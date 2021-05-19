@@ -1,3 +1,6 @@
 [submodule "lib/AccountKeying"]
 	path = lib/AccountKeying
 	url = https://github.com/Simbiat/AccountKeying
+[submodule "lib/array2table"]
+	path = lib/array2table
+	url = https://github.com/Simbiat/array2table
