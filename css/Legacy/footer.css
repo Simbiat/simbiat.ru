@@ -1,0 +1,36 @@
+footer {
+    bottom: 0;
+    height: var(--height-footer);
+}
+
+#footer {
+    height: 55px;
+    line-height: 55px;
+    font-size: 90%;
+}
+
+#contactme,#rsslist,#sitemaplist {
+    left: 0;
+    right: 0;
+    bottom: 100%;
+}
+
+#contactme,#sitemaplist { max-width: 450px;}
+
+#rsslist {max-width: 410px;}
+
+#sitemaplist {max-width: 100px;}
+
+#contactbutton,#sitemapbutton,#rssbutton {font-family: initial;}
+
+#contactbutton {
+    margin-left: 90px;
+    margin-right: 90px;
+}
+
+.back-to-top {
+    display: none;
+    color: var(--color-interactive);
+    font-size: 200%;
+    padding-top: 4px;
+}

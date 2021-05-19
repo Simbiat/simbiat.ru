@@ -1,0 +1,41 @@
+<nav id="sidenav" class="hide-on-small" role="navigation" itemscope="" itemtype="http://schema.org/SiteNavigationElement">
+    <ul>
+        <li>
+            <a class="maincat" href="/" target="_self" itemprop="url"><span itemprop="name"><i class="fonticon-home"></i> Home <i class="fonticon-home"></i></span></a>
+        </li>
+        <li>
+            <a class="maincat" href="/fftracker/" target="_self" itemprop="url"><span itemprop="name">FFXIV Tracker</span></a>
+            {{ breadcrumbs.fftracker|raw }}
+        </li>
+        <li>
+            <a class="maincat" href="/bictracker/" target="_self" itemprop="url"><span itemprop="name">BIC Tracker</span></a>
+            {{ breadcrumbs.bictracker|raw }}
+        </li>
+        <li>
+            <a class="maincat" href="/forum/" target="_self" itemprop="url"><span itemprop="name">Forum</span></a>
+            {{ breadcrumbs.forum|raw }}
+        </li>
+        <!--
+        <li>
+            <a class="maincat" href="/silversteam/" target="_self" itemprop="url"><span itemprop="name">SilverSteam</span></a>
+        </li>
+        -->
+        <!--
+        <li>
+            <a class="maincat" href="/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a>
+        </li>
+        -->
+        {%if admincp%}
+            <li>
+                <a class="maincat" href="/admin/" target="_self" itemprop="url"><span itemprop="name">Admin Panel</span></a>
+                {{ breadcrumbs.admin|raw }}
+            </li>
+        {%endif%}
+        {%if usercp%}
+            <li>
+                <a class="maincat" href="/user/{{userid}}" target="_self" itemprop="url"><span itemprop="name">User Panel</span></a>
+                {{ breadcrumbs.usercp|raw }}
+            </li>
+        {%endif%}
+    </ul>
+</nav>

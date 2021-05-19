@@ -1,0 +1,85 @@
+<head>
+    <meta charset="UTF-8" />
+    <meta name="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{{ title }}</title>
+    <!-- General Meta -->
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!-- Author Meta -->
+    <meta name="author" content="Dmitry Kustov" />
+    <link rel="author" href="https://www.facebook.com/simbiat19"/>
+
+    <!-- SEO Meta -->
+    <meta name="description" content="{{ ogdesc }}" />
+    <meta itemprop="description" content="{{ ogdesc }}" />
+    <meta property="og:description" content="{{ ogdesc }}" />
+    <meta name="X-Csrftoken" content="{{XCsrftoken}}" />
+    <!-- Custom meta tag to indicate whether Save-Data header was recieved -->
+    <meta name="save_data" content="{{save_data}}" />
+
+    <!-- FaceBook IDs -->
+    {{ facebook|raw }}
+
+    <!-- Open Graph Protocol -->
+    <meta property="og:site_name" content="{{site_name}}" />
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:url" content="{{ url }}" />
+    <meta property="og:image" content="{{ ogimage }}" />
+    {{ ogextra|raw }}
+    {%if not ogtype%}
+    <meta property="og:type" content="website" />
+    {%endif%}
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    {{ twitter_card|raw}}
+
+    <!-- MS Tiles -->
+    {{ ms_tile|raw}}
+
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Links -->
+    {{ link_tags|raw }}
+    {{ link_extra|raw }}
+    {{ breadcrumbs.links|raw }}
+    {{ pagination.links|raw }}
+
+    <meta name="apple-mobile-web-app-title" content="{{site_name}}" />
+
+    <!-- JavaScript -->
+    <script src="/js/{{js_version}}.js"></script>
+
+    <!-- Google Charts -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">google.charts.load('current', {packages: ['corechart', 'bar']});</script>
+
+    <!-- Google rich cards -->
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "Organization",
+            "url": "{{ domain }}",
+            "logo": "{{ domain }}/img/favicons/simbiat.png",
+            "sameAs": [
+                "https://facebook.com/SimbiatSoftware/",
+                "https://facebook.com/simbiat19",
+                "https://twitter.com/simbiat199",
+                "https://www.linkedin.com/in/simbiat19/",
+                "https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q"
+            ]
+        }
+    </script>
+
+    {{ extrajs }}
+    <noscript>
+        <div id="noscript">
+            This site requires JavaScript to work correctly.<br>Please, enable it and reload page.
+        </div>
+    </noscript>
+</head>

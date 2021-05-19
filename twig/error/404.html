@@ -1,0 +1,13 @@
+<div id="http_error">
+    Page not found.
+</div>
+{% if ff_suggestions %}
+    <div id="ff-main" class="article-content centertext">
+    Perhaps you will be interested in one of these?
+        <div id="ff_searchlist">
+            {% for entity in ff_suggestions %}
+                {{ include('fftracker/entity_card.html', entity) }}
+            {%endfor%}
+        </div>
+    </div>
+{%endif%}

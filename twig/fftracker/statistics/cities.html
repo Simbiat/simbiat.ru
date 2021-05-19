@@ -1,0 +1,64 @@
+<div id="ff_cities" class="ff_tabcontent">
+    {% for categoryname, category in statistics.cities.gender %}
+        <h2 class="ff_stat_title">{{categoryname|capitalize}} population distribution by city</h2>
+        <div id="ff_chart_city_{{categoryname}}" data-type="pie" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['City','Characters'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+            " data-colors="
+                {% set array = category|column('color') %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+        "></div>
+    {%endfor%}
+    <h2 class="ff_stat_title">Free Companies' houses distribution by city</h2>
+    <div id="ff_chart_city_freecompany" data-type="pie" data-chart="
+        {% for row in statistics.cities.free_company %}
+            {%if loop.first%}[{% set array = ['City','Free companies'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.value,row.count] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+        " data-colors="
+            {% set array = statistics.cities.free_company|column('color') %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+    "></div>
+    {% for categoryname, category in statistics.cities.gc_characters %}
+        <h2 class="ff_stat_title">Grand companies' recruits (characters) distribution in {{categoryname}}</h2>
+        <div id="ff_chart_city_gcchar_{{categoryname|replace({' ': '', '\'': ''})}}" data-type="pie" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['Grand company','Characters'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+            " data-colors="
+                {% set array = category|column('color') %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+        "></div>
+    {%endfor%}
+    {% for categoryname, category in statistics.cities.gc_fc %}
+        <h2 class="ff_stat_title">Grand companies' affiliates (free companies) distribution in {{categoryname}}</h2>
+        <div id="ff_chart_city_gc_fc_{{categoryname|replace({' ': '', '\'': ''})}}" data-type="pie" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['Grand company','Free companies'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+            " data-colors="
+                {% set array = category %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+        "></div>
+    {%endfor%}
+</div>

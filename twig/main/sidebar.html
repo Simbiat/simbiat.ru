@@ -1,0 +1,25 @@
+{%if user_side_panel%}
+    <article class="article-block">
+        <div class="article-top-row"><h2 class="article-block-name">User Panel</h2></div>
+        <div class="sidebar-content">
+            {{user_side_panel|raw}}
+        </div>
+    </article>
+{%endif%}
+{%if sidebar.fflinks%}
+    <article class="article-block">
+        <div class="article-top-row"><h2 class="article-block-name"><abbr title="Final Fantasy XIV">FFXIV</abbr> entities' updates</h2></div>
+        <div class="sidebar-content">
+            {% for entity in sidebar.fflinks %}
+                <p title="{{entity.updated|date("d/m/Y")}}">
+                    <a href="/fftracker/{{entity.type}}/{{entity.id}}/{{entity.name|escape('url')}}/">{{entity.name}}</a> 
+                    {%if entity.updated|date("d/m/Y")==entity.registered|date("d/m/Y")%}
+                        registered
+                    {%else%}
+                        updated
+                    {%endif%}
+                </p>
+            {% endfor %}
+        </div>
+    </article>
+{%endif%}

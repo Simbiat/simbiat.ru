@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# profile: http://ogp.me/ns/profile# article: http://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#">
+    {% if unsupported %}
+        {{ include('main/head.html')}}
+        <body>
+            <center>
+                This website uses features aimed at improving security of content delivery and information exchange.<br>
+                Unfortunately, these features are not supported by <b>{{client}}</b> <i>teapot</i>.<br>
+                Since we value security, we are unable to serve any content to you.<br>
+                We are sorry for inconvenience, but, please, try with a different browser.
+            </center>
+        </body>
+    {% else %}
+        {% if http_error%}
+            {% if http_error != 403 and http_error != 404%}
+                <meta http-equiv="refresh" content="60"/>
+            {% endif %}
+        {% endif %}
+        {{ include('main/head.html')}}
+        <body>
+            <div id="fb-root"></div>
+            <header>
+                <div id="menuicon" class="stonebutton"><i class="fonticon-outdent"></i></div>
+                <div id="logo">
+                    <div>Simbiat<div id="ajaxloadpagestat">
+                        <div id="ajaxflipfront">
+                            <img id="logoimg" alt="logo" title="Simbiat Software" src="/img/theme/simbiat.png">
+                        </div>
+                        <div id="ajaxloadpageanim">
+                            <div id="ajaxcog">
+                                <i class="fonticon-cog spin"></i>
+                            </div>
+                            <div id="ajaxfail">
+                                    <i class="fonticon-frown pulse"></i>
+                            </div>
+                        </div>
+                    </div>Software</div>
+                </div>
+                <div id="sideicon" class="stonebutton"><i class="fonticon-outdent"></i></div>
+                <div id="h1div">
+                    <h1 id="h1title" title="{{ h1 }}" onclick="location.reload(true);">{{ h1 }}</h1>
+                    <span id="sharebutton" class="stonebutton hideme"><i title="Share current page" class="{%if iOS%}fonticon-share-square{%else%}fonticon-share-alt{%endif%}"></i></span>
+                </div>
+            </header>
+            <aside id="sidebar" class="hide-on-small">
+                {{ include('main/sidebar.html')}}
+            </aside>
+            {{ include('main/navigation.html')}}
+            <main id="main-content">
+                {% if http_error%}
+                    {{ include('error/'~http_error~'.html')}}
+                {% else %}
+                    {% if service_name%}
+                        {% if service_name == 'landing'%}
+                            {{ include('landing.html')}}
+                        {% endif %}
+                        {% if service_name == 'forum'%}
+                            {{pagination_top|raw}}
+                            {% for article in articles %}
+                                {{ include('articles.html', article) }}
+                            {% endfor %}
+                            {{pagination_bottom|raw}}
+                        {% endif %}
+                        {% if service_name == 'thread'%}
+                            {{ include('articles.html', article) }}
+                        {% endif %}
+                        {% if service_name == 'fftracker'%}
+                            {{ include('fftracker/'~subservice~'.html')}}
+                        {% endif %}
+                        {% if service_name == 'bictracker'%}
+                            {{ include('bic/'~subservice~'.html')}}
+                        {% endif %}
+                        {% if service_name == 'usercontrol'%}
+                            {{ include('usercontrol/'~subservice~'.html')}}
+                        {% endif %}
+                        {% if service_name == 'silversteam'%}
+                            {{ include('ssc.html')}}
+                        {% endif %}
+                    {% else %}
+                        {{ content|raw }}
+                    {% endif %}
+                {% endif %}
+            </main>
+            {{ include('main/footer.html')}}
+            {% if http_error%}
+                {% if http_error != 403 and http_error != 404%}
+                    <script>setInterval(function() {
+                            if (parseInt($("#timer").text()) > 0) {
+                                $("#timer").text(parseInt($("#timer").text())-1);
+                            }
+                        }, 1000);
+                    </script>
+                {%endif%}
+            {% endif %}
+            <div id="zoomer">
+            </div>
+        </body>
+    {%endif%}
+</html>

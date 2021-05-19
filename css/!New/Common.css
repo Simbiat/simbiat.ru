@@ -1,0 +1,6 @@
+/*Class to hide objects instead of using inline styles (due to CSP restrictions).
+Intended to use through JavaScript classList only.
+!important is used to ensure it is applied.*/
+.hideme {
+    display: none!important;
+}

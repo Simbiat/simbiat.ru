@@ -1,0 +1,42 @@
+<article class="article-content" id="user_dash">
+    {%if miss_user%}
+        <div class="miss_user">No or wrong user ID is provided</div>
+    {%else%}
+        {%if usercp%}
+            {%include('user/navigation.html') with {'usercptype': 'cp'} %}
+        {%endif%}
+        {%if avatar%}
+            <img class="avatar" src="{{avatar}}">
+        {%else%}
+            <img class="avatar" src="/img/theme/noavatar.png">
+        {%endif%}
+        <p><h3>ID</h3>: {{user.userid}}</p>
+        <p><h3>Registered</h3>: {{user.registered|date("d/m/Y H:i")}}</p>
+        {%if user.createdby%}<p><h3>Created by</h3>: {{user.createdby}}</p>{%endif%}
+        {%if user.firstname%}<p><h3>First name</h3>: {{user.firstname}}</p>{%endif%}
+        {%if user.lastname%}<p><h3>Last name</h3>: {{user.lastname}}</p>{%endif%}
+        {%if user.middlename%}<p><h3>Middle name</h3>: {{user.middlename}}</p>{%endif%}
+        {%if user.fathername%}<p><h3>Father name</h3>: {{user.fathername}}</p>{%endif%}
+        {%if user.gender%}<p><h3>Gender</h3>: {{user.gender}}</p>{%endif%}
+        {%if user.birthday%}<p><h3>Birthday</h3>: {{user.birthday|date("d/m/Y")}}</p>{%endif%}
+        {%if user.companyname%}<p><h3>Company name</h3>: {{user.companyname}}</p>{%endif%}
+        {%if user.about%}<p><h3>About</h3>: {{user.about}}</p>{%endif%}
+        <p><h3>Groups</h3>: 
+            {% for group in user.usergroups %}
+                {{group.groupname}}{%if not loop.last%}, {%endif%}
+            {% endfor %}
+        </p>
+        {%if user.unverified_user%}
+            <div id="verify_notice">
+                <p>You have yet to verify your identity. Please, follow the link that was sent to your e-mail. If required, click <span id="verify_user" data-id="{{user.userid}}">here</span> to resend the mail.</p>
+                <div id="verify_resend"></div>
+            </div>
+        {%endif%}
+        {%if user.activated%}
+            <div id="activation_notice">
+                <p>Your account has been successfully activated. Page will reload to ensure session data is up-to-date.</p>
+                <meta http-equiv="refresh" content="2;/user/{{user.userid}}"/>
+            </div>
+        {%endif%}
+    {%endif%}
+</article>

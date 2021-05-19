@@ -1,0 +1,45 @@
+<article class="article-content" id="user_dash">
+    {%if miss_user%}
+        <div class="miss_user">No or wrong user ID is provided</div>
+    {%else%}
+        {%if usercp%}
+            {%include('user/navigation.html') with {'usercptype': 'edit'} %}
+            {%include('user/editsubcats.html') with {'usercptype': 'personal'} %}
+            <form id="cp_personal" action="/user/{{user.userid}}/edit/" method="post">
+                {%if edit_result is defined%}
+                    <span class="{%if edit_result%}success{%else%}error{%endif%}">Update {%if edit_result%}successful{%else%}failed{%endif%}</span>
+                {%endif%}
+                <p>
+                    <input type="checkbox" class="cp_privacy_check" name="cp_personal[cp_fn_p]" id="cp_fn_p" {%if user.public_firstname %} checked{%endif%}><label for="cp_fn_p" title="Choose whether to show or hide this information from your public profile"></label>
+                    <input name="cp_personal[cp_fn]" id="cp_fn" type="text" maxlength="100" value="{{user.firstname}}" placeholder="First name" title="First name">
+                    <input name="cp_personal[cp_ln]" id="cp_ln" type="text" maxlength="100" value="{{user.lastname}}" placeholder="Last name" title="Last name">
+                    <input type="checkbox" class="cp_privacy_check" name="cp_personal[cp_ln_p]" id="cp_ln_p" {%if user.public_lastname %} checked{%endif%}><label for="cp_ln_p" title="Choose whether to show or hide this information from your public profile"></label>
+                </p>
+                <p>
+                    <input type="checkbox" class="cp_privacy_check" name="cp_personal[cp_mn_p]" id="cp_mn_p" {%if user.public_middlename %} checked{%endif%}><label for="cp_mn_p" title="Choose whether to show or hide this information from your public profile"></label>
+                    <input name="cp_personal[cp_mn]" id="cp_mn" type="text" maxlength="100" value="{{user.middlename}}" placeholder="Middle name" title="Middle name">
+                    <input name="cp_personal[cp_farn]" id="cp_farn" type="text" maxlength="100" value="{{user.fathername}}" placeholder="Father name" title="Father name">
+                    <input type="checkbox" class="cp_privacy_check" name="cp_personal[cp_farn_p]" id="cp_farn_p" {%if user.public_fathername %} checked{%endif%}><label for="cp_farn_p" title="Choose whether to show or hide this information from your public profile"></label>
+                </p>
+                <p>
+                    <input type="checkbox" class="cp_birth_check" name="cp_personal[cp_bd_p]" id="cp_bd_p" {%if user.public_birthday %} checked{%endif%}><label for="cp_bd_p"></label>
+                    <input name="cp_personal[cp_bd]" id="cp_bd" type="date" title="Birthday" placeholder="{{"now"|date("Y-m-d")}}" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"{%if user.birthday%} value="{{user.birthday|date("Y-m-d")}}"{%endif%}>
+                    <select name="cp_personal[cp_gender]" id="cp_gender" title="Gender">
+                        <option value="null"{%if user.gender == null%} selected{%endif%}>Gender</option>
+                        <option value="0"{%if user.gender == "female"%} selected{%endif%}>Female</option>
+                        <option value="1"{%if user.gender == "male"%} selected{%endif%}>Male</option>
+                    </select>
+                    <input type="checkbox" class="cp_privacy_check" name="cp_personal[cp_gender_p]" id="cp_gender_p" {%if user.public_gender %} checked{%endif%}><label for="cp_gender_p" title="Choose whether to show or hide this information from your public profile"></label>
+                </p>
+                <p>
+                    <input type="checkbox" class="cp_privacy_check" name="cp_personal[cp_cn_p]" id="cp_cn_p" {%if user.public_companyname %} checked{%endif%}><label for="cp_cn_p" title="Choose whether to show or hide this information from your public profile"></label>
+                    <input name="cp_personal[cp_cn]" id="cp_cn" type="text" maxlength="190" value="{{user.companyname}}" placeholder="Company name" title="Company name">
+                </p>
+                <p><textarea name="cp_personal[cp_about]" id="cp_about" placeholder="About" title="About" maxlength="250">{{user.about}}</textarea></p>
+                <p><input type="submit" value="Save"><input type="reset"></p>
+            </form>
+        {%else%}
+            {{ include('no_access.html')}}
+        {%endif%}
+    {%endif%}
+</article>

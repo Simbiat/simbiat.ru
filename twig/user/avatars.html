@@ -1,0 +1,18 @@
+<article class="article-content" id="user_dash">
+    {%if miss_user%}
+        <div class="miss_user">No or wrong user ID is provided</div>
+    {%else%}
+        {%if usercp%}
+            {%include('user/navigation.html') with {'usercptype': 'edit'} %}
+            {%include('user/editsubcats.html') with {'usercptype': 'avatar'} %}
+            <form id="cp_personal" action="/user/{{user.userid}}/edit/" method="post">
+                {%if edit_result is defined%}
+                    <span class="{%if edit_result%}success{%else%}error{%endif%}">Update {%if edit_result%}successful{%else%}failed{%endif%}</span>
+                {%endif%}
+                <p><h3>Avatars:</h3></p>
+            </form>
+        {%else%}
+            {{ include('no_access.html')}}
+        {%endif%}
+    {%endif%}
+</article>

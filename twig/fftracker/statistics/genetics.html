@@ -1,0 +1,41 @@
+<div id="ff_genetics" class="ff_tabcontent">
+    {% for categoryname, category in statistics.characters.clans %}
+        <h2 class="ff_stat_title">{{categoryname|capitalize}} population distribution by clan</h2>
+        <div id="ff_chart_clans_{{categoryname}}" data-type="pie" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['Clan','Characters'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+        "></div>
+    {%endfor%}
+    {% for categoryname, category in statistics.cities.clans %}
+        <h2 class="ff_stat_title">Clans' distribution in {{categoryname}}</h2>
+        <div id="ff_chart_city_clans_{{categoryname|replace({' ': '', '\'': ''})}}" data-type="pie" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['Clan','Characters'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+        "></div>
+    {%endfor%}
+    {% for categoryname, category in statistics.grand_companies.clans %}
+        <h2 class="ff_stat_title">Clan distribution in {{categoryname}}</h2>
+        <div id="ff_chart_{{categoryname|replace({' ': ''})}}_clan" data-type="pie" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['Clan','Characters'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+        "></div>
+    {%endfor%}
+</div>

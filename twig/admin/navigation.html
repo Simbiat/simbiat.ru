@@ -1,0 +1,25 @@
+<div>
+{%if admincptype == 'dash' %}
+    <span>Dashboard</span>
+{%else%}
+    <span><a href="/admin/dashboard/">Dashboard</a></span>
+{%endif%}
+|
+{%if admincptype == 'settings' %}
+    <span>Site Settings</span>
+{%else%}
+    <span><a href="/admin/settings/">Site Settings</a></span>
+{%endif%}
+|
+{%if admincptype == 'cron' %}
+    <span>Cron</span>
+{%else%}
+    <span><a href="/admin/cron/">Cron</a></span>
+{%endif%}
+|
+{%if admincptype == 'users' %}
+    <span>users</span>
+{%else%}
+    <span><a href="/admin/users/">Users</a></span>
+{%endif%}
+</div>

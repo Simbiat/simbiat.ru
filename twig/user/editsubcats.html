@@ -1,0 +1,32 @@
+<div>
+
+{%if usercptype == 'personal' %}
+    <span>Personal Information</span>
+{%else%}
+    <span><a href="/user/{{usercp}}/edit/">Personal Information</a></span>
+{%endif%}
+|
+{%if usercptype == 'settings' %}
+    <span>Settings</span>
+{%else%}
+    <span><a href="/user/{{usercp}}/settings/">Settings</a></span>
+{%endif%}
+|
+{%if usercptype == 'avatar' %}
+    <span>Avatars</span>
+{%else%}
+    <span><a href="/user/{{usercp}}/avatars/">Avatars</a></span>
+{%endif%}
+|
+{%if usercptype == 'emails' %}
+    <span>E-mails</span>
+{%else%}
+    <span><a href="/user/{{usercp}}/emails/">E-mails</a></span>
+{%endif%}
+|
+{%if usercptype == 'password' %}
+    <span>Password</span>
+{%else%}
+    <span><a href="/user/{{usercp}}/password/">Password</a></span>
+{%endif%}
+</div>

@@ -1,0 +1,45 @@
+#service_list {
+    display:inline-block;
+    text-align:center;
+    width: 100%;
+    min-height:470px;
+}
+.service_land {
+    max-width: 707px;
+    min-width: 332px;
+    display: inline-block;
+    text-align: center;
+    margin: 1px;
+    margin-top: 20px;
+    width:50%;
+    position: relative;
+    border-radius:5px;
+}
+.service_wrapper {
+    position: relative;
+    display: block;
+    min-width: 330px;
+    max-width: 705px;
+    min-height: 186px;
+    max-height: 400px;
+}
+.service_wrapper > img {
+    border: 1px solid var(--color-system-alt);
+    width:100%;
+    border-radius:5px;
+    border-color: var(--color-system-border) var(--color-system-alt) var(--color-system-alt) var(--color-system-border);
+    box-shadow: 1px 1px 5px rgba(0, 160, 165, 1), -1px -1px 5px rgba(0, 160, 165, 1);
+    max-width: 705px;
+    min-width: 330px;
+}
+.service_wrapper > canvas {
+    width:100%;
+    height: 100%;
+}
+.service_wrapper > canvas,
+.service_wrapper > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
