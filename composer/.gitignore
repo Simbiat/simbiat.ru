@@ -1,3 +1,4 @@
 !.gitignore
 auth.json
 vendor/
+!vendor/composer
