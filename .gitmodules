@@ -1,0 +1,4 @@
+[submodule "lib/AccountKeying"]
+	path = lib/AccountKeying
+	url = https://github.com/Simbiat/AccountKeying
+	branch = main
