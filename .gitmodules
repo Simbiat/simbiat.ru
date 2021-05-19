@@ -6,3 +6,7 @@
 	path = lib/array2table
 	url = https://github.com/Simbiat/array2table
 	branch = master
+[submodule "lib/cute-bytes"]
+	path = lib/cute-bytes
+	url = https://github.com/Simbiat/cute-bytes
+	branch = master
