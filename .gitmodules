@@ -10,3 +10,59 @@
 	path = lib/cute-bytes
 	url = https://github.com/Simbiat/cute-bytes
 	branch = master
+[submodule "lib/ArrayHelpers"]
+	path = lib/ArrayHelpers
+	url = https://github.com/Simbiat/ArrayHelpers
+	branch = main
+[submodule "lib/bicXML"]
+	path = lib/bicXML
+	url = https://github.com/Simbiat/bicXML
+	branch = main
+[submodule "lib/colloquium"]
+	path = lib/colloquium
+	url = https://github.com/Simbiat/colloquium
+	branch = main
+[submodule "lib/Cron"]
+	path = lib/Cron
+	url = https://github.com/Simbiat/Cron
+	branch = main
+[submodule "lib/database"]
+	path = lib/database
+	url = https://github.com/Simbiat/database
+	branch = master
+[submodule "lib/filename-sanitizer"]
+	path = lib/filename-sanitizer
+	url = https://github.com/Simbiat/filename-sanitizer
+	branch = master
+[submodule "lib/HomePage"]
+	path = lib/HomePage
+	url = https://github.com/Simbiat/HomePage
+	branch = main
+[submodule "lib/HTMLCache"]
+	path = lib/HTMLCache
+	url = https://github.com/Simbiat/HTMLCache
+	branch = main
+[submodule "lib/HTMLCut"]
+	path = lib/HTMLCut
+	url = https://github.com/Simbiat/HTMLCut
+	branch = main
+[submodule "lib/HTTP20"]
+	path = lib/HTTP20
+	url = https://github.com/Simbiat/HTTP20
+	branch = main
+[submodule "lib/lodestone-parser"]
+	path = lib/lodestone-parser
+	url = https://github.com/Simbiat/lodestone-parser
+	branch = main
+[submodule "lib/optimize-tables"]
+	path = lib/optimize-tables
+	url = https://github.com/Simbiat/optimize-tables
+	branch = master
+[submodule "lib/sand-clock"]
+	path = lib/sand-clock
+	url = https://github.com/Simbiat/sand-clock
+	branch = master
+[submodule "lib/UserControl"]
+	path = lib/UserControl
+	url = https://github.com/Simbiat/UserControl
+	branch = main
