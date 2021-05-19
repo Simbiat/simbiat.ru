@@ -1,4 +1,5 @@
 !.gitignore
+!.htaccess
 auth.json
 vendor/
 !vendor/composer

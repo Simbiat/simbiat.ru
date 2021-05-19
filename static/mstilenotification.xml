@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tile>
+    <visual>
+        <binding template="TileSquare150x150IconWithBadge">
+            <text id="1">Test</text>
+        </binding>
+    </visual>
+</tile>

@@ -1,0 +1,13 @@
+# www.robotstxt.org/
+
+# Allow crawling of all content
+User-agent: *
+Sitemap: https://www.simbiat.ru/sitemap/xml/index/
+# Forbid some folders
+Disallow: /cgi-bin/
+Disallow: /data/
+Disallow: /composer/
+Disallow: /lib/
+Disallow: /static/
+Disallow: /twig/
+Disallow: /dbhelper/

@@ -1,0 +1,17 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+    Developer: Dmitry Kustov
+    Contact: simbiat [at] outlook.com
+    From: Moscow, Russia
+
+# THANKS
+    Developer: Dmitry Kustov
+    Contact: simbiat [at] outlook.com
+    From: Moscow, Russia
+
+# TECHNOLOGY COLOPHON
+	Language: English
+	Doctype: HTML5, CSS3
+	IDE: PHPStorm, FileZilla, Photoshop, Modernizr, Normalize.css, jQuery, Twig, PHPMailer, DeviceDetector, Boilerplate, Apache, Litespeed, EditPad, Javascript

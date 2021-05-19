@@ -86,3 +86,8 @@ fabric.properties
 /.idea/vcs.xml
 /.idea/webResources.xml
 /.idea/
+
+/dbhelper/
+/config.php
+/EngineUpdate.php
+/toupdateonprod.sql
