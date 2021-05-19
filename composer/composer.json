@@ -1,0 +1,35 @@
+{
+  "name": "simbiat/simbiat.ru",
+  "description": "Package for simbiat.ru",
+  "prefer-stable" : true,
+  "minimum-stability": "dev",
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Dmitry Kustov",
+      "email": "simbiat@outlook.com",
+      "homepage": "https://www.simbiat.ru",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8",
+    "matomo/device-detector": "^4.2",
+    "phpmailer/phpmailer": "^6.4",
+    "twig/twig": "^3.3"
+  },
+  "config": {
+    "sort-packages": true,
+    "store-auths": true,
+    "platform": {
+      "php": "8"
+    },
+    "data-dir": "../data/composer",
+    "cache-dir": "../data/cache/composer",
+    "preferred-install": "source",
+    "optimize-autoloader": true,
+    "classmap-authoritative": true,
+    "htaccess-protect": true,
+    "platform-check": true
+  }
+}
