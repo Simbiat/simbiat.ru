@@ -91,3 +91,5 @@ fabric.properties
 /config.php
 /EngineUpdate.php
 /toupdateonprod.sql
+/error.log
+/errors.log

@@ -1,6 +1,27 @@
 <?php
 declare(strict_types=1);
 
+#To run before upload to prod, but after the images are downloaded from prod
+#set_time_limit(3000000);
+#foreach (new FilesystemIterator('C:\Users\simbi\OneDrive\Documents\!Personal\Coding\WebServer\htdocs\lib\FFTracker\src\Images\merged-crests') as $fileInfo) {
+#    $filename = $fileInfo->getFilename();
+#    $fullname = $fileInfo->getPathname();
+#    $dir = $fileInfo->getPath().'/'.substr($filename, 0, 2).'/'.substr($filename, 2, 2);
+#    if (!is_dir($dir)) {
+#        mkdir($dir, recursive: true);
+#    }
+#    if ($fullname !== $dir.'/'.$filename) {
+#        if (!is_file($dir.'/'.$filename)) {
+#            rename($fullname, $dir.'/'.$filename);
+#        } else {
+#            unlink($fullname);
+#        }
+#    }
+#    echo $fullname . "<br>\n";
+#}
+#exit;
+
+
 #Load composer libraries
 require __DIR__. '/composer/vendor/autoload.php';
 
