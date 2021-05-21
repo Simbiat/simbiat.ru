@@ -25,7 +25,7 @@ class Api
             return true;
         }
         header("Content-Type: application/json; charset=utf-8");
-        (new \Simbiat\http20\Common)->zEcho($result);
+        (new \Simbiat\HTTP20\Common)->zEcho($result);
         return $result;
     }
     

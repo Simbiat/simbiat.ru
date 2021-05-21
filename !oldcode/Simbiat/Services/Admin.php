@@ -26,7 +26,7 @@ class Admin
                 $twigparameters['adminuser'] = true;
             }
         }
-        $breadarray = (new \Simbiat\http20\HTML)->breadcrumbs(items: $breadarray, links: true, headers: true);
+        $breadarray = (new \Simbiat\HTTP20\HTML)->breadcrumbs(items: $breadarray, links: true, headers: true);
         $twigparameters['breadcrumbs']['admin'] = $breadarray['breadcrumbs'];
         $twigparameters['breadcrumbs']['links'] = $breadarray['links'];
         $twigparameters['content'] = $this->Render($twigparameters, $template);
