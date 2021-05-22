@@ -22,7 +22,7 @@
             <div>
                 <h2>Empty achievements</h2>
                 {% for achievement in dash.achievements %}
-                    <a class="postlink" data-postaction="achgrab" data-achid="{{achievement.achievementid}}" data-charid="{{achievement.charecterid}}" data-achname="{{achievement.name}}" href="./"><img class="ff_collectable_icon_border" src="{{achievement.icon}}" alt="{{achievement.name}}" title="{{achievement.name}}"></a>
+                    <a class="postlink" data-postaction="achgrab" data-achid="{{achievement.achievementid}}" data-charId="{{achievement.charecterid}}" data-achname="{{achievement.name}}" href="./"><img class="ff_collectable_icon_border" src="{{achievement.icon}}" alt="{{achievement.name}}" title="{{achievement.name}}"></a>
                 {%endfor%}
             </div>
         {%endif%}

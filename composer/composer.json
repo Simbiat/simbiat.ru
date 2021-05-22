@@ -25,7 +25,9 @@
     "ext-apcu": "*",
     "ext-zlib": "*",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "ext-openssl": "*",
+    "ext-gd": "*"
   },
   "config": {
     "sort-packages": true,
