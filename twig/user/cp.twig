@@ -3,7 +3,7 @@
         <div class="miss_user">No or wrong user ID is provided</div>
     {%else%}
         {%if usercp%}
-            {%include('user/navigation.html') with {'usercptype': 'cp'} %}
+            {%include('user/navigation.twig') with {'usercptype': 'cp'} %}
         {%endif%}
         {%if avatar%}
             <img class="avatar" src="{{avatar}}">
@@ -21,7 +21,7 @@
         {%if user.birthday%}<p><h3>Birthday</h3>: {{user.birthday|date("d/m/Y")}}</p>{%endif%}
         {%if user.companyname%}<p><h3>Company name</h3>: {{user.companyname}}</p>{%endif%}
         {%if user.about%}<p><h3>About</h3>: {{user.about}}</p>{%endif%}
-        <p><h3>Groups</h3>: 
+        <p><h3>Groups</h3>:
             {% for group in user.usergroups %}
                 {{group.groupname}}{%if not loop.last%}, {%endif%}
             {% endfor %}

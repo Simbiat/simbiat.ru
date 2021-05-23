@@ -14,7 +14,7 @@ class Mail
     private $imap = "993";
     private $pop3 = "995";
     private $smtp = "465";
-    
+
     public function sendmail($to = null, string $subject, string $message, $cc = null, $bcc = null): bool
     {
         if ($this->mail) {
@@ -29,7 +29,7 @@ class Mail
             }
         }
     }
-    
+
     private function message(string $subject, string $message): bool
     {
         try {
@@ -47,7 +47,7 @@ class Mail
             $twigparameters['subject'] = $subject;
             $twigparameters['content'] = $message;
             $this->mail->Subject = $subject;
-            $this->mail->Body = $twig->render('mail.html', $twigparameters);
+            $this->mail->Body = $twig->render('mail.twig', $twigparameters);
             $this->mail->AltBody = strip_tags($message);
             return true;
         } catch (Exception $e) {
@@ -55,7 +55,7 @@ class Mail
             return false;
         }
     }
-    
+
     private function setRecipients(array $recipients): bool
     {
         try {
@@ -86,7 +86,7 @@ class Mail
             return false;
         }
     }
-    
+
     private function addRecipient(string $type, string $address, string $name = ""): bool
     {
         try {
@@ -121,14 +121,14 @@ class Mail
             return false;
         }
     }
-    
+
     private function attachment()
     {
         //Attachments
         $this->mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
         $this->mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
     }
-    
+
     private function mailCheck($address): bool
     {
         if(filter_var($address, FILTER_VALIDATE_EMAIL)) {
@@ -137,13 +137,13 @@ class Mail
             return false;
         }
     }
-    
+
     public function __construct()
     {
         try {
             $certpath = getcwd()."/certificate/";
             $this->mail = new PHPMailer(true);
-            
+
             //Server settings
             //$this->mail->SMTPDebug = 4;                                 // Enable verbose debug output
             $this->mail->isSMTP();                                      // Set mailer to use SMTP
@@ -163,7 +163,7 @@ class Mail
             $this->mail = false;
         }
     }
-    
+
     public function __destruct() {}
 }
 ?>

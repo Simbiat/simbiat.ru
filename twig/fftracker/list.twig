@@ -2,7 +2,7 @@
     {{ pagination_top|raw }}
     <div id="ff_searchlist">
         {% for entity in searchresult.entities %}
-            {{ include('fftracker/entity_card.html', entity) }}
+            {{ include('fftracker/entity_card.twig', entity) }}
         {% endfor %}
     </div>
     {{ pagination_bottom|raw }}

@@ -4,7 +4,7 @@
         <div>
             <details><summary>Achievements' pages</summary>
                 {% for row in category %}
-                    {{ include('fftracker/entity_card.html', row) }}
+                    {{ include('fftracker/entity_card.twig', row) }}
                 {%endfor%}
             </details>
         </div>

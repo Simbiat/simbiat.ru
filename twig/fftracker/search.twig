@@ -24,7 +24,7 @@
         <span id="found_achievements">Achievements: <a href="/fftracker/achievements/">{{searchresult.counts.achievements}}</a></span>
         </div>
         {% for entity in searchresult.entities %}
-            {{ include('fftracker/entity_card.html', entity) }}
+            {{ include('fftracker/entity_card.twig', entity) }}
         {% endfor %}
     </div>
     

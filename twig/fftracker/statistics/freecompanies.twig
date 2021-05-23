@@ -46,7 +46,7 @@
                     <div>Ratio is calculated as <i>`1/(rank*members)*100`</i>, meaning, the lower the number of members and the higher the rank (the lower its number) - the more efficient a company is. <i>`*100`</i> is for getting a little bit more human readable values.</div>
                     <div>
                         {% for row in category %}
-                            {{ include('fftracker/entity_card.html', row) }}
+                            {{ include('fftracker/entity_card.twig', row) }}
                         {%endfor%}
                     </div>
                 </details>

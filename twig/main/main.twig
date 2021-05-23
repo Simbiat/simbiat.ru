@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# profile: http://ogp.me/ns/profile# article: http://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#">
     {% if unsupported %}
-        {{ include('main/head.html')}}
+        {{ include('main/head.twig')}}
         <body>
             <center>
                 This website uses features aimed at improving security of content delivery and information exchange.<br>
@@ -16,7 +16,7 @@
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
         {% endif %}
-        {{ include('main/head.html')}}
+        {{ include('main/head.twig')}}
         <body>
             <div id="fb-root"></div>
             <header>
@@ -43,45 +43,45 @@
                 </div>
             </header>
             <aside id="sidebar" class="hide-on-small">
-                {{ include('main/sidebar.html')}}
+                {{ include('main/sidebar.twig')}}
             </aside>
-            {{ include('main/navigation.html')}}
+            {{ include('main/navigation.twig')}}
             <main id="main-content">
                 {% if http_error%}
-                    {{ include('error/'~http_error~'.html')}}
+                    {{ include('error/'~http_error~'.twig')}}
                 {% else %}
                     {% if service_name%}
                         {% if service_name == 'landing'%}
-                            {{ include('landing.html')}}
+                            {{ include('landing.twig')}}
                         {% endif %}
                         {% if service_name == 'forum'%}
                             {{pagination_top|raw}}
                             {% for article in articles %}
-                                {{ include('articles.html', article) }}
+                                {{ include('articles.twig', article) }}
                             {% endfor %}
                             {{pagination_bottom|raw}}
                         {% endif %}
                         {% if service_name == 'thread'%}
-                            {{ include('articles.html', article) }}
+                            {{ include('articles.twig', article) }}
                         {% endif %}
                         {% if service_name == 'fftracker'%}
-                            {{ include('fftracker/'~subservice~'.html')}}
+                            {{ include('fftracker/'~subservice~'.twig')}}
                         {% endif %}
                         {% if service_name == 'bictracker'%}
-                            {{ include('bic/'~subservice~'.html')}}
+                            {{ include('bic/'~subservice~'.twig')}}
                         {% endif %}
                         {% if service_name == 'usercontrol'%}
-                            {{ include('usercontrol/'~subservice~'.html')}}
+                            {{ include('usercontrol/'~subservice~'.twig')}}
                         {% endif %}
                         {% if service_name == 'silversteam'%}
-                            {{ include('ssc.html')}}
+                            {{ include('ssc.twig')}}
                         {% endif %}
                     {% else %}
                         {{ content|raw }}
                     {% endif %}
                 {% endif %}
             </main>
-            {{ include('main/footer.html')}}
+            {{ include('main/footer.twig')}}
             {% if http_error%}
                 {% if http_error != 403 and http_error != 404%}
                     <script>setInterval(function() {

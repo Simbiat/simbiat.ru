@@ -101,7 +101,7 @@
         {% if character.deleted%}
             <div id="ff_deleted_notice"><h3>{{character.name}}</h3></p><p> was deleted from Lodestone on {{character.deleted}}. Below information is what was avialable on or prior to the deletion date.</div><br>
         {% else %}
-            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/character/{{character.characterid}}/" target="_blank">{{character.name}}</a>
+            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/character/{{character.characterid}}/character.twig" target="_blank">{{character.name}}</a>
         {% endif %}
         </p>
         <p><h3>ID</h3>: {{character.characterid}}</p>
@@ -136,7 +136,7 @@
             <p><h3>Affiliations</h3>:</p>
                 <div id="ff_searchlist">
                     {% for entity in character.groups %}
-                        {{ include('fftracker/entity_card.html', entity) }}
+                        {{ include('fftracker/entity_card.twig', entity) }}
                     {% endfor %}
                 </div>
         {%endif%}
@@ -154,6 +154,6 @@
             <p><h3>Updated</h3>: {{character.updated}}</p>
         {% endif %}
     </div>
-    
+
     <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
 </div>

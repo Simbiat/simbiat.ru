@@ -22,8 +22,62 @@ declare(strict_types=1);
 #exit;
 
 
-#Load composer libraries
 require __DIR__. '/composer/vendor/autoload.php';
+
+#PSR-4 Autoloader for own libraries
+spl_autoload_register(function ($class) {
+    #Project's prefix
+    $prefix = 'Simbiat\\';
+    #List of folders to search in
+    $libraries = [
+        'AccountKeying',
+        'array2table',
+        'ArrayHelpers',
+        'bicXML',
+        'colloquium',
+        'Cron',
+        'cute-bytes',
+        'database',
+        'FFTracker',
+        'filename-sanitizer',
+        'HomePage',
+        'HTMLCache',
+        'HTMLCut',
+        'HTTP20',
+        'lodestone-parser',
+        'optimize-tables',
+        'sand-clock',
+        'UserControl',
+        __DIR__ . 'lib/AccountKeying/src/',
+    ];
+    #Check if class uses the prefix
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        #No, move to the next registered autoloader
+        return;
+    }
+    #Get the relative class name
+    $relative_class = substr($class, $len);
+    #Itterate over libraries
+    foreach ($libraries as $dir) {
+        #Set file path
+        $file = __DIR__.'/lib/'.$dir.'/src/'.str_replace('\\', '/', $relative_class) . '.php';
+        #Check if file exists
+        if (file_exists($file)) {
+            #Require file
+            require $file;
+        }
+    }
+});
+
+#Load composer libraries
+use Simbiat\colloquium\Show;
+use Simbiat\Cron;
+use Simbiat\Database\Controller;
+use Simbiat\HomeApi;
+use Simbiat\HomeFeeds;
+use Simbiat\HomePage;
+use Simbiat\HomeRouter;
 
 #Get config file
 require_once __DIR__. '/config.php';
@@ -36,9 +90,9 @@ require_once __DIR__. '/config.php';
 
 #Determine if test server to enable or disable deisplay_errors
 if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'local.simbiat.ru' && $_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
-    $HomePage = new \Simbiat\HomePage(false);
+    $HomePage = new HomePage(false);
 } else {
-    $HomePage = new \Simbiat\HomePage(true);
+    $HomePage = new HomePage(true);
 }
 
 #Check if we are in CLI
@@ -52,7 +106,7 @@ if (preg_match('/^cli(-server)?$/i', php_sapi_name()) === 1) {
 if ($CLI) {
     #Process Cron
     $HomePage->dbConnect(false);
-    (new \Simbiat\Cron)->process(50);
+    (new Cron)->process(50);
     #Ensure we exit no matter what happens with CRON
     exit;
 } else {
@@ -72,7 +126,7 @@ if ($CLI) {
             #Check if API
             if (strcasecmp($uri[0], 'api') === 0) {
                 #Process API request
-                (new \Simbiat\HomeApi)->uriParse(array_slice($uri, 1));
+                (new HomeApi)->uriParse(array_slice($uri, 1));
                 #Ensure we no matter what happens in API gateway
                 exit;
             } else {
@@ -83,20 +137,20 @@ if ($CLI) {
                     $vars = match(strtolower($uri[0])) {
                         #Forum/Articles
                         #use https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language to specify audience for russian posts
-                        'forum' => (new \Simbiat\colloquium\Show)->forum($uri),
-                        'thread' => (new \Simbiat\colloquium\Show)->thread($uri),
+                        'forum' => (new Show)->forum($uri),
+                        'thread' => (new Show)->thread($uri),
                         #FFTracker
-                        'fftracker' => (new \Simbiat\HomeRouter)->fftracker(array_slice($uri, 1)),
+                        'fftracker' => (new HomeRouter)->fftracker(array_slice($uri, 1)),
                         #BIC Tracker
-                        'bictracker' => (new \Simbiat\HomeRouter)->bictracker(array_slice($uri, 1)),
+                        'bictracker' => (new HomeRouter)->bictracker(array_slice($uri, 1)),
                         #User control
-                        'uc' => (new \Simbiat\HomeRouter)->usercontrol(array_slice($uri, 1)),
+                        'uc' => (new HomeRouter)->usercontrol(array_slice($uri, 1)),
                         #Silversteam
                         'ssc', 'silversteam', 'darksteam' => [
                             'service_name' => 'silversteam',
                         ],
                         #Feeds
-                        'sitemap', 'rss', 'atom' => (new \Simbiat\HomeFeeds)->uriParse($uri),
+                        'sitemap', 'rss', 'atom' => (new HomeFeeds)->uriParse($uri),
                         #Page not found
                         default => [
                             'http_error' => 404,
@@ -106,7 +160,7 @@ if ($CLI) {
                     $vars = [];
                 }
                 #Generate page
-                $output = $HomePage->twigProc($vars, (empty($vars['http_error']) ? NULL : $vars['http_error']));
+                $HomePage->twigProc($vars, (empty($vars['http_error']) ? NULL : $vars['http_error']));
             }
         }
     } else {
@@ -119,13 +173,13 @@ if ($CLI) {
             $vars = [
                 'h1' => 'Home',
                 'service_name' => 'landing',
-                'notice' => (new \Simbiat\Database\Controller)->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
+                'notice' => (new Controller)->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
             ];
         } else {
             $vars = [];
         }
         #Generate page
-        $output = $HomePage->twigProc($vars);
+        $HomePage->twigProc($vars);
     }
 }
 exit;
@@ -180,9 +234,6 @@ exit;
 #Actions only if no error
 if ($twigparameters['error'] !== true) {
 
-    #Device detection and customization
-    $twigparameters = devicedetector($twigparameters);
-    
     if ((empty(@$uri[1]) || (!empty(@$uri[1]) && @$uri[1] !== 'atom'))) {
         $twigparameters['XCsrftoken'] = (new \Simbiat\Common\Security)->csrftoken(@$uri);
         $twigparameters = (new \Simbiat\UserSystem\UserDetails)->sessiontwig($twigparameters);
@@ -190,7 +241,7 @@ if ($twigparameters['error'] !== true) {
             $twig->getExtension('Twig_Extension_Core')->setTimezone($twigparameters['timezone']);
         }
     }
-    
+
     #Meta description
     if (in_array(@$uri[0], ['admin', 'user'])) {
         $twigparameters['h1'] = match(@$uri[0]) {
@@ -216,7 +267,7 @@ if ($twigparameters['error'] !== true) {
             break;
         case 'posttest':
             $twigparameters['h1'] = 'WYSIWIG test';
-            $twigparameters['content'] = $twig->render('wysiwyg.html', $twigparameters);
+            $twigparameters['content'] = $twig->render('wysiwyg.twig', $twigparameters);
             break;
         case 'logout':
             (new \Simbiat\UserSystem\Api)->apiparse(array('','','logout'));
@@ -239,4 +290,3 @@ if (@$uri[0] != 'api') {
     }
 }
 exit;
-?>

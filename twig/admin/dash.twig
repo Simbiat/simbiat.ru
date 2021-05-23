@@ -1,6 +1,6 @@
 <article class="article-content" id="admin_dash">
     {%if adminuser%}
-        {%include('admin/navigation.html') with {'admincptype': 'dash'} %}
+        {%include('admin/navigation.twig') with {'admincptype': 'dash'} %}
         <div>Next refresh in <span id="timer">300</span> seconds.</div>
         {%if postresult%}<div>{{postresult|raw}}</div>{%endif%}
         <div>
@@ -39,6 +39,6 @@
             }, 1000);
         </script>
     {%else%}
-        {{ include('no_access.html')}}
+        {{ include('no_access.twig')}}
     {%endif%}
 </article>

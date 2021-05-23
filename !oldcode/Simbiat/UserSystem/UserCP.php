@@ -5,14 +5,14 @@ class UserCP
 {
     use \Simbiat\UserSystem\AccessHistory;
     use \Simbiat\UserSystem\ProfileUpdate;
-    
+
     public function __construct() {}
-    
+
     public function PageGenerate(array $uri, array $twigparameters): array
     {
         $searchvalue = "";
         $breadarray = array(array("href"=>'/'."user", "name"=>$twigparameters['h1']));
-        $template = "cp.html";
+        $template = "cp.twig";
         if (!empty($uri[1])) {
             if (@$uri[2] == "verify" && !empty($uri[3])) {
                 $activated = (new \Simbiat\UserSystem\Api)->user_verified($uri[3]);
@@ -53,11 +53,11 @@ class UserCP
                 }
                 if (!empty($twigparameters['usercp'])) {
                     if (@$uri[2] == "audit") {
-                        $template = "audit.html";
+                        $template = "audit.twig";
                         $twigparameters['savedsessions'] = $this->accesshostiry($userdetails['userid'], "cookies");
                         $twigparameters['loginhistory'] = $this->accesshostiry($userdetails['userid'], "audit");
                     } elseif (@$uri[2] == "edit") {
-                        $template = "edit.html";
+                        $template = "edit.twig";
                         if (isset($_POST['cp_personal'])) {
                             $editresult = $this->personalupdate($userdetails, $_POST['cp_personal']);
                             if ($editresult) {
@@ -68,7 +68,7 @@ class UserCP
                             }
                         }
                     } elseif (@$uri[2] == "password") {
-                        $template = "password.html";
+                        $template = "password.twig";
                         if (isset($_POST['cp_password'])) {
                             $editresult = $this->password_change($userdetails['userid'], $_POST['cp_password']);
                             if ($editresult) {
@@ -79,9 +79,9 @@ class UserCP
                             }
                         }
                     } elseif (@$uri[2] == "linkages") {
-                        $template = "linkages.html";
+                        $template = "linkages.twig";
                     } elseif (@$uri[2] == "settings") {
-                        $template = "settings.html";
+                        $template = "settings.twig";
                         $twigparameters['timezones'] = $this->timezonelist();
                         if (isset($_POST['cp_settings'])) {
                             $editresult = $this->settings($userdetails, $_POST['cp_settings'], $twigparameters['timezones']);
@@ -93,9 +93,9 @@ class UserCP
                             }
                         }
                     } elseif (@$uri[2] == "avatars") {
-                        $template = "avatars.html";
+                        $template = "avatars.twig";
                     } elseif (@$uri[2] == "emails") {
-                        $template = "emails.html";
+                        $template = "emails.twig";
                     }
                 }
             } else {
@@ -110,13 +110,13 @@ class UserCP
         $twigparameters['content'] = $this->Render($twigparameters, $template);
         return $twigparameters;
     }
-    
-    public function Render(array $twigreplace = array(), string $template = "cp.html"): string
+
+    public function Render(array $twigreplace = array(), string $template = "cp.twig"): string
     {
         $result = $GLOBALS['twig']->render("user/".$template, $twigreplace);
         return $result;
     }
-    
+
     public function timezonelist(): array
     {
         $timezones = \DateTimeZone::listIdentifiers();
@@ -139,7 +139,7 @@ class UserCP
         });
         return $timezones;
     }
-    
+
     public function __destruct() {}
 }
 ?>

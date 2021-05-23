@@ -5,18 +5,18 @@ class Admin
 {
     use \Simbiat\Services\Admin\Dashboard;
     use \Simbiat\Services\Admin\Post;
-    
+
     public function __construct() {}
-    
+
     public function PageGenerate(array $uri, array $twigparameters): array
     {
         $twigparameters['postresult'] = $this->postProcess();
         if (empty($uri[1]) || $uri[1] == "dashboard") {
-            $template = "dash.html";
+            $template = "dash.twig";
             $breadarray = array(array("href"=>'/'."admin", "name"=>$twigparameters['h1']), array("href"=>'/'."dashboard", "name"=>"Dashboard"));
             $twigparameters['dash'] = $this->dashboard();
         } else {
-            $template = "dash.html";
+            $template = "dash.twig";
             $breadarray = array(array("href"=>'/'."admin", "name"=>$twigparameters['h1']), array("href"=>'/'."dashboard", "name"=>"Dashboard"));
             $twigparameters['dash'] = $this->dashboard();
         }
@@ -32,13 +32,13 @@ class Admin
         $twigparameters['content'] = $this->Render($twigparameters, $template);
         return $twigparameters;
     }
-    
-    public function Render(array $twigreplace = array(), string $template = "dash.html"): string
+
+    public function Render(array $twigreplace = array(), string $template = "dash.twig"): string
     {
         $result = $GLOBALS['twig']->render("admin/".$template, $twigreplace);
         return $result;
     }
-    
+
     public function __destruct() {}
 }
 ?>
