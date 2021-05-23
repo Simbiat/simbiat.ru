@@ -1,6 +1,6 @@
 <div id="ff-main" class="article-content centertext">
     <div id="ff_logo_parent">
-        <img id="ff_logo_header" src="/img/fftracker/merged-crests/{{pvpteam.crest}}.png">
+        <img id="ff_logo_header" src="/img/fftracker/merged-crests/{{pvpteam.crest|slice(0,2)}}/{{pvpteam.crest|slice(2,2)}}/{{pvpteam.crest}}.png">
         {% if freecompany.deleted%}
             <img id="ff_logo_header_deleted" src="/img/fftracker/deleted.png">
         {% endif %}
@@ -63,6 +63,6 @@
             </div>
         {% endfor %}
     </div>
-    
+
     <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
 </div>

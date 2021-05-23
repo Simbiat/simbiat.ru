@@ -1,6 +1,6 @@
 <div id="ff-main" class="article-content centertext">
     <div id="ff_logo_parent">
-        <img id="ff_logo_header" src="/img/fftracker/merged-crests/{{freecompany.crest}}.png">
+        <img id="ff_logo_header" src="/img/fftracker/merged-crests/{{freecompany.crest|slice(0,2)}}/{{freecompany.crest|slice(2,2)}}/{{freecompany.crest}}.png">
         {% if freecompany.deleted%}
             <img id="ff_logo_header_deleted" src="/img/fftracker/deleted.png">
         {% endif %}
@@ -30,7 +30,7 @@
         {%if freecompany.slogan %}<p><h3>About</h3>: {{freecompany.slogan|raw}}</p>{%endif%}
         <p><h3>Affiliation</h3>: {{freecompany.gc_name}}</p>
         {%if freecompany['Role-playing'] or freecompany.Leveling or freecompany.Casual or freecompany.Hardcore or freecompany.Dungeons or freecompany.Guildhests or freecompany.Trials or freecompany.Raids or freecompany.PvP %}
-            <p><h3>Occupation</h3>: 
+            <p><h3>Occupation</h3>:
                 {%if freecompany['Role-playing'] %}<img title="Role-playing" class="ff_icon" src="/img/fftracker/focus/Roleplaying.png">{%endif%}
                 {%if freecompany.Leveling %}<img title="Leveling" class="ff_icon" src="/img/fftracker/focus/Leveling.png">{%endif%}
                 {%if freecompany.Casual %}<img title="Casual" class="ff_icon" src="/img/fftracker/focus/Casual.png">{%endif%}
@@ -42,7 +42,7 @@
                 {%if freecompany.PvP %}<img title="PvP" class="ff_icon" src="/img/fftracker/focus/PvP.png">{%endif%}
             </p>
         {%endif%}
-        <p><h3>Location</h3>: 
+        <p><h3>Location</h3>:
         {%if freecompany.estate_zone %}
             {{freecompany.estate_zone|raw}} on plot {{freecompany.plot}} in ward {{freecompany.ward}} of {{freecompany.area}}, {{freecompany.city}}, {{freecompany.region}}, {{freecompany.server}}, {{freecompany.datacenter}}<img id="ff_map_zoom" title="Show on map" src="/img/fftracker/maps/zoom.png">
             <div class="hideme"><div id="ff_map_div">
@@ -61,7 +61,7 @@
                 <p><h3>Open</h3>: {{freecompany.active}}</p>
             {%endif%}
             {%if freecompany.Tank or freecompany.Healer or freecompany.DPS or freecompany.Crafter or freecompany.Gatherer %}
-                <p><h3>Recruiting</h3>: 
+                <p><h3>Recruiting</h3>:
                     {%if freecompany.Tank %}<img title="Tanks" class="ff_icon" src="/img/fftracker/roles/Tank.png">{%endif%}
                     {%if freecompany.Healer %}<img title="Healers" class="ff_icon" src="/img/fftracker/roles/Healer.png">{%endif%}
                     {%if freecompany.DPS %}<img title="DPS" class="ff_icon" src="/img/fftracker/roles/DPS.png">{%endif%}
@@ -121,6 +121,6 @@
             </div>
         {% endfor %}
     </div>
-    
+
     <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
 </div>
