@@ -65,13 +65,13 @@
                             {{ include('articles.twig', article) }}
                         {% endif %}
                         {% if service_name == 'fftracker'%}
-                            {{ include('fftracker/'~subservice~'.twig')}}
+                            {{ include('ffxiv__'~subservice~'.twig')}}
                         {% endif %}
                         {% if service_name == 'bictracker'%}
-                            {{ include('bic/'~subservice~'.twig')}}
+                            {{ include('bic__'~subservice~'.twig')}}
                         {% endif %}
                         {% if service_name == 'usercontrol'%}
-                            {{ include('usercontrol/'~subservice~'.twig')}}
+                            {{ include('uc__'~subservice~'.twig')}}
                         {% endif %}
                         {% if service_name == 'silversteam'%}
                             {{ include('ssc.twig')}}
