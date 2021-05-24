@@ -28,28 +28,8 @@ require __DIR__. '/composer/vendor/autoload.php';
 spl_autoload_register(function ($class) {
     #Project's prefix
     $prefix = 'Simbiat\\';
-    #List of folders to search in
-    $libraries = [
-        'AccountKeying',
-        'array2table',
-        'ArrayHelpers',
-        'bicXML',
-        'colloquium',
-        'Cron',
-        'cute-bytes',
-        'database',
-        'FFTracker',
-        'filename-sanitizer',
-        'HomePage',
-        'HTMLCache',
-        'HTMLCut',
-        'HTTP20',
-        'lodestone-parser',
-        'optimize-tables',
-        'sand-clock',
-        'UserControl',
-        __DIR__ . 'lib/AccountKeying/src/',
-    ];
+    #Generate list of folders to search in
+    $libraries = glob(__DIR__.'/lib/*', GLOB_ONLYDIR);
     #Check if class uses the prefix
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
@@ -61,7 +41,7 @@ spl_autoload_register(function ($class) {
     #Itterate over libraries
     foreach ($libraries as $dir) {
         #Set file path
-        $file = __DIR__.'/lib/'.$dir.'/src/'.str_replace('\\', '/', $relative_class) . '.php';
+        $file = $dir.'/src/'.str_replace('\\', '/', $relative_class) . '.php';
         #Check if file exists
         if (file_exists($file)) {
             #Require file
