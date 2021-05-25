@@ -93,3 +93,5 @@ fabric.properties
 /toupdateonprod.sql
 /error.log
 /errors.log
+/!oldcode/
+/!spares/
