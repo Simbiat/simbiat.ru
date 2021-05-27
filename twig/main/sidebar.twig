@@ -12,7 +12,7 @@
         <div class="sidebar-content">
             {% for entity in sidebar.fflinks %}
                 <p title="{{entity.updated|date("d/m/Y")}}">
-                    <a href="/fftracker/{{entity.type}}/{{entity.id}}/{{entity.name|escape('url')}}/">{{entity.name}}</a> 
+                    <a href="/fftracker/{{entity.type}}/{{entity.id}}/{{entity.name|escape('url')}}/">{{entity.name}}</a>
                     {%if entity.updated|date("d/m/Y")==entity.registered|date("d/m/Y")%}
                         registered
                     {%else%}

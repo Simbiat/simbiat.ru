@@ -47,7 +47,7 @@ require_once __DIR__. '/config.php';
 #set_include_path(get_include_path().PATH_SEPARATOR.__DIR__ . '/backend');
 #spl_autoload_register(function ($class_name) {include str_replace('\\', '/', $class_name) . '.php';});
 
-#Determine if test server to enable or disable deisplay_errors
+#Determine if test server to enable or disable display_errors
 if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'local.simbiat.ru' && $_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
     $HomePage = new HomePage(false);
 } else {
@@ -110,6 +110,8 @@ if ($CLI) {
                         ],
                         #Feeds
                         'sitemap', 'rss', 'atom' => (new HomeFeeds)->uriParse($uri),
+                        #Tests
+                        'tests' => (new HomeRouter)->tests(array_slice($uri, 1)),
                         #Page not found
                         default => [
                             'http_error' => 404,
@@ -142,38 +144,6 @@ if ($CLI) {
     }
 }
 exit;
-
-###################
-#Test lodestonephp#
-###################
-#$Lodestone = (new \Simbiat\Lodestone)->setLanguage('eu')->setUseragent('Simbiat Software');
-#$data = $Lodestone->searchLinkshell()->getResult();
-#$data = $Lodestone->searchDatabase('duty', 2)->getResult();
-#$data = $Lodestone->searchDatabase('achievement', 0, 0, 'hit the floor')->getResult();
-#$data = $Lodestone->getCharacter('6691027')->getResult();
-#$data = $Lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
-#$data = $Lodestone->getCharacter('11164476')->getResult();
-#$data = $Lodestone->getCharacter('26370203')->getResult();
-#$data = $Lodestone->getLinkshellMembers('22517998136956039')->getResult();
-#$data = $Lodestone->getLinkshellMembers('22517998136982037')->getResult();
-#$data = $Lodestone->getLinkshellMembers('6e125c2e2f7b9e3d4dbfb2ab7190c32c36b930c5')->getResult();
-#$data = $Lodestone->getPvPTeam('86886213d32985bcb85a157ccaa1fa8d6e7c37c0')->getResult();
-#$data = $Lodestone->getPvPTeam('c036a9c564d1818cde15fc40db01be8fc4a88612')->getResult();
-#$data = $Lodestone->getFreeCompanyMembers('9229001536389081054')->getResult();
-#$data = $Lodestone->getFreeCompany('9234631035923213559')->getResult();
-#$data = $Lodestone->getFreeCompany('9233364398528123167')->getResult();
-#$data = $Lodestone->getFreeCompany('9233786610993180104')->getResult();
-#$data = $Lodestone->getFreeCompany('9232097761132923243')->getFreeCompanyMembers('9232097761132923243')->getResult();
-#$data = $Lodestone->getFreeCompanyMembers('9234631035923213559')->getResult();
-#$data = $Lodestone->getFreeCompanyMembers('9228016373970503975')->getResult();
-#$data = $Lodestone->getWorldStatus(true)->getResult();
-#$data = $Lodestone->getDeepDungeon(2, '', '', '')->getResult();
-#$data = $Lodestone->getLinkshellMembers('1', 1)->getResult();
-#$data = $Lodestone->getLinkshellMembers('c4fac4f1cd085af406cc0b0bfe05f4d51e4a2f90')->getResult();
-#echo count($data['database']['achievement']).'<br>';
-#echo '<pre>'.var_export($data, true).'</pre>';
-#new \Simbiat\LodestoneTest;
-#exit;
 
 
 #FFTracker test
