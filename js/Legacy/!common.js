@@ -54,9 +54,6 @@ function initresize()
 
 function init()
 {
-    if (!Modernizr.details) {
-        $('details').details();
-    }
     $("main").off("wheel");
     $("#autonextwarn").off("touchmove");
     $("main").on("scroll", function(){scrollFunction();});

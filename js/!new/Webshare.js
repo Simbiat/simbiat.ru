@@ -1,8 +1,9 @@
-//WebSahre API call
+//WebShare API call
 function webShare() {
+    'use strict';
     navigator.share({
         title: document.title,
-        text: getMeta('og:desription') ?? getMeta('desription'),
+        text: getMeta('og:description') ?? getMeta('description'),
         url: document.location,
-    })
+    });
 }

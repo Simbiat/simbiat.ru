@@ -1,5 +1,6 @@
 //Get meta content
 function getMeta(metaName) {
+    'use strict';
     const metas = document.getElementsByTagName('meta');
     for (let i = 0; i < metas.length; i++) {
         if (metas[i].getAttribute('name') === metaName) {
