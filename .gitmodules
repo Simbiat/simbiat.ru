@@ -34,10 +34,6 @@
 	path = lib/filename-sanitizer
 	url = https://github.com/Simbiat/filename-sanitizer
 	branch = master
-[submodule "lib/HomePage"]
-	path = lib/HomePage
-	url = https://github.com/Simbiat/HomePage
-	branch = main
 [submodule "lib/HTMLCache"]
 	path = lib/HTMLCache
 	url = https://github.com/Simbiat/HTMLCache
