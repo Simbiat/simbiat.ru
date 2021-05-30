@@ -1,0 +1,159 @@
+<div id="ff-main" class="article-content centertext">
+    <div id="ff_portrait">
+        <div class="ff_member_front ff_portait_bg">
+            {% if character.deleted %}
+                <img id="ff_portrait_img" src="/img/fftracker/silhouettes/{% if character.gender == 1%}male{% else %}female{% endif %}{{character.race}}.png">
+            {% else %}
+                <img id="ff_portrait_img" class="{% if character.gender == 1%}male{% else %}female{% endif %}{{character.race|replace({' ': '', '\'': ''})}}" src="/img/fftracker/avatar/{{character.avatar}}l0_640x873.jpg">
+            {% endif %}
+        </div>
+        <div class="ff_member_back">
+            <div>
+                <img class="ff_icon" alt="Dark Knight" title="Dark Knight" src="/img/fftracker/jobs/DarkKnight.png">
+                <img class="ff_icon" alt="Dark Knight" title="Gunbreaker" src="/img/fftracker/jobs/Gunbreaker.png">
+                <img class="ff_icon" alt="Paladin" title="Paladin" src="/img/fftracker/jobs/Paladin.png">
+                <img class="ff_icon" alt="Warrior" title="Warrior" src="/img/fftracker/jobs/Warrior.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_tank">{{character.jobs['Dark Knight']}}</span>
+                <span class="ff_class_level ff_tank">{{character.jobs.Gunbreaker}}</span>
+                <span class="ff_class_level ff_tank">{{character.jobs.Paladin}}</span>
+                <span class="ff_class_level ff_tank">{{character.jobs.Warrior}}</span>
+            </div>
+            <div>
+                <img class="ff_icon" alt="Astrologian" title="Astrologian" src="/img/fftracker/jobs/Astrologian.png">
+                <img class="ff_icon" alt="Scholar" title="Scholar" src="/img/fftracker/jobs/Scholar.png">
+                <img class="ff_icon" alt="White Mage" title="White Mage" src="/img/fftracker/jobs/WhiteMage.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_healer">{{character.jobs.Astrologian}}</span>
+                <span class="ff_class_level ff_healer">{{character.jobs.Scholar}}</span>
+                <span class="ff_class_level ff_healer">{{character.jobs['White Mage']}}</span>
+            </div>
+            <div>
+                <img class="ff_icon" alt="Dragoon" title="Dragoon" src="/img/fftracker/jobs/Dragoon.png">
+                <img class="ff_icon" alt="Monk" title="Monk" src="/img/fftracker/jobs/Monk.png">
+                <img class="ff_icon" alt="Ninja" title="Ninja" src="/img/fftracker/jobs/Ninja.png">
+                <img class="ff_icon" alt="Samurai" title="Samurai" src="/img/fftracker/jobs/Samurai.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_dps">{{character.jobs.Dragoon}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs.Monk}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs.Ninja}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs.Samurai}}</span>
+            </div>
+            <div>
+                <img class="ff_icon" alt="Bard" title="Bard" src="/img/fftracker/jobs/Bard.png">
+                <img class="ff_icon" alt="Bard" title="Dancer" src="/img/fftracker/jobs/Dancer.png">
+                <img class="ff_icon" alt="Machinist" title="Machinist" src="/img/fftracker/jobs/Machinist.png">
+                <img class="ff_icon" alt="Black Mage" title="Black Mage" src="/img/fftracker/jobs/BlackMage.png">
+                <img class="ff_icon" alt="Blue Mage" title="Blue Mage" src="/img/fftracker/jobs/BlueMage.png">
+                <img class="ff_icon" alt="Red Mage" title="Red Mage" src="/img/fftracker/jobs/RedMage.png">
+                <img class="ff_icon" alt="Summoner" title="Summoner" src="/img/fftracker/jobs/Summoner.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_dps">{{character.jobs.Bard}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs.Dancer}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs.Machinist}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs['Black Mage']}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs['Blue Mage']}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs['Red Mage']}}</span>
+                <span class="ff_class_level ff_dps">{{character.jobs.Summoner}}</span>
+            </div>
+            <div>
+                <img class="ff_icon" alt="Armorer" title="Armorer" src="/img/fftracker/jobs/Armorer.png">
+                <img class="ff_icon" alt="Blacksmith" title="Blacksmith" src="/img/fftracker/jobs/Blacksmith.png">
+                <img class="ff_icon" alt="Carpenter" title="Carpenter" src="/img/fftracker/jobs/Carpenter.png">
+                <img class="ff_icon" alt="Goldsmith" title="Goldsmith" src="/img/fftracker/jobs/Goldsmith.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Armorer}}</span>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Blacksmith}}</span>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Carpenter}}</span>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Goldsmith}}</span>
+            </div>
+            <div>
+                <img class="ff_icon" alt="Alchemist" title="Alchemist" src="/img/fftracker/jobs/Alchemist.png">
+                <img class="ff_icon" alt="Culinarian" title="Culinarian" src="/img/fftracker/jobs/Culinarian.png">
+                <img class="ff_icon" alt="Leatherworker" title="Leatherworker" src="/img/fftracker/jobs/Leatherworker.png">
+                <img class="ff_icon" alt="Weaver" title="Weaver" src="/img/fftracker/jobs/Weaver.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Alchemist}}</span>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Culinarian}}</span>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Leatherworker}}</span>
+                <span class="ff_class_level ff_crafter">{{character.jobs.Weaver}}</span>
+            </div>
+            <div>
+                <img class="ff_icon" alt="Botanist" title="Botanist" src="/img/fftracker/jobs/Botanist.png">
+                <img class="ff_icon" alt="Fisher" title="Fisher" src="/img/fftracker/jobs/Fisher.png">
+                <img class="ff_icon" alt="Miner" title="Miner" src="/img/fftracker/jobs/Miner.png">
+            </div>
+            <div>
+                <span class="ff_class_level ff_gatherer">{{character.jobs.Botanist}}</span>
+                <span class="ff_class_level ff_gatherer">{{character.jobs.Fisher}}</span>
+                <span class="ff_class_level ff_gatherer">{{character.jobs.Miner}}</span>
+            </div>
+        </div>
+    </div>
+    <div>
+        <p>
+        {% if character.deleted%}
+            <div id="ff_deleted_notice"><h3>{{character.name}}</h3></p><p> was deleted from Lodestone on {{character.deleted}}. Below information is what was avialable on or prior to the deletion date.</div><br>
+        {% else %}
+            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/character/{{character.characterid}}/character.twig" target="_blank">{{character.name}}</a>
+        {% endif %}
+        </p>
+        <p><h3>ID</h3>: {{character.characterid}}</p>
+        {%if character.title %}<p><h3>Moniker</h3>: {{character.title}}</p>{%endif%}
+        <p><h3>Race</h3>: {%if character.clan%}{% if character.gender == 1%}Male{% else %}Female{% endif %} <i>{{character.race}}</i> of <i>{{character.clan}}</i> clan{%else%}Unknown{%endif%}</p>
+        {%if character.incarnations %}
+            <details id="ff_incarnations">
+                <summary title="Previous incarnations">
+                    <h3>Previous incarnations</h3>
+                </summary>
+                {% for incarnation in character.incarnations %}
+                    {% if incarnation.gender == 1%}Male{% else %}Female{% endif %} <i>{{incarnation.race}}</i> of <i>{{incarnation.clan}}</i> clan{%if not loop.last%},<br>{%endif%}
+                {%endfor%}
+            </details>
+        {%endif%}
+        <p><h3>Nameday</h3>: {{character.nameday}}</p>
+        <p><h3>Guardian</h3>: <img class="ff_icon" src="/img/fftracker/guardians/{{character.guardianid}}.png">{{character.guardian}}</p>
+        <p><h3>Location</h3>: <img class="ff_icon" src="/img/fftracker/cities/{{character.cityid}}.png">{{character.city}}, {{character.server}}, {{character.datacenter}}</p>
+        {%if character.servers %}
+            <details id="ff_servers">
+                <summary title="Previous locations">
+                    <h3>Previous locations</h3>
+                </summary>
+                {% for server in character.servers %}
+                    {{server.server}}, {{server.datacenter}}{%if not loop.last%},<br>{%endif%}
+                {%endfor%}
+            </details>
+        {%endif%}
+        {%if character.gc_rank %}<p><h3>Grand Company</h3>: <img class="ff_icon" src="/img/fftracker/grandcompany/{{character.gcrankid}}.png">{{character.gc_rank}} in <i>{{character.gc_name}}</i></p>{%endif%}
+        {%if character.biography %}<p><h3>About</h3>: {{character.biography|raw}}</p>{%endif%}
+        {%if character.groups|length > 0 %}
+            <p><h3>Affiliations</h3>:</p>
+                <div id="ff_searchlist">
+                    {% for entity in character.groups %}
+                        {{ include('ffxiv__entity_card.twig', entity) }}
+                    {% endfor %}
+                </div>
+        {%endif%}
+        {%if character.achievements|length > 0 %}
+            <br>
+            <p><h2>Last 10 achievements</h2>:
+            {% for achievement in character.achievements|slice(0,10) %}
+                <a href="/fftracker/achievement/{{achievement.achievementid}}/{{achievement.name|url_encode}}/"><img class="ff_collectable_icon_border" src="/img/fftracker/icon/{{achievement.icon}}" alt="{{achievement.name}}" title="&quot;{{achievement.name}}&quot; seized on {{achievement.time|date("d/m/Y")}}"></a>
+            {% endfor %}
+            </p>
+        {%endif%}
+        <br>
+        <p><h3>Registered</h3>: {{character.registered}}</p>
+        {% if not character.deleted %}
+            <p><h3>Updated</h3>: {{character.updated}}</p>
+        {% endif %}
+    </div>
+
+    <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
+</div>

@@ -1,0 +1,41 @@
+<div id="ff_servers" class="ff_tabcontent">
+    {% for serverstattype, serverstat in statistics.servers %}
+        {% if serverstattype != 'crossworldlinkshell' and serverstattype != 'pvpteam'%}
+            {% for categoryname, category in serverstat %}
+                <h2 class="ff_stat_title">{{categoryname|capitalize}} 10 servers by {{serverstattype}}</h2>
+                <div id="ff_chart_server_{{serverstattype|replace({' ': ''})}}_{{categoryname}}" data-type="bar" data-chart="
+                    {% for row in category %}
+                        {%if loop.first%}[{% set array = ['Server','Characters'] %}
+                        {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                        {% set array = [row.value,row.count] %}
+                        {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                        {%if not loop.last%},{%endif%}
+                        {%if loop.last%}]{%endif%}
+                    {%endfor%}
+                "></div>
+            {%endfor%}
+        {%endif%}
+    {%endfor%}
+    <h2 class="ff_stat_title">Crossworld linkshells distribution by data center</h2>
+    <div id="ff_chart_server_cwls" data-type="pie" data-chart="
+        {% for row in statistics.servers.crossworldlinkshell %}
+            {%if loop.first%}[{% set array = ['Data Center','Linkshells'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.value,row.count] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+    <h2 class="ff_stat_title">PvP teams distribution by data center</h2>
+    <div id="ff_chart_server_pvpteam" data-type="pie" data-chart="
+        {% for row in statistics.servers.pvpteam %}
+            {%if loop.first%}[{% set array = ['Data Center','PvP teams'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.value,row.count] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+</div>

@@ -1,0 +1,32 @@
+<div id="ff-main" class="article-content">
+    <div>
+        <p>Service to track different information for Free Companies (guilds), Linkshells (chat groups) and individual characters for <b>Final Fantasy XIV</b> online game developed and published by <a href="http://www.square-enix.com" target="_blank">Square Enix</a>. Utilizes data grabbed from official <a href="https://eu.finalfantasyxiv.com/lodestone" target="_blank">Lodestone</a> with special <a href="https://github.com/Simbiat/lodestone-php" target="_blank">parser</a>.</p>
+        <p>Service has an official <a href="http://forum.square-enix.com/ffxiv/threads/304191-Free-Company-Tracker-Page" target="_blank">thread</a> on Lodestone forum.</p>
+    </div>
+    <div id="ff_searchdiv">
+        <input type="search" results=10 autosave="fftracker" maxlength="50" id="fc_search_input" placeholder="Type ID or name to search"
+        {% if searchvalue is defined %}
+            value="{{searchvalue}}"
+        {% endif %}
+        >
+        <button id="ff-Register" type="button" value="Register">Or press to register new one</button>
+    </div>
+    <div id="ff_searchlist">
+        {% if ff_error is defined %}
+            <div id="ff_error">{{ff_error}}</div>
+        {% endif %}
+        <a id="ff_statistics_link" href="/fftracker/statistics">Statistics</a>
+        <div>
+        <span id="found_characters">Characters: <a href="/fftracker/characters/">{{searchresult.counts.characters}}</a></span>
+        <span id="found_companies">Free Companies: <a href="/fftracker/freecompanies/">{{searchresult.counts.companies}}</a></span>
+        <span id="found_linkshells">Linkshells: <a href="/fftracker/linkshells/">{{searchresult.counts.linkshells}}</a></span>
+        <span id="found_pvpteams">PvP Teams: <a href="/fftracker/pvpteams/">{{searchresult.counts.pvpteams}}</a></span>
+        <span id="found_achievements">Achievements: <a href="/fftracker/achievements/">{{searchresult.counts.achievements}}</a></span>
+        </div>
+        {% for entity in searchresult.entities %}
+            {{ include('ffxiv__entity_card.twig', entity) }}
+        {% endfor %}
+    </div>
+
+    <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
+</div>

@@ -1,0 +1,29 @@
+<div id="ff-main" class="article-content centertext">
+    <img class="ff_collectable_icon_border" src="/img/fftracker/icon/{{achievement.icon}}">
+    <div>
+        <p><h3>Name</h3>: {% if achievement.dbid %}<a href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/{{achievement.dbid}}/achievement.twig" target="_blank">{% endif %}{{achievement.name}}{% if achievement.dbid%}</a>{% endif %}</p>
+        <p><h3>ID</h3>: {{achievement.achievementid}}</p>
+        {%if achievement.howto %}<p><h3>How to get</h3>: {{achievement.howto}}</p>{%endif%}
+        <p><h3>Points</h3>: {{achievement.points}}</p>
+        {%if achievement.title %}<p><h3>Title</h3>: {{achievement.title}}</p>{%endif%}
+        {%if achievement.item %}<p><h3>Item</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{achievement.itemid}}/achievement.twig" target="_blank" title="{{achievement.item}}"><img class="ff_icon ff_collectable_icon_border" src="/img/fftracker/icon/{{achievement.itemicon}}"></a></p>{%endif%}
+    </div>
+    <div id="ff_members_list">
+        {%if achievement.characters %}
+            <div id="found_characters">
+                <div>
+                {%if achievement.count > achievement.characters|length %}
+                    Showing last {{achievement.characters|length}} characters from {{achievement.count}} with this achievement
+                {%else%}
+                    Showing all {{achievement.count}} characters with this achievement
+                {%endif%}
+                </div>
+            </div>
+            {% for entity in achievement.characters %}
+                {{ include('ffxiv__entity_card.twig', entity) }}
+            {% endfor %}
+        {%endif%}
+    </div>
+
+    <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
+</div>

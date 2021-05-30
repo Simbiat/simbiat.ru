@@ -1,0 +1,42 @@
+<div id="ff_other" class="ff_tabcontent">
+    <h2 class="ff_stat_title">Use of communities</h2>
+    <div id="ff_chart_other_community" data-type="column" data-chart="
+        {% for type, row in statistics.other.communities %}
+            {%if loop.first%}[{% set array = ['Group type','No community', 'Community'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [type, row['No community'], row['Community']] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+    <h2 class="ff_stat_title">Registered entities</h2>
+    <div id="ff_chart_other_entities" data-type="pie" data-chart="
+        {% for row in statistics.other.entities %}
+            {%if loop.first%}[{% set array = ['Entity','Count'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.value, row.count] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+    <h2 class="ff_stat_title">Top 20 crests most used by PvP Teams</h2>
+    <div>
+        <details><summary>Crests</summary>
+        {% for row in statistics.pvpteam.crests %}
+            <img class="ff_avatar supressback" alt="{{row.value}}" src="/img/fftracker/merged-crests/{{row.value}}.png">{%if not loop.last%} | {%endif%}
+        {%endfor%}
+        </details>
+    </div>
+    <div id="ff_chart_pvpteam_crests" data-type="bar" data-chart="
+        {% for row in statistics.pvpteam.crests %}
+            {%if loop.first%}[{% set array = ['Crest', 'PvP Teams'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.value, row.count] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+</div>

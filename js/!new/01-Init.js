@@ -50,9 +50,9 @@ function attachListeners()
     loginRadioCheck();
     //Register WebShare if supported
     if (navigator.share) {
-        document.getElementById('sharebutton').classList.remove('hideme');
+        document.getElementById('sharebutton').classList.remove('hidden');
         document.getElementById('sharebutton').addEventListener('click', webShare);
     } else {
-        document.getElementById('sharebutton').classList.add('hideme');
+        document.getElementById('sharebutton').classList.add('hidden');
     }
 }

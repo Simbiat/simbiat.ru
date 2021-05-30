@@ -1,0 +1,84 @@
+<div id="ff_freecompanies" class="ff_tabcontent">
+    {% for categoryname, category in statistics.freecompany.estate %}
+        <h2 class="ff_stat_title">{{categoryname|capitalize}} 20 popular estates</h2>
+        <div>
+            <details><summary>Maps</summary>
+            {% for row in category %}
+                <a href="/img/fftracker/maps/{{row.area}}/{{row.plot}}.jpg" target="_blank">{{row.value}}</a>{%if not loop.last%} | {%endif%}
+            {%endfor%}
+            </details>
+        </div>
+        <div id="ff_chart_freecompany_estate_{{categoryname}}" data-type="bar" data-chart="
+            {% for row in category %}
+                {%if loop.first%}[{% set array = ['Estate','Used by number of Free Companies'] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                {% set array = [row.value,row.count] %}
+                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                {%if not loop.last%},{%endif%}
+                {%if loop.last%}]{%endif%}
+            {%endfor%}
+        "></div>
+    {%endfor%}
+    <h2 class="ff_stat_title">Companies' activity time and recrtuitment</h2>
+    <div id="ff_chart_freecompany_activity" data-type="column" data-chart="
+        {% for row in statistics.freecompany.active %}
+            {%if loop.first%}[{% set array = ['Recruiting', 'Always', 'Weekdays', 'Weekends'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.recruiting, row.Always, row.Weekdays, row.Weekends] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+    <h2 class="ff_stat_title">Companies' activities and wanted roles (% from total)</h2>
+    <div id="ff_chart_freecompany_activities" data-type="column" data-chart="
+        [{% set array = ['Statistics', 'Tank', 'Healer', 'DPS', 'Crafter', 'Gatherer', 'Role-playing', 'Leveling', 'Casual', 'Hardcore', 'Dungeons', 'Guildhests', 'Trials', 'Raids', 'PvP'] %}
+        {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},
+        {% set array = ['Statistics', statistics.freecompany.activities.Tank, statistics.freecompany.activities.Healer, statistics.freecompany.activities.DPS, statistics.freecompany.activities.Crafter, statistics.freecompany.activities.Gatherer, statistics.freecompany.activities['Role-playing'], statistics.freecompany.activities.Leveling, statistics.freecompany.activities.Casual, statistics.freecompany.activities.Hardcore, statistics.freecompany.activities.Dungeons, statistics.freecompany.activities.Guildhests, statistics.freecompany.activities.Trials, statistics.freecompany.activities.Raids, statistics.freecompany.activities.PvP] %}
+        {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+        ]
+    "></div>
+    {% for rankingname, ranking in statistics.freecompany.ranking %}
+        {% for categoryname, category in ranking %}
+            <h2 class="ff_stat_title">{{categoryname|capitalize}} 20 efficient free companies by {{rankingname}} rank</h2>
+            <div>
+                <details><summary>Details</summary>
+                    <div>Ratio is calculated as <i>`1/(rank*members)*100`</i>, meaning, the lower the number of members and the higher the rank (the lower its number) - the more efficient a company is. <i>`*100`</i> is for getting a little bit more human readable values.</div>
+                    <div>
+                        {% for row in category %}
+                            {{ include('ffxiv__entity_card.twig', row) }}
+                        {%endfor%}
+                    </div>
+                </details>
+            </div>
+            <div id="ff_chart_freecompany_ranking_{{rankingname}}_{{categoryname}}" data-type="bar" data-chart="
+                {% for row in category %}
+                    {%if loop.first%}[{% set array = ['Free Company', 'Ratio'] %}
+                    {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+                    {% set array = [row.name, row.ratio] %}
+                    {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+                    {%if not loop.last%},{%endif%}
+                    {%if loop.last%}]{%endif%}
+                {%endfor%}
+            "></div>
+        {%endfor%}
+    {%endfor%}
+    <h2 class="ff_stat_title">Top 20 crests most used by Free Companies</h2>
+    <div>
+        <details><summary>Crests</summary>
+        {% for row in statistics.freecompany.crests %}
+            <img class="ff_avatar supressback" alt="{{row.value}}" src="/img/fftracker/merged-crests/{{row.value}}.png">{%if not loop.last%} | {%endif%}
+        {%endfor%}
+        </details>
+    </div>
+    <div id="ff_chart_freecompany_crests" data-type="bar" data-chart="
+        {% for row in statistics.freecompany.crests %}
+            {%if loop.first%}[{% set array = ['Crest', 'Free Companies'] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
+            {% set array = [row.value, row.count] %}
+            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
+            {%if not loop.last%},{%endif%}
+            {%if loop.last%}]{%endif%}
+        {%endfor%}
+    "></div>
+</div>

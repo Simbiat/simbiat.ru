@@ -1,0 +1,74 @@
+<div id="ff-main" class="article-content centertext">
+    <div id="ff_logo_parent">
+        <img id="ff_logo_header" src="
+            {%if linkshell.crossworld %}
+                /img/fftracker/crossworld_linkshell.png
+            {%else%}
+                /img/fftracker/linkshell.png
+            {% endif %}
+        ">
+        {% if freecompany.deleted%}
+            <img id="ff_logo_header_deleted" src="/img/fftracker/deleted.png">
+        {% endif %}
+    </div>
+    <div>
+        <p>
+        {% if linkshell.deleted%}
+            <div id="ff_deleted_notice"><h3>{{linkshell.name}}</h3></p><p> was deleted from Lodestone on {{linkshell.deleted}}. Below information is what was avialable on or prior to the deletion date.</div><br>
+        {% else %}
+            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/linkshell/{{linkshell.linkshellid}}/linkshell.twig" target="_blank">{{linkshell.name}}</a>
+        {% endif %}
+        </p>
+        {%if linkshell.oldnames %}
+            <details id="ff_oldnames">
+                <summary title="Known aliases">
+                    <h3>Previous names</h3>
+                </summary>
+                {% for name in linkshell.oldnames %}
+                    {{name}}{%if not loop.last%},<br>{%endif%}
+                {%endfor%}
+            </details>
+        {%endif%}
+        <p><h3>Members</h3>: {{linkshell.members|length}}</p>
+        <p><h3>ID</h3>: {{linkshell.linkshellid}}</p>
+        <p><h3>Location</h3>: {% if linkshell.crossworld %}{{linkshell.datacenter}}{%else%}{{linkshell.server}}, {{linkshell.datacenter}}{%endif%}</p>
+        {%if linkshell.communityid %}
+            <p><h3>Community ID</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{linkshell.communityid}}" target="_blank">{{linkshell.communityid}}</a></p>
+        {% endif %}
+        <br>
+        {% if linkshell.formed %}
+            <p><h3>Formed</h3>: {{linkshell.formed}}</p>
+        {% endif %}
+        <p><h3>Registered</h3>: {{linkshell.registered}}</p>
+        {% if not linkshell.deleted %}
+            <p><h3>Updated</h3>: {{linkshell.updated}}</p>
+        {% endif %}
+    </div>
+    {% if linkshell.members|length > 0 %}
+        <input type="search" autofocus="" alt="Search" id="fc_member_search" placeholder="Type ID, rank or name to highlight a member">
+    {%endif%}
+    <div id="ff_members_list">
+        {% for rank in linkshell.levels %}
+            <div class="ff_list_level">
+                <span>{{rank}}</span>
+                {% for member in linkshell.members %}
+                    {% if member.rank==rank %}
+                    <a class="ff_list_member" href="/fftracker/character/{{member.characterid}}/{{member.name|url_encode}}/" rank="{{member.rank}}" name="{{member.name}}" id="{{member.characterid}}">
+                        <div class="ff_member_front">
+                            <img class="avatar" src="/img/fftracker/avatar/{{member.avatar}}c0_96x96.jpg">
+                            {%if member.lsrankid!=3%}<img class="ff_member_rank" src="/img/fftracker/lsranks/{{member.lsrankid}}.png">{%endif%}
+                        </div>
+                        <div class="ff_member_back">
+                            {%if member.lsrankid!=3%}<img class="ff_member_rank" src="/img/fftracker/lsranks/{{member.lsrankid}}.png">{%endif%}
+                            <span>{{member.name}}</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                <span>{{rank}}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
+</div>
