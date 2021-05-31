@@ -146,24 +146,19 @@ class HomePage
         } elseif (preg_match('/^css\/\d+\.css$/i', $request) === 1) {
             #Process CSS
             (new Common)->reductor($GLOBALS['siteconfig']['cssdir'], 'css', true, '', 'aggressive');
-        } elseif (preg_match('/^img\/fftracker\/.*$/i', $request) === 1) {
-            #Process FFTracker images
-            #Get real path
-            if (preg_match('/^(img\/fftracker\/avatar\/)(.+)$/i', $request) === 1) {
-                $imgPath = preg_replace('/^(img\/fftracker\/avatar\/)(.+)/i', 'https://img2.finalfantasyxiv.com/f/$2', $request);
-                (new Sharing)->proxyFile($imgPath, 'week');
-            } elseif (preg_match('/^(img\/fftracker\/icon\/)(.+)$/i', $request) === 1) {
-                $imgPath = preg_replace('/^(img\/fftracker\/icon\/)(.+)/i', 'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/$2', $request);
-                (new Sharing)->proxyFile($imgPath, 'week');
-            } else {
-                $imgPath = (new FFTracker)->ImageShow(preg_replace('/^img\/fftracker\//i', '', $request));
-                #Output the image
-                (new Sharing)->fileEcho($imgPath);
-            }
+        } elseif (preg_match('/^(img\/fftracker\/avatar\/)(.+)$/i', $request) === 1) {
+            #Stream FFXIV avatars
+            $imgPath = preg_replace('/^(img\/fftracker\/avatar\/)(.+)/i', 'https://img2.finalfantasyxiv.com/f/$2', $request);
+            (new Sharing)->proxyFile($imgPath, 'week');
+        } elseif (preg_match('/^(img\/fftracker\/icon\/)(.+)$/i', $request) === 1) {
+            #Stream FFXIV icons
+            $imgPath = preg_replace('/^(img\/fftracker\/icon\/)(.+)/i', 'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/$2', $request);
+            (new Sharing)->proxyFile($imgPath, 'week');
         } elseif (preg_match('/^(favicon\.ico)|(img\/favicons\/favicon\.ico)$/i', $request) === 1) {
             #Process favicon
             (new Sharing)->fileEcho($GLOBALS['siteconfig']['favicon']);
         } elseif (preg_match('/^(bic)($|\/.*)/i', $request) === 1) {
+            #Redicrect 'bic' to 'bictracker'
             self::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/' . (preg_replace('/^(bic)($|\/.*)/i', 'bictracker$2', $request)), true, true, false);
         } elseif (is_file($GLOBALS['siteconfig']['maindir'].'/static/'.$request)) {
             #Check if exists in static folder
