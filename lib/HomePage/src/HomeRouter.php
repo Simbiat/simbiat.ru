@@ -99,7 +99,7 @@ class HomeRouter
                 }
                 break;
             case 'optimize':
-                echo '<pre>'.var_export((new optimizeTables)->setMaintenance("sys__settings","setting","maintenance","value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true), true).'</pre>';
+                (new HomeTests)->testDump((new optimizeTables)->setMaintenance("sys__settings","setting","maintenance","value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
                 exit;
         }
         $outputArray['http_error'] = 400;

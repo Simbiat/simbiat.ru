@@ -36,7 +36,7 @@ class HomeTests
                     $Lodestone->getCharacter($id);
                     break;
             }
-            echo '<pre>'.var_export($Lodestone->getResult(), true).'</pre>';
+            $this->testDump($Lodestone->getResult());
         }
         exit;
     }
@@ -56,7 +56,7 @@ class HomeTests
         curl_setopt($curl, CURLOPT_INFILE, fopen($filepath, 'rb'));
         curl_setopt($curl, CURLOPT_INFILESIZE, filesize($filepath));
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        (new Common)->zEcho('<pre>'.var_export(curl_exec($curl), true).'</pre>');
+        $this->testDump(curl_exec($curl));
         exit;
     }
 
@@ -74,10 +74,10 @@ class HomeTests
                 <input type="submit" value="Send File" />
             </form>
             ';
+            (new Common)->zEcho($output);
         } else {
-           $output = '<pre>'.var_export((new Sharing)->upload($uploadPath, false, false, [], false), true).'</pre>';
+           $this->testDump((new Sharing)->upload($uploadPath, false, false, [], false));
         }
-        (new Common)->zEcho($output);
         exit;
     }
 
@@ -89,5 +89,16 @@ class HomeTests
         }
         (new Sharing)->download($filepath, '', '', true);
         exit;
+    }
+
+    #A simple wrapper function for var_dump to apply <pre> tag and exit the script by default
+    public function testDump(mixed $variable, bool $exit = true): void
+    {
+        echo '<pre>';
+        var_dump($variable);
+        echo '</pre>';
+        if ($exit) {
+            exit;
+        }
     }
 }
