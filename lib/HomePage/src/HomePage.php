@@ -231,6 +231,7 @@ class HomePage
             try {
                 (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings']));
                 self::$dbup = true;
+                (new Controller)->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
                 #In some cases these extra checks are not required
                 if ($extraChecks === true) {
                     #Check if maintenance
