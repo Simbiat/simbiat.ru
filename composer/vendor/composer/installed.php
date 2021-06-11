@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'c95c3fb9dcd0d802180b1cbeeffed7c3d06950dd',
+    'reference' => 'd14898f55ca469cceb57804eb08c48237e017e0f',
     'name' => 'simbiat/simbiat.ru',
   ),
   'versions' => 
@@ -52,25 +52,25 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'c95c3fb9dcd0d802180b1cbeeffed7c3d06950dd',
+      'reference' => 'd14898f55ca469cceb57804eb08c48237e017e0f',
     ),
     'symfony/polyfill-ctype' => 
     array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
+      'pretty_version' => 'v1.23.0',
+      'version' => '1.23.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'c6c942b1ac76c82448322025e084cadc56048b4e',
+      'reference' => '46cd95797e9df938fdd2b03693b5fca5e64b01ce',
     ),
     'symfony/polyfill-mbstring' => 
     array (
-      'pretty_version' => 'v1.22.1',
-      'version' => '1.22.1.0',
+      'pretty_version' => 'v1.23.0',
+      'version' => '1.23.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '5232de97ee3b75b0360528dae24e73db49566ab1',
+      'reference' => '2df51500adbaebdc4c38dea4c89a2e131c45c8a1',
     ),
     'twig/twig' => 
     array (

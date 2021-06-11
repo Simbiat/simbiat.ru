@@ -9,9 +9,20 @@ if (!(PHP_VERSION_ID >= 80000)) {
 }
 
 $missingExtensions = array();
+extension_loaded('apcu') || $missingExtensions[] = 'apcu';
 extension_loaded('ctype') || $missingExtensions[] = 'ctype';
+extension_loaded('curl') || $missingExtensions[] = 'curl';
+extension_loaded('dom') || $missingExtensions[] = 'dom';
+extension_loaded('fileinfo') || $missingExtensions[] = 'fileinfo';
 extension_loaded('filter') || $missingExtensions[] = 'filter';
+extension_loaded('gd') || $missingExtensions[] = 'gd';
 extension_loaded('hash') || $missingExtensions[] = 'hash';
+extension_loaded('iconv') || $missingExtensions[] = 'iconv';
+extension_loaded('libxml') || $missingExtensions[] = 'libxml';
+extension_loaded('openssl') || $missingExtensions[] = 'openssl';
+extension_loaded('pdo') || $missingExtensions[] = 'pdo';
+extension_loaded('zip') || $missingExtensions[] = 'zip';
+extension_loaded('zlib') || $missingExtensions[] = 'zlib';
 
 if ($missingExtensions) {
     $issues[] = 'Your Composer dependencies require the following PHP extensions to be installed: ' . implode(', ', $missingExtensions) . '.';
