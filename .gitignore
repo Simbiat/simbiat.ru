@@ -95,3 +95,4 @@ fabric.properties
 /errors.log
 /!oldcode/
 /!spares/
+/lib/FFTracker/src/statistics/
