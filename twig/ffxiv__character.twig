@@ -101,7 +101,7 @@
         {% if character.deleted%}
             <div id="ff_deleted_notice"><h3>{{character.name}}</h3></p><p> was deleted from Lodestone on {{character.deleted}}. Below information is what was avialable on or prior to the deletion date.</div><br>
         {% else %}
-            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/character/{{character.characterid}}/character.twig" target="_blank">{{character.name}}</a>
+            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/character/{{character.characterid}}/" target="_blank">{{character.name}}</a>
         {% endif %}
         </p>
         <p><h3>ID</h3>: {{character.characterid}}</p>

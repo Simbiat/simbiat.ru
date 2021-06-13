@@ -62,10 +62,6 @@
 	path = lib/UserControl
 	url = https://github.com/Simbiat/UserControl
 	branch = main
-[submodule "lib/FFTracker"]
-	path = lib/FFTracker
-	url = https://github.com/Simbiat/FFTracker
-	branch = main
 [submodule "img/fftracker/merged-crests"]
 	path = img/fftracker/merged-crests
 	url = https://github.com/Simbiat/FFXIV-Crests

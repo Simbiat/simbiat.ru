@@ -10,7 +10,7 @@
         {% if freecompany.deleted%}
             <div id="ff_deleted_notice"><h3>{{freecompany.name}}</h3></p><p> was deleted from Lodestone on {{freecompany.deleted}}. Below information is what was avialable on or prior to the deletion date.</div><br>
         {% else %}
-            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/freecompany/{{freecompany.freecompanyid}}/freecompany.twig" target="_blank">{{freecompany.name}}</a>
+            <h3>Name</h3>: <a href="https://eu.finalfantasyxiv.com/lodestone/freecompany/{{freecompany.freecompanyid}}/" target="_blank">{{freecompany.name}}</a>
         {% endif %}
         </p>
         {%if freecompany.oldnames %}
