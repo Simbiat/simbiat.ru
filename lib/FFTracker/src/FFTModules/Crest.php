@@ -59,11 +59,14 @@ trait Crest
                 #Copy the file to new path
                 copy($imgFolder.$groupId.'.png', $finalPath.$hash.'.png');
             }
-            #Remove temporary file
-            unlink($imgFolder.$groupId.'.png');
             return $hash;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return '';
+        } finally {
+            #Remove temporary file
+            if (isset($imgFolder)) {
+                @unlink($imgFolder . $groupId . '.png');
+            }
         }
     }
 }
