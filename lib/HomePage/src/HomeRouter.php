@@ -287,7 +287,7 @@ class HomeRouter
                         $outputArray['link_extra'] = $headers->links($altLink, 'head');
                         #Cache age for achievements (due to random characters)
                         if ($uri[0] === 'achievement') {
-                            $outputArray['cache_age'] = 259200;
+                            $outputArray['cache_age'] = 86400;
                         }
                     }
                 }
@@ -300,7 +300,7 @@ class HomeRouter
         if (!empty($outputArray['http_error']) && $outputArray['http_error'] === 404) {
             $outputArray['ff_suggestions'] = $fftracker->GetRandomEntities($fftracker->maxlines);
             #Cache due to random entities
-            $outputArray['cache_age'] = 259200;
+            $outputArray['cache_age'] = 86400;
         }
         #Add breadcrumbs
         $breadArray = $html->breadcrumbs(items: $breadArray, links: true, headers: true);

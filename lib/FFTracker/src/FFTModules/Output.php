@@ -714,11 +714,11 @@ trait Output
                     $data['bugs']['nomembers'] = $json['bugs']['nomembers'];
                 } else {
                     $data['bugs']['nomembers'] = $dbcon->SelectAll(
-                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__character`)
+                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__character` WHERE `freecompanyid` IS NOT NULL)
                         UNION
                         SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type` FROM `ffxiv__linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `ffxiv__linkshell_character`)
                         UNION
-                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type` FROM `ffxiv__pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__character`)
+                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type` FROM `ffxiv__pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__character` WHERE `pvpteamid` IS NOT NULL)
                         ORDER BY `name`;'
                     );
                 }
