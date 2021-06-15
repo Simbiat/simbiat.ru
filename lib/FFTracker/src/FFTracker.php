@@ -12,7 +12,6 @@ class FFTracker
     use FFTModules\Setters;
     use FFTModules\Grabber;
     use FFTModules\Updater;
-    use FFTModules\Crest;
     use FFTModules\Output;
 
     public function __construct(string $language = 'na', int $maxAge = 90, int $maxLines = 50, string $userAgent = '', string $cacheDir = '')
