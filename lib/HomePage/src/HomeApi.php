@@ -81,7 +81,7 @@ class HomeApi
                     $data = $fftracker->Update(rawurldecode($uri[1]), $uri[0]);
                     #If $data value is not a supported one, means that the entity does not exist, so we can exist earlier
                     if (!in_array($data, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam'])) {
-                        $this->apiEcho(httpCode: '404');
+                        $this->apiEcho(false, httpCode: '503');
                     }
                 }
             }

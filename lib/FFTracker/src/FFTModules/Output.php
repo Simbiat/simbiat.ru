@@ -479,7 +479,7 @@ trait Output
                 } else {
                     $data['freecompany']['estate'] = $ArrayHelpers->topAndBottom($dbcon->countUnique('ffxiv__freecompany', 'estateid', '`ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL', 'ffxiv__estate', 'INNER', 'estateid', '`ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, \', plot \', `ffxiv__estate`.`plot`)'), 20);
                 }
-                #Get statistics by activite time
+                #Get statistics by activity time
                 if (!$nocache && !empty($json['freecompany']['active'])) {
                     $data['freecompany']['active'] = $json['freecompany']['active'];
                 } else {

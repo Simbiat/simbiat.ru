@@ -9,7 +9,7 @@ trait Crest
     private function CrestMerge(string $groupId, array $images): string
     {
         try {
-            $imgFolder = dirname(__DIR__) . '../../../../img/fftracker/merged-crests/';
+            $imgFolder = $GLOBALS['siteconfig']['merged_crests'];
             #Checking if directory exists
             if (!is_dir($imgFolder)) {
                 #Creating directory
@@ -19,9 +19,9 @@ trait Crest
             $layers = array();
             foreach ($images as $key=>$image) {
                 $layers[$key] = @imagecreatefrompng($image);
-                if (empty($layers[$key])) {
+                if ($layers[$key] === false) {
                     #This means that we failed to get the image thus final crest will either fail or be corrupt, thus exiting early
-                    return '';
+                    throw new \RuntimeException('Failed to download '.$image.' used as layer '.$key.' for '.$groupId.' crest');
                 }
             }
             #Create image object
@@ -44,7 +44,7 @@ trait Crest
             #Get hash of the file
             if (!file_exists($imgFolder.$groupId.'.png')) {
                 #Failed to save the image
-                return '';
+                throw new \RuntimeException('Failed to save crest '.$imgFolder.$groupId.'.png');
             }
             $hash = hash_file('sha3-256', $imgFolder.$groupId.'.png');
             #Get final path based on hash
@@ -60,13 +60,12 @@ trait Crest
                 copy($imgFolder.$groupId.'.png', $finalPath.$hash.'.png');
             }
             return $hash;
-        } catch (\Exception) {
-            return '';
+        } catch (\Exception $e) {
+            #Ensure that error is rethrown
+            throw $e;
         } finally {
             #Remove temporary file
-            if (isset($imgFolder)) {
-                @unlink($imgFolder . $groupId . '.png');
-            }
+            @unlink($imgFolder . $groupId . '.png');
         }
     }
 }
