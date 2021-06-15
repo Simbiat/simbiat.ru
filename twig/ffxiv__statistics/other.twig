@@ -25,7 +25,7 @@
     <div>
         <details><summary>Crests</summary>
         {% for row in statistics.pvpteam.crests %}
-            <img class="ff_avatar supressback" alt="{{row.value}}" src="/img/fftracker/merged-crests/{{row.value}}.png">{%if not loop.last%} | {%endif%}
+            <img class="ff_avatar supressback" alt="{{row.value}}" src="/img/fftracker/merged-crests/{{row.value|slice(0,2)}}/{{row.value|slice(2,2)}}/{{row.value}}.png">{%if not loop.last%} | {%endif%}
         {%endfor%}
         </details>
     </div>
