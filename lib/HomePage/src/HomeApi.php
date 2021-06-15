@@ -4,6 +4,9 @@ namespace Simbiat;
 
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class HomeApi
 {
@@ -45,9 +48,9 @@ class HomeApi
     #Process FFTracker
 
     /**
-     * @throws \Twig\Error\SyntaxError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\LoaderError
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
      * @throws \Exception
      */
     private function ffTracker(array $uri): string|array|bool
@@ -71,7 +74,7 @@ class HomeApi
         }
         $fftracker = (new FFTracker);
         if ($uri[0] === 'register') {
-            $data = $fftracker->Update(rawurldecode($uri[1]), '');
+            $data = $fftracker->Update(rawurldecode($uri[1]));
         } else {
             #Handle force update
             if (in_array($uri[0], ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam'])) {
@@ -102,6 +105,13 @@ class HomeApi
     }
 
     #Process BICTracker
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws \Exception
+     */
     private function bicTracker(array $uri): array|bool|int
     {
         #Check that next value is appropriate
