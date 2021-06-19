@@ -172,7 +172,7 @@ class HomePage
             }
         } else {
             #Create HTMLCache object to check for cache
-            self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/'));
+            self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
             #Attempt to use cache
             $output = self::$HTMLCache->get('', true, false);
             if (!empty($output)) {
