@@ -141,7 +141,7 @@ trait Updater
                         [
                             ':characterid' => $data['characterid'],
                             ':job' => [$job, 'string'],
-                            ':level' => [(empty($level) ? 0 : intval($level)), 'int'],
+                            ':level' => [(empty($level['level']) ? 0 : intval($level['level'])), 'int'],
                         ],
                     ];
                 }
