@@ -305,7 +305,11 @@ trait Grabber
         } else {
             $bindings[':itemid'] = $data['item']['id'];
         }
-        if (empty($data['dbid'])) {
+        #Eggstreme Hunting is a duplicate name for Legacy achievement (ID 500) and for current one (ID 903).
+        #But current seasonal achievements do not have viewable page in Lodestone Database for some reason.
+        #Yet DBID is found for current achievement due to... Duplicate name. Which results in unique key violation.
+        #Since it's supposed to be "invisible" we enforce DBID to be null for it.
+        if (empty($data['dbid']) || $achievement === '903') {
             $bindings[':dbid'] = [NULL, 'null'];
         } else {
             $bindings[':dbid'] = $data['dbid'];
