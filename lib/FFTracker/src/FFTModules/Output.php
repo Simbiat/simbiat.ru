@@ -558,7 +558,7 @@ trait Output
                 if (!$nocache && !empty($json['cities']['gc_fc'])) {
                     $data['cities']['gc_fc'] = $json['cities']['gc_fc'];
                 } else {
-                    $data['cities']['gc_fc'] = $dbcon->SelectAll('SELECT `ffxiv__city`.`city`, `ffxiv__grandcompany_rank`.`gc_name` AS `value`, COUNT(`ffxiv__freecompany`.`freecompanyid`) AS `count` FROM `ffxiv__freecompany` LEFT JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estateid`=`ffxiv__estate`.`estateid` LEFT JOIN `ffxiv__city` ON `ffxiv__estate`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany_rank`.`gcrankid` WHERE `ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
+                    $data['cities']['gc_fc'] = $dbcon->SelectAll('SELECT `ffxiv__city`.`city`, `ffxiv__grandcompany_rank`.`gc_name` AS `value`, COUNT(`ffxiv__freecompany`.`freecompanyid`) AS `count` FROM `ffxiv__freecompany` LEFT JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estateid`=`ffxiv__estate`.`estateid` LEFT JOIN `ffxiv__city` ON `ffxiv__estate`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany_rank`.`gcrankid` WHERE `ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL AND `ffxiv__grandcompany_rank`.`gc_name` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_fc'] as $key=>$company) {
                         $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC($company['value']);
