@@ -707,18 +707,18 @@ trait Output
                 if (!$nocache && !empty($json['bugs']['noclan'])) {
                     $data['bugs']['noclan'] = $json['bugs']['noclan'];
                 } else {
-                    $data['bugs']['noclan'] = $dbcon->SelectAll('SELECT `characterid` AS `id`, `name` FROM `ffxiv__character` WHERE `clanid` IS NULL AND `deleted` IS NULL ORDER BY `name`;');
+                    $data['bugs']['noclan'] = $dbcon->SelectAll('SELECT `characterid` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `ffxiv__character` WHERE `clanid` IS NULL AND `deleted` IS NULL ORDER BY `name`;');
                 }
                 #Groups with no members
                 if (!$nocache && !empty($json['bugs']['nomembers'])) {
                     $data['bugs']['nomembers'] = $json['bugs']['nomembers'];
                 } else {
                     $data['bugs']['nomembers'] = $dbcon->SelectAll(
-                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__character` WHERE `freecompanyid` IS NOT NULL)
+                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, `crest` AS `icon` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__character` WHERE `freecompanyid` IS NOT NULL)
                         UNION
-                        SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type` FROM `ffxiv__linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `ffxiv__linkshell_character`)
+                        SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, NULL AS `icon` FROM `ffxiv__linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `ffxiv__linkshell_character`)
                         UNION
-                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type` FROM `ffxiv__pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__character` WHERE `pvpteamid` IS NOT NULL)
+                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest` AS `icon` FROM `ffxiv__pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__character` WHERE `pvpteamid` IS NOT NULL)
                         ORDER BY `name`;'
                     );
                 }

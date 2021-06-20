@@ -3,7 +3,7 @@
     <div>
         <details><summary>Characters' links</summary>
             {% for row in statistics.bugs.noclan %}
-                <a class="ff_bugresult" href="/fftracker/character/{{row.id}}/" title="{{row.name|raw}}"><span>{{row.name|raw}}</span></a>
+                {{ include('ffxiv__entity_card.twig', row) }}
             {%endfor%}
         </details>
     </div>
@@ -11,7 +11,7 @@
     <div>
         <details><summary>Groups' links</summary>
             {% for row in statistics.bugs.nomembers %}
-                <a class="ff_bugresult" href="/fftracker/{{row.type}}/{{row.id}}/" title="{{row.name|raw}}"><span>{{row.name|raw}}</span></a>
+                {{ include('ffxiv__entity_card.twig', row) }}
             {%endfor%}
         </details>
     </div>
