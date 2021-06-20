@@ -58,10 +58,6 @@
 	path = lib/sand-clock
 	url = https://github.com/Simbiat/sand-clock
 	branch = master
-[submodule "lib/UserControl"]
-	path = lib/UserControl
-	url = https://github.com/Simbiat/UserControl
-	branch = main
 [submodule "img/fftracker/merged-crests"]
 	path = img/fftracker/merged-crests
 	url = https://github.com/Simbiat/FFXIV-Crests
