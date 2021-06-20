@@ -300,10 +300,10 @@ trait Output
         #Sanitize cachepath
         if (empty($cachepath)) {
             #Create path if missing
-            if (!is_dir(dirname(__DIR__).'/statistics/')) {
-                mkdir(dirname(__DIR__).'/statistics/');
+            if (!is_dir($GLOBALS['siteconfig']['ffstatitics_cache'])) {
+                mkdir($GLOBALS['siteconfig']['ffstatitics_cache']);
             }
-            $cachepath = dirname(__DIR__).'/statistics/'.$type.'.json';
+            $cachepath = $GLOBALS['siteconfig']['ffstatitics_cache'].$type.'.json';
         }
         #Check if cache file exists
         if (is_file($cachepath)) {
