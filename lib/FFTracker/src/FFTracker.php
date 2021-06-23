@@ -20,7 +20,6 @@ class FFTracker
         $this->setUseragent($userAgent);
         $this->setMaxage($maxAge);
         $this->setMaxlines($maxLines);
-        $this->getCrestPath();
         #Checking if HTML Cache is used
         if (method_exists('\Simbiat\HTMLCache','delete')) {
             if (empty($cacheDir)) {

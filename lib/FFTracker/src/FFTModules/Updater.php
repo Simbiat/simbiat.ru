@@ -619,7 +619,8 @@ trait Updater
         }
     }
 
-    #Update statistics
+    #Update statistics (called from Cron)
+    /** @noinspection PhpUnused */
     public function UpdateStatistics(): bool|string
     {
         try {
@@ -643,7 +644,8 @@ trait Updater
         }
     }
 
-    #Function to update old entities
+    #Function to update old entities (called from Cron)
+    /** @noinspection PhpUnused */
     public function UpdateOld(int $limit = 1): bool|string
     {
         #Sanitize entities number
