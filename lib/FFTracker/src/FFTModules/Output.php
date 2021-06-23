@@ -39,8 +39,6 @@ trait Output
         }
         #Get old names. For now this is commented out due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
         #$data['oldnames'] = $dbController->selectColumn('SELECT `name` FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$id, ':name'=>$data['name']]);
-        #Get levels
-        $data['jobs'] = $dbController->selectPair('SELECT `ffxiv__job`.`name` AS `job`, `level` FROM `ffxiv__character_jobs` INNER JOIN `ffxiv__job` ON `ffxiv__job`.`jobid`=`ffxiv__character_jobs`.`jobid` WHERE `characterid`=:id;', [':id'=>$id]);
         #Get previous known incarnations (combination of gender and race/clan)
         $data['incarnations'] = $dbController->selectAll('SELECT `genderid`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clanid` = `ffxiv__clan`.`clanid` WHERE `ffxiv__character_clans`.`characterid`=:id AND (`ffxiv__character_clans`.`clanid`!=:clanid AND `ffxiv__character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id'=>$id, ':clanid'=>$data['clanid'], ':genderid'=>$data['genderid']]);
         #Get old servers
@@ -392,7 +390,13 @@ trait Output
                 if (!$nocache && !empty($json['characters']['jobs'])) {
                     $data['characters']['jobs'] = $json['characters']['jobs'];
                 } else {
-                    $data['characters']['jobs'] = $dbcon->selectPair('SELECT `ffxiv__job`.`name` AS `job`, `sum`.`level` FROM (SELECT `jobid`, SUM(`level`) AS `level` FROM `ffxiv__character_jobs` GROUP BY `jobid`) AS `sum` INNER JOIN `ffxiv__job` ON `sum`.`jobid`=`ffxiv__job`.`jobid` ORDER BY `sum`.`level` DESC;');
+                    $jobs = $dbcon->selectRow('SELECT SUM(`Alchemist`) AS `Alchemist`, SUM(`Armorer`) AS `Armorer`, SUM(`Astrologian`) AS `Astrologian`, SUM(`Bard`) AS `Bard`, SUM(`BlackMage`) AS `BlackMage`, SUM(`Blacksmith`) AS `Blacksmith`, SUM(`BlueMage`) AS `BlueMage`, SUM(`Botanist`) AS `Botanist`, SUM(`Carpenter`) AS `Carpenter`, SUM(`Culinarian`) AS `Culinarian`, SUM(`Dancer`) AS `Dancer`, SUM(`DarkKnight`) AS `DarkKnight`, SUM(`Dragoon`) AS `Dragoon`, SUM(`Fisher`) AS `Fisher`, SUM(`Goldsmith`) AS `Goldsmith`, SUM(`Gunbreaker`) AS `Gunbreaker`, SUM(`Leatherworker`) AS `Leatherworker`, SUM(`Machinist`) AS `Machinist`, SUM(`Miner`) AS `Miner`, SUM(`Monk`) AS `Monk`, SUM(`Ninja`) AS `Ninja`, SUM(`Paladin`) AS `Paladin`, SUM(`RedMage`) AS `RedMage`, SUM(`Samurai`) AS `Samurai`, SUM(`Scholar`) AS `Scholar`, SUM(`Summoner`) AS `Summoner`, SUM(`Warrior`) AS `Warrior`, SUM(`Weaver`) AS `Weaver`, SUM(`WhiteMage`) AS `WhiteMage` FROM `ffxiv__character`;');
+                    #Sort array
+                    arsort($jobs);
+                    #Add spaces to job names
+                    foreach ($jobs as $job=>$level) {
+                        $data['characters']['jobs'][preg_replace('/(\B[A-Z])/', ' $1', $job)] = $level;
+                    }
                 }
                 #Most name changes
                 if (!$nocache && !empty($json['characters']['changes']['name'])) {
@@ -442,7 +446,7 @@ trait Output
                 } else {
                     $data['characters']['groups']['participation'] = $dbcon->SelectAll('
                         SELECT `affiliation` AS `value`, COUNT(`affiliation`) AS `count`FROM (
-                            SELECT `ffxiv__character`.`characterid`,
+                            SELECT
                                 (CASE
                                     WHEN (`ffxiv__character`.`freecompanyid` IS NOT NULL AND `ffxiv__character`.`pvpteamid` IS NULL AND `ffxiv__linkshell_character`.`linkshellid` IS NULL) THEN \'Free Company only\'
                                     WHEN (`ffxiv__character`.`freecompanyid` IS NULL AND `ffxiv__character`.`pvpteamid` IS NOT NULL AND `ffxiv__linkshell_character`.`linkshellid` IS NULL) THEN \'PvP Team only\'
@@ -636,7 +640,7 @@ trait Output
                 if (!$nocache && !empty($json['other']['achievements'])) {
                     $data['other']['achievements'] = $json['other']['achievements'];
                 } else {
-                    $data['other']['achievements'] = $dbcon->SelectAll('SELECT \'achievement\' as `type`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`icon`, `ffxiv__achievement`.`name` AS `name`, `count` FROM (SELECT `ffxiv__character_achievement`.`achievementid`, count(`ffxiv__character_achievement`.`achievementid`) AS `count` from `ffxiv__character_achievement` GROUP BY `ffxiv__character_achievement`.`achievementid` ORDER BY `count`) `tempresult` INNER JOIN `ffxiv__achievement` ON `tempresult`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__achievement`.`category` IS NOT NULL ORDER BY `count` ASC');
+                    $data['other']['achievements'] = $dbcon->SelectAll('SELECT \'achievement\' as `type`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`icon`, `ffxiv__achievement`.`name` AS `name`, `count` FROM (SELECT `ffxiv__character_achievement`.`achievementid`, count(`ffxiv__character_achievement`.`achievementid`) AS `count` from `ffxiv__character_achievement` GROUP BY `ffxiv__character_achievement`.`achievementid` ORDER BY `count`) `tempresult` INNER JOIN `ffxiv__achievement` ON `tempresult`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__achievement`.`category` IS NOT NULL ORDER BY `count`');
                     #Split achievements by categories
                     $data['other']['achievements'] = $ArrayHelpers->splitByKey($data['other']['achievements'], 'category', [], []);
                     #Get only top 20 for each category

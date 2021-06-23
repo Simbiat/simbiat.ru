@@ -125,25 +125,23 @@ trait Updater
                         ],
                 ],
             ];
-            #Add levels
+            #Update levels. Doing this in cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
             if (!empty($data['jobs'])) {
                 foreach ($data['jobs'] as $job=>$level) {
-                    #Insert job (we lose performance a tiny bit, but this allows to automatically add new jobs and avoid failures on next step)
-                    $queries[] = [
-                        'INSERT IGNORE INTO `ffxiv__job` (`name`) VALUES (:job);',
-                        [
-                            ':job' => [$job, 'string'],
-                        ]
-                    ];
-                    #Insert actual level
-                    $queries[] = [
-                        'INSERT INTO `ffxiv__character_jobs`(`characterid`, `jobid`, `level`) VALUES (:characterid, (SELECT `jobid` FROM `ffxiv__job` WHERE `name`=:job LIMIT 1), :level) ON DUPLICATE KEY UPDATE `level`=:level;',
-                        [
-                            ':characterid' => $data['characterid'],
-                            ':job' => [$job, 'string'],
-                            ':level' => [(empty($level['level']) ? 0 : intval($level['level'])), 'int'],
-                        ],
-                    ];
+                    #Remove spaces from the job name
+                    $jobNoSpace = preg_replace('/\s*/', '', $job);
+                    #Check if column exists in order to avoid errors. Checking that level is not empty to not waste time on updating zeros
+                    if ($dbController->checkColumn('ffxiv__character', $jobNoSpace) && !empty($level['level'])) {
+                        #Update level
+                        /** @noinspection SqlResolve */
+                        $queries[] = [
+                            'UPDATE `ffxiv__character` SET `'.$jobNoSpace.'`=:level WHERE `characterid`=:characterid;',
+                            [
+                                ':characterid' => $data['characterid'],
+                                ':level' => [intval($level['level']), 'int'],
+                            ],
+                        ];
+                    }
                 }
             }
             #Insert server, if it has not been inserted yet
@@ -654,6 +652,8 @@ trait Updater
         }
         try {
             $dbCon = (new Controller);
+            /** @noinspection SqlAggregates */
+            #Suppressing hint for HAVING: despite the complaint, this is much faster than using a JOIN. At least with the current data storage solution
             $entities = $dbCon->selectAll('
                     SELECT `type`, `id`, `charid` FROM (
                         SELECT * FROM (
@@ -871,5 +871,46 @@ trait Updater
             #Remove temporary file
             @unlink($imgFolder . $groupId . '.png');
         }
+    }
+
+    #Function to add missing jobs to table (called from Cron)
+    /** @noinspection PhpUnused */
+    /**
+     * @throws \Exception
+     */
+    public function jobsUpdate(): bool|string
+    {
+        #Cache controller
+        $dbController = (new Controller);
+        #Get freshest character ID
+        $characterId = $dbController->selectValue('SELECT `characterid` FROM `ffxiv__character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
+        #Grab its data from Lodestone
+        $character = $this->LodestoneGrab($characterId, 'character');
+        if (empty($character['jobs'])) {
+            return 'No jobs retrieved for character '.$characterId;
+        }
+        #Sort alphabetically by keys
+        ksort($character['jobs'], SORT_NATURAL);
+        #Prepare string for ALTER
+        $alter = [];
+        #Previous job in the list (for AFTER clause)
+        $previous = '';
+        foreach ($character['jobs'] as $job=>$details) {
+            #Remove spaces from the job name
+            $jobNoSpace = preg_replace('/\s*/', '', $job);
+            #Check if job is present as respective column
+            if (!$dbController->checkColumn('ffxiv__character', $jobNoSpace)) {
+                #Add respective column definition
+                $alter[] = 'ADD COLUMN `'.$jobNoSpace.'` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT \'Level of '.$job.' job\' AFTER `'.(empty($previous) ? 'pvp_matches' : $previous).'`';
+            }
+            #Update previous column name
+            $previous = $jobNoSpace;
+        }
+        if (empty($alter)) {
+            #Nothing to add
+            return true;
+        }
+        #Generate and run the query
+        return $dbController->query('ALTER TABLE `ffxiv__character` '.implode(', ', $alter).';');
     }
 }
