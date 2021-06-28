@@ -137,10 +137,7 @@ class HomePage
     {
         #Remove query string, if present (that is everything after ?)
         $request = preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
-        if (preg_match('/^browserconfig\.xml$/i', $request) === 1) {
-            #Process MS Tile
-            (new Meta)->msTile($GLOBALS['siteconfig']['mstile'], [], [], true, true);
-        } elseif (preg_match('/^js\/\d+\.js$/i', $request) === 1) {
+        if (preg_match('/^js\/\d+\.js$/i', $request) === 1) {
             #Process JS
             (new Common)->reductor($GLOBALS['siteconfig']['jsdir'], 'js', false, '', 'aggressive');
         } elseif (preg_match('/^css\/\d+\.css$/i', $request) === 1) {
@@ -341,12 +338,14 @@ class HomePage
         }
         #Limit Ogdesc to 120 characters
         $twigVars['ogdesc'] = mb_substr($twigVars['ogdesc'], 0, 120, 'UTF-8');
-        #Add meta tags
-        $this->socialMeta($twigVars);
+        #Twitter
+        $twigVars['twitter_card'] = $GLOBALS['siteconfig']['twitter_card'];
+        #Facebook
+        $twigVars['facebook'] = $GLOBALS['siteconfig']['facebook'];
         #Add CSRF Token to meta
         $twigVars['XCSRFToken'] = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
         #Render page
-        $output = $twig->render('main/main.twig', $twigVars);
+        $output = $twig->render('index.twig', $twigVars);
         #Close session
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
@@ -358,27 +357,5 @@ class HomePage
             (new Common)->zEcho($output, $cacheStrat);
         }
         exit;
-    }
-
-    #Function to generate social media metas
-    private function socialMeta(&$twigVars): void
-    {
-        #Cache object
-        $meta = (new Meta);
-        #Twitter
-        $twigVars['twitter_card'] = $meta->twitter([
-            'title' => (empty($twigVars['title']) ? 'Simbiat Software' : $twigVars['title']),
-            'description' => (empty($twigVars['ogdesc']) ? 'Simbiat Software' : $twigVars['ogdesc']),
-            'site' => 'simbiat199',
-            'site:id' => '3049604752',
-            'creator' => '@simbiat199',
-            'creator:id' => '3049604752',
-            'image' => $twigVars['domain'].'/img/favicons/simbiat.png',
-            'image:alt' => 'Simbiat Software logo',
-        ], [], false);
-        #Facebook
-        $twigVars['facebook'] = $meta->facebook(288606374482851, [100002283569233]);
-        #MS Tile (for pinned sites)
-        $twigVars['ms_tile'] = $meta->msTile($GLOBALS['siteconfig']['mstile'], [], [], false, false);
     }
 }

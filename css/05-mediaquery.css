@@ -1,0 +1,30 @@
+@media (max-width: 499px) {
+    body {
+        grid-template-columns: 100%;
+        grid-template-areas:
+            'header header'
+            'navigation navigation'
+            'content content'
+            'sidebar sidebar'
+            'footer footer';
+    }
+}
+@media (min-width: 500px) {
+    body {
+        grid-template-columns: 4fr 1fr;
+        grid-template-areas:
+          'header header'
+          'navigation navigation'
+          'content sidebar'
+          'footer footer';
+    }
+}
+@media (min-width: 700px) {
+    body {
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-template-areas:
+          'header header header'
+          'navigation content sidebar'
+          'footer footer footer'
+    }
+}

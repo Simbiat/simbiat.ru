@@ -1,0 +1,12 @@
+.failure, .error {
+    color: var(--color-failure);
+}
+.warning, .notice, .attention {
+     color: var(--color-warning);
+}
+.success {
+    color: var(--color-success);
+}
+.disabled, *[disabled], *[aria-disabled] {
+     color: var(--color-disabled);
+ }

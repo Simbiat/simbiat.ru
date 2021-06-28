@@ -64,7 +64,7 @@ class HomeFeeds
                         'language' => 'en-us',
                         'ttl' => 3600,
                         'image' => [
-                            'url' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/android-chrome-144x144.png',
+                            'url' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/android/144x144.png',
                             'width' => 144,
                             'height' => 144,
                         ],

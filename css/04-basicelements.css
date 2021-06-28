@@ -1,0 +1,131 @@
+/*Grid styling*/
+header {
+    grid-area: header;
+}
+#content {
+    grid-area: content;
+}
+#navigation {
+    grid-area: navigation;
+}
+#sidebar {
+    grid-area: sidebar;
+}
+footer {
+    grid-area: footer;
+}
+body {
+    display: grid;
+    gap: 0.5rem;
+}
+
+/*Main blocks styling*/
+body {
+    background-color: var(--color-body);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    width: 100%;
+    height: 100vh;
+}
+main {
+    min-width: 45ch;
+    max-width: 100ch;
+    margin: auto;
+}
+article {
+    background-color: var(--color-article);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-bottom-color: var(--border-light);
+    border-right-color: var(--border-light);
+    border-top-color: var(--border-dark);
+    border-left-color: var(--border-dark);
+    padding: 0.5rem 1rem;
+}
+footer, header {
+    position: sticky;
+    width: 100%;
+    text-align: center;
+    background-color: var(--color-block);
+}
+header {
+    top: 0;
+    border-bottom-color: var(--border-light);
+    border-bottom-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-bottom-style: solid;
+    /*Reset common radius*/
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+footer {
+    bottom: 0;
+    border-top-color: var(--border-dark);
+    border-top-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-top-style: solid;
+    /*Reset common radius*/
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+#navigation, #sidebar {
+    position: sticky;
+}
+
+#navigation {
+    border-style: solid;
+    border-radius: var(--border-radius);
+    border-bottom-color: var(--border-light);
+    border-right-color: var(--border-light);
+    border-top-color: var(--border-dark);
+    border-left-color: var(--border-dark);
+    left: 0;
+}
+#sidebar {
+    right: 0;
+}
+
+del, s {
+    text-decoration: line-through;
+}
+ins {
+    text-decoration: underline;
+}
+time, em {
+    font-style: italic;
+}
+
+mark {
+    color: var(--color-article);
+    background: var(--color-text);
+}
+
+/*Dummy elements to style in future, when used*/
+progress, meter {
+    /*Consider different colors depending on percentage*/
+}
+output {
+
+}
+/*Styling for code and keyboard buttons*/
+kbd {
+
+}
+code {
+
+}
+
+/*Styling of pop-ups*/
+dialog {
+
+}
+
+/*Helps with auto-scroll positioning (when using anchors)*/
+article, h1, h2, h3, h4, h5, h6 {
+    scroll-padding: 1rem 0 0 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+}
