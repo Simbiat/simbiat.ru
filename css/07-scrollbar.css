@@ -4,12 +4,12 @@
     border-radius: var(--border-radius);
 }
 ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 0.45rem hsla(0, 0%, 0%, 0.3);
     border-radius: var(--border-radius);
     background-color: var(--color-article);
 }
 ::-webkit-scrollbar-track-piece {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 0.45rem hsla(0, 0%, 0%, 0.3);
     border-radius: var(--border-radius);
     background-color: var(--color-article);
 }
@@ -20,7 +20,7 @@
     background-color: var(--color-article);
     color: var(--color-interactive);
     background-image: linear-gradient(135deg, var(--color-interactive) 16.67%, var(--color-block) 16.67%, var(--color-block) 50%, var(--color-interactive) 50%, var(--color-interactive) 66.67%, var(--color-block) 66.67%, var(--color-block) 100%);
-    background-size: 10px 10px;
+    background-size: 0.7rem 0.7rem;
 }
 
 /*Thumb*/
@@ -32,7 +32,6 @@
     border-top-color: var(--border-dark);
     border-left-color: var(--border-dark);
     border-radius: var(--border-radius);
-    background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
     border-color: var(--color-interactive);
@@ -53,7 +52,7 @@
 }
 /* Up */
 ::-webkit-scrollbar-button:vertical:decrement {
-    border-width: 0 7px 14px 7px;
+    border-width: 0 0.5rem 1rem 0.5rem;
     border-color: transparent transparent var(--color-interactive) transparent;
 }
 ::-webkit-scrollbar-button:vertical:decrement:hover {
@@ -62,7 +61,7 @@
 /* Down */
 ::-webkit-scrollbar-button:vertical:increment
 {
-    border-width: 14px 7px 0 7px;
+    border-width: 1rem 0.5rem 0 0.5rem;
     border-color: var(--color-interactive) transparent transparent transparent;
 }
 ::-webkit-scrollbar-button:vertical:increment:hover
@@ -71,7 +70,7 @@
 }
 /* Left */
 ::-webkit-scrollbar-button:horizontal:decrement {
-    border-width: 7px 14px 7px 0;
+    border-width: 0.5rem 1rem 0.5rem 0;
     border-color: transparent var(--color-interactive) transparent transparent;
 }
 ::-webkit-scrollbar-button:horizontal:decrement:hover {
@@ -79,7 +78,7 @@
 }
 /* Right */
 ::-webkit-scrollbar-button:horizontal:increment {
-    border-width: 7px 0 7px 14px;
+    border-width: 0.5rem 0 0.5rem 1rem;
     border-color: transparent transparent transparent var(--color-interactive);
 }
 ::-webkit-scrollbar-button:horizontal:increment:hover {

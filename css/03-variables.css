@@ -16,9 +16,9 @@ metatags.twig (MS Tile and theme-color)*/
     /*Color indicating success of some action*/
     --color-success: hsl(132, 64%, 72%);
     /*Color indicating failure of some action*/
-    --color-failure: hsl(6, 80%, 70%);
+    --color-failure: hsl(344, 77%, 79%);
     /*Color indicating a warning*/
-    --color-warning: hsl(43, 88%, 63%);
+    --color-warning: hsl(43, 77%, 57%);
     /*Color for disabled elements*/
     --color-disabled: hsl(0, 0%, 50%);
 

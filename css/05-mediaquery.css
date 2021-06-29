@@ -1,6 +1,5 @@
 @media (max-width: 499px) {
     body {
-        grid-template-columns: 100%;
         grid-template-areas:
             'header header'
             'navigation navigation'

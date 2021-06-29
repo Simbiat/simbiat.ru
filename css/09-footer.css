@@ -1,0 +1,42 @@
+#footerLinks, #footerContacts, #footerCopyright {
+    font-size: 0.7rem;
+}
+#footerContacts .socialIcon {
+    filter: brightness(70%);
+}
+#footerContacts .socialIcon:hover {
+    filter: brightness(125%);
+}
+#footerContacts a {
+    outline: none;
+}
+#footerSitemap {
+    display: inline-block;
+    text-decoration: underline var(--color-interactive);
+    position: relative;
+    margin: auto 0.5rem;
+}
+#footerSitemap #sitemapLinks {
+    position: absolute;
+    width: 10rem;
+    height: 1.5rem;
+    top: -2rem;
+    left: -3.5rem;
+    background-color: var(--color-block);
+    line-height: 1.5rem;
+}
+#footerSitemap[open] summary:after {
+    content: ' ▲';
+}
+#footerLinks a {
+    margin: auto 0.5rem;
+}
+#sitemapLinks {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-bottom-color: var(--border-light);
+    border-right-color: var(--border-light);
+    border-top-color: var(--border-dark);
+    border-left-color: var(--border-dark);
+}

@@ -1,5 +1,6 @@
 .failure, .error {
     color: var(--color-failure);
+    font-weight: bold;
 }
 .warning, .notice, .attention {
      color: var(--color-warning);
@@ -10,3 +11,8 @@
 .disabled, *[disabled], *[aria-disabled] {
      color: var(--color-disabled);
  }
+.socialIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0.25rem;
+}

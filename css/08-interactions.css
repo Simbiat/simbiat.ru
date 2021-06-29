@@ -11,7 +11,7 @@ a {
     color: var(--color-interactive);
     font-weight: bold;
     text-decoration: none;
-
+    cursor: pointer;
 }
 a:link {
     text-decoration-line: underline;
@@ -44,4 +44,27 @@ textarea:focus, textarea:active {
 textarea::-webkit-resizer {
     border-bottom-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
+}
+
+/*Add a more obvious styling for summary tag by making it more like a link*/
+summary {
+    color: var(--color-interactive);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*Show details marker to right*/
+details>.rightSummary {
+    list-style: none;
+}
+.rightSummary::-webkit-details-marker {
+    display: none
+}
+
+.rightSummary::after {
+    content: ' ▷';
+}
+details[open] .rightSummary:after {
+    content: ' ▼';
 }

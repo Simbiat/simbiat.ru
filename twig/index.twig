@@ -1,4 +1,3 @@
-<!--This is main template, that covers general layout, used for all pages-->
 <!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# profile: http://ogp.me/ns/profile# article: http://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#" itemscope itemtype="https://schema.org/Article">
     <head>
@@ -13,12 +12,11 @@
         <title>{{ title }}</title>
     </head>
     <body>
-        {{ include('common/noscript.twig')}}
         <header>
             Header
         </header>
-        <nav id="navigation" aria-label="Primary">
-            Navigation
+        <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="http://schema.org/SiteNavigationElement">
+            {{ include('common/navigation.twig')}}
         </nav>
         <main id="content">
             <article>
@@ -54,12 +52,13 @@
             </article>
         </main>
         <aside id="sidebar" aria-label="Sidebar">
-            <section>
+            <section id="loginForm">
                 User Panel
+                {{ include('common/noscript.twig')}}
             </section>
         </aside>
         <footer>
-            Footer
+            {{ include('common/footer.twig')}}
         </footer>
     </body>
 </html>
