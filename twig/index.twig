@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# profile: http://ogp.me/ns/profile# article: http://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#" itemscope itemtype="https://schema.org/Article">
+<html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb# profile: https://ogp.me/ns/profile# article: https://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#" itemscope itemtype="https://schema.org/Article">
     <head>
         {{ include('common/metatags.twig')}}
 
@@ -10,12 +10,14 @@
         {{ pagination.links|raw }}
 
         <title>{{ title }}</title>
+
+        {{ include('common/scripts.twig')}}
     </head>
     <body>
         <header>
             Header
         </header>
-        <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="http://schema.org/SiteNavigationElement">
+        <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
             {{ include('common/navigation.twig')}}
         </nav>
         <main id="content">

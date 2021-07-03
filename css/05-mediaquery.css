@@ -7,6 +7,9 @@
             'sidebar sidebar'
             'footer footer';
     }
+    .back-to-top {
+        margin: 0 2rem 0 2rem;
+    }
 }
 @media (min-width: 500px) {
     body {
@@ -17,6 +20,9 @@
           'content sidebar'
           'footer footer';
     }
+    .back-to-top {
+        margin: 0 3rem 0 3rem;
+    }
 }
 @media (min-width: 700px) {
     body {
@@ -25,5 +31,8 @@
           'header header header'
           'navigation content sidebar'
           'footer footer footer'
+    }
+    .back-to-top {
+        margin: 0 3rem 0 3rem;
     }
 }

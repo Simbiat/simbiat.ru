@@ -10,11 +10,18 @@
 #footerContacts a {
     outline: none;
 }
+#footerContacts {
+    display: inline-block;
+}
 #footerSitemap {
     display: inline-block;
     text-decoration: underline var(--color-interactive);
     position: relative;
     margin: auto 0.5rem;
+}
+#footerSitemap:hover, #footerSitemap:active, #footerSitemap:focus {
+    outline: outset var(--color-interactive);
+    text-decoration: none;
 }
 #footerSitemap #sitemapLinks {
     position: absolute;
@@ -39,4 +46,10 @@
     border-right-color: var(--border-light);
     border-top-color: var(--border-dark);
     border-left-color: var(--border-dark);
+}
+.back-to-top {
+    color: var(--color-interactive);
+    display: inline-block;
+    font-weight: 900;
+    cursor: pointer;
 }

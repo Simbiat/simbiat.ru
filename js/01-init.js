@@ -1,0 +1,63 @@
+// JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
+/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop*/
+
+//Stuff to do on load
+
+// Avoid `console` errors in browsers that lack a console.
+(function() {
+    'use strict';
+    let method;
+    const noop = function () {};
+    const methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
+    ];
+    let length = methods.length;
+    const console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+}());
+
+document.addEventListener('DOMContentLoaded', attachListeners);
+
+//Attaches event listeners
+function attachListeners()
+{
+    'use strict';
+    //Back-to-top buttons
+    document.getElementById('content').addEventListener('scroll', backToTop);
+    //Show password functionality
+    document.querySelectorAll('.showpassword').forEach(item => {
+        item.addEventListener('mousedown', showPassToggle);
+    });
+    //Register automated aria-invalid attribute adding
+    Array.from(document.getElementsByTagName('input')).forEach(item => {
+        item.addEventListener('focus', ariaNationOnEvent);
+        item.addEventListener('change', ariaNationOnEvent);
+        item.addEventListener('input', ariaNationOnEvent);
+        //Force update the values right now
+        ariaNation(item);
+    });
+    //Register function for radio buttons toggling on login form
+    document.querySelectorAll('#radio_signinup input[name=signinuptype]').forEach(item => {
+        item.addEventListener('change', loginRadioCheck);
+    });
+    //Force loginRadioCheck for consistency
+    loginRadioCheck();
+    //Register WebShare if supported
+    if (navigator.share) {
+        document.getElementById('shareButton').classList.remove('hidden');
+        document.getElementById('shareButton').addEventListener('click', webShare);
+    } else {
+        document.getElementById('shareButton').classList.add('hidden');
+    }
+}
