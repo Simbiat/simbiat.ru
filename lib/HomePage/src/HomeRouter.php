@@ -310,7 +310,6 @@ class HomeRouter
     }
 
     #Function to prepare data for BICTracker depending on the URI
-
     /**
      * @throws \Exception
      */
@@ -407,6 +406,17 @@ class HomeRouter
         $breadArray = (new HTML)->breadcrumbs(items: $breadArray, links: true, headers: true);
         $outputArray['breadcrumbs']['bictracker'] = $breadArray['breadcrumbs'];
         $outputArray['breadcrumbs']['links'] = $breadArray['links'];
+        return $outputArray;
+    }
+
+    #Function to route error pages
+    public function error(array $uri): array {
+        if (empty($uri[0]) || preg_match('/\d{3}/', $uri[0]) !== 1) {
+            $outputArray['http_error'] = 404;
+        } else {
+            $outputArray['http_error'] = intval($uri[0]);
+        }
+        $outputArray['error_page'] = true;
         return $outputArray;
     }
 }

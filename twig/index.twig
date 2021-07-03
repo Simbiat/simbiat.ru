@@ -32,7 +32,7 @@
                 {% if http_error%}
                     <article id="http_error">
                         {{ include('errors/'~http_error~'.twig')}}
-                        {% if http_error != 403 and http_error != 404%}
+                        {% if not(error_page) and http_error != 403 and http_error != 404%}
                             <p>Page will refresh in <span id="refresh_timer">60</span> seconds.</p>
                         {% endif %}
                     </article>

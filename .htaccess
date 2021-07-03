@@ -6,6 +6,14 @@ php_value error_log ./error.log
 Options -Indexes -MultiViews
 DirectoryIndex index.php
 
+ErrorDocument 400 /httperror/404/
+ErrorDocument 403 /httperror/403/
+ErrorDocument 404 /httperror/404/
+#Teapot is not supported by deafult
+#ErrorDocument 418 /httperror/418/
+ErrorDocument 500 /httperror/500/
+ErrorDocument 503 /httperror/503/
+
 #Prevent some of the headers being sent
 <IfModule mod_headers.c>
 	Header unset Expires

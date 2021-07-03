@@ -24,6 +24,7 @@ spl_autoload_register(function ($class) {
         #Check if file exists
         if (file_exists($file)) {
             #Require file
+            /** @noinspection PhpIncludeInspection */
             require $file;
         }
     }
@@ -112,6 +113,8 @@ if ($CLI) {
                         'sitemap', 'rss', 'atom' => (new HomeFeeds)->uriParse($uri),
                         #Tests
                         'tests' => (new HomeRouter)->tests(array_slice($uri, 1)),
+                        #Errors
+                        'error', 'errors', 'httperror', 'httperrors' => (new HomeRouter)->error(array_slice($uri, 1)),
                         #Page not found
                         default => [
                             'http_error' => 404,
