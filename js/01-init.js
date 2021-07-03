@@ -1,5 +1,5 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop*/
+/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer*/
 
 //Stuff to do on load
 
@@ -60,4 +60,10 @@ function attachListeners()
     } else {
         document.getElementById('shareButton').classList.add('hidden');
     }
+    //Counter for refresh timer
+    let refreshTimer = document.getElementById('refresh_timer');
+    if (refreshTimer) {
+        timer(refreshTimer, false);
+    }
 }
+

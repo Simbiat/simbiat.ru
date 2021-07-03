@@ -29,7 +29,6 @@ body {
     height: 100vh;
 }
 main {
-    max-width: 100ch;
     margin: auto;
     height: calc(100vh - var(--footer-height) - var(--header-height));
     overflow: auto;
@@ -146,4 +145,12 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
     align-items: center;
     height: 100%;
+}
+
+#http_error{
+    text-align: center;
+}
+#http_error img {
+    max-width: 20rem;
+    max-height: 20rem;
 }

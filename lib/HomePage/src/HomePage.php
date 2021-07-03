@@ -9,7 +9,6 @@ use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
-use Simbiat\HTTP20\Meta;
 use Simbiat\HTTP20\Sharing;
 use Simbiat\usercontrol\Bans;
 use Simbiat\usercontrol\Security;
@@ -29,6 +28,8 @@ class HomePage
     public static string $canonical = '';
     #Track if DB connection is up
     public static bool $dbup = false;
+    #Maintenance flag
+    public static bool $dbUpdate = false;
     #HTMLCache object
     public static ?HTMLCache $HTMLCache = NULL;
     #HTTP headers object
@@ -228,19 +229,23 @@ class HomePage
             try {
                 (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings']));
                 self::$dbup = true;
-                (new Controller)->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
+                #Cache controller
+                $dbController = (new Controller);
+                #Check for maintenance
+                self::$dbUpdate = boolval($dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
+                $dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
                 #In some cases these extra checks are not required
                 if ($extraChecks === true) {
                     #Check if maintenance
-                    if ((new Controller)->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'') == 1) {
-                        $this->twigProc(error: 5032);
+                    if (self::$dbUpdate) {
+                        $this->twigProc(error: 503);
                     }
                     #Check if banned
                     if ((new Bans)->bannedIP() === true) {
                         $this->twigProc(error: 403);
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 self::$dbup = false;
                 return false;
             }
@@ -309,10 +314,10 @@ class HomePage
         #Set error for Twig
         if (!empty($error)) {
             #Server error page
-            $twigVars['http_error'] = $error;
-            $twigVars['title'] = $twigVars['site_name'].': '.($error === 5032 ? 'Maintenance' : strval($error));
+            $twigVars['http_error'] = (self::$dbup === false ? 'database' : (self::$dbUpdate === true ? 'maintenance' : $error));
+            $twigVars['title'] = $twigVars['site_name'].': '.(self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : strval($error)));
             $twigVars['h1'] = $twigVars['title'];
-            self::$headers->clientReturn(($error === 5032 ? '503' : strval($error)), false);
+            self::$headers->clientReturn(strval($error), false);
         }
         #Merge with extra variables provided
         $twigVars = array_merge($twigVars, $extraVars);

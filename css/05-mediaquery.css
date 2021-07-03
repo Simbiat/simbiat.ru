@@ -10,6 +10,9 @@
     .back-to-top {
         margin: 0 2rem 0 2rem;
     }
+    main {
+        max-width: 100ch;
+    }
 }
 @media (min-width: 500px) {
     body {
@@ -23,6 +26,9 @@
     .back-to-top {
         margin: 0 3rem 0 3rem;
     }
+    main {
+        max-width: 100ch;
+    }
 }
 @media (min-width: 700px) {
     body {
@@ -34,5 +40,8 @@
     }
     .back-to-top {
         margin: 0 3rem 0 3rem;
+    }
+    main {
+        width: 100ch;
     }
 }

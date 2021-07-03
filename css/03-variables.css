@@ -1,7 +1,8 @@
 /*If changing colors, remember to adjust them in:
 manifest.webmanifest
 browserconfig.xml
-metatags.twig (MS Tile and theme-color)*/
+metatags.twig (MS Tile and theme-color)
+errors\teapot.twig*/
 :root {
     /*Meant for main body*/
     --color-body: hsl(256, 20%, 10%);
