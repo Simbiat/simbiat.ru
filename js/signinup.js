@@ -1,4 +1,5 @@
 /*globals ariaNation*/
+/*exported showPassToggle, loginRadioCheck*/
 
 //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
 const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
@@ -8,7 +9,6 @@ const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-
 //Show or hide password. Should be attached to .showpassword class to "mousedown" event
 function showPassToggle(event)
 {
-    'use strict';
     //Prevent focus stealing
     event.preventDefault();
     let eyeIcon = event.target;
@@ -25,7 +25,6 @@ function showPassToggle(event)
 //Password strength check. Purely as advise, nothing more.
 function passwordStrengthOnEvent(event)
 {
-    'use strict';
     //Attempt to get extra values to check against
 
     //Get element where we will be showing strength
@@ -45,25 +44,24 @@ function passwordStrengthOnEvent(event)
 }
 
 //Actual check
-'use strict';
 function passwordStrength(password, extras = [])
 {
     //Assigning points for the password
     let points = 0;
     //Check that it's long enough
-    if (/.{8,}/.test(password) === true) {
+    if (/.{8,}/u.test(password) === true) {
         points++;
     }
     //Add one more point, if it's twice as long as minimum requirement
-    if (/.{16,}/.test(password) === true) {
+    if (/.{16,}/u.test(password) === true) {
         points++;
     }
     //Add one more point, if it's 3 times as long as minimum requirement
-    if (/.{32,}/.test(password) === true) {
+    if (/.{32,}/u.test(password) === true) {
         points++;
     }
     //Add one more point, if it's 64 characters or more
-    if (/.{64,}/.test(password) === true) {
+    if (/.{64,}/u.test(password) === true) {
         points++;
     }
     //Check for lower case letters
@@ -109,7 +107,6 @@ function passwordStrength(password, extras = [])
 //Handle some adjustments when using radio-button switch
 function loginRadioCheck()
 {
-    'use strict';
     //Assign actual elements to variables
     let existUser = document.getElementById('radio_existuser');
     let newUser = document.getElementById('radio_newuser');
@@ -133,7 +130,7 @@ function loginRadioCheck()
         //Adjust name of the button
         button.value = 'Sign in';
         //Add or remove listeners for password strength
-        ['focus', 'change', 'input'].forEach(function(e) {
+        ['focus', 'change', 'input',].forEach(function(e) {
             password.removeEventListener(e, passwordStrengthOnEvent);
         });
         //Show or hide password field
@@ -151,7 +148,7 @@ function loginRadioCheck()
         login.setAttribute('pattern', '^'+emailRegex+'$');
         password.setAttribute('minlength', '8');
         button.value = 'Join';
-        ['focus', 'change', 'input'].forEach(function(e) {
+        ['focus', 'change', 'input',].forEach(function(e) {
             password.addEventListener(e, passwordStrengthOnEvent);
         });
         password.parentElement.classList.remove('hidden');
@@ -166,7 +163,7 @@ function loginRadioCheck()
         login.setAttribute('pattern', '^('+userRegex+')|('+emailRegex+')$');
         password.removeAttribute('minlength');
         button.value = 'Remind';
-        ['focus', 'change', 'input'].forEach(function(e) {
+        ['focus', 'change', 'input',].forEach(function(e) {
             password.removeEventListener(e, passwordStrengthOnEvent);
         });
         password.parentElement.classList.add('hidden');

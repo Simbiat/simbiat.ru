@@ -1,3 +1,11 @@
+/*320px
+480px
+600px
+768px
+900px
+1024px
+1200px*/
+
 @media (max-width: 499px) {
     body {
         grid-template-areas:
@@ -30,9 +38,10 @@
         max-width: 100ch;
     }
 }
-@media (min-width: 700px) {
+@media (min-width: 600px) {
     body {
         grid-template-columns: 1fr 3fr 1fr;
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
         grid-template-areas:
           'header header header'
           'navigation content sidebar'

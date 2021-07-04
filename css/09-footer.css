@@ -1,6 +1,9 @@
 #footerLinks, #footerContacts, #footerCopyright {
     font-size: 0.7rem;
 }
+#footerLinks {
+    margin-top: 0.2rem;
+}
 #footerContacts .socialIcon {
     filter: brightness(70%);
 }
@@ -27,7 +30,7 @@
     position: absolute;
     width: 10rem;
     height: 1.5rem;
-    top: -2rem;
+    top: -2.25rem;
     left: -3.5rem;
     background-color: var(--color-block);
     line-height: 1.5rem;

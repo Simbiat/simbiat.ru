@@ -1,0 +1,43 @@
+#header_logo {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    letter-spacing: 0.25rem;
+    font-weight: bold;
+    color: var(--border-light);
+    line-height: 2rem;
+    height: 2rem;
+}
+#header_logo img,
+#header_logo span {
+    height: 2rem;
+    line-height: 2rem;
+    display: inline-block;
+}
+#header_logo img {
+    margin-bottom: 0.4rem;
+}
+#header_logo span {
+    width: 11rem;
+}
+#header_logo span:first-of-type {
+    text-align: right;
+    margin-right: -0.7rem;
+}
+#header_logo span:last-of-type {
+    text-align: left;
+    margin-left: -0.5rem;
+}
+#h1div h1,
+#shareButton {
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1rem;
+    height: 1rem;
+}
+#shareButton {
+    height: 1rem;
+    width: 1rem;
+    margin-bottom: 0.2rem;
+    margin-left: 0.5rem;
+    cursor: pointer
+}

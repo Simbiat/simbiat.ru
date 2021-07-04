@@ -23,7 +23,7 @@
     {% else %}
         <body>
             <header>
-                Header
+                {{ include('common/header.twig')}}
             </header>
             <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
                 {{ include('common/navigation.twig')}}

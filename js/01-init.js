@@ -1,21 +1,21 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
 /*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer*/
+'use strict';
 
 //Stuff to do on load
 
 // Avoid `console` errors in browsers that lack a console.
 (function() {
-    'use strict';
     let method;
     const noop = function () {};
     const methods = [
         'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
         'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
         'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-        'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
+        'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn',
     ];
     let length = methods.length;
-    const console = (window.console = window.console || {});
+    const console = window.console = window.console || {};
 
     while (length--) {
         method = methods[length];
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', attachListeners);
 //Attaches event listeners
 function attachListeners()
 {
-    'use strict';
     //Back-to-top buttons
     document.getElementById('content').addEventListener('scroll', backToTop);
     //Show password functionality

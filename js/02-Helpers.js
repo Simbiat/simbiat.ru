@@ -1,6 +1,7 @@
+/*exported getMeta, timer*/
+
 //Get meta content
 function getMeta(metaName) {
-    'use strict';
     const metas = document.getElementsByTagName('meta');
     for (let i = 0; i < metas.length; i++) {
         if (metas[i].getAttribute('name') === metaName) {
@@ -11,7 +12,6 @@ function getMeta(metaName) {
 }
 
 //Timer to show remaining or elapsed time
-'use strict';
 function timer(target, increase = true) {
     setInterval(function() {
         if (parseInt(target.innerHTML) > 0) {

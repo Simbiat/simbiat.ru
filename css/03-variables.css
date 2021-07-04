@@ -28,11 +28,12 @@ errors\teapot.twig*/
     --border-light: hsl(192, 50%, 30%);
     --border-width: 0.1rem;
     --border-radius: 0.75rem;
-    --border-shadow: drop-shadow(1px 1px 2px var(--border-light)) drop-shadow(-1px -1px 2px var(--border-light));
+    --border-shadow: drop-shadow(0.1rem 0.1rem 0.2rem var(--border-light)) drop-shadow(-0.1rem -0.1rem 0.2rem var(--border-light));
 
     /*Sizes*/
     --footer-height: 4rem;
     --header-height: 4rem;
+    --grid-gap: 1rem;
 
     /*Fonts based on what StackExchange and GitHub use. Because less stuff to download in the client*/
     --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI Variable", "Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";

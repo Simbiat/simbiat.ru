@@ -1,5 +1,6 @@
+/*exported backToTop*/
+
 function backToTop(event) {
-    'use strict';
     //Check position of the scroll
     if (event.target.scrollTop === 0) {
         //Hide buttons
@@ -16,6 +17,5 @@ function backToTop(event) {
     }
 }
 function scrollToTop() {
-    'use strict';
     document.getElementById('content').scrollTop = 0;
 }
