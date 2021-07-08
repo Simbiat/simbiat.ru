@@ -300,8 +300,6 @@ class HomePage
         if (self::$dbup) {
             #Update default variables with values from database
             $twigVars = array_merge($twigVars, (new Controller)->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
-            #Get sidebar
-            $twigVars['sidebar']['fflinks'] = (new FFTracker)->GetLastEntities(5);
             #Show login form in sidebar, but only if we do not ahve login/registration page open
             if (preg_match('/^uc\/(registration|register|login|signin|signup|join)$/i', $_SERVER['REQUEST_URI']) !== 1) {
                 $twigVars['user_side_panel'] = true;
