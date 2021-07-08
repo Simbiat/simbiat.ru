@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb# profile: https://ogp.me/ns/profile# article: https://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#" itemscope itemtype="https://schema.org/Article">
     <head>
-        {{ include('common/metatags.twig')}}
+        {{ include('common/metatags.twig') }}
 
         <!-- Links -->
         {{ link_tags|raw }}
@@ -11,7 +11,7 @@
 
         <title>{{ title }}</title>
 
-        {{ include('common/scripts.twig')}}
+        {{ include('common/scripts.twig') }}
         {% if http_error%}
             {% if http_error != 403 and http_error != 404%}
                 <meta http-equiv="refresh" content="60"/>
@@ -19,19 +19,19 @@
         {% endif %}
     </head>
     {% if unsupported %}
-        {{ include('errors/teapot.twig')}}
+        {{ include('errors/teapot.twig') }}
     {% else %}
         <body>
             <header>
-                {{ include('common/header.twig')}}
+                {{ include('common/header.twig') }}
             </header>
             <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
-                {{ include('common/navigation.twig')}}
+                {{ include('common/navigation.twig') }}
             </nav>
             <main id="content">
                 {% if http_error%}
                     <article id="http_error">
-                        {{ include('errors/'~http_error~'.twig')}}
+                        {{ include('errors/'~http_error~'.twig') }}
                         {% if not(error_page) and http_error != 403 and http_error != 404%}
                             <p>Page will refresh in <span id="refresh_timer">60</span> seconds.</p>
                         {% endif %}
@@ -71,13 +71,15 @@
                 {% endif %}
             </main>
             <aside id="sidebar" aria-label="Sidebar">
-                <section id="loginForm">
-                    User Panel
-                    {{ include('common/noscript.twig')}}
-                </section>
+                {% if user_side_panel %}
+                    <section id="loginForm">
+                        {{ include('common/noscript.twig') }}
+                        {{ include('common/signinup.twig') }}
+                    </section>
+                {% endif %}
             </aside>
             <footer>
-                {{ include('common/footer.twig')}}
+                {{ include('common/footer.twig') }}
             </footer>
         </body>
     {%endif%}

@@ -1,0 +1,193 @@
+#loginForm {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+}
+
+/*Center form content*/
+#signinup {
+    text-align: center;
+}
+
+/*Limit width*/
+#signinup .float_label_div,
+#signinup_email,
+#signinup_password {
+    /*Width corresponds to characters.
+    10 looks the lowest number that makes placeholders more or less readable.
+    Longer than 65 characters is unnecessary, since we limit username at 64. 65 is used since with 64 there is a higher chance of truncation*/
+    width: clamp(calc(10ch + var(--showpassword-width)), calc(20ch + var(--showpassword-width)), calc(65ch + var(--showpassword-width)));
+}
+
+/*Mark fields as required, when they are*/
+[id^=signinup_][required]+label:after {
+    content: '*';
+    color: var(--color-failure);
+}
+
+[id^=signinup_] {
+    /*Force text cursor*/
+    cursor: text;
+}
+
+/*Visually hide placeholder since we are using label instead of it*/
+[id^=signinup_]::-webkit-input-placeholder {
+    opacity: 0;
+}
+
+/*Override global highlights since form is present on all pages by default*/
+/*Border for valid/invalid input*/
+[id^=signinup_]:invalid:not(:placeholder-shown):not([type=submit]):not([type=checkbox]):not([type=radio]),
+[id^=signinup_][required]:invalid:not([type=submit]):not([type=checkbox]):not([type=radio]) {
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    box-shadow: none;
+}
+
+/*Style invalid input. Ideally should be replace by :user-invalid but it's currently only supported by Firefox*/
+[id^=signinup_]:invalid:focus:not(:placeholder-shown),
+[id^=signinup_][required]:invalid:focus:placeholder-shown {
+    border-color: var(--color-failure);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-failure), -0.1rem -0.1rem 0.75rem var(--color-failure);
+}
+
+/*Style valid inputs on focus*/
+[id^=signinup_]:valid:focus:not(#signinup_submit) {
+    border-color: var(--color-success);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
+}
+
+.rememberme_div {
+    line-height: 1.5rem;
+    white-space: nowrap;
+}
+
+/*Style remember be checkbox*/
+#rememberme,
+#rememberme+label {
+    color: var(--color-text);
+    vertical-align: middle;
+    display: inline-block;
+}
+#rememberme+label {
+    margin-left: 0.4rem;
+}
+
+/*Style toggle*/
+#radio_signinup {
+    color: var(--color-text);
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0.4rem auto;
+    text-align: center;
+}
+
+.radio_and_label {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+#radio_signinup input[type^=radio] {
+    margin-left: 0.4rem;
+}
+
+/*Vertical align radio*/
+#radio_signinup span,
+#radio_signinup input[type^=radio],
+#radio_signinup input[type^=radio]+label {
+    vertical-align: middle;
+}
+
+/*Adjust submit button width based on text*/
+#signinup_submit {
+    width: auto;
+}
+
+/*Pad text inside input to allow placement for an eye icon*/
+#signinup_password {
+    padding-left: 5ch;
+}
+
+/*Style eye icon*/
+.showpassword {
+    color: var(--color-interactive);
+    position: absolute;
+    top: -0.3rem;
+    left: 1rem;
+    cursor: pointer;
+    display: none;
+    content: '\1F441';
+    width: var(--showpassword-width);
+    font-size: 1.75rem;
+    text-align: center;
+}
+
+/*Add eye icon to class for ease of use*/
+#signinup_password~.showpassword:before {
+    content: '\1F441';
+}
+
+/*Add diagonal line to the eye icon if it's text field*/
+#signinup_password[type^=text]~.showpassword:after {
+    content: '\2571';
+    position: absolute;
+    left: 0.25rem;
+    font-weight: bold;
+    color: var(--color-failure);
+}
+
+/*Show eye icon only when field is focused or there is text there*/
+#signinup_password:focus~.showpassword,
+#signinup_password:not(:placeholder-shown)~.showpassword {
+    display: block;
+}
+
+/*Style text of password requirement*/
+#password_req {
+    display: none;
+    text-align: left;
+}
+
+#signinup_password:focus~#password_req,
+#signinup_password:not(:placeholder-shown)~#password_req,
+#signinup_password:focus~.pass_str_div,
+#signinup_password:not(:placeholder-shown)~.pass_str_div {
+    display: block;
+}
+
+#signinup_password:valid~#password_req {
+    color: var(--color-success);
+}
+
+#signinup_password:invalid~#password_req {
+    color: var(--color-failure);
+}
+
+/*Style password strength*/
+.pass_str_div {
+    display: none;
+    color: var(--color-text);
+    text-align: left;
+}
+.password_weak,
+.password_strength {
+    color: var(--color-failure);
+    font-weight: 400;
+}
+.password_medium {
+    color: var(--color-warning);
+    font-weight: 500;
+}
+.password_strong {
+    color: var(--color-success);
+    font-weight: 700;
+}
+.password_very_strong {
+    font-weight: 900;
+    background: linear-gradient(to bottom, hsl(41, 33%, 72%) 22%, hsl(38, 38%, 28%) 24%, hsl(41, 33%, 72%) 26%, hsl(41, 33%, 72%) 27%, hsl(45, 100%, 85%) 40%, hsl(40, 59%, 50%) 78%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

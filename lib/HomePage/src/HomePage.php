@@ -13,7 +13,6 @@ use Simbiat\HTTP20\Sharing;
 use Simbiat\usercontrol\Bans;
 use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
-use Simbiat\usercontrol\Signinup;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -305,7 +304,9 @@ class HomePage
             $twigVars['sidebar']['fflinks'] = (new FFTracker)->GetLastEntities(5);
             #Show login form in sidebar, but only if we do not ahve login/registration page open
             if (preg_match('/^uc\/(registration|register|login|signin|signup|join)$/i', $_SERVER['REQUEST_URI']) !== 1) {
-                $twigVars['user_side_panel'] = (new Signinup)->form();
+                $twigVars['user_side_panel'] = true;
+            } else {
+                $twigVars['user_side_panel'] = false;
             }
         } else {
             #Enforce 503 error

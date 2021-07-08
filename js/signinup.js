@@ -122,6 +122,7 @@ function loginRadioCheck()
         //Autocomplete suggestion for password
         password.setAttribute('autocomplete', 'current-password');
         //Autocomplete suggestion for login
+        login.setAttribute('type', 'text');
         login.setAttribute('autocomplete', 'username');
         //Set pattern for login
         login.setAttribute('pattern', '^('+userRegex+')|('+emailRegex+')$');
@@ -159,6 +160,7 @@ function loginRadioCheck()
     if (forget.checked === true) {
         password.required = false;
         password.removeAttribute('autocomplete');
+        login.setAttribute('type', 'text');
         login.setAttribute('autocomplete', 'username');
         login.setAttribute('pattern', '^('+userRegex+')|('+emailRegex+')$');
         password.removeAttribute('minlength');

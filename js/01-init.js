@@ -47,7 +47,7 @@ function attachListeners()
         ariaNation(item);
     });
     //Register function for radio buttons toggling on login form
-    document.querySelectorAll('#radio_signinup input[name=signinuptype]').forEach(item => {
+    document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
         item.addEventListener('change', loginRadioCheck);
     });
     //Force loginRadioCheck for consistency

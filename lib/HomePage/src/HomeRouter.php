@@ -51,7 +51,6 @@ class HomeRouter
                 if (empty($_SESSION['username'])) {
                     $outputArray['subservice'] = 'registration';
                     $outputArray['h1'] = $outputArray['title'] = 'User sign in/join';
-                    $outputArray['login_form'] = (new Signinup)->form();
                 } else {
                     #Redirect to main page if user is already authenticated
                     $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : ''), false, true, false);

@@ -12,17 +12,132 @@ a {
     font-weight: bold;
     text-decoration: none;
     cursor: pointer;
+    border-style: outset;
+    border-radius: var(--border-radius);
+    border-color: transparent;
+    padding: 0.1rem;
+    border-width: 0.1rem;
 }
 a:link {
     text-decoration-line: underline;
 }
 a:visited {
-    outline-style: inset;
     text-decoration: none;
+    border-style: inset;
 }
 a:hover, a:focus, a:active {
-    outline-style: outset;
     text-decoration: none;
+    border-color: var(--color-interactive);
+}
+
+/*Inputs styling*/
+input,
+button {
+    background-color: var(--color-article);
+    color: var(--color-text);
+    /*Border colors are reversed to make the elements "popup"*/
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    outline: none;
+    box-sizing: border-box;
+    height: clamp(1.5rem, 2rem, 2.5rem);
+}
+/*Special styling for buttons*/
+button,
+input[type=submit] {
+    color: var(--color-interactive);
+    font-weight: bold;
+    margin: 0.5rem;
+    cursor: pointer;
+}
+
+/*Style border when input is selected or hovered over*/
+input:focus,
+input:hover,
+input:active,
+button:focus,
+button:hover,
+button:active {
+    border-color: var(--border-color-outset);
+    filter: var(--border-shadow);
+}
+button:active,
+input[type=submit]:active {
+    border-color: var(--border-color-inset);
+    filter: brightness(0.7);
+}
+
+/*Border for valid/invalid input*/
+input:valid:focus:not([type=submit]):not([type=checkbox]):not([type=radio]) {
+    border-color: var(--color-success);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
+}
+input:invalid:focus:not(:placeholder-shown):not([type=submit]):not([type=checkbox]):not([type=radio]),
+input[required]:invalid:not([type=submit]):not([type=checkbox]):not([type=radio]) {
+    border-color: var(--color-failure);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-failure), -0.1rem -0.1rem 0.75rem var(--color-failure);
+}
+/*Label styling*/
+/*Used to adjust placement of labels*/
+.float_label_div {
+    position: relative;
+    /*0.5rem margin on bottom and top, yet center the element in parent*/
+    margin: 0.5rem auto;
+    text-align: left;
+}
+/*Common label settings*/
+input[type=text]+label,
+input[type=url]+label,
+input[type=email]+label,
+input[type=password]+label,
+input[type=number]+label,
+input[type=search]+label {
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    position: absolute;
+    display: block;
+    color: var(--color-interactive);
+    cursor: text;
+    -webkit-user-select: none;
+    user-select: none;
+}
+/*Style label when placeholder is shown. Essentially place it instead of placeholder.*/
+input[type=text]:placeholder-shown+label,
+input[type=url]:placeholder-shown+label,
+input[type=email]:placeholder-shown+label,
+input[type=password]:placeholder-shown+label,
+input[type=number]:placeholder-shown+label,
+input[type=search]:placeholder-shown+label {
+    transform-origin: left bottom;
+    transform: translate(0,2.125rem) scale(1.25);
+    top: -1.75rem;
+    left: 0.5rem;
+}
+/*Move label to top on select and when placeholder is not shown*/
+input[type=text]:not(:placeholder-shown)+label,
+input[type=url]:not(:placeholder-shown)+label,
+input[type=email]:not(:placeholder-shown)+label,
+input[type=password]:not(:placeholder-shown)+label,
+input[type=number]:not(:placeholder-shown)+label,
+input[type=search]:not(:placeholder-shown)+label,
+input[type=text]:focus+label,
+input[type=url]:focus+label,
+input[type=email]:focus+label,
+input[type=password]:focus+label,
+input[type=number]:focus+label,
+input[type=search]:focus+label {
+    transform: translate(0, 0) scale(1);
+    top: -0.75rem;
+    filter: contrast(0.8);
+}
+/*Some input types make more sense with pointer cursor*/
+input[type=radio],
+input[type=checkbox],
+input[type=radio]+label,
+input[type=checkbox]+label {
+    cursor: pointer;
 }
 
 /*Textarea*/
@@ -32,14 +147,16 @@ textarea {
     border-width: var(--border-width);
     border-radius: var(--border-radius);
     border-style: solid;
-    border-bottom-color: var(--border-light);
-    border-right-color: var(--border-light);
-    border-top-color: var(--border-dark);
-    border-left-color: var(--border-dark);
+    border-color: var(--border-color-inset);
+}
+textarea:hover {
+    outline: none;
+    filter: var(--border-shadow);
 }
 textarea:focus, textarea:active {
     outline: none;
     border-color: var(--color-interactive);
+    filter: var(--border-shadow);
 }
 textarea::-webkit-resizer {
     border-bottom-right-radius: var(--border-radius);

@@ -8,10 +8,12 @@ function ariaNation(inputElement)
     //Adjust aria-invalid based on whether input is valid or not
     inputElement.setAttribute('aria-invalid', !inputElement.validity.valid);
     //Add aria-required with value based on whether "required" attribute is present
-    if (inputElement.required === true) {
-        inputElement.setAttribute('aria-required', true);
-    } else {
-        inputElement.setAttribute('aria-required', false);
+    if (inputElement.hasAttribute('type') === true && ['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'checkbox', 'radio', 'file',].includes(inputElement.getAttribute('type'))) {
+        if (inputElement.required === true) {
+            inputElement.setAttribute('aria-required', true);
+        } else {
+            inputElement.setAttribute('aria-required', false);
+        }
     }
     //Add checkbox role
     if (inputElement.hasAttribute('type') === true && inputElement.getAttribute('type') === 'checkbox') {

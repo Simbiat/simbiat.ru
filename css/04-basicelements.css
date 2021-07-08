@@ -40,10 +40,7 @@ article {
     border-width: var(--border-width);
     border-radius: var(--border-radius);
     border-style: solid;
-    border-bottom-color: var(--border-light);
-    border-right-color: var(--border-light);
-    border-top-color: var(--border-dark);
-    border-left-color: var(--border-dark);
+    border-color: var(--border-color-inset);
     padding: 0.5rem 0.5rem;
     filter: var(--border-shadow);
 }
@@ -87,10 +84,7 @@ main, #navigation, #sidebar {
 #navigation {
     border-style: solid;
     border-radius: var(--border-radius);
-    border-bottom-color: var(--border-light);
-    border-right-color: var(--border-light);
-    border-top-color: var(--border-dark);
-    border-left-color: var(--border-dark);
+    border-color: var(--border-color-inset);
     left: 0;
 }
 #sidebar {
