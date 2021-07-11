@@ -58,3 +58,8 @@
     font-weight: 900;
     cursor: pointer;
 }
+#footerContacts a:hover,
+#footerContacts a:focus,
+#footerContacts a:active {
+    border-color: transparent;
+}

@@ -17,6 +17,7 @@ a {
     border-color: transparent;
     padding: 0.1rem;
     border-width: 0.1rem;
+    outline: none;
 }
 a:link {
     text-decoration-line: underline;
@@ -28,6 +29,9 @@ a:visited {
 a:hover, a:focus, a:active {
     text-decoration: none;
     border-color: var(--color-interactive);
+}
+a:active {
+    filter: brightness(0.7);
 }
 
 /*Inputs styling*/

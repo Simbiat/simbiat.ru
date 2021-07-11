@@ -48,6 +48,9 @@
     border-style: solid;
     border-color: var(--color-interactive);
     background-repeat: no-repeat;
+    border-radius: var(--border-radius);
+    width: 1rem;
+    height: 1rem;
 }
 /* Up */
 ::-webkit-scrollbar-button:vertical:decrement {

@@ -1,42 +1,71 @@
 <ul id="navList">
-    <li class="navItem">
-        <div class="dropdown" aria-haspopup="true">
-            <span>Blog</span>
-            <div class="dropdownContent" aria-label="submenu">
-                <p>Hello World!</p>
-            </div>
+    <li class="navElement">
+        <div class="navLine">
+            <a class="navItem" href="/" target="_self" itemprop="url"><img class="navIcon" alt="home page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
         </div>
     </li>
-    <li class="navItem">
-        <div class="dropdown" aria-haspopup="true">
-            <span>Tracker</span>
-            <div class="dropdownContent" aria-label="submenu">
-                <p>Hello World!</p>
+    <li class="navElement">
+        {% if breadcrumbs %}
+            <div class="navLine navBread">
+                {{ breadcrumbs|raw }}
             </div>
+        {% endif %}
+    </li>
+    <li class="navElement">
+        <div class="navLine">
+            <details class="navCat">
+                <summary class="rightSummary"><img class="navIcon" alt="blog" src="/img/navigation/blog.svg">Blog</summary>
+                <ul>
+                    <li><a class="navItem" href="/blog/" target="_self" itemprop="url"><span itemprop="name">All entries</span></a></li>
+                    <li><a class="navItem" href="/blog/review/" target="_self" itemprop="url"><span itemprop="name">Reviews</span></a></li>
+                    <li><a class="navItem" href="/blog/prose/" target="_self" itemprop="url"><span itemprop="name">Prose</span></a></li>
+                    <li><a class="navItem" href="/blog/poem/" target="_self" itemprop="url"><span itemprop="name">Poems</span></a></li>
+                </ul>
+            </details>
         </div>
     </li>
-    <li class="navItem">
-        <div class="dropdown" aria-haspopup="true">
-            <span>Art</span>
-            <div class="dropdownContent" aria-label="submenu">
-                <p>Hello World!</p>
-            </div>
+    <li class="navElement">
+        <div class="navLine">
+            <details class="navCat">
+                <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg">FFXIV Tracker</summary>
+                <ul>
+                    <li><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
+                    <li><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
+                    <li><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
+                    <li><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
+                    <li><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
+                    <li><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
+                </ul>
+            </details>
         </div>
     </li>
-    <li class="navItem">
-        <div class="dropdown" aria-haspopup="true">
-            <span>Tools</span>
-            <div class="dropdownContent" aria-label="submenu">
-                <p>Hello World!</p>
-            </div>
+    <li class="navElement">
+        <div class="navLine">
+            <details class="navCat">
+                <summary class="rightSummary"><img class="navIcon" alt="BIC Tracker" src="/img/navigation/bictracker.svg">BIC Tracker</summary>
+                <ul>
+                    <li><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Keying</span></a></li>
+                </ul>
+            </details>
         </div>
     </li>
-    <li class="navItem">
-        <div class="dropdown" aria-haspopup="true">
-            <span>About</span>
-            <div class="dropdownContent" aria-label="submenu">
-                <p>Hello World!</p>
-            </div>
+    <li class="navElement">
+        <div class="navLine">
+            <details class="navCat">
+                <summary class="rightSummary"><img class="navIcon" alt="About" src="/img/navigation/about.svg">About</summary>
+                <ul>
+                    <li><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
+                    <li><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>
+                    <li><a class="navItem" href="/about/tech/" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
+                    <li><a class="navItem" href="/about/resume/" target="_self" itemprop="url"><span itemprop="name">Resume</span></a></li>
+                    <li><a class="navItem" href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
+                    <li><a class="navItem" href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
+                    <li><a class="navItem" href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
+                    <li><a class="navItem" href="/blog/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
+                </ul>
+            </details>
         </div>
     </li>
 </ul>

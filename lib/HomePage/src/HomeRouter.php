@@ -62,8 +62,8 @@ class HomeRouter
         }
         #Add breadcrumbs
         $breadArray = $html->breadcrumbs(items: $breadArray, links: true, headers: true);
-        $outputArray['breadcrumbs']['usercontrol'] = $breadArray['breadcrumbs'];
-        $outputArray['breadcrumbs']['links'] = $breadArray['links'];
+        $outputArray['breadcrumbs'] = $breadArray['breadcrumbs'];
+        $outputArray['links_bread'] = $breadArray['links'];
         return $outputArray;
     }
 
@@ -303,8 +303,8 @@ class HomeRouter
         }
         #Add breadcrumbs
         $breadArray = $html->breadcrumbs(items: $breadArray, links: true, headers: true);
-        $outputArray['breadcrumbs']['fftracker'] = $breadArray['breadcrumbs'];
-        $outputArray['breadcrumbs']['links'] = $breadArray['links'];
+        $outputArray['breadcrumbs'] = $breadArray['breadcrumbs'];
+        $outputArray['links_bread'] = $breadArray['links'];
         return $outputArray;
     }
 
@@ -403,8 +403,8 @@ class HomeRouter
         }
         #Add breadcrumbs
         $breadArray = (new HTML)->breadcrumbs(items: $breadArray, links: true, headers: true);
-        $outputArray['breadcrumbs']['bictracker'] = $breadArray['breadcrumbs'];
-        $outputArray['breadcrumbs']['links'] = $breadArray['links'];
+        $outputArray['breadcrumbs'] = $breadArray['breadcrumbs'];
+        $outputArray['links_bread'] = $breadArray['links'];
         return $outputArray;
     }
 

@@ -82,9 +82,6 @@ main, #navigation, #sidebar {
 }
 
 #navigation {
-    border-style: solid;
-    border-radius: var(--border-radius);
-    border-color: var(--border-color-inset);
     left: 0;
 }
 #sidebar {
@@ -133,16 +130,6 @@ article, h1, h2, h3, h4, h5, h6 {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
-}
-
-#navList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
 }
 
 #http_error{

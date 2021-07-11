@@ -1,0 +1,136 @@
+#navigation {
+    border-style: solid;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+}
+
+#navList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    position: relative;
+    overflow-y: auto;
+}
+#navList .navElement:first-child a {
+    width: calc(100% - 0.2rem);
+    border: none;
+}
+#navList .navElement:nth-child(2) {
+    height: auto;
+}
+#navList .navElement:first-child {
+    height: 2.5rem;
+}
+#navList .navElement:first-child:hover,
+#navList .navElement:first-child:active,
+#navList .navElement:first-child:focus {
+    background-color: var(--color-article);
+}
+.navIcon {
+    width: 2rem;
+    height: 2rem;
+    margin: 0.1rem 0.4rem 0.4em 0.1rem;
+}
+.navElement {
+    width: calc(100% - 0.2rem);
+    border-color: transparent;
+    border-radius: var(--border-radius);
+    border-style: outset;
+    border-width: 0.1rem;
+}
+.navElement details {
+    display: inline-block;
+    width: calc(100% - 0.2rem);
+}
+.navLine {
+    cursor: pointer;
+}
+.navItem {
+    height: 2rem;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+}
+.navCat {
+    padding: .1rem;
+    border-radius: var(--border-radius);
+    text-decoration: underline var(--color-interactive);
+}
+.navCat:focus-within, .navCat:hover, .navCat:active, .navCat[open] {
+    background-color: var(--color-article);
+    text-decoration: none;
+}
+.navCat summary {
+    width: calc(100% - 0.2rem);
+}
+.navCat summary:hover, .navCat summary:active, .navCat summary:focus, .navCat summary:focus-within {
+    text-decoration: none;
+    outline: none;
+}
+.navCat ul {
+    list-style: none;
+    padding-left: 0;
+}
+.navCat ul li {
+    display: block;
+}
+.navCat ul li .navItem {
+    padding-left: 2.5rem;
+    box-sizing: border-box;
+}
+.navElement:hover, .navElement:active, .navElement:focus, .navElement:focus-within {
+    border-color: var(--color-interactive);
+    text-decoration: none;
+    outline: none;
+}
+.navLine:hover .navIcon,
+.navLine:active .navIcon,
+.navLine details[open] .navIcon {
+    filter: brightness(200%) contrast(70%);
+}
+.navBread {
+    margin-left: 2.75rem;
+    margin-top: -0.75rem;
+}
+.navBread:hover,
+.navBread:focus-within,
+.navBread:active,
+#navList .navElement:nth-child(2):hover,
+#navList .navElement:nth-child(2):focus-within,
+#navList .navElement:nth-child(2):active {
+    border-color: transparent;
+}
+nav[aria-label='breadcrumb 1'],
+#ol_breadcrumbs_1 li {
+    display: inline-block;
+}
+nav[aria-label='breadcrumb 1'] {
+    width: 100%;
+    font-size: 0.5rem;
+}
+#ol_breadcrumbs_1 {
+    padding-left: 0;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+#ol_breadcrumbs_1 li:first-child {
+    display: none;
+}
+#ol_breadcrumbs_1 li:last-child a {
+    font-weight: normal;
+    text-decoration: none;
+}
+#ol_breadcrumbs_1 li::before {
+    content: '❮';
+    font-weight: bold;
+    display: inline-block
+}
+#ol_breadcrumbs_1 li:nth-child(2)::before {
+    transform: rotate(90deg);
+    display: inline-block
+}
