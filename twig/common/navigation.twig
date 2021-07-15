@@ -13,7 +13,7 @@
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat">
+            <details class="navCat" {% if service_name == 'blog' or service_name == 'forum' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="blog" src="/img/navigation/blog.svg">Blog</summary>
                 <ul>
                     <li><a class="navItem" href="/blog/" target="_self" itemprop="url"><span itemprop="name">All entries</span></a></li>
@@ -26,44 +26,44 @@
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat">
+            <details class="navCat" {% if service_name == 'fftracker' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg">FFXIV Tracker</summary>
                 <ul>
-                    <li><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
-                    <li><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
-                    <li><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
-                    <li><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
-                    <li><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
-                    <li><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
-                    <li><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
+                    <li{% if subservice == 'search' %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li{% if subservice == 'statistics' %} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
+                    <li{% if subservice == 'character' or subservice == 'characters' %} class="current"{% endif %}><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
+                    <li{% if subservice == 'freecompany' or subservice == 'freecompanies' %} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
+                    <li{% if subservice == 'pvpteam' or subservice == 'pvpteam' %} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
+                    <li{% if subservice == 'linkshell' or subservice == 'linkshell' %} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
+                    <li{% if subservice == 'achievement' or subservice == 'achievements' %} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
                 </ul>
             </details>
         </div>
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat">
+            <details class="navCat" {% if service_name == 'bictracker' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="BIC Tracker" src="/img/navigation/bictracker.svg">BIC Tracker</summary>
                 <ul>
-                    <li><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
-                    <li><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Keying</span></a></li>
+                    <li{% if subservice == 'search' %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li{% if subservice == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Keying</span></a></li>
                 </ul>
             </details>
         </div>
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat">
+            <details class="navCat" {% if service_name == 'about' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="About" src="/img/navigation/about.svg">About</summary>
                 <ul>
-                    <li><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
-                    <li><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>
-                    <li><a class="navItem" href="/about/tech/" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
-                    <li><a class="navItem" href="/about/resume/" target="_self" itemprop="url"><span itemprop="name">Resume</span></a></li>
-                    <li><a class="navItem" href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
-                    <li><a class="navItem" href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
-                    <li><a class="navItem" href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
-                    <li><a class="navItem" href="/blog/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
+                    <li{% if subservice == 'me' %} class="current"{% endif %}><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
+                    <li{% if subservice == 'website' %} class="current"{% endif %}><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>
+                    <li{% if subservice == 'tech' %} class="current"{% endif %}><a class="navItem" href="/about/tech/" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
+                    <li{% if subservice == 'resume' %} class="current"{% endif %}><a class="navItem" href="/about/resume/" target="_self" itemprop="url"><span itemprop="name">Resume</span></a></li>
+                    <li{% if subservice == 'contacts' %} class="current"{% endif %}><a class="navItem" href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
+                    <li{% if subservice == 'tos' %} class="current"{% endif %}><a class="navItem" href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
+                    <li{% if subservice == 'privacy' %} class="current"{% endif %}><a class="navItem" href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
+                    <li{% if subservice == 'changelog' %} class="current"{% endif %}><a class="navItem" href="/blog/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
                 </ul>
             </details>
         </div>

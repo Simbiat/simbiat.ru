@@ -1,0 +1,21 @@
+{% if service_name == 'landing'%}
+    {{ include('landing.twig')}}
+{% elseif service_name == 'forum'%}
+    {{pagination_top|raw}}
+    {% for article in articles %}
+        {{ include('articles.twig', article) }}
+    {% endfor %}
+    {{pagination_bottom|raw}}
+{% elseif service_name == 'thread'%}
+    {{ include('articles.twig', article) }}
+{% elseif service_name == 'fftracker'%}
+    {{ include('ffxiv__'~subservice~'.twig')}}
+{% elseif service_name == 'bictracker'%}
+    {{ include('bic__'~subservice~'.twig')}}
+{% elseif service_name == 'usercontrol'%}
+    {{ include('uc__'~subservice~'.twig')}}
+{% elseif service_name == 'silversteam'%}
+    {{ include('ssc.twig')}}
+{% else %}
+    {{ content|raw }}
+{% endif %}

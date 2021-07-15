@@ -1,4 +1,4 @@
-/*exported getMeta, timer*/
+/*exported getMeta, timer, openDetails*/
 
 //Get meta content
 function getMeta(metaName) {
@@ -22,4 +22,17 @@ function timer(target, increase = true) {
             }
         }
     }, 1000);
+}
+
+//Close details tags that are not the target
+function openDetails(event) {
+    //Get all details tags
+    const details = document.querySelectorAll('details');
+    //Iterate
+    details.forEach((detail) => {
+        //If it's not target and does not have "persistent" class - close it
+        if (detail !== event.target && detail.classList.contains('persistent') === false) {
+            detail.removeAttribute('open');
+        }
+    });
 }

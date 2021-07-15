@@ -61,9 +61,7 @@ class HomeRouter
                 break;
         }
         #Add breadcrumbs
-        $breadArray = $html->breadcrumbs(items: $breadArray, links: true, headers: true);
-        $outputArray['breadcrumbs'] = $breadArray['breadcrumbs'];
-        $outputArray['links_bread'] = $breadArray['links'];
+        $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
         return $outputArray;
     }
 
@@ -207,7 +205,7 @@ class HomeRouter
                 } else {
                     #Try to get out earlier based on date of last update of the list. Unlikely, that will help, but still.
                     $headers->lastModified($outputArray['searchresult']['statistics']['updated'], true);
-                    $outputArray['subservice'] = 'list';
+                    $outputArray['subservice'] = $uri[0];
                     #Adjust list type to human-readable value
                     $tempName = match($uri[0]) {
                         'freecompanies' => 'Free Companies',
@@ -221,9 +219,7 @@ class HomeRouter
                     $outputArray['title'] .= ': '.$tempName.', page '.$uri[1];
                     $outputArray['ogdesc'] = 'List of '.$tempName.' on '.$outputArray['ogdesc'];
                     #Prepare pagination
-                    $pagination = $html->pagination($uri[1], $lastPage, links: true, headers: true);
-                    $outputArray['pagination_top'] = $pagination['pagination'];
-                    $outputArray['pagination']['links'] = $pagination['links'];
+                    $outputArray['pagination_top'] = $html->pagination($uri[1], $lastPage);
                     $outputArray['pagination_bottom'] = $html->pagination($uri[1], $lastPage);
                 }
                 break;
@@ -302,9 +298,7 @@ class HomeRouter
             $outputArray['cache_age'] = 86400;
         }
         #Add breadcrumbs
-        $breadArray = $html->breadcrumbs(items: $breadArray, links: true, headers: true);
-        $outputArray['breadcrumbs'] = $breadArray['breadcrumbs'];
-        $outputArray['links_bread'] = $breadArray['links'];
+        $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
         return $outputArray;
     }
 
@@ -402,9 +396,7 @@ class HomeRouter
                 break;
         }
         #Add breadcrumbs
-        $breadArray = (new HTML)->breadcrumbs(items: $breadArray, links: true, headers: true);
-        $outputArray['breadcrumbs'] = $breadArray['breadcrumbs'];
-        $outputArray['links_bread'] = $breadArray['links'];
+        $outputArray['breadcrumbs'] = (new HTML)->breadcrumbs($breadArray);
         return $outputArray;
     }
 
