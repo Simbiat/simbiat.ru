@@ -1,5 +1,5 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer, openDetails*/
+/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer*/
 'use strict';
 
 //Stuff to do on load
@@ -60,8 +60,23 @@ function attachListeners()
         document.getElementById('shareButton').classList.add('hidden');
     }
     //Close all details except currently selected one
-    document.querySelectorAll('details').forEach(item => {
-        item.addEventListener('click', openDetails);
+    document.querySelectorAll('details').forEach((details,_,list)=>{
+        details.ontoggle =_=> { // jshint ignore:line
+            if(details.open) {
+                list.forEach(tag =>{
+                    if(tag !== details && tag.classList.contains('persistent') === false) {
+                        tag.open=false;
+                    }
+                });
+            }
+        };
+    });
+    window.addEventListener('click', function(event){
+        document.querySelectorAll('details').forEach((details)=>{
+            if(details.classList.contains('popup') === true && details.contains(event.target) === false) {
+                details.open=false;
+            }
+        });
     });
     //Counter for refresh timer
     let refreshTimer = document.getElementById('refresh_timer');

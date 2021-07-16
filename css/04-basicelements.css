@@ -28,6 +28,7 @@ body {
     width: 100%;
     height: 100vh;
     overflow: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 main {
     margin: 0 auto 0 auto;
@@ -103,26 +104,152 @@ mark {
     background: var(--color-text);
 }
 
-/*Dummy elements to style in future, when used*/
-progress, meter {
-    /*Consider different colors depending on percentage*/
-}
 output {
-
+    font-family: var(--font-mono);
+    text-decoration: underline dotted 0.1rem var(--color-success);
 }
+
 /*Styling for code and keyboard buttons*/
+/*Keyboard is based on https://github.com/auth0/kbd/blob/gh-pages/kbd.css*/
 kbd {
-
+    font-family: var(--font-mono);
+    display: inline-block;
+    border-radius: var(--border-radius);
+    padding: 0 0.25rem;
+    box-shadow: 0.1rem 0.1rem 0.1rem #777;
+    margin: 0.1rem;
+    font-size: 1rem;
+    vertical-align: text-bottom;
+    background: var(--color-disabled);
+    color: var(--color-text);
+    cursor: default;
+    font-variant: small-caps;
+    font-weight: bold;
+    letter-spacing: 0.1rem;
+    -webkit-user-select: none;
+    user-select: none;
 }
-code {
+kbd:active, kbd:active * {
+    color: black;
+    box-shadow: 0.1rem 0.1rem 0 #444 inset;
+}
 
+code, samp {
+    font-family: var(--font-mono);
+    white-space: pre;
+    display: block;
+    font-size: 1rem;
+    line-height: 1.25;
+    page-break-inside: avoid;
+    word-wrap: break-word;
+    max-width: calc(100% - 1rem);
+    box-sizing: border-box;
+    overflow: auto;
+    border: calc(var(--border-width) * 2) dashed;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+    border-left: calc(var(--border-width) * 3) solid var(--color-warning);
+    background: var(--color-block);
+    margin: 0.5rem;
+    padding: 0.2rem;
+}
+samp,
+samp.success {
+    border-left: calc(var(--border-width) * 3) solid var(--color-success);
+}
+samp.failure {
+    border-left: calc(var(--border-width) * 3) solid var(--color-failure);
+}
+
+cite {
+    font-style: italic;
+}
+
+blockquote {
+    display: block;
+    font-size: 1rem;
+    width: 100%;
+    word-wrap: break-word;
+    box-sizing: border-box;
+    border: calc(var(--border-width) * 1.5) dashed;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+    border-left: calc(var(--border-width) * 2) solid var(--color-disabled);
+    background: var(--color-block);
+    margin: 0.5rem;
+    padding: 1rem;
+    position: relative;
+}
+blockquote::before {
+    content: '\2760';
+    padding-right: 0.1rem;
+    color: var(--color-disabled);
+    position: absolute;
+    top: -1.75rem;
+    left: 0.25rem;
+    font-size: 2rem;
+    font-style: italic;
+}
+blockquote::after {
+    content: '\275D';
+    padding-left: 0.1rem;
+    color: var(--color-disabled);
+    position: absolute;
+    bottom: -1.25rem;
+    right: 0.5rem;
+    font-size: 2rem;
+    font-style: italic;
+}
+figure.quote {
+    max-width: calc(100% - 1rem);
+    margin: 0;
+    position: relative;
+}
+figure.quote > figcaption {
+    color: var(--color-disabled);
+    font-style: italic;
+    font-size: 0.75rem;
+    position: absolute;
+    left: 2.25rem;
+    z-index: 1;
+}
+figure.quote > figcaption::after {
+    content: ':';
+}
+q {
+    font-style: italic;
+    border-color: var(--color-disabled);
+    border-width: calc(var(--border-width)*2);
+    border-style: dotted;
+    border-top: none;
+    border-bottom: none;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+}
+q::before {
+    content: '\2760';
+    padding-right: 0.1rem;
+    color: var(--color-disabled);
+}
+q::after {
+    content: '\275D';
+    padding-left: 0.1rem;
+    color: var(--color-disabled);
 }
 
 /*Styling of pop-ups*/
 dialog {
-
+    background-color: var(--color-body);
+    border: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    border-style: solid;
+    width: 50vw;
+    height: 50vh;
 }
-
+dialog::backdrop {
+    background-color: hsla(256, 20%, 10%, 0.75);
+}
 /*Helps with auto-scroll positioning (when using anchors)*/
 article, h1, h2, h3, h4, h5, h6 {
     scroll-padding: 1rem 0 0 0;
