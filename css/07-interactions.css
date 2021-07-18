@@ -1,0 +1,539 @@
+*:focus {
+    outline-color: var(--color-interactive);
+}
+::selection {
+    color: var(--color-article);
+    background: var(--color-text);
+}
+
+/*Links styling*/
+a {
+    color: var(--color-interactive);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    border-style: outset;
+    border-radius: var(--border-radius);
+    border-color: transparent;
+    padding: 0.1rem;
+    border-width: 0.1rem;
+    outline: none;
+}
+a:link {
+    text-decoration-line: underline;
+}
+a:visited {
+    text-decoration: none;
+    border-style: inset;
+}
+a:hover, a:focus, a:active {
+    text-decoration: none;
+    border-color: var(--color-interactive);
+}
+a:active {
+    filter: brightness(0.7);
+}
+
+/*Inputs styling*/
+input,
+button,
+::file-selector-button {
+    background-color: var(--color-article);
+    color: var(--color-text);
+    /*Border colors are reversed to make the elements "popup"*/
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    outline: none;
+    box-sizing: border-box;
+    height: clamp(1.5rem, 2rem, 2.5rem);
+}
+/*Special styling for buttons*/
+button,
+input[type=submit],
+input[type=button],
+input[type=reset],
+::file-selector-button {
+    color: var(--color-interactive);
+    font-weight: bold;
+    margin: 0.5rem;
+    cursor: pointer;
+}
+
+/*Style border when input is selected or hovered over*/
+input:focus,
+input:hover,
+input:active,
+button:focus,
+button:hover,
+button:active,
+::file-selector-button:focus,
+::file-selector-button:hover,
+::file-selector-button:active {
+    border-color: var(--border-color-outset);
+    filter: var(--border-shadow);
+}
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active,
+input[type=image]:active,
+::file-selector-button:active {
+    border-color: var(--border-color-inset);
+    filter: brightness(0.7);
+}
+::file-selector-button {
+    margin: 0.1rem;
+}
+input[type=file] {
+    /*Need to set a height, that will not cut the button*/
+    height: 2.4rem;
+    cursor: pointer;
+}
+
+/*Border for valid/invalid input*/
+input:valid:focus:not([type=submit]):not([type=button]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]) {
+    border-color: var(--color-success);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
+}
+input:invalid:focus:not(:placeholder-shown):not([type=submit]):not([type=button]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]),
+input[required]:invalid:not([type=submit]):not([type=button]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]) {
+    border-color: var(--color-failure);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-failure), -0.1rem -0.1rem 0.75rem var(--color-failure);
+}
+/*Label styling*/
+/*Used to adjust placement of labels*/
+.float_label_div {
+    position: relative;
+    /*0.5rem margin on bottom and top, yet center the element in parent*/
+    margin: 0.5rem auto;
+    text-align: left;
+    display: inline-block;
+}
+/*Common label settings*/
+input[type=text]+label,
+input[type=url]+label,
+input[type=email]+label,
+input[type=password]+label,
+input[type=number]+label,
+input[type=search]+label,
+input[type=tel]+label,
+input[type=date]+label,
+input[type=datetime-local]+label,
+input[type=time]+label,
+input[type=month]+label,
+input[type=week]+label,
+input[type=color]+label,
+input[type=file]+label,
+input[type=range]+label,
+textarea+label,
+select+label {
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    position: absolute;
+    display: block;
+    color: var(--color-interactive);
+    cursor: text;
+    -webkit-user-select: none;
+    user-select: none;
+}
+/*Visually hide placeholder since we are using label instead of it*/
+input[type=text]::-webkit-input-placeholder,
+input[type=url]::-webkit-input-placeholder,
+input[type=email]::-webkit-input-placeholder,
+input[type=password]::-webkit-input-placeholder,
+input[type=number]::-webkit-input-placeholder,
+input[type=search]::-webkit-input-placeholder,
+input[type=tel]::-webkit-input-placeholder,
+input[type=date]::-webkit-input-placeholder,
+input[type=datetime-local]::-webkit-input-placeholder,
+input[type=time]::-webkit-input-placeholder,
+input[type=month]::-webkit-input-placeholder,
+input[type=week]::-webkit-input-placeholder,
+input[type=color]::-webkit-input-placeholder,
+input[type=file]::-webkit-input-placeholder,
+input[type=range]::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+select::-webkit-input-placeholder{
+    opacity: 0;
+}
+/*Style label when placeholder is shown. Essentially place it instead of placeholder.*/
+input[type=text]:placeholder-shown+label,
+input[type=url]:placeholder-shown+label,
+input[type=email]:placeholder-shown+label,
+input[type=password]:placeholder-shown+label,
+input[type=number]:placeholder-shown+label,
+input[type=search]:placeholder-shown+label,
+input[type=tel]:placeholder-shown+label,
+input[type=date]:placeholder-shown+label,
+input[type=datetime-local]:placeholder-shown+label,
+input[type=time]:placeholder-shown+label,
+input[type=month]:placeholder-shown+label,
+input[type=week]:placeholder-shown+label,
+input[type=color]:placeholder-shown+label,
+input[type=file]:placeholder-shown+label,
+input[type=range]:placeholder-shown+label,
+textarea:placeholder-shown+label,
+select:placeholder-shown+label {
+    transform-origin: left bottom;
+    transform: translate(0,2.125rem) scale(1.25);
+    top: -1.75rem;
+    left: 0.5rem;
+}
+select:placeholder-shown+label {
+    left: 1rem;
+}
+/*Move label to top on select and when placeholder is not shown*/
+input[type=text]:not(:placeholder-shown)+label,
+input[type=url]:not(:placeholder-shown)+label,
+input[type=email]:not(:placeholder-shown)+label,
+input[type=password]:not(:placeholder-shown)+label,
+input[type=number]:not(:placeholder-shown)+label,
+input[type=search]:not(:placeholder-shown)+label,
+input[type=tel]:not(:placeholder-shown)+label,
+input[type=date]:not(:placeholder-shown)+label,
+input[type=datetime-local]:not(:placeholder-shown)+label,
+input[type=time]:not(:placeholder-shown)+label,
+input[type=month]:not(:placeholder-shown)+label,
+input[type=week]:not(:placeholder-shown)+label,
+input[type=color]:not(:placeholder-shown)+label,
+input[type=file]:not(:placeholder-shown)+label,
+input[type=range]:not(:placeholder-shown)+label,
+textarea:not(:placeholder-shown)+label,
+select:not(:placeholder-shown)+label,
+input[type=text]:focus+label,
+input[type=url]:focus+label,
+input[type=email]:focus+label,
+input[type=password]:focus+label,
+input[type=number]:focus+label,
+input[type=search]:focus+label,
+input[type=tel]:focus+label,
+input[type=date]:focus+label,
+input[type=datetime-local]:focus+label,
+input[type=time]:focus+label,
+input[type=month]:focus+label,
+input[type=week]:focus+label,
+input[type=color]:focus+label,
+input[type=file]:focus+label,
+input[type=range]:focus+label,
+textarea:focus+label,
+select:focus+label {
+    transform: translate(0, 0) scale(1);
+    top: -0.75rem;
+    left: 0.5rem;
+    filter: var(--border-shadow);
+    cursor: default;
+}
+select:not(:placeholder-shown)+label,
+select:focus+label {
+    left: 1rem;
+}
+/*Some input types make more sense with pointer cursor*/
+input[type=radio],
+input[type=checkbox],
+input[type=radio]+label,
+input[type=checkbox]+label {
+    cursor: pointer;
+}
+/*Hide incremental buttons for number field. You can't style them (only replace), thus better remove completely by default for consistent look*/
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/*Mark fields as required, when they are*/
+input[required]+label:after {
+    content: '*';
+    color: var(--color-failure);
+}
+/*Color for date picker icon*/
+::-webkit-calendar-picker-indicator {
+    filter: invert(75%) sepia(66%) saturate(203%) hue-rotate(161deg) brightness(95%) contrast(93%);
+    cursor: pointer;
+}
+input[type=image] {
+    padding: 0.2rem;
+}
+
+/*Textarea*/
+textarea {
+    background-color: var(--color-article);
+    color: var(--color-text);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+}
+textarea:hover {
+    outline: none;
+    filter: var(--border-shadow);
+}
+textarea:focus, textarea:active {
+    outline: none;
+    border-color: var(--border-color-inset);
+    filter: var(--border-shadow);
+}
+textarea::-webkit-resizer {
+    border-bottom-right-radius: var(--border-radius);
+    border-top-left-radius: var(--border-radius);
+}
+
+/*Add a more obvious styling for summary tag by making it more like a link*/
+summary {
+    color: var(--color-interactive);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*Show details marker to right*/
+details>.rightSummary {
+    list-style: none;
+}
+.rightSummary::-webkit-details-marker {
+    display: none
+}
+
+.rightSummary::after {
+    content: ' ▷';
+}
+details[open] .rightSummary:after {
+    content: ' ▼';
+}
+
+/*Color picker*/
+input[type=color] {
+    position: relative;
+    min-width: 15ch;
+    cursor: pointer;
+    padding: 0;
+}
+input[type=color]::-webkit-color-swatch-wrapper {
+    padding: 0;
+    width: 50%;
+}
+input[type=color]::-webkit-color-swatch {
+    border: none;
+    border-radius: var(--border-radius);
+}
+/* firefox */
+input[type=color]::-moz-focus-inner {
+    border: none;
+    padding: 0;
+    border-radius: var(--border-radius);
+    width: 50%;
+}
+input[type=color]::-moz-color-swatch {
+    border: none;
+    border-radius: var(--border-radius);
+}
+input[type=color]::after {
+    content: attr(value);
+    position: absolute;
+    top: 0.25rem;
+    right: 0.1rem;
+}
+
+/*Range input*/
+input[type=range] {
+    appearance: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    background: var(--color-body);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    height: 0.5rem;
+}
+input[type=range]::-webkit-slider-thumb {
+    background: var(--color-interactive);
+    appearance: none;
+    display: block;
+    height: 1rem;
+    width: 1rem;
+    border-radius: var(--border-radius);
+    margin-top: -0.25rem;
+}
+
+/*Checkboxes and radio*/
+.radio_and_label {
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--color-text);
+    margin: 0.4rem auto;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+.radio_and_label input[type=radio]+label,
+.radio_and_label input[type=checkbox]+label {
+    margin-left: 0.4rem;
+}
+input[type=checkbox],
+input[type=radio] {
+    display: none;
+}
+input[type=checkbox]+label::before,
+input[type=radio]+label::before {
+    margin-right: 0.25rem;
+    font-family: var(--font-mono);
+    font-weight: bolder;
+    color: var(--color-interactive);
+    /*Maxes the symbol bolder*/
+    text-shadow: 0.02rem 0.02rem var(--color-interactive);
+}
+input[type=checkbox]+label:focus::before,
+input[type=checkbox]+label:hover::before,
+input[type=checkbox]+label:active::before,
+input[type=radio]+label:focus::before,
+input[type=radio]+label:hover::before,
+input[type=radio]+label:active::before {
+    filter: var(--border-shadow);
+}
+input[type=checkbox]:checked+label::before {
+    content: '\1F5F9';
+}
+input[type=checkbox]:not(checked)+label::before {
+    content: '\2610';
+}
+input[type=radio]:checked+label::before {
+    content: '\29BF';
+}
+input[type=radio]:not(checked)+label::before {
+    content: '\2B58';
+}
+
+/*Select and option styling*/
+select {
+    min-width: 15ch;
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    border-radius: var(--border-radius);
+    padding: 0.25em 0.5em;
+    cursor: pointer;
+    background: var(--color-article);
+    color: var(--color-text);
+    margin: 0.5rem;
+}
+select:active,
+select:focus,
+select:focus-within,
+select:hover {
+    outline: none;
+    border-color: var(--border-color-outset);
+    filter: var(--border-shadow);
+}
+option {
+    border-radius: calc(var(--border-radius)/2);
+}
+
+
+/*Scrollbar*/
+::-webkit-scrollbar {
+    width: 1rem;
+    background-color: var(--color-article);
+    border-radius: var(--border-radius);
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0.45rem hsla(0, 0%, 0%, 0.3);
+    border-radius: var(--border-radius);
+    background-color: var(--color-article);
+}
+::-webkit-scrollbar-track-piece {
+    box-shadow: inset 0 0 0.45rem hsla(0, 0%, 0%, 0.3);
+    border-radius: var(--border-radius);
+    background-color: var(--color-article);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+}
+::-webkit-scrollbar-corner {
+    background-color: var(--color-block);
+}
+::-webkit-resizer {
+    background-color: var(--color-article);
+    color: var(--color-interactive);
+    background-image: linear-gradient(135deg, var(--color-interactive) 16.67%, var(--color-block) 16.67%, var(--color-block) 50%, var(--color-interactive) 50%, var(--color-interactive) 66.67%, var(--color-block) 66.67%, var(--color-block) 100%);
+    background-size: 0.7rem 0.7rem;
+}
+
+/*Thumb*/
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-body);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+}
+::-webkit-scrollbar-thumb:hover {
+    border-color: var(--color-interactive);
+    background-color: var(--color-block);
+}
+::-webkit-scrollbar-thumb:active {
+    border-color: var(--color-interactive);
+    background-color: var(--color-article);
+}
+
+/*Buttons*/
+::-webkit-scrollbar-button {
+    background-color: var(--color-block);
+    color: var(--color-interactive);
+    border-style: solid;
+    border-color: var(--color-interactive);
+    background-repeat: no-repeat;
+    border-radius: var(--border-radius);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+/* Up */
+::-webkit-scrollbar-button:vertical:decrement {
+    border-width: 0 0.5rem 1rem 0.5rem;
+    border-color: transparent transparent var(--color-interactive) transparent;
+}
+::-webkit-scrollbar-button:vertical:decrement:hover {
+    border-color: transparent transparent var(--color-interactive) transparent;
+}
+/* Down */
+::-webkit-scrollbar-button:vertical:increment
+{
+    border-width: 1rem 0.5rem 0 0.5rem;
+    border-color: var(--color-interactive) transparent transparent transparent;
+}
+::-webkit-scrollbar-button:vertical:increment:hover
+{
+    border-color: var(--color-interactive) transparent transparent transparent;
+}
+/* Left */
+::-webkit-scrollbar-button:horizontal:decrement {
+    border-width: 0.5rem 1rem 0.5rem 0;
+    border-color: transparent var(--color-interactive) transparent transparent;
+}
+::-webkit-scrollbar-button:horizontal:decrement:hover {
+    border-color: transparent var(--color-interactive) transparent transparent;
+}
+/* Right */
+::-webkit-scrollbar-button:horizontal:increment {
+    border-width: 0.5rem 0 0.5rem 1rem;
+    border-color: transparent transparent transparent var(--color-interactive);
+}
+::-webkit-scrollbar-button:horizontal:increment:hover {
+    border-color: transparent transparent transparent var(--color-interactive);
+}
+/*Hide doubled buttons*/
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:end:decrement,
+::-webkit-scrollbar-button:horizontal:start:increment,
+::-webkit-scrollbar-button:horizontal:end:decrement
+{
+    display: none;
+}
+main::-webkit-scrollbar {
+    margin-left: 2rem;
+}

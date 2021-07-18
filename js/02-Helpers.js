@@ -1,4 +1,4 @@
-/*exported getMeta, timer, openDetails*/
+/*exported getMeta, timer, openDetails, colorValue, colorValueOnEvent*/
 
 //Get meta content
 function getMeta(metaName) {
@@ -22,4 +22,15 @@ function timer(target, increase = true) {
             }
         }
     }, 1000);
+}
+
+//Get and show color
+function colorValue(target) {
+    //if (target.hasAttribute('value') === false) {
+        target.setAttribute('value', target.value);
+    //}
+    console.log(target.value);
+}
+function colorValueOnEvent(event) {
+    colorValue(event.target);
 }

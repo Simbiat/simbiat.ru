@@ -1,5 +1,5 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer*/
+/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer, colorValue, colorValueOnEvent*/
 'use strict';
 
 //Stuff to do on load
@@ -45,6 +45,23 @@ function attachListeners()
         item.addEventListener('input', ariaNationOnEvent);
         //Force update the values right now
         ariaNation(item);
+        //Add placeholder, if not present. Required more as a precaution for text-like inputs with no placeholder
+        if (item.hasAttribute('placeholder') === false) {
+            item.setAttribute('placeholder', item.value || item.type || 'placeholder');
+        }
+        //Attach listeners for color picker
+        if (item.type === 'color') {
+            item.addEventListener('focus', colorValueOnEvent);
+            item.addEventListener('change', colorValueOnEvent);
+            item.addEventListener('input', colorValueOnEvent);
+            colorValue(item);
+        }
+    });
+    //Enforce placeholder for textarea similar to text inputs
+    Array.from(document.getElementsByTagName('textarea')).forEach(item => {
+        if (item.hasAttribute('placeholder') === false) {
+            item.setAttribute('placeholder', item.value || item.type || 'placeholder');
+        }
     });
     //Register function for radio buttons toggling on login form
     document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {

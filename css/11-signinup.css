@@ -20,85 +20,30 @@
     width: clamp(calc(10ch + var(--showpassword-width)), calc(20ch + var(--showpassword-width)), calc(65ch + var(--showpassword-width)));
 }
 
-/*Mark fields as required, when they are*/
-[id^=signinup_][required]+label:after {
-    content: '*';
-    color: var(--color-failure);
-}
-
-[id^=signinup_] {
-    /*Force text cursor*/
-    cursor: text;
-}
-
-/*Visually hide placeholder since we are using label instead of it*/
-[id^=signinup_]::-webkit-input-placeholder {
-    opacity: 0;
-}
-
 /*Override global highlights since form is present on all pages by default*/
 /*Border for valid/invalid input*/
-[id^=signinup_]:invalid:not(:placeholder-shown):not([type=submit]):not([type=checkbox]):not([type=radio]),
-[id^=signinup_][required]:invalid:not([type=submit]):not([type=checkbox]):not([type=radio]) {
+#signinup_email, #signinup_password {
     border-style: solid;
     border-width: var(--border-width);
     border-radius: var(--border-radius);
     border-color: var(--border-color-outset);
     box-shadow: none;
 }
-
-/*Style invalid input. Ideally should be replace by :user-invalid but it's currently only supported by Firefox*/
-[id^=signinup_]:invalid:focus:not(:placeholder-shown),
-[id^=signinup_][required]:invalid:focus:placeholder-shown {
+#signinup_email:invalid:focus:not(:placeholder-shown),
+#signinup_email[required]:invalid:focus:placeholder-shown,
+#signinup_password:invalid:focus:not(:placeholder-shown),
+#signinup_password[required]:invalid:focus:placeholder-shown {
     border-color: var(--color-failure);
     box-shadow: 0.1rem 0.1rem 0.75rem var(--color-failure), -0.1rem -0.1rem 0.75rem var(--color-failure);
 }
-
-/*Style valid inputs on focus*/
-[id^=signinup_]:valid:focus:not(#signinup_submit) {
+#signinup_email:valid:focus,
+#signinup_password:valid:focus {
     border-color: var(--color-success);
     box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
 }
 
-.rememberme_div {
-    line-height: 1.5rem;
-    white-space: nowrap;
-}
-
-/*Style remember be checkbox*/
-#rememberme,
-#rememberme+label {
-    color: var(--color-text);
-    vertical-align: middle;
-    display: inline-block;
-}
-#rememberme+label {
-    margin-left: 0.4rem;
-}
-
-/*Style toggle*/
-#radio_signinup {
-    color: var(--color-text);
-    vertical-align: middle;
-    display: inline-block;
-    margin: 0.4rem auto;
-    text-align: center;
-}
-
-.radio_and_label {
-    white-space: nowrap;
-    vertical-align: middle;
-}
-
-#radio_signinup input[type^=radio] {
-    margin-left: 0.4rem;
-}
-
-/*Vertical align radio*/
-#radio_signinup span,
-#radio_signinup input[type^=radio],
-#radio_signinup input[type^=radio]+label {
-    vertical-align: middle;
+#rememberme_div {
+    display: flex;
 }
 
 /*Adjust submit button width based on text*/
