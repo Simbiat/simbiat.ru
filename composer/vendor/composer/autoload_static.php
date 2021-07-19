@@ -8,8 +8,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
 {
     public static $files = array (
         '04c6c5c2f7095ccf6c481d3e53e1776f' => __DIR__ . '/..' . '/mustangostang/spyc/Spyc.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -83,6 +83,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'DeviceDetector\\Parser\\Device\\Mobile' => __DIR__ . '/..' . '/matomo/device-detector/Parser/Device/Mobile.php',
         'DeviceDetector\\Parser\\Device\\Notebook' => __DIR__ . '/..' . '/matomo/device-detector/Parser/Device/Notebook.php',
         'DeviceDetector\\Parser\\Device\\PortableMediaPlayer' => __DIR__ . '/..' . '/matomo/device-detector/Parser/Device/PortableMediaPlayer.php',
+        'DeviceDetector\\Parser\\Device\\ShellTv' => __DIR__ . '/..' . '/matomo/device-detector/Parser/Device/ShellTv.php',
         'DeviceDetector\\Parser\\OperatingSystem' => __DIR__ . '/..' . '/matomo/device-detector/Parser/OperatingSystem.php',
         'DeviceDetector\\Parser\\VendorFragment' => __DIR__ . '/..' . '/matomo/device-detector/Parser/VendorFragment.php',
         'DeviceDetector\\Yaml\\ParserInterface' => __DIR__ . '/..' . '/matomo/device-detector/Yaml/ParserInterface.php',

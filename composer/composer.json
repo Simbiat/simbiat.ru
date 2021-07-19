@@ -14,9 +14,9 @@
   ],
   "require": {
     "php": "^8",
-    "matomo/device-detector": "^4.2",
-    "phpmailer/phpmailer": "^6.4",
-    "twig/twig": "^3.3",
+    "matomo/device-detector": "^4",
+    "phpmailer/phpmailer": "^6",
+    "twig/twig": "^3",
     "ext-zip": "*",
     "ext-iconv": "*",
     "ext-pdo": "*",

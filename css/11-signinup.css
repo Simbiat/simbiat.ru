@@ -61,7 +61,7 @@
     color: var(--color-interactive);
     position: absolute;
     top: -0.3rem;
-    left: 1rem;
+    left: 0.25rem;
     cursor: pointer;
     display: none;
     content: '\1F441';

@@ -16,3 +16,10 @@
     height: 1.25rem;
     margin: 0.25rem;
 }
+#http_error{
+    text-align: center;
+}
+#http_error img {
+    max-width: 20rem;
+    max-height: 20rem;
+}

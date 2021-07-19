@@ -6,19 +6,19 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'd14898f55ca469cceb57804eb08c48237e017e0f',
+    'reference' => '7dae7df555284b6740c1fdd377e90ad0b8aee954',
     'name' => 'simbiat/simbiat.ru',
   ),
   'versions' => 
   array (
     'matomo/device-detector' => 
     array (
-      'pretty_version' => '4.2.3',
-      'version' => '4.2.3.0',
+      'pretty_version' => '4.3.0',
+      'version' => '4.3.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd879f07496d6e6ee89cef5bcd925383d9b0c2cc0',
+      'reference' => '3fcceafc601444412ce65297ba4ce878ee77e450',
     ),
     'mustangostang/spyc' => 
     array (
@@ -31,18 +31,18 @@
     ),
     'phpmailer/phpmailer' => 
     array (
-      'pretty_version' => 'v6.4.1',
-      'version' => '6.4.1.0',
+      'pretty_version' => 'v6.5.0',
+      'version' => '6.5.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '9256f12d8fb0cd0500f93b19e18c356906cbed3d',
+      'reference' => 'a5b5c43e50b7fba655f793ad27303cd74c57363c',
     ),
     'piwik/device-detector' => 
     array (
       'replaced' => 
       array (
-        0 => '4.2.3',
+        0 => '4.3.0',
       ),
     ),
     'simbiat/simbiat.ru' => 
@@ -52,7 +52,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'd14898f55ca469cceb57804eb08c48237e017e0f',
+      'reference' => '7dae7df555284b6740c1fdd377e90ad0b8aee954',
     ),
     'symfony/polyfill-ctype' => 
     array (

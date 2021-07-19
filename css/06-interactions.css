@@ -139,23 +139,23 @@ select+label {
     user-select: none;
 }
 /*Visually hide placeholder since we are using label instead of it*/
-input[type=text]::-webkit-input-placeholder,
-input[type=url]::-webkit-input-placeholder,
-input[type=email]::-webkit-input-placeholder,
-input[type=password]::-webkit-input-placeholder,
-input[type=number]::-webkit-input-placeholder,
-input[type=search]::-webkit-input-placeholder,
-input[type=tel]::-webkit-input-placeholder,
-input[type=date]::-webkit-input-placeholder,
-input[type=datetime-local]::-webkit-input-placeholder,
-input[type=time]::-webkit-input-placeholder,
-input[type=month]::-webkit-input-placeholder,
-input[type=week]::-webkit-input-placeholder,
-input[type=color]::-webkit-input-placeholder,
-input[type=file]::-webkit-input-placeholder,
-input[type=range]::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder,
-select::-webkit-input-placeholder{
+input[type=text]::placeholder,
+input[type=url]::placeholder,
+input[type=email]::placeholder,
+input[type=password]::placeholder,
+input[type=number]::placeholder,
+input[type=search]::placeholder,
+input[type=tel]::placeholder,
+input[type=date]::placeholder,
+input[type=datetime-local]::placeholder,
+input[type=time]::placeholder,
+input[type=month]::placeholder,
+input[type=week]::placeholder,
+input[type=color]::placeholder,
+input[type=file]::placeholder,
+input[type=range]::placeholder,
+textarea::placeholder,
+select::placeholder{
     opacity: 0;
 }
 /*Style label when placeholder is shown. Essentially place it instead of placeholder.*/
@@ -317,17 +317,6 @@ input[type=color]::-webkit-color-swatch {
     border: none;
     border-radius: var(--border-radius);
 }
-/* firefox */
-input[type=color]::-moz-focus-inner {
-    border: none;
-    padding: 0;
-    border-radius: var(--border-radius);
-    width: 50%;
-}
-input[type=color]::-moz-color-swatch {
-    border: none;
-    border-radius: var(--border-radius);
-}
 input[type=color]::after {
     content: attr(value);
     position: absolute;
@@ -340,7 +329,8 @@ input[type=range] {
     appearance: none;
 }
 input[type=range]::-webkit-slider-runnable-track {
-    background: var(--color-body);
+    box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+    background: var(--color-block);
     border-radius: var(--border-radius);
     cursor: pointer;
     height: 0.5rem;
@@ -353,6 +343,8 @@ input[type=range]::-webkit-slider-thumb {
     width: 1rem;
     border-radius: var(--border-radius);
     margin-top: -0.25rem;
+    border: none;
+    cursor: pointer;
 }
 
 /*Checkboxes and radio*/

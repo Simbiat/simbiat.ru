@@ -33,6 +33,7 @@ return array(
     'DeviceDetector\\Parser\\Device\\Mobile' => $vendorDir . '/matomo/device-detector/Parser/Device/Mobile.php',
     'DeviceDetector\\Parser\\Device\\Notebook' => $vendorDir . '/matomo/device-detector/Parser/Device/Notebook.php',
     'DeviceDetector\\Parser\\Device\\PortableMediaPlayer' => $vendorDir . '/matomo/device-detector/Parser/Device/PortableMediaPlayer.php',
+    'DeviceDetector\\Parser\\Device\\ShellTv' => $vendorDir . '/matomo/device-detector/Parser/Device/ShellTv.php',
     'DeviceDetector\\Parser\\OperatingSystem' => $vendorDir . '/matomo/device-detector/Parser/OperatingSystem.php',
     'DeviceDetector\\Parser\\VendorFragment' => $vendorDir . '/matomo/device-detector/Parser/VendorFragment.php',
     'DeviceDetector\\Yaml\\ParserInterface' => $vendorDir . '/matomo/device-detector/Yaml/ParserInterface.php',

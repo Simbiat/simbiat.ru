@@ -1,0 +1,97 @@
+@-moz-document url-prefix() {
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    input[type=color]::-moz-focus-inner {
+        border: none;
+        padding: 0;
+        border-radius: var(--border-radius);
+        width: 50%;
+    }
+    input[type=color]::-moz-color-swatch {
+        border: none;
+        padding: 0;
+        border-radius: var(--border-radius);
+    }
+    input[type=range]::-moz-range-track {
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background: var(--color-block);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        height: 0.5rem;
+    }
+    input[type=range]::-moz-range-thumb {
+        background: var(--color-interactive);
+        appearance: none;
+        display: block;
+        height: 1rem;
+        width: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: -0.25rem;
+        border: none;
+        cursor: pointer;
+    }
+    input[type=range]::-moz-range-progress {
+        background: var(--color-interactive);
+        cursor: pointer;
+    }
+    progress {
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background: var(--color-article);
+        border-color: transparent;
+        height: 1.25rem;
+    }
+    progress:indeterminate {
+        border-color: transparent;
+        height: 1.25rem;
+    }
+    progress:not(indeterminate) {
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--border-color-inset);
+    }
+    :indeterminate::-moz-progress-bar {
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--border-color-inset);
+        height: 1.25rem;
+        position: relative;
+    }
+    progress::-moz-progress-bar {
+        appearance: none;
+        border-radius: var(--border-radius);
+        background-color: var(--color-article);
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background-image: linear-gradient(to right, var(--color-failure), var(--color-success));
+    }
+    progress:indeterminate::-moz-progress-bar {
+        background-image: none;
+    }
+    meter {
+        height: 1rem;
+        border-radius: var(--border-radius);
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--border-color-inset);
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background: var(--color-article);
+    }
+    meter:-moz-meter-optimum::-moz-meter-bar,
+    meter:-moz-meter-sub-optimum::-moz-meter-bar,
+    meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        border-radius: var(--border-radius);
+    }
+    meter:-moz-meter-optimum::-moz-meter-bar {
+        background-image: linear-gradient(to right, white, var(--color-success), lightgreen);
+    }
+    meter:-moz-meter-sub-optimum::-moz-meter-bar {
+        background-image: linear-gradient(to right, white, var(--color-warning), orange);
+    }
+    meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        background-image: linear-gradient(to right, white, var(--color-failure), lightcoral);
+    }
+    body {
+        scrollbar-color: var(--color-block) var(--color-body);
+        scrollbar-width: auto;
+    }
+}

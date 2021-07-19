@@ -26,10 +26,7 @@ function timer(target, increase = true) {
 
 //Get and show color
 function colorValue(target) {
-    //if (target.hasAttribute('value') === false) {
-        target.setAttribute('value', target.value);
-    //}
-    console.log(target.value);
+    target.setAttribute('value', target.value);
 }
 function colorValueOnEvent(event) {
     colorValue(event.target);
