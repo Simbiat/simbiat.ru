@@ -28,6 +28,9 @@ body {
     width: 100%;
     height: 100vh;
     overflow: hidden;
+    /*If we do not disable it, Chrome adds an ugly color on clickable elements.
+    Not needed, since I adjust :active for them.*/
+    -webkit-tap-highlight-color: transparent;
 }
 main {
     margin: 0 auto 0 auto;

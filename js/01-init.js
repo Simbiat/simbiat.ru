@@ -1,5 +1,6 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer, colorValue, colorValueOnEvent*/
+/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer, colorValue,
+colorValueOnEvent, toggleSidebar, toggleNav*/
 'use strict';
 
 //Stuff to do on load
@@ -36,7 +37,7 @@ function attachListeners()
     document.getElementById('content').addEventListener('scroll', backToTop);
     //Show password functionality
     document.querySelectorAll('.showpassword').forEach(item => {
-        item.addEventListener('mousedown', showPassToggle);
+        item.addEventListener('click', showPassToggle);
     });
     //Register automated aria-invalid attribute adding
     Array.from(document.getElementsByTagName('input')).forEach(item => {
@@ -94,6 +95,13 @@ function attachListeners()
                 details.open=false;
             }
         });
+    });
+    //Click handling for toggling sidebar
+    document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
+        item.addEventListener('click', toggleSidebar);
+    });
+    document.querySelectorAll('#showNav, #hideNav').forEach(item => {
+        item.addEventListener('click', toggleNav);
     });
     //Counter for refresh timer
     let refreshTimer = document.getElementById('refresh_timer');

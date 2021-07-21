@@ -42,10 +42,6 @@
     box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
 }
 
-#rememberme_div {
-    display: flex;
-}
-
 /*Adjust submit button width based on text*/
 #signinup_submit {
     width: auto;

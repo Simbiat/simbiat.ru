@@ -15,19 +15,27 @@
     position: relative;
     overflow-y: auto;
 }
-#navList .navElement:first-child a {
+#navList .navElement:first-child a,
+#showSidebar a {
     width: calc(100% - 0.2rem);
     border: none;
 }
 #navList .navElement:nth-child(2) {
     height: auto;
 }
-#navList .navElement:first-child {
+#navList .navElement:first-child,
+#showSidebar {
     height: 2.5rem;
+}
+#showSidebar {
+    border-radius: var(--border-radius);
 }
 #navList .navElement:first-child:hover,
 #navList .navElement:first-child:active,
-#navList .navElement:first-child:focus {
+#navList .navElement:first-child:focus,
+#showSidebar:hover,
+#showSidebar:active,
+#showSidebar:focus {
     background-color: var(--color-article);
 }
 .navIcon {

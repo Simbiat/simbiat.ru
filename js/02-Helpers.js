@@ -1,4 +1,4 @@
-/*exported getMeta, timer, openDetails, colorValue, colorValueOnEvent*/
+/*exported getMeta, timer, openDetails, colorValue, colorValueOnEvent, toggleSidebar, toggleNav*/
 
 //Get meta content
 function getMeta(metaName) {
@@ -24,10 +24,31 @@ function timer(target, increase = true) {
     }, 1000);
 }
 
-//Get and show color
+//Get and show color in attribute. For some reason, CSS's attr(value) does not show the value, if I do not do this
 function colorValue(target) {
     target.setAttribute('value', target.value);
 }
 function colorValueOnEvent(event) {
     colorValue(event.target);
+}
+
+//Toggle sidebar for small screens
+function toggleSidebar(event) {
+    event.preventDefault();
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('shown')) {
+        sidebar.classList.remove('shown');
+    } else {
+        sidebar.classList.add('shown');
+    }
+}
+//Toggle navigation for small screens
+function toggleNav(event) {
+    event.preventDefault();
+    const sidebar = document.getElementById('navigation');
+    if (sidebar.classList.contains('shown')) {
+        sidebar.classList.remove('shown');
+    } else {
+        sidebar.classList.add('shown');
+    }
 }

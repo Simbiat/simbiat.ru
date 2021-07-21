@@ -60,3 +60,10 @@
     height: 1.1rem;
     letter-spacing: 0.1rem;
 }
+#logoNav {
+    position: relative;
+}
+#logoIcon, #showNav {
+    position: absolute;
+    left: 0;
+}

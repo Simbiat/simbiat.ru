@@ -1,0 +1,237 @@
+/*Using em based on experiments from https://zellwk.com/blog/media-query-units/
+and https://medium.com/@barrypeng6/why-should-not-use-rem-unit-in-media-query-5645d0163ce5
+since they show em as most consistent*/
+@media (max-width: 20em) {
+    body {
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
+        grid-template-areas:
+            'header header'
+            'content content'
+            'footer footer';
+    }
+    #header_logo span {
+        display: none;
+    }
+    #header_logo {
+        width: 2rem;
+        display: inline-block;
+        margin-top: 0.25rem;
+    }
+    #h1div {
+        width: calc(100% - 3rem);
+        display: inline-block;
+    }
+    main {
+        max-width: 100vw;
+    }
+    #footerContacts {
+        display: none;
+    }
+    #navigation {
+        grid-area: none;
+        position: absolute;
+        width: 100vw;
+        /*Using !important to enforce stretching, because otherwise height will be same as for main block*/
+        height: 100vh!important;
+        z-index: 1;
+        display: none;
+        background: var(--color-body);
+        border: none;
+        border-radius: 0;
+    }
+    #showSidebar {
+        margin-top: 2rem;
+    }
+    #hideNav {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    #header_logo img, #header_logo span {
+        display: none;
+    }
+    #showNav {
+        display: block;
+    }
+    :root {
+        --header-height: 2.5rem;
+        --footer-height: 2.5rem;
+    }
+    #radio_signinup br {
+        display: none;
+    }
+    #rememberme_div {
+        display: inline-flex;
+    }
+    #sidebar {
+        grid-area: unset;
+        display: none;
+        margin: auto;
+        background: var(--color-body);
+        height: 100vh;
+        width: 100vw;
+        z-index: 2;
+    }
+    #content, #navigation {
+        height: calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2);
+    }
+    #showSidebar, #hideSidebar {
+        display: block;
+    }
+    #hideSidebar {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    #loginForm {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+    }
+}
+/*
+@media (max-width: 30em) {
+    body {
+        grid-template-areas:
+            'header header'
+            'navigation navigation'
+            'content content'
+            'sidebar sidebar'
+            'footer footer';
+    }
+    .back-to-top {
+        margin: 0 2rem 0 2rem;
+    }
+    main {
+        max-width: 18ch;
+    }
+}
+@media (max-width: 37em) {
+    body {
+        grid-template-columns: 4fr 1fr;
+        grid-template-areas:
+          'header header'
+          'navigation navigation'
+          'content sidebar'
+          'footer footer';
+    }
+    .back-to-top {
+        margin: 0 3rem 0 3rem;
+    }
+    main {
+        max-width: 18ch;
+    }
+}
+*/
+@media (min-width: 30em) and (max-width: 55.5em) {
+    body {
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
+        grid-template-areas:
+          'header header'
+          'navigation content'
+          'footer footer'
+    }
+    .back-to-top {
+        margin: 0 3rem 0 3rem;
+    }
+    main {
+        max-width: 100ch;
+    }
+    #radio_signinup br {
+        display: none;
+    }
+    #rememberme_div {
+        display: inline-flex;
+    }
+    #sidebar {
+        grid-area: unset;
+        display: none;
+        margin: auto;
+        background: var(--color-body);
+        height: 100vh;
+        width: 100vw;
+        z-index: 2;
+    }
+    #content, #navigation {
+        height: calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2);
+    }
+    #showSidebar, #hideSidebar {
+        display: block;
+    }
+    #hideSidebar {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    #loginForm {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+    }
+    #showNav {
+        display: none;
+    }
+}
+@media (min-width: 55.5em) and (max-width: 62em) {
+    body {
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: var(--header-height) 6rem calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3) var(--footer-height);
+        grid-template-areas:
+          'header header'
+          'navigation sidebar'
+          'navigation content'
+          'footer footer'
+    }
+    .back-to-top {
+        margin: 0 3rem 0 3rem;
+    }
+    main {
+        max-width: 100ch;
+    }
+    #radio_signinup br {
+        display: none;
+    }
+    #rememberme_div {
+        display: inline-flex;
+    }
+    #sidebar {
+        height: 6rem;
+    }
+    #content {
+        height: calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3);
+    }
+    #showSidebar, #hideSidebar {
+        display: none;
+    }
+    #showNav {
+        display: none;
+    }
+}
+@media (min-width: 62em) {
+    body {
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
+        grid-template-areas:
+          'header header header'
+          'navigation content sidebar'
+          'footer footer footer'
+    }
+    .back-to-top {
+        margin: 0 3rem 0 3rem;
+    }
+    main {
+        max-width: 100ch;
+    }
+    #rememberme_div {
+        display: flex;
+    }
+    #showSidebar, #hideSidebar {
+        display: none;
+    }
+    #showNav {
+        display: none;
+    }
+}

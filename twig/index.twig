@@ -39,6 +39,7 @@
                 {% endif %}
             </main>
             <aside id="sidebar" aria-label="Sidebar">
+                <div id="hideSidebar"><input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" title="Close sidebar" type="image" src="/img/close.svg"></div>
                 {% if user_side_panel %}
                     <section id="loginForm">
                         {{ include('common/noscript.twig') }}

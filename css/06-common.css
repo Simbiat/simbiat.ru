@@ -16,6 +16,9 @@
     height: 1.25rem;
     margin: 0.25rem;
 }
+.shown {
+    display: block!important;
+}
 #http_error{
     text-align: center;
 }
