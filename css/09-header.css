@@ -62,8 +62,8 @@
 }
 #logoNav {
     position: relative;
+    display: inline-block;
 }
 #logoIcon, #showNav {
     position: absolute;
-    left: 0;
 }

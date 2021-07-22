@@ -58,7 +58,7 @@
     cursor: pointer;
 }
 .navItem {
-    height: 2rem;
+    min-height: 2rem;
     display: inline-block;
     vertical-align: middle;
     width: 100%;
