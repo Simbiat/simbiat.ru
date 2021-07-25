@@ -103,8 +103,71 @@ class HomeRouter
         return $outputArray;
     }
 
-    #Function to prepare data for FFTracker depending on the URI
+    #Function to prepare data for "About" pages
+    public function about(array $uri): array {
+        $html = (new HTML);
+        #Prepare array
+        $outputArray = [
+            'service_name' => 'about',
+            'h1' => 'About '.$GLOBALS['siteconfig']['site_name'],
+            'title' => 'About '.$GLOBALS['siteconfig']['site_name'],
+            'ogdesc' => 'About '.$GLOBALS['siteconfig']['site_name'],
+        ];
+        #Start breadcrumbs
+        $breadArray = [
+            ['href'=>'/', 'name'=>'Home page'],
+            ['href'=>'/about/', 'name'=>'About'],
+        ];
+        #Check if URI is empty
+        if (!empty($uri)) {
+            $uri[0] = strtolower($uri[0]);
+            switch ($uri[0]) {
+                case 'me':
+                case 'website':
+                    #Continue breadcrumb
+                    $breadArray[] = ['href'=>'/about/'.$uri[0], 'name'=>ucfirst($uri[0])];
+                    #Update page title
+                    $outputArray['title'] .= ' '.ucfirst($uri[0]);
+                    break;
+                case 'tech':
+                    #Continue breadcrumb
+                    $breadArray[] = ['href'=>'/about/'.$uri[0], 'name'=>'Technology'];
+                    #Update page title
+                    $outputArray['title'] .= '\'s Technology';
+                    break;
+                case 'resume':
+                case 'contacts':
+                case 'changelog':
+                    #Continue breadcrumb
+                    $breadArray[] = ['href'=>'/about/'.$uri[0], 'name'=>ucfirst($uri[0])];
+                    #Update page title
+                    $outputArray['title'] = ucfirst($uri[0]);
+                    break;
+                case 'tos':
+                    #Continue breadcrumb
+                    $breadArray[] = ['href'=>'/about/'.$uri[0], 'name'=>'Terms of Service'];
+                    #Update page title
+                    $outputArray['title'] = 'Terms of Service';
+                    break;
+                case 'privacy':
+                    #Continue breadcrumb
+                    $breadArray[] = ['href'=>'/about/'.$uri[0], 'name'=>'Privacy Policy'];
+                    #Update page title
+                    $outputArray['title'] = 'Privacy Policy';
+                    break;
+                default:
+                    $outputArray['http_error'] = 404;
+                    break;
+            }
+            $outputArray['h1'] = $outputArray['title'];
+            $outputArray['ogdesc'] = $outputArray['title'];
+            $outputArray['subservice'] = $uri[0];
+        }
+        $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
+        return $outputArray;
+    }
 
+    #Function to prepare data for FFTracker depending on the URI
     /**
      * @throws \JsonException
      * @throws \Exception

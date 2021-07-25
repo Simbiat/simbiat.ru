@@ -340,3 +340,20 @@ meter::-webkit-meter-suboptimum-value {
 meter::-webkit-meter-even-less-good-value {
     background-image: linear-gradient(to right, white, var(--color-failure), lightcoral);
 }
+
+/*Paragraphs*/
+p {
+    margin: 0.25rem;
+    text-indent: 1rem;
+}
+p+p {
+    margin-top: 0.25rem;
+}
+p::first-letter {
+    font-weight: bold;
+    color: var(--color-success);
+    text-transform: uppercase;
+}
+article+article {
+    margin-top: 1.5rem;
+}

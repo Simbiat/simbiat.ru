@@ -80,7 +80,7 @@ function attachListeners()
     //Close all details except currently selected one
     document.querySelectorAll('details').forEach((details,_,list)=>{
         details.ontoggle =_=> { // jshint ignore:line
-            if(details.open) {
+            if(details.open && details.classList.contains('persistent') === false) {
                 list.forEach(tag =>{
                     if(tag !== details && tag.classList.contains('persistent') === false) {
                         tag.open=false;

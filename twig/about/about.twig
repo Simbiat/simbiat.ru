@@ -1,0 +1,44 @@
+<section>
+    <article>
+        <details {% if not subservice %}class="persistent" open{% endif %}>
+            <summary class="rightSummary aboutSection">About</summary>
+            <p>This is the section, where you can learn about {{ site_name }}.</p>
+            {% if not subservice %}
+                <p>
+                    Select one of the links below to learn more about:
+                    <ul>
+                        <li><a href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
+                        <li><a href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>
+                        <li><a href="/about/tech/" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
+                        <li><a href="/about/resume/" target="_self" itemprop="url"><span itemprop="name">Resume</span></a></li>
+                        <li><a href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
+                        <li><a href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
+                        <li><a href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
+                        <li><a href="/about/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
+                    </ul>
+                </p>
+            {% endif %}
+        </details>
+    </article>
+    {% if subservice %}
+        <article>
+            {% if subservice == 'me' %}
+                {{ include('about/me.twig')}}
+            {% elseif subservice == 'website' %}
+                {{ include('about/website.twig')}}
+            {% elseif subservice == 'tech' %}
+                {{ include('about/tech.twig')}}
+            {% elseif subservice == 'resume' %}
+                {{ include('about/resume.twig')}}
+            {% elseif subservice == 'contacts' %}
+                {{ include('about/contacts.twig')}}
+            {% elseif subservice == 'tos' %}
+                {{ include('about/tos.twig')}}
+            {% elseif subservice == 'privacy' %}
+                {{ include('about/privacy.twig')}}
+            {% elseif subservice == 'changelog' %}
+                {{ include('about/changelog.twig')}}
+            {% endif %}
+        </article>
+    {% endif %}
+</section>

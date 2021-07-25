@@ -14,10 +14,19 @@
 .socialIcon {
     width: 1.25rem;
     height: 1.25rem;
-    margin: 0.25rem;
+    /*Negative margin to align with text*/
+    margin: -0.25rem 0.25rem 0.25rem;
+}
+/*We do not need the negative margin in footer*/
+footer address a .socialIcon {
+    margin-top: 0.25rem;
 }
 .shown {
     display: block!important;
+}
+.aboutSection {
+    text-align: center;
+    font-size: small;
 }
 #http_error{
     text-align: center;
@@ -25,4 +34,7 @@
 #http_error img {
     max-width: 20rem;
     max-height: 20rem;
+}
+.zeroMargin {
+    margin: 0
 }

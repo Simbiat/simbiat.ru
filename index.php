@@ -95,6 +95,8 @@ if ($CLI) {
                 #Connect to DB
                 if ($HomePage->dbConnect(true)) {
                     $vars = match(strtolower($uri[0])) {
+                        #Pages about the site
+                        'about' => (new HomeRouter)->about(array_slice($uri, 1)),
                         #Forum/Articles
                         #use https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language to specify audience for russian posts
                         'forum' => (new Show)->forum($uri),
