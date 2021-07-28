@@ -357,3 +357,31 @@ p::first-letter {
 article+article {
     margin-top: 1.5rem;
 }
+
+/*Tables styling*/
+table {
+    border-radius: var(--border-radius);
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+table td,
+table th {
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+}
+table thead,
+table tfoot {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    background: var(--color-block);
+}
+table caption {
+    font-weight: bold;
+    font-style: italic;
+}
