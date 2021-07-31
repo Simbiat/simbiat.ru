@@ -38,3 +38,21 @@ footer address a .socialIcon {
 .zeroMargin {
     margin: 0
 }
+.float_left {
+    float: left;
+}
+.float_right {
+    float: right;
+}
+.clear::after {
+    content: ' ';
+    display: block;
+    height: 0;
+    clear: both;
+}
+.avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    filter: var(--border-shadow);
+}
