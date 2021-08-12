@@ -3,7 +3,7 @@
 }
 ::selection {
     color: var(--color-article);
-    background: var(--color-text);
+    background-color: var(--color-text);
 }
 
 /*Links styling*/
@@ -330,13 +330,13 @@ input[type=range] {
 }
 input[type=range]::-webkit-slider-runnable-track {
     box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
-    background: var(--color-block);
+    background-color: var(--color-block);
     border-radius: var(--border-radius);
     cursor: pointer;
     height: 0.5rem;
 }
 input[type=range]::-webkit-slider-thumb {
-    background: var(--color-interactive);
+    background-color: var(--color-interactive);
     appearance: none;
     display: block;
     height: 1rem;
@@ -410,7 +410,7 @@ select {
     border-radius: var(--border-radius);
     padding: 0.25em 0.5em;
     cursor: pointer;
-    background: var(--color-article);
+    background-color: var(--color-article);
     color: var(--color-text);
     margin: 0.5rem;
 }

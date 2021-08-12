@@ -15,13 +15,13 @@
     }
     input[type=range]::-moz-range-track {
         box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
-        background: var(--color-block);
+        background-color: var(--color-block);
         border-radius: var(--border-radius);
         cursor: pointer;
         height: 0.5rem;
     }
     input[type=range]::-moz-range-thumb {
-        background: var(--color-interactive);
+        background-color: var(--color-interactive);
         appearance: none;
         display: block;
         height: 1rem;
@@ -32,12 +32,12 @@
         cursor: pointer;
     }
     input[type=range]::-moz-range-progress {
-        background: var(--color-interactive);
+        background-color: var(--color-interactive);
         cursor: pointer;
     }
     progress {
         box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
-        background: var(--color-article);
+        background-color: var(--color-article);
         border-color: transparent;
         height: 1.25rem;
     }
@@ -74,7 +74,7 @@
         border-style: solid;
         border-color: var(--border-color-inset);
         box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
-        background: var(--color-article);
+        background-color: var(--color-article);
     }
     meter:-moz-meter-optimum::-moz-meter-bar,
     meter:-moz-meter-sub-optimum::-moz-meter-bar,

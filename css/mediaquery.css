@@ -100,7 +100,7 @@ since they show em as most consistent*/
         height: 100vh!important;
         z-index: 1;
         display: none;
-        background: var(--color-body);
+        background-color: var(--color-body);
         border: none;
         border-radius: 0;
     }
@@ -278,7 +278,7 @@ since they show em as most consistent*/
         grid-area: unset;
         display: none;
         margin: auto;
-        background: var(--color-body);
+        background-color: var(--color-body);
         height: 100vh;
         width: 100vw;
         z-index: 2;

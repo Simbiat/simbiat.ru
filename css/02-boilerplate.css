@@ -28,12 +28,12 @@ html {
  */
 
 ::-moz-selection {
-  background: #b3d4fc;
+  background-color: #b3d4fc;
   text-shadow: none;
 }
 
 ::selection {
-  background: #b3d4fc;
+  background-color: #b3d4fc;
   text-shadow: none;
 }
 
@@ -196,7 +196,7 @@ textarea {
   *,
   *::before,
   *::after {
-    background: #fff !important;
+    background-color: #fff !important;
     color: #000 !important;
     /* Black prints faster */
     box-shadow: none !important;

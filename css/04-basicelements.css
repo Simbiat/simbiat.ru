@@ -103,7 +103,7 @@ time, em {
 
 mark {
     color: var(--color-article);
-    background: var(--color-text);
+    background-color: var(--color-text);
 }
 
 output {
@@ -122,7 +122,7 @@ kbd {
     margin: 0.1rem;
     font-size: 1rem;
     vertical-align: text-bottom;
-    background: var(--color-disabled);
+    background-color: var(--color-disabled);
     color: var(--color-text);
     cursor: default;
     font-variant: small-caps;
@@ -151,7 +151,7 @@ code, samp {
     border-radius: var(--border-radius);
     border-color: var(--border-color-inset);
     border-left: calc(var(--border-width) * 3) solid var(--color-warning);
-    background: var(--color-block);
+    background-color: var(--color-block);
     margin: 0.5rem;
     padding: 0.2rem;
 }
@@ -177,7 +177,7 @@ blockquote {
     border-radius: var(--border-radius);
     border-color: var(--border-color-inset);
     border-left: calc(var(--border-width) * 2) solid var(--color-disabled);
-    background: var(--color-block);
+    background-color: var(--color-block);
     margin: 0.5rem;
     padding: 1rem;
     position: relative;
@@ -379,7 +379,7 @@ table tfoot {
     font-weight: bold;
     text-align: center;
     vertical-align: middle;
-    background: var(--color-block);
+    background-color: var(--color-block);
 }
 table caption {
     font-weight: bold;

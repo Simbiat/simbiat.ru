@@ -4,10 +4,10 @@
 #footerLinks {
     margin-top: -0.1rem;
 }
-#footerContacts .socialIcon {
+#footerContacts .linkIcon {
     filter: brightness(70%);
 }
-#footerContacts .socialIcon:hover {
+#footerContacts .linkIcon:hover {
     filter: brightness(125%);
 }
 #footerContacts a {

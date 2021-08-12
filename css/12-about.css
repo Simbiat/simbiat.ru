@@ -6,3 +6,6 @@
     width: 8rem;
     height: 8rem;
 }
+#resume_timeline {
+    display: grid;
+}
