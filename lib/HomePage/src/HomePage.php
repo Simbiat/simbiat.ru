@@ -284,7 +284,6 @@ class HomePage
             'domain' => $GLOBALS['siteconfig']['domain'],
             'url' => $GLOBALS['siteconfig']['domain'].$_SERVER['REQUEST_URI'],
             'site_name' => $GLOBALS['siteconfig']['site_name'],
-            'currentyear' => '-'.date('Y', time()),
         ];
         #Set versions of CSS and JS
         $twigVars['css_version'] = $this->filesVersion($GLOBALS['siteconfig']['cssdir']);
