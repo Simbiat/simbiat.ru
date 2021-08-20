@@ -16,23 +16,42 @@ ErrorDocument 503 /httperror/503/
 
 #Prevent some of the headers being sent
 <IfModule mod_headers.c>
-	Header unset Expires
-	Header unset Host
-	Header unset P3P
-	Header unset Pragma
-	Header unset Public-Key-Pins
-	Header unset Public-Key-Pins-Report-Only
-	Header unset Via
-	Header unset X-Cache
-	Header unset X-AspNet-Version
-	Header unset X-AspNetMvc-version
-	Header unset X-Frame-Options
-	Header unset X-Powered-By
-	Header unset X-Runtime
-	Header unset X-Version
-	Header unset X-UA-Compatible
-	Header unset X-Robots-Tag
-	Header unset Server
+	Header always unset Expires
+	Header always unset Host
+	Header always unset P3P
+	Header always unset Pragma
+	Header always unset Public-Key-Pins
+	Header always unset Public-Key-Pins-Report-Only
+	Header always unset Via
+	Header always unset X-Cache
+	Header always unset X-AspNet-Version
+	Header always unset X-AspNetMvc-version
+	Header always unset X-Frame-Options
+	Header always unset X-Powered-By
+	Header always unset X-Runtime
+	Header always unset X-Version
+	Header always unset X-UA-Compatible
+	Header always unset X-Robots-Tag
+	Header always unset Server
+
+    #'onsuccess' is default condition (can be omitted) and it's not superseeded by 'always' in some cases, thus duplicating the headers
+	Header onsuccess unset Expires
+    Header onsuccess unset Host
+    Header onsuccess unset P3P
+    Header onsuccess unset Pragma
+    Header onsuccess unset Public-Key-Pins
+    Header onsuccess unset Public-Key-Pins-Report-Only
+    Header onsuccess unset Via
+    Header onsuccess unset X-Cache
+    Header onsuccess unset X-AspNet-Version
+    Header onsuccess unset X-AspNetMvc-version
+    Header onsuccess unset X-Frame-Options
+    Header onsuccess unset X-Powered-By
+    Header onsuccess unset X-Runtime
+    Header onsuccess unset X-Version
+    Header onsuccess unset X-UA-Compatible
+    Header onsuccess unset X-Robots-Tag
+    Header onsuccess unset Server
 </IfModule>
 
 #Disable native ETag, since we use our own

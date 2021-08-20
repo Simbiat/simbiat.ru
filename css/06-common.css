@@ -62,15 +62,15 @@ footer address a .linkIcon {
     font-style: italic;
     flex-wrap: wrap;
     align-content: space-between;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     padding: 0;
     list-style: none;
 }
 .tagList li {
-    margin-left: 1rem;
+    margin: 0.1rem 0.1rem 0.1rem 0.5rem;
     background-color: var(--color-block);
-    padding: 0.1rem;
+    padding: 0.1rem 0.25rem 0.1rem 0.1rem;
     border-radius: var(--border-radius);
 }
 .tagList li::before {

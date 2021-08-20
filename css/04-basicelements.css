@@ -147,7 +147,8 @@ code, samp {
     max-width: calc(100% - 1rem);
     box-sizing: border-box;
     overflow: auto;
-    border: calc(var(--border-width) * 2) dashed;
+    border-width: calc(var(--border-width) * 2);
+    border-style: dashed;
     border-radius: var(--border-radius);
     border-color: var(--border-color-inset);
     border-left: calc(var(--border-width) * 3) solid var(--color-warning);
@@ -166,6 +167,16 @@ samp.failure {
 cite {
     font-style: italic;
 }
+cite:before {
+    content: '\2760';
+    margin-left: 0.25rem;
+    padding-right: 0.1rem;
+}
+cite:after {
+    content: '\275D';
+    margin-right: 0.25rem;
+    padding-left: 0.1rem;
+}
 
 blockquote {
     display: block;
@@ -173,7 +184,8 @@ blockquote {
     width: 100%;
     word-wrap: break-word;
     box-sizing: border-box;
-    border: calc(var(--border-width) * 1.5) dashed;
+    border-width: calc(var(--border-width) * 1.5);
+    border-style: dashed;
     border-radius: var(--border-radius);
     border-color: var(--border-color-inset);
     border-left: calc(var(--border-width) * 2) solid var(--color-disabled);
@@ -242,7 +254,7 @@ q::after {
 /*Styling of pop-ups*/
 dialog {
     background-color: var(--color-body);
-    border: var(--border-width);
+    border-width: var(--border-width);
     border-radius: var(--border-radius);
     border-color: var(--border-color-outset);
     border-style: solid;
