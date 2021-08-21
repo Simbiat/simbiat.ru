@@ -13,6 +13,7 @@
                     <li><a href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
                     <li><a href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
                     <li><a href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
+                    <li><a href="/about/security/" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a></li>
                     <li><a href="/about/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
                 </ul>
             {% endif %}
@@ -34,6 +35,8 @@
                 {{ include('about/tos.twig')}}
             {% elseif subservice == 'privacy' %}
                 {{ include('about/privacy.twig')}}
+            {% elseif subservice == 'security' %}
+                {{ include('about/security.twig')}}
             {% elseif subservice == 'changelog' %}
                 {{ include('about/changelog.twig')}}
             {% endif %}

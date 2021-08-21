@@ -155,6 +155,12 @@ class HomeRouter
                     #Update page title
                     $outputArray['title'] = 'Privacy Policy';
                     break;
+                case 'security':
+                    #Continue breadcrumb
+                    $breadArray[] = ['href'=>'/about/'.$uri[0], 'name'=>'Security Policy'];
+                    #Update page title
+                    $outputArray['title'] = 'Security Policy';
+                    break;
                 default:
                     $outputArray['http_error'] = 404;
                     break;

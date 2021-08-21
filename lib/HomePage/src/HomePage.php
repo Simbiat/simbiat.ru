@@ -4,6 +4,7 @@ namespace Simbiat;
 
 #Some functions in this class can be realized in .htaccess files, but I am implementing the logic in PHP for more control and less dependencies on server software (not all web servers support htaccess files)
 
+use DateTimeInterface;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
@@ -157,6 +158,14 @@ class HomePage
         } elseif (preg_match('/^(bic)($|\/.*)/i', $request) === 1) {
             #Redicrect 'bic' to 'bictracker'
             self::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/' . (preg_replace('/^(bic)($|\/.*)/i', 'bictracker$2', $request)), true, true, false);
+        } elseif (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
+            #'2022-12-31T21:00:00.000Z'
+            #Send headers, that will identify this as actual file
+            header('Content-Type: text/plain; charset=utf-8');
+            header('Content-Disposition: inline; filename="security.txt"');
+            #Get content
+            $content = str_replace('%expires%', date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight')), file_get_contents($GLOBALS['siteconfig']['maindir'].'/static/.well-known/security.txt'));
+            (new Common)->zEcho($content, 'week');
         } elseif (is_file($GLOBALS['siteconfig']['maindir'].'/static/'.$request)) {
             #Check if exists in static folder
             return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'/static/'.$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
