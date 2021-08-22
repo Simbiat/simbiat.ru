@@ -4,7 +4,18 @@
 //Add ID attribute to header tags, if it's missing
 function idToHeader(hTag) {
     if (hTag.hasAttribute('id') === false) {
-        hTag.setAttribute('id', hTag.textContent.replaceAll(/\s/gmu, `_`).replaceAll(/[^\p{L}\p{N}_\-]/gmu, ``).replaceAll(/(^.{1,64})(.*$)/gmu, `$1`));
+        //Get initial ID
+        let id = hTag.textContent.replaceAll(/\s/gmu, `_`).replaceAll(/[^\p{L}\p{N}_\-]/gmu, ``).replaceAll(/(^.{1,64})(.*$)/gmu, `$1`);
+        //Get ID index, in case it's already used
+        let index = 1;
+        let altId = id;
+        //Check if altID exists
+        while (document.getElementById(altId)) {
+            //Increase index
+            index++;
+            altId = id + '_' + index;
+        }
+        hTag.setAttribute('id', altId);
     }
 }
 
