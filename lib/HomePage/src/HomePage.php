@@ -177,6 +177,12 @@ class HomePage
                 return 403;
             }
         } else {
+            #If request is for image - consider it missing and replace with placeholder
+            if (preg_match('/^.*\.(jpg|jpeg|png|svg|gif|bmp)$/i', $request) === 1) {
+                #Set caching to 1 hour. Live is an option, but may hit the server unnecessarily
+                (new Headers)->cacheControl('', 'hour', true);
+                return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'/img/noimage.svg', $GLOBALS['siteconfig']['allowedMime'], 'day',true);
+            }
             #Create HTMLCache object to check for cache
             self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
             #Attempt to use cache
