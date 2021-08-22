@@ -12,7 +12,7 @@ function idToHeader(hTag) {
 function anchorFromHeader(event) {
     //Generate and copy anchor link to clipboard
     navigator.clipboard.writeText(window.location.href.replaceAll(/(^[^#]*)(#.*)?$/gmu, `$1`) + '#' + event.target.getAttribute('id')).then(function() {
-        addSnackbar('Anchor link for "' + event.target.textContent + '" copied to clipboard', 'success', 0);
+        addSnackbar('Anchor link for "' + event.target.textContent + '" copied to clipboard', 'success');
     }, function() {
         addSnackbar('Failed to copy anchor link for "' + event.target.textContent + '"','failure');
     });
