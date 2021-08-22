@@ -77,3 +77,9 @@ footer address a .linkIcon {
     content: '#';
     color: var(--border-light);
 }
+.fadeIn {
+    animation: fadein 0.5s;
+}
+.fadeOut {
+    animation: fadeout 0.5s;
+}

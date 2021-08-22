@@ -44,6 +44,18 @@ since they show em as most consistent*/
     }
 }
 
+/*Adjust snackbars*/
+@media (max-width: 44.599999em) {
+    .snackbar {
+        width: 90vw;
+    }
+}
+@media (min-width: 44.599999em) {
+    .snackbar {
+        width: 75vw;
+    }
+}
+
 /*Adjust variables*/
 @media (max-height: 20.599999em) {
     :root {

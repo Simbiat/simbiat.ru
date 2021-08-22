@@ -1,6 +1,6 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
 /*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer, colorValue,
-colorValueOnEvent, toggleSidebar, toggleNav*/
+colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader*/
 'use strict';
 
 //Stuff to do on load
@@ -102,6 +102,11 @@ function attachListeners()
     });
     document.querySelectorAll('#showNav, #hideNav').forEach(item => {
         item.addEventListener('click', toggleNav);
+    });
+    //Add IDs to H1-H6 tags and handle onclick events to copy anchor links
+    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(item => {
+        idToHeader(item);
+        item.addEventListener('click', anchorFromHeader);
     });
     //Counter for refresh timer
     let refreshTimer = document.getElementById('refresh_timer');

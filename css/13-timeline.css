@@ -145,12 +145,3 @@
 .timeline_elapsed {
     margin-bottom: 1rem;
 }
-
-@keyframes timeline-flash {
-    from {
-        background: var(--color-interactive);
-    }
-    to {
-        background: var(--color-block);
-    }
-}
