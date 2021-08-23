@@ -13,7 +13,7 @@ function addSnackbar(text, color = 'text', milliseconds = 3000) {
     //Add snackbar class
     snack.classList.add('snackbar');
     //Add text
-    snack.innerHTML = '<span class="snack_text">' + text + '</span><input id="closeSnack' + id + '" class="navIcon snack_close" alt="Close notification" title="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image">';
+    snack.innerHTML = '<span class="snack_text">' + text + '</span><input id="closeSnack' + id + '" class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image">';
     //Add class for color
     snack.classList.add(color);
     //Add element to parent

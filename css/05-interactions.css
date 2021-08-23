@@ -529,3 +529,46 @@ option {
 main::-webkit-scrollbar {
     margin-left: 2rem;
 }
+
+/*Style tooltips*/
+[data-tooltip] {
+    text-decoration: underline dotted;
+}
+[data-tooltip]:active::after,
+[data-tooltip]:focus::after,
+#tooltip {
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    background-color: var(--color-block);
+    color: var(--color-text);
+    text-align: center;
+    padding: 0.25rem;
+    z-index: 3;
+    margin: 1rem auto;
+    height: 2rem;
+    line-height: 2rem;
+}
+[data-tooltip]:active::after,
+[data-tooltip]:focus::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    font-style: normal;
+    font-weight: normal;
+}
+#tooltip {
+    display: none;
+    position: absolute;
+    left: var(--cursorX);
+    top: var(--cursorY);
+}
+#tooltip[data-tooltip] {
+    display: block;
+    transform: translate3d(var(--cursorX) px, var(--cursorY) px, 0px);
+    text-decoration: none;
+}
+#tooltip[data-tooltip]::before {
+    display: block;
+    content: attr(data-tooltip);
+}

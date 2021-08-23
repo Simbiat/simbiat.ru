@@ -100,6 +100,7 @@
 }
 .navLine:hover .navIcon,
 .navLine:active .navIcon,
+.navLine:focus .navIcon,
 .navLine details[open] .navIcon {
     filter: brightness(200%) contrast(70%);
 }

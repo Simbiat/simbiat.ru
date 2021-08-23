@@ -1,13 +1,13 @@
-<div id="hideNav"><input id="hideNavIcon" class="navIcon" alt="Close navigation" title="Close navigation" type="image" src="/img/close.svg"></div>
+<div id="hideNav"><input id="hideNavIcon" class="navIcon" alt="Close navigation" type="image" src="/img/close.svg"></div>
 <div class="navElement">
     <div class="navLine" id="showSidebar">
-        <a class="navItem" href="#" target="_self" itemprop="url"><img class="navIcon" alt="Login" title="Login" src="/img/navigation/login.svg"><span itemprop="name">Login</span></a>
+        <a class="navItem" href="#" target="_self" itemprop="url"><img class="navIcon" alt="Login" src="/img/navigation/login.svg"><span itemprop="name">Login</span></a>
     </div>
 </div>
 <ul id="navList">
     <li class="navElement">
         <div class="navLine">
-            <a class="navItem" href="/" target="_self" itemprop="url"><img class="navIcon" alt="Home Page" title="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
+            <a class="navItem" href="/" target="_self" itemprop="url"><img class="navIcon" alt="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
         </div>
     </li>
     <li class="navElement">
@@ -20,7 +20,7 @@
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if service_name == 'blog' or service_name == 'forum' %}open{% endif %}>
-                <summary class="rightSummary"><img class="navIcon" alt="Blog" title="Blog" src="/img/navigation/blog.svg"><span itemprop="name">Blog</span></summary>
+                <summary class="rightSummary"><img class="navIcon" alt="Blog" src="/img/navigation/blog.svg"><span itemprop="name">Blog</span></summary>
                 <ul>
                     <li><a class="navItem" href="/blog/" target="_self" itemprop="url"><span itemprop="name">All entries</span></a></li>
                     <li><a class="navItem" href="/blog/review/" target="_self" itemprop="url"><span itemprop="name">Reviews</span></a></li>
@@ -33,7 +33,7 @@
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if service_name == 'fftracker' %}open{% endif %}>
-                <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" title="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
+                <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
                 <ul>
                     <li{% if subservice == 'search' %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
                     <li{% if subservice == 'statistics' %} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
@@ -49,7 +49,7 @@
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if service_name == 'bictracker' %}open{% endif %}>
-                <summary class="rightSummary"><img class="navIcon" alt="BIC Tracker" title="BIC Tracker" src="/img/navigation/bictracker.svg"><span itemprop="name">BIC Tracker</span></summary>
+                <summary class="rightSummary"><img class="navIcon" alt="BIC Tracker" src="/img/navigation/bictracker.svg"><span itemprop="name">BIC Tracker</span></summary>
                 <ul>
                     <li{% if subservice == 'search' %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
                     <li{% if subservice == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Keying</span></a></li>
@@ -60,7 +60,7 @@
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if service_name == 'about' %}open{% endif %}>
-                <summary class="rightSummary"><img class="navIcon" alt="About" title="About" src="/img/navigation/about.svg"><span itemprop="name">About</span></summary>
+                <summary class="rightSummary"><img class="navIcon" alt="About" src="/img/navigation/about.svg"><span itemprop="name">About</span></summary>
                 <ul>
                     <li{% if subservice == 'me' %} class="current"{% endif %}><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
                     <li{% if subservice == 'website' %} class="current"{% endif %}><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>

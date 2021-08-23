@@ -7,7 +7,9 @@
 #footerContacts .linkIcon {
     filter: brightness(70%);
 }
-#footerContacts .linkIcon:hover {
+#footerContacts .linkIcon:hover,
+#footerContacts .linkIcon:active,
+#footerContacts .linkIcon:focus {
     filter: brightness(125%);
 }
 #footerContacts a {

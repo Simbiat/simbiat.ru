@@ -41,7 +41,8 @@
     cursor: pointer
 }
 #shareButton:hover,
-#shareButton:focus {
+#shareButton:focus,
+#shareButton:active {
     filter: var(--border-shadow);
 }
 #shareButton:active {

@@ -113,5 +113,23 @@ function attachListeners()
     if (refreshTimer) {
         timer(refreshTimer, false);
     }
+    //Add tabindex to elements with data-tooltip attribute, if missing
+    document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
+        item.setAttribute('tabindex', '0');
+    });
+    //Floating tooltip
+    document.onmousemove = function (e) {
+        let x = e.clientX,
+            y = e.clientY;
+        document.documentElement.style.setProperty('--cursorX', x + 'px');
+        document.documentElement.style.setProperty('--cursorY', y + 'px');
+        let element = e.target;
+        let tooltip = document.getElementById('tooltip');
+        if (element.hasAttribute('data-tooltip') && document.activeElement !== element) {
+            tooltip.setAttribute('data-tooltip', element.getAttribute('data-tooltip'));
+        } else {
+            tooltip.removeAttribute('data-tooltip');
+        }
+    };
 }
 

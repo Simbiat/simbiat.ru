@@ -278,6 +278,16 @@ h1, h2, h3, h4, h5, h6 {
 h1:target, h2:target, h3:target, h4:target, h5:target, h6:target {
     animation: anchor-flash 1.5s ease-in-out 0s;
 }
+/*Add anchor symbol to left of headers by default*/
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+    content: '\2693';
+    font-size: small;
+    vertical-align: middle;
+}
+/*Remove the anchor symbol for page title in header*/
+#h1title::before {
+    content: unset;
+}
 
 /*Progress and meter*/
 progress[value],
