@@ -1,4 +1,6 @@
 <?php
+#Suppressing unhandled exceptions, since they are meant to be handled inside respective functions
+/** @noinspection PhpUnhandledExceptionInspection */
 declare(strict_types=1);
 
 require __DIR__. '/composer/vendor/autoload.php';
@@ -24,7 +26,6 @@ spl_autoload_register(function ($class) {
         #Check if file exists
         if (file_exists($file)) {
             #Require file
-            /** @noinspection PhpIncludeInspection */
             require $file;
         }
     }
@@ -93,7 +94,7 @@ if ($CLI) {
                 #Send links
                 $HomePage->commonLinks();
                 #Connect to DB
-                if ($HomePage->dbConnect(true)) {
+                if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
                     $vars = match(strtolower($uri[0])) {
                         #Pages about the site
                         'about' => (new HomeRouter)->about(array_slice($uri, 1)),

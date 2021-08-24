@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
-#Some functions in this class can be realized in .htaccess files, but I am implementing the logic in PHP for more control and less dependencies on server software (not all web servers support htaccess files)
+#Some functions in this class can be realized in .htaccess files, but I am implementing the logic in PHP for more control and fewer dependencies on server software (not all web servers support htaccess files)
 
 use DateTimeInterface;
 use Simbiat\Database\Config;
@@ -66,28 +66,28 @@ class HomePage
     }
 
     #Redirect to HTTPS
-    private function forceSecure(int $port = 443): void
+    private function forceSecure(): void
     {
         if (
                 #If HTTPS is not set or is set as 'off' - assume HTTP protocol
                 (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') &&
-                #If the above is true, it does not mean we are on HTTP, because there can be a special reverse proxy/balancer case. Thus we check X-FORWARDED-* headers
+                #If the above is true, it does not mean we are on HTTP, because there can be a special reverse proxy/balancer case. Thus, we check X-FORWARDED-* headers
                 (empty($_SERVER['HTTP_X_FORWARDED_PROTO']) || $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https') &&
                 (empty($_SERVER['HTTP_X_FORWARDED_SSL']) || $_SERVER['HTTP_X_FORWARDED_SSL'] === 'off') &&
                 #This one is for Microsoft balancers and apps
                 (empty($_SERVER['HTTP_FRONT_END_HTTPS']) || $_SERVER['HTTP_FRONT_END_HTTPS'] === 'off')
             ) {
             #Redirect to HTTPS, while keeping the port, in case it's not standard
-            self::$headers->redirect('https://'.$_SERVER['HTTP_HOST'].($port !== 443 ? ':'.$port : '').$_SERVER['REQUEST_URI'], true, true, false);
+            self::$headers->redirect('https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], true, true, false);
         }
     }
 
     #Function to force www version of the website, unless on subdomain
-    private function forceWWW(int $port = 443): void
+    private function forceWWW(): void
     {
         if (preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1) {
             #Redirect to www version
-            self::$headers->redirect('https://'.'www.'.$_SERVER['HTTP_HOST'].($port != 443 ? ':'.$port : '').$_SERVER['REQUEST_URI'], true, true, false);
+            self::$headers->redirect('https://'.'www.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], true, true, false);
         }
     }
 
@@ -251,7 +251,7 @@ class HomePage
                 #In some cases these extra checks are not required
                 if ($extraChecks === true) {
                     #Check if maintenance
-                    if (self::$dbUpdate) {
+                    if (self::$dbUpdate && preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) !== 1) {
                         $this->twigProc(error: 503);
                     }
                     #Check if banned
@@ -318,6 +318,12 @@ class HomePage
             #Enforce 503 error
             $error = 503;
         }
+        #Check if we are loading a static page
+        if (preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
+            $twigVars['static_page'] = true;
+        } else {
+            $twigVars['static_page'] = false;
+        }
         #Set error for Twig
         if (!empty($error)) {
             #Server error page
@@ -362,7 +368,7 @@ class HomePage
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
-        #Cache page if cache age is setup
+        #Cache page if cache age is set up
         if (self::$PROD && !empty($twigVars['cache_age']) && is_numeric($twigVars['cache_age'])) {
             self::$HTMLCache->set($output, '', intval($twigVars['cache_age']));
         } else {
