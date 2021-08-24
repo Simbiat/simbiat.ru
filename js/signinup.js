@@ -142,7 +142,7 @@ function loginRadioCheck()
         document.getElementById('password_req').classList.add('hidden');
         document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
     }
-    if (newUser.checked === true) {
+    if (newUser && newUser.checked === true) {
         password.required = true;
         password.setAttribute('autocomplete', 'new-password');
         login.setAttribute('autocomplete', 'email');
