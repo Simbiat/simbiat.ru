@@ -213,7 +213,12 @@ class HomePage
     #Function to send HTML only headers
     public function htmlHeaders(): void
     {
-        self::$headers->features(['web-share'=>'\'self\''])->contentPolicy($GLOBALS['siteconfig']['allowedDirectives'], false);
+        #Ensure, that API does not get feature-policy header (since not used)
+        if (preg_match('/^api(\/.*)?/i', $_SERVER['REQUEST_URI']) === 1) {
+            self::$headers->contentPolicy($GLOBALS['siteconfig']['allowedDirectives'], false);
+        } else {
+            self::$headers->features(['web-share' => '\'self\''])->contentPolicy($GLOBALS['siteconfig']['allowedDirectives'], false);
+        }
     }
 
     #Function to send common Link headers
