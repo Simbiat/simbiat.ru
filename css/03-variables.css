@@ -26,7 +26,7 @@ errors\teapot.twig*/
     /*Borders styling*/
     --border-dark: hsl(192, 50%, 20%);
     --border-light: hsl(192, 50%, 30%);
-    --border-width: 0.1rem;
+    --border-width: 0.125rem;
     --border-radius: 0.75rem;
     --border-shadow: drop-shadow(0.05rem 0.05rem 0.1rem var(--border-light)) drop-shadow(-0.05rem -0.05rem 0.1rem var(--border-light));
     --border-color-inset: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);

@@ -45,14 +45,12 @@ article {
     border-style: solid;
     border-color: var(--border-color-inset);
     padding: 0.5rem 0.5rem;
-    filter: var(--border-shadow);
 }
 footer, header {
     position: fixed;
     width: 100%;
     text-align: center;
     background-color: var(--color-block);
-    filter: var(--border-shadow);
 }
 header {
     top: 0;
@@ -86,6 +84,7 @@ main, #navigation, #sidebar {
 
 #navigation {
     left: 0;
+    border-width: var(--border-width);
 }
 #sidebar {
     right: 0;
