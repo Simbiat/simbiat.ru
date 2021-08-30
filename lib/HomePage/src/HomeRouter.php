@@ -632,90 +632,120 @@ class HomeRouter
     {
         $headers = (new Headers);
         $bictracker = (new bicXML);
-        #Check if URI is empty
-        if (empty($uri)) {
-            $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/bictracker/search', true, true, false);
-        }
-        $uri[0] = strtolower($uri[0]);
-        #Gracefully handle legacy links
-        if ($uri[0] !== 'search' && mb_strlen(rawurldecode($uri[0])) === 8) {
-            #Assume legacy '/bic/vkey' link type was used and redirect to proper link
-            $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/bictracker/bic/'.$uri[0], true, true, false);
-        }
         #Tell that content is intended for Russians
         header('Content-Language: ru-RU');
         #Prepare array
         $outputArray = [
             'service_name' => 'bictracker',
-            'h1' => 'BIC Tracker',
-            'title' => 'BIC Tracker',
-            'ogdesc' => 'Representation of Bank Identification Codes from Central Bank of Russia',
+            'h1' => 'BIC Tracker '.$GLOBALS['siteconfig']['site_name'],
+            'title' => 'BIC Tracker '.$GLOBALS['siteconfig']['site_name'],
+            'ogdesc' => 'BIC Tracker '.$GLOBALS['siteconfig']['site_name'],
         ];
         #Start breadcrumbs
         $breadArray = [
             ['href'=>'/', 'name'=>'Home page'],
+            ['href'=>'/bictracker/', 'name'=>'BIC Tracker'],
         ];
-        switch ($uri[0]) {
-            #Process search page
-            case 'search':
-                $outputArray['subservice'] = $uri[0];
-                $outputArray['maxresults'] = 50;
-                #Continue breadcrumbs
-                $breadArray[] = ['href'=>'/bictracker/search', 'name'=>'Search'];
-                #Set search value
-                if (!isset($uri[1])) {
-                    $uri[1] = '';
-                }
-                #Sanitize search value
-                $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
-                #Check if search value was provided
-                if (empty($uri[1])) {
-                    #Get statistics
-                    $outputArray = array_merge($outputArray, $bictracker->Statistics());
-                } else {
+        #Check if URI is empty
+        if (!empty($uri)) {
+            $uri[0] = strtolower($uri[0]);
+            #Gracefully handle legacy links
+            if ($uri[0] !== 'search' && mb_strlen(rawurldecode($uri[0])) === 8) {
+                #Assume legacy '/bic/vkey' link type was used and redirect to proper link
+                $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/bic/' . $uri[0], true, true, false);
+            }
+            #Prepare array
+            $outputArray = [
+                'service_name' => 'bictracker',
+                'h1' => 'BIC Tracker',
+                'title' => 'BIC Tracker',
+                'ogdesc' => 'Representation of Bank Identification Codes from Central Bank of Russia',
+            ];
+            switch ($uri[0]) {
+                #Process keying page
+                case 'keying':
+                    $outputArray['subservice'] = $uri[0];
                     #Continue breadcrumbs
-                    $breadArray[] = ['href'=>'/bictracker/search/'.$uri[1], 'name'=>'Search for '.$decodedSearch];
-                    #Get search results
-                    $outputArray['searchresult'] = $bictracker->Search($uri[1]);
-                }
-                break;
-            case 'bic':
-                $outputArray['subservice'] = $uri[0];
-                if (empty($uri[1])) {
-                    $outputArray['http_error'] = 404;
-                } else {
-                    #Sanitize vkey
-                    $vkey = preg_replace('/[^a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
-                    #Try to get details
-                    $outputArray['bicdetails'] = $bictracker->getCurrent($vkey);
-                    #Check if key was found
-                    if (empty($outputArray['bicdetails'])) {
+                    $breadArray[] = ['href' => '/bictracker/keying', 'name' => 'Keying'];
+                    $outputArray['h1'] = $outputArray['title'] = 'Ключевание счёта';
+                    $outputArray['ogdesc'] = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода.';
+                    $outputArray['checkResult'] = null;
+                    if (!empty($uri[1]) && !empty($uri[2])) {
+                        $outputArray['checkResult'] = (new AccountKeying)->accCheck($uri[1], $uri[2]);
+                        if ($outputArray['checkResult'] !== false) {
+                            $outputArray['bic_value'] = $uri[1];
+                            $outputArray['acc_value'] = $uri[2];
+                            $outputArray['h1'] = $outputArray['title'] = 'Ключевание счёта '.$uri[2];
+                            $outputArray['link_extra'] = HomePage::$headers->links([['href' => '/api/bictracker/keying/'.$uri[1].'/'.$uri[2], 'rel' => 'alternate', 'title' => 'API link', 'type' => 'application/json; charset=utf-8'],], 'head');
+                        }
+                        if (is_numeric($outputArray['checkResult'])) {
+                            $outputArray['properKey'] = preg_replace('/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $uri[2]);
+                        }
+                    }
+                    break;
+                #Process search page
+                case 'search':
+                    $outputArray['subservice'] = $uri[0];
+                    $outputArray['maxresults'] = 50;
+                    #Continue breadcrumbs
+                    $breadArray[] = ['href' => '/bictracker/search', 'name' => 'Search'];
+                    #Set search value
+                    if (!isset($uri[1])) {
+                        $uri[1] = '';
+                    }
+                    #Sanitize search value
+                    $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
+                    #Check if search value was provided
+                    if (empty($uri[1])) {
+                        #Get statistics
+                        $outputArray = array_merge($outputArray, $bictracker->Statistics());
+                    } else {
+                        #Continue breadcrumbs
+                        $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Search for ' . $decodedSearch];
+                        #Get search results
+                        $outputArray['searchresult'] = $bictracker->Search($uri[1]);
+                        $outputArray['searchvalue'] = $uri[1];
+                    }
+                    break;
+                #Process bic details page
+                case 'bic':
+                    $outputArray['subservice'] = $uri[0];
+                    if (empty($uri[1])) {
                         $outputArray['http_error'] = 404;
                     } else {
-                        #Try to exit early based on modification date
-                        if (!empty($outputArray['bicdetails']['DT_IZM'])) {
-                            $headers->lastModified(strtotime($outputArray['bicdetails']['DT_IZM']), true);
+                        #Sanitize vkey
+                        $vkey = preg_replace('/[^a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
+                        #Try to get details
+                        $outputArray['bicdetails'] = $bictracker->getCurrent($vkey);
+                        #Check if key was found
+                        if (empty($outputArray['bicdetails'])) {
+                            $outputArray['http_error'] = 404;
+                        } else {
+                            #Try to exit early based on modification date
+                            if (!empty($outputArray['bicdetails']['DT_IZM'])) {
+                                $headers->lastModified(strtotime($outputArray['bicdetails']['DT_IZM']), true);
+                            }
+                            #Continue breadcrumbs
+                            $breadArray[] = ['href' => '/bictracker/bic/' . $uri[1], 'name' => $outputArray['bicdetails']['NAMEP']];
+                            #Set cache due to query complexity
+                            $outputArray['cache_age'] = 259200;
+                            #Update meta
+                            $outputArray['title'] = $outputArray['bicdetails']['NAMEP'];
+                            $outputArray['h1'] = $outputArray['bicdetails']['NAMEP'];
+                            $outputArray['ogdesc'] = $outputArray['bicdetails']['NAMEP'] . ' (' . $outputArray['bicdetails']['NEWNUM'] . ') in BIC Tracker';
+                            #Link header/tag for API
+                            $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation', 'href' => '/api/bictracker/bic/' . rawurlencode($vkey)]];
+                            #Send HTTP header
+                            $headers->links($altLink);
+                            #Add link to HTML
+                            $outputArray['link_extra'] = $headers->links($altLink, 'head');
                         }
-                        #Continue breadcrumbs
-                        $breadArray[] = ['href' => '/bictracker/bic/'.$uri[1], 'name' => $outputArray['bicdetails']['NAMEP']];
-                        #Set cache due to query complexity
-                        $outputArray['cache_age'] = 259200;
-                        #Update meta
-                        $outputArray['title'] = $outputArray['bicdetails']['NAMEP'];
-                        $outputArray['h1'] = $outputArray['bicdetails']['NAMEP'];
-                        $outputArray['ogdesc'] = $outputArray['bicdetails']['NAMEP'].' ('.$outputArray['bicdetails']['NEWNUM'].') in BIC Tracker';
-                        #Link header/tag for API
-                        $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation', 'href' => '/api/bictracker/bic/'.rawurlencode($vkey)]];
-                        #Send HTTP header
-                        $headers->links($altLink);
-                        #Add link to HTML
-                        $outputArray['link_extra'] = $headers->links($altLink, 'head');
                     }
-                }
-                break;
-            default:
-                $outputArray['http_error'] = 404;
-                break;
+                    break;
+                default:
+                    $outputArray['http_error'] = 404;
+                    break;
+            }
         }
         #Add breadcrumbs
         $outputArray['breadcrumbs'] = (new HTML)->breadcrumbs($breadArray);

@@ -1,0 +1,25 @@
+<section class="bottomMargin">
+    <details>
+        <summary class="rightSummary">Технические детали</summary>
+        <p>Код проверки можно посмотреть на <a href="https://github.com/Simbiat/AccountKeying" target="_blank"><img loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">GitHub</a></p>
+        <p>Функционал доступен в виде API (JSON), для доступа к которому используйте следующую ссылку (обновляется динамически): <code>{{ domain }}/api/bictracker/keying/<span id="bic_key_sample" class="warning">{% if bic_value %}{{ bic_value }}{% else %}БИК{% endif %}</span>/<span id="account_key_sample" class="warning">{% if acc_value %}{{ acc_value }}{% else %}СЧЁТ{% endif %}</span>/</code></p>
+    </details>
+</section>
+<section>
+    <p>Используйте форму ниже для проверки контрольного символа номера счёта или проверки <em>возможной</em> принадлежности счёта указанному БИК:</p>
+    <p>
+        <span class="float_label_div"><input id="bic_key" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^[0-9]{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}><label for="bic_key">БИК</label></span>
+        <span class="float_label_div"><input id="account_key" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх]{1}[0-9]{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}><label for="account_key">Номер счёта</label></span>
+    </p>
+    <p class="noLetter">
+        {% if checkResult is same as(null) %}
+            <span id="accCheckResult"></span>
+        {% elseif checkResult is same as(false) %}
+            <span id="accCheckResult" class="failure">Неверный формат БИКа или счёта</span>
+        {% elseif checkResult is same as(true) %}
+            <span id="accCheckResult" class="success">Правильное ключевание</span>
+        {% else %}
+            <span id="accCheckResult" class="failure">Неверное ключевание. Ожидаемый ключ: {{ checkResult }} ({{ properKey|raw }})</span>
+        {% endif %}
+    </p>
+</section>

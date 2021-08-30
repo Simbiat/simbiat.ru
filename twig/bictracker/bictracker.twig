@@ -1,0 +1,24 @@
+<section>
+    <article>
+        <details {% if not subservice %}class="persistent" open{% endif %}>
+            <summary class="rightSummary aboutSection">About</summary>
+            <p>This is BIC Tracker, meant for tracking changes in Bank Identification Codes issued by <a href="https://cbr.ru/" target="_blank"><img loading="lazy" class="linkIcon" src="/img/tech/CBR.svg" alt="Central Bank of Russia">Центральный Банк Российской Федерации</a> (Central Bank of Russia or CBR).</p>
+            <p>The library contains different information used by banks and other parties to identify both the banks themselves and services provided by them. The tracker is meant to provide a visual representation of that information and also track some of the changes to it.</p>
+            <p>There is also an "official" forum thread on <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" class="linkIcon" src="/img/icons/banki.ru.svg" alt="Central Bank of Russia">banki.ru</a></p>
+            {% if not subservice %}
+                <p>You are on the main page of the service. To search for bank details, please, use <a href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a>. If you are looking for account control number checker use <a href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">keying</span></a> page.</p>
+            {% endif %}
+        </details>
+    </article>
+    {% if subservice %}
+        <article lang="ru-RU">
+            {% if subservice == 'keying' %}
+                {{ include('bictracker/keying.twig')}}
+            {% elseif subservice == 'search' %}
+                {{ include('bictracker/search.twig')}}
+            {% elseif subservice == 'bic' %}
+                {{ include('bictracker/bic.twig')}}
+            {% endif %}
+        </article>
+    {% endif %}
+</section>

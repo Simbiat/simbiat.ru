@@ -1,4 +1,5 @@
-/*exported getMeta, timer, openDetails, colorValue, colorValueOnEvent, toggleSidebar, toggleNav*/
+/*exported getMeta, timer, openDetails, colorValue, colorValueOnEvent, toggleSidebar, toggleNav, tooltipInit,
+updateHistory*/
 
 //Get meta content
 function getMeta(metaName) {
@@ -51,4 +52,11 @@ function toggleNav(event) {
     } else {
         sidebar.classList.add('shown');
     }
+}
+
+//Update document title and push to history. Required, since browsers mostly ignore title argument in pushState
+function updateHistory(newUrl, title)
+{
+    document.title = title;
+    window.history.pushState(title, title, newUrl);
 }

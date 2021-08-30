@@ -37,8 +37,12 @@
                 {% else %}
                     {% if service_name == 'about'%}
                         {{ include('about/about.twig')}}
-                    {% elseif service_name == 'landing'%}
-                        {{ include('landing.twig')}}
+                    {% elseif service_name == 'usercontrol'%}
+                        {{ include('usercontrol/usercontrol.twig')}}
+                    {% elseif service_name == 'fftracker'%}
+                        {{ include('fftracker/fftracker.twig')}}
+                    {% elseif service_name == 'bictracker'%}
+                        {{ include('bictracker/bictracker.twig')}}
                     {% elseif service_name == 'forum'%}
                         {{pagination_top|raw}}
                         {% for article in articles %}
@@ -47,14 +51,6 @@
                         {{pagination_bottom|raw}}
                     {% elseif service_name == 'thread'%}
                         {{ include('articles.twig', article) }}
-                    {% elseif service_name == 'fftracker'%}
-                        {{ include('ffxiv__'~subservice~'.twig')}}
-                    {% elseif service_name == 'bictracker'%}
-                        {{ include('bic__'~subservice~'.twig')}}
-                    {% elseif service_name == 'usercontrol'%}
-                        {{ include('uc__'~subservice~'.twig')}}
-                    {% elseif service_name == 'silversteam'%}
-                        {{ include('ssc.twig')}}
                     {% else %}
                         {{ include('stylingTest.twig') }}
                     {% endif %}

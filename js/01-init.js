@@ -1,7 +1,11 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals showPassToggle, ariaNationOnEvent, ariaNation, loginRadioCheck, webShare, backToTop, timer, colorValue,
-colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader*/
+/*globals signInUpInit, ariaInit, webShareInit, backToTop, timer, colorValue, bicInit, detailsInit,
+colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader, tooltipInit, copyQuoteInit,
+placeholders, searchInit*/
+/*exported pageTitle*/
 'use strict';
+
+const pageTitle = ' on Simbiat Software';
 
 //Stuff to do on load
 
@@ -35,17 +39,9 @@ function attachListeners()
 {
     //Back-to-top buttons
     document.getElementById('content').addEventListener('scroll', backToTop);
-    //Show password functionality
-    document.querySelectorAll('.showpassword').forEach(item => {
-        item.addEventListener('click', showPassToggle);
-    });
     //Register automated aria-invalid attribute adding
     Array.from(document.getElementsByTagName('input')).forEach(item => {
-        item.addEventListener('focus', ariaNationOnEvent);
-        item.addEventListener('change', ariaNationOnEvent);
-        item.addEventListener('input', ariaNationOnEvent);
-        //Force update the values right now
-        ariaNation(item);
+        ariaInit(item);
         //Add placeholder, if not present. Required more as a precaution for text-like inputs with no placeholder
         if (item.hasAttribute('placeholder') === false) {
             item.setAttribute('placeholder', item.value || item.type || 'placeholder');
@@ -58,44 +54,13 @@ function attachListeners()
             colorValue(item);
         }
     });
-    //Enforce placeholder for textarea similar to text inputs
-    Array.from(document.getElementsByTagName('textarea')).forEach(item => {
-        if (item.hasAttribute('placeholder') === false) {
-            item.setAttribute('placeholder', item.value || item.type || 'placeholder');
-        }
-    });
-    //Register function for radio buttons toggling on login form
-    document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
-        item.addEventListener('change', loginRadioCheck);
-    });
-    //Force loginRadioCheck for consistency
-    loginRadioCheck();
-    //Register WebShare if supported
-    if (navigator.share) {
-        document.getElementById('shareButton').classList.remove('hidden');
-        document.getElementById('shareButton').addEventListener('click', webShare);
-    } else {
-        document.getElementById('shareButton').classList.add('hidden');
-    }
-    //Close all details except currently selected one
-    document.querySelectorAll('details').forEach((details,_,list)=>{
-        details.ontoggle =_=> { // jshint ignore:line
-            if(details.open && details.classList.contains('persistent') === false) {
-                list.forEach(tag =>{
-                    if(tag !== details && tag.classList.contains('persistent') === false) {
-                        tag.open=false;
-                    }
-                });
-            }
-        };
-    });
-    window.addEventListener('click', function(event){
-        document.querySelectorAll('details').forEach((details)=>{
-            if(details.classList.contains('popup') === true && details.contains(event.target) === false) {
-                details.open=false;
-            }
-        });
-    });
+    placeholders();
+    signInUpInit();
+    webShareInit();
+    bicInit();
+    detailsInit();
+    copyQuoteInit();
+    searchInit();
     //Click handling for toggling sidebar
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
         item.addEventListener('click', toggleSidebar);
@@ -113,23 +78,7 @@ function attachListeners()
     if (refreshTimer) {
         timer(refreshTimer, false);
     }
-    //Add tabindex to elements with data-tooltip attribute, if missing
-    document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
-        item.setAttribute('tabindex', '0');
-    });
     //Floating tooltip
-    document.onmousemove = function (e) {
-        let x = e.clientX,
-            y = e.clientY;
-        document.documentElement.style.setProperty('--cursorX', x + 'px');
-        document.documentElement.style.setProperty('--cursorY', y + 'px');
-        let element = e.target;
-        let tooltip = document.getElementById('tooltip');
-        if (element.hasAttribute('data-tooltip') && document.activeElement !== element) {
-            tooltip.setAttribute('data-tooltip', element.getAttribute('data-tooltip'));
-        } else {
-            tooltip.removeAttribute('data-tooltip');
-        }
-    };
+    tooltipInit();
 }
 

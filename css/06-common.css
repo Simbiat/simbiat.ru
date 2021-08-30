@@ -38,6 +38,9 @@ footer address a .linkIcon {
 .zeroMargin {
     margin: 0
 }
+.bottomMargin {
+    margin-bottom: 2rem;
+}
 .float_left {
     float: left;
 }
@@ -82,4 +85,102 @@ footer address a .linkIcon {
 }
 .fadeOut {
     animation: fadeout 0.5s;
+}
+.copyQuote {
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0.25em;
+    border-radius: 25%;
+    border-style: solid;
+    border-color: transparent;
+    border-width: var(--border-width);
+    float: left;
+    cursor: pointer;
+    margin-right: 0.25em;
+}
+blockquote>.copyQuote {
+    float: right;
+}
+.copyQuote:hover,
+.copyQuote:focus,
+.copyQuote:active {
+    border-color: var(--color-interactive);
+}
+.copyQuote:active {
+    border-color: var(--color-interactive);
+    filter: brightness(70%);
+}
+
+/*Color unicode emojis with plain color. This allows a bit more standardization across systems*/
+[class^='emoji'], [class*=' emoji']  {
+    color: transparent;
+}
+.emojiGreen {
+    text-shadow: 0 0 0 var(--color-success);
+}
+.emojiRed {
+    text-shadow: 0 0 0 var(--color-failure);
+}
+.emojiOrange {
+    text-shadow: 0 0 0 var(--color-warning);
+}
+.emojiBlue {
+    text-shadow: 0 0 0 var(--color-interactive);
+}
+.emojiWhite {
+    text-shadow: 0 0 0 var(--color-text);
+}
+
+/*Style search results along with entity cards*/
+.searchResults {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.searchCount {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+.entityCard {
+    width: 25%;
+    height: 2rem;
+    background-color: var(--color-block);
+    margin: 0.2rem;
+    border-color: var(--border-color-outset);
+    padding: 0;
+}
+.entityIcon, .entityArrow {
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    vertical-align: middle;
+    display: block;
+    float: left;
+}
+.entityIcon {
+    text-align: center;
+}
+.entityArrow {
+    font-size: 1.5rem;
+    text-align: right;
+    width: 1.2rem;
+}
+.entityName {
+    width: calc(100% - 3.5rem);
+    overflow: hidden;
+    text-overflow: clip;
+    word-break: break-word;
+    display: block;
+    height: 2rem;
+    font-size: smaller;
+    line-height: 1.025rem;
+    float: left;
+    color: var(--color-text);
+    border-left: 0.1rem solid var(--border-light);
+    border-right: 0.1rem solid var(--border-dark);
+    padding-left: 0.1rem;
+    font-weight: normal;
 }

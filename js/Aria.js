@@ -1,6 +1,16 @@
-/*exported ariaNationOnEvent*/
+/*exported ariaInit*/
 
 //Accessibility related functions
+
+//General initialization
+function ariaInit(item)
+{
+    item.addEventListener('focus', ariaNationOnEvent);
+    item.addEventListener('change', ariaNationOnEvent);
+    item.addEventListener('input', ariaNationOnEvent);
+    //Force update the values right now
+    ariaNation(item);
+}
 
 //Adding some aria attributes to input elements.
 function ariaNation(inputElement)

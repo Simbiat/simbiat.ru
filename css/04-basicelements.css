@@ -139,7 +139,8 @@ code, samp {
     font-family: var(--font-mono);
     white-space: pre;
     display: block;
-    font-size: 1rem;
+    /*Using em for font instead of rem, so that it will depend on parent's size, not on root size*/
+    font-size: 0.9em;
     line-height: 1.25;
     page-break-inside: avoid;
     word-wrap: break-word;
@@ -238,6 +239,7 @@ q {
     border-bottom: none;
     padding-left: 0.3rem;
     padding-right: 0.3rem;
+    cursor: pointer;
 }
 q::before {
     content: '\2760';
@@ -381,6 +383,11 @@ p::first-letter {
     color: var(--color-success);
     text-transform: uppercase;
 }
+p.noLetter::first-letter {
+    font-weight: unset;
+    color: unset;
+    text-transform: unset;
+}
 article+article {
     margin-top: 1.5rem;
 }
@@ -392,14 +399,34 @@ table {
     border-style: solid;
     border-color: var(--border-color-outset);
     border-spacing: 0;
-    border-collapse: collapse;
+    border-collapse: separate;
     width: 100%;
 }
-table td,
-table th {
-    border-width: var(--border-width);
-    border-style: solid;
-    border-color: var(--border-color-outset);
+table tr td,
+table tr th {
+    border-right-width: var(--border-width);
+    border-right-style: solid;
+    border-right-color: var(--border-light);
+    border-bottom-width: var(--border-width);
+    border-bottom-style: solid;
+    border-bottom-color: var(--border-light);
+}
+table tr th:last-child,
+table tr td:last-child {
+    border-right-width: var(--border-width);
+    border-right-style: none;
+    border-right-color: var(--border-color-outset);
+}
+table tr:last-child td,
+table tr:last-child th {
+    border-bottom-width: var(--border-width);
+    border-bottom-style: none;
+    border-bottom-color: var(--border-color-outset);
+}
+table tr th {
+    border-top-width: var(--border-width);
+    border-top-style: solid;
+    border-top-color: var(--border-color-outset);
 }
 table thead,
 table tfoot {
@@ -408,10 +435,62 @@ table tfoot {
     vertical-align: middle;
     background-color: var(--color-block);
 }
+/* top-left border-radius */
+table :not(tfoot) tr:first-child th:first-child,
+table :not(tfoot) tr:first-child td:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: 0;
+}
+
+/* top-right border-radius */
+table :not(tfoot) tr:first-child th:last-child,
+table :not(tfoot) tr:first-child td:last-child {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: 0;
+}
+
+/* bottom-left border-radius */
+table :not(thead) tr:last-child th:first-child,
+table :not(thead) tr:last-child td:first-child {
+    border-bottom-left-radius: var(--border-radius);
+}
+
+/* bottom-right border-radius */
+table :not(thead) tr:last-child th:last-child,
+table :not(thead) tr:last-child td:last-child{
+    border-bottom-right-radius: var(--border-radius);
+}
+/*Handle thead and tfoot borders*/
+table thead tr:first-child th,
+table thead tr:first-child td {
+    border-top-style: none;
+}
+table thead tr:last-child th,
+table thead tr:last-child td {
+    border-bottom-style: solid;
+    border-bottom-width: var(--border-width);
+    border-bottom-color: var(--border-light);
+}
+table tfoot tr:last-child th,
+table tfoot tr:last-child td {
+    border-bottom-style: none;
+}
+table tfoot tr:first-child th,
+table tfoot tr:first-child td {
+    border-top-style: solid;
+    border-top-width: var(--border-width);
+    border-top-color: var(--border-light);
+}
+table tr:first-child th,
+table tr:first-child td {
+    border-top-style: none;
+}
 table caption {
     font-weight: bold;
     font-style: italic;
 }
+
+/*Snackbar notifications*/
 #snacksContainer {
     visibility: hidden;
     position: absolute;

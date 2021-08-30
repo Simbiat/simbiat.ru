@@ -275,7 +275,7 @@ class HomePage
                 #Use custom session handler
                 session_set_save_handler(new Session, true);
                 session_start();
-                if (!empty($_SESSION['UA']['client']) && preg_match('/^Internet Explorer.*/i', $_SESSION['UA']['client']) === 1) {
+                if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
                     $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418, 'aggressive');
                 }
                 #Process POST data if any

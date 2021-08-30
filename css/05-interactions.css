@@ -533,9 +533,8 @@ main::-webkit-scrollbar {
 /*Style tooltips*/
 [data-tooltip] {
     text-decoration: underline dotted;
+    cursor: pointer;
 }
-[data-tooltip]:active::after,
-[data-tooltip]:focus::after,
 #tooltip {
     border-radius: var(--border-radius);
     border-style: solid;
@@ -549,13 +548,11 @@ main::-webkit-scrollbar {
     margin: 1rem auto;
     height: 2rem;
     line-height: 2rem;
-}
-[data-tooltip]:active::after,
-[data-tooltip]:focus::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    font-style: normal;
-    font-weight: normal;
+    overflow: hidden;
+    text-overflow: clip;
+    word-break: keep-all;
+    width: -moz-fit-content;
+    width: fit-content;
 }
 #tooltip {
     display: none;

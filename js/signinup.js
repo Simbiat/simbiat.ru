@@ -1,5 +1,19 @@
 /*globals ariaNation*/
-/*exported showPassToggle, loginRadioCheck*/
+/*exported signInUpInit*/
+
+function signInUpInit()
+{
+    //Show password functionality
+    document.querySelectorAll('.showpassword').forEach(item => {
+        item.addEventListener('click', showPassToggle);
+    });
+    //Register function for radio buttons toggling on login form
+    document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
+        item.addEventListener('change', loginRadioCheck);
+    });
+    //Force loginRadioCheck for consistency
+    loginRadioCheck();
+}
 
 //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
 const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';

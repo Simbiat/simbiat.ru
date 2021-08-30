@@ -1,0 +1,9 @@
+<section>
+    {% if subservice %}
+        <article>
+            {% if subservice == 'registration' %}
+                {{ include('usercontrol/registration.twig')}}
+            {% endif %}
+        </article>
+    {% endif %}
+</section>

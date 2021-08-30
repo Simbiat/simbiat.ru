@@ -120,11 +120,11 @@ class HomeApi
         }
         $uri[0] = strtolower($uri[0]);
         #Check if supported
-        if (!in_array($uri[0], ['bic', 'accheck'])) {
+        if (!in_array($uri[0], ['bic', 'keying'])) {
             $this->apiEcho(httpCode: '404');
         }
         #Check that data was provided
-        if (($uri[0] === 'bic' && empty($uri[1])) || ($uri[0] === 'accheck' && (empty($uri[1]) || empty($uri[2])))) {
+        if (($uri[0] === 'bic' && empty($uri[1])) || ($uri[0] === 'keying' && (empty($uri[1]) || empty($uri[2])))) {
             $this->apiEcho(httpCode: '400');
         }
         if ($uri[0] === 'bic') {
@@ -146,7 +146,7 @@ class HomeApi
             } else {
                 $this->apiEcho(httpCode: '503');
             }
-        } elseif ($uri[0] === 'accheck') {
+        } elseif ($uri[0] === 'keying') {
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
         }
         return [];

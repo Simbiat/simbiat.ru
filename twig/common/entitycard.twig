@@ -1,0 +1,18 @@
+{# Set link variable based on type #}
+{% if type == 'bic' %}
+    {% set url = 'bictracker/bic' %}
+{% endif %}
+{# Actual card #}
+<a class="entityCard" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
+    <span class="entityIcon">
+        {% if type == 'bic' %}
+            {% if DATEDEL %}
+                <span class="emojiRed">&#10060;</span>
+            {% else %}
+                <span class="emojiGreen">&#10004;</span>
+            {% endif %}
+        {% endif %}
+    </span>
+    <span class="entityName">{{name}}</span>
+    <span class="entityArrow">&#10151;</span>
+</a>

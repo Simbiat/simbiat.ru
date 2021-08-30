@@ -1,0 +1,33 @@
+<section>
+    <p>Введите БИК, корреспондентский счёт, имя банка, его адрес или регистрационный номер.</p>
+    <form id="bicSearchForm" class="searchForm" data-baseURL="/bictracker/search/" action="">
+        <span class="float_label_div" id="bicSearchLabel"><input id="bicSearchField" type="search" inputmode="search" autocomplete="on" maxlength="100" autofocus{% if searchvalue is defined %} value="{{searchvalue}}"{% endif %}><label for="bicSearchField">Термин для поиска</label></span>
+        <input type="submit" id="bicSearch" value="Поиск">
+    </form>
+</section>
+<section>
+    {% if searchresult is defined %}
+        {% if searchresult|length == 0 %}
+            <p>Не найдено ни одного банка. Пожалуйста, уточните поиск.</p>
+        {% else %}
+            {% if searchresult|length > maxresults %}
+                <p>Найдено {{searchresult|length}} банков. Пожалуйста, уточните поиск для вывода результатов.</p>
+            {% else %}
+                <p>Найдено {{searchresult|length}} банков:</p>
+                <div class="searchResults">
+                    {% for bank in searchresult %}
+                        {{ include('common/entitycard.twig', bank) }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <p>Сервису известны {{bicactive}} активных и {{bicdeleted}} закрытых кодов.</p>
+        <p>Последние изменения:</p>
+        <div class="searchResults">
+            {% for bank in bicchanges %}
+                {{ include('common/entitycard.twig', bank) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
