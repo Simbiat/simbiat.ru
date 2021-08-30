@@ -423,11 +423,6 @@ table tr:last-child th {
     border-bottom-style: none;
     border-bottom-color: var(--border-color-outset);
 }
-table tr th {
-    border-top-width: var(--border-width);
-    border-top-style: solid;
-    border-top-color: var(--border-color-outset);
-}
 table thead,
 table tfoot {
     font-weight: bold;
