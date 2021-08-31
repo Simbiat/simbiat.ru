@@ -51,7 +51,7 @@
             <details class="navCat" {% if service_name == 'bictracker' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="BIC Tracker" src="/img/navigation/bictracker.svg"><span itemprop="name">BIC Tracker</span></summary>
                 <ul>
-                    <li{% if subservice == 'search' %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li{% if subservice == 'search' or subservice == 'bic' %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
                     <li{% if subservice == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Keying</span></a></li>
                 </ul>
             </details>

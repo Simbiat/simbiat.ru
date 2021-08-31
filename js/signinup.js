@@ -130,7 +130,7 @@ function loginRadioCheck()
     let button = document.getElementById('signinup_submit');
     let rememberme = document.getElementById('rememberme');
     //Adjust elements based on the toggle
-    if (existUser.checked === true) {
+    if (existUser && existUser.checked === true) {
         //Whether password field is required
         password.required = true;
         //Autocomplete suggestion for password
@@ -171,7 +171,7 @@ function loginRadioCheck()
         document.getElementById('password_req').classList.remove('hidden');
         document.querySelectorAll('.pass_str_div').item(0).classList.remove('hidden');
     }
-    if (forget.checked === true) {
+    if (forget && forget.checked === true) {
         password.required = false;
         password.removeAttribute('autocomplete');
         login.setAttribute('type', 'text');
@@ -190,5 +190,7 @@ function loginRadioCheck()
         rememberme.checked = false;
     }
     //Adjust Aria values
-    ariaNation(password);
+    if (password) {
+        ariaNation(password);
+    }
 }

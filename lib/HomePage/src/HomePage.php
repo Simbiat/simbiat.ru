@@ -333,9 +333,11 @@ class HomePage
         if (!empty($error)) {
             #Server error page
             $twigVars['http_error'] = (self::$dbup === false ? 'database' : (self::$dbUpdate === true ? 'maintenance' : $error));
-            $twigVars['title'] = $twigVars['site_name'].': '.(self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : strval($error)));
-            $twigVars['h1'] = $twigVars['title'];
-            self::$headers->clientReturn(strval($error), false);
+            if (!$twigVars['static_page']) {
+                $twigVars['title'] = $twigVars['site_name'] . ': ' . (self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : strval($error)));
+                $twigVars['h1'] = $twigVars['title'];
+                self::$headers->clientReturn(strval($error), false);
+            }
         }
         #Merge with extra variables provided
         $twigVars = array_merge($twigVars, $extraVars);

@@ -726,6 +726,11 @@ class HomeRouter
                                 $headers->lastModified(strtotime($outputArray['bicdetails']['DT_IZM']), true);
                             }
                             #Continue breadcrumbs
+                            if (!empty($outputArray['bicdetails']['BIC_UF'])) {
+                                foreach(array_reverse($outputArray['bicdetails']['BIC_UF']) as $bank) {
+                                    $breadArray[] = ['href' => '/bictracker/bic/' . $bank['id'], 'name' => $bank['name']];
+                                }
+                            }
                             $breadArray[] = ['href' => '/bictracker/bic/' . $uri[1], 'name' => $outputArray['bicdetails']['NAMEP']];
                             #Set cache due to query complexity
                             $outputArray['cache_age'] = 259200;
