@@ -7,10 +7,10 @@
 </section>
 <section>
     <p>Используйте форму ниже для проверки контрольного символа номера счёта или проверки <em>возможной</em> принадлежности счёта указанному БИК:</p>
-    <p>
+    <form role="form" action="">
         <span class="float_label_div"><input id="bic_key" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^[0-9]{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}><label for="bic_key">БИК</label></span>
         <span class="float_label_div"><input id="account_key" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх]{1}[0-9]{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}><label for="account_key">Номер счёта</label></span>
-    </p>
+    </form>
     <p class="noLetter">
         {% if checkResult is same as(null) %}
             <span id="accCheckResult"></span>

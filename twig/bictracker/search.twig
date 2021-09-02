@@ -1,8 +1,8 @@
 <section>
     <p>Введите БИК, корреспондентский счёт, имя банка, его адрес или регистрационный номер.</p>
-    <form id="bicSearchForm" class="searchForm" data-baseURL="/bictracker/search/" action="">
-        <span class="float_label_div" id="bicSearchLabel"><input id="bicSearchField" type="search" inputmode="search" autocomplete="on" maxlength="100" autofocus{% if searchvalue is defined %} value="{{searchvalue}}"{% endif %}><label for="bicSearchField">Термин для поиска</label></span>
-        <input type="submit" id="bicSearch" value="Поиск">
+    <form role="search" id="bicSearchForm" class="searchForm" data-baseURL="/bictracker/search/" action="">
+        <span class="float_label_div" id="bicSearchLabel"><input id="bicSearchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100" autofocus{% if searchvalue is defined %} value="{{searchvalue}}"{% endif %}><label for="bicSearchField">Термин для поиска</label></span>
+        <input role="button" type="submit" id="bicSearch" value="Поиск">
     </form>
 </section>
 <section>

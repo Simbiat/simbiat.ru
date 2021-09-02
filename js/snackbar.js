@@ -10,6 +10,7 @@ function addSnackbar(text, color = 'text', milliseconds = 3000) {
     //Set ID for notification
     let id = notificationIndex++;
     snack.setAttribute('id', 'snackbar' + id);
+    snack.setAttribute('role', 'alert');
     //Add snackbar class
     snack.classList.add('snackbar');
     //Add text
