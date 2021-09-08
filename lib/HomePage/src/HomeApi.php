@@ -138,7 +138,7 @@ class HomeApi
                 } else {
                     #Send additional headers
                     $headers = (new Headers);
-                    $headers->lastModified(strtotime($data['DT_IZM']), true);
+                    $headers->lastModified(strtotime($data['Updated']), true);
                     $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/bictracker/bic/'.$uri[1]]]);
                 }
                 #Send data

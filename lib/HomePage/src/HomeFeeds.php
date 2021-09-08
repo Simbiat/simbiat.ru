@@ -91,13 +91,13 @@ class HomeFeeds
                 #Set query for the feed
                 if ($format === 'atom') {
                     $query = match($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NAMEP` as `title`, `DT_IZM` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NAMEP` as `summary`, `DT_IZM` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `DT_IZM` as `source_updated` FROM `bic__list` a WHERE `DATEDEL` IS NULL ORDER BY `DT_IZM` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NAMEP` as `title`, `DT_IZM` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NAMEP` as `summary`, `DT_IZM` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `DT_IZM` as `source_updated` FROM `bic__list` a WHERE `DATEDEL` IS NOT NULL ORDER BY `DATEDEL` DESC LIMIT 25',
+                        'bicchanged' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
+                        'bicdeleted' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
                 } elseif ($format === 'rss') {
                     $query = match($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NAMEP` as `title`, `DT_IZM` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DATEDEL` IS NULL ORDER BY `DT_IZM` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NAMEP` as `title`, `DT_IZM` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DATEDEL` IS NOT NULL ORDER BY `DATEDEL` DESC LIMIT 25',
+                        'bicchanged' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
+                        'bicdeleted' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `VKEY`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
 
                 }
@@ -191,7 +191,7 @@ class HomeFeeds
                                     #Get links
                                     $uri[2] = intval($uri[2]);
                                     $links = match($uri[1]) {
-                                        'bic' => (new Controller)->selectAll('SELECT CONCAT(\''.$baseurl.'bictracker/bic/\', `VKEY`, \'/\') AS `loc`, `DT_IZM` AS `lastmod`, `NAMEP` AS `name` FROM `bic__list` ORDER BY `NAMEP` ASC LIMIT '.$uri[2].', 50000'),
+                                        'bic' => (new Controller)->selectAll('SELECT CONCAT(\''.$baseurl.'bictracker/bic/\', `VKEY`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` ORDER BY `NameP` ASC LIMIT '.$uri[2].', 50000'),
                                         'forum' => (new Controller)->selectAll('SELECT CONCAT(\''.$baseurl.'thread/\', `threadid`, \'/\') AS `loc`, `date` AS `lastmod`, `title` AS `name` FROM `forum__thread` ORDER BY `title` ASC LIMIT '.$uri[2].', 50000'),
                                         'ff_achievement' => (new Controller)->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/achievement/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
                                         'ff_character' => (new Controller)->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/character/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),

@@ -633,8 +633,8 @@ class HomeRouter
         $headers = (new Headers);
         $bictracker = (new bicXML);
 
-        $bictracker->dbUpdate();
-        exit;
+        #$bictracker->dbUpdate();
+        #exit;
 
         #Tell that content is intended for Russians
         header('Content-Language: ru-RU');
@@ -726,22 +726,22 @@ class HomeRouter
                             $outputArray['http_error'] = 404;
                         } else {
                             #Try to exit early based on modification date
-                            if (!empty($outputArray['bicdetails']['DT_IZM'])) {
-                                $headers->lastModified(strtotime($outputArray['bicdetails']['DT_IZM']), true);
+                            if (!empty($outputArray['bicdetails']['Updated'])) {
+                                $headers->lastModified(strtotime($outputArray['bicdetails']['Updated']), true);
                             }
                             #Continue breadcrumbs
-                            if (!empty($outputArray['bicdetails']['BIC_UF'])) {
-                                foreach(array_reverse($outputArray['bicdetails']['BIC_UF']) as $bank) {
+                            if (!empty($outputArray['bicdetails']['PrntBIC'])) {
+                                foreach(array_reverse($outputArray['bicdetails']['PrntBIC']) as $bank) {
                                     $breadArray[] = ['href' => '/bictracker/bic/' . $bank['id'], 'name' => $bank['name']];
                                 }
                             }
-                            $breadArray[] = ['href' => '/bictracker/bic/' . $uri[1], 'name' => $outputArray['bicdetails']['NAMEP']];
+                            $breadArray[] = ['href' => '/bictracker/bic/' . $uri[1], 'name' => $outputArray['bicdetails']['NameP']];
                             #Set cache due to query complexity
                             $outputArray['cache_age'] = 259200;
                             #Update meta
-                            $outputArray['title'] = $outputArray['bicdetails']['NAMEP'];
-                            $outputArray['h1'] = $outputArray['bicdetails']['NAMEP'];
-                            $outputArray['ogdesc'] = $outputArray['bicdetails']['NAMEP'] . ' (' . $outputArray['bicdetails']['NEWNUM'] . ') in BIC Tracker';
+                            $outputArray['title'] = $outputArray['bicdetails']['NameP'];
+                            $outputArray['h1'] = $outputArray['bicdetails']['NameP'];
+                            $outputArray['ogdesc'] = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') in BIC Tracker';
                             #Link header/tag for API
                             $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation', 'href' => '/api/bictracker/bic/' . rawurlencode($vkey)]];
                             #Send HTTP header

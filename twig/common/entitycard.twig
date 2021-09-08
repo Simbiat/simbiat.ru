@@ -6,7 +6,7 @@
 <a class="entityCard" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
     <span class="entityIcon">
         {% if type == 'bic' %}
-            {% if DATEDEL %}
+            {% if DateOut %}
                 <span class="emojiRed">&#10060;</span>
             {% else %}
                 <span class="emojiGreen">&#10004;</span>

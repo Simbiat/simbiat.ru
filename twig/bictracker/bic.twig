@@ -1,10 +1,10 @@
 <section>
-    {%if bicdetails.DATEDEL%}
+    {%if bicdetails.DateOut%}
         <table>
             <caption><h2 class="zeroMargin">Информация о закрытии</h2></caption>
             <tbody>
                 <tr>
-                    <td>Дата удаления из справочника:</td><td>{{bicdetails.DATEDEL|date("d/m/Y")|default('-')}}</td>
+                    <td>Дата удаления из справочника:</td><td>{{bicdetails.DateOut|date("d/m/Y")|default('-')}}</td>
                 </tr>
                 <tr>
                     <td>Причина закрытия счёта:</td><td>{{bicdetails.R_CLOSE|default('-')}}</td>
@@ -25,22 +25,16 @@
         <caption><h2 class="zeroMargin">Информация для расчётов</h2></caption>
         <tbody>
             <tr>
-                <td>Полное наименование:</td><td>{%if bicdetails.NAMEMAXB%}{{bicdetails.NAMEMAXB}}{%else%}{{bicdetails.NAMEP}}{%endif%}</td>
+                <td>Полное наименование:</td><td>{%if bicdetails.NAMEMAXB%}{{bicdetails.NAMEMAXB}}{%else%}{{bicdetails.NameP}}{%endif%}</td>
             </tr>
             <tr>
-                <td>Наименование филиала:</td><td>{{bicdetails.NAMEMAXF|default('-')}}</td>
+                <td>Наименование в <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:</td><td>{{bicdetails.SWIFT_NAME|default('-')}}</td>
             </tr>
             <tr>
-                <td>Наименование в <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:</td><td>{{bicdetails.NAME_SRUS|default('-')}}</td>
+                <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr>:</td><td>{{bicdetails.BIC|default('-')}}</td>
             </tr>
             <tr>
-                <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr>:</td><td>{{bicdetails.NEWNUM|default('-')}}</td>
-            </tr>
-            <tr>
-                <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:</td><td>{{bicdetails.KOD_SWIFT}}</td>
-            </tr>
-            <tr>
-                <td>Корреспондентский счёт:</td><td>{{bicdetails.KSNP|default('-')}}</td>
+                <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:</td><td>{{bicdetails.SWBIC}}</td>
             </tr>
             <tr>
                 <td>Код <abbr data-tooltip="Общероссийский классификатор предприятий и организаций">ОКПО</abbr>:</td><td>{{bicdetails.OKPO|default('-')}}</td>
@@ -51,13 +45,13 @@
         <caption><h2 class="zeroMargin">Контакты</h2></caption>
         <tbody>
             <tr>
-                <td>Регион:</td><td>{{bicdetails.RGN|default('-')}}</td>
+                <td>Регион:</td><td>{{bicdetails.Rgn|default('-')}}</td>
             </tr>
             <tr>
                 <td>Административный центр:</td><td>{{bicdetails.CENTER|default('-')}}</td>
             </tr>
             <tr>
-                <td>Адрес:</td><td>{%if bicdetails.ADR%}{{bicdetails.ADR}} <a target="_blank" href="https://yandex.ru/maps/?mode=search&amp;text={{ bicdetails.ADR|url_encode}}"><img src="/img/icons/YandexMaps.svg" class="linkIcon" alt="Яндекс Карты"></a><a target="_blank" href="https://www.google.com/maps/search/{{ bicdetails.ADR|url_encode}}"><img src="/img/icons/GoogleMaps.svg" class="linkIcon" alt="Google Maps"></a>{% else %}-{% endif %}</td>
+                <td>Адрес:</td><td>{%if bicdetails.Adr%}{{bicdetails.Adr}} <a target="_blank" href="https://yandex.ru/maps/?mode=search&amp;text={{ bicdetails.Adr|url_encode}}"><img src="/img/icons/YandexMaps.svg" class="linkIcon" alt="Яндекс Карты"></a><a target="_blank" href="https://www.google.com/maps/search/{{ bicdetails.Adr|url_encode}}"><img src="/img/icons/GoogleMaps.svg" class="linkIcon" alt="Google Maps"></a>{% else %}-{% endif %}</td>
             </tr>
             <tr>
                 <td>Абонентский телеграф 1:</td><td>{{bicdetails.AT1|default('-')}}</td>
@@ -85,19 +79,13 @@
         <caption><h2 class="zeroMargin">Служебная информация</h2></caption>
         <tbody>
             <tr>
-                <td>Код контроля допустимости проведения расчётных операций:</td><td>{{bicdetails.REAL|default('-')}}</td>
-            </tr>
-            <tr>
-                <td>Код типа участника расчётов:</td><td>{{bicdetails.PZN|default('-')}}</td>
-            </tr>
-            <tr>
-                <td>Код типа участника системы электронных расчётов:</td><td>{{bicdetails.UER|default('-')}}</td>
+                <td>Код типа участника расчётов:</td><td>{{bicdetails.PtType|default('-')}}</td>
             </tr>
             <tr>
                 <td>Срок прохождения документов:</td><td>{{bicdetails.SROK|default('-')}}</td>
             </tr>
             <tr>
-                <td>Регистрационный номер:</td><td>{{bicdetails.REGN|default('-')}}</td>
+                <td>Регистрационный номер:</td><td>{{bicdetails.RegN|default('-')}}</td>
             </tr>
             <tr>
                 <td>Корреспондентский счёт до нового Плана:</td><td>{{bicdetails.NEWKS|default('-')}}</td>
@@ -106,16 +94,10 @@
                 <td>Номер по межфилиальным оборотам:</td><td>{{bicdetails.PERMFO|default('-')}}</td>
             </tr>
             <tr>
-                <td>Дата начала централизованного обмена:</td><td>{{bicdetails.DT_ST|date("d/m/Y")|default('-')}}</td>
+                <td>Дата включения в справочник:</td><td>{{bicdetails.DateIn|date("d/m/Y")|default('-')}}</td>
             </tr>
             <tr>
-                <td>Дата завершения централизованного обмена:</td><td>{{bicdetails.DT_FIN|date("d/m/Y")|default('-')}}</td>
-            </tr>
-            <tr>
-                <td>Дата включения в справочник:</td><td>{{bicdetails.DATE_IN|date("d/m/Y")|default('-')}}</td>
-            </tr>
-            <tr>
-                <td>Дата последнего изменения:</td><td>{{bicdetails.DT_IZM|date("d/m/Y")|default('-')}}</td>
+                <td>Дата последнего изменения:</td><td>{{bicdetails.Updated|date("d/m/Y")|default('-')}}</td>
             </tr>
             <tr>
                 <td>Дата контроля:</td><td>{{bicdetails.DATE_CH|date("d/m/Y")|default('-')}}</td>
@@ -133,7 +115,7 @@
     </table>
 
 
-    {%if bicdetails.RKC or bicdetails.BIC_UF or bicdetails.filials or bicdetails.successors or bicdetails.predecessors%}<h2>Родственные организации</h2>{%endif%}
+    {%if bicdetails.RKC or bicdetails.PrntBIC or bicdetails.filials or bicdetails.successors or bicdetails.predecessors%}<h2>Родственные организации</h2>{%endif%}
     {%if bicdetails.RKC%}
         <h3>Расчётно-кассовы{%if bicdetails.RKC|length > 1%}е{%else%}й{%endif%} центр{%if bicdetails.RKC|length > 1%}ы{%endif%}</h3>
         <div class="searchResults bicChain">
@@ -142,10 +124,10 @@
             {%endfor%}
         </div>
     {%endif%}
-    {%if bicdetails.BIC_UF%}
-        <h3>Уполномоченны{%if bicdetails.BIC_UF|length > 1%}е{%else%}й{%endif%} филиал{%if bicdetails.BIC_UF|length > 1%}ы{%endif%}</h3>
+    {%if bicdetails.PrntBIC%}
+        <h3>Уполномоченны{%if bicdetails.PrntBIC|length > 1%}е{%else%}й{%endif%} филиал{%if bicdetails.PrntBIC|length > 1%}ы{%endif%}</h3>
         <div class="searchResults bicChain">
-            {% for bank in bicdetails.BIC_UF %}
+            {% for bank in bicdetails.PrntBIC %}
                 {{ include('common/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
             {%endfor%}
         </div>
