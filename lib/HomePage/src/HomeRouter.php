@@ -631,10 +631,10 @@ class HomeRouter
     public function bictracker(array $uri): array
     {
         $headers = (new Headers);
-        $bictracker = (new bicXML);
+        $bictracker = (new bicXML\Display);
 
-        #$bictracker->dbUpdate();
-        #exit;
+        (new bicXML\Update)->dbUpdate();
+        exit;
 
         #Tell that content is intended for Russians
         header('Content-Language: ru-RU');

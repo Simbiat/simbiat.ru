@@ -131,7 +131,7 @@ class HomeApi
             #Connect to DB
             if ((new HomePage)->dbConnect()) {
                 #Get data
-                $data = (new bicXML)->getCurrent(rawurldecode($uri[1]));
+                $data = (new bicXML\Display)->getCurrent(rawurldecode($uri[1]));
                 #Check if empty
                 if (empty($data)) {
                     $this->apiEcho(httpCode: '404');
