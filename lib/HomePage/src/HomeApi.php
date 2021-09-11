@@ -120,7 +120,7 @@ class HomeApi
         }
         $uri[0] = strtolower($uri[0]);
         #Check if supported
-        if (!in_array($uri[0], ['bic', 'keying'])) {
+        if (!in_array($uri[0], ['bic', 'keying', 'dbupdate'])) {
             $this->apiEcho(httpCode: '404');
         }
         #Check that data was provided
@@ -148,6 +148,16 @@ class HomeApi
             }
         } elseif ($uri[0] === 'keying') {
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
+        } elseif ($uri[0] === 'dbupdate') {
+            if ((new HomePage)->dbConnect()) {
+                if ((new bicXML\Update)->dbUpdate() === true) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                $this->apiEcho(httpCode: '503');
+            }
         }
         return [];
     }
@@ -157,7 +167,7 @@ class HomeApi
     {
         #Convert data to JSON
         $data = json_encode($data, JSON_PRETTY_PRINT|JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
-        #Send HTTP code to client
+        #Send HTTP response code to client
         (new Headers)->clientReturn($httpCode, false);
         #Send content-type
         header('Content-Type: application/json; charset=utf-8');

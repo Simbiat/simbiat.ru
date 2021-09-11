@@ -97,6 +97,8 @@ class HomeTests
         echo '<pre>';
         var_dump($variable);
         echo '</pre>';
+        ob_flush();
+        flush();
         if ($exit) {
             exit;
         }

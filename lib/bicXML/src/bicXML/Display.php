@@ -76,22 +76,6 @@ class Display
         return $statistics;
     }
 
-    #Function to prepare tables
-    public function install(): bool
-    {
-        #Get contents from SQL file
-        $sql = file_get_contents(__DIR__.'\install.sql');
-        #Split file content into queries
-        $sql = (new Controller)->stringToQueries($sql);
-        try {
-            (new Controller)->query($sql);
-            return true;
-        } catch(\Exception $e) {
-            echo $e->getTraceAsString();
-            return false;
-        }
-    }
-
     #Function to get list of all predecessors (each as a chain)
 
     /**

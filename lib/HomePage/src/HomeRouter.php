@@ -632,10 +632,6 @@ class HomeRouter
     {
         $headers = (new Headers);
         $bictracker = (new bicXML\Display);
-
-        (new bicXML\Update)->dbUpdate();
-        exit;
-
         #Tell that content is intended for Russians
         header('Content-Language: ru-RU');
         #Prepare array

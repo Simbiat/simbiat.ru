@@ -48,7 +48,7 @@ class Update
     /**
      * @throws \Exception
      */
-    public function dbUpdate(): bool
+    public function dbUpdate(): string|bool
     {
         if (empty($this->dbController)) {
             return false;
@@ -60,244 +60,295 @@ class Update
         $libDate = $this->dbController->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
         $libDate = strtotime(date('d.m.Y', intval($libDate)));
         while ($libDate <= $currentDate) {
-            $download = $this->download($libDate);
-            if ($download === true) {
-                #The day does not have library, skip it
-                continue;
-            } elseif ($download === false) {
-                #Failed to download. Stop processing to avoid loosing sequence
-                return false;
-            } else {
-                #Load file
-                libxml_use_internal_errors(true);
-                $library = new \DOMDocument();
-                $library->load(realpath($download));
-                #Get date from root node
-                $elements = new \DOMXpath($library);
-                #Check date of the library
-                $this->fileDate = $elements->evaluate('string(/*/@EDDate)');
-                if ($this->fileDate !== date('Y-m-d', $libDate)) {
-                    #Date mismatch. Stop processing to avoid loosing sequence
-                    return false;
-                }
-                #Get entries
-                $elements = $library->getElementsByTagName('BICDirectoryEntry');
-                #List of BICs to compare against current database
-                $bics = [];
-                #Array for queries
-                $queries = [];
-                #Iterate entries
-                foreach ($elements as $element) {
-                    #Get BIC
-                    $bic = $element->getAttribute('BIC');
-                    $bics[] = $bic;
-                    #Get general details
-                    $details = $element->getElementsByTagName('ParticipantInfo')[0];
-                    #Get restrictions
-                    $restrictions = $element->getElementsByTagName('RstrList');
-                    #Get SWIFT codes
-                    $swifts = $element->getElementsByTagName('SWBICS');
-                    #Get accounts
-                    $accounts = $element->getElementsByTagName('Accounts');
-                    #Generate array, which can be compared to what we can get from DB
-                    $details = $arrayHelpers->attributesToArray($details, true, ['BIC', 'DateIn', 'NameP', 'EnglName', 'XchType', 'PtType', 'Srvcs', 'UID', 'PrntBIC', 'CntrCd', 'RegN', 'Ind', 'Rgn', 'Tnp', 'Nnp', 'Adr']);
-                    $details['BIC'] = $bic;
-                    #Ensure some old or unused fields are removed
-                    unset($details['NPSParticipant'], $details['ParticipantStatus']);
-                    ksort($details, SORT_NATURAL);
-                    #Prepare bindings
-                    $bindings = [];
-                    foreach (array_keys($details) as $key) {
-                        $bindings[':'.$key] = [
-                            ($details[$key] === NULL ? NULL : $details[$key]),
-                            ($details[$key] === NULL ? 'null' : 'string'),
-                        ];
+            try {
+                $download = $this->download($libDate);
+                if ($download === true) {
+                    #The day does not have library, skip it
+                    $libDate = $libDate + 86400;
+                    continue;
+                } elseif ($download === false) {
+                    #Failed to download. Stop processing to avoid loosing sequence
+                    throw new \RuntimeException('Failed to download `'.$download.'`');
+                } else {
+                    #Some files are known to have double XML definition. We need to fix this.
+                    file_put_contents($download, preg_replace('/(<\?xml version="1\.0" encoding="WINDOWS-1251"\?>){2,}/i', '$1', file_get_contents($download)));
+                    #Load file
+                    $library = new \DOMDocument();
+                    $loadSuccess = @$library->load(realpath($download), LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
+                    if ($loadSuccess === false) {
+                        #Bad file detected
+                        throw new \DOMException('Failed to open `'.$download.'`');
                     }
-                    #Get current details
-                    $currentDetails = $this->getBIC($bic);
-                    #Check if BIC exists at all
-                    if (empty($currentDetails)) {
-                        #We need to INSERT
-                        $queries[] = [
-                            'INSERT INTO `'.self::dbPrefix.'list` (`BIC`, `DateIn`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr`) VALUES (:BIC, :DateIn, :NameP, :EnglName, :XchType, :PtType, :Srvcs, :UID, :PrntBIC, :CntrCd, :RegN, :Ind, :Rgn, :Tnp, :Nnp, :Adr);',
-                            array_merge($bindings, [':fileDate' => $this->fileDate]),
-                        ];
-                    } else {
-                        #Compare details
-                        if ($details !== $currentDetails) {
-                            #We need to update
-                            $queries[] = [
-                                'UPDATE `'.self::dbPrefix.'list` SET `DateIn`=:DateIn, `Updated`=:fileDate, `NameP`=:NameP, `EnglName`=:EnglName, `XchType`=:XchType, `PtType`=:PtType, `Srvcs`=:Srvcs, `UID`=:UID, `PrntBIC`=:PrntBIC, `CntrCd`=:CntrCd, `RegN`=:CntrCd, `Ind`=:Ind, `Rgn`=:Rgn, `Tnp`=:Tnp, `Nnp`=:Nnp, `Adr`=:Adr WHERE `BIC`=:BIC;',
-                                array_merge($bindings, [':fileDate' => $this->fileDate]),
+                    #Some files are in packets or envelopes, thus we need to explicitly get ED807 element and work with it.
+                    $library = $library->getElementsByTagName('ED807')[0];
+                    #Get date from root node. Earlier libraries did not have BusinessDay, but later it was added, because it became possible for the library to be prepared before the day, when it needed applying.
+                    #Using @ to suppress potential errors and also allow ?: instead of ??, since ?? will treat empty string as valid
+                    $this->fileDate = @$library->getAttribute('BusinessDay') ?: $library->getAttribute('EDDate');
+                    #Check date of the library
+                    if (empty($this->fileDate)) {
+                        #Empty date. Stop processing to avoid loosing sequence
+                        throw new \LengthException('Empty date `'.$download.'`');
+                    }
+                    if ($this->fileDate !== date('Y-m-d', $libDate)) {
+                        #Date mismatch. Stop processing to avoid loosing sequence
+                        throw new \UnexpectedValueException('Date mismatch in `'.$download.'`');
+                    }
+                    #Get entries
+                    $elements = $library->getElementsByTagName('BICDirectoryEntry');
+                    #List of BICs to compare against current database
+                    $bics = [];
+                    #List of BICs to add to be used later
+                    $delayed = [];
+                    #Iterate entries
+                    foreach ($elements as $element) {
+                        #Flag determining whether we delay or not
+                        $delay = false;
+                        #Array for queries
+                        $queries = [];
+                        #Get BIC
+                        $bic = $element->getAttribute('BIC');
+                        $bics[] = $bic;
+                        #Get general details
+                        $details = $element->getElementsByTagName('ParticipantInfo')[0];
+                        #Get restrictions
+                        $restrictions = $element->getElementsByTagName('RstrList');
+                        #Get SWIFT codes
+                        $swifts = $element->getElementsByTagName('SWBICS');
+                        #Get accounts
+                        $accounts = $element->getElementsByTagName('Accounts');
+                        #Generate array, which can be compared to what we can get from DB
+                        $details = $arrayHelpers->attributesToArray($details, true, ['BIC', 'DateIn', 'DateOut', 'NameP', 'EnglName', 'XchType', 'PtType', 'Srvcs', 'UID', 'PrntBIC', 'CntrCd', 'RegN', 'Ind', 'Rgn', 'Tnp', 'Nnp', 'Adr']);
+                        $details['BIC'] = $bic;
+                        #Ensure some old or unused fields are removed
+                        unset($details['NPSParticipant'], $details['ParticipantStatus']);
+                        ksort($details, SORT_NATURAL);
+                        #Prepare bindings
+                        $bindings = [];
+                        foreach (array_keys($details) as $key) {
+                            $bindings[':'.$key] = [
+                                ($details[$key] === NULL ? NULL : $details[$key]),
+                                ($details[$key] === NULL ? 'null' : 'string'),
                             ];
                         }
-                    }
-                    #Process restrictions
-                    if (count($restrictions) > 0) {
-                        #Convert to array
-                        $libraryRest = [];
-                        foreach ($restrictions as $restriction) {
-                            $libraryRest[] = $arrayHelpers->attributesToArray($restriction);
-                            ksort($libraryRest[array_key_last($libraryRest)]);
+                        #Get current details
+                        $currentDetails = $this->getBIC($bic);
+                        #Check for Parent BIC
+                        if (!empty($details['PrntBIC']) && empty($this->getBIC($details['PrntBIC']))) {
+                            $delay = true;
                         }
-                        #Get current restrictions
-                        $currentRest = $this->getRestrictions($bic);
-                        #Check if any of restrictions were removed
-                        foreach ($currentRest as $restriction) {
-                            if (array_search($restriction, $libraryRest, true) === false) {
-                                #Update DateOut for restriction
-                                $queries[] = $this->endRestriction($bic, $restriction);
-                            }
-                        }
-                        #Add new restrictions
-                        foreach ($libraryRest as $restriction) {
-                            if (array_search($restriction, $currentRest, true) === false) {
-                                #Insert restriction
+                        #Check if BIC exists at all
+                        if (empty($currentDetails)) {
+                            #We need to INSERT
+                            $queries[] = [
+                                'INSERT INTO `'.self::dbPrefix.'list` (`BIC`, `DateIn`, `DateOut`, `Updated`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr`) VALUES (:BIC, :DateIn, :DateOut, :fileDate, :NameP, :EnglName, :XchType, :PtType, :Srvcs, :UID, :PrntBIC, :CntrCd, :RegN, :Ind, :Rgn, :Tnp, :Nnp, :Adr);',
+                                array_merge($bindings, [':fileDate' => $this->fileDate]),
+                            ];
+                        } else {
+                            #Compare details
+                            if ($details !== $currentDetails) {
+                                #We need to update
                                 $queries[] = [
-                                    'INSERT IGNORE INTO `'.self::dbPrefix.'bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
-                                    [
-                                        ':BIC' => $bic,
-                                        ':Rstr' => $restriction['Rstr'],
-                                        ':RstrDate' => $restriction['RstrDate'],
-                                    ]
+                                    'UPDATE `'.self::dbPrefix.'list` SET `DateIn`=:DateIn, `DateOut`=:DateOut, `Updated`=:fileDate, `NameP`=:NameP, `EnglName`=:EnglName, `XchType`=:XchType, `PtType`=:PtType, `Srvcs`=:Srvcs, `UID`=:UID, `PrntBIC`=:PrntBIC, `CntrCd`=:CntrCd, `RegN`=:CntrCd, `Ind`=:Ind, `Rgn`=:Rgn, `Tnp`=:Tnp, `Nnp`=:Nnp, `Adr`=:Adr WHERE `BIC`=:BIC;',
+                                    array_merge($bindings, [':fileDate' => $this->fileDate]),
                                 ];
                             }
                         }
-                    } else {
-                        #End all restrictions if any exist
-                        $queries[] = $this->endRestriction($bic);
-                    }
-                    #Process swifts
-                    if (count($swifts) > 0) {
-                        #Convert to array
-                        $librarySwift = [];
-                        foreach ($swifts as $swift) {
-                            $librarySwift[] = $arrayHelpers->attributesToArray($swift);
-                            ksort($librarySwift[array_key_last($librarySwift)]);
+                        #Process restrictions
+                        if (count($restrictions) > 0) {
+                            #Convert to array
+                            $libraryRest = [];
+                            foreach ($restrictions as $restriction) {
+                                $libraryRest[] = $arrayHelpers->attributesToArray($restriction);
+                                ksort($libraryRest[array_key_last($libraryRest)]);
+                            }
+                            #Get current restrictions
+                            $currentRest = $this->getRestrictions($bic);
+                            #Check if any of restrictions were removed
+                            foreach ($currentRest as $restriction) {
+                                if (array_search($restriction, $libraryRest, true) === false) {
+                                    #Update DateOut for restriction
+                                    $queries[] = $this->endRestriction($bic, $restriction);
+                                }
+                            }
+                            #Add new restrictions
+                            foreach ($libraryRest as $restriction) {
+                                if (array_search($restriction, $currentRest, true) === false) {
+                                    #Insert restriction
+                                    $queries[] = [
+                                        'INSERT IGNORE INTO `'.self::dbPrefix.'bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
+                                        [
+                                            ':BIC' => $bic,
+                                            ':Rstr' => $restriction['Rstr'],
+                                            ':RstrDate' => $restriction['RstrDate'],
+                                        ]
+                                    ];
+                                }
+                            }
+                        } else {
+                            #End all restrictions if any exist
+                            $queries[] = $this->endRestriction($bic);
                         }
-                        #Get current SWIFTs
-                        $currentSwift = $this->getSWIFTs($bic);
-                        #Add all SWIFTs. Updating Default flag if already existing
-                        foreach ($librarySwift as $swift) {
-                            if (array_search($swift, $currentSwift, true) === false) {
-                                #Insert restriction
+                        #Process swifts
+                        if (count($swifts) > 0) {
+                            #Convert to array
+                            $librarySwift = [];
+                            foreach ($swifts as $swift) {
+                                $librarySwift[] = $arrayHelpers->attributesToArray($swift);
+                                ksort($librarySwift[array_key_last($librarySwift)]);
+                            }
+                            #Get current SWIFTs
+                            $currentSwift = $this->getSWIFTs($bic);
+                            #Add all SWIFTs. Updating Default flag if already existing
+                            foreach ($librarySwift as $swift) {
+                                if (array_search($swift, $currentSwift, true) === false) {
+                                    #Insert restriction
+                                    $queries[] = [
+                                        'INSERT INTO `'.self::dbPrefix.'swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :fileDate) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
+                                        [
+                                            ':BIC' => $bic,
+                                            ':SWBIC' => $swift['SWBIC'],
+                                            ':DefaultSWBIC' => $swift['DefaultSWBIC'],
+                                            ':fileDate' => $this->fileDate,
+                                        ]
+                                    ];
+                                }
+                            }
+                            #Close SWIFTs that do not match what we already have. If Default flag has been updated on previous step, there will be no update here, because it will no longer match the condition
+                            foreach ($currentSwift as $swift) {
+                                if (array_search($swift, $librarySwift, true) === false) {
+                                    #Close SWIFT
+                                    $queries[] = $this->closeSwift($bic, $swift['SWBIC'], $swift['DefaultSWBIC']);
+                                }
+                            }
+                        } else {
+                            #Close all SWIFTs
+                            $queries[] = $this->closeSwift($bic);
+                        }
+                        #Process accounts
+                        if (count($accounts) > 0) {
+                            #Convert to array
+                            $libraryAccounts = [];
+                            $libraryAccountsRest = [];
+                            foreach ($accounts as $account) {
+                                #Convert account
+                                $libraryAccounts[] = $arrayHelpers->attributesToArray($account, true, ['CK']);
+                                #Set last key
+                                $lastKey = array_key_last($libraryAccounts);
+                                unset($libraryAccounts[$lastKey]['AccountStatus']);
+                                ksort($libraryAccounts[$lastKey]);
+                                #Convert restrictions
+                                if (count($account->getElementsByTagName('AccRstrList')) > 0) {
+                                    foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
+                                        $libraryAccountsRest[$libraryAccounts[$lastKey]['Account']][] = $arrayHelpers->attributesToArray($restriction, true, ['SuccessorBIC']);
+                                        ksort($libraryAccountsRest[$libraryAccounts[$lastKey]['Account']]);
+                                    }
+                                }
+                            }
+                            #Get current accounts
+                            $currentAccounts = $this->getAccounts($bic);
+                            #"Remove" accounts
+                            foreach ($currentAccounts as $account) {
+                                if (array_search($account, $libraryAccounts, true) === false) {
+                                    $queries = array_merge($queries, $this->closeAccount($bic, $account['Account']));
+                                }
+                            }
+                            #Update accounts
+                            foreach ($libraryAccounts as $account) {
+                                if (!empty($account['AccountCBRBIC']) && empty($this->getBIC($account['AccountCBRBIC']))) {
+                                    $delay = true;
+                                }
+                                #Update account
                                 $queries[] = [
-                                    'INSERT INTO `'.self::dbPrefix.'swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :fileDate) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
+                                    'INSERT INTO `'.self::dbPrefix.'accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :fileDate) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK;',
                                     [
                                         ':BIC' => $bic,
-                                        ':SWBIC' => $swift['SWBIC'],
-                                        ':DefaultSWBIC' => $swift['DefaultSWBIC'],
+                                        ':Account' => $account['Account'],
+                                        #There are known cases, when BIC was set to '000000000' for some reason, thus we need to replace it with NULL. We also cover possibility, that it will not be present at all.
+                                        ':AccountCBRBIC' => [
+                                            (empty(intval($account['AccountCBRBIC'])) ? NULL : $account['AccountCBRBIC']),
+                                            (empty(intval($account['AccountCBRBIC'])) ? 'null' : 'string'),
+                                        ],
+                                        ':RegulationAccountType' => $account['RegulationAccountType'],
+                                        ':CK' => $account['CK'],
                                         ':fileDate' => $this->fileDate,
                                     ]
                                 ];
-                            }
-                        }
-                        #Close SWIFTs that do not match what we already have. If Default flag has been updated on previous step, there will be no update here, because it will no longer match the condition
-                        foreach ($currentSwift as $swift) {
-                            if (array_search($swift, $librarySwift, true) === false) {
-                                #Close SWIFT
-                                $queries[] = $this->closeSwift($bic, $swift['SWBIC'], $swift['DefaultSWBIC']);
-                            }
-                        }
-                    } else {
-                        #Close all SWIFTs
-                        $queries[] = $this->closeSwift($bic);
-                    }
-                    #Process accounts
-                    if (count($accounts) > 0) {
-                        #Convert to array
-                        $libraryAccounts = [];
-                        $libraryAccountsRest = [];
-                        foreach ($accounts as $account) {
-                            #Convert account
-                            $libraryAccounts[] = $arrayHelpers->attributesToArray($account, true, ['CK']);
-                            #Set last key
-                            $lastKey = array_key_last($libraryAccounts);
-                            unset($libraryAccounts[$lastKey]['AccountStatus']);
-                            ksort($libraryAccounts[$lastKey]);
-                            #Convert restrictions
-                            if (count($account->getElementsByTagName('AccRstrList')) > 0) {
-                                foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
-                                    $libraryAccountsRest[$libraryAccounts[$lastKey]['Account']][] = $arrayHelpers->attributesToArray($restriction, true, ['SuccessorBIC']);
-                                    ksort($libraryAccountsRest[$libraryAccounts[$lastKey]['Account']]);
-                                }
-                            }
-                        }
-                        #Get current accounts
-                        $currentAccounts = $this->getAccounts($bic);
-                        #"Remove" accounts
-                        foreach ($currentAccounts as $account) {
-                            if (array_search($account, $libraryAccounts, true) === false) {
-                                $queries = array_merge($queries, $this->closeAccount($bic, $account['Account']));
-                            }
-                        }
-                        #Update accounts
-                        foreach ($libraryAccounts as $account) {
-                            #Update account
-                            $queries[] = [
-                                'INSERT INTO `'.self::dbPrefix.'accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :fileDate) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK;',
-                                [
-                                    ':BIC' => $bic,
-                                    ':Account' => $account['Account'],
-                                    ':AccountCBRBIC' => $account['AccountCBRBIC'],
-                                    ':RegulationAccountType' => $account['RegulationAccountType'],
-                                    ':CK' => $account['CK'],
-                                    ':fileDate' => $this->fileDate,
-                                ]
-                            ];
-                            if (!empty($libraryAccountsRest[$account['Account']])) {
-                                #Get current restrictions
-                                $currentRest = $this->getAccountRestrictions($account['Account']);
-                                #Add all new restrictions
-                                foreach ($libraryAccountsRest[$account['Account']] as $restriction) {
-                                    if (array_search($restriction, $currentRest, true) === false) {
-                                        #Insert restriction
-                                        $queries[] = [
-                                            'INSERT INTO `'.self::dbPrefix.'acc_rstr` (`Account`, `AccRstr`, `AccRstrDate`, `SuccessorBIC`) VALUES (:Account, :AccRstr, :AccRstrDate, :SuccessorBIC) ON DUPLICATE KEY UPDATE `SuccessorBIC`=:SuccessorBIC;',
-                                            [
-                                                ':Account' => $account['Account'],
-                                                ':AccRstr' => $restriction['AccRstr'],
-                                                ':AccRstrDate' => $restriction['AccRstrDate'],
-                                                ':SuccessorBIC' => $restriction['SuccessorBIC'],
-                                            ]
-                                        ];
+                                if (!empty($libraryAccountsRest[$account['Account']])) {
+                                    #Get current restrictions
+                                    $currentRest = $this->getAccountRestrictions($account['Account']);
+                                    #Add all new restrictions
+                                    foreach ($libraryAccountsRest[$account['Account']] as $restriction) {
+                                        if (array_search($restriction, $currentRest, true) === false) {
+                                            if (!empty($restriction['SuccessorBIC']) && empty($this->getBIC($restriction['SuccessorBIC']))) {
+                                                $delay = true;
+                                            }
+                                            #Insert restriction
+                                            $queries[] = [
+                                                'INSERT INTO `'.self::dbPrefix.'acc_rstr` (`Account`, `AccRstr`, `AccRstrDate`, `SuccessorBIC`) VALUES (:Account, :AccRstr, :AccRstrDate, :SuccessorBIC) ON DUPLICATE KEY UPDATE `SuccessorBIC`=:SuccessorBIC;',
+                                                [
+                                                    ':Account' => $account['Account'],
+                                                    ':AccRstr' => $restriction['AccRstr'],
+                                                    ':AccRstrDate' => $restriction['AccRstrDate'],
+                                                    ':SuccessorBIC' => $restriction['SuccessorBIC'],
+                                                ]
+                                            ];
+                                        }
                                     }
-                                }
-                                #Check if any of restrictions were removed
-                                foreach ($currentRest as $restriction) {
-                                    if (array_search($restriction, $libraryAccountsRest[$account['Account']], true) === false) {
-                                        #End restriction
-                                        $queries[] = $this->endAccountRestriction($account['Account'], true, ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate'],]);
+                                    #Check if any of restrictions were removed
+                                    foreach ($currentRest as $restriction) {
+                                        if (array_search($restriction, $libraryAccountsRest[$account['Account']], true) === false) {
+                                            #End restriction
+                                            $queries[] = $this->endAccountRestriction($account['Account'], true, ['AccRstr' => $restriction['AccRstr'], 'AccRstrDate' => $restriction['AccRstrDate'],]);
+                                        }
                                     }
+                                } else {
+                                    #End all restrictions for the account
+                                    $queries[] = $this->endAccountRestriction($account['Account'], true);
                                 }
-                            } else {
-                                #End all restrictions for the account
-                                $queries[] = $this->endAccountRestriction($account['Account'], true);
+                            }
+                        } else {
+                            #Close all accounts
+                            $queries = array_merge($queries, $this->closeAccount($bic));
+                        }
+                        #If flag is true, it means that there is a dependency on a BIC, which is not yet present, thus we need to add run the queries after BIC is added, but since we can't predict when it will be added, we do this outside of the loop.
+                        if ($delay) {
+                            $delayed = array_merge($delayed, $queries);
+                        } else {
+                            #Appply queries for this BIC
+                            if ($this->dbController->query($queries) !== true) {
+                                throw new \RuntimeException('Failed to update `'.$bic.'` from `'.$download.'`');
                             }
                         }
-                    } else {
-                        #Close all accounts
-                        $queries = array_merge($queries, $this->closeAccount($bic));
                     }
-                }
-                #Check for removed BICs
-                $currentBics = $this->getBICs();
-                foreach ($currentBics as $bic) {
-                    if (!in_array($bic, $bics)) {
-                        #Close bic
-                        $queries = array_merge($queries, $this->closeBIC($bic));
+                    #Reset queries
+                    $queries = [];
+                    #Add delayed queries
+                    $queries = array_merge($queries, $delayed);
+                    #Check for removed BICs
+                    $currentBics = $this->getBICs();
+                    foreach ($currentBics as $bic) {
+                        if (!in_array($bic, $bics)) {
+                            #Close bic
+                            $queries = array_merge($queries, $this->closeBIC($bic));
+                        }
                     }
+                    #Increase $libDate by 1 day
+                    $libDate = $libDate + 86400;
+                    $queries[] = [
+                        'UPDATE `'.self::dbPrefix.'settings` SET `value`=:date WHERE `setting`=\'date\';',
+                        [':date' => $libDate],
+                    ];
+                    #Run queries for BICs removals and library update
+                    $this->dbController->query($queries);
+                    #Remove library file
+                    @unlink($download);
                 }
-                #Increase $libDate by 1 day
-                $libDate = $libDate + 86400;
-                $queries[] = [
-                    'UPDATE `'.self::dbPrefix.'settings` SET `value`=:date WHERE `setting`=\'date\';',
-                    [':date' => $libDate],
-                ];
-                (new \Simbiat\HomeTests())->testDump($queries);
-                #Remove library file
-                #@unlink($download);
-                exit;
+            } catch(\Exception $e) {
+                if (!empty($download)) {
+                    #Remove library file, if failure was while processing it
+                    @unlink($download);
+                }
+                return $e->getMessage()."\r\n".$e->getTraceAsString();
             }
         }
         return true;
