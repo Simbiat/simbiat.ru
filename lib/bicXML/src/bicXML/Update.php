@@ -368,11 +368,13 @@ class Update
             'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `'.self::dbPrefix.'list` WHERE `BIC`=:BIC;',
             [':BIC' => $bic,]
         );
-        ksort($result, SORT_NATURAL);
-        #Pad BICs with zeros
-        $result['BIC'] = str_pad($result['BIC'], 9, '0', STR_PAD_LEFT);
-        if ($result['PrntBIC'] !== NULL) {
-            $result['PrntBIC'] = str_pad($result['PrntBIC'], 9, '0', STR_PAD_LEFT);
+        if (!empty($result)) {
+            ksort($result, SORT_NATURAL);
+            #Pad BICs with zeros
+            $result['BIC'] = str_pad($result['BIC'], 9, '0', STR_PAD_LEFT);
+            if ($result['PrntBIC'] !== NULL) {
+                $result['PrntBIC'] = str_pad($result['PrntBIC'], 9, '0', STR_PAD_LEFT);
+            }
         }
         return $result;
     }
