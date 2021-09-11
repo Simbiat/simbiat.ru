@@ -148,7 +148,7 @@ class Update
                             if ($details !== $currentDetails) {
                                 #We need to update
                                 $queries[] = [
-                                    'UPDATE `'.self::dbPrefix.'list` SET `DateIn`=:DateIn, `DateOut`=:DateOut, `Updated`=:fileDate, `NameP`=:NameP, `EnglName`=:EnglName, `XchType`=:XchType, `PtType`=:PtType, `Srvcs`=:Srvcs, `UID`=:UID, `PrntBIC`=:PrntBIC, `CntrCd`=:CntrCd, `RegN`=:CntrCd, `Ind`=:Ind, `Rgn`=:Rgn, `Tnp`=:Tnp, `Nnp`=:Nnp, `Adr`=:Adr WHERE `BIC`=:BIC;',
+                                    'UPDATE `'.self::dbPrefix.'list` SET `DateIn`=:DateIn, `DateOut`=:DateOut, `Updated`=:fileDate, `NameP`=:NameP, `EnglName`=:EnglName, `XchType`=:XchType, `PtType`=:PtType, `Srvcs`=:Srvcs, `UID`=:UID, `PrntBIC`=:PrntBIC, `CntrCd`=:CntrCd, `RegN`=:RegN, `Ind`=:Ind, `Rgn`=:Rgn, `Tnp`=:Tnp, `Nnp`=:Nnp, `Adr`=:Adr WHERE `BIC`=:BIC;',
                                     array_merge($bindings, [':fileDate' => $this->fileDate]),
                                 ];
                             }
@@ -365,10 +365,15 @@ class Update
     private function getBIC(string $bic): array
     {
         $result = $this->dbController->selectRow(
-            'SELECT `BIC`, `DateIn`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `'.self::dbPrefix.'list` WHERE `BIC`=:BIC;',
+            'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `'.self::dbPrefix.'list` WHERE `BIC`=:BIC;',
             [':BIC' => $bic,]
         );
         ksort($result, SORT_NATURAL);
+        #Pad BICs with zeros
+        $result['BIC'] = str_pad($result['BIC'], 9, '0', STR_PAD_LEFT);
+        if ($result['PrntBIC'] !== NULL) {
+            $result['PrntBIC'] = str_pad($result['PrntBIC'], 9, '0', STR_PAD_LEFT);
+        }
         return $result;
     }
 
@@ -402,10 +407,17 @@ class Update
      */
     private function getAccounts(string $bic): array
     {
-        return $this->dbController->selectAll(
+        $result = $this->dbController->selectAll(
             'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `'.self::dbPrefix.'accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
+        #Pad BICs with zeros
+        foreach ($result as $key=>$account) {
+            if ($account['AccountCBRBIC'] !== NULL) {
+                $result[$key]['AccountCBRBIC'] = str_pad($account['AccountCBRBIC'], 9, '0', STR_PAD_LEFT);
+            }
+        }
+        return $result;
     }
 
     #Get account restrictions
@@ -414,10 +426,16 @@ class Update
      */
     private function getAccountRestrictions(string $account): array
     {
-        return $this->dbController->selectAll(
+        $result = $this->dbController->selectAll(
             'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `'.self::dbPrefix.'acc_rstr` WHERE `Account`=:Account;',
             [':Account' => $account,]
         );
+        foreach ($result as $key=>$restriction) {
+            if ($restriction['SuccessorBIC'] !== NULL) {
+                $result[$key]['SuccessorBIC'] = str_pad($restriction['SuccessorBIC'], 9, '0', STR_PAD_LEFT);
+            }
+        }
+        return $result;
     }
 
     #Get all BICs
