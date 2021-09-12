@@ -22,7 +22,7 @@
             {% endif %}
         {% endif %}
     {% else %}
-        <p>Сервису известны {{bicactive}} активных и {{bicdeleted}} закрытых кодов.</p>
+        <p>Сервису известны {{bicactive}} активных и {{bicdeleted}} закрытых кодов по состоянию на <time datetime="{{ bidDate|date('Y-m-d') }}">{{ bidDate|date('d.m.Y') }}</time>.</p>
         <p>Последние изменения:</p>
         <div class="searchResults">
             {% for bank in bicchanges %}

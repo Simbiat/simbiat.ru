@@ -6,7 +6,7 @@ use Simbiat\Database\Controller;
 
 class Display
 {
-    const prefix = 'bic__';
+    const dbPrefix = 'bic__';
 
     #Function to return current data about the bank
     /**
@@ -50,18 +50,7 @@ class Display
         }
     }
 
-    #Function to search for BICs
-
-    /**
-     * @throws \Exception
-     */
-    public function Search(string $what = ''): array
-    {
-        return (new Controller)->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `VKEY`=:name OR `BIC`=:name OR `OLD_NEWNUM`=:name OR `RegN`=:name OR MATCH (`NameP`, `Adr`) AGAINST (:match IN BOOLEAN MODE) ORDER BY `NameP`', [':name'=>$what, ':match'=>[$what, 'match']]);
-    }
-
     #Function to get basic statistics
-
     /**
      * @throws \Exception
      */
@@ -72,6 +61,7 @@ class Display
         $temp = $dbCon->selectAll('SELECT COUNT(*) as \'bics\' FROM `bic__list` WHERE `DateOut` IS NULL UNION ALL SELECT COUNT(*) as \'bics\' FROM `bic__list` WHERE `DateOut` IS NOT NULL');
         $statistics['bicactive'] = $temp[0]['bics'];
         $statistics['bicdeleted'] = $temp[1]['bics'];
+        $statistics['bicDate'] = $dbCon->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
         $statistics['bicchanges'] = $dbCon->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` ORDER BY `Updated` DESC LIMIT '.$lastChanges);
         return $statistics;
     }

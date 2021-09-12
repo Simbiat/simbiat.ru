@@ -471,7 +471,7 @@ class HomeRouter
                 }
                 #Set specific values
                 $outputArray['searchvalue'] = $decodedSearch;
-                $outputArray['searchresult'] = $fftracker->Search($decodedSearch);
+                $outputArray['searchresult'] = (new HomeSearch)->Search('fftracker', $decodedSearch);
                 break;
             #Process statistics
             case 'statistics':
@@ -703,7 +703,7 @@ class HomeRouter
                         #Continue breadcrumbs
                         $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
                         #Get search results
-                        $outputArray['searchresult'] = $bictracker->Search($uri[1]);
+                        $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker', $uri[1]);
                         $outputArray['searchvalue'] = $uri[1];
                     }
                     break;
