@@ -12,7 +12,7 @@ class Display
     /**
      * @throws \Exception
      */
-    public function getCurrent(string $vkey): array
+    public function getCurrent(string $BIC): array
     {
         #Get general data
         $bicDetails = (new Controller)->selectRow('SELECT `biclist`.`VKEY`, `VKEYDEL`, `BVKEY`, `FVKEY`, `Adr`, `AT1`, `AT2`, `CKS`, `DATE_CH`, `DateIn`, `DateOut`, `Updated`, `Ind`, `bic__srvcs`.`Description` AS `Srvcs`, `NameP`, `NAMEMAXB`, `NEWKS`, biclist.`BIC`, `PrntBIC`, `SWIFT_NAME`, `Nnp`, `OKPO`, `PERMFO`, `bic__pzn`.`NAME` AS `PtType`, `bic__rclose`.`NAMECLOSE` AS `R_CLOSE`, `RegN`, `bic__reg`.`NAME` AS `Rgn`, `bic__reg`.`CENTER`, `RKC`, `SROK`, `TELEF`, `Tnp`, `PRIM1`, `PRIM2`, `PRIM3` FROM `bic__list` biclist
@@ -20,7 +20,7 @@ class Display
                 LEFT JOIN `bic__pzn` ON `bic__pzn`.`PtType` = biclist.`PtType`
                 LEFT JOIN `bic__rclose` ON `bic__rclose`.`R_CLOSE` = biclist.`R_CLOSE`
                 LEFT JOIN `bic__srvcs` ON `bic__srvcs`.`Srvcs` = biclist.`Srvcs`
-                WHERE biclist.`VKEY` = :vkey', [':vkey'=>$vkey]);
+                WHERE biclist.`BIC` = :BIC', [':BIC'=>$BIC]);
         if (empty($bicDetails)) {
             return [];
         } else {
@@ -57,7 +57,7 @@ class Display
      */
     public function Search(string $what = ''): array
     {
-        return (new Controller)->selectAll('SELECT \'bic\' as `type`, `VKEY` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `VKEY`=:name OR `BIC`=:name OR `OLD_NEWNUM`=:name OR `RegN`=:name OR MATCH (`NameP`, `Adr`) AGAINST (:name IN BOOLEAN MODE) ORDER BY `NameP`', [':name'=>$what]);
+        return (new Controller)->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `VKEY`=:name OR `BIC`=:name OR `OLD_NEWNUM`=:name OR `RegN`=:name OR MATCH (`NameP`, `Adr`) AGAINST (:match IN BOOLEAN MODE) ORDER BY `NameP`', [':name'=>$what, ':match'=>[$what, 'match']]);
     }
 
     #Function to get basic statistics
@@ -72,7 +72,7 @@ class Display
         $temp = $dbCon->selectAll('SELECT COUNT(*) as \'bics\' FROM `bic__list` WHERE `DateOut` IS NULL UNION ALL SELECT COUNT(*) as \'bics\' FROM `bic__list` WHERE `DateOut` IS NOT NULL');
         $statistics['bicactive'] = $temp[0]['bics'];
         $statistics['bicdeleted'] = $temp[1]['bics'];
-        $statistics['bicchanges'] = $dbCon->selectAll('SELECT \'bic\' as `type`, `VKEY` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` ORDER BY `Updated` DESC LIMIT '.$lastChanges);
+        $statistics['bicchanges'] = $dbCon->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` ORDER BY `Updated` DESC LIMIT '.$lastChanges);
         return $statistics;
     }
 
@@ -84,7 +84,7 @@ class Display
     private function predecessors(string $vkey): array
     {
         #Get initial list
-        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, `VKEY` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
+        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
         if (empty($bank)) {
             $bank = array();
         } else {
@@ -118,7 +118,7 @@ class Display
     private function successors(string $vkey): array
     {
         #Get initial list
-        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, `VKEY` as `id`, `NameP` as `name`, `VKEYDEL`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
+        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
         if (empty($bank)) {
             $bank = [];
         } else {
@@ -140,7 +140,7 @@ class Display
     private function rkcChain(string $bic): array
     {
         #Get initial list
-        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, `VKEY` as `id`, `NameP` as `name`, `BIC`, `RKC`, `DateOut` FROM `bic__list` WHERE `BIC` = :BIC AND `DateOut` IS NULL LIMIT 1', [':BIC'=>$bic]);
+        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `BIC`, `RKC`, `DateOut` FROM `bic__list` WHERE `BIC` = :BIC AND `DateOut` IS NULL LIMIT 1', [':BIC'=>$bic]);
         if (empty($bank)) {
             $bank = [];
         } else {
@@ -159,7 +159,7 @@ class Display
     private function bicUf(string $bic): array
     {
         #Get initial list
-        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`,`VKEY` as `id`,`NameP` as `name`, `DateOut`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC LIMIT 1', [':BIC'=>$bic]);
+        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC LIMIT 1', [':BIC'=>$bic]);
         if (empty($bank)) {
             $bank = [];
         } else {
@@ -177,7 +177,7 @@ class Display
      */
     private function filials(string $bic): array
     {
-        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, biclist.`VKEY` as `id`, biclist.`BIC`, biclist.`NameP` as `name`, biclist.`DateOut` FROM `bic__list` biclist LEFT JOIN `bic__list` bicco ON biclist.`BIC` = bicco.`PrntBIC` WHERE biclist.`PrntBIC` = :BIC ORDER BY biclist.`NameP`', [':BIC'=>$bic]);
+        $bank = (new Controller)->selectAll('SELECT \'bic\' as `type`, biclist.`BIC` as `id`, biclist.`BIC`, biclist.`NameP` as `name`, biclist.`DateOut` FROM `bic__list` biclist LEFT JOIN `bic__list` bicco ON biclist.`BIC` = bicco.`PrntBIC` WHERE biclist.`PrntBIC` = :BIC ORDER BY biclist.`NameP`', [':BIC'=>$bic]);
         if (empty($bank)) {
             $bank = [];
         }

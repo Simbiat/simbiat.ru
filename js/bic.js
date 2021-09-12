@@ -22,26 +22,18 @@ function bicCalc()
     if (/^[0-9]{9}$/u.exec(bicKey.value) === null) {
         result.classList.add('failure');
         result.innerHTML = 'Неверный формат БИКа';
-        bicKeySample.classList.remove(...bicKeySample.classList);
-        bicKeySample.classList.add('warning');
-        bicKeySample.innerHTML = 'БИК';
+        bicStyle(bicKeySample, 'warning', 'БИК');
         return;
     } else {
-        bicKeySample.classList.remove(...bicKeySample.classList);
-        bicKeySample.classList.add('success');
-        bicKeySample.innerHTML = bicKey.value;
+        bicStyle(bicKeySample, 'success', bicKey.value);
     }
     if (/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{14}$/u.exec(accKey.value) === null) {
         result.classList.add('failure');
         result.innerHTML = 'Неверный формат счёта';
-        accKeySample.classList.remove(...accKeySample.classList);
-        accKeySample.classList.add('warning');
-        accKeySample.innerHTML = 'СЧЁТ';
+        bicStyle(accKeySample, 'warning', 'СЧЁТ');
         return;
     } else {
-        accKeySample.classList.remove(...accKeySample.classList);
-        accKeySample.classList.add('success');
-        accKeySample.innerHTML = accKey.value;
+        bicStyle(accKeySample, 'success', accKey.value);
     }
     //Change address
     updateHistory(location.protocol+'//'+location.host+'/bictracker/keying/'+bicKey.value+'/'+accKey.value+'/', 'Ключевание счёта '+accKey.value+pageTitle);
@@ -62,4 +54,11 @@ function bicCalc()
             }
         }
     });
+}
+
+function bicStyle(element, newClass, text = '')
+{
+    element.classList.remove(...element.classList);
+    element.classList.add(newClass);
+    element.innerHTML = text;
 }

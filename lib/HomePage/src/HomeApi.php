@@ -37,7 +37,7 @@ class HomeApi
                 break;
         }
         #Send data
-        if (empty($data)) {
+        if (!isset($data)) {
             $this->apiEcho(httpCode: '204');
         } else {
             $this->apiEcho($data);

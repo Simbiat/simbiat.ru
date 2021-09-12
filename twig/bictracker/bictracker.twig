@@ -1,17 +1,17 @@
-<section>
+<section lang="ru-RU">
     <article>
         <details {% if not subservice %}class="persistent" open{% endif %}>
-            <summary class="rightSummary aboutSection">About</summary>
-            <p>This is BIC Tracker, meant for tracking changes in Bank Identification Codes issued by <a href="https://cbr.ru/" target="_blank"><img loading="lazy" class="linkIcon" src="/img/tech/CBR.svg" alt="Central Bank of Russia">Центральный Банк Российской Федерации</a> (Central Bank of Russia or CBR).</p>
-            <p>The library contains different information used by banks and other parties to identify both the banks themselves and services provided by them. The tracker is meant to provide a visual representation of that information and also track some of the changes to it.</p>
-            <p>There is also an "official" forum thread on <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" class="linkIcon" src="/img/icons/banki.ru.svg" alt="Central Bank of Russia">banki.ru</a></p>
+            <summary class="rightSummary aboutSection">О сервисе</summary>
+            <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank"><img loading="lazy" class="linkIcon" src="/img/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
+            <p>Библиотека содержит различную информацию, использующейся в банковских расчётах. Трекер предназначен для визуального отображения этой информации, а также отслеживания некоторых изменений.</p>
+            <p>У сервиса есть "официальная" страница на форуме <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" class="linkIcon" src="/img/icons/banki.ru.svg" alt="banki.ru">banki.ru</a></p>
             {% if not subservice %}
-                <p>You are on the main page of the service. To search for bank details, please, use <a href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a>. If you are looking for account control number checker use <a href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">keying</span></a> page.</p>
+                <p>Вы находитесь на главной странице сервиса. Для поиска банков используйте <a href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">поиск</span></a>. Если вы хотите проверить ключевание счёта, то можете использовать эту <a href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">страницу</span></a>.</p>
             {% endif %}
         </details>
     </article>
     {% if subservice %}
-        <article lang="ru-RU">
+        <article>
             {% if subservice == 'keying' %}
                 {{ include('bictracker/keying.twig')}}
             {% elseif subservice == 'search' %}

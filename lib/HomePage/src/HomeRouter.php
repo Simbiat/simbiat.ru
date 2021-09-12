@@ -637,36 +637,36 @@ class HomeRouter
         #Prepare array
         $outputArray = [
             'service_name' => 'bictracker',
-            'h1' => 'BIC Tracker '.$GLOBALS['siteconfig']['site_name'],
-            'title' => 'BIC Tracker '.$GLOBALS['siteconfig']['site_name'],
-            'ogdesc' => 'BIC Tracker '.$GLOBALS['siteconfig']['site_name'],
+            'h1' => 'БИК Трекер '.$GLOBALS['siteconfig']['site_name'],
+            'title' => 'БИК Трекер '.$GLOBALS['siteconfig']['site_name'],
+            'ogdesc' => 'БИК Трекер '.$GLOBALS['siteconfig']['site_name'],
         ];
         #Start breadcrumbs
         $breadArray = [
             ['href'=>'/', 'name'=>'Home page'],
-            ['href'=>'/bictracker/', 'name'=>'BIC Tracker'],
+            ['href'=>'/bictracker/', 'name'=>'БИК Трекер'],
         ];
         #Check if URI is empty
         if (!empty($uri)) {
             $uri[0] = strtolower($uri[0]);
             #Gracefully handle legacy links
             if ($uri[0] !== 'search' && mb_strlen(rawurldecode($uri[0])) === 8) {
-                #Assume legacy '/bic/vkey' link type was used and redirect to proper link
-                $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/bic/' . $uri[0], true, true, false);
+                #Assume legacy '/bic/vkey' link type was used and redirect to search page
+                $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/search/' . $uri[0], true, true, false);
             }
             #Prepare array
             $outputArray = [
                 'service_name' => 'bictracker',
-                'h1' => 'BIC Tracker',
-                'title' => 'BIC Tracker',
-                'ogdesc' => 'Representation of Bank Identification Codes from Central Bank of Russia',
+                'h1' => 'БИК Трекер',
+                'title' => 'БИК Трекер',
+                'ogdesc' => 'Трекер БИК предоставляемых Центральным Банком Российской Федерации',
             ];
             switch ($uri[0]) {
                 #Process keying page
                 case 'keying':
                     $outputArray['subservice'] = $uri[0];
                     #Continue breadcrumbs
-                    $breadArray[] = ['href' => '/bictracker/keying', 'name' => 'Keying'];
+                    $breadArray[] = ['href' => '/bictracker/keying', 'name' => 'Ключевание'];
                     $outputArray['h1'] = $outputArray['title'] = 'Ключевание счёта';
                     $outputArray['ogdesc'] = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода.';
                     $outputArray['checkResult'] = null;
@@ -676,7 +676,7 @@ class HomeRouter
                             $outputArray['bic_value'] = $uri[1];
                             $outputArray['acc_value'] = $uri[2];
                             $outputArray['h1'] = $outputArray['title'] = 'Ключевание счёта '.$uri[2];
-                            $outputArray['link_extra'] = HomePage::$headers->links([['href' => '/api/bictracker/keying/'.$uri[1].'/'.$uri[2], 'rel' => 'alternate', 'title' => 'API link', 'type' => 'application/json; charset=utf-8'],], 'head');
+                            $outputArray['link_extra'] = HomePage::$headers->links([['href' => '/api/bictracker/keying/'.$uri[1].'/'.$uri[2], 'rel' => 'alternate', 'title' => 'Ссылка на API', 'type' => 'application/json; charset=utf-8'],], 'head');
                         }
                         if (is_numeric($outputArray['checkResult'])) {
                             $outputArray['properKey'] = preg_replace('/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $uri[2]);
@@ -688,7 +688,7 @@ class HomeRouter
                     $outputArray['subservice'] = $uri[0];
                     $outputArray['maxresults'] = 50;
                     #Continue breadcrumbs
-                    $breadArray[] = ['href' => '/bictracker/search', 'name' => 'Search'];
+                    $breadArray[] = ['href' => '/bictracker/search', 'name' => 'Поиск'];
                     #Set search value
                     if (!isset($uri[1])) {
                         $uri[1] = '';
@@ -701,7 +701,7 @@ class HomeRouter
                         $outputArray = array_merge($outputArray, $bictracker->Statistics());
                     } else {
                         #Continue breadcrumbs
-                        $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Search for ' . $decodedSearch];
+                        $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
                         #Get search results
                         $outputArray['searchresult'] = $bictracker->Search($uri[1]);
                         $outputArray['searchvalue'] = $uri[1];
@@ -713,10 +713,15 @@ class HomeRouter
                     if (empty($uri[1])) {
                         $outputArray['http_error'] = 404;
                     } else {
-                        #Sanitize vkey
-                        $vkey = preg_replace('/[^a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
+                        #Check if we have BIC
+                        if (preg_match('/\d{9}/', rawurldecode($uri[1])) !== 1) {
+                            #Assume legacy 'vkey' link type was used and redirect to search page
+                            $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/search/' . $uri[1], true, true, false);
+                        }
+                        #Sanitize BIC
+                        $BIC = preg_replace('/[^0-9]/', '', rawurldecode($uri[1]));
                         #Try to get details
-                        $outputArray['bicdetails'] = $bictracker->getCurrent($vkey);
+                        $outputArray['bicdetails'] = $bictracker->getCurrent($BIC);
                         #Check if key was found
                         if (empty($outputArray['bicdetails'])) {
                             $outputArray['http_error'] = 404;
@@ -739,7 +744,7 @@ class HomeRouter
                             $outputArray['h1'] = $outputArray['bicdetails']['NameP'];
                             $outputArray['ogdesc'] = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') in BIC Tracker';
                             #Link header/tag for API
-                            $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation', 'href' => '/api/bictracker/bic/' . rawurlencode($vkey)]];
+                            $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bic/' . rawurlencode($BIC)]];
                             #Send HTTP header
                             $headers->links($altLink);
                             #Add link to HTML
