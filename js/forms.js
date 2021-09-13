@@ -56,8 +56,8 @@ function formDynamicAction(event)
 //Prevent form submit on Enter, if action is empty (otherwise this causes page reload with additional question mark in address
 function formEnter(event)
 {
-    let form = event.target;
-    if ((event.keyCode || event.charCode || 0) === 13 && !form.action) {
+    let form = event.target.form;
+    if ((event.keyCode || event.charCode || 0) === 13 && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host+form.getAttribute('data-baseURL') !== form.action))) {
         event.stopPropagation();
         event.preventDefault();
         return false;

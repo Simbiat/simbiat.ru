@@ -7,6 +7,9 @@ use Simbiat\Database\Controller;
 class HomeSearch
 {
     private ?Controller $dbController;
+    const bicPrefix = 'bic__';
+    const ffPrefix = 'ff__';
+    const maxEntities = 25;
 
     public function __construct()
     {
@@ -17,25 +20,53 @@ class HomeSearch
     /**
      * @throws \Exception
      */
-    public function search(string $type, string $what = ''): array
+    public function search(string $type = 'all', string $what = ''): array
     {
+        $counts = [];
         $results = [];
         if ($type === 'bictracker') {
-            $results = $this->bicTracker($what);
+            $counts = array_merge($results, $this->bicTracker(true ,$what, 15));
+            $results = array_merge($results, $this->bicTracker(false ,$what, 15));
         }
         if ($type === 'fftracker') {
-            $results = $this->fftracker($what);
+            $counts = array_merge($results, $this->fftracker($what));
+            $results = array_merge($results, $this->fftracker($what));
         }
-        return $results;
+        return ['counts'=>$counts, 'results'=>$results];
     }
 
+#$statistics['bicchanges'] = $dbCon->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` ORDER BY `Updated` DESC LIMIT '.$lastChanges);
 
     /**
      * @throws \Exception
      */
-    public function bicTracker(string $what = ''): array
+    public function bicTracker(bool $count = true, string $what = '', int $limit = 25): array
     {
-        return $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `VKEY`=:name OR `BIC`=:name OR `OLD_NEWNUM`=:name OR `RegN`=:name OR MATCH (`NameP`, `Adr`) AGAINST (:match IN BOOLEAN MODE) ORDER BY `NameP`', [':name'=>$what, ':match'=>[$what, 'match']]);
+        #Set binding
+        if ($what !== '') {
+            $binding = [':name' => $what, ':match' => [$what, 'match']];
+            $condition = 'IF(`VKEY`=:name OR `BIC`=:name OR `OLD_NEWNUM`=:name OR `RegN`=:name, 99999, MATCH (`NameP`, `Adr`) AGAINST (:name IN BOOLEAN MODE))';
+        }
+        #Build query
+        if ($count) {
+            if ($what === '') {
+                $result['openBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL');
+                $result['closeBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL');
+            } else {
+                $result['openBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL AND '.$condition.' > 0', $binding);
+                $result['closeBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL AND '.$condition.' > 0', $binding);
+            }
+        } else {
+            $fields = '\'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`';
+            if ($what === '') {
+                $result['openBics'] = $this->dbController->selectAll('SELECT '.$fields.' FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT '.$limit);
+                $result['closeBics'] = $this->dbController->selectAll('SELECT '.$fields.' FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL ORDER BY `Updated` DESC LIMIT '.$limit);
+            } else {
+                $result['openBics'] = $this->dbController->selectAll('SELECT '.$fields.', '.$condition.' as `relevance` FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT '.$limit, $binding);
+                $result['closeBics'] = $this->dbController->selectAll('SELECT '.$fields.', '.$condition.' as `relevance` FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT '.$limit, $binding);
+            }
+        }
+        return $result;
     }
 
     /**

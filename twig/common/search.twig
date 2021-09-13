@@ -1,0 +1,34 @@
+{# Set link variable based on type #}
+{% if service_name == 'bictracker' %}
+    {% set actionURL = '/bictracker/search/' %}
+{% else %}
+    {% set actionURL = '/search/' %}
+{% endif %}
+<section>
+    {% if service_name == 'bictracker' %}
+        <p>Введите БИК, корреспондентский счёт, имя банка, его адрес или регистрационный номер.</p>
+    {% endif %}
+    <form role="search" class="searchForm" data-baseURL="{{ actionURL }}" action="">
+        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100" autofocus{% if searchvalue is defined %} value="{{searchvalue}}"{% endif %}><label for="searchField">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+        <input role="button" type="submit" id="search" value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
+    </form>
+</section>
+<section>
+    {% if service_name == 'bictracker' %}
+        <p>Библиотека обновлена <time datetime="{{ bidDate|date('Y-m-d') }}">{{ bidDate|date('d.m.Y') }}</time>.</p>
+    {% endif %}
+    {% for type, count in searchresult.counts %}
+        <p>
+            {% if type == 'openBics' %}
+                Открытых БИК
+            {% elseif type == 'closeBics' %}
+                Закрытых БИК
+            {% endif %}
+        : {{ count }}</p>
+        <div class="searchResults">
+            {% for entity in searchresult.results[type] %}
+                {{ include('common/entitycard.twig', entity) }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</section>

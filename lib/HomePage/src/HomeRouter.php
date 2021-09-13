@@ -697,11 +697,16 @@ class HomeRouter
                     $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
                     #Check if search value was provided
                     if (empty($uri[1])) {
-                        #Get statistics
-                        $outputArray = array_merge($outputArray, $bictracker->Statistics());
+                        #Get date
+                        $outputArray['bicDate'] = $bictracker->bicDate();
+                        #Get search results
+                        $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker');
+                        #(new HomeTests)->testDump($outputArray['searchresult']);
                     } else {
                         #Continue breadcrumbs
                         $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
+                        #Get date
+                        $outputArray['bicDate'] = $bictracker->bicDate();
                         #Get search results
                         $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker', $uri[1]);
                         $outputArray['searchvalue'] = $uri[1];

@@ -184,3 +184,11 @@ blockquote>.copyQuote {
     padding-left: 0.1rem;
     font-weight: normal;
 }
+
+.searchForm {
+    text-align: center;
+}
+#searchLabel,
+#searchField {
+    width: 100%;
+}

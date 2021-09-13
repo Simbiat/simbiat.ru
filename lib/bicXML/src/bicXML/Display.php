@@ -54,16 +54,9 @@ class Display
     /**
      * @throws \Exception
      */
-    public function Statistics(int $lastChanges = 25): array
+    public function bicDate(): string
     {
-        #Cache Controller
-        $dbCon = (new Controller);
-        $temp = $dbCon->selectAll('SELECT COUNT(*) as \'bics\' FROM `bic__list` WHERE `DateOut` IS NULL UNION ALL SELECT COUNT(*) as \'bics\' FROM `bic__list` WHERE `DateOut` IS NOT NULL');
-        $statistics['bicactive'] = $temp[0]['bics'];
-        $statistics['bicdeleted'] = $temp[1]['bics'];
-        $statistics['bicDate'] = $dbCon->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
-        $statistics['bicchanges'] = $dbCon->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` ORDER BY `Updated` DESC LIMIT '.$lastChanges);
-        return $statistics;
+        return (new Controller)->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
     }
 
     #Function to get list of all predecessors (each as a chain)

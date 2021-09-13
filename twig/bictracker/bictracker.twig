@@ -15,7 +15,7 @@
             {% if subservice == 'keying' %}
                 {{ include('bictracker/keying.twig')}}
             {% elseif subservice == 'search' %}
-                {{ include('bictracker/search.twig')}}
+                {{ include('common/search.twig')}}
             {% elseif subservice == 'bic' %}
                 {{ include('bictracker/bic.twig')}}
             {% endif %}
