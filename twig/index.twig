@@ -44,11 +44,9 @@
                     {% elseif service_name == 'bictracker'%}
                         {{ include('bictracker/bictracker.twig')}}
                     {% elseif service_name == 'forum'%}
-                        {{pagination_top|raw}}
                         {% for article in articles %}
                             {{ include('articles.twig', article) }}
                         {% endfor %}
-                        {{pagination_bottom|raw}}
                     {% elseif service_name == 'thread'%}
                         {{ include('articles.twig', article) }}
                     {% else %}

@@ -7,9 +7,27 @@ use Simbiat\Database\Controller;
 class HomeSearch
 {
     private ?Controller $dbController;
-    const bicPrefix = 'bic__';
-    const ffPrefix = 'ff__';
-    const maxEntities = 25;
+    #Items to display per page for lists
+    const listItems = 100;
+    #Settings for each type
+    const forQueries = [
+        'openBics' => [
+            'table' => 'bic__list',
+            'fields' => '\'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`',
+            'where' => '`DateOut` IS NULL',
+            'what' => 'IF(`VKEY`=:what OR `BIC`=:what OR `OLD_NEWNUM`=:what OR `RegN`=:what, 99999, MATCH (`NameP`, `Adr`) AGAINST (:match IN BOOLEAN MODE))',
+            'order' => '`Updated` DESC',
+            'orderList' => '`NameP`',
+        ],
+        'closedBics' => [
+            'table' => 'bic__list',
+            'fields' => '\'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`',
+            'where' => '`DateOut` IS NOT NULL',
+            'what' => 'IF(`VKEY`=:what OR `BIC`=:what OR `OLD_NEWNUM`=:what OR `RegN`=:what, 99999, MATCH (`NameP`, `Adr`) AGAINST (:match IN BOOLEAN MODE))',
+            'order' => '`Updated` DESC',
+            'orderList' => '`NameP`',
+        ],
+    ];
 
     public function __construct()
     {
@@ -25,54 +43,79 @@ class HomeSearch
         $counts = [];
         $results = [];
         if ($type === 'bictracker') {
-            $counts = array_merge($results, $this->bicTracker(true ,$what, 15));
-            $results = array_merge($results, $this->bicTracker(false ,$what, 15));
+            $counts['openBics'] = $this->count('openBics', $what);
+            $counts['closedBics'] = $this->count('closedBics', $what);
+            $results['openBics'] = $this->select('openBics', $what, 15);
+            $results['closedBics'] = $this->select('closedBics', $what,15);
         }
         if ($type === 'fftracker') {
-            $counts = array_merge($results, $this->fftracker($what));
-            $results = array_merge($results, $this->fftracker($what));
+            #$counts = array_merge($results, $this->fftracker($what));
+            #$results = array_merge($results, $this->fftracker($what));
         }
         return ['counts'=>$counts, 'results'=>$results];
     }
 
-#$statistics['bicchanges'] = $dbCon->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` ORDER BY `Updated` DESC LIMIT '.$lastChanges);
-
+    #Function to generate list of entities or get a proper page number for redirect
     /**
      * @throws \Exception
      */
-    public function bicTracker(bool $count = true, string $what = '', int $limit = 25): array
+    public function listEntities(string $type, int $page = 1, string $what = ''): int|array
     {
-        #Set binding
+        #Suggest redirect if page number is less than 1
+        if ($page < 1) {
+            return 1;
+        }
+        #Count entities first
+        $count = $this->count($type, $what);
+        #Count pages
+        $pages = intval(ceil($count/self::listItems));
+        #Suggest redirect if page is larger than the number of pages
+        if ($page > $pages) {
+            return $pages;
+        }
+        return ['count'=>$count, 'pages'=> $pages,'entities'=>$this->select($type, $what, self::listItems, self::listItems*($page-1), true)];
+    }
+
+    #Generalized function to count entities
+    /**
+     * @throws \Exception
+     */
+    private function count(string $type, string $what = ''): int
+    {
+        if (!isset(self::forQueries[$type])) {
+            return 0;
+        }
         if ($what !== '') {
-            $binding = [':name' => $what, ':match' => [$what, 'match']];
-            $condition = 'IF(`VKEY`=:name OR `BIC`=:name OR `OLD_NEWNUM`=:name OR `RegN`=:name, 99999, MATCH (`NameP`, `Adr`) AGAINST (:name IN BOOLEAN MODE))';
-        }
-        #Build query
-        if ($count) {
-            if ($what === '') {
-                $result['openBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL');
-                $result['closeBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL');
-            } else {
-                $result['openBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL AND '.$condition.' > 0', $binding);
-                $result['closeBics'] = $this->dbController->count('SELECT COUNT(*) FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL AND '.$condition.' > 0', $binding);
-            }
+            #Set binding
+            $binding = [':what' => $what, ':match' => [$what, 'match']];
+            return $this->dbController->count('SELECT COUNT(*) FROM `'.self::forQueries[$type]['table'].'` WHERE '.self::forQueries[$type]['where'].' AND '.self::forQueries[$type]['what'].' > 0', $binding);
         } else {
-            $fields = '\'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`';
-            if ($what === '') {
-                $result['openBics'] = $this->dbController->selectAll('SELECT '.$fields.' FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT '.$limit);
-                $result['closeBics'] = $this->dbController->selectAll('SELECT '.$fields.' FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL ORDER BY `Updated` DESC LIMIT '.$limit);
-            } else {
-                $result['openBics'] = $this->dbController->selectAll('SELECT '.$fields.', '.$condition.' as `relevance` FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NULL HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT '.$limit, $binding);
-                $result['closeBics'] = $this->dbController->selectAll('SELECT '.$fields.', '.$condition.' as `relevance` FROM `' . self::bicPrefix . 'list` WHERE `DateOut` IS NOT NULL HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT '.$limit, $binding);
-            }
+            return $this->dbController->count('SELECT COUNT(*) FROM `'.self::forQueries[$type]['table'].'` WHERE '.self::forQueries[$type]['where']);
         }
-        return $result;
+    }
+
+    #Generalized function to select entities
+    /**
+     * @throws \Exception
+     */
+    private function select(string $type, string $what = '', int $limit = 100, int $offset = 0, bool $list = false): array
+    {
+        if (!isset(self::forQueries[$type])) {
+            return [];
+        }
+        if ($what !== '') {
+            #Set binding
+            $binding = [':what' => $what, ':match' => [$what, 'match']];
+            return $this->dbController->selectAll('SELECT '.self::forQueries[$type]['fields'].', '.self::forQueries[$type]['what'].' as `relevance` FROM `'.self::forQueries[$type]['table'].'` WHERE '.self::forQueries[$type]['where'].' HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, $binding);
+        } else {
+            return $this->dbController->selectAll('SELECT '.self::forQueries[$type]['fields'].' FROM `'.self::forQueries[$type]['table'].'` WHERE '.self::forQueries[$type]['where'].' ORDER BY '.($list ? self::forQueries[$type]['orderList'] : self::forQueries[$type]['order']).' LIMIT '.$limit.' OFFSET '.$offset);
+        }
     }
 
     /**
      * @throws \Exception
      */
-    public function fftracker(string $what = ''): array
+    private function fftracker(string $what = ''): array
     {
         $what = preg_replace('/(^[-+@<>()~*\'\s]*)|([-+@<>()~*\'\s]*$)/mi', '', $what);
         if ($what === '') {

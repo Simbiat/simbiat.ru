@@ -91,10 +91,10 @@ class HomePage
         }
     }
 
-    #Function to trim request URI from whitespace, slashes, and then whitespaces before slashes
+    #Function to trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes
     private function trimURI(): void
     {
-        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim($_SERVER['REQUEST_URI']), '/')));
+        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
     }
 
     #Function returns version of the file based on number of files and date of the newest file

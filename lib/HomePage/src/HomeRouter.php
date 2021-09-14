@@ -701,15 +701,17 @@ class HomeRouter
                         $outputArray['bicDate'] = $bictracker->bicDate();
                         #Get search results
                         $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker');
-                        #(new HomeTests)->testDump($outputArray['searchresult']);
+                        $outputArray['h1'] = $outputArray['title'] = $outputArray['ogdesc'] = 'Поиск по БИК Трекеру';
                     } else {
                         #Continue breadcrumbs
                         $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
                         #Get date
                         $outputArray['bicDate'] = $bictracker->bicDate();
                         #Get search results
-                        $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker', $uri[1]);
-                        $outputArray['searchvalue'] = $uri[1];
+                        $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker', $decodedSearch);
+                        $outputArray['searchvalue'] = $decodedSearch;
+                        $outputArray['h1'] = $outputArray['title'] = 'Поиск `'.$decodedSearch.'`';
+                        $outputArray['ogdesc'] = 'Поиск `'.$decodedSearch.'` по БИК Трекеру';
                     }
                     break;
                 #Process bic details page
@@ -754,6 +756,43 @@ class HomeRouter
                             $headers->links($altLink);
                             #Add link to HTML
                             $outputArray['link_extra'] = $headers->links($altLink, 'head');
+                        }
+                    }
+                    break;
+                case 'open':
+                case 'closed':
+                    $outputArray['subservice'] = $uri[0];
+                    $page = intval($_GET['page'] ?? 1);
+                    #Sanitize search value
+                    $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1] ?? ''));
+                    $outputArray['listOfEntities'] = (new HomeSearch)->listEntities($uri[0].'Bics', $page, $decodedSearch);
+                    #If int is returned, we have a bad page
+                    if (is_int($outputArray['listOfEntities'])) {
+                        $outputArray['http_error'] = 404;
+                    } else {
+                        #Generate pagination
+                        $html = (new HTML);
+                        $outputArray['pagination_top'] = $html->pagination($page, $outputArray['listOfEntities']['pages'], prefix: '?page=');
+                        $outputArray['pagination_bottom'] = $html->pagination($page, $outputArray['listOfEntities']['pages'], prefix: '?page=');
+                        if (!empty($decodedSearch)) {
+                            #Set search value, if available
+                            $outputArray['searchvalue'] = $decodedSearch;
+                            #Continue breadcrumbs
+                            $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
+                            $breadArray[] = ['href' => '/bictracker/' . $uri[0] . '/' . $uri[1], 'name' => match($uri[0]){'open'=>'Открытые', 'closed'=>'Закрытые'}];
+                            if ($page > 1) {
+                                $breadArray[] = ['href' => '/bictracker/' . $uri[0] . '/' . $uri[1] . '/?page=' . $page, 'name' => 'Страница ' . $page];
+                            }
+                            $outputArray['h1'] = $outputArray['title'] = 'Поиск `'.$decodedSearch.'`, страница '.$page;
+                            $outputArray['ogdesc'] = 'Поиск `'.$decodedSearch.'` по БИК Трекеру, страница '.$page;
+                        } else {
+                            #Continue breadcrumbs
+                            $breadArray[] = ['href' => '/bictracker/' . $uri[0], 'name' => match($uri[0]){'open'=>'Открытые БИК', 'closed'=>'Закрытые БИК'}];
+                            if ($page > 1) {
+                                $breadArray[] = ['href' => '/bictracker/' . $uri[0] . '/?page=' . $page, 'name' => 'Страница ' . $page];
+                            }
+                            $outputArray['h1'] = $outputArray['title'] = match($uri[0]){'open'=>'Открытые БИК', 'closed'=>'Закрытые БИК'}.', страница '.$page;
+                            $outputArray['ogdesc'] = match($uri[0]){'open'=>'Открытые БИК', 'closed'=>'Закрытые БИК'}.', страница '.$page.' на БИК Трекере';
                         }
                     }
                     break;

@@ -18,10 +18,10 @@ function formInit()
         item.addEventListener('keypress', formEnter);
     });
     //Forms with dynamic actions (expected to be search forms only at the time of writing)
-    document.querySelectorAll('form[data-baseURL]').forEach((item)=>{
-        item.addEventListener('input', formDynamicAction);
-        item.addEventListener('change', formDynamicAction);
-        item.addEventListener('focus', formDynamicAction);
+    document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item)=>{
+        item.addEventListener('input', searchAction);
+        item.addEventListener('change', searchAction);
+        item.addEventListener('focus', searchAction);
     });
     document.querySelectorAll('form input').forEach((item)=>{
         if (textInputTypes.includes(item.type)) {
@@ -39,7 +39,7 @@ function formInit()
     });
 }
 
-function formDynamicAction(event)
+function searchAction(event)
 {
     let search = event.target;
     let form = search.form;
@@ -48,8 +48,8 @@ function formDynamicAction(event)
     } else {
         form.action = form.getAttribute('data-baseURL') + search.value;
     }
-    //Ensure that form will use POST (will also remove question mark on submit)
-    form.method = 'post';
+    //Ensure that form will use GET method. This adds unnecessary question mark to the end of the URL, but it's better than form resubmit prompt
+    form.method = 'get';
 }
 
 

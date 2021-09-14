@@ -51,7 +51,9 @@
             <details class="navCat" {% if service_name == 'bictracker' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="БИК Трекер" src="/img/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
                 <ul>
-                    <li{% if subservice == 'search' or subservice == 'bic' %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
+                    <li{% if subservice == 'search' or subservice == 'bic' or ((subservice == 'open' or subservice == 'closed') and searchvalue is defined) %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
+                    <li{% if subservice == 'open' and searchvalue is not defined %} class="current"{% endif %}><a class="navItem" href="/bictracker/open/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
+                    <li{% if subservice == 'closed' and searchvalue is not defined %} class="current"{% endif %}><a class="navItem" href="/bictracker/closed/" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
                     <li{% if subservice == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a></li>
                 </ul>
             </details>

@@ -11,6 +11,7 @@
         </details>
     </article>
     {% if subservice %}
+        {{pagination_top|raw}}
         <article>
             {% if subservice == 'keying' %}
                 {{ include('bictracker/keying.twig')}}
@@ -18,7 +19,12 @@
                 {{ include('common/search.twig')}}
             {% elseif subservice == 'bic' %}
                 {{ include('bictracker/bic.twig')}}
+            {% elseif subservice == 'open' %}
+                {{ include('common/list.twig')}}
+            {% elseif subservice == 'closed' %}
+                {{ include('common/list.twig')}}
             {% endif %}
         </article>
+        {{pagination_bottom|raw}}
     {% endif %}
 </section>
