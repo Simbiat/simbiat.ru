@@ -16,7 +16,7 @@
 </section>
 <section>
     {% if service_name == 'bictracker' %}
-        <p>Библиотека обновлена <time datetime="{{ bidDate|date('Y-m-d') }}">{{ bidDate|date('d.m.Y') }}</time>.</p>
+        <p class="relative">Библиотека обновлена <time datetime="{{ bidDate|date('Y-m-d') }}">{{ bidDate|date('d.m.Y') }}</time>.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/img/refresh.svg"></p>
     {% endif %}
     {% for type, count in searchresult.counts %}
         <p>

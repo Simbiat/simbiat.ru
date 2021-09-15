@@ -1,4 +1,4 @@
-/*globals ajax, pageTitle, updateHistory*/
+/*globals ajax, pageTitle, updateHistory, addSnackbar*/
 /*exported bicInit*/
 
 function bicInit()
@@ -8,6 +8,10 @@ function bicInit()
     if (bicKey && accKey) {
         bicKey.addEventListener('input', bicCalc);
         accKey.addEventListener('input', bicCalc);
+    }
+    let refresh = document.getElementById('bicRefresh');
+    if (refresh) {
+        refresh.addEventListener('click', bicRefresh);
     }
 }
 
@@ -56,9 +60,33 @@ function bicCalc()
     });
 }
 
+//Helper function for styling
 function bicStyle(element, newClass, text = '')
 {
     element.classList.remove(...element.classList);
     element.classList.add(newClass);
     element.innerHTML = text;
+}
+
+//Refresh BIC library through API
+function bicRefresh(event)
+{
+    let refresh = event.target;
+    if (refresh.classList.contains('spin')) {
+        //It already has been clicked, cancel event
+        event.stopPropagation();
+        event.preventDefault();
+    } else {
+        refresh.classList.add('spin');
+        setTimeout(async function() {
+            await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/').then(data => {
+                if (data === true) {
+                    addSnackbar('Библиотека БИК обновлена', 'success');
+                } else {
+                    addSnackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                }
+            });
+            refresh.classList.remove('spin');
+        }, 500);
+    }
 }

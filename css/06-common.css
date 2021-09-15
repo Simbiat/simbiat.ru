@@ -192,3 +192,19 @@ blockquote>.copyQuote {
 #searchField {
     width: 100%;
 }
+
+.relative {
+    position: relative;
+}
+
+.spin {
+    animation: spin 4s linear infinite;
+}
+.refresh.spin,
+.refresh.spin:hover,
+.refresh.focus,
+.refresh.active {
+    border: none;
+    filter: none;
+    cursor: wait;
+}

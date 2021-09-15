@@ -16,7 +16,7 @@ a {
     border-radius: var(--border-radius);
     border-color: transparent;
     padding: 0.1rem;
-    border-width: 0.1rem;
+    border-width: var(--border-width);
     outline: none;
 }
 a:link {

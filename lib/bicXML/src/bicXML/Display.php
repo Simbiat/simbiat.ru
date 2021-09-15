@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\bicXML;
 
+use Simbiat\ArrayHelpers;
 use Simbiat\Database\Controller;
 
 class Display
@@ -25,7 +26,7 @@ class Display
             return [];
         } else {
             #Generating address from different fields
-            $bicDetails['Adr'] = (!empty($bicDetails['Ind']) ? $bicDetails['Ind'].' ' : '').(!empty($bicDetails['Tnp']) ? $bicDetails['Tnp'].' ' : '').(!empty($bicDetails['Nnp']) ? $bicDetails['Nnp'].', ' : '').$bicDetails['Adr'];
+            $bicDetails['Adr'] = (!empty($bicDetails['Ind']) ? $bicDetails['Ind'].', ' : '').(!empty($bicDetails['Tnp']) ? $bicDetails['Tnp'].' ' : '').(!empty($bicDetails['Nnp']) ? $bicDetails['Nnp'].', ' : '').$bicDetails['Adr'];
             #Get list of phones
             if (!empty($bicDetails['TELEF'])) {
                 $bicDetails['TELEF'] = $this->phoneList($bicDetails['TELEF']);
@@ -46,6 +47,21 @@ class Display
             $bicDetails['predecessors'] = $this->predecessors($bicDetails['VKEY']);
             #Get the chain of successors (if any)
             $bicDetails['successors'] = (empty($bicDetails['VKEYDEL']) ? [] : $this->successors($bicDetails['VKEYDEL']));
+            #Moving DBF related values around
+            $arrayHelpers = (new ArrayHelpers());
+            foreach (['NAMEMAXB', 'NAMEN', 'SWIFT_NAME'] as $key) {
+                $arrayHelpers->moveToSubarray($bicDetails, $key, ['DBF', 'names', $key]);
+            }
+            foreach (['AT1', 'AT2', 'TELEF', 'CKS'] as $key) {
+                $arrayHelpers->moveToSubarray($bicDetails, $key, ['DBF', 'contacts', $key]);
+            }
+            foreach (['R_CLOSE', 'PRIM1', 'PRIM2', 'PRIM3'] as $key) {
+                $arrayHelpers->moveToSubarray($bicDetails, $key, ['DBF', 'removal', $key]);
+            }
+            foreach (['DATE_CH', 'VKEY', 'VKEYDEL', 'BVKEY', 'FVKEY', 'RKC', 'SROK', 'NEWKS', 'OKPO', 'PERMFO'] as $key) {
+                $arrayHelpers->moveToSubarray($bicDetails, $key, ['DBF', 'misc', $key]);
+            }
+            #(new \Simbiat\HomeTests)->testDump($bicDetails);
             return $bicDetails;
         }
     }
