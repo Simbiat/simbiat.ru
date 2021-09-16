@@ -208,3 +208,7 @@ blockquote>.copyQuote {
     filter: none;
     cursor: wait;
 }
+
+.bold {
+    font-weight: bold;
+}

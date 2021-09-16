@@ -259,7 +259,7 @@ class Update
                                 }
                                 #Update account
                                 $queries[] = [
-                                    'INSERT INTO `'.self::dbPrefix.'accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :fileDate) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK;',
+                                    'INSERT INTO `'.self::dbPrefix.'accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :DateIn) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK, `DateIn`=:DateIn, `DateOut`=NULL;',
                                     [
                                         ':BIC' => $bic,
                                         ':Account' => $account['Account'],
@@ -270,7 +270,7 @@ class Update
                                         ],
                                         ':RegulationAccountType' => $account['RegulationAccountType'],
                                         ':CK' => $account['CK'],
-                                        ':fileDate' => $this->fileDate,
+                                        ':DateIn' => $account['DateIn'],
                                     ]
                                 ];
                                 if (!empty($libraryAccountsRest[$account['Account']])) {
@@ -332,6 +332,11 @@ class Update
                             $queries = array_merge($queries, $this->closeBIC($bic));
                         }
                     }
+                    #Reset Default flag for SWIFTs with DateOut (the way data is presented by CB, it's possible for them to have incorrect flag).
+                    $queries[] = ['UPDATE `'.self::dbPrefix.'swift` SET `DefaultSWBIC`=0 WHERE `DateOut` IS NOT NULL;'];
+                    #Set `DateIn` for "bad" entries. We are assuming, that affected entries were added at least at the time of BIC library creation. Another case of "bad" data.
+                    $queries[] = ['UPDATE `'.self::dbPrefix.'list` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
+                    $queries[] = ['UPDATE `'.self::dbPrefix.'accounts` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
                     #Increase $libDate by 1 day
                     $libDate = $libDate + 86400;
                     $queries[] = [

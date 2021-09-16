@@ -733,6 +733,10 @@ class HomeRouter
                         if (empty($outputArray['bicdetails'])) {
                             $outputArray['http_error'] = 404;
                         } else {
+                            #Generate timeline
+                            if (!empty($outputArray['bicdetails']['restrictions'])) {
+                                $outputArray['bicdetails']['restrictions'] = (new HTTP20\HTML)->timeline($outputArray['bicdetails']['restrictions']);
+                            }
                             #Try to exit early based on modification date
                             if (!empty($outputArray['bicdetails']['Updated'])) {
                                 $headers->lastModified(strtotime($outputArray['bicdetails']['Updated']), true);
