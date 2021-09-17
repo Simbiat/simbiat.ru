@@ -5,7 +5,7 @@ namespace Simbiat;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Sharing;
 
-class HomeTests
+class Tests
 {
     #Function to test Lodestone
     #Incorporate below ones, when and if required
@@ -97,8 +97,8 @@ class HomeTests
         echo '<pre>';
         var_dump($variable);
         echo '</pre>';
-        ob_flush();
-        flush();
+        @ob_flush();
+        @flush();
         if ($exit) {
             exit;
         }

@@ -8,7 +8,7 @@ use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\RSS;
 use Simbiat\HTTP20\Sitemap;
 
-class HomeFeeds
+class Feeds
 {
     #Fcuntion to parse URI and generate appropriate feed
     /**

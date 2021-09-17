@@ -8,7 +8,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class HomeApi
+class Api
 {
     /**
      * @throws \Exception
@@ -131,7 +131,7 @@ class HomeApi
             #Connect to DB
             if ((new HomePage)->dbConnect()) {
                 #Get data
-                $data = (new bicXML\Display)->getCurrent(rawurldecode($uri[1]));
+                $data = (new bictracker\Bic)->getCurrent(rawurldecode($uri[1]));
                 #Check if empty
                 if (empty($data)) {
                     $this->apiEcho(httpCode: '404');
@@ -150,7 +150,7 @@ class HomeApi
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
         } elseif ($uri[0] === 'dbupdate') {
             if ((new HomePage)->dbConnect()) {
-                if ((new bicXML\Update)->dbUpdate() === true) {
+                if ((new bictracker\Update)->dbUpdate() === true) {
                     return true;
                 } else {
                     return false;

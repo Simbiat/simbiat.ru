@@ -4,7 +4,7 @@ namespace Simbiat;
 
 use Simbiat\Database\Controller;
 
-class HomeSearch
+class Search
 {
     private ?Controller $dbController;
     #Items to display per page for lists

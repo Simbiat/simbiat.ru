@@ -191,7 +191,7 @@ class HomePage
                 #Cache hit, we need to connect to DB and initiate session to write data about it
                 if ($this->dbConnect(true) === true) {
                     #Process POST data if any
-                    (new HomeRouter)->postProcess();
+                    (new Router)->postProcess();
                     #Close session right after if it opened
                     if (session_status() === PHP_SESSION_ACTIVE) {
                         session_write_close();
@@ -279,7 +279,7 @@ class HomePage
                     $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418, 'aggressive');
                 }
                 #Process POST data if any
-                (new HomeRouter)->postProcess();
+                (new Router)->postProcess();
             }
         }
         return true;

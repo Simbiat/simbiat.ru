@@ -6,7 +6,7 @@ use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\HTML;
 use Simbiat\usercontrol\Signinup;
 
-class HomeRouter
+class Router
 {
     #Function to process (or rather relay) $_POST data
     public function postProcess(): void
@@ -79,24 +79,24 @@ class HomeRouter
             #Lodestone tests
             case 'lodestone':
                 if (empty($uri[1])) {
-                    (new HomeTests)->ffTest(true);
+                    (new Tests)->ffTest(true);
                     exit;
                 }
                 $uri[1] = strtolower($uri[1]);
                 switch ($uri[1]) {
                     case 'full':
-                        (new HomeTests)->ffTest(true);
+                        (new Tests)->ffTest(true);
                         exit;
                     case 'freecompany':
                     case 'linkshell':
                     case 'pvpteam':
                     case 'character':
-                        (new HomeTests)->ffTest(false, $uri[1], $uri[2] ?? '');
+                        (new Tests)->ffTest(false, $uri[1], $uri[2] ?? '');
                         exit;
                 }
                 break;
             case 'optimize':
-                (new HomeTests)->testDump((new optimizeTables)->setMaintenance("sys__settings","setting","maintenance","value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
+                (new Tests)->testDump((new optimizeTables)->setMaintenance("sys__settings","setting","maintenance","value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
                 exit;
         }
         $outputArray['http_error'] = 400;
@@ -471,7 +471,7 @@ class HomeRouter
                 }
                 #Set specific values
                 $outputArray['searchvalue'] = $decodedSearch;
-                $outputArray['searchresult'] = (new HomeSearch)->Search('fftracker', $decodedSearch);
+                $outputArray['searchresult'] = (new Search)->Search('fftracker', $decodedSearch);
                 break;
             #Process statistics
             case 'statistics':
@@ -631,7 +631,7 @@ class HomeRouter
     public function bictracker(array $uri): array
     {
         $headers = (new Headers);
-        $bictracker = (new bicXML\Display);
+        $bictracker = (new bictracker\Bic);
         #Tell that content is intended for Russians
         header('Content-Language: ru-RU');
         #Prepare array
@@ -695,20 +695,19 @@ class HomeRouter
                     }
                     #Sanitize search value
                     $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
+                    #Get date
+                    $outputArray['bicDate'] = $bictracker->bicDate();
+                    $headers->lastModified($outputArray['bicDate'], true);
                     #Check if search value was provided
                     if (empty($uri[1])) {
-                        #Get date
-                        $outputArray['bicDate'] = $bictracker->bicDate();
                         #Get search results
-                        $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker');
+                        $outputArray['searchresult'] = (new Search)->Search('bictracker');
                         $outputArray['h1'] = $outputArray['title'] = $outputArray['ogdesc'] = 'Поиск по БИК Трекеру';
                     } else {
                         #Continue breadcrumbs
                         $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
-                        #Get date
-                        $outputArray['bicDate'] = $bictracker->bicDate();
                         #Get search results
-                        $outputArray['searchresult'] = (new HomeSearch)->Search('bictracker', $decodedSearch);
+                        $outputArray['searchresult'] = (new Search)->Search('bictracker', $decodedSearch);
                         $outputArray['searchvalue'] = $decodedSearch;
                         $outputArray['h1'] = $outputArray['title'] = 'Поиск `'.$decodedSearch.'`';
                         $outputArray['ogdesc'] = 'Поиск `'.$decodedSearch.'` по БИК Трекеру';
@@ -769,7 +768,7 @@ class HomeRouter
                     $page = intval($_GET['page'] ?? 1);
                     #Sanitize search value
                     $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1] ?? ''));
-                    $outputArray['listOfEntities'] = (new HomeSearch)->listEntities($uri[0].'Bics', $page, $decodedSearch);
+                    $outputArray['listOfEntities'] = (new Search)->listEntities($uri[0].'Bics', $page, $decodedSearch);
                     #If int is returned, we have a bad page
                     if (is_int($outputArray['listOfEntities'])) {
                         $outputArray['http_error'] = 404;

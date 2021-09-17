@@ -35,10 +35,10 @@ spl_autoload_register(function ($class) {
 use Simbiat\colloquium\Show;
 use Simbiat\Cron;
 use Simbiat\Database\Controller;
-use Simbiat\HomeApi;
-use Simbiat\HomeFeeds;
+use Simbiat\Api;
+use Simbiat\Feeds;
 use Simbiat\HomePage;
-use Simbiat\HomeRouter;
+use Simbiat\Router;
 
 #Get config file
 require_once __DIR__. '/config.php';
@@ -87,7 +87,7 @@ if ($CLI) {
             #Check if API
             if (strcasecmp($uri[0], 'api') === 0) {
                 #Process API request
-                (new HomeApi)->uriParse(array_slice($uri, 1));
+                (new Api)->uriParse(array_slice($uri, 1));
                 #Ensure we no matter what happens in API gateway
                 exit;
             } else {
@@ -97,27 +97,27 @@ if ($CLI) {
                 if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
                     $vars = match(strtolower($uri[0])) {
                         #Pages about the site
-                        'about' => (new HomeRouter)->about(array_slice($uri, 1)),
+                        'about' => (new Router)->about(array_slice($uri, 1)),
                         #Forum/Articles
                         #use https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language to specify audience for russian posts
                         'forum' => (new Show)->forum($uri),
                         'thread' => (new Show)->thread($uri),
                         #FFTracker
-                        'fftracker' => (new HomeRouter)->fftracker(array_slice($uri, 1)),
+                        'fftracker' => (new Router)->fftracker(array_slice($uri, 1)),
                         #BIC Tracker
-                        'bictracker' => (new HomeRouter)->bictracker(array_slice($uri, 1)),
+                        'bictracker' => (new Router)->bictracker(array_slice($uri, 1)),
                         #User control
-                        'uc' => (new HomeRouter)->usercontrol(array_slice($uri, 1)),
+                        'uc' => (new Router)->usercontrol(array_slice($uri, 1)),
                         #Silversteam
                         'ssc', 'silversteam', 'darksteam' => [
                             'service_name' => 'silversteam',
                         ],
                         #Feeds
-                        'sitemap', 'rss', 'atom' => (new HomeFeeds)->uriParse($uri),
+                        'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($uri),
                         #Tests
-                        'tests' => (new HomeRouter)->tests(array_slice($uri, 1)),
+                        'tests' => (new Router)->tests(array_slice($uri, 1)),
                         #Errors
-                        'error', 'errors', 'httperror', 'httperrors' => (new HomeRouter)->error(array_slice($uri, 1)),
+                        'error', 'errors', 'httperror', 'httperrors' => (new Router)->error(array_slice($uri, 1)),
                         #Page not found
                         default => [
                             'http_error' => 404,

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\bicXML;
+namespace Simbiat\bictracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Database\Controller;
 
-class Display
+class Bic
 {
     const dbPrefix = 'bic__';
     private ?Controller $dbController;
