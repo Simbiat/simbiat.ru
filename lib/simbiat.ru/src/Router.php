@@ -2,7 +2,10 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Abstracts\Search;
+use Simbiat\bictracker\ClosedBics;
 use Simbiat\bictracker\Library;
+use Simbiat\bictracker\OpenBics;
 use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\HTML;
 use Simbiat\usercontrol\Signinup;
@@ -472,7 +475,7 @@ class Router
                 }
                 #Set specific values
                 $outputArray['searchvalue'] = $decodedSearch;
-                $outputArray['searchresult'] = (new Search)->Search('fftracker', $decodedSearch);
+                $outputArray['searchresult'] = (new Search)->Search($decodedSearch);
                 break;
             #Process statistics
             case 'statistics':
@@ -702,13 +705,15 @@ class Router
                     #Check if search value was provided
                     if (empty($uri[1])) {
                         #Get search results
-                        $outputArray['searchresult'] = (new Search)->Search('bictracker');
+                        $outputArray['searchresult']['openBics'] = (new OpenBics())->Search();
+                        $outputArray['searchresult']['closedBics'] = (new ClosedBics())->Search();
                         $outputArray['h1'] = $outputArray['title'] = $outputArray['ogdesc'] = 'Поиск по БИК Трекеру';
                     } else {
                         #Continue breadcrumbs
                         $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
                         #Get search results
-                        $outputArray['searchresult'] = (new Search)->Search('bictracker', $decodedSearch);
+                        $outputArray['searchresult']['openBics'] = (new OpenBics())->Search($decodedSearch);
+                        $outputArray['searchresult']['closedBics'] = (new ClosedBics())->Search($decodedSearch);
                         $outputArray['searchvalue'] = $decodedSearch;
                         $outputArray['h1'] = $outputArray['title'] = 'Поиск `'.$decodedSearch.'`';
                         $outputArray['ogdesc'] = 'Поиск `'.$decodedSearch.'` по БИК Трекеру';
@@ -769,7 +774,11 @@ class Router
                     $page = intval($_GET['page'] ?? 1);
                     #Sanitize search value
                     $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1] ?? ''));
-                    $outputArray['listOfEntities'] = (new Search)->listEntities($uri[0].'Bics', $page, $decodedSearch);
+                    if ($outputArray['subservice'] === 'open') {
+                        $outputArray['listOfEntities'] = (new OpenBics)->listEntities($page, $decodedSearch);
+                    } else {
+                        $outputArray['listOfEntities'] = (new ClosedBics)->listEntities($page, $decodedSearch);
+                    }
                     #If int is returned, we have a bad page
                     if (is_int($outputArray['listOfEntities'])) {
                         $outputArray['http_error'] = 404;

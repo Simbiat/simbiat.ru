@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 namespace Simbiat\bictracker;
 
@@ -126,7 +125,7 @@ class Bic extends Entity
         #Count banks, that are serviced by this one
         $fromDB['serviceFor'] = $this->dbController->Count('SELECT COUNT(*) FROM `' . self::dbPrefix . 'accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
         #Get list of banks, that used same BIC
-        $fromDB['sameBIC'] = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `' . self::dbPrefix . 'list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $this->id, ':BIC' => $this->id]);
+        $fromDB['sameBIC'] = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `' . self::dbPrefix . 'list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $fromDB['BIC'], ':BIC' => $fromDB['BIC']]);
         #Get list of banks on same address
         $fromDB['sameAddress'] = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `' . self::dbPrefix . 'list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;', [':Adr' => $fromDB['Adr'], ':BIC' => $this->id]);
 

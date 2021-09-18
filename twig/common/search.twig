@@ -10,7 +10,7 @@
         <p>Введите БИК, корреспондентский счёт, имя банка, его адрес или регистрационный номер.</p>
     {% endif %}
     <form role="search" class="searchForm" data-baseURL="{{ actionURL }}" action="">
-        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100" {% if searchvalue is defined %}value="{{searchvalue}}"{% else %}autofocus{% endif %}><label for="searchField">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100"{% if searchvalue is defined %} value="{{searchvalue}}"{% else %} autofocus{% endif %}><label for="searchField">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
         <input role="button" type="submit" id="search" value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
     </form>
 </section>
@@ -18,14 +18,14 @@
     {% if service_name == 'bictracker' %}
         <p class="relative">Библиотека обновлена <time datetime="{{ bidDate|date('Y-m-d') }}">{{ bidDate|date('d.m.Y') }}</time>.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/img/refresh.svg"></p>
     {% endif %}
-    {% for type, count in searchresult.counts %}
+    {% for type, subResult in searchresult %}
         <p>
             {% if type == 'openBics' %}
                 Открытых БИК:
             {% elseif type == 'closedBics' %}
                 Закрытых БИК:
             {% endif %}
-            {% if count>searchresult.results[type]|length %}
+            {% if subResult.count>subResult.results|length %}
                 {# Set list link #}
                 {% if type == 'openBics' %}
                     {% set listURL = '/bictracker/open/' %}
@@ -33,13 +33,13 @@
                     {% set listURL = '/bictracker/closed/' %}
                 {% endif %}
                 {# Show link itself #}
-                <a href="{{ listURL }}{{ searchvalue }}">{{ count }}</a>
+                <a href="{{ listURL }}{{ searchvalue }}">{{ subResult.count }}</a>
             {% else %}
-                {{ count }}
+                {{ subResult.count }}
             {% endif %}
         </p>
         <div class="searchResults">
-            {% for entity in searchresult.results[type] %}
+            {% for entity in subResult.results %}
                 {{ include('common/entitycard.twig', entity) }}
             {% endfor %}
         </div>

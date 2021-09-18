@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Database\Controller;
@@ -13,9 +13,7 @@ abstract class Entity
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
     protected bool $attempted = false;
     #If ID was retrieved, this needs to not be null
-    public ?string $id = null;
-    #Last error
-    public ?string $lastError = null;
+    protected ?string $id = null;
     #Debug flag
     protected bool $debug = false;
 
@@ -23,7 +21,7 @@ abstract class Entity
     {
         #All entities are expected to have a dbPrefix
         if(empty($this::dbPrefix)) {
-            throw new \LogicException(get_class($this) . ' must have a non-empty dbPrefix constant.');
+            throw new \LogicException(get_class($this) . ' must have a non-empty `dbPrefix` constant.');
         }
         #ALl entities are expected to use database somehow, thus using
         $this->dbController = (new Controller);
@@ -39,21 +37,16 @@ abstract class Entity
             $this->id = $id;
             #Set flag, that we have tried to get data
             $this->attempted = true;
-            #Reset error
-            $this->lastError = null;
             #Get data
             $result = $this->getFromDB();
             if (empty($result)) {
                 #Reset ID
                 $this->id = null;
-                #Set error
-                $this->lastError = 'No data found for ID `'.$id.'`';
             } else {
                 $this->process($result);
             }
         } catch (\Throwable $exception) {
             $error = $exception->getMessage().$exception->getTraceAsString();
-            $this->lastError = $error;
             error_log($error);
             #Rethrow exception, if using debug mode
             if ($this->debug) {
@@ -103,6 +96,13 @@ abstract class Entity
         }
         #If IDs do not match - something is wrong or trying to reuse the object, failsafe to an empty array
         if ($this->id === $id) {
+            $array = get_mangled_object_vars($this);
+            #Remove private and protected properties
+            foreach ($array as $key=>$value) {
+                if (preg_match('/^\x00/u', $key) === 1) {
+                    unset($array[$key]);
+                }
+            }
             return get_object_vars($this);
         } else {
             return [];
