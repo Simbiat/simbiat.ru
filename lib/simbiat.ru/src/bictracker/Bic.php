@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace Simbiat\bictracker;
 
@@ -10,33 +11,61 @@ class Bic extends Entity
     protected const dbPrefix = 'bic__';
 
     #Custom properties
+    #Bank code of the entity
     public string $BIC;
+    #Name of the entity
     public string $NameP;
+    #Bank code of parent entity
     public ?string $PrntBIC = null;
+    #English name of the entity
     public ?string $EnglName = null;
+    #Whether entity is active or not
     public bool|int $XchType = false;
+    #Old BIC, in case it was used by several organizations
     public ?string $OLD_NEWNUM = null;
+    #UID for electronic messages used by organization
     public ?string $UID = null;
+    #Country code
     public ?string $CntrCd = null;
+    #Address
     public ?string $Adr = null;
+    #Date added
     public ?string $DateIn = null;
+    #Date removed from official library
     public ?string $DateOut = null;
+    #Date of the latest update
     public ?string $Updated = null;
+    #Postal index
     public ?string $Ind = null;
+    #Types of services provided
     public ?string $Srvcs = null;
+    #Name of the location
     public ?string $Nnp = null;
+    #Type of location
     public ?string $Tnp = null;
+    #Type of entity
     public ?string $PtType = null;
+    #Registration number
     public ?string $RegN = null;
+    #Location region
     public ?string $Rgn = null;
+    #Processing center
     public ?string $CENTER = null;
+    #List of branches if any
     public array $branches = [];
+    #List of SWIFT codes if any
     public array $SWIFTs = [];
+    #Restrictions on whole organization
     public array $restrictions = [];
+    #List of accounts
     public array $accounts = [];
+    #List of organizations with same BIC used in the past
     public array $sameBIC = [];
+    #List of organizations using same address
     public array $sameAddress = [];
+    #Number of entities serviced by entity
     public int $serviceFor = 0;
+    #Old data from DBF files
     public array $DBF = [];
 
     protected function getFromDB(): array
