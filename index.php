@@ -127,7 +127,7 @@ if ($CLI) {
                     $vars = [];
                 }
                 #Generate page
-                $HomePage->twigProc($vars, (empty($vars['http_error']) ? NULL : $vars['http_error']));
+                $HomePage->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
             }
         }
     } else {

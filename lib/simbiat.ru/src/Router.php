@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\bictracker\Library;
 use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\HTML;
 use Simbiat\usercontrol\Signinup;
@@ -631,7 +632,7 @@ class Router
     public function bictracker(array $uri): array
     {
         $headers = (new Headers);
-        $bictracker = (new bictracker\Bic);
+        $bictracker = (new bictracker\Bic());
         #Tell that content is intended for Russians
         header('Content-Language: ru-RU');
         #Prepare array
@@ -696,7 +697,7 @@ class Router
                     #Sanitize search value
                     $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
                     #Get date
-                    $outputArray['bicDate'] = $bictracker->bicDate();
+                    $outputArray['bicDate'] = (new Library)->bicDate();
                     $headers->lastModified($outputArray['bicDate'], true);
                     #Check if search value was provided
                     if (empty($uri[1])) {
@@ -727,7 +728,7 @@ class Router
                         #Sanitize BIC
                         $BIC = preg_replace('/[^0-9]/', '', rawurldecode($uri[1]));
                         #Try to get details
-                        $outputArray['bicdetails'] = $bictracker->getCurrent($BIC);
+                        $outputArray['bicdetails'] = $bictracker->getArray($BIC);
                         #Check if key was found
                         if (empty($outputArray['bicdetails'])) {
                             $outputArray['http_error'] = 404;

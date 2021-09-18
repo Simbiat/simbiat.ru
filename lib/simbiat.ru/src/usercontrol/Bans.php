@@ -12,7 +12,7 @@ class Bans
     public function __construct()
     {
         #Cache DB controller, if not done already
-        if (self::$dbController === NULL) {
+        if (self::$dbController === null) {
             self::$dbController = new Controller;
         }
     }
@@ -26,7 +26,7 @@ class Bans
     {
         #Get IP
         $ip = $this->getIP();
-        if ($ip === NULL) {
+        if ($ip === null) {
             #We failed to get any proper IP, something is definitely wrong, protect ourselves
             return true;
         }

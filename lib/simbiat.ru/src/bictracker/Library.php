@@ -5,7 +5,7 @@ namespace Simbiat\bictracker;
 use Simbiat\ArrayHelpers;
 use Simbiat\Database\Controller;
 
-class Update
+class Library
 {
     const dbPrefix = 'bic__';
     private ?Controller $dbController;
@@ -48,7 +48,7 @@ class Update
     /**
      * @throws \Exception
      */
-    public function dbUpdate(): string|bool
+    public function update(): string|bool
     {
         if (empty($this->dbController)) {
             return false;
@@ -57,7 +57,7 @@ class Update
         $arrayHelpers = (new ArrayHelpers());
         $currentDate = strtotime(date('d.m.Y', time()));
         #Get date of current library
-        $libDate = $this->dbController->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
+        $libDate = $this->bicDate();
         $libDate = strtotime(date('d.m.Y', intval($libDate)));
         while ($libDate <= $currentDate) {
             try {
@@ -625,7 +625,7 @@ class Update
     /**
      * @throws \Exception
      */
-    private function download(int $date): bool|string
+    public function download(int $date): bool|string
     {
         #Generate zip path
         $fileName = sys_get_temp_dir().'/'.date('Ymd', $date).'_ED807_full.xml';
@@ -692,5 +692,16 @@ class Update
         }
         #This means, that no file was found for the date (which is not necessarily a problem)
         return true;
+    }
+
+
+
+    #Function to get basic statistics
+    /**
+     * @throws \Exception
+     */
+    public function bicDate(): string
+    {
+        return $this->dbController->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
     }
 }

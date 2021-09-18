@@ -131,7 +131,7 @@ class Api
             #Connect to DB
             if ((new HomePage)->dbConnect()) {
                 #Get data
-                $data = (new bictracker\Bic)->getCurrent(rawurldecode($uri[1]));
+                $data = (new bictracker\Bic)->getArray(rawurldecode($uri[1]));
                 #Check if empty
                 if (empty($data)) {
                     $this->apiEcho(httpCode: '404');
@@ -150,7 +150,7 @@ class Api
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
         } elseif ($uri[0] === 'dbupdate') {
             if ((new HomePage)->dbConnect()) {
-                if ((new bictracker\Update)->dbUpdate() === true) {
+                if ((new bictracker\Library)->update() === true) {
                     return true;
                 } else {
                     return false;
