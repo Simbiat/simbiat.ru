@@ -1,0 +1,76 @@
+<?php
+declare(strict_types=1);
+namespace Simbiat;
+
+use Simbiat\bictracker\Router;
+use Simbiat\colloquium\Show;
+use Simbiat\HTTP20\Headers;
+use Simbiat\usercontrol\Signinup;
+
+class MainRouter extends Abstracts\Router
+{
+    #Supported
+    protected array $subRoutes = [
+        #Forum/articles
+        'forum', 'thread',
+        #Pages routing
+        'about', 'fftracker', 'bictracker', 'uc', 'tests',
+        #Feeds
+        'sitemap', 'rss', 'atom',
+        #Errors
+        'error', 'errors', 'httperror', 'httperrors'
+    ];
+    #Current breadcrumb for navigation
+    protected array $breadCrumb = [
+        ['href'=>'/', 'name'=>'Home page'],
+    ];
+
+    /**
+     * @throws \Exception
+     */
+    protected function pageGen(array $path): array
+    {
+        #Some extra processing for bictracker
+        if (strtolower($path[0]) === 'bictracker') {
+            #Tell that content is intended for Russians
+            header('Content-Language: ru-RU');
+            if (!empty($path[1]) && $path[1] !== 'search' && mb_strlen(rawurldecode($path[1])) === 8) {
+                #Assume legacy '/bic/vkey' link type was used and redirect to search page
+                (new Headers)->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/search/' . $path[1], true, true, false);
+            }
+        }
+        return match(strtolower($path[0])) {
+            #Forum/Articles
+            'forum' => (new Show)->forum($path),
+            'thread' => (new Show)->thread($path),
+            #Pages routing
+            'bictracker' => (new Router)->route(array_slice($path, 1)),
+                #'about', 'fftracker', 'uc', 'tests' => (new MainRouter)->route(array_slice($uri, 1)),
+            #Feeds
+            'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($path),
+            #Errors
+            'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
+        };
+    }
+
+    #Function to process (or rather relay) $_POST data
+    public function postProcess(): void
+    {
+        if (!empty($_POST)) {
+            if (!empty($_POST['signinup'])) {
+                (new Signinup)->signinup();
+            }
+        }
+    }
+
+    #Function to route help route error pages on frontend
+    private function error(array $uri): array {
+        if (empty($uri[0]) || preg_match('/\d{3}/', $uri[0]) !== 1) {
+            $outputArray['http_error'] = 404;
+        } else {
+            $outputArray['http_error'] = intval($uri[0]);
+        }
+        $outputArray['error_page'] = true;
+        return $outputArray;
+    }
+}

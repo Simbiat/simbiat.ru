@@ -4,7 +4,7 @@ namespace Simbiat\Abstracts;
 
 use Simbiat\Database\Controller;
 
-class Search
+abstract class Search
 {
     protected ?Controller $dbController;
     #Items to display per page for lists
@@ -40,7 +40,7 @@ class Search
     /**
      * @throws \Exception
      */
-    public function search(string $what = ''): array
+    public final function search(string $what = ''): array
     {
         return ['count'=>$this->countEntities($what), 'results'=>$this->selectEntities($what, 15)];
     }
@@ -49,7 +49,7 @@ class Search
     /**
      * @throws \Exception
      */
-    public function listEntities(int $page = 1, string $what = ''): int|array
+    public final function listEntities(int $page = 1, string $what = ''): int|array
     {
         #Suggest redirect if page number is less than 1
         if ($page < 1) {
@@ -70,7 +70,7 @@ class Search
     /**
      * @throws \Exception
      */
-    public function countEntities(string $what = ''): int
+    public final function countEntities(string $what = ''): int
     {
         if ($what !== '') {
             #Set binding
@@ -85,7 +85,7 @@ class Search
     /**
      * @throws \Exception
      */
-    public function selectEntities(string $what = '', int $limit = 100, int $offset = 0, bool $list = false): array
+    public final function selectEntities(string $what = '', int $limit = 100, int $offset = 0, bool $list = false): array
     {
         if ($what !== '') {
             #Set binding

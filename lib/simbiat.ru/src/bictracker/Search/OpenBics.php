@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\bictracker;
+namespace Simbiat\bictracker\Search;
 use Simbiat\Abstracts\Search;
 
 class OpenBics extends Search

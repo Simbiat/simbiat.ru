@@ -35,19 +35,19 @@
                         {% endif %}
                     </article>
                 {% else %}
-                    {% if service_name == 'about'%}
+                    {% if serviceName == 'about'%}
                         {{ include('about/about.twig')}}
-                    {% elseif service_name == 'usercontrol'%}
+                    {% elseif serviceName == 'usercontrol'%}
                         {{ include('usercontrol/usercontrol.twig')}}
-                    {% elseif service_name == 'fftracker'%}
+                    {% elseif serviceName == 'fftracker'%}
                         {{ include('fftracker/fftracker.twig')}}
-                    {% elseif service_name == 'bictracker'%}
+                    {% elseif serviceName == 'bictracker'%}
                         {{ include('bictracker/bictracker.twig')}}
-                    {% elseif service_name == 'forum'%}
+                    {% elseif serviceName == 'forum'%}
                         {% for article in articles %}
                             {{ include('articles.twig', article) }}
                         {% endfor %}
-                    {% elseif service_name == 'thread'%}
+                    {% elseif serviceName == 'thread'%}
                         {{ include('articles.twig', article) }}
                     {% else %}
                         {{ include('stylingTest.twig') }}

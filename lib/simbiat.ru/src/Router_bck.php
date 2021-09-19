@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat;
 
-use Simbiat\Abstracts\Search;
 use Simbiat\bictracker\ClosedBics;
 use Simbiat\bictracker\Library;
 use Simbiat\bictracker\OpenBics;
@@ -10,19 +9,8 @@ use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\HTML;
 use Simbiat\usercontrol\Signinup;
 
-class Router
+class Router_bck
 {
-    #Function to process (or rather relay) $_POST data
-    public function postProcess(): void
-    {
-        if (!empty($_POST)) {
-            if (!empty($_POST['signinup'])) {
-                (new Signinup)->signinup();
-            }
-        }
-    }
-
-
     #Function to prepare data for user control pages
     public function usercontrol(array $uri): array
     {
@@ -34,7 +22,7 @@ class Router
         }
         #Prepare array
         $outputArray = [
-            'service_name' => 'usercontrol',
+            'serviceName' => 'usercontrol',
             'h1' => 'User Control',
             'title' => 'User Control',
             'ogdesc' => 'User\'s Control Panel',
@@ -112,7 +100,7 @@ class Router
         $html = (new HTML);
         #Prepare array
         $outputArray = [
-            'service_name' => 'about',
+            'serviceName' => 'about',
             'h1' => 'About '.$GLOBALS['siteconfig']['site_name'],
             'title' => 'About '.$GLOBALS['siteconfig']['site_name'],
             'ogdesc' => 'About '.$GLOBALS['siteconfig']['site_name'],
@@ -446,7 +434,7 @@ class Router
         }
         #Prepare array
         $outputArray = [
-            'service_name' => 'fftracker',
+            'serviceName' => 'fftracker',
             'h1' => 'Final Fantasy XIV Tracker',
             'title' => 'Final Fantasy XIV Tracker',
             'ogdesc' => 'Tracker for Final Fantasy XIV entities and respective statistics',
@@ -475,7 +463,7 @@ class Router
                 }
                 #Set specific values
                 $outputArray['searchvalue'] = $decodedSearch;
-                $outputArray['searchresult'] = (new Search)->Search($decodedSearch);
+                #$outputArray['searchresult'] = (new Search)->Search($decodedSearch);
                 break;
             #Process statistics
             case 'statistics':
@@ -636,35 +624,12 @@ class Router
     {
         $headers = (new Headers);
         $bictracker = (new bictracker\Bic());
-        #Tell that content is intended for Russians
-        header('Content-Language: ru-RU');
-        #Prepare array
-        $outputArray = [
-            'service_name' => 'bictracker',
-            'h1' => 'БИК Трекер '.$GLOBALS['siteconfig']['site_name'],
-            'title' => 'БИК Трекер '.$GLOBALS['siteconfig']['site_name'],
-            'ogdesc' => 'БИК Трекер '.$GLOBALS['siteconfig']['site_name'],
-        ];
         #Start breadcrumbs
         $breadArray = [
-            ['href'=>'/', 'name'=>'Home page'],
-            ['href'=>'/bictracker/', 'name'=>'БИК Трекер'],
         ];
         #Check if URI is empty
         if (!empty($uri)) {
             $uri[0] = strtolower($uri[0]);
-            #Gracefully handle legacy links
-            if ($uri[0] !== 'search' && mb_strlen(rawurldecode($uri[0])) === 8) {
-                #Assume legacy '/bic/vkey' link type was used and redirect to search page
-                $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/search/' . $uri[0], true, true, false);
-            }
-            #Prepare array
-            $outputArray = [
-                'service_name' => 'bictracker',
-                'h1' => 'БИК Трекер',
-                'title' => 'БИК Трекер',
-                'ogdesc' => 'Трекер БИК предоставляемых Центральным Банком Российской Федерации',
-            ];
             switch ($uri[0]) {
                 #Process keying page
                 case 'keying':
@@ -775,9 +740,9 @@ class Router
                     #Sanitize search value
                     $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1] ?? ''));
                     if ($outputArray['subservice'] === 'open') {
-                        $outputArray['listOfEntities'] = (new OpenBics)->listEntities($page, $decodedSearch);
+                        $outputArray['listOfEntities'] = (new bictracker\Search\OpenBics)->listEntities($page, $decodedSearch);
                     } else {
-                        $outputArray['listOfEntities'] = (new ClosedBics)->listEntities($page, $decodedSearch);
+                        $outputArray['listOfEntities'] = (new bictracker\Search\ClosedBics)->listEntities($page, $decodedSearch);
                     }
                     #If int is returned, we have a bad page
                     if (is_int($outputArray['listOfEntities'])) {
@@ -816,17 +781,6 @@ class Router
         }
         #Add breadcrumbs
         $outputArray['breadcrumbs'] = (new HTML)->breadcrumbs($breadArray);
-        return $outputArray;
-    }
-
-    #Function to route error pages
-    public function error(array $uri): array {
-        if (empty($uri[0]) || preg_match('/\d{3}/', $uri[0]) !== 1) {
-            $outputArray['http_error'] = 404;
-        } else {
-            $outputArray['http_error'] = intval($uri[0]);
-        }
-        $outputArray['error_page'] = true;
         return $outputArray;
     }
 }

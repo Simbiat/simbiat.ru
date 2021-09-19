@@ -32,13 +32,11 @@ spl_autoload_register(function ($class) {
 });
 
 #Load composer libraries
-use Simbiat\colloquium\Show;
 use Simbiat\Cron;
 use Simbiat\Database\Controller;
 use Simbiat\Api;
-use Simbiat\Feeds;
 use Simbiat\HomePage;
-use Simbiat\Router;
+use Simbiat\MainRouter;
 
 #Get config file
 require_once __DIR__. '/config.php';
@@ -95,34 +93,7 @@ if ($CLI) {
                 $HomePage->commonLinks();
                 #Connect to DB
                 if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
-                    $vars = match(strtolower($uri[0])) {
-                        #Pages about the site
-                        'about' => (new Router)->about(array_slice($uri, 1)),
-                        #Forum/Articles
-                        #use https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Language to specify audience for russian posts
-                        'forum' => (new Show)->forum($uri),
-                        'thread' => (new Show)->thread($uri),
-                        #FFTracker
-                        'fftracker' => (new Router)->fftracker(array_slice($uri, 1)),
-                        #BIC Tracker
-                        'bictracker' => (new Router)->bictracker(array_slice($uri, 1)),
-                        #User control
-                        'uc' => (new Router)->usercontrol(array_slice($uri, 1)),
-                        #Silversteam
-                        'ssc', 'silversteam', 'darksteam' => [
-                            'service_name' => 'silversteam',
-                        ],
-                        #Feeds
-                        'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($uri),
-                        #Tests
-                        'tests' => (new Router)->tests(array_slice($uri, 1)),
-                        #Errors
-                        'error', 'errors', 'httperror', 'httperrors' => (new Router)->error(array_slice($uri, 1)),
-                        #Page not found
-                        default => [
-                            'http_error' => 404,
-                        ],
-                    };
+                    $vars = (new MainRouter)->route($uri);
                 } else {
                     $vars = [];
                 }
@@ -139,7 +110,7 @@ if ($CLI) {
         if ($HomePage->dbConnect(true)) {
             $vars = [
                 'h1' => 'Home',
-                'service_name' => 'landing',
+                'serviceName' => 'landing',
                 'notice' => (new Controller)->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
             ];
         } else {

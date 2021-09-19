@@ -191,7 +191,7 @@ class HomePage
                 #Cache hit, we need to connect to DB and initiate session to write data about it
                 if ($this->dbConnect(true) === true) {
                     #Process POST data if any
-                    (new Router)->postProcess();
+                    (new MainRouter)->postProcess();
                     #Close session right after if it opened
                     if (session_status() === PHP_SESSION_ACTIVE) {
                         session_write_close();
@@ -279,7 +279,7 @@ class HomePage
                     $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418, 'aggressive');
                 }
                 #Process POST data if any
-                (new Router)->postProcess();
+                (new MainRouter)->postProcess();
             }
         }
         return true;
@@ -344,12 +344,17 @@ class HomePage
         #Set title if it's empty
         if (empty($twigVars['title'])) {
             $twigVars['title'] = $twigVars['site_name'];
+            #Set H1 if it's empty
+            if (empty($twigVars['h1'])) {
+                $twigVars['h1'] = $twigVars['site_name'];
+            }
         } else {
+            #Set H1 if it's empty
+            if (empty($twigVars['h1'])) {
+                $twigVars['h1'] = $twigVars['title'];
+            }
+            #Add site name to it
             $twigVars['title'] = $twigVars['title'].' on '.$twigVars['site_name'];
-        }
-        #Set title if it's empty
-        if (empty($twigVars['h1'])) {
-            $twigVars['h1'] = $twigVars['title'];
         }
         #Set OG values to global ones, if empty
         if (empty($twigVars['ogdesc'])) {
@@ -369,6 +374,8 @@ class HomePage
         $twigVars['facebook'] = $GLOBALS['siteconfig']['facebook'];
         #Add CSRF Token to meta
         $twigVars['XCSRFToken'] = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
+        #Generate breadcrumbs
+        $twigVars['breadcrumbs'] = (new HTTP20\HTML)->breadcrumbs($twigVars['breadcrumbs']);
         #Render page
         $output = $twig->render('index.twig', $twigVars);
         #Close session

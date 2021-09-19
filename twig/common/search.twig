@@ -1,21 +1,21 @@
 {# Set link variable based on type #}
-{% if service_name == 'bictracker' %}
+{% if serviceName == 'bictracker' %}
     {% set actionURL = '/bictracker/search/' %}
 {% else %}
     {% set actionURL = '/search/' %}
 {% endif %}
 {# Render the form itself #}
 <section>
-    {% if service_name == 'bictracker' %}
+    {% if serviceName == 'bictracker' %}
         <p>Введите БИК, корреспондентский счёт, имя банка, его адрес или регистрационный номер.</p>
     {% endif %}
     <form role="search" class="searchForm" data-baseURL="{{ actionURL }}" action="">
-        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100"{% if searchvalue is defined %} value="{{searchvalue}}"{% else %} autofocus{% endif %}><label for="searchField">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
-        <input role="button" type="submit" id="search" value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
+        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100"{% if searchvalue is defined %} value="{{searchvalue}}"{% else %} autofocus{% endif %}><label for="searchField">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+        <input role="button" type="submit" id="search" value="{% if serviceName == 'bictracker' %}Поиск{% else %}Search{% endif %}">
     </form>
 </section>
 <section>
-    {% if service_name == 'bictracker' %}
+    {% if v == 'bictracker' %}
         <p class="relative">Библиотека обновлена <time datetime="{{ bidDate|date('Y-m-d') }}">{{ bidDate|date('d.m.Y') }}</time>.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/img/refresh.svg"></p>
     {% endif %}
     {% for type, subResult in searchresult %}
