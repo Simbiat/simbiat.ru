@@ -15,11 +15,11 @@ class Bic extends Entity
     #Name of the entity
     public string $NameP;
     #Bank code of parent entity
-    public ?string $PrntBIC = null;
+    public null|string|array $PrntBIC = null;
     #English name of the entity
     public ?string $EnglName = null;
     #Whether entity is active or not
-    public bool|int $XchType = false;
+    public bool|int|string $XchType = false;
     #Old BIC, in case it was used by several organizations
     public ?string $OLD_NEWNUM = null;
     #UID for electronic messages used by organization

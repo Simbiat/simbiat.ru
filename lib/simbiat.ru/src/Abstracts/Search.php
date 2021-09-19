@@ -37,18 +37,16 @@ abstract class Search
         $this->dbController = (new Controller);
     }
 
-    /**
-     * @throws \Exception
-     */
     public final function search(string $what = ''): array
     {
-        return ['count'=>$this->countEntities($what), 'results'=>$this->selectEntities($what, 15)];
+        try {
+            return ['count' => $this->countEntities($what), 'results' => $this->selectEntities($what, 15)];
+        } catch (\Throwable) {
+            return [];
+        }
     }
 
     #Function to generate list of entities or get a proper page number for redirect
-    /**
-     * @throws \Exception
-     */
     public final function listEntities(int $page = 1, string $what = ''): int|array
     {
         #Suggest redirect if page number is less than 1
@@ -63,36 +61,43 @@ abstract class Search
         if ($page > $pages) {
             return $pages;
         }
-        return ['count'=>$count, 'pages'=> $pages,'entities'=>$this->selectEntities($what, $this->listItems, $this->listItems*($page-1), true)];
+        try {
+            return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->listItems, $this->listItems * ($page - 1), true)];
+        } catch (\Throwable) {
+            return ['count' => $count, 'pages' => $pages, 'entities' => []];
+        }
     }
 
     #Generalized function to count entities
-    /**
-     * @throws \Exception
-     */
+    /** @noinspection SqlResolve */
     public final function countEntities(string $what = ''): int
     {
-        if ($what !== '') {
-            #Set binding
-            $binding = [':what' => $what, ':match' => [$what, 'match']];
-            return $this->dbController->count('SELECT COUNT(*) FROM `'.$this->table.'` WHERE '.(empty($this->where) ? '' : $this->where.' AND ').$this->whatToSearch.' > 0', $binding);
-        } else {
-            return $this->dbController->count('SELECT COUNT(*) FROM `'.$this->table.'`'.(empty($this->where) ? '' : ' WHERE '.$this->where));
+        try {
+            if ($what !== '') {
+                #Set binding
+                $binding = [':what' => $what, ':match' => [$what, 'match']];
+                return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . $this->whatToSearch . ' > 0', $binding);
+            } else {
+                return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
+            }
+        } catch (\Throwable) {
+            return 0;
         }
     }
 
     #Generalized function to select entities
-    /**
-     * @throws \Exception
-     */
     public final function selectEntities(string $what = '', int $limit = 100, int $offset = 0, bool $list = false): array
     {
-        if ($what !== '') {
-            #Set binding
-            $binding = [':what' => $what, ':match' => [$what, 'match']];
-            return $this->dbController->selectAll('SELECT \''.$this->entityType.'\' as `type`, '.$this->fields.', '.$this->whatToSearch.' as `relevance` FROM `'.$this->table.'`'.(empty($this->where) ? '' : ' WHERE '.$this->where).' HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, $binding);
-        } else {
-            return $this->dbController->selectAll('SELECT \''.$this->entityType.'\' as `type`, '.$this->fields.' FROM `'.$this->table.'`'.(empty($this->where) ? '' : ' WHERE '.$this->where).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset);
+        try {
+            if ($what !== '') {
+                #Set binding
+                $binding = [':what' => $what, ':match' => [$what, 'match']];
+                return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->whatToSearch . ' as `relevance` FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' HAVING `relevance`>0 ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, $binding);
+            } else {
+                return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
+            }
+        } catch (\Throwable) {
+            return [];
         }
     }
 }

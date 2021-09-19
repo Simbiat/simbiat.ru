@@ -375,7 +375,9 @@ class HomePage
         #Add CSRF Token to meta
         $twigVars['XCSRFToken'] = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
         #Generate breadcrumbs
-        $twigVars['breadcrumbs'] = (new HTTP20\HTML)->breadcrumbs($twigVars['breadcrumbs']);
+        if (!empty($twigVars['breadcrumbs'])) {
+            $twigVars['breadcrumbs'] = (new HTTP20\HTML)->breadcrumbs($twigVars['breadcrumbs']);
+        }
         #Render page
         $output = $twig->render('index.twig', $twigVars);
         #Close session
@@ -383,8 +385,8 @@ class HomePage
             session_write_close();
         }
         #Cache page if cache age is set up
-        if (self::$PROD && !empty($twigVars['cache_age']) && is_numeric($twigVars['cache_age'])) {
-            self::$HTMLCache->set($output, '', intval($twigVars['cache_age']));
+        if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
+            self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
         } else {
             (new Common)->zEcho($output, $cacheStrat);
         }

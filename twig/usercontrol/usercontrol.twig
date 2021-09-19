@@ -1,7 +1,7 @@
 <section>
-    {% if subservice %}
+    {% if subServiceName %}
         <article>
-            {% if subservice == 'registration' %}
+            {% if subServiceName == 'registration' %}
                 {{ include('usercontrol/registration.twig')}}
             {% endif %}
         </article>

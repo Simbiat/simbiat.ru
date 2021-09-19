@@ -1,27 +1,27 @@
 <section lang="ru-RU">
     <article>
-        <details {% if not subservice %}class="persistent" open{% endif %}>
+        <details {% if not subServiceName %}class="persistent" open{% endif %}>
             <summary class="rightSummary aboutSection">О сервисе</summary>
             <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank"><img loading="lazy" class="linkIcon" src="/img/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
             <p>Библиотека содержит различную информацию, использующейся в банковских расчётах. Трекер предназначен для визуального отображения этой информации, а также отслеживания некоторых изменений.</p>
             <p>У сервиса есть "официальная" страница на форуме <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" class="linkIcon" src="/img/icons/banki.ru.svg" alt="banki.ru">banki.ru</a></p>
-            {% if not subservice %}
+            {% if not subServiceName %}
                 <p>Вы находитесь на главной странице сервиса. Для поиска банков используйте <a href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">поиск</span></a>. Если вы хотите проверить ключевание счёта, то можете использовать эту <a href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">страницу</span></a>.</p>
             {% endif %}
         </details>
     </article>
-    {% if subservice %}
+    {% if subServiceName %}
         {{pagination_top|raw}}
         <article>
-            {% if subservice == 'keying' %}
+            {% if subServiceName == 'keying' %}
                 {{ include('bictracker/keying.twig')}}
-            {% elseif subservice == 'search' %}
+            {% elseif subServiceName == 'search' %}
                 {{ include('common/search.twig')}}
-            {% elseif subservice == 'bic' %}
+            {% elseif subServiceName == 'bic' %}
                 {{ include('bictracker/bic.twig')}}
-            {% elseif subservice == 'open' %}
+            {% elseif subServiceName == 'open' %}
                 {{ include('common/list.twig')}}
-            {% elseif subservice == 'closed' %}
+            {% elseif subServiceName == 'closed' %}
                 {{ include('common/list.twig')}}
             {% endif %}
         </article>

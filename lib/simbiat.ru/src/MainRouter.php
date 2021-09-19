@@ -34,10 +34,6 @@ class MainRouter extends Abstracts\Router
         if (strtolower($path[0]) === 'bictracker') {
             #Tell that content is intended for Russians
             header('Content-Language: ru-RU');
-            if (!empty($path[1]) && $path[1] !== 'search' && mb_strlen(rawurldecode($path[1])) === 8) {
-                #Assume legacy '/bic/vkey' link type was used and redirect to search page
-                (new Headers)->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/search/' . $path[1], true, true, false);
-            }
         }
         return match(strtolower($path[0])) {
             #Forum/Articles
@@ -66,7 +62,7 @@ class MainRouter extends Abstracts\Router
     #Function to route help route error pages on frontend
     private function error(array $uri): array {
         if (empty($uri[0]) || preg_match('/\d{3}/', $uri[0]) !== 1) {
-            $outputArray['http_error'] = 404;
+            (new Headers)->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/httperror/404', false, true, false);
         } else {
             $outputArray['http_error'] = intval($uri[0]);
         }

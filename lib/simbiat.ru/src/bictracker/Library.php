@@ -694,14 +694,13 @@ class Library
         return true;
     }
 
-
-
-    #Function to get basic statistics
-    /**
-     * @throws \Exception
-     */
+    #Function to get current library date
     public function bicDate(): string
     {
-        return $this->dbController->selectValue('SELECT `value` FROM `'.self::dbPrefix.'settings` WHERE `setting`=\'date\';');
+        try {
+            return $this->dbController->selectValue('SELECT `value` FROM `' . self::dbPrefix . 'settings` WHERE `setting`=\'date\';');
+        } catch (\Throwable) {
+            return strval(time());
+        }
     }
 }

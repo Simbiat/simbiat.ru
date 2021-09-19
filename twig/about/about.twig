@@ -1,9 +1,9 @@
 <section>
     <article>
-        <details {% if not subservice %}class="persistent" open{% endif %}>
+        <details {% if not subServiceName %}class="persistent" open{% endif %}>
             <summary class="rightSummary aboutSection">About</summary>
             <p>This is the section, where you can learn about {{ site_name }}.</p>
-            {% if not subservice %}
+            {% if not subServiceName %}
                 <p>Select one of the links below to learn more about:</p>
                 <ul>
                     <li><a href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
@@ -19,25 +19,25 @@
             {% endif %}
         </details>
     </article>
-    {% if subservice %}
+    {% if subServiceName %}
         <article>
-            {% if subservice == 'me' %}
+            {% if subServiceName == 'me' %}
                 {{ include('about/me.twig')}}
-            {% elseif subservice == 'website' %}
+            {% elseif subServiceName == 'website' %}
                 {{ include('about/website.twig')}}
-            {% elseif subservice == 'tech' %}
+            {% elseif subServiceName == 'tech' %}
                 {{ include('about/tech.twig')}}
-            {% elseif subservice == 'resume' %}
+            {% elseif subServiceName == 'resume' %}
                 {{ include('about/resume.twig')}}
-            {% elseif subservice == 'contacts' %}
+            {% elseif subServiceName == 'contacts' %}
                 {{ include('about/contacts.twig')}}
-            {% elseif subservice == 'tos' %}
+            {% elseif subServiceName == 'tos' %}
                 {{ include('about/tos.twig')}}
-            {% elseif subservice == 'privacy' %}
+            {% elseif subServiceName == 'privacy' %}
                 {{ include('about/privacy.twig')}}
-            {% elseif subservice == 'security' %}
+            {% elseif subServiceName == 'security' %}
                 {{ include('about/security.twig')}}
-            {% elseif subservice == 'changelog' %}
+            {% elseif subServiceName == 'changelog' %}
                 {{ include('about/changelog.twig')}}
             {% endif %}
         </article>

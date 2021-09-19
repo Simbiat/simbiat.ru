@@ -2,12 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat;
 
-use Simbiat\bictracker\ClosedBics;
-use Simbiat\bictracker\Library;
-use Simbiat\bictracker\OpenBics;
 use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\HTML;
-use Simbiat\usercontrol\Signinup;
 
 class Router_bck
 {
@@ -41,7 +37,7 @@ class Router_bck
             case 'signup':
             case 'join':
                 if (empty($_SESSION['username'])) {
-                    $outputArray['subservice'] = 'registration';
+                    $outputArray['subServiceName'] = 'registration';
                     $outputArray['h1'] = $outputArray['title'] = 'User sign in/join';
                 } else {
                     #Redirect to main page if user is already authenticated
@@ -412,7 +408,7 @@ class Router_bck
             }
             $outputArray['h1'] = $outputArray['title'];
             $outputArray['ogdesc'] = $outputArray['title'];
-            $outputArray['subservice'] = $uri[0];
+            $outputArray['subServiceName'] = $uri[0];
         }
         $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
         return $outputArray;
@@ -447,7 +443,7 @@ class Router_bck
         switch ($uri[0]) {
             #Process search page
             case 'search':
-                $outputArray['subservice'] = 'search';
+                $outputArray['subServiceName'] = 'search';
                 #Set search value
                 if (!isset($uri[1])) {
                     $uri[1] = '';
@@ -459,7 +455,7 @@ class Router_bck
                     $breadArray[] = ['href'=>'/fftracker/search/'.$uri[1], 'name'=>'Search for '.$decodedSearch];
                 } else {
                     #Cache due to random entities
-                    $outputArray['cache_age'] = 86400;
+                    $outputArray['cacheAge'] = 86400;
                 }
                 #Set specific values
                 $outputArray['searchvalue'] = $decodedSearch;
@@ -473,7 +469,7 @@ class Router_bck
                 } else {
                     $uri[1] = strtolower($uri[1]);
                     if (in_array($uri[1], ['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'])) {
-                        $outputArray['subservice'] = 'statistics';
+                        $outputArray['subServiceName'] = 'statistics';
                         #Set statistics type
                         $outputArray['ff_stat_type'] = $uri[1];
                         #Continue breadcrumb
@@ -485,7 +481,7 @@ class Router_bck
                         $outputArray['h1'] .= ': Statistics';
                         $outputArray['title'] .= ': Statistics';
                         $outputArray['ogdesc'] = $tempName.' on '.$outputArray['ogdesc'];
-                        $outputArray['cache_age'] = 86400;
+                        $outputArray['cacheAge'] = 86400;
                     } else {
                         $outputArray['http_error'] = 404;
                     }
@@ -519,7 +515,7 @@ class Router_bck
                 } else {
                     #Try to get out earlier based on date of last update of the list. Unlikely, that will help, but still.
                     $headers->lastModified($outputArray['searchresult']['statistics']['updated'], true);
-                    $outputArray['subservice'] = $uri[0];
+                    $outputArray['subServiceName'] = $uri[0];
                     #Adjust list type to human-readable value
                     $tempName = match($uri[0]) {
                         'freecompanies' => 'Free Companies',
@@ -557,7 +553,7 @@ class Router_bck
                     if (empty($outputArray[$uri[0]])) {
                         $outputArray['http_error'] = 404;
                     } else {
-                        $outputArray['subservice'] = $uri[0];
+                        $outputArray['subServiceName'] = $uri[0];
                         #Try to exit early based on modification date
                         $headers->lastModified($outputArray[$uri[0]]['updated'], true);
                         #Continue breadcrumb by adding link to list (1 page)
@@ -596,7 +592,7 @@ class Router_bck
                         $outputArray['link_extra'] = $headers->links($altLink, 'head');
                         #Cache age for achievements (due to random characters)
                         if ($uri[0] === 'achievement') {
-                            $outputArray['cache_age'] = 86400;
+                            $outputArray['cacheAge'] = 86400;
                         }
                     }
                 }
@@ -609,178 +605,11 @@ class Router_bck
         if (!empty($outputArray['http_error']) && $outputArray['http_error'] === 404) {
             $outputArray['ff_suggestions'] = $fftracker->GetRandomEntities($fftracker->maxlines);
             #Cache due to random entities
-            $outputArray['cache_age'] = 86400;
+            $outputArray['cacheAge'] = 86400;
         }
         #Add breadcrumbs
         $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
         return $outputArray;
     }
 
-    #Function to prepare data for BICTracker depending on the URI
-    /**
-     * @throws \Exception
-     */
-    public function bictracker(array $uri): array
-    {
-        $headers = (new Headers);
-        $bictracker = (new bictracker\Bic());
-        #Start breadcrumbs
-        $breadArray = [
-        ];
-        #Check if URI is empty
-        if (!empty($uri)) {
-            $uri[0] = strtolower($uri[0]);
-            switch ($uri[0]) {
-                #Process keying page
-                case 'keying':
-                    $outputArray['subservice'] = $uri[0];
-                    #Continue breadcrumbs
-                    $breadArray[] = ['href' => '/bictracker/keying', 'name' => 'Ключевание'];
-                    $outputArray['h1'] = $outputArray['title'] = 'Ключевание счёта';
-                    $outputArray['ogdesc'] = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода.';
-                    $outputArray['checkResult'] = null;
-                    if (!empty($uri[1]) && !empty($uri[2])) {
-                        $outputArray['checkResult'] = (new AccountKeying)->accCheck($uri[1], $uri[2]);
-                        if ($outputArray['checkResult'] !== false) {
-                            $outputArray['bic_value'] = $uri[1];
-                            $outputArray['acc_value'] = $uri[2];
-                            $outputArray['h1'] = $outputArray['title'] = 'Ключевание счёта '.$uri[2];
-                            $outputArray['link_extra'] = HomePage::$headers->links([['href' => '/api/bictracker/keying/'.$uri[1].'/'.$uri[2], 'rel' => 'alternate', 'title' => 'Ссылка на API', 'type' => 'application/json; charset=utf-8'],], 'head');
-                        }
-                        if (is_numeric($outputArray['checkResult'])) {
-                            $outputArray['properKey'] = preg_replace('/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $uri[2]);
-                        }
-                    }
-                    break;
-                #Process search page
-                case 'search':
-                    $outputArray['subservice'] = $uri[0];
-                    $outputArray['maxresults'] = 50;
-                    #Continue breadcrumbs
-                    $breadArray[] = ['href' => '/bictracker/search', 'name' => 'Поиск'];
-                    #Set search value
-                    if (!isset($uri[1])) {
-                        $uri[1] = '';
-                    }
-                    #Sanitize search value
-                    $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1]));
-                    #Get date
-                    $outputArray['bicDate'] = (new Library)->bicDate();
-                    $headers->lastModified($outputArray['bicDate'], true);
-                    #Check if search value was provided
-                    if (empty($uri[1])) {
-                        #Get search results
-                        $outputArray['searchresult']['openBics'] = (new OpenBics())->Search();
-                        $outputArray['searchresult']['closedBics'] = (new ClosedBics())->Search();
-                        $outputArray['h1'] = $outputArray['title'] = $outputArray['ogdesc'] = 'Поиск по БИК Трекеру';
-                    } else {
-                        #Continue breadcrumbs
-                        $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
-                        #Get search results
-                        $outputArray['searchresult']['openBics'] = (new OpenBics())->Search($decodedSearch);
-                        $outputArray['searchresult']['closedBics'] = (new ClosedBics())->Search($decodedSearch);
-                        $outputArray['searchvalue'] = $decodedSearch;
-                        $outputArray['h1'] = $outputArray['title'] = 'Поиск `'.$decodedSearch.'`';
-                        $outputArray['ogdesc'] = 'Поиск `'.$decodedSearch.'` по БИК Трекеру';
-                    }
-                    break;
-                #Process bic details page
-                case 'bic':
-                    $outputArray['subservice'] = $uri[0];
-                    if (empty($uri[1])) {
-                        $outputArray['http_error'] = 404;
-                    } else {
-                        #Check if we have BIC
-                        if (preg_match('/\d{9}/', rawurldecode($uri[1])) !== 1) {
-                            #Assume legacy 'vkey' link type was used and redirect to search page
-                            $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/bictracker/search/' . $uri[1], true, true, false);
-                        }
-                        #Sanitize BIC
-                        $BIC = preg_replace('/[^0-9]/', '', rawurldecode($uri[1]));
-                        #Try to get details
-                        $outputArray['bicdetails'] = $bictracker->getArray($BIC);
-                        #Check if key was found
-                        if (empty($outputArray['bicdetails'])) {
-                            $outputArray['http_error'] = 404;
-                        } else {
-                            #Generate timeline
-                            if (!empty($outputArray['bicdetails']['restrictions'])) {
-                                $outputArray['bicdetails']['restrictions'] = (new HTTP20\HTML)->timeline($outputArray['bicdetails']['restrictions']);
-                            }
-                            #Try to exit early based on modification date
-                            if (!empty($outputArray['bicdetails']['Updated'])) {
-                                $headers->lastModified(strtotime($outputArray['bicdetails']['Updated']), true);
-                            }
-                            #Continue breadcrumbs
-                            if (!empty($outputArray['bicdetails']['PrntBIC'])) {
-                                foreach(array_reverse($outputArray['bicdetails']['PrntBIC']) as $bank) {
-                                    $breadArray[] = ['href' => '/bictracker/bic/' . $bank['id'], 'name' => $bank['name']];
-                                }
-                            }
-                            $breadArray[] = ['href' => '/bictracker/bic/' . $uri[1], 'name' => $outputArray['bicdetails']['NameP']];
-                            #Set cache due to query complexity
-                            $outputArray['cache_age'] = 259200;
-                            #Update meta
-                            $outputArray['title'] = $outputArray['bicdetails']['NameP'];
-                            $outputArray['h1'] = $outputArray['bicdetails']['NameP'];
-                            $outputArray['ogdesc'] = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') in BIC Tracker';
-                            #Link header/tag for API
-                            $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bic/' . rawurlencode($BIC)]];
-                            #Send HTTP header
-                            $headers->links($altLink);
-                            #Add link to HTML
-                            $outputArray['link_extra'] = $headers->links($altLink, 'head');
-                        }
-                    }
-                    break;
-                case 'open':
-                case 'closed':
-                    $outputArray['subservice'] = $uri[0];
-                    $page = intval($_GET['page'] ?? 1);
-                    #Sanitize search value
-                    $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($uri[1] ?? ''));
-                    if ($outputArray['subservice'] === 'open') {
-                        $outputArray['listOfEntities'] = (new bictracker\Search\OpenBics)->listEntities($page, $decodedSearch);
-                    } else {
-                        $outputArray['listOfEntities'] = (new bictracker\Search\ClosedBics)->listEntities($page, $decodedSearch);
-                    }
-                    #If int is returned, we have a bad page
-                    if (is_int($outputArray['listOfEntities'])) {
-                        $outputArray['http_error'] = 404;
-                    } else {
-                        #Generate pagination
-                        $html = (new HTML);
-                        $outputArray['pagination_top'] = $html->pagination($page, $outputArray['listOfEntities']['pages'], prefix: '?page=');
-                        $outputArray['pagination_bottom'] = $html->pagination($page, $outputArray['listOfEntities']['pages'], prefix: '?page=');
-                        if (!empty($decodedSearch)) {
-                            #Set search value, if available
-                            $outputArray['searchvalue'] = $decodedSearch;
-                            #Continue breadcrumbs
-                            $breadArray[] = ['href' => '/bictracker/search/' . $uri[1], 'name' => 'Поиск ' . $decodedSearch];
-                            $breadArray[] = ['href' => '/bictracker/' . $uri[0] . '/' . $uri[1], 'name' => match($uri[0]){'open'=>'Открытые', 'closed'=>'Закрытые'}];
-                            if ($page > 1) {
-                                $breadArray[] = ['href' => '/bictracker/' . $uri[0] . '/' . $uri[1] . '/?page=' . $page, 'name' => 'Страница ' . $page];
-                            }
-                            $outputArray['h1'] = $outputArray['title'] = 'Поиск `'.$decodedSearch.'`, страница '.$page;
-                            $outputArray['ogdesc'] = 'Поиск `'.$decodedSearch.'` по БИК Трекеру, страница '.$page;
-                        } else {
-                            #Continue breadcrumbs
-                            $breadArray[] = ['href' => '/bictracker/' . $uri[0], 'name' => match($uri[0]){'open'=>'Открытые БИК', 'closed'=>'Закрытые БИК'}];
-                            if ($page > 1) {
-                                $breadArray[] = ['href' => '/bictracker/' . $uri[0] . '/?page=' . $page, 'name' => 'Страница ' . $page];
-                            }
-                            $outputArray['h1'] = $outputArray['title'] = match($uri[0]){'open'=>'Открытые БИК', 'closed'=>'Закрытые БИК'}.', страница '.$page;
-                            $outputArray['ogdesc'] = match($uri[0]){'open'=>'Открытые БИК', 'closed'=>'Закрытые БИК'}.', страница '.$page.' на БИК Трекере';
-                        }
-                    }
-                    break;
-                default:
-                    $outputArray['http_error'] = 404;
-                    break;
-            }
-        }
-        #Add breadcrumbs
-        $outputArray['breadcrumbs'] = (new HTML)->breadcrumbs($breadArray);
-        return $outputArray;
-    }
 }
