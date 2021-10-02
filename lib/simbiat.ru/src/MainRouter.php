@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat;
 
-use Simbiat\bictracker\Router;
 use Simbiat\colloquium\Show;
 use Simbiat\HTTP20\Headers;
 use Simbiat\usercontrol\Signinup;
@@ -40,12 +39,15 @@ class MainRouter extends Abstracts\Router
             'forum' => (new Show)->forum($path),
             'thread' => (new Show)->thread($path),
             #Pages routing
-            'bictracker' => (new Router)->route(array_slice($path, 1)),
-                #'about', 'fftracker', 'uc', 'tests' => (new MainRouter)->route(array_slice($uri, 1)),
+            'about' => (new About\Router)->route(array_slice($path, 1)),
+            'bictracker' => (new bictracker\Router)->route(array_slice($path, 1)),
+            'fftracker' => (new fftracker\Router)->route(array_slice($path, 1)),
+                #'uc', 'tests' => (new MainRouter)->route(array_slice($uri, 1)),
             #Feeds
             'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($path),
             #Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
+            default => $this->error(['404']),
         };
     }
 
