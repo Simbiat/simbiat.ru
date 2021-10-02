@@ -19,7 +19,7 @@ class Router extends \Simbiat\Abstracts\Router
     protected function pageGen(array $path): array
     {
         return match(strtolower($path[0])) {
-            'search' => [],
+            'search' => (new Pages\Search)->get(array_slice($path, 1)),
         };
     }
 }

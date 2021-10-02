@@ -37,11 +37,12 @@ abstract class Search
         $this->dbController = (new Controller);
     }
 
-    public final function search(string $what = ''): array
+    public final function search(string $what = '', int $limit = 15): array
     {
         try {
-            return ['count' => $this->countEntities($what), 'results' => $this->selectEntities($what, 15)];
-        } catch (\Throwable) {
+            return ['count' => $this->countEntities($what), 'results' => $this->selectEntities($what, $limit)];
+        } catch (\Throwable $throwable) {
+            error_log($throwable->getMessage().$throwable->getTraceAsString());
             return [];
         }
     }
@@ -63,7 +64,8 @@ abstract class Search
         }
         try {
             return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->listItems, $this->listItems * ($page - 1), true)];
-        } catch (\Throwable) {
+        } catch (\Throwable $throwable) {
+            error_log($throwable->getMessage().$$throwable->getTraceAsString());
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
     }
@@ -80,7 +82,8 @@ abstract class Search
             } else {
                 return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $throwable) {
+            error_log($throwable->getMessage().$throwable->getTraceAsString());
             return 0;
         }
     }
@@ -96,7 +99,8 @@ abstract class Search
             } else {
                 return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $throwable) {
+            error_log($throwable->getMessage().$throwable->getTraceAsString());
             return [];
         }
     }

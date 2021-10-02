@@ -1,6 +1,16 @@
 {# Set link variable based on type #}
 {% if type == 'bic' %}
     {% set url = 'bictracker/bic' %}
+{% elseif type == 'achievement' %}
+    {% set url = 'fftracker/achievement' %}
+{% elseif type == 'character' %}
+    {% set url = 'fftracker/character' %}
+{% elseif type == 'freecompany' %}
+    {% set url = 'fftracker/freecompany' %}
+{% elseif type == 'pvpteam' %}
+    {% set url = 'fftracker/pvpteam' %}
+{% elseif type == 'linkshell' %}
+    {% set url = 'fftracker/linkshell' %}
 {% endif %}
 {# Actual card #}
 <a class="entityCard" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
@@ -11,8 +21,16 @@
             {% else %}
                 <span class="emojiGreen">&#10004;</span>
             {% endif %}
+        {% elseif type == 'achievement' %}
+            <img alt="{{name|raw}}" src="/img/fftracker/icon/{{icon}}">
+        {% elseif type == 'character' %}
+            <img alt="{{name|raw}}" src="/img/fftracker/avatar/{{icon}}c0_96x96.jpg">
+        {% elseif type == 'freecompany' or type == 'pvpteam' %}
+            <img alt="{{name|raw}}" src="/img/fftracker/merged-crests/{{icon|slice(0,2)}}/{{icon|slice(2,2)}}/{{icon}}.png">
+        {% elseif type == 'linkshell' %}
+            <img alt="{{name|raw}}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.png">
         {% endif %}
     </span>
-    <span class="entityName">{{name}}</span>
+    <span class="entityName">{{name|raw}}</span>
     <span class="entityArrow">&#10151;</span>
 </a>
