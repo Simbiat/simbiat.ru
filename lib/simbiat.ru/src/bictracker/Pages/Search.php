@@ -27,7 +27,7 @@ class Search extends Page
     protected function generate(array $path): array
     {
         #Sanitize search value
-        $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<>]/', '', rawurldecode($path[0] ?? ''));
+        $decodedSearch = preg_replace('/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<> ]/', '', rawurldecode($path[0] ?? ''));
         #Get date
         $outputArray['bicDate'] = (new Library)->bicDate();
         (new Headers)->lastModified($outputArray['bicDate'], true);
