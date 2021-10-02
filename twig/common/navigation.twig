@@ -35,13 +35,14 @@
             <details class="navCat" {% if serviceName == 'fftracker' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
                 <ul>
-                    <li{% if subServiceName == 'search' %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
                     <li{% if subServiceName == 'statistics' %} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
+                    <li{% if subServiceName == 'search' %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
                     <li{% if subServiceName == 'character' or subServiceName == 'characters' %} class="current"{% endif %}><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
                     <li{% if subServiceName == 'freecompany' or subServiceName == 'freecompanies' %} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
                     <li{% if subServiceName == 'pvpteam' or subServiceName == 'pvpteam' %} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
                     <li{% if subServiceName == 'linkshell' or subServiceName == 'linkshell' %} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
                     <li{% if subServiceName == 'achievement' or subServiceName == 'achievements' %} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
+                    <li{% if subServiceName == 'track' %} class="current"{% endif %}><a class="navItem" href="/fftracker/track/" target="_self" itemprop="url"><span itemprop="name">Track entity</span></a></li>
                 </ul>
             </details>
         </div>
