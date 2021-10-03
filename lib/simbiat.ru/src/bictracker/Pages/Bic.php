@@ -41,7 +41,7 @@ class Bic extends Page
         }
         #Try to exit early based on modification date
         if (!empty($outputArray['bicdetails']['Updated'])) {
-            $headers->lastModified(strtotime($outputArray['bicdetails']['Updated']), true);
+            $this->lastModified($outputArray['bicdetails']['Updated']);
         }
         #Generate timeline
         if (!empty($outputArray['bicdetails']['restrictions'])) {

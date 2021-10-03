@@ -29,7 +29,7 @@ class Listing extends Page
     {
         $headers = (new Headers);
         #Attempt early exit
-        $headers->lastModified((new Library)->bicDate(), true);
+        $this->lastModified((new Library)->bicDate());
         $this->subServiceName = $path[0];
         $page = intval($_GET['page'] ?? 1);
         #Sanitize search value
