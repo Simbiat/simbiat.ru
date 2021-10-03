@@ -10,13 +10,26 @@ class Characters extends Search
     #Name of the table to search use
     protected string $table = 'ffxiv__character';
     #List of fields
-    protected string $fields = '`characterid` as `id`, `name`, `avatar` AS `icon`';
-    #Optional WHERE clause
-    protected string $where = '';
-    #Condition for search
-    protected string $whatToSearch = 'IF(`characterid` = :what, 99999, MATCH (`name`, `biography`) AGAINST (:match IN BOOLEAN MODE))';
+    protected string $fields = '`characterid` as `id`, `name`, `avatar` AS `icon`, `updated`';
     #Default order (for main page, for example)
     protected string $orderDefault = '`Updated` DESC';
     #Order for list pages
     protected string $orderList = '`name` ASC';
+    #Next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
+    #the more weight/relevancy condition with it will have (if true)
+    #List of FULLTEXT columns
+    protected array $fulltext = [
+        'name',
+        'biography',
+    ];
+    #List of optional columns for direct comparison
+    protected array $direct = [
+        'characterid',
+        'name',
+    ];
+    #List of optional columns for LIKE %% comparison
+    protected array $like = [
+        'name',
+        'biography',
+    ];
 }

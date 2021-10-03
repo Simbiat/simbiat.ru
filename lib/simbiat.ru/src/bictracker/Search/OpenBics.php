@@ -11,12 +11,31 @@ class OpenBics extends Search
     protected string $table = 'bic__list';
     #List of fields
     protected string $fields = '`BIC` as `id`, `NameP` as `name`, `DateOut`';
-    #Optional WHERE clause
+    #Optional WHERE clause for every SELECT
     protected string $where = '`DateOut` IS NULL';
-    #Condition for search
-    protected string $whatToSearch = 'IF(`VKEY`=:what OR `BIC`=:what OR `OLD_NEWNUM`=:what OR `RegN`=:what, 99999, MATCH (`NameP`, `Adr`) AGAINST (:match IN BOOLEAN MODE))';
+    #Optional WHERE clause for SELECT where search term is defined
+    protected string $whereSearch = '`BIC` IN (SELECT `BIC` FROM `bic__swift` WHERE `SWBIC`=:what) OR `BIC` IN (SELECT `BIC` FROM `bic__accounts` WHERE `Account`=:what)';
     #Default order (for main page, for example)
     protected string $orderDefault = '`Updated` DESC';
     #Order for list pages
     protected string $orderList = '`NameP` ASC';
+    #Next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
+    #the more weight/relevancy condition with it will have (if true)
+    #List of FULLTEXT columns
+    protected array $fulltext = [
+        'NameP',
+        'Adr',
+    ];
+    #List of optional columns for direct comparison
+    protected array $direct = [
+        'BIC',
+        'OLD_NEWNUM',
+        'RegN',
+        'VKEY',
+    ];
+    #List of optional columns for LIKE %% comparison
+    protected array $like = [
+        'NameP',
+        'Adr',
+    ];
 }

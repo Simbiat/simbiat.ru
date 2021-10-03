@@ -51,6 +51,19 @@ class Search extends Page
             $this->h1 = $this->title = 'Search for `'.$decodedSearch.'`';
             $this->ogdesc = 'Search for `'.$decodedSearch.'` on Final Fantasy XIV Tracker';
         }
+        #Get the freshest date for the results
+        #Get list of dates first
+        $dates = array_merge(
+            array_column($outputArray['searchresult']['characters']['results'], 'updated'),
+            array_column($outputArray['searchresult']['freecompanies']['results'], 'updated'),
+            array_column($outputArray['searchresult']['pvpteams']['results'], 'updated'),
+            array_column($outputArray['searchresult']['linkshells']['results'], 'updated'),
+            array_column($outputArray['searchresult']['achievements']['results'], 'updated')
+        );
+        #If list of dates is not empty
+        if (!empty($dates)) {
+            $this->lastModified(max($dates));
+        }
         return $outputArray;
     }
 }

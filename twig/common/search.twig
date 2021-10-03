@@ -9,7 +9,9 @@
 {# Render the form itself #}
 <section>
     {% if serviceName == 'bictracker' %}
-        <p>Введите БИК, корреспондентский счёт, имя банка, его адрес или регистрационный номер.</p>
+        <p>Введите БИК, SWIFT, название банка, его адрес, регистрационный номер или номер счёта.</p>
+    {% elseif serviceName == 'fftracker' %}
+        <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
     <form role="search" class="searchForm" data-baseURL="{{ actionURL }}" action="">
         <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100"{% if searchvalue is defined %} value="{{searchvalue|raw}}"{% else %} autofocus{% endif %}><label for="searchField">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
