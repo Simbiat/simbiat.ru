@@ -67,8 +67,12 @@ class Library
                     $libDate = $libDate + 86400;
                     continue;
                 } elseif ($download === false) {
+                    #If date is current one, then assume that file is simply not available yet
+                    if ($libDate === $currentDate) {
+                        return true;
+                    }
                     #Failed to download. Stop processing to avoid loosing sequence
-                    throw new \RuntimeException('Failed to download `'.$download.'`');
+                    throw new \RuntimeException('Failed to download file for '.$libDate);
                 } else {
                     #Some files are known to have double XML definition. We need to fix this.
                     file_put_contents($download, preg_replace('/(<\?xml version="1\.0" encoding="WINDOWS-1251"\?>){2,}/i', '$1', file_get_contents($download)));
