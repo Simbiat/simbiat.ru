@@ -18,7 +18,7 @@ class Search extends Page
     protected string $fullTitle = 'Search for `%s`';
 
     #Generation of the page data
-    protected function generate(array $path): array
+    protected final function generate(array $path): array
     {
         #Check if types are set
         $this->typesCheck();
@@ -33,6 +33,12 @@ class Search extends Page
         foreach ($this->types as $type=>$class) {
             $outputArray['searchresult'][$type] = (new $class)->Search($decodedSearch, $this->searchItems);
         }
+        #Get the freshest date
+        $date = $this->getDate($outputArray['searchresult']);
+        #Attempt to exit a bit earlier with Last Modified header
+        if (!empty($date)) {
+            $this->lastModified($date);
+        }
         if (!empty($decodedSearch)) {
             #Continue breadcrumbs
             $this->breadCrumb[] = ['href' => $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $path[0], 'name' => '' . $decodedSearch.''];
@@ -41,18 +47,12 @@ class Search extends Page
             $this->h1 = $this->title = sprintf($this->shortTitle, $decodedSearch);
             $this->ogdesc = sprintf($this->fullTitle, $decodedSearch);
         }
-        #Get date
-        $date = $this->getDate($outputArray['searchresult']);
-        #Attempt to exit a bit earlier with Last Modified header
-        if (!empty($date)) {
-            $this->lastModified($date);
-        }
         #Merge with extra fields and return the result
         return array_merge($outputArray, $this->extras());
     }
 
     #Check if types are properly set
-    protected function typesCheck(): void
+    protected final function typesCheck(): void
     {
         #Bad if array is empty
         if (empty($this->types)) {
@@ -61,13 +61,13 @@ class Search extends Page
         #Check that classes are available
         foreach ($this->types as $type) {
             if (!method_exists($type, 'Search')) {
-                throw new \RuntimeException('Search method does not exist in '.$type.' class');
+                throw new \RuntimeException('`Search` method does not exist in `'.$type.'` class');
             }
         }
     }
 
     #Get date from results
-    protected function getDate(array $results): int|string
+    protected final function getDate(array $results): int|string
     {
         #Prepare array of dates
         $dates = [];
