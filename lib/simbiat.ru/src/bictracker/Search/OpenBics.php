@@ -10,7 +10,7 @@ class OpenBics extends Search
     #Name of the table to search use
     protected string $table = 'bic__list';
     #List of fields
-    protected string $fields = '`BIC` as `id`, `NameP` as `name`, `DateOut`';
+    protected string $fields = '`BIC` as `id`, `NameP` as `name`, `DateOut`, `Updated` as `updated`';
     #Optional WHERE clause for every SELECT
     protected string $where = '`DateOut` IS NULL';
     #Optional WHERE clause for SELECT where search term is defined

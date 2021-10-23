@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\Abstracts;
+namespace Simbiat\Abstracts\Pages;
+
+use Simbiat\Abstracts\Page;
 
 class StaticPage extends Page
 {

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\About\Pages;
 
-use Simbiat\Abstracts\StaticPage;
+use Simbiat\Abstracts\Pages\StaticPage;
 
 class Me extends StaticPage
 {
