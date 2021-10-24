@@ -20,10 +20,22 @@
         </details>
     </article>
     {% if subServiceName %}
+        {{pagination_top|raw}}
         <article>
             {% if subServiceName == 'search' %}
                 {{ include('common/pages/search.twig')}}
+            {% elseif subServiceName == 'characters' %}
+                {{ include('common/pages/list.twig')}}
+            {% elseif subServiceName == 'freecompanies' %}
+                {{ include('common/pages/list.twig')}}
+            {% elseif subServiceName == 'pvpteams' %}
+                {{ include('common/pages/list.twig')}}
+            {% elseif subServiceName == 'linkshells' %}
+                {{ include('common/pages/list.twig')}}
+            {% elseif subServiceName == 'achievements' %}
+                {{ include('common/pages/list.twig')}}
             {% endif %}
         </article>
+        {{pagination_bottom|raw}}
     {% endif %}
 </section>

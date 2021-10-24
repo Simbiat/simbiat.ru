@@ -36,12 +36,12 @@
                 <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
                 <ul>
                     <li{% if subServiceName == 'statistics' %} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
-                    <li{% if subServiceName == 'search' %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
-                    <li{% if subServiceName == 'character' or subServiceName == 'characters' %} class="current"{% endif %}><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
-                    <li{% if subServiceName == 'freecompany' or subServiceName == 'freecompanies' %} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
-                    <li{% if subServiceName == 'pvpteam' or subServiceName == 'pvpteam' %} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
-                    <li{% if subServiceName == 'linkshell' or subServiceName == 'linkshell' %} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
-                    <li{% if subServiceName == 'achievement' or subServiceName == 'achievements' %} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
+                    <li{% if serviceName == 'fftracker' and (subServiceName == 'search' or searchvalue is defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li{% if subServiceName == 'character' or (subServiceName == 'characters' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
+                    <li{% if subServiceName == 'freecompany' or (subServiceName == 'freecompanies' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
+                    <li{% if subServiceName == 'pvpteam' or (subServiceName == 'pvpteams' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
+                    <li{% if subServiceName == 'linkshell' or (subServiceName == 'linkshells' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
+                    <li{% if subServiceName == 'achievement' or (subServiceName == 'achievements' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
                     <li{% if subServiceName == 'track' %} class="current"{% endif %}><a class="navItem" href="/fftracker/track/" target="_self" itemprop="url"><span itemprop="name">Track entity</span></a></li>
                 </ul>
             </details>
@@ -52,7 +52,7 @@
             <details class="navCat" {% if serviceName == 'bictracker' %}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="БИК Трекер" src="/img/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
                 <ul>
-                    <li{% if subServiceName == 'search' or ((subServiceName == 'open' or subServiceName == 'closed') and searchvalue is defined) %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
+                    <li{% if serviceName == 'bictracker' and (subServiceName == 'search' or searchvalue is defined) %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
                     <li{% if (subServiceName == 'open' and searchvalue is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut) %} class="current"{% endif %}><a class="navItem" href="/bictracker/open/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
                     <li{% if (subServiceName == 'closed' and searchvalue is not defined) or (subServiceName == 'bic' and bicdetails.DateOut) %} class="current"{% endif %}><a class="navItem" href="/bictracker/closed/" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
                     <li{% if subServiceName == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a></li>

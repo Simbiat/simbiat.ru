@@ -5,7 +5,7 @@ namespace Simbiat\fftracker;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['search'];
+    protected array $subRoutes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'achievements'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/fftracker/', 'name'=>'FFXIV Tracker']
@@ -20,6 +20,7 @@ class Router extends \Simbiat\Abstracts\Router
     {
         return match(strtolower($path[0])) {
             'search' => (new Pages\Search)->get(array_slice($path, 1)),
+            'characters', 'freecompanies', 'pvpteams', 'linkshells', 'achievements' => (new Pages\Listing)->get($path),
         };
     }
 }
