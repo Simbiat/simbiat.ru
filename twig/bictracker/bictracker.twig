@@ -16,13 +16,13 @@
             {% if subServiceName == 'keying' %}
                 {{ include('bictracker/keying.twig')}}
             {% elseif subServiceName == 'search' %}
-                {{ include('common/search.twig')}}
+                {{ include('common/pages/search.twig')}}
             {% elseif subServiceName == 'bic' %}
                 {{ include('bictracker/bic.twig')}}
             {% elseif subServiceName == 'open' %}
-                {{ include('common/list.twig')}}
+                {{ include('common/pages/list.twig')}}
             {% elseif subServiceName == 'closed' %}
-                {{ include('common/list.twig')}}
+                {{ include('common/pages/list.twig')}}
             {% endif %}
         </article>
         {{pagination_bottom|raw}}

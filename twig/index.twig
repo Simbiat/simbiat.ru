@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb# profile: https://ogp.me/ns/profile# article: https://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#" itemscope itemtype="https://schema.org/Article">
     <head>
-        {{ include('common/metatags.twig') }}
+        {{ include('common/layout/metatags.twig') }}
 
         <!-- Links -->
         {{ link_tags|raw }}
@@ -9,7 +9,7 @@
 
         <title>{{ title }}</title>
 
-        {{ include('common/scripts.twig') }}
+        {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
             {% if http_error != 403 and http_error != 404%}
                 <meta http-equiv="refresh" content="60"/>
@@ -21,10 +21,10 @@
     {% else %}
         <body>
             <header>
-                {{ include('common/header.twig') }}
+                {{ include('common/layout/header.twig') }}
             </header>
             <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
-                {{ include('common/navigation.twig') }}
+                {{ include('common/layout/navigation.twig') }}
             </nav>
             <main id="content" role="main">
                 {% if http_error and static_page == false%}
@@ -37,18 +37,10 @@
                 {% else %}
                     {% if serviceName == 'about'%}
                         {{ include('about/about.twig')}}
-                    {% elseif serviceName == 'usercontrol'%}
-                        {{ include('usercontrol/usercontrol.twig')}}
                     {% elseif serviceName == 'fftracker'%}
                         {{ include('fftracker/fftracker.twig')}}
                     {% elseif serviceName == 'bictracker'%}
                         {{ include('bictracker/bictracker.twig')}}
-                    {% elseif serviceName == 'forum'%}
-                        {% for article in articles %}
-                            {{ include('articles.twig', article) }}
-                        {% endfor %}
-                    {% elseif serviceName == 'thread'%}
-                        {{ include('articles.twig', article) }}
                     {% else %}
                         {{ include('stylingTest.twig') }}
                     {% endif %}
@@ -58,8 +50,8 @@
                 <div id="hideSidebar"><input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" type="image" src="/img/close.svg"></div>
                     {% if http_error != 'database' and maintenance == 0 %}
                         <section id="loginForm">
-                            {{ include('common/noscript.twig') }}
-                            {{ include('common/signinup.twig') }}
+                            {{ include('common/layout/noscript.twig') }}
+                            {{ include('common/layout/signinup.twig') }}
                         </section>
                     {% else %}
                         <section id="sidebar_for_static">
@@ -68,7 +60,7 @@
                     {% endif %}
             </aside>
             <footer>
-                {{ include('common/footer.twig') }}
+                {{ include('common/layout/footer.twig') }}
             </footer>
             <div id="tooltip" role="tooltip" aria-label="Tooltip"></div>
         </body>
