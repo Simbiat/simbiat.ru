@@ -268,7 +268,7 @@ class Resume extends Page
                         'Work quickly to identify and fix the root causes of problems',
                         'Assist and train teammates',
                     ],
-                    'achievements' => null,
+                    'achievements' => '<a href="/static/resume/Snapchat_Essentials.pdf" target="_blank"><img src="/img/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>',
                     'description' => null,
                 ],
             ]
