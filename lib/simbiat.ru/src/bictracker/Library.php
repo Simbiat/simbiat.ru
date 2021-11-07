@@ -48,7 +48,7 @@ class Library
     /**
      * @throws \Exception
      */
-    public function update(): string|bool
+    public function update(bool $manual = false): string|bool
     {
         if (empty($this->dbController)) {
             return false;
@@ -64,13 +64,16 @@ class Library
                 $download = $this->download($libDate);
                 if ($download === true) {
                     #The day does not have library, skip it
+                    $this->log($libDate, 'Библиотека за день не найдена: день пропущен', $manual);
                     $libDate = $libDate + 86400;
                     continue;
                 } elseif ($download === false) {
                     #If date is current one, then assume that file is simply not available yet
                     if ($libDate === $currentDate) {
+                        $this->log($libDate, 'Библиотека за день не найдена: скорее всего, ещё не опубликована', $manual);
                         return true;
                     }
+                    $this->log($libDate, 'Не удалось скачать файл', $manual);
                     #Failed to download. Stop processing to avoid loosing sequence
                     throw new \RuntimeException('Failed to download file for '.$libDate);
                 } else {
@@ -81,6 +84,7 @@ class Library
                     $loadSuccess = @$library->load(realpath($download), LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
                     if ($loadSuccess === false) {
                         #Bad file detected
+                        $this->log($libDate, 'Не удалось открыть файл', $manual);
                         throw new \DOMException('Failed to open `'.$download.'`');
                     }
                     #Some files are in packets or envelopes, thus we need to explicitly get ED807 element and work with it.
@@ -91,10 +95,12 @@ class Library
                     #Check date of the library
                     if (empty($this->fileDate)) {
                         #Empty date. Stop processing to avoid loosing sequence
+                        $this->log($libDate, 'Не удалось получить дату из файла', $manual);
                         throw new \LengthException('Empty date `'.$download.'`');
                     }
                     if ($this->fileDate !== date('Y-m-d', $libDate)) {
                         #Date mismatch. Stop processing to avoid loosing sequence
+                        $this->log($libDate, 'Дата в файле не совпадает с ожидаемой', $manual);
                         throw new \UnexpectedValueException('Date mismatch in `'.$download.'`');
                     }
                     #Get entries
@@ -351,13 +357,16 @@ class Library
                     $this->dbController->query($queries);
                     #Remove library file
                     @unlink($download);
+                    $this->log($libDate, 'Успешное обновление', $manual);
                 }
             } catch(\Exception $e) {
                 if (!empty($download)) {
                     #Remove library file, if failure was while processing it
                     @unlink($download);
                 }
-                return $e->getMessage()."\r\n".$e->getTraceAsString();
+                $error = $e->getMessage()."\r\n".$e->getTraceAsString();
+                $this->log($libDate, $error, $manual);
+                return $error;
             }
         }
         return true;
@@ -622,6 +631,27 @@ class Library
                     ':fileDate' => $this->fileDate,
                 ]
             ];
+        }
+    }
+
+    #Function to log updates
+    private function log($bicdate, $message, bool $manual = false): void
+    {
+        try {
+            #Sleep to ensure that log entries will be unique
+            sleep(1);
+            #Log the entry
+            $this->dbController->query(
+                'INSERT INTO `'.self::dbPrefix.'log` (`id`, `manual`, `bicdate`, `message`) VALUES (CURRENT_TIMESTAMP(), :manual, :bicdate, :message);',
+                [
+                    ':manual' => [$manual, 'bool'],
+                    ':bicdate' => [$bicdate, 'date'],
+                    ':message' => [$message, 'string'],
+                ]
+            );
+        } catch (\Throwable $exception) {
+            #Just log to file. Generally we do not lose much if this fails
+            error_log($exception->getMessage().$exception->getTraceAsString());
         }
     }
 

@@ -150,7 +150,7 @@ class Api
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
         } elseif ($uri[0] === 'dbupdate') {
             if ((new HomePage)->dbConnect()) {
-                if ((new bictracker\Library)->update() === true) {
+                if ((new bictracker\Library)->update(true) === true) {
                     return true;
                 } else {
                     return false;
