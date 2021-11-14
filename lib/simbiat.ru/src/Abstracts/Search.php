@@ -50,7 +50,7 @@ abstract class Search
         try {
             return ['count' => $this->countEntities($what), 'results' => $this->selectEntities($what, $limit)];
         } catch (\Throwable $throwable) {
-            error_log($throwable->getMessage().$throwable->getTraceAsString());
+            error_log($throwable->getMessage()."\r\n".$throwable->getTraceAsString());
             return [];
         }
     }
@@ -73,7 +73,7 @@ abstract class Search
         try {
             return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->listItems, $this->listItems * ($page - 1), true)];
         } catch (\Throwable $throwable) {
-            error_log($throwable->getMessage().$$throwable->getTraceAsString());
+            error_log($throwable->getMessage()."\r\n".$throwable->getTraceAsString());
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
     }
@@ -91,7 +91,7 @@ abstract class Search
                 return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
             }
         } catch (\Throwable $throwable) {
-            error_log($throwable->getMessage().$throwable->getTraceAsString());
+            error_log($throwable->getMessage()."\r\n".$throwable->getTraceAsString());
             return 0;
         }
     }
@@ -108,7 +108,7 @@ abstract class Search
                 return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
             }
         } catch (\Throwable $throwable) {
-            error_log($throwable->getMessage().$throwable->getTraceAsString());
+            error_log($throwable->getMessage()."\r\n".$throwable->getTraceAsString());
             return [];
         }
     }
