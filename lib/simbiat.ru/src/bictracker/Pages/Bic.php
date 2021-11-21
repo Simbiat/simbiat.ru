@@ -33,7 +33,7 @@ class Bic extends Page
             $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/httperror/404', true, true, false);
         }
         #Try to get details
-        $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->getArray($BIC);
+        $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->setId($BIC)->getArray();
         #Check if ID was found
         if (empty($outputArray['bicdetails'])) {
             #404

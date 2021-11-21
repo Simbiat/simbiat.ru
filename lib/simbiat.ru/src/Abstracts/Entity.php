@@ -13,7 +13,9 @@ abstract class Entity
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
     protected bool $attempted = false;
     #If ID was retrieved, this needs to not be null
-    protected ?string $id = null;
+    public ?string $id = null;
+    #Format for IDs
+    protected string $idFormat = '/^\d+$/mi';
     #Debug flag
     protected bool $debug = false;
 
@@ -29,12 +31,25 @@ abstract class Entity
         $this->debug = $debug;
     }
 
+    #Set ID
+    public function setId(string $id): self
+    {
+        if (preg_match($this->idFormat, $id) !== 1) {
+            throw new \UnexpectedValueException('ID `'.$id.'` has incorrect format.');
+        } else {
+            $this->id = $id;
+        }
+        return $this;
+    }
+
     #Update entity properties
-    public final function get(string $id): self
+    protected final function get(): self
     {
         try {
             #Set ID
-            $this->id = $id;
+            if ($this->id === null) {
+                throw new \UnexpectedValueException('ID can\'t be empty.');
+            }
             #Set flag, that we have tried to get data
             $this->attempted = true;
             #Get data
@@ -84,28 +99,23 @@ abstract class Entity
     }
 
     #Share the data
-    public final function getArray(string $id): array
+    public final function getArray(): array
     {
         #If data was not retrieved yet - attempt to
         if ($this->attempted === false) {
             try {
-                $this->get($id);
+                $this->get();
             } catch (\Throwable) {
                 return [];
             }
         }
-        #If IDs do not match - something is wrong or trying to reuse the object, failsafe to an empty array
-        if ($this->id === $id) {
-            $array = get_mangled_object_vars($this);
-            #Remove private and protected properties
-            foreach ($array as $key=>$value) {
-                if (preg_match('/^\x00/u', $key) === 1) {
-                    unset($array[$key]);
-                }
+        $array = get_mangled_object_vars($this);
+        #Remove private and protected properties
+        foreach ($array as $key=>$value) {
+            if (preg_match('/^\x00/u', $key) === 1) {
+                unset($array[$key]);
             }
-            return get_object_vars($this);
-        } else {
-            return [];
         }
+        return $array;
     }
 }

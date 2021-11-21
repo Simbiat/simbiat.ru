@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Cron;
-use Simbiat\Database\Controller;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
@@ -14,7 +13,21 @@ class FreeCompany extends Entity
 
     #Custom properties
     protected const entityType = 'freecompany';
-    protected const idFormat = '/^\d{10}$/mi';
+    public array $dates = [];
+    public ?string $tag = null;
+    public ?string $crest = null;
+    public int $rank = 0;
+    public ?string $slogan = null;
+    public bool $recruiting = false;
+    public ?string $community = null;
+    public ?string $grandCompany = null;
+    public string $active = 'Always';
+    public array $location = [];
+    public array $focus = [];
+    public array $seeking = [];
+    public array $oldNames = [];
+    public array $ranking = [];
+    public array $members = [];
 
     #Function to get initial data from DB
     /**
@@ -22,27 +35,25 @@ class FreeCompany extends Entity
      */
     protected function getFromDB(): array
     {
-        $dbcon = (new Controller);
         #Get general information
-        $data = $dbcon->selectRow('SELECT * FROM `'.self::dbPrefix.'freecompany` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'freecompany`.`serverid`=`'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'freecompany`.`grandcompanyid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'timeactive` ON `'.self::dbPrefix.'freecompany`.`activeid`=`'.self::dbPrefix.'timeactive`.`activeid` LEFT JOIN `'.self::dbPrefix.'estate` ON `'.self::dbPrefix.'freecompany`.`estateid`=`'.self::dbPrefix.'estate`.`estateid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'estate`.`cityid`=`'.self::dbPrefix.'city`.`cityid` WHERE `freecompanyid`=:id', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'freecompany` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'freecompany`.`serverid`=`'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'freecompany`.`grandcompanyid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'timeactive` ON `'.self::dbPrefix.'freecompany`.`activeid`=`'.self::dbPrefix.'timeactive`.`activeid` LEFT JOIN `'.self::dbPrefix.'estate` ON `'.self::dbPrefix.'freecompany`.`estateid`=`'.self::dbPrefix.'estate`.`estateid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'estate`.`cityid`=`'.self::dbPrefix.'city`.`cityid` WHERE `freecompanyid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data) || !is_array($data)) {
             return [];
         }
 
         #Get old names
-        $data['oldnames'] = $dbcon->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'freecompany_names` WHERE `freecompanyid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'freecompany_names` WHERE `freecompanyid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $dbcon->selectAll('SELECT `'.self::dbPrefix.'character`.`characterid`, `company_joined` AS `join`, `'.self::dbPrefix.'freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `avatar` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'freecompany_rank`.`rankid`=`'.self::dbPrefix.'character`.`company_rank` AND `'.self::dbPrefix.'freecompany_rank`.`freecompanyid`=`'.self::dbPrefix.'character`.`freecompanyid` JOIN (SELECT `company_rank`, COUNT(*) AS `total` FROM `'.self::dbPrefix.'character` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:id GROUP BY `company_rank`) `ranklist` ON `ranklist`.`company_rank` = `'.self::dbPrefix.'character`.`company_rank` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:id ORDER BY `ranklist`.`total` , `ranklist`.`company_rank` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'character`.`characterid`, `company_joined` AS `join`, `'.self::dbPrefix.'freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `avatar` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'freecompany_rank`.`rankid`=`'.self::dbPrefix.'character`.`company_rank` AND `'.self::dbPrefix.'freecompany_rank`.`freecompanyid`=`'.self::dbPrefix.'character`.`freecompanyid` JOIN (SELECT `company_rank`, COUNT(*) AS `total` FROM `'.self::dbPrefix.'character` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:id GROUP BY `company_rank`) `ranklist` ON `ranklist`.`company_rank` = `'.self::dbPrefix.'character`.`company_rank` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:id ORDER BY `ranklist`.`total` , `ranklist`.`company_rank` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
         #History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
-        $data['ranks_history'] = $dbcon->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
+        $data['ranks_history'] = $this->dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['grandcompanyid'], $data['estateid'], $data['gcrankid'], $data['gc_rank'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
         if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400 && empty($_SESSION['UA']['bot'])) {
-            (new Cron)->add('ffentityupdate', [$this->id, 'freecompany'], priority: 1, message: 'Updating free company with ID '.$this->id);
+            (new Cron)->add('ffUpdateEntity', [$this->id, 'freecompany'], priority: 1, message: 'Updating free company with ID '.$this->id);
         }
-        unset($dbcon);
         return $data;
     }
 
@@ -52,9 +63,7 @@ class FreeCompany extends Entity
         $data = $Lodestone->getFreeCompany($this->id)->getFreeCompanyMembers($this->id, 0)->getResult();
         if (empty($data['freecompanies'][$this->id]['server']) || (!empty($data['freecompanies'][$this->id]['members']) && count($data['freecompanies'][$this->id]['members']) < intval($data['freecompanies'][$this->id]['members_count'])) || (empty($data['freecompanies'][$this->id]['members']) && intval($data['freecompanies'][$this->id]['members_count']) > 0)) {
             if (@$data['freecompanies'][$this->id] == 404) {
-                $data['entitytype'] = 'freecompany';
-                $data['404'] = true;
-                return $data;
+                return ['404' => true];
             } else {
                 if (empty($Lodestone->getLastError())) {
                     return 'Failed to get any data for Free Company '.$this->id;
@@ -64,8 +73,6 @@ class FreeCompany extends Entity
             }
         }
         $data = $data['freecompanies'][$this->id];
-        $data['freecompanyid'] = $this->id;
-        $data['entitytype'] = 'freecompany';
         $data['404'] = false;
         return $data;
     }
@@ -73,18 +80,75 @@ class FreeCompany extends Entity
     #Function to do processing
     protected function process(array $fromDB): void
     {
-
+        $this->name = $fromDB['name'];
+        $this->dates = [
+            'formed' => strtotime($fromDB['formed']),
+            'registered' => strtotime($fromDB['registered']),
+            'updated' => strtotime($fromDB['updated']),
+            'deleted' => (empty($fromDB['deleted']) ? null : strtotime($fromDB['deleted'])),
+        ];
+        $this->location = [
+            'dataCenter' => $fromDB['datacenter'],
+            'server' => $fromDB['server'],
+            'estate' => [
+                'region' => $fromDB['region'],
+                'city' => $fromDB['city'],
+                'area' => $fromDB['area'],
+                'ward' => intval($fromDB['ward']),
+                'plot' => intval($fromDB['plot']),
+                'name' => $fromDB['estate_zone'],
+                'size' => intval($fromDB['size']),
+                'message' => $fromDB['estate_message'],
+            ],
+        ];
+        $this->tag = $fromDB['tag'];
+        $this->crest = $fromDB['crest'];
+        $this->rank = intval($fromDB['rank']);
+        $this->slogan = $fromDB['slogan'];
+        $this->recruiting = boolval($fromDB['recruitment']);
+        $this->community = $fromDB['communityid'];
+        $this->grandCompany = $fromDB['gc_name'];
+        $this->active = $fromDB['active'];
+        $this->focus = [
+            'Role-playing' => boolval($fromDB['Role-playing']),
+            'Leveling' => boolval($fromDB['Leveling']),
+            'Casual' => boolval($fromDB['Casual']),
+            'Hardcore' => boolval($fromDB['Hardcore']),
+            'Dungeons' => boolval($fromDB['Dungeons']),
+            'Guildhests' => boolval($fromDB['Guildhests']),
+            'Trials' => boolval($fromDB['Trials']),
+            'Raids' => boolval($fromDB['Raids']),
+            'PvP' => boolval($fromDB['PvP']),
+        ];
+        $this->seeking = [
+            'Tank' => boolval($fromDB['Tank']),
+            'Healer' => boolval($fromDB['Healer']),
+            'DPS' => boolval($fromDB['DPS']),
+            'Crafter' => boolval($fromDB['Crafter']),
+            'Gatherer' => boolval($fromDB['Gatherer']),
+        ];
+        $this->oldNames = $fromDB['oldnames'];
+        $this->ranking = $fromDB['ranks_history'];
+        #Adjust types for ranking
+        foreach ($this->ranking as $key=>$rank) {
+            $this->ranking[$key]['date'] = strtotime($rank['date']);
+            $this->ranking[$key]['weekly'] = intval($rank['weekly']);
+            $this->ranking[$key]['monthly'] = intval($rank['monthly']);
+            $this->ranking[$key]['members'] = intval($rank['members']);
+        }
+        $this->members = $fromDB['members'];
+        #Adjust join date format
+        foreach ($this->members as $key=>$member) {
+            $this->members[$key]['join'] = strtotime($member['join']);
+        }
     }
 
     #Function to update the entity
-    public function update(): string|bool
+    protected function updateDB(): string|bool
     {
         try {
-            $data = $this->getFromLodestone();
             #Attempt to get crest
-            $data['crest'] = $this->CrestMerge($data['freecompanyid'], $data['crest']);
-            #Cache controller
-            $dbController = (new Controller);
+            $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
             #Main query to insert or update a Free Company
             $queries[] = [
                 'INSERT INTO `'.self::dbPrefix.'freecompany` (
@@ -96,55 +160,55 @@ class FreeCompany extends Entity
                 ON DUPLICATE KEY UPDATE
                     `name`=:name, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `grandcompanyid`=(SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_name`=:grandCompany ORDER BY `gcrankid` LIMIT 1), `tag`=:tag, `crest`=COALESCE(:crest, `crest`), `rank`=:rank, `slogan`=:slogan, `activeid`=(SELECT `activeid` FROM `'.self::dbPrefix.'timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), `recruitment`=:recruitment, `communityid`=:communityid, `estate_zone`=:estate_zone, `estateid`=(SELECT `estateid` FROM `'.self::dbPrefix.'estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), `estate_message`=:estate_message, `Role-playing`=:rolePlaying, `Leveling`=:leveling, `Casual`=:casual, `Hardcore`=:hardcore, `Dungeons`=:dungeons, `Guildhests`=:guildhests, `Trials`=:trials, `Raids`=:raids, `PvP`=:pvp, `Tank`=:tank, `Healer`=:healer, `DPS`=:dps, `Crafter`=:crafter, `Gatherer`=:gatherer;',
                 [
-                    ':freecompanyid'=>$data['freecompanyid'],
-                    ':name'=>$data['name'],
-                    ':server'=>$data['server'],
-                    ':formed'=>[$data['formed'], 'date'],
-                    ':grandCompany'=>$data['grandCompany'],
-                    ':tag'=>$data['tag'],
+                    ':freecompanyid'=>$this->id,
+                    ':name'=>$this->lodestone['name'],
+                    ':server'=>$this->lodestone['server'],
+                    ':formed'=>[$this->lodestone['formed'], 'date'],
+                    ':grandCompany'=>$this->lodestone['grandCompany'],
+                    ':tag'=>$this->lodestone['tag'],
                     ':crest'=>[
-                        (empty($data['crest']) ? NULL : $data['crest']),
-                        (empty($data['crest']) ? 'null' : 'string'),
+                        (empty($this->lodestone['crest']) ? NULL : $this->lodestone['crest']),
+                        (empty($this->lodestone['crest']) ? 'null' : 'string'),
                     ],
-                    ':rank'=>$data['rank'],
+                    ':rank'=>$this->lodestone['rank'],
                     ':slogan'=>[
-                        (empty($data['slogan']) ? NULL : $data['slogan']),
-                        (empty($data['slogan']) ? 'null' : 'string'),
+                        (empty($this->lodestone['slogan']) ? NULL : $this->removeBrs($this->lodestone['slogan'])),
+                        (empty($this->lodestone['slogan']) ? 'null' : 'string'),
                     ],
                     ':active'=>[
-                        (($data['active'] == 'Not specified') ? NULL : (empty($data['active']) ? NULL : $data['active'])),
-                        (($data['active'] == 'Not specified') ? 'null' : (empty($data['active']) ? 'null' : 'string')),
+                        (($this->lodestone['active'] == 'Not specified') ? NULL : (empty($this->lodestone['active']) ? NULL : $this->lodestone['active'])),
+                        (($this->lodestone['active'] == 'Not specified') ? 'null' : (empty($this->lodestone['active']) ? 'null' : 'string')),
                     ],
-                    ':recruitment'=>(strcasecmp($data['recruitment'], 'Open') === 0 ? 1 : 0),
+                    ':recruitment'=>(strcasecmp($this->lodestone['recruitment'], 'Open') === 0 ? 1 : 0),
                     ':estate_zone'=>[
-                        (empty($data['estate']['name']) ? NULL : $data['estate']['name']),
-                        (empty($data['estate']['name']) ? 'null' : 'string'),
+                        (empty($this->lodestone['estate']['name']) ? NULL : $this->lodestone['estate']['name']),
+                        (empty($this->lodestone['estate']['name']) ? 'null' : 'string'),
                     ],
                     ':estate_address'=>[
-                        (empty($data['estate']['address']) ? NULL : $data['estate']['address']),
-                        (empty($data['estate']['address']) ? 'null' : 'string'),
+                        (empty($this->lodestone['estate']['address']) ? NULL : $this->lodestone['estate']['address']),
+                        (empty($this->lodestone['estate']['address']) ? 'null' : 'string'),
                     ],
                     ':estate_message'=>[
-                        (empty($data['estate']['greeting']) ? NULL : $data['estate']['greeting']),
-                        (empty($data['estate']['greeting']) ? 'null' : 'string'),
+                        (empty($this->lodestone['estate']['greeting']) ? NULL : $this->removeBrs($this->lodestone['estate']['greeting'])),
+                        (empty($this->lodestone['estate']['greeting']) ? 'null' : 'string'),
                     ],
-                    ':rolePlaying'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Role-playing', array_column($data['focus'], 'name'))]['enabled']),
-                    ':leveling'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Leveling', array_column($data['focus'], 'name'))]['enabled']),
-                    ':casual'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Casual', array_column($data['focus'], 'name'))]['enabled']),
-                    ':hardcore'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Hardcore', array_column($data['focus'], 'name'))]['enabled']),
-                    ':dungeons'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Dungeons', array_column($data['focus'], 'name'))]['enabled']),
-                    ':guildhests'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Guildhests', array_column($data['focus'], 'name'))]['enabled']),
-                    ':trials'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Trials', array_column($data['focus'], 'name'))]['enabled']),
-                    ':raids'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('Raids', array_column($data['focus'], 'name'))]['enabled']),
-                    ':pvp'=>(empty($data['focus']) ? 0 : $data['focus'][array_search('PvP', array_column($data['focus'], 'name'))]['enabled']),
-                    ':tank'=>(empty($data['seeking']) ? 0 : $data['seeking'][array_search('Tank', array_column($data['seeking'], 'name'))]['enabled']),
-                    ':healer'=>(empty($data['seeking']) ? 0 : $data['seeking'][array_search('Healer', array_column($data['seeking'], 'name'))]['enabled']),
-                    ':dps'=>(empty($data['seeking']) ? 0 : $data['seeking'][array_search('DPS', array_column($data['seeking'], 'name'))]['enabled']),
-                    ':crafter'=>(empty($data['seeking']) ? 0 : $data['seeking'][array_search('Crafter', array_column($data['seeking'], 'name'))]['enabled']),
-                    ':gatherer'=>(empty($data['seeking']) ? 0 : $data['seeking'][array_search('Gatherer', array_column($data['seeking'], 'name'))]['enabled']),
+                    ':rolePlaying'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Role-playing', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':leveling'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Leveling', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':casual'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Casual', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':hardcore'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Hardcore', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':dungeons'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Dungeons', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':guildhests'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Guildhests', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':trials'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Trials', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':raids'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Raids', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':pvp'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('PvP', array_column($this->lodestone['focus'], 'name'))]['enabled']),
+                    ':tank'=>(empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][array_search('Tank', array_column($this->lodestone['seeking'], 'name'))]['enabled']),
+                    ':healer'=>(empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][array_search('Healer', array_column($this->lodestone['seeking'], 'name'))]['enabled']),
+                    ':dps'=>(empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][array_search('DPS', array_column($this->lodestone['seeking'], 'name'))]['enabled']),
+                    ':crafter'=>(empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][array_search('Crafter', array_column($this->lodestone['seeking'], 'name'))]['enabled']),
+                    ':gatherer'=>(empty($this->lodestone['seeking']) ? 0 : $this->lodestone['seeking'][array_search('Gatherer', array_column($this->lodestone['seeking'], 'name'))]['enabled']),
                     ':communityid'=>[
-                        (empty($data['communityid']) ? NULL : $data['communityid']),
-                        (empty($data['communityid']) ? 'null' : 'string'),
+                        (empty($this->lodestone['communityid']) ? NULL : $this->lodestone['communityid']),
+                        (empty($this->lodestone['communityid']) ? 'null' : 'string'),
                     ],
                 ],
             ];
@@ -152,36 +216,36 @@ class FreeCompany extends Entity
             $queries[] = [
                 'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_names`(`freecompanyid`, `name`) VALUES (:freecompanyid, :name);',
                 [
-                    ':freecompanyid'=>$data['freecompanyid'],
-                    ':name'=>$data['name'],
+                    ':freecompanyid'=>$this->id,
+                    ':name'=>$this->lodestone['name'],
                 ],
             ];
-            if (!empty($data['members'])) {
+            if (!empty($this->lodestone['members'])) {
                 #Adding ranking
-                if (!empty($data['weekly_rank']) && !empty($data['monthly_rank'])) {
+                if (!empty($this->lodestone['weekly_rank']) && !empty($this->lodestone['monthly_rank'])) {
                     $queries[] = [
                         'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_ranking` (`freecompanyid`, `date`, `weekly`, `monthly`, `members`) SELECT * FROM (SELECT :freecompanyid AS `freecompanyid`, UTC_DATE() AS `date`, :weekly AS `weekly`, :monthly AS `monthly`, :members AS `members` FROM DUAL WHERE :freecompanyid NOT IN (SELECT `freecompanyid` FROM (SELECT * FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:freecompanyid ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=:weekly AND `monthly`=:monthly) LIMIT 1) `actualinsert`;',
                         [
-                            ':freecompanyid' => $data['freecompanyid'],
-                            ':weekly' => $data['weekly_rank'],
-                            ':monthly' => $data['monthly_rank'],
-                            ':members' => count($data['members']),
+                            ':freecompanyid' => $this->id,
+                            ':weekly' => $this->lodestone['weekly_rank'],
+                            ':monthly' => $this->lodestone['monthly_rank'],
+                            ':members' => count($this->lodestone['members']),
                         ],
                     ];
                 }
             }
             #Get members as registered on tracker
-            $trackMembers = $dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `freecompanyid`=:fcId', [':fcId'=>$data['freecompanyid']]);
+            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `freecompanyid`=:fcId', [':fcId'=>$this->id]);
             #Process members, that left the company
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
-                if (!isset($data['members'][$member])) {
+                if (!isset($this->lodestone['members'][$member])) {
                     #Insert to list of ex-members
                     $queries[] = [
                         'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_x_character` (`characterid`, `freecompanyid`) VALUES (:characterid, :fcId);',
                         [
                             ':characterid'=>$member,
-                            ':fcId'=>$data['freecompanyid'],
+                            ':fcId'=>$this->id,
                         ],
                     ];
                     #Remove company details
@@ -194,26 +258,26 @@ class FreeCompany extends Entity
                 }
             }
             #Process Lodestone members
-            if (!empty($data['members'])) {
-                foreach ($data['members'] as $member=>$details) {
+            if (!empty($this->lodestone['members'])) {
+                foreach ($this->lodestone['members'] as $member=>$details) {
                     #Register or update rank name
                     $queries[] = [
                         'INSERT INTO `'.self::dbPrefix.'freecompany_rank` (`freecompanyid`, `rankid`, `rankname`) VALUE (:freecompanyid, :rankid, :rankName) ON DUPLICATE KEY UPDATE `rankname`=:rankName',
                         [
-                            ':freecompanyid'=>$data['freecompanyid'],
+                            ':freecompanyid'=>$this->id,
                             ':rankid'=>$details['rankid'],
                             ':rankName'=>(empty($details['rank']) ? '' : $details['rank']),
                         ],
                     ];
                     #Check if member is registered on tracker, while saving the status for future use
-                    $data['members'][$member]['registered'] = $dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
-                    if ($data['members'][$member]['registered']) {
+                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
+                    if ($this->lodestone['members'][$member]['registered']) {
                         #Update company status
                         $queries[] = [
                             'UPDATE `'.self::dbPrefix.'character` SET `freecompanyid`=:fcId, `company_joined`=COALESCE(`company_joined`, UTC_DATE()), `company_rank`=:rankid WHERE `characterid`=:characterid;',
                             [
                                 ':characterid'=>$member,
-                                ':fcId'=>$data['freecompanyid'],
+                                ':fcId'=>$this->id,
                                 ':rankid'=>$details['rankid'],
                             ],
                         ];
@@ -232,7 +296,7 @@ class FreeCompany extends Entity
                                 ':name'=>$details['name'],
                                 ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg'], '', $details['avatar']),
                                 ':gcRank'=>(empty($details['grandCompany']['rank']) ? '' : $details['grandCompany']['rank']),
-                                ':fcId'=>$data['freecompanyid'],
+                                ':fcId'=>$this->id,
                                 ':rankid'=>$details['rankid'],
                             ]
                         ];
@@ -240,10 +304,10 @@ class FreeCompany extends Entity
                 }
             }
             #Running the queries we've accumulated
-            $dbController->query($queries);
+            $this->dbController->query($queries);
             #Schedule proper update of any newly added characters
-            if (!empty($data['members'])) {
-                $this->charMassCron($data['members']);
+            if (!empty($this->lodestone['members'])) {
+                $this->charMassCron($this->lodestone['members']);
             }
             return true;
         } catch(\Exception $e) {
@@ -252,11 +316,9 @@ class FreeCompany extends Entity
     }
 
     #Function to update the entity
-    public function delete(): bool
+    protected function delete(): bool
     {
         try {
-            #Cache DB Controller
-            $dbController = (new Controller);
             $queries = [];
             #Remove characters from group
             $queries[] = [
@@ -277,7 +339,7 @@ class FreeCompany extends Entity
                 'UPDATE `'.self::dbPrefix.'freecompany` SET `deleted` = UTC_DATE() WHERE `freecompanyid` = :id',
                 [':id' => $this->id],
             ];
-            return $dbController->query($queries);
+            return $this->dbController->query($queries);
         } catch (\Throwable $e) {
             error_log($e->getMessage()."\r\n".$e->getTraceAsString());
             return false;

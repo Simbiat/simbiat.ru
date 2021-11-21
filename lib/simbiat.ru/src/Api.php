@@ -2,6 +2,12 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\fftracker\Entities\Achievement;
+use Simbiat\fftracker\Entities\Character;
+use Simbiat\fftracker\Entities\CrossworldLinkshell;
+use Simbiat\fftracker\Entities\FreeCompany;
+use Simbiat\fftracker\Entities\Linkshell;
+use Simbiat\fftracker\Entities\PvPTeam;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
 use Twig\Error\LoaderError;
@@ -61,44 +67,56 @@ class Api
         }
         $uri[0] = strtolower($uri[0]);
         #Check if supported
-        if (!in_array($uri[0], ['register', 'achievement', 'character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam'])) {
+        if (!in_array($uri[0], ['achievement', 'character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'pvpteam'])) {
             $this->apiEcho(httpCode: '404');
         }
         #Check that data was provided
         if (empty($uri[1])) {
             $this->apiEcho(httpCode: '400');
         }
+        if (!empty($uri[2])) {
+            if (in_array(strtolower($uri[2]), ['register', 'update', 'get', 'lodestone'])){
+                $uri[2] = strtolower($uri[2]);
+            }
+        } else {
+            $uri[2] = '';
+        }
         #Connect to DB
         if ((new HomePage)->dbConnect() === false) {
             $this->apiEcho(httpCode: '503');
         }
-        $fftracker = (new FFTracker);
-        if ($uri[0] === 'register') {
-            $data = $fftracker->Update(rawurldecode($uri[1]));
+        if (in_array($uri[2], ['register', 'update'])) {
+            $data = (new \Simbiat\fftracker\Cron)->UpdateEntity($uri[1], $uri[0]);
+        } elseif ($uri[2] === 'lodestone') {
+            $data = match ($uri[0]) {
+                'character' => (new Character)->setId($uri[1])->getFromLodestone(),
+                'freecompany' => (new FreeCompany)->setId($uri[1])->getFromLodestone(),
+                'pvpteam' => (new PvPTeam)->setId($uri[1])->getFromLodestone(),
+                'linkshell' => (new Linkshell)->setId($uri[1])->getFromLodestone(),
+                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->getFromLodestone(),
+                'achievement' => (new Achievement)->setId($uri[1])->getFromLodestone(),
+            };
         } else {
-            #Handle force update
-            if (in_array($uri[0], ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam'])) {
-                #Check if force update was requested
-                if (!empty($uri[2]) && in_array(strtolower($uri[2]), ['force', 'update'])) {
-                    #Update the entity
-                    $data = $fftracker->Update(rawurldecode($uri[1]), $uri[0]);
-                    #If $data value is not a supported one, means that the entity does not exist, so we can exist earlier
-                    if (!in_array($data, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam'])) {
-                        $this->apiEcho(false, httpCode: '503');
-                    }
-                }
-            }
-            #Get data
-            $data = $fftracker->TrackerGrab($uri[0], rawurldecode($uri[1]));
-            #Check if empty
-            if (empty($data)) {
-                $this->apiEcho(httpCode: '404');
-            } else {
-                #Send additional headers
-                $headers = (new Headers);
+            $data = match ($uri[0]) {
+                'character' => (new Character)->setId($uri[1])->getArray(),
+                'freecompany' => (new FreeCompany)->setId($uri[1])->getArray(),
+                'pvpteam' => (new PvPTeam)->setId($uri[1])->getArray(),
+                'linkshell' => (new Linkshell)->setId($uri[1])->getArray(),
+                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->getArray(),
+                'achievement' => (new Achievement)->setId($uri[1])->getArray(),
+            };
+        }
+        (new \Simbiat\Tests)->testDump($data);
+        #Check if empty
+        if (!isset($data)) {
+            $this->apiEcho(httpCode: '404');
+        } else {
+            #Send additional headers
+            $headers = (new Headers);
+            if (isset($data['updated'])) {
                 $headers->lastModified($data['updated'], true);
-                $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/fftracker/'.$uri[0].'/'.$uri[1]]]);
             }
+            $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/fftracker/'.$uri[0].'/'.$uri[1]]]);
         }
         #Send data
         return $data;
@@ -131,7 +149,7 @@ class Api
             #Connect to DB
             if ((new HomePage)->dbConnect()) {
                 #Get data
-                $data = (new bictracker\Bic)->getArray(rawurldecode($uri[1]));
+                $data = (new bictracker\Bic)->setId($uri[1])->getArray();
                 #Check if empty
                 if (empty($data)) {
                     $this->apiEcho(httpCode: '404');

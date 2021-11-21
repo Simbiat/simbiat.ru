@@ -18,9 +18,15 @@ trait Traits
         foreach ($members as $member=>$details) {
             if (!$details['registered']) {
                 #Priority is higher, since they are missing a lot of data.
-                $cron->add('ffentityupdate', [$member, 'character'], priority: 2, message: 'Updating character with ID ' . $member);
+                $cron->add('ffUpdateEntity', [$member, 'character'], priority: 2, message: 'Updating character with ID ' . $member);
             }
         }
+    }
+
+    #Function to remove excessive new lines
+    private function removeBrs(string $string): string
+    {
+        return preg_replace('/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi', '', preg_replace('/(\s*<br \/>\s*){5,}/mi', '<br>', $string));
     }
 
     #Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side

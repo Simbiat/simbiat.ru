@@ -19,13 +19,26 @@ class Cron
     public function UpdateStatistics(): bool|string
     {
         try {
-            foreach (['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other'] as $type) {
+            foreach (['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
                 (new Statistics)->get($type, '', true);
             }
             return true;
         } catch(\Exception $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
+    }
+
+    public function UpdateEntity(string $id, string $type): bool|string
+    {
+        return match ($type) {
+            'character' => (new Character)->setId($id)->update(),
+            'freecompany' => (new FreeCompany)->setId($id)->update(),
+            'pvpteam' => (new PvPTeam)->setId($id)->update(),
+            'linkshell' => (new Linkshell)->setId($id)->update(),
+            'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($id)->update(),
+            'achievement' => (new Achievement)->setId($id)->update(),
+            default => false,
+        };
     }
 
     #Function to update old entities
@@ -58,14 +71,7 @@ class Cron
                 ]
             );
             foreach ($entities as $entity) {
-                $result = match($entity['type']) {
-                    'character' => (new Character)->setId($entity['id'])->update(),
-                    'freecompany' => (new FreeCompany)->setId($entity['id'])->update(),
-                    'pvpteam' => (new PvPTeam)->setId($entity['id'])->update(),
-                    'linkshell' => (new Linkshell)->setId($entity['id'])->update(),
-                    'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($entity['id'])->update(),
-                    'achievement' => (new Achievement)->setId($entity['id'])->update(),
-                };
+                $result = $this->UpdateEntity($entity['id'], $entity['type']);
                 if (!in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement'])) {
                     return $result;
                 }
@@ -80,7 +86,7 @@ class Cron
     /**
      * @throws \Exception
      */
-    public function jobsUpdate(): bool|string
+    public function UpdateJobs(): bool|string
     {
         #Cache controller
         $dbController = (new Controller);
