@@ -64,7 +64,7 @@ class MainRouter extends Abstracts\Router
     #Function to route help route error pages on frontend
     private function error(array $uri): array {
         if (empty($uri[0]) || preg_match('/\d{3}/', $uri[0]) !== 1) {
-            (new Headers)->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/httperror/404', false, true, false);
+            $outputArray['http_error'] = 404;
         } else {
             $outputArray['http_error'] = intval($uri[0]);
         }

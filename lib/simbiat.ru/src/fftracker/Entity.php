@@ -8,7 +8,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     protected const entityType = 'character';
     public string $name = '';
 
-    protected ?array $lodestone = null;
+    protected null|array|string $lodestone = null;
 
     #Function to get initial data from DB
     /**
@@ -52,6 +52,9 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Try to get data from Lodestone
         $this->lodestone = $this->getFromLodestone();
+        if (!is_array($this->lodestone)) {
+            return $this->lodestone;
+        }
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             return $this->delete();
         } else {

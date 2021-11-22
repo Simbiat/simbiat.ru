@@ -11,7 +11,7 @@
         </div>
     </li>
     <li class="navElement">
-        {% if breadcrumbs %}
+        {% if breadcrumbs and not http_error%}
             <div class="navLine navBread">
                 {{ breadcrumbs|raw }}
             </div>
@@ -19,7 +19,7 @@
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat" {% if serviceName == 'blog' or serviceName == 'forum' %}open{% endif %}>
+            <details class="navCat" {% if serviceName == 'blog' or serviceName == 'forum' and not http_error%}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="Blog" src="/img/navigation/blog.svg"><span itemprop="name">Blog</span></summary>
                 <ul>
                     <li><a class="navItem" href="/blog/" target="_self" itemprop="url"><span itemprop="name">All entries</span></a></li>
@@ -32,48 +32,48 @@
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat" {% if serviceName == 'fftracker' %}open{% endif %}>
+            <details class="navCat" {% if serviceName == 'fftracker' and not http_error%}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
                 <ul>
-                    <li{% if subServiceName == 'statistics' %} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
-                    <li{% if serviceName == 'fftracker' and (subServiceName == 'search' or searchvalue is defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
-                    <li{% if subServiceName == 'character' or (subServiceName == 'characters' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
-                    <li{% if subServiceName == 'freecompany' or (subServiceName == 'freecompanies' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
-                    <li{% if subServiceName == 'pvpteam' or (subServiceName == 'pvpteams' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
-                    <li{% if subServiceName == 'linkshell' or (subServiceName == 'linkshells' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
-                    <li{% if subServiceName == 'achievement' or (subServiceName == 'achievements' and searchvalue is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
-                    <li{% if subServiceName == 'track' %} class="current"{% endif %}><a class="navItem" href="/fftracker/track/" target="_self" itemprop="url"><span itemprop="name">Track entity</span></a></li>
+                    <li{% if subServiceName == 'statistics' and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
+                    <li{% if serviceName == 'fftracker' and (subServiceName == 'search' or searchvalue is defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
+                    <li{% if subServiceName == 'character' or (subServiceName == 'characters' and searchvalue is not defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/characters/" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
+                    <li{% if subServiceName == 'freecompany' or (subServiceName == 'freecompanies' and searchvalue is not defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies/" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
+                    <li{% if subServiceName == 'pvpteam' or (subServiceName == 'pvpteams' and searchvalue is not defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams/" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
+                    <li{% if subServiceName == 'linkshell' or (subServiceName == 'linkshells' and searchvalue is not defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells/" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
+                    <li{% if subServiceName == 'achievement' or (subServiceName == 'achievements' and searchvalue is not defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
+                    <li{% if subServiceName == 'track' and not http_error%} class="current"{% endif %}><a class="navItem" href="/fftracker/track/" target="_self" itemprop="url"><span itemprop="name">Track entity</span></a></li>
                 </ul>
             </details>
         </div>
     </li>
     <li class="navElement" lang="ru-RU">
         <div class="navLine">
-            <details class="navCat" {% if serviceName == 'bictracker' %}open{% endif %}>
+            <details class="navCat" {% if serviceName == 'bictracker' and not http_error%}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="БИК Трекер" src="/img/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
                 <ul>
-                    <li{% if serviceName == 'bictracker' and (subServiceName == 'search' or searchvalue is defined) %} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
-                    <li{% if (subServiceName == 'open' and searchvalue is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut) %} class="current"{% endif %}><a class="navItem" href="/bictracker/open/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
-                    <li{% if (subServiceName == 'closed' and searchvalue is not defined) or (subServiceName == 'bic' and bicdetails.DateOut) %} class="current"{% endif %}><a class="navItem" href="/bictracker/closed/" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
-                    <li{% if subServiceName == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a></li>
+                    <li{% if serviceName == 'bictracker' and (subServiceName == 'search' or searchvalue is defined) and not http_error%} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
+                    <li{% if (subServiceName == 'open' and searchvalue is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut) and not http_error%} class="current"{% endif %}><a class="navItem" href="/bictracker/open/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
+                    <li{% if (subServiceName == 'closed' and searchvalue is not defined) or (subServiceName == 'bic' and bicdetails.DateOut) and not http_error%} class="current"{% endif %}><a class="navItem" href="/bictracker/closed/" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
+                    <li{% if subServiceName == 'keying' and not http_error%} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a></li>
                 </ul>
             </details>
         </div>
     </li>
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat" {% if serviceName == 'about' %}open{% endif %}>
+            <details class="navCat" {% if serviceName == 'about' and not http_error%}open{% endif %}>
                 <summary class="rightSummary"><img class="navIcon" alt="About" src="/img/navigation/about.svg"><span itemprop="name">About</span></summary>
                 <ul>
-                    <li{% if subServiceName == 'me' %} class="current"{% endif %}><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
-                    <li{% if subServiceName == 'website' %} class="current"{% endif %}><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>
-                    <li{% if subServiceName == 'tech' %} class="current"{% endif %}><a class="navItem" href="/about/tech/" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
-                    <li{% if subServiceName == 'resume' %} class="current"{% endif %}><a class="navItem" href="/about/resume/" target="_self" itemprop="url"><span itemprop="name">Resume</span></a></li>
-                    <li{% if subServiceName == 'contacts' %} class="current"{% endif %}><a class="navItem" href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
-                    <li{% if subServiceName == 'tos' %} class="current"{% endif %}><a class="navItem" href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
-                    <li{% if subServiceName == 'privacy' %} class="current"{% endif %}><a class="navItem" href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
-                    <li{% if subServiceName == 'security' %} class="current"{% endif %}><a class="navItem" href="/about/security/" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a></li>
-                    <li{% if subServiceName == 'changelog' %} class="current"{% endif %}><a class="navItem" href="/about/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
+                    <li{% if subServiceName == 'me' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
+                    <li{% if subServiceName == 'website' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>
+                    <li{% if subServiceName == 'tech' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/tech/" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
+                    <li{% if subServiceName == 'resume' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/resume/" target="_self" itemprop="url"><span itemprop="name">Resume</span></a></li>
+                    <li{% if subServiceName == 'contacts' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/contacts/" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
+                    <li{% if subServiceName == 'tos' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
+                    <li{% if subServiceName == 'privacy' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
+                    <li{% if subServiceName == 'security' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/security/" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a></li>
+                    <li{% if subServiceName == 'changelog' and not http_error%} class="current"{% endif %}><a class="navItem" href="/about/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
                 </ul>
             </details>
         </div>

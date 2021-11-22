@@ -20,6 +20,7 @@ class Router extends \Simbiat\Abstracts\Router
     {
         return match(strtolower($path[0])) {
             'search' => (new Pages\Search)->get(array_slice($path, 1)),
+            'character' => (new Pages\Character)->get(array_slice($path, 1)),
             'characters', 'freecompanies', 'pvpteams', 'linkshells', 'achievements' => (new Pages\Listing)->get($path),
         };
     }

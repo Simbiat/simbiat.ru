@@ -118,26 +118,6 @@ class Router_bck
         ];
         $uri[0] = strtolower($uri[0]);
         switch ($uri[0]) {
-            #Process search page
-            case 'search':
-                $outputArray['subServiceName'] = 'search';
-                #Set search value
-                if (!isset($uri[1])) {
-                    $uri[1] = '';
-                }
-                $decodedSearch = rawurldecode($uri[1]);
-                #Continue breadcrumb
-                $breadArray[] = ['href'=>'/fftracker/search', 'name'=>'Search'];
-                if (!empty($uri[1])) {
-                    $breadArray[] = ['href'=>'/fftracker/search/'.$uri[1], 'name'=>'Search for '.$decodedSearch];
-                } else {
-                    #Cache due to random entities
-                    $outputArray['cacheAge'] = 86400;
-                }
-                #Set specific values
-                $outputArray['searchvalue'] = $decodedSearch;
-                #$outputArray['searchresult'] = (new Search)->Search($decodedSearch);
-                break;
             #Process statistics
             case 'statistics':
                 #Check if type is set
@@ -162,52 +142,6 @@ class Router_bck
                     } else {
                         $outputArray['http_error'] = 404;
                     }
-                }
-                break;
-            #Process lists
-            case 'crossworldlinkshells':
-            case 'crossworld_linkshells':
-                #Redirect to linkshells list, since we do not differentiate between them that much
-                $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/linkshells/'.(empty($uri[1]) ? '' : $uri[1]), true, true, false);
-                break;
-            case 'freecompanies':
-            case 'linkshells':
-            case 'characters':
-            case 'achievements':
-            case 'pvpteams':
-                #Check if page was provided and is numeric
-                if (empty($uri[1]) || !is_numeric($uri[1]) || intval($uri[1]) < 1) {
-                    $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/'.$uri[0].'/1', true, true, false);
-                }
-                #Ensure that use INT
-                $uri[1] = intval($uri[1]);
-                #Get data
-                $outputArray['searchresult'] = $fftracker->listEntities($uri[0], ($uri[1]-1)*100);
-                #Check that we requested page is not more than what was requested
-                $lastPage = intval(ceil($outputArray['searchresult']['statistics']['count']/100));
-                if ($uri[1] > $lastPage) {
-                    #Bad page
-                    unset($outputArray['searchresult']);
-                    $outputArray['http_error'] = 404;
-                } else {
-                    #Try to get out earlier based on date of last update of the list. Unlikely, that will help, but still.
-                    $headers->lastModified($outputArray['searchresult']['statistics']['updated'], true);
-                    $outputArray['subServiceName'] = $uri[0];
-                    #Adjust list type to human-readable value
-                    $tempName = match($uri[0]) {
-                        'freecompanies' => 'Free Companies',
-                        'pvpteams' => 'PvP Teams',
-                        default => ucfirst($uri[0]),
-                    };
-                    #Continue breadcrumb
-                    $breadArray[] = ['href'=>'/fftracker/'.$uri[0].'/'.$uri[1], 'name'=>$tempName.', page '.$uri[1]];
-                    #Update meta
-                    $outputArray['h1'] .= ': '.$tempName.', page '.$uri[1];
-                    $outputArray['title'] .= ': '.$tempName.', page '.$uri[1];
-                    $outputArray['ogdesc'] = 'List of '.$tempName.' on '.$outputArray['ogdesc'];
-                    #Prepare pagination
-                    $outputArray['pagination_top'] = $html->pagination($uri[1], $lastPage);
-                    $outputArray['pagination_bottom'] = $html->pagination($uri[1], $lastPage);
                 }
                 break;
             case 'crossworldlinkshell':

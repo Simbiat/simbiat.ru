@@ -28,16 +28,16 @@ class Bic extends Page
     {
         $headers = (new Headers);
         #Sanitize BIC
-        $BIC = preg_replace('/[^0-9]/', '', rawurldecode($path[0] ?? ''));
-        if (empty($BIC)) {
-            $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/httperror/404', true, true, false);
-        }
+        $BIC = rawurldecode($path[0] ?? '');
         #Try to get details
-        $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->setId($BIC)->getArray();
+        try {
+            $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->setId($BIC)->getArray();
+        } catch (\UnexpectedValueException) {
+            return ['http_error' => 404];
+        }
         #Check if ID was found
-        if (empty($outputArray['bicdetails'])) {
-            #404
-            $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/httperror/404', false, true, false);
+        if ($outputArray['bicdetails']['id'] === null) {
+            return ['http_error' => 404];
         }
         #Try to exit early based on modification date
         if (!empty($outputArray['bicdetails']['Updated'])) {
