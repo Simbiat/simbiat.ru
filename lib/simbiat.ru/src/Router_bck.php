@@ -183,18 +183,6 @@ class Router_bck
                         $outputArray['h1'] = $outputArray[$uri[0]]['name'];
                         $outputArray['title'] = $outputArray[$uri[0]]['name'];
                         $outputArray['ogdesc'] = $outputArray[$uri[0]]['name'].' on '.$outputArray['ogdesc'];
-                        #Setup OG profile for characters
-                        if ($uri[0] === 'character') {
-                            $outputArray['ogtype'] = 'profile';
-                            $profName = explode(' ', $outputArray[$uri[0]]['name']);
-                            $outputArray['ogextra'] = '
-                                <meta property="og:type" content="profile" />
-                                <meta property="profile:first_name" content="'.htmlspecialchars($profName[0]).'" />
-                                <meta property="profile:last_name" content="'.htmlspecialchars($profName[1]).'" />
-                                <meta property="profile:username" content="'.htmlspecialchars($outputArray[$uri[0]]['name']).'" />
-                                <meta property="profile:gender" content="'.htmlspecialchars(($outputArray[$uri[0]]['genderid'] === 1 ? 'male' : 'female')).'" />
-                            ';
-                        }
                         #Link header/tag for API
                         $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation', 'href' => '/api/fftracker/'.$uri[0].'/'.$outputArray[$uri[0]][$uri[0].'id']]];
                         #Send HTTP header

@@ -36,14 +36,14 @@ class Linkshell extends Entity
         #Get old names
         $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'linkshell_names` WHERE `linkshellid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'linkshell_character`.`characterid`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar`, `'.self::dbPrefix.'linkshell_rank`.`rank`, `'.self::dbPrefix.'linkshell_rank`.`lsrankid` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_rank`.`lsrankid`=`'.self::dbPrefix.'linkshell_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'linkshell_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:id ORDER BY `'.self::dbPrefix.'linkshell_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'linkshell_character`.`characterid`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar`, `'.self::dbPrefix.'linkshell_rank`.`rank`, `'.self::dbPrefix.'linkshell_rank`.`lsrankid` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_rank`.`lsrankid`=`'.self::dbPrefix.'linkshell_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'linkshell_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'linkshell_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['serverid']);
         if ($data['crossworld']) {
             unset($data['server']);
         }
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400 && empty($_SESSION['UA']['bot'])) {
+        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
             if ($data['crossworld'] == '0') {
                 (new Cron)->add('ffUpdateEntity', [$this->id, 'linkshell'], priority: 1, message: 'Updating linkshell with ID '.$this->id);
             } else {
@@ -125,25 +125,17 @@ class Linkshell extends Entity
                 ],
             ];
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'linkshell_character` WHERE `linkshellid`=:linkshellid', [':linkshellid'=>$this->id]);
+            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'linkshell_character` WHERE `linkshellid`=:linkshellid AND `current`=1;', [':linkshellid'=>$this->id]);
             #Process members, that left the linkshell
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
                 if (!isset($this->lodestone['members'][$member])) {
-                    #Insert to list of ex-members
+                    #Update status for the character
                     $queries[] = [
-                        'INSERT IGNORE INTO `'.self::dbPrefix.'linkshell_x_character` (`characterid`, `linkshellid`) VALUES (:characterid, :linkshellid);',
+                        'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `linkshellid`=:pvpId AND `characterid`=:characterid;',
                         [
                             ':characterid'=>$member,
-                            ':linkshellid'=>$this->id,
-                        ],
-                    ];
-                    #Remove team details
-                    $queries[] = [
-                        'DELETE FROM `'.self::dbPrefix.'linkshell_character` WHERE `characterid`=:characterid AND `linkshellid`=:linkshellid;',
-                        [
-                            ':characterid'=>$member,
-                            ':linkshellid'=>$this->id,
+                            ':linkshellId'=>$this->id,
                         ],
                     ];
                 }
@@ -173,7 +165,7 @@ class Linkshell extends Entity
                     }
                     #Insert/update character relationship with linkshell
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'linkshell_character` (`linkshellid`, `characterid`, `rankid`) VALUES (:linkshellid, :memberid, (SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1)) ON DUPLICATE KEY UPDATE `rankid`=(SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1);',
+                        'INSERT INTO `'.self::dbPrefix.'linkshell_character` (`linkshellid`, `characterid`, `rankid`, `current`) VALUES (:linkshellid, :memberid, (SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), 1) ON DUPLICATE KEY UPDATE `rankid`=(SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), `current`=1;',
                         [
                             ':linkshellid'=>$this->id,
                             ':memberid'=>$member,
@@ -201,17 +193,8 @@ class Linkshell extends Entity
             $queries = [];
             #Remove characters from group
             $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'linkshell_x_character` (`characterid`, `linkshellid`) SELECT `'.self::dbPrefix.'linkshell_character`.`characterid`, `'.self::dbPrefix.'linkshell_character`.`linkshellid` FROM `'.self::dbPrefix.'linkshell_character` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:groupId;',
-                [
-                    ':groupId'=>$this->id,
-                ]
-            ];
-            #Update characters
-            $queries[] = [
-                'DELETE FROM `'.self::dbPrefix.'linkshell_character` WHERE `linkshellid`=:groupId;',
-                [
-                    ':groupId'=>$this->id,
-                ]
+                'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `linkshellid`=:groupId;',
+                [':groupId' => $this->id,]
             ];
             #Update linkshell
             $queries[] = [

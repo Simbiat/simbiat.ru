@@ -151,6 +151,12 @@ blockquote>.copyQuote {
     margin: 0.2rem;
     border-color: var(--border-color-outset);
     padding: 0;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
 }
 .entityIcon, .entityArrow {
     width: 2rem;

@@ -45,13 +45,13 @@ class FreeCompany extends Entity
         #Get old names
         $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'freecompany_names` WHERE `freecompanyid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'character`.`characterid`, `company_joined` AS `join`, `'.self::dbPrefix.'freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `avatar` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'freecompany_rank`.`rankid`=`'.self::dbPrefix.'character`.`company_rank` AND `'.self::dbPrefix.'freecompany_rank`.`freecompanyid`=`'.self::dbPrefix.'character`.`freecompanyid` JOIN (SELECT `company_rank`, COUNT(*) AS `total` FROM `'.self::dbPrefix.'character` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:id GROUP BY `company_rank`) `ranklist` ON `ranklist`.`company_rank` = `'.self::dbPrefix.'character`.`company_rank` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:id ORDER BY `ranklist`.`total` , `ranklist`.`company_rank` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'freecompany_character`.`characterid`, `'.self::dbPrefix.'freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `avatar` FROM `'.self::dbPrefix.'freecompany_character` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'freecompany_rank`.`rankid`=`'.self::dbPrefix.'freecompany_character`.`rankid` AND `'.self::dbPrefix.'freecompany_rank`.`freecompanyid`=`'.self::dbPrefix.'freecompany_character`.`freecompanyid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'character`.`characterid`=`'.self::dbPrefix.'freecompany_character`.`characterid` LEFT JOIN (SELECT `rankid`, COUNT(*) AS `total` FROM `'.self::dbPrefix.'freecompany_character` WHERE `'.self::dbPrefix.'freecompany_character`.`freecompanyid`=:id GROUP BY `rankid`) `ranklist` ON `ranklist`.`rankid` = `'.self::dbPrefix.'freecompany_character`.`rankid` WHERE `'.self::dbPrefix.'freecompany_character`.`freecompanyid`=:id AND `current`=1 ORDER BY `ranklist`.`total`, `ranklist`.`rankid` , `'.self::dbPrefix.'character`.`name`;', [':id'=>$this->id]);
         #History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
         $data['ranks_history'] = $this->dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['grandcompanyid'], $data['estateid'], $data['gcrankid'], $data['gc_rank'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400 && empty($_SESSION['UA']['bot'])) {
+        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
             (new Cron)->add('ffUpdateEntity', [$this->id, 'freecompany'], priority: 1, message: 'Updating free company with ID '.$this->id);
         }
         return $data;
@@ -137,10 +137,6 @@ class FreeCompany extends Entity
             $this->ranking[$key]['members'] = intval($rank['members']);
         }
         $this->members = $fromDB['members'];
-        #Adjust join date format
-        foreach ($this->members as $key=>$member) {
-            $this->members[$key]['join'] = strtotime($member['join']);
-        }
     }
 
     #Function to update the entity
@@ -235,24 +231,17 @@ class FreeCompany extends Entity
                 }
             }
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `freecompanyid`=:fcId', [':fcId'=>$this->id]);
+            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'freecompany_character` WHERE `freecompanyid`=:fcId AND `current`=1;', [':fcId'=>$this->id]);
             #Process members, that left the company
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
                 if (!isset($this->lodestone['members'][$member])) {
-                    #Insert to list of ex-members
+                    #Update status for the character
                     $queries[] = [
-                        'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_x_character` (`characterid`, `freecompanyid`) VALUES (:characterid, :fcId);',
+                        'UPDATE `'.self::dbPrefix.'freecompany_character` SET `current`=0 WHERE `freecompanyid`=:fcId AND `characterid`=:characterid;',
                         [
                             ':characterid'=>$member,
                             ':fcId'=>$this->id,
-                        ],
-                    ];
-                    #Remove company details
-                    $queries[] = [
-                        'UPDATE `'.self::dbPrefix.'character` SET `freecompanyid`=NULL, `company_joined`=NULL, `company_rank`=NULL WHERE `characterid`=:characterid;',
-                        [
-                            ':characterid'=>$member,
                         ],
                     ];
                 }
@@ -271,36 +260,33 @@ class FreeCompany extends Entity
                     ];
                     #Check if member is registered on tracker, while saving the status for future use
                     $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
-                    if ($this->lodestone['members'][$member]['registered']) {
-                        #Update company status
-                        $queries[] = [
-                            'UPDATE `'.self::dbPrefix.'character` SET `freecompanyid`=:fcId, `company_joined`=COALESCE(`company_joined`, UTC_DATE()), `company_rank`=:rankid WHERE `characterid`=:characterid;',
-                            [
-                                ':characterid'=>$member,
-                                ':fcId'=>$this->id,
-                                ':rankid'=>$details['rankid'],
-                            ],
-                        ];
-                    } else {
+                    if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
-                            'INSERT IGNORE INTO `'.self::dbPrefix.'character`(
-                                `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`, `freecompanyid`, `company_joined`, `company_rank`
+                            'INSERT IGNORE INTO `' . self::dbPrefix . 'character`(
+                                `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :fcId, UTC_DATE(), :rankid
-                            )',
+                                :characterid, (SELECT `serverid` FROM `' . self::dbPrefix . 'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `' . self::dbPrefix . 'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
+                            );',
                             [
-                                ':characterid'=>$member,
-                                ':server'=>$details['server'],
-                                ':name'=>$details['name'],
-                                ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg'], '', $details['avatar']),
-                                ':gcRank'=>(empty($details['grandCompany']['rank']) ? '' : $details['grandCompany']['rank']),
-                                ':fcId'=>$this->id,
-                                ':rankid'=>$details['rankid'],
+                                ':characterid' => $member,
+                                ':server' => $details['server'],
+                                ':name' => $details['name'],
+                                ':avatar' => str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg'], '', $details['avatar']),
+                                ':gcRank' => (empty($details['grandCompany']['rank']) ? '' : $details['grandCompany']['rank']),
                             ]
                         ];
                     }
+                    #Link the character to company
+                    $queries[] = [
+                        'INSERT INTO `'.self::dbPrefix.'freecompany_character` (`freecompanyid`, `characterid`, `rankid`, `current`) VALUES (:fcId, :characterid, :rankid, 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=:rankid;',
+                        [
+                            ':characterid'=>$member,
+                            ':fcId'=>$this->id,
+                            ':rankid'=>$details['rankid'],
+                        ],
+                    ];
                 }
             }
             #Running the queries we've accumulated
@@ -322,17 +308,8 @@ class FreeCompany extends Entity
             $queries = [];
             #Remove characters from group
             $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_x_character` (`characterid`, `freecompanyid`) SELECT `'.self::dbPrefix.'character`.`characterid`, `'.self::dbPrefix.'character`.`freecompanyid` FROM `'.self::dbPrefix.'character` WHERE `'.self::dbPrefix.'character`.`freecompanyid`=:groupId;',
+                'UPDATE `'.self::dbPrefix.'freecompany_character` SET `current`=0 WHERE `freecompanyid`=:groupId;',
                 [':groupId' => $this->id,]
-            ];
-            #Update characters
-            $queries[] = [
-                'UPDATE `'.self::dbPrefix.'character` SET `freecompanyid`=NULL, `company_joined`=NULL, `company_rank`=NULL WHERE `freecompanyid`=:groupId;', [':groupId' => $this->id,]
-            ];
-            #Remove ranks (not ranking!)
-            $queries[] = [
-                'DELETE FROM `'.self::dbPrefix.'freecompany_rank` WHERE `freecompanyid` = :id',
-                [':id' => $this->id],
             ];
             #Update Free Company
             $queries[] = [

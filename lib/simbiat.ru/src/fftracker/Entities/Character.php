@@ -19,8 +19,7 @@ class Character extends Entity
     public ?string $biography = null;
     public array $title = [];
     public array $grandCompany = [];
-    public array $freeCompany = [];
-    public array $pvp = [];
+    public int $pvp = 0;
     public array $groups = [];
     public array $jobs = [];
     public array $achievements = [];
@@ -32,39 +31,33 @@ class Character extends Entity
     protected function getFromDB(): array
     {
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
-        $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`updated` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`updated`, `'.self::dbPrefix.'enemy`.`name` AS `killedby` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` LEFT JOIN `'.self::dbPrefix.'enemy` ON `'.self::dbPrefix.'character`.`enemyid` = `'.self::dbPrefix.'enemy`.`enemyid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data) || !is_array($data)) {
             return [];
         }
-        #Get old names. For now this is commented out due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
-        #$data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
+        $data['oldNames'] = $this->dbController->Count('SELECT COUNT(*) FROM `'.self::dbPrefix.'character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get previous known incarnations (combination of gender and race/clan)
         $data['incarnations'] = $this->dbController->selectAll('SELECT `genderid`, `'.self::dbPrefix.'clan`.`race`, `'.self::dbPrefix.'clan`.`clan` FROM `'.self::dbPrefix.'character_clans` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character_clans`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` WHERE `'.self::dbPrefix.'character_clans`.`characterid`=:id AND (`'.self::dbPrefix.'character_clans`.`clanid`!=:clanid AND `'.self::dbPrefix.'character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id'=>$this->id, ':clanid'=>$data['clanid'], ':genderid'=>$data['genderid']]);
         #Get old servers
         $data['servers'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'server`.`datacenter`, `'.self::dbPrefix.'server`.`server` FROM `'.self::dbPrefix.'character_servers` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'server`.`serverid`=`'.self::dbPrefix.'character_servers`.`serverid` WHERE `'.self::dbPrefix.'character_servers`.`characterid`=:id AND `'.self::dbPrefix.'character_servers`.`serverid` != :serverid ORDER BY `datacenter` , `server` ', [':id'=>$this->id, ':serverid'=>$data['serverid']]);
         #Get achievements
-        $data['achievements'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'achievement`.`achievementid`, `'.self::dbPrefix.'achievement`.`category`, `'.self::dbPrefix.'achievement`.`subcategory`, `'.self::dbPrefix.'achievement`.`name`, `time`, `icon` FROM `'.self::dbPrefix.'character_achievement` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character_achievement`.`achievementid`=`'.self::dbPrefix.'achievement`.`achievementid` WHERE `'.self::dbPrefix.'character_achievement`.`characterid` = :id AND `'.self::dbPrefix.'achievement`.`category` IS NOT NULL AND `'.self::dbPrefix.'achievement`.`achievementid` IS NOT NULL ORDER BY `time` DESC, `name` ', [':id'=>$this->id]);
+        $data['achievements'] = $this->dbController->selectAll('SELECT \'achievement\' AS `type`, `'.self::dbPrefix.'achievement`.`achievementid` AS `id`, `'.self::dbPrefix.'achievement`.`category`, `'.self::dbPrefix.'achievement`.`subcategory`, `'.self::dbPrefix.'achievement`.`name`, `time`, `icon` FROM `'.self::dbPrefix.'character_achievement` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character_achievement`.`achievementid`=`'.self::dbPrefix.'achievement`.`achievementid` WHERE `'.self::dbPrefix.'character_achievement`.`characterid` = :id AND `'.self::dbPrefix.'achievement`.`category` IS NOT NULL AND `'.self::dbPrefix.'achievement`.`achievementid` IS NOT NULL ORDER BY `time` DESC, `name` LIMIT 10', [':id'=>$this->id]);
         #Get affiliated groups' details
         $data['groups'] = $this->dbController->selectAll(
-            '(SELECT \'freecompany\' AS `type`, `'.self::dbPrefix.'character`.`freecompanyid` AS `id`, `'.self::dbPrefix.'freecompany`.`name` as `name`, 1 AS `current`, `'.self::dbPrefix.'character`.`company_joined` AS `join`, `'.self::dbPrefix.'character`.`company_rank` AS `rankid`, `'.self::dbPrefix.'freecompany_rank`.`rankname`, `'.self::dbPrefix.'freecompany`.`crest` AS `icon` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'character`.`freecompanyid`=`'.self::dbPrefix.'freecompany`.`freecompanyid` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'character`.`freecompanyid`=`'.self::dbPrefix.'freecompany_rank`.`freecompanyid` AND `'.self::dbPrefix.'character`.`company_rank`=`'.self::dbPrefix.'freecompany_rank`.`rankid` WHERE `characterid`=:id AND `'.self::dbPrefix.'character`.`freecompanyid` IS NOT NULL)
+            '(SELECT \'freecompany\' AS `type`, `'.self::dbPrefix.'freecompany_character`.`freecompanyid` AS `id`, `'.self::dbPrefix.'freecompany`.`name` as `name`, `current`, `'.self::dbPrefix.'freecompany_character`.`rankid`, `'.self::dbPrefix.'freecompany_rank`.`rankname`, `'.self::dbPrefix.'freecompany`.`crest` AS `icon` FROM `'.self::dbPrefix.'freecompany_character` LEFT JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'freecompany_character`.`freecompanyid`=`'.self::dbPrefix.'freecompany`.`freecompanyid` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'freecompany_rank`.`freecompanyid`=`'.self::dbPrefix.'freecompany`.`freecompanyid` AND `'.self::dbPrefix.'freecompany_character`.`rankid`=`'.self::dbPrefix.'freecompany_rank`.`rankid` WHERE `characterid`=:id)
             UNION ALL
-            (SELECT \'freecompany\' AS `type`, `'.self::dbPrefix.'freecompany_x_character`.`freecompanyid` AS `id`, `'.self::dbPrefix.'freecompany`.`name` as `name`, 0 AS `current`, NULL AS `join`, NULL AS `rankid`, NULL AS `rankname`, `'.self::dbPrefix.'freecompany`.`crest` AS `icon` FROM `'.self::dbPrefix.'freecompany_x_character` LEFT JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'freecompany_x_character`.`freecompanyid`=`'.self::dbPrefix.'freecompany`.`freecompanyid` WHERE `characterid`=:id)
+            (SELECT IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, `'.self::dbPrefix.'linkshell_character`.`linkshellid` AS `id`, `'.self::dbPrefix.'linkshell`.`name` as `name`, `current`, `'.self::dbPrefix.'linkshell_character`.`rankid`, `'.self::dbPrefix.'linkshell_rank`.`rank` AS `rankname`, NULL AS `icon` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell` ON `'.self::dbPrefix.'linkshell_character`.`linkshellid`=`'.self::dbPrefix.'linkshell`.`linkshellid` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_character`.`rankid`=`'.self::dbPrefix.'linkshell_rank`.`lsrankid` WHERE `characterid`=:id)
             UNION ALL
-            (SELECT IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, `'.self::dbPrefix.'linkshell_character`.`linkshellid` AS `id`, `'.self::dbPrefix.'linkshell`.`name` as `name`, 1 AS `current`, NULL AS `join`, `'.self::dbPrefix.'linkshell_character`.`rankid`, `'.self::dbPrefix.'linkshell_rank`.`rank` AS `rankname`, NULL AS `icon` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell` ON `'.self::dbPrefix.'linkshell_character`.`linkshellid`=`'.self::dbPrefix.'linkshell`.`linkshellid` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_character`.`rankid`=`'.self::dbPrefix.'linkshell_rank`.`lsrankid` WHERE `characterid`=:id)
-            UNION ALL
-            (SELECT IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, `'.self::dbPrefix.'linkshell_x_character`.`linkshellid` AS `id`, `'.self::dbPrefix.'linkshell`.`name` as `name`, 0 AS `current`, NULL AS `join`, NULL AS `rankid`, NULL AS `rankname`, NULL AS `icon` FROM `'.self::dbPrefix.'linkshell_x_character` LEFT JOIN `'.self::dbPrefix.'linkshell` ON `'.self::dbPrefix.'linkshell_x_character`.`linkshellid`=`'.self::dbPrefix.'linkshell`.`linkshellid` WHERE `characterid`=:id)
-            UNION ALL
-            (SELECT \'pvpteam\' AS `type`, `'.self::dbPrefix.'character`.`pvpteamid` AS `id`, `'.self::dbPrefix.'pvpteam`.`name` as `name`, 1 AS `current`, NULL AS `join`, `'.self::dbPrefix.'character`.`pvp_rank` AS `rankid`, `'.self::dbPrefix.'pvpteam_rank`.`rank` AS `rankname`, `'.self::dbPrefix.'pvpteam`.`crest` AS `icon` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'pvpteam` ON `'.self::dbPrefix.'character`.`pvpteamid`=`'.self::dbPrefix.'pvpteam`.`pvpteamid` LEFT JOIN `'.self::dbPrefix.'pvpteam_rank` ON `'.self::dbPrefix.'character`.`pvp_rank`=`'.self::dbPrefix.'pvpteam_rank`.`pvprankid` WHERE `characterid`=:id AND `'.self::dbPrefix.'character`.`pvpteamid` IS NOT NULL)
-            UNION ALL
-            (SELECT \'pvpteam\' AS `type`, `'.self::dbPrefix.'pvpteam_x_character`.`pvpteamid` AS `id`, `'.self::dbPrefix.'pvpteam`.`name` as `name`, 0 AS `current`, NULL AS `join`, NULL AS `rankid`, NULL AS `rankname`, `'.self::dbPrefix.'pvpteam`.`crest` AS `icon` FROM `'.self::dbPrefix.'pvpteam_x_character` LEFT JOIN `'.self::dbPrefix.'pvpteam` ON `'.self::dbPrefix.'pvpteam_x_character`.`pvpteamid`=`'.self::dbPrefix.'pvpteam`.`pvpteamid` WHERE `characterid`=:id)
+            (SELECT \'pvpteam\' AS `type`, `'.self::dbPrefix.'pvpteam_character`.`pvpteamid` AS `id`, `'.self::dbPrefix.'pvpteam`.`name` as `name`, `current`, `'.self::dbPrefix.'pvpteam_character`.`rankid`, `'.self::dbPrefix.'pvpteam_rank`.`rank` AS `rankname`, `'.self::dbPrefix.'pvpteam`.`crest` AS `icon` FROM `'.self::dbPrefix.'pvpteam_character` LEFT JOIN `'.self::dbPrefix.'pvpteam` ON `'.self::dbPrefix.'pvpteam_character`.`pvpteamid`=`'.self::dbPrefix.'pvpteam`.`pvpteamid` LEFT JOIN `'.self::dbPrefix.'pvpteam_rank` ON `'.self::dbPrefix.'pvpteam_character`.`rankid`=`'.self::dbPrefix.'pvpteam_rank`.`pvprankid` WHERE `characterid`=:id)
             ORDER BY `current` DESC, `name` ASC;',
             [':id'=>$this->id]
         );
         #Clean up the data from unnecessary (technical) clutter
         unset($data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400 && empty($_SESSION['UA']['bot'])) {
+        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
             (new Cron)->add('ffUpdateEntity', [$this->id, 'character'], priority: 1, message: 'Updating character with ID '.$this->id);
         }
         return $data;
@@ -108,6 +101,8 @@ class Character extends Entity
             'guardian' => $fromDB['guardian'],
             'guardianid' => $fromDB['guardianid'],
             'incarnations' => $fromDB['incarnations'],
+            'oldNames' => intval($fromDB['oldNames']),
+            'killedby' => $fromDB['killedby'],
         ];
         $this->location = [
             'datacenter' => $fromDB['datacenter'],
@@ -127,21 +122,10 @@ class Character extends Entity
             'rank' => $fromDB['gc_rank'],
             'gcrankid' => $fromDB['gcrankid'],
         ];
-        $this->freeCompany = [
-            'id' => $fromDB['freecompanyid'],
-            'joined' => (empty($fromDB['company_joined']) ? null : strtotime($fromDB['company_joined'])),
-            'rank' => $fromDB['company_rank'],
-        ];
-        $this->pvp = [
-            'id' => $fromDB['pvpteamid'],
-            'joined' => (empty($fromDB['pvp_joined']) ? null : strtotime($fromDB['pvp_joined'])),
-            'rank' => $fromDB['pvp_rank'],
-            'matches' => intval($fromDB['pvp_matches']),
-        ];
+        $this->pvp = intval($fromDB['pvp_matches']);
         $this->groups = $fromDB['groups'];
         foreach ($this->groups as $key=>$group) {
             $this->groups[$key]['current'] = boolval($group['current']);
-            $this->groups[$key]['join'] = (empty($group['join']) ? null : strtotime($group['join']));
         }
         $this->achievements = $fromDB['achievements'];
         foreach ($this->achievements as $key=>$achievement) {
@@ -152,9 +136,9 @@ class Character extends Entity
             $fromDB['characterid'], $fromDB['name'], $fromDB['avatar'], $fromDB['biography'], $fromDB['genderid'], $fromDB['datacenter'],
             $fromDB['registered'], $fromDB['updated'],$fromDB['deleted'], $fromDB['clan'], $fromDB['race'], $fromDB['server'],
             $fromDB['region'], $fromDB['city'], $fromDB['cityid'], $fromDB['nameday'], $fromDB['guardian'], $fromDB['guardianid'],
-            $fromDB['servers'], $fromDB['incarnations'], $fromDB['title'], $fromDB['titleid'], $fromDB['dbid'], $fromDB['company_rank'],
-            $fromDB['gcrankid'], $fromDB['freecompanyid'], $fromDB['company_joined'], $fromDB['gc_rank'], $fromDB['gc_name'],
-            $fromDB['groups'], $fromDB['achievements'], $fromDB['pvpteamid'], $fromDB['pvp_joined'], $fromDB['pvp_rank'], $fromDB['pvp_matches'],
+            $fromDB['servers'], $fromDB['incarnations'], $fromDB['title'], $fromDB['titleid'], $fromDB['dbid'],
+            $fromDB['gcrankid'], $fromDB['gc_rank'], $fromDB['gc_name'], $fromDB['oldNames'], $fromDB['killedby'],
+            $fromDB['groups'], $fromDB['achievements'],  $fromDB['pvp_matches'], $fromDB['enemyid'],
         );
         $this->jobs = $fromDB;
         foreach ($this->jobs as $key=>$job) {
@@ -166,13 +150,6 @@ class Character extends Entity
     protected function updateDB(): string|bool
     {
         try {
-            #Try to get current values of Free Company or PvP Team
-            $this->lodestone['tracker_groups'] = $this->dbController->selectRow('SELECT `freecompanyid`, `company_joined`, `company_rank`, `pvpteamid`, `pvp_joined`, `pvp_rank`, `pvp_matches` FROM `'.self::dbPrefix.'character` WHERE `characterid` = :id', [':id' => $this->id]);
-            #If this is a new character, ensure that array is properly populated
-            if (empty($this->lodestone['tracker_groups'])) {
-                $this->lodestone['tracker_groups'] = ['freecompanyid' => NULL, 'company_joined' => NULL, 'company_rank' => NULL, 'pvpteamid' => NULL, 'pvp_joined' => NULL, 'pvp_rank' => NULL, 'pvp_matches' => NULL];
-            }
-            #If character on Lodestone is registered in Free Company or PvP Team - check if they are registered on Tracker as well
             #If character on Lodestone is not registered in Free Company or PvP Team, add their IDs as NULL for consistency
             if (empty($this->lodestone['freeCompany']['id'])) {
                 $this->lodestone['freeCompany']['id'] = NULL;
@@ -185,17 +162,6 @@ class Character extends Entity
                 $this->lodestone['pvp']['registered'] = false;
             } else {
                 $this->lodestone['pvp']['registered'] = $this->dbController->check('SELECT `pvpteamid` FROM `'.self::dbPrefix.'pvpteam` WHERE `pvpteamid` = :id', [':id' => $this->lodestone['pvp']['id']]);
-            }
-            #Flags to schedule Free Company or PvPTeam updates
-            if ($this->lodestone['tracker_groups']['freecompanyid'] !== $this->lodestone['freeCompany']['id'] && $this->lodestone['freeCompany']['id'] !== NULL) {
-                $fcCron = true;
-            } else {
-                $fcCron = false;
-            }
-            if ($this->lodestone['tracker_groups']['pvpteamid'] !== $this->lodestone['pvp']['id'] && $this->lodestone['pvp']['id'] !== NULL) {
-                $pvpCron = true;
-            } else {
-                $pvpCron = false;
             }
             #Insert Free Companies and PvP Team if they are not registered
             if ($this->lodestone['freeCompany']['id'] !== NULL && $this->lodestone['freeCompany']['registered'] === false) {
@@ -223,13 +189,13 @@ class Character extends Entity
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `'.self::dbPrefix.'character`(
-                    `characterid`, `serverid`, `name`, `registered`, `updated`, `deleted`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `freecompanyid`, `company_joined`, `company_rank`, `pvpteamid`, `pvp_joined`, `pvp_rank`, `pvp_matches`
+                    `characterid`, `serverid`, `name`, `registered`, `updated`, `deleted`, `enemyid`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `pvp_matches`
                 )
                 VALUES (
-                    :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), UTC_TIMESTAMP(), NULL, :biography, (SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :fcId, :fcDate, NULL, :pvpId, :pvpDate, NULL, 0
+                    :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), UTC_TIMESTAMP(), NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0
                 )
                 ON DUPLICATE KEY UPDATE
-                    `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), `name`=:name, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), `freecompanyid`=:fcId, `company_joined`=:fcDate, `company_rank`=:fcRank, `pvpteamid`=:pvpId, `pvp_joined`=:pvpDate, `pvp_rank`=:pvpRank;',
+                    `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), `name`=:name, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `enemyid`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1);',
                 [
                     ':characterid'=>$this->id,
                     ':server'=>$this->lodestone['server'],
@@ -246,24 +212,6 @@ class Character extends Entity
                     ':guardian'=>$this->lodestone['guardian']['name'],
                     ':city'=>$this->lodestone['city']['name'],
                     ':gcRank'=>(empty($this->lodestone['grandCompany']['rank']) ? '' : $this->lodestone['grandCompany']['rank']),
-                    ':fcId' => [$this->lodestone['freeCompany']['id'], ($this->lodestone['freeCompany']['id'] === NULL ? 'null' : 'string')],
-                    ':fcDate' => [
-                        ($this->lodestone['freeCompany']['id'] === NULL ? NULL : time()),
-                        ($this->lodestone['freeCompany']['id'] === NULL ? 'null' : 'date'),
-                    ],
-                    ':fcRank' => [
-                        ($this->lodestone['freeCompany']['id'] === NULL ? NULL : ($this->lodestone['tracker_groups']['company_rank'] === NULL ? NULL : $this->lodestone['tracker_groups']['company_rank'])),
-                        ($this->lodestone['freeCompany']['id'] === NULL ? 'null' : ($this->lodestone['tracker_groups']['company_rank'] === NULL ? 'null' : 'int')),
-                    ],
-                    ':pvpId' => [$this->lodestone['pvp']['id'], ($this->lodestone['pvp']['id'] === NULL ? 'null' : 'string')],
-                    ':pvpDate' => [
-                        ($this->lodestone['pvp']['id'] === NULL ? NULL : time()),
-                        ($this->lodestone['pvp']['id'] === NULL ? 'null' : 'date'),
-                    ],
-                    ':pvpRank' => [
-                        ($this->lodestone['pvp']['id'] === NULL ? NULL : ($this->lodestone['tracker_groups']['pvp_rank'] === NULL ? NULL : $this->lodestone['tracker_groups']['pvp_rank'])),
-                        ($this->lodestone['pvp']['id'] === NULL ? 'null' : ($this->lodestone['tracker_groups']['pvp_rank'] === NULL ? 'null' : 'int')),
-                    ],
                 ],
             ];
             #Update levels. Doing this in cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
@@ -312,28 +260,28 @@ class Character extends Entity
                     ],
                 ];
             }
-            #Check if change of Free Company has been detected
-            if ($fcCron || ($this->lodestone['tracker_groups']['freecompanyid'] !== NULL && $this->lodestone['freeCompany']['id'] === NULL)) {
-                #Register previous Free Company
-                $queries[] = [
-                    'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_x_character` (`characterid`, `freecompanyid`) VALUES (:characterid, :fcId);',
-                    [
-                        ':characterid'=>$this->id,
-                        ':fcId'=>$this->lodestone['tracker_groups']['freecompanyid'],
+            #Update company information
+            $queries[] = [
+                'UPDATE `'.self::dbPrefix.'freecompany_character` SET `current`=0 WHERE `characterid`=:characterid AND `freecompanyid` '.(empty($this->lodestone['freeCompany']['id']) ? 'IS NOT ' : '!= ').' :fcId;',
+                [
+                    ':characterid'=>$this->id,
+                    ':fcId'=>[
+                        $this->lodestone['freeCompany']['id'],
+                        (empty($this->lodestone['freeCompany']['id']) ? 'null' : 'string'),
                     ],
-                ];
-            }
-            #Check if change of PvP Team has been detected
-            if ($fcCron || ($this->lodestone['tracker_groups']['pvpteamid'] !== NULL && $this->lodestone['pvp']['id'] === NULL)) {
-                #Register previous PvP Team
-                $queries[] = [
-                    'INSERT IGNORE INTO `'.self::dbPrefix.'pvpteam_x_character` (`characterid`, `pvpteamid`) VALUES (:characterid, :pvpId);',
-                    [
-                        ':characterid'=>$this->id,
-                        ':pvpId'=>$this->lodestone['tracker_groups']['pvpteamid'],
+                ],
+            ];
+            #Update PvP Team information
+            $queries[] = [
+                'UPDATE `'.self::dbPrefix.'pvpteam_character` SET `current`=0 WHERE `characterid`=:characterid AND `pvpteamid` '.(empty($this->lodestone['pvp']['id']) ? 'IS NOT ' : '!= ').' :pvpId;',
+                [
+                    ':characterid'=>$this->id,
+                    ':pvpId'=>[
+                        $this->lodestone['pvp']['id'],
+                        (empty($this->lodestone['pvp']['id']) ? 'null' : 'string'),
                     ],
-                ];
-            }
+                ],
+            ];
             #Achievements
             if (!empty($this->lodestone['achievements']) && is_array($this->lodestone['achievements'])) {
                 foreach ($this->lodestone['achievements'] as $achievementid=>$item) {
@@ -358,16 +306,16 @@ class Character extends Entity
             }
             $this->dbController->query($queries);
             #Register Free Company update if change was detected
-            if ($fcCron === true || $pvpCron === true) {
-                #Cache CRON object
-                $cron = (new Cron);
-            }
-            if ($fcCron) {
-                $cron->add('ffUpdateEntity', [$this->lodestone['freeCompany']['id'], 'freecompany'], priority: 1, message: 'Updating free company with ID '.$this->lodestone['freeCompany']['id']);
+            if (!empty($this->lodestone['freeCompany']['id']) && $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid'=>$this->id, ':fcID'=>$this->lodestone['freeCompany']['id']]) === false) {
+                if ((new FreeCompany)->setId($this->lodestone['freeCompany']['id'])->update() !== true) {
+                    (new Cron)->add('ffUpdateEntity', [$this->lodestone['freeCompany']['id'], 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->lodestone['freeCompany']['id']);
+                }
             }
             #Register PvP Team update if change was detected
-            if ($pvpCron) {
-                $cron->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID '.$this->lodestone['pvp']['id']);
+            if (!empty($this->lodestone['pvp']['id']) && $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'pvpteam_character` WHERE `characterid`=:characterid AND `pvpteamid`=:pvpID;', [':characterid'=>$this->id, ':pvpID'=>$this->lodestone['pvp']['id']]) === false) {
+                if ((new PvPTeam)->setId($this->lodestone['pvp']['id'])->update() !== true) {
+                    (new Cron)->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->lodestone['pvp']['id']);
+                }
             }
             return true;
         } catch(\Exception $e) {
@@ -380,44 +328,30 @@ class Character extends Entity
     {
         try {
             $queries = [];
-            #Try to get current values of Free Company or PvP Team
-            $groups = $this->dbController->selectRow('SELECT `freecompanyid`, `pvpteamid` FROM `'.self::dbPrefix.'character` WHERE `characterid` = :id', [':id' => $this->id]);
             #Remove from Free Company
-            if (!empty($groups['freecompanyid'])) {
-                $queries[] = [
-                    'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_x_character` (`characterid`, `freecompanyid`) VALUES (:characterid, :fcId);',
-                    [
-                        ':characterid'=>$this->id,
-                        ':fcId'=>$groups['freecompanyid'],
-                    ],
-                ];
-            }
-            #Remove from PvP Team
-            if (!empty($groups['pvpteamid'])) {
-                $queries[] = [
-                    'INSERT IGNORE INTO `'.self::dbPrefix.'pvpteam_x_character` (`characterid`, `pvpteamid`) VALUES (:characterid, :pvpteamid);',
-                    [
-                        ':characterid'=>$this->id,
-                        ':pvpteamid'=>$groups['pvpteamid'],
-                    ],
-                ];
-            }
-            #Remove from Linkshells
             $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'linkshell_x_character` (`characterid`, `linkshellid`) SELECT `'.self::dbPrefix.'linkshell_character`.`characterid`, `'.self::dbPrefix.'linkshell_character`.`linkshellid` FROM `'.self::dbPrefix.'linkshell_character` WHERE `'.self::dbPrefix.'linkshell_character`.`characterid`=:characterid;',
+                'UPDATE `'.self::dbPrefix.'freecompany_character` SET `current`=0 WHERE `characterid`=:characterid;',
                 [
                     ':characterid'=>$this->id,
                 ],
             ];
+            #Remove from PvP Team
             $queries[] = [
-                'DELETE FROM `'.self::dbPrefix.'linkshell_character` WHERE `characterid`=:characterid;',
+                'UPDATE `'.self::dbPrefix.'pvpteam_character` SET `current`=0 WHERE `characterid`=:characterid;',
+                [
+                    ':characterid'=>$this->id,
+                ],
+            ];
+            #Remove from Linkshells
+            $queries[] = [
+                'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `characterid`=:characterid;',
                 [
                     ':characterid'=>$this->id,
                 ],
             ];
             #Update character
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'character` SET `deleted` = UTC_DATE(), `freecompanyid` = NULL, `company_joined` = NULL, `company_rank` = NULL, `pvpteamid` = NULL, `pvp_joined` = NULL, `pvp_rank` = NULL WHERE `characterid` = :id',
+                'UPDATE `'.self::dbPrefix.'character` SET `deleted` = UTC_DATE(), `enemyid` = (SELECT `enemyid` FROM `ffxiv__enemy` ORDER BY RAND() LIMIT 1) WHERE `characterid` = :id',
                 [':id'=>$this->id],
             ];
             return $this->dbController->query($queries);

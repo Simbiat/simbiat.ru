@@ -183,6 +183,7 @@ blockquote {
     font-size: 1rem;
     width: 100%;
     word-wrap: break-word;
+    overflow-wrap: anywhere;
     box-sizing: border-box;
     border-width: calc(var(--border-width) * 1.5);
     border-style: dashed;
@@ -401,6 +402,9 @@ table {
     border-spacing: 0;
     border-collapse: separate;
     width: 100%;
+    table-layout: fixed;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 table tr td,
 table tr th {

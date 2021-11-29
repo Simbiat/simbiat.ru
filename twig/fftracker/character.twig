@@ -1,0 +1,120 @@
+{% if character.biology.gender == 0 and character.biology.race == 'Miqo\'te' %}
+    {% set adjective = 'sexy' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Miqo\'te' %}
+    {% set adjective = 'haughty' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Lalafell' %}
+    {% set adjective = 'adorable' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Lalafell' %}
+    {% set adjective = 'tiny' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Elezen' %}
+    {% set adjective = 'tall' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Elezen' %}
+    {% set adjective = 'lofty' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Roegadyn' %}
+    {% set adjective = 'bodacious' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Roegadyn' %}
+    {% set adjective = 'bulky' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Hrothgar' %}
+    {% set adjective = 'inconspicious' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Hrothgar' %}
+    {% set adjective = 'hairy' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Hyur' %}
+    {% set adjective = 'flexible' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Hyur' %}
+    {% set adjective = 'handsome' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Au Ra' %}
+    {% set adjective = 'horny' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Au Ra' %}
+    {% set adjective = 'scaly' %}
+{% elseif character.biology.gender == 0 and character.biology.race == 'Viera' %}
+    {% set adjective = 'fast' %}
+{% elseif character.biology.gender == 1 and character.biology.race == 'Viera' %}
+    {% set adjective = 'eared' %}
+{% endif %}
+<section class="ff_char_page">
+    <section class="ff_char_block">
+        {% if character.dates.deleted %}
+            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1%}male{% else %}female{% endif %}{{character.biology.race}}.png">
+        {% else %}
+            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/avatar/{{character.avatarID}}l0_640x873.jpg">
+        {% endif %}
+    </section>
+    <section class="ff_char_block">
+        <h2>General</h2>
+        <p><b>{{character.name}}</b>{% if character.title.title %}, a.k.a <i>"{{ character.title.title }}"</i>,{% endif %} is a {{ adjective }} {% if character.biology.gender == 1%}male{% else %}female{% endif %} <i>{{character.biology.race}}</i> of <i>{{character.biology.clan}}</i> clan, registered in the database on <time datetime="{{character.dates.registered|date("Y-m-d")}}">{{character.dates.registered|date("d/m/Y")}}</time> with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames > 0 %} Had also been known under <i>{{ character.biology.oldNames }}</i> other name{% if character.biology.oldNames > 1 %}s{% endif %}.{% endif %}</p>
+        <p>
+            Born on <i>{{character.biology.nameday}}</i> under protection of <img loading="lazy" decoding="async" alt="{{character.biology.guardian}}" class="linkIcon" src="/img/fftracker/guardians/{{character.biology.guardianid}}.png"><i>{{character.biology.guardian}}</i>.{% if character.dates.deleted %} {% if character.biology.killedby %}&#9760; Killed{% else %}&#129702; Died{% endif %} on <time datetime="{{character.dates.deleted|date("Y-m-d")}}">{{character.dates.deleted|date("d/m/Y")}}</time> {% if character.biology.killedby %}by {{ character.biology.killedby }} &#9760;{% else %}from old age &#129702;{% endif %}. {% endif %}
+        </p>
+        <p>
+            {% if character.biology.incarnations %}
+                Other known incarnations:
+                {% for incarnation in character.biology.incarnations %}
+                    {%if loop.last%}and {%endif%}{% if character.biology.gender == 1%}male{% else %}female{% endif %} {{incarnation.race}} of {{ incarnation.clan }}{%if not loop.last%}, {% else %}.{%endif%}
+                {% endfor %}
+                .
+            {% endif %}
+        </p>
+        <p>
+            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{character.location.cityid}}" class="linkIcon" src="/img/fftracker/cities/{{character.location.cityid}}.png"><i>{{character.location.city}}</i>, <i>{{character.location.region}}</i> on {{character.location.server}} of {{character.location.datacenter}}.
+            {% if character.location.previousServers %}
+                Has also been seen on
+                {% for server in character.location.previousServers %}
+                    {%if loop.last%}and {%endif%}{{server.server}} of {{server.datacenter}}{%if not loop.last%}, {% else %}.{%endif%}
+                {% endfor %}
+            {% endif %}
+        </p>
+        {% if character.pvp %}
+            <p>Participated in <i class="failure">{{character.pvp}}</i> &#9876; battles.</p>
+        {% endif %}
+        {% if character.grandCompany.name %}
+            <p>Reached rank of <img loading="lazy" decoding="async" alt="{{character.grandCompany.rank}}" class="linkIcon" src="/img/fftracker/grandcompany/{{character.grandCompany.gcrankid}}.png"><i>{{character.grandCompany.rank}}</i> in <i>{{character.grandCompany.name}}</i> Grand company.</p>
+        {% endif %}
+        <p>
+            Last interview was conducted on <time datetime="{{character.dates.updated|date("Y-m-d")}}">{{character.dates.updated|date("d/m/Y")}}</time>.
+            {% if character.biography %}
+                This is what adventurer had to say during it:
+            {% endif %}
+        </p>
+        {% if character.biography %}
+            <blockquote>{{ character.biography|raw }}</blockquote>
+        {% endif %}
+    </section>
+    {% if character.groups%}
+        <section class="ff_char_block">
+            <h2>Affiliations</h2>
+            {% if character.groups%}
+                <div class="ff_groups">
+                    {% for entity in character.groups %}
+                        <div>
+                            {% if entity.current %}<span class="emojiGreen">&#10004;</span>{% else %}<span class="emojiRed">&#10060;</span>{% endif %}
+                            {{ include('common/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    {% endif %}
+    {%if character.achievements|length > 0 %}
+        <section class="ff_char_block">
+            <h2>Last achievements</h2>
+            <div class="searchResults">
+                {% for entity in character.achievements|slice(0,10) %}
+                    {{ include('common/entitycard.twig', entity) }}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+    <section class="ff_char_block">
+        <h2>Job affinities</h2>
+        <table>
+            <thead><tr><th>Job</th><th>Level</th></tr></thead>
+            {% for key, job in character.jobs %}
+                {% set sum = job.level + sum ?? 0 %}
+                <tr><td><img loading="lazy" decoding="async" class="linkIcon" alt="{{ job.name }}" src="/img/fftracker/jobs/{{ key }}.png">{{ job.name }}</td><td>{{ job.level }}</td></tr>
+                {% if loop.last %}
+                    <tfoot><tr><td>Total:</td><td>{{ sum }}</td></tr></tfoot>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </section>
+</section>

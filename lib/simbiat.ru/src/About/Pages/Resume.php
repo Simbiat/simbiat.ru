@@ -34,7 +34,7 @@ class Resume extends Page
                     'responsibilities' => null,
                     'achievements' => [
                         'Blood donor',
-                        'Patron for <a href="https://sos-dd.ru/" target="_blank"><img src="/img/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="linkIcon">SOS Children\'s Villages</a>'
+                        'Patron for <a href="https://sos-dd.ru/" target="_blank"><img loading="lazy" decoding="async" src="/img/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="linkIcon">SOS Children\'s Villages</a>'
                     ],
                     'description' => null,
                 ],
@@ -51,7 +51,7 @@ class Resume extends Page
                         'High level of English',
                         'Class president in grades 6 to 9',
                         'Participated in school theatre with noticeable roles of Famusov (<cite>Grief from the mind</cite>), Zvyagincev (<cite>They Were Fighting for Homeland</cite>), reindeer (<cite>Snow Queen</cite>), Carlo/Geppetto and Karabas-Barabas/Mangiafuoco/Stromboli (<cite>Buratino/Pinocchio</cite>)',
-                        '<a href="/static/resume/MiddleSchool.jpg" target="_blank"><img src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                        '<a href="/static/resume/MiddleSchool.jpg" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
                     ],
                     'description' => null,
                 ],
@@ -69,8 +69,8 @@ class Resume extends Page
                         'Learn narrative design through gaming experiences',
                     ],
                     'achievements' => [
-                        'Posted most of game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" class="linkIcon" src="/img/social/steam.svg" alt="Steam">Steam</a>',
-                        'Experimented with narrative in video by creating <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" target="_blank"><img loading="lazy" class="linkIcon" src="/img/social/youtube.svg" alt="Youtube">Welcome To My Crib</a> and <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" target="_blank"><img class="linkIcon" src="/img/social/youtube.svg" alt="Youtube">Aqua Chronica</a> series',
+                        'Posted most of game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" decoding="async" decoding="async" class="linkIcon" src="/img/social/steam.svg" alt="Steam">Steam</a>',
+                        'Experimented with narrative in video by creating <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/youtube.svg" alt="Youtube">Welcome To My Crib</a> and <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/youtube.svg" alt="Youtube">Aqua Chronica</a> series',
                     ],
                     'description' => null,
                 ],
@@ -85,8 +85,8 @@ class Resume extends Page
                     'achievements' => [
                         'Class president since 2nd year',
                         'Graduate work: <cite>Testing of hardware and software solutions for 3-dimensional information representation in virtual reality system</cite>',
-                        '<a href="/static/resume/Specialist-Diploma.jpg" target="_blank"><img src="/img/certificate.svg" alt="Diploma" class="linkIcon">Diploma</a>',
-                        '<a href="/static/resume/Specialist-GPA.pdf" target="_blank"><img src="/img/certificate.svg" alt="GPA" class="linkIcon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.56',
+                        '<a href="/static/resume/Specialist-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Diploma" class="linkIcon">Diploma</a>',
+                        '<a href="/static/resume/Specialist-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="GPA" class="linkIcon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.56',
                     ],
                     'description' => 'Specialization: management and informatics in technical systems',
                 ],
@@ -101,8 +101,8 @@ class Resume extends Page
                     'achievements' => [
                         'Class president',
                         'Graduate work: <cite>Hardware solutions for 3-dimensional information representation in virtual reality system</cite>',
-                        '<a href="/static/resume/Bachelor-Diploma.jpg" target="_blank"><img src="/img/certificate.svg" alt="Diploma" class="linkIcon">Diploma</a>',
-                        '<a href="/static/resume/Bachelor-GPA.pdf" target="_blank"><img src="/img/certificate.svg" alt="GPA" class="linkIcon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.52',
+                        '<a href="/static/resume/Bachelor-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Diploma" class="linkIcon">Diploma</a>',
+                        '<a href="/static/resume/Bachelor-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="GPA" class="linkIcon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.52',
                     ],
                     'description' => 'Specialization: automation and management',
                 ],
@@ -121,8 +121,8 @@ class Resume extends Page
                         'Write technical and client documentation',
                     ],
                     'achievements' => [
-                        'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
-                        'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
+                        'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img loading="lazy" decoding="async" loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
+                        'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img loading="lazy" decoding="async" loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
                         'Supported file storage of 8Tbs+',
                         'Administered and moderated a forum of 20,000+ users',
                         'Automated payments and donations via PayPal using vBulletin plugins',
@@ -248,7 +248,7 @@ class Resume extends Page
                     'href' => 'https://www.luxoft-training.ru/',
                     'position' => 'Student',
                     'responsibilities' => null,
-                    'achievements' => '<a href="/static/resume/Web-Service_Certificate.pdf" target="_blank"><img src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                    'achievements' => '<a href="/static/resume/Web-Service_Certificate.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
                     'description' => 'Customized course <cite>Basics of web-services support</cite>, 6 hours',
                 ],
                 [
@@ -268,7 +268,7 @@ class Resume extends Page
                         'Work quickly to identify and fix the root causes of problems',
                         'Assist and train teammates',
                     ],
-                    'achievements' => '<a href="/static/resume/Snapchat_Essentials.pdf" target="_blank"><img src="/img/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>',
+                    'achievements' => '<a href="/static/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>',
                     'description' => null,
                 ],
             ]

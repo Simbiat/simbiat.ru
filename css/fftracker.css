@@ -3,3 +3,34 @@
     font-size: smaller;
     margin: 3rem auto auto auto;
 }
+#ff_portrait_img {
+    width: 95%;
+    border-radius: var(--border-radius);
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    border-style: solid;
+}
+.ff_char_page {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.ff_char_page > section {
+    flex-grow: 1;
+    width: fit-content;
+    max-width: 100%;
+    flex-basis: 45%;
+    padding: 0.1rem;
+}
+.ff_char_block .entityCard {
+    min-width: 45%;
+}
+.ff_char_page .searchResults {
+    justify-content: flex-start;
+}
+@media (max-width: 55.599999em) {
+    .ff_char_page {
+        flex-direction: column;
+    }
+}
