@@ -106,7 +106,6 @@ class Api
                 'achievement' => (new Achievement)->setId($uri[1])->getArray(),
             };
         }
-        (new \Simbiat\Tests)->testDump($data);
         #Check if empty
         if (!isset($data)) {
             $this->apiEcho(httpCode: '404');

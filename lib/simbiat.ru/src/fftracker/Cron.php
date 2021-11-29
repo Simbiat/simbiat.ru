@@ -11,6 +11,7 @@ use Simbiat\fftracker\Entities\CrossworldLinkshell;
 use Simbiat\fftracker\Entities\FreeCompany;
 use Simbiat\fftracker\Entities\Linkshell;
 use Simbiat\fftracker\Entities\PvPTeam;
+use Simbiat\Lodestone;
 
 class Cron
 {
@@ -61,10 +62,10 @@ class Cron
                             UNION ALL
                             SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'linkshell`
                             WHERE `deleted` IS NULL
-                        ) `nonach`
+                        ) `nonAch`
                         UNION ALL
                         SELECT \'achievement\' AS `type`, `'.self::dbPrefix.'achievement`.`achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `'.self::dbPrefix.'achievement`
-                    ) `allentities`
+                    ) `allEntities`
                     ORDER BY `updated` LIMIT :maxLines',
                 [
                     ':maxLines'=>[$limit, 'int'],
@@ -83,42 +84,66 @@ class Cron
     }
 
     #Function to add missing jobs to table
-    /**
-     * @throws \Exception
-     */
     public function UpdateJobs(): bool|string
     {
-        #Cache controller
-        $dbController = (new Controller);
-        #Get the freshest character ID
-        $characterId = $dbController->selectValue('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
-        #Grab its data from Lodestone
-        $character = (new Character)->setId($characterId)->getFromLodestone();
-        if (empty($character['jobs'])) {
-            return 'No jobs retrieved for character '.$characterId;
-        }
-        #Sort alphabetically by keys
-        ksort($character['jobs'], SORT_NATURAL);
-        #Prepare string for ALTER
-        $alter = [];
-        #Previous job in the list (for AFTER clause)
-        $previous = '';
-        foreach ($character['jobs'] as $job=>$details) {
-            #Remove spaces from the job name
-            $jobNoSpace = preg_replace('/\s*/', '', $job);
-            #Check if job is present as respective column
-            if (!$dbController->checkColumn(''.self::dbPrefix.'character', $jobNoSpace)) {
-                #Add respective column definition
-                $alter[] = 'ADD COLUMN `'.$jobNoSpace.'` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT \'Level of '.$job.' job\' AFTER `'.(empty($previous) ? 'pvp_matches' : $previous).'`';
+        try {
+            #Cache controller
+            $dbController = (new Controller);
+            #Get the freshest character ID
+            $characterId = $dbController->selectValue('SELECT `characterid` FROM `' . self::dbPrefix . 'character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
+            #Grab its data from Lodestone
+            $character = (new Character)->setId($characterId)->getFromLodestone();
+            if (empty($character['jobs'])) {
+                return 'No jobs retrieved for character '.$characterId;
             }
-            #Update previous column name
-            $previous = $jobNoSpace;
+            #Sort alphabetically by keys
+            ksort($character['jobs'], SORT_NATURAL);
+            #Prepare string for ALTER
+            $alter = [];
+            #Previous job in the list (for AFTER clause)
+            $previous = '';
+            foreach ($character['jobs'] as $job=>$details) {
+                #Remove spaces from the job name
+                $jobNoSpace = preg_replace('/\s*/', '', $job);
+                #Check if job is present as respective column
+                if (!$dbController->checkColumn(''.self::dbPrefix.'character', $jobNoSpace)) {
+                    #Add respective column definition
+                    $alter[] = 'ADD COLUMN `'.$jobNoSpace.'` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT \'Level of '.$job.' job\' AFTER `'.(empty($previous) ? 'pvp_matches' : $previous).'`';
+                }
+                #Update previous column name
+                $previous = $jobNoSpace;
+            }
+            if (empty($alter)) {
+                #Nothing to add
+                return true;
+            }
+            #Generate and run the query
+            return $dbController->query('ALTER TABLE `'.self::dbPrefix.'character` '.implode(', ', $alter).';');
+        } catch (\Throwable $e) {
+            return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
-        if (empty($alter)) {
-            #Nothing to add
-            return true;
+    }
+
+    #Update list of servers
+    public function UpdateServers(): bool|string
+    {
+        try {
+            $Lodestone = (new Lodestone);
+            #Get server
+            $worlds = $Lodestone->getWorldStatus()->getResult()['worlds'];
+            #Prepare queries
+            $queries = [];
+            foreach ($worlds as $dataCenter=>$servers) {
+                foreach ($servers as $server=>$status) {
+                    $queries[] = [
+                        'INSERT IGNORE INTO `'.self::dbPrefix.'server` (`server`, `dataCenter`) VALUES (:server, :dataCenter)',
+                        [':server' => $server, ':dataCenter' => $dataCenter],
+                    ];
+                }
+            }
+            return (new Controller)->query($queries);
+        } catch (\Throwable $e) {
+            return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
-        #Generate and run the query
-        return $dbController->query('ALTER TABLE `'.self::dbPrefix.'character` '.implode(', ', $alter).';');
     }
 }

@@ -233,14 +233,16 @@ class Character extends Entity
                     }
                 }
             }
-            #Insert server, if it has not been inserted yet
-            $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'character_servers`(`characterid`, `serverid`) VALUES (:characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server));',
-                [
-                    ':characterid'=>$this->id,
-                    ':server'=>$this->lodestone['server'],
-                ],
-            ];
+            #Insert server, if it has not been inserted yet. If server is registered at all.
+            if ($this->dbController->check('SELECT `serverid` FROM `' . self::dbPrefix . 'server` WHERE `server`=:server;', [':server' => $this->lodestone['server']]) === true) {
+                $queries[] = [
+                    'INSERT IGNORE INTO `' . self::dbPrefix . 'character_servers`(`characterid`, `serverid`) VALUES (:characterid, (SELECT `serverid` FROM `' . self::dbPrefix . 'server` WHERE `server`=:server));',
+                    [
+                        ':characterid' => $this->id,
+                        ':server' => $this->lodestone['server'],
+                    ],
+                ];
+            }
             #Insert name, if it has not been inserted yet
             $queries[] = [
                 'INSERT IGNORE INTO `'.self::dbPrefix.'character_names`(`characterid`, `name`) VALUES (:characterid, :name);',
