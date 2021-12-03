@@ -31,7 +31,7 @@ class Character extends Entity
     protected function getFromDB(): array
     {
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
-        $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`updated`, `'.self::dbPrefix.'enemy`.`name` AS `killedby` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` LEFT JOIN `'.self::dbPrefix.'enemy` ON `'.self::dbPrefix.'character`.`enemyid` = `'.self::dbPrefix.'enemy`.`enemyid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`updated`, `'.self::dbPrefix.'enemy`.`name` AS `killedby` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` LEFT JOIN `'.self::dbPrefix.'enemy` ON `'.self::dbPrefix.'character`.`enemyid` = `'.self::dbPrefix.'enemy`.`enemyid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data) || !is_array($data)) {
             return [];
@@ -118,8 +118,9 @@ class Character extends Entity
             'id' => $fromDB['titleid'],
         ];
         $this->grandCompany = [
-            'name' => $fromDB['gc_name'],
+            'name' => $fromDB['gcName'],
             'rank' => $fromDB['gc_rank'],
+            'gcId' => $fromDB['gcId'],
             'gcrankid' => $fromDB['gcrankid'],
         ];
         $this->pvp = intval($fromDB['pvp_matches']);
@@ -136,9 +137,9 @@ class Character extends Entity
             $fromDB['characterid'], $fromDB['name'], $fromDB['avatar'], $fromDB['biography'], $fromDB['genderid'], $fromDB['datacenter'],
             $fromDB['registered'], $fromDB['updated'],$fromDB['deleted'], $fromDB['clan'], $fromDB['race'], $fromDB['server'],
             $fromDB['region'], $fromDB['city'], $fromDB['cityid'], $fromDB['nameday'], $fromDB['guardian'], $fromDB['guardianid'],
-            $fromDB['servers'], $fromDB['incarnations'], $fromDB['title'], $fromDB['titleid'], $fromDB['dbid'],
-            $fromDB['gcrankid'], $fromDB['gc_rank'], $fromDB['gc_name'], $fromDB['oldNames'], $fromDB['killedby'],
-            $fromDB['groups'], $fromDB['achievements'],  $fromDB['pvp_matches'], $fromDB['enemyid'],
+            $fromDB['servers'], $fromDB['incarnations'], $fromDB['title'], $fromDB['titleid'], $fromDB['dbid'], $fromDB['gcId'],
+            $fromDB['gcrankid'], $fromDB['gc_rank'], $fromDB['gcName'], $fromDB['oldNames'], $fromDB['killedby'],
+            $fromDB['groups'], $fromDB['achievements'],  $fromDB['pvp_matches'], $fromDB['enemyid'],  $fromDB['raceid'],
         );
         $this->jobs = $fromDB;
         foreach ($this->jobs as $key=>$job) {

@@ -302,7 +302,7 @@ class HomePage
         #Set default variables
         $twigVars = [
             'domain' => $GLOBALS['siteconfig']['domain'],
-            'url' => $GLOBALS['siteconfig']['domain'].$_SERVER['REQUEST_URI'],
+            'url' => $GLOBALS['siteconfig']['domain'].'/'.$_SERVER['REQUEST_URI'],
             'site_name' => $GLOBALS['siteconfig']['site_name'],
         ];
         #Set versions of CSS and JS

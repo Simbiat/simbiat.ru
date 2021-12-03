@@ -29,7 +29,11 @@
             <main id="content" role="main">
                 {% if http_error and static_page == false%}
                     <article id="http_error">
-                        {{ include('errors/'~http_error~'.twig') }}
+                        {% if construction == false %}
+                            {{ include('errors/'~http_error~'.twig') }}
+                        {% else %}
+                            {{ include('errors/construction.twig') }}
+                        {% endif %}
                         {% if not(error_page) and http_error != 403 and http_error != 404%}
                             <p>Page will refresh in <span id="refresh_timer">60</span> seconds.</p>
                         {% endif %}
@@ -41,6 +45,8 @@
                         {{ include('fftracker/fftracker.twig')}}
                     {% elseif serviceName == 'bictracker'%}
                         {{ include('bictracker/bictracker.twig')}}
+                    {% elseif serviceName == 'landing'%}
+                        {{ include('landing.twig') }}
                     {% else %}
                         {{ include('stylingTest.twig') }}
                     {% endif %}
@@ -55,7 +61,7 @@
                         </section>
                     {% else %}
                         <section id="sidebar_for_static">
-                            <div class="warning">Database is currently unavailable and you are seeing a static page, that is not dependant on it. Sidebar elements supressed.</div>
+                            <div class="warning">Database is currently unavailable, and you are seeing a static page, that is not dependent on it. Sidebar elements suppressed.</div>
                         </section>
                     {% endif %}
             </aside>

@@ -146,4 +146,139 @@ class Cron
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
+
+    #Register new entities (if found)
+    public function registerNew(): bool|string
+    {
+        $Lodestone = (new Lodestone);
+        $dbCon = (new Controller);
+        #Generate list of pages to parse (every hour 256 pages to scan, 2 seconds delay for each?)
+        try {
+            $worlds = $dbCon->selectAll('
+                (
+                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, `entity` FROM `'.self::dbPrefix.'server`
+                    CROSS JOIN `'.self::dbPrefix.'orderby`
+                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    CROSS JOIN (
+                        SELECT \'linkshell\' AS `entity` UNION SELECT \'freecompany\' AS `entity`
+                    ) `entities`
+                    WHERE `orderID` IN (1, 2, 3, 4)
+                )
+                UNION ALL
+                (
+                    SELECT `server` AS `world`, 5 AS `order`, \'\' AS `count`, `page`, `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `'.self::dbPrefix.'server`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    CROSS JOIN `'.self::dbPrefix.'grandcompany`
+                    WHERE `gcId` <> 0
+                )
+                UNION ALL
+                (
+                    SELECT `server` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, `gcId`, `clanid`, \'character\' AS `entity` FROM `'.self::dbPrefix.'server`
+                    CROSS JOIN `'.self::dbPrefix.'orderby`
+                    CROSS JOIN `'.self::dbPrefix.'grandcompany`
+                    CROSS JOIN `'.self::dbPrefix.'clan`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    WHERE `orderID` IN (1, 2, 5, 6)
+                )
+                UNION ALL
+                (
+                    SELECT `datacenter` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'crossworldlinkshell\' AS `entity` FROM `'.self::dbPrefix.'orderby`
+                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    CROSS JOIN (
+                        SELECT UNIQUE(`datacenter`) FROM `'.self::dbPrefix.'server`
+                    ) `dataCenters`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    WHERE `orderID` IN (1, 2, 3, 4)
+                )
+                UNION ALL
+                (
+                    SELECT `datacenter` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'pvpteam\' AS `entity` FROM `'.self::dbPrefix.'orderby`
+                    CROSS JOIN (
+                        SELECT UNIQUE(`datacenter`) FROM `'.self::dbPrefix.'server`
+                    ) `dataCenters`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    WHERE `orderID` IN (1, 2, 3, 4)
+                )
+                ;
+            ');
+        } catch (\Throwable $e) {
+            return 'Failed to generate pages list: '.$e->getMessage()."\r\n".$e->getTraceAsString();
+        }
+        exit;
+
+        $request = 0;
+        #Loop through the servers
+        foreach ($worlds as $world) {
+            #Loop through orders
+            foreach (['1', '2', '3', '4'] as $order) {
+                #Loop through counts
+                foreach ([10, 30, 50, 51] as $count) {
+                    #Get linkshells
+                    $Lodestone->searchLinkshell('', $world, $count, $order);
+                    $Lodestone->searchLinkshell('', $world, $count, $order, 20);
+                    #Get free companies
+                    #Loop through Grand Companies
+                    foreach (['1', '2', '3'] as $gc) {
+                        $Lodestone->searchFreeCompany('', $world, $count, gcId: $gc, order: $order);
+                        $Lodestone->searchFreeCompany('', $world, $count, gcId: $gc, order: $order, page: 20);
+                    }
+                }
+            }
+            #Get the newest free companies
+            #Loop through pages
+            for ($page = 1; $page <= 20; $page++) {
+                #Loop through Grand Companies
+                foreach (['1', '2', '3'] as $gc) {
+                    $Lodestone->searchFreeCompany('', $world, $count, gcId: $gc, order: '5', page: $page);
+                }
+            }
+            #Get characters
+            #Loop through orders
+            foreach (['1', '2', '5', '6'] as $order) {
+                #Loop through Grand Companies
+                foreach (['1', '2', '3', '0'] as $gc) {
+                    #Loop through clans
+                    foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] as $clan) {
+                        $Lodestone->searchCharacter('', $world, race_tribe: 'tribe_'.$clan, gcId: $gc, order: $order);
+                        $Lodestone->searchCharacter('', $world, race_tribe: 'tribe_'.$clan, gcId: $gc, order: $order, page: 20);
+                    }
+                }
+            }
+        }
+        #Get list of data centers
+        try {
+            $worlds = $dbCon->selectUnique('SELECT `datacenter` FROM `' . self::dbPrefix . 'server`');
+        } catch (\Throwable) {
+            $worlds = [];
+        }
+        #Loop through the servers
+        foreach ($worlds as $world) {
+            #Loop through orders
+            foreach (['1', '2', '3', '4'] as $order) {
+                #Loop through counts
+                foreach ([10, 30, 50, 51] as $count) {
+                    #Get crossworld linkshells
+                    $Lodestone->searchLinkshell('', $world['datacenter'], $count, $order, 1, true);
+                    $Lodestone->searchLinkshell('', $world['datacenter'], $count, $order, 20, true);
+                }
+                #Get PvP Teams
+                $Lodestone->searchPvPTeam('', $world['datacenter'], $order);
+                $Lodestone->searchPvPTeam('', $world['datacenter'], $order, 20);
+            }
+        }
+        $data = $Lodestone->getResult();
+        (new \Simbiat\Tests)->testDump($data);
+        return true;
+    }
 }

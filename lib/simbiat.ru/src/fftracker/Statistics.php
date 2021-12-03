@@ -32,7 +32,6 @@ class Statistics
         #Check if cache file exists
         if (is_file($cachePath)) {
             #Read the cache
-            /** @noinspection DuplicatedCode */
             $json = file_get_contents($cachePath);
             if ($json !== false && $json !== '') {
                 $json = json_decode($json, true, 512, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR);
@@ -73,7 +72,7 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['clans'])) {
                     $data['grand_companies']['clans'] = $json['grand_companies']['clans'];
                 } else {
-                    $data['grand_companies']['clans'] = $ArrayHelpers->splitByKey($dbCon->SelectAll('SELECT `'.self::dbPrefix.'grandcompany_rank`.`gc_name`, CONCAT(`'.self::dbPrefix.'clan`.`race`, \' of \', `'.self::dbPrefix.'clan`.`clan`, \' clan\') AS `value`, COUNT(`'.self::dbPrefix.'character`.`characterid`) AS `count` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid`=`'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` WHERE `'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'grandcompany_rank`.`gc_name` IS NOT NULL GROUP BY `gc_name`, `value` ORDER BY `count` DESC'), 'gc_name', [], []);
+                    $data['grand_companies']['clans'] = $ArrayHelpers->splitByKey($dbCon->SelectAll('SELECT `'.self::dbPrefix.'grandcompany`.`gcName`, CONCAT(`'.self::dbPrefix.'clan`.`race`, \' of \', `'.self::dbPrefix.'clan`.`clan`, \' clan\') AS `value`, COUNT(`'.self::dbPrefix.'character`.`characterid`) AS `count` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid`=`'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` WHERE `'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'grandcompany`.`gcName` IS NOT NULL GROUP BY `gcName`, `value` ORDER BY `count` DESC'), 'gcName', [], []);
                 }
                 break;
             case 'astrology':
@@ -104,12 +103,12 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['guardians'])) {
                     $data['grand_companies']['guardians'] = $json['grand_companies']['guardians'];
                 } else {
-                    $data['grand_companies']['guardians'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'grandcompany_rank`.`gc_name`, `'.self::dbPrefix.'guardian`.`guardian` AS `value`, COUNT(`'.self::dbPrefix.'character`.`characterid`) AS `count` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid`=`'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` WHERE `'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'grandcompany_rank`.`gc_name` IS NOT NULL GROUP BY `gc_name`, `value` ORDER BY `count` DESC');
+                    $data['grand_companies']['guardians'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'grandcompany`.`gcName`, `'.self::dbPrefix.'guardian`.`guardian` AS `value`, COUNT(`'.self::dbPrefix.'character`.`characterid`) AS `count` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid`=`'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` WHERE `'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'grandcompany`.`gcName` IS NOT NULL GROUP BY `gcName`, `value` ORDER BY `count` DESC');
                     #Add colors to guardians
                     foreach ($data['grand_companies']['guardians'] as $key=>$guardian) {
                         $data['grand_companies']['guardians'][$key]['color'] = $Lodestone->colorGuardians($guardian['value']);
                     }
-                    $data['grand_companies']['guardians'] = $ArrayHelpers->splitByKey($data['grand_companies']['guardians'], 'gc_name', [], []);
+                    $data['grand_companies']['guardians'] = $ArrayHelpers->splitByKey($data['grand_companies']['guardians'], 'gcName', [], []);
                 }
                 break;
             case 'characters':
@@ -289,7 +288,7 @@ class Statistics
                 if (!$nocache && !empty($json['cities']['gc_characters'])) {
                     $data['cities']['gc_characters'] = $json['cities']['gc_characters'];
                 } else {
-                    $data['cities']['gc_characters'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'city`.`city`, `'.self::dbPrefix.'grandcompany_rank`.`gc_name` AS `value`, COUNT(`'.self::dbPrefix.'character`.`characterid`) AS `count` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid`=`'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` WHERE `'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'grandcompany_rank`.`gc_name` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
+                    $data['cities']['gc_characters'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'city`.`city`, `'.self::dbPrefix.'grandcompany`.`gcName` AS `value`, COUNT(`'.self::dbPrefix.'character`.`characterid`) AS `count` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid`=`'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` WHERE `'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'grandcompany`.`gcName` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_characters'] as $key=>$company) {
                         $data['cities']['gc_characters'][$key]['color'] = $Lodestone->colorGC($company['value']);
@@ -300,7 +299,7 @@ class Statistics
                 if (!$nocache && !empty($json['cities']['gc_fc'])) {
                     $data['cities']['gc_fc'] = $json['cities']['gc_fc'];
                 } else {
-                    $data['cities']['gc_fc'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'city`.`city`, `'.self::dbPrefix.'grandcompany_rank`.`gc_name` AS `value`, COUNT(`'.self::dbPrefix.'freecompany`.`freecompanyid`) AS `count` FROM `'.self::dbPrefix.'freecompany` LEFT JOIN `'.self::dbPrefix.'estate` ON `'.self::dbPrefix.'freecompany`.`estateid`=`'.self::dbPrefix.'estate`.`estateid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'estate`.`cityid`=`'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'freecompany`.`grandcompanyid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` WHERE `'.self::dbPrefix.'freecompany`.`deleted` IS NULL AND `'.self::dbPrefix.'freecompany`.`estateid` IS NOT NULL AND `'.self::dbPrefix.'grandcompany_rank`.`gc_name` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
+                    $data['cities']['gc_fc'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'city`.`city`, `'.self::dbPrefix.'grandcompany`.`gcName` AS `value`, COUNT(`'.self::dbPrefix.'freecompany`.`freecompanyid`) AS `count` FROM `'.self::dbPrefix.'freecompany` LEFT JOIN `'.self::dbPrefix.'estate` ON `'.self::dbPrefix.'freecompany`.`estateid`=`'.self::dbPrefix.'estate`.`estateid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'estate`.`cityid`=`'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'freecompany`.`grandcompanyid`=`'.self::dbPrefix.'grandcompany_rank`.`gcrankid` WHERE `'.self::dbPrefix.'freecompany`.`deleted` IS NULL AND `'.self::dbPrefix.'freecompany`.`estateid` IS NOT NULL AND `'.self::dbPrefix.'grandcompany`.`gcName` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_fc'] as $key=>$company) {
                         $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC($company['value']);
@@ -313,14 +312,14 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['population'])) {
                     $data['grand_companies']['population'] = $json['grand_companies']['population'];
                 } else {
-                    $data['grand_companies']['population'] = $dbCon->countUnique(''.self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'character`.`gcrankid` IS NOT NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gc_name`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
+                    $data['grand_companies']['population'] = $dbCon->countUnique(''.self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'character`.`gcrankid` IS NOT NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gcId`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
                     #Add colors to companies
                     foreach ($data['grand_companies']['population'] as $key=>$company) {
                         $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC($company['value']);
                     }
                     #Split companies by gender
                     $data['grand_companies']['population'] = $ArrayHelpers->splitByKey($data['grand_companies']['population'], 'genderid', ['female', 'male'], [0, 1]);
-                    $data['grand_companies']['population']['free_company'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany', 'grandcompanyid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'grandcompany_rank`.`gc_name`');
+                    $data['grand_companies']['population']['free_company'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany', 'grandcompanyid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'grandcompany_rank`.`gcId`');
                     #Add colors to cities
                     foreach ($data['grand_companies']['population']['free_company'] as $key=>$company) {
                         $data['grand_companies']['population']['free_company'][$key]['color'] = $Lodestone->colorGC($company['value']);
@@ -330,7 +329,7 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['ranks'])) {
                     $data['grand_companies']['ranks'] = $json['grand_companies']['ranks'];
                 } else {
-                    $data['grand_companies']['ranks'] = $ArrayHelpers->splitByKey($dbCon->countUnique(''.self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gc_name`, `'.self::dbPrefix.'grandcompany_rank`.`gc_rank`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`', '`'.self::dbPrefix.'grandcompany_rank`.`gc_name`']), 'gc_name', [], []);
+                    $data['grand_companies']['ranks'] = $ArrayHelpers->splitByKey($dbCon->countUnique(''.self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gcId`, `'.self::dbPrefix.'grandcompany_rank`.`gc_rank`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`', '`'.self::dbPrefix.'grandcompany_rank`.`gcId`']), 'gcId', [], []);
                     #Split by gender
                     foreach ($data['grand_companies']['ranks'] as $key=>$company) {
                         $data['grand_companies']['ranks'][$key] = $ArrayHelpers->splitByKey($company, 'genderid', ['female', 'male'], [0, 1]);

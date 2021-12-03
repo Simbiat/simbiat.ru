@@ -4,22 +4,21 @@ namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\HTTP20\Headers;
-use Simbiat\HTTP20\HTML;
 
 class Achievement extends Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/fftracker/characters', 'name' => 'Characters']
+        ['href' => '/fftracker/achievements', 'name' => 'Achievements']
     ];
     #Sub service name
-    protected string $subServiceName = 'character';
+    protected string $subServiceName = 'achievement';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = 'Character';
+    protected string $title = 'Achievement';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $h1 = 'Character';
+    protected string $h1 = 'Achievement';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Character';
+    protected string $ogdesc = 'Achievement';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -27,26 +26,38 @@ class Achievement extends Page
         $headers = (new Headers);
         #Sanitize ID
         $id = rawurldecode($path[0] ?? '');
+
+
+        #Placeholder
+        return ['http_error' => 503, 'construction' => true, 'error_page' => true];
+
+
         #Try to get details
         try {
-            $outputArray['character'] = (new \Simbiat\fftracker\Entities\Character)->setId($id)->getArray();
+            $outputArray['achievement'] = (new \Simbiat\fftracker\Entities\Achievement())->setId($id)->getArray();
         } catch (\UnexpectedValueException) {
             return ['http_error' => 404];
         }
         #Check if ID was found
-        if (empty($outputArray['bicdetails'])) {
+        if (empty($outputArray['achievement']['id'])) {
             return ['http_error' => 404];
         }
         #Try to exit early based on modification date
-        $this->lastModified($outputArray['character']['dates']['updated']);
+        $this->lastModified($outputArray['achievement']['updated']);
         #Continue breadcrumbs
-        $this->breadCrumb[] = ['href' => '/fftracker/character/' . $id, 'name' => $outputArray['character']['name']];
+        $this->breadCrumb[] = ['href' => '/fftracker/achievement/' . $id, 'name' => $outputArray['achievement']['name']];
         #Update meta
-        $this->h1 = $this->title = $outputArray['character']['name'];
-        $this->ogdesc = $outputArray['character']['name'] . ' on FFXIV Tracker';
+        $this->h1 = $this->title = $outputArray['achievement']['name'];
+        $this->ogdesc = $outputArray['achievement']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
-        $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/character/' . $id]];
-        $altLink[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/character/lodestone/' . $id];
+        #Link header/tag for API
+        $altLink = [
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/achievement/' . $id],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievement/lodestone/' . $id],
+        ];
+        if (!empty($outputArray['dbid'])) {
+            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['dbid']];
+        }
         #Send HTTP header
         $headers->links($altLink);
         #Add link to HTML

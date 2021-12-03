@@ -10,7 +10,11 @@
 {% elseif type == 'pvpteam' %}
     {% set url = 'fftracker/pvpteam' %}
 {% elseif type == 'linkshell' %}
-    {% set url = 'fftracker/linkshell' %}
+    {% if crossworld %}
+        {% set url = 'fftracker/crossworld_linkshell' %}
+    {% else %}
+            {% set url = 'fftracker/linkshell' %}
+    {% endif %}
 {% endif %}
 {# Actual card #}
 <a class="entityCard" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
