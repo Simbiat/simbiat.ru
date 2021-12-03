@@ -106,7 +106,7 @@ class Cron
                 #Remove spaces from the job name
                 $jobNoSpace = preg_replace('/\s*/', '', $job);
                 #Check if job is present as respective column
-                if (!$dbController->checkColumn(''.self::dbPrefix.'character', $jobNoSpace)) {
+                if (!$dbController->checkColumn(self::dbPrefix.'character', $jobNoSpace)) {
                     #Add respective column definition
                     $alter[] = 'ADD COLUMN `'.$jobNoSpace.'` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT \'Level of '.$job.' job\' AFTER `'.(empty($previous) ? 'pvp_matches' : $previous).'`';
                 }
