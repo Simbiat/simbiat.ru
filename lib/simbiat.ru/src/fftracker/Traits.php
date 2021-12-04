@@ -30,7 +30,7 @@ trait Traits
     }
 
     #Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
-    private function CrestMerge(string $groupId, array $images): ?string
+    private function CrestMerge(string $groupId, array $images, bool $debug = false): ?string
     {
         try {
             $imgFolder = $GLOBALS['siteconfig']['merged_crests'];
@@ -85,7 +85,9 @@ trait Traits
             }
             return $hash;
         } catch (\Throwable $throwable) {
-            error_log($throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+            if ($debug) {
+                error_log($throwable->getMessage() . "\r\n" . $throwable->getTraceAsString());
+            }
             return null;
         } finally {
             #Remove temporary file
