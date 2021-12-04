@@ -29,6 +29,10 @@
 .ff_char_page .searchResults {
     justify-content: flex-start;
 }
+.ff_crest {
+    width: 4rem;
+    height: 4rem;
+}
 @media (max-width: 55.599999em) {
     .ff_char_page {
         flex-direction: column;
