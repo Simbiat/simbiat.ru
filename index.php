@@ -84,18 +84,27 @@ if ($CLI) {
             $uri = explode('/', $_SERVER['REQUEST_URI']);
             #Check if API
             if (strcasecmp($uri[0], 'api') === 0) {
-                #Process API request
-                (new Api)->uriParse(array_slice($uri, 1));
-                #Ensure we no matter what happens in API gateway
+                try {
+                    #Process API request
+                    (new Api)->uriParse(array_slice($uri, 1));
+                } catch (Throwable $throwable) {
+                    error_log('Failed on API call `'.$_SERVER['REQUEST_URI'].'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+                }
+                #Ensure we exit no matter what happens in API gateway
                 exit;
             } else {
-                #Send links
-                $HomePage->commonLinks();
-                #Connect to DB
-                if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
-                    $vars = (new MainRouter)->route($uri);
-                } else {
-                    $vars = [];
+                try {
+                    #Send links
+                    $HomePage->commonLinks();
+                    #Connect to DB
+                    if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
+                        $vars = (new MainRouter)->route($uri);
+                    } else {
+                        $vars = [];
+                    }
+                } catch (Throwable $throwable) {
+                    error_log('Failed to generate page `'.$_SERVER['REQUEST_URI'].'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+                    $vars = ['http_error' => 500];
                 }
                 #Generate page
                 $HomePage->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
