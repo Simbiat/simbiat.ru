@@ -7,7 +7,7 @@
         {{ link_tags|raw }}
         {{ link_extra|raw }}
 
-        <title>{{ title }}</title>
+        <title>{{ title|raw }}</title>
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
