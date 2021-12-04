@@ -42,12 +42,14 @@ class Linkshell extends Entity
         if ($data['crossworld']) {
             unset($data['server']);
         }
-        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-            if ($data['crossworld'] == '0') {
-                (new Cron)->add('ffUpdateEntity', [$this->id, 'linkshell'], priority: 1, message: 'Updating linkshell with ID '.$this->id);
-            } else {
-                (new Cron)->add('ffUpdateEntity', [$this->id, 'crossworldlinkshell'], priority: 1, message: 'Updating crossworldlinkshell with ID '.$this->id);
+        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
+        if (empty($_SESSION['UA']['bot'])) {
+            if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
+                if ($data['crossworld'] == '0') {
+                    (new Cron)->add('ffUpdateEntity', [$this->id, 'linkshell'], priority: 1, message: 'Updating linkshell with ID ' . $this->id);
+                } else {
+                    (new Cron)->add('ffUpdateEntity', [$this->id, 'crossworldlinkshell'], priority: 1, message: 'Updating crossworldlinkshell with ID ' . $this->id);
+                }
             }
         }
         return $data;

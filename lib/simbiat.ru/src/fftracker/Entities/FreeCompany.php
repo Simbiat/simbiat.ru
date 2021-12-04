@@ -50,9 +50,11 @@ class FreeCompany extends Entity
         $data['ranks_history'] = $this->dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['gcId'], $data['estateid'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon']);
-        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-            (new Cron)->add('ffUpdateEntity', [$this->id, 'freecompany'], priority: 1, message: 'Updating free company with ID '.$this->id);
+        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
+        if (empty($_SESSION['UA']['bot'])) {
+            if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
+                (new Cron)->add('ffUpdateEntity', [$this->id, 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->id);
+            }
         }
         return $data;
     }

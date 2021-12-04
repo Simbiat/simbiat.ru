@@ -39,9 +39,11 @@ class PvPTeam extends Entity
         $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'pvpteam_character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`pvp_matches` AS `matches`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, `'.self::dbPrefix.'pvpteam_rank`.`rank`, `'.self::dbPrefix.'pvpteam_rank`.`pvprankid` FROM `'.self::dbPrefix.'pvpteam_character` LEFT JOIN `'.self::dbPrefix.'pvpteam_rank` ON `'.self::dbPrefix.'pvpteam_rank`.`pvprankid`=`'.self::dbPrefix.'pvpteam_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'pvpteam_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'pvpteam_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['datacenterid'], $data['serverid'], $data['server']);
-        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-            (new Cron)->add('ffUpdateEntity', [$this->id, 'pvpteam'], priority: 1, message: 'Updating PvP team with ID '.$this->id);
+        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
+        if (empty($_SESSION['UA']['bot'])) {
+            if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
+                (new Cron)->add('ffUpdateEntity', [$this->id, 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->id);
+            }
         }
         return $data;
     }

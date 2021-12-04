@@ -56,9 +56,11 @@ class Character extends Entity
         );
         #Clean up the data from unnecessary (technical) clutter
         unset($data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
-        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot (if \Simbiat\usercontrol is used).
-        if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-            (new Cron)->add('ffUpdateEntity', [$this->id, 'character'], priority: 1, message: 'Updating character with ID '.$this->id);
+        #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
+        if (empty($_SESSION['UA']['bot'])) {
+            if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
+                (new Cron)->add('ffUpdateEntity', [$this->id, 'character'], priority: 1, message: 'Updating character with ID ' . $this->id);
+            }
         }
         return $data;
     }
