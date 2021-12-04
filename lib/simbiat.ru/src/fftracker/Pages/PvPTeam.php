@@ -26,12 +26,6 @@ class PvPTeam extends Page
         $headers = (new Headers);
         #Sanitize ID
         $id = rawurldecode($path[0] ?? '');
-
-
-        #Placeholder
-        return ['http_error' => 503, 'construction' => true, 'error_page' => true];
-
-
         #Try to get details
         try {
             $outputArray['pvpteam'] = (new \Simbiat\fftracker\Entities\PvPTeam())->setId($id)->getArray();
@@ -49,7 +43,6 @@ class PvPTeam extends Page
         #Update meta
         $this->h1 = $this->title = $outputArray['pvpteam']['name'];
         $this->ogdesc = $outputArray['pvpteam']['name'] . ' on FFXIV Tracker';
-        #Link header/tag for API
         #Link header/tag for API
         $altLink = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/pvpteam/' . $id],

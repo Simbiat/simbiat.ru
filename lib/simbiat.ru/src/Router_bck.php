@@ -144,58 +144,6 @@ class Router_bck
                     }
                 }
                 break;
-            case 'crossworldlinkshell':
-            case 'crossworld_linkshell':
-                #Redirect to linkshell page, since we do not differentiate between them that much
-                $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/linkshell/'.(empty($uri[1]) ? '' : $uri[1]), true, true, false);
-                break;
-            case 'achievement':
-            case 'character':
-            case 'freecompany':
-            case 'linkshell':
-            case 'pvpteam':
-                #Check if id was provided and has valid format
-                if (empty($uri[1]) || preg_match('/^[0-9a-f]{1,40}$/i', $uri[1]) !== 1) {
-                    $outputArray['http_error'] = 404;
-                } else {
-                    #Grab data
-                    $outputArray[$uri[0]] = $fftracker->TrackerGrab($uri[0], $uri[1]);
-                    #Check if ID was found
-                    if (empty($outputArray[$uri[0]])) {
-                        $outputArray['http_error'] = 404;
-                    } else {
-                        $outputArray['subServiceName'] = $uri[0];
-                        #Try to exit early based on modification date
-                        $headers->lastModified($outputArray[$uri[0]]['updated'], true);
-                        #Continue breadcrumb by adding link to list (1 page)
-                        $breadArray[] = match($uri[0]) {
-                            'freecompany' => ['href'=>'/fftracker/freecompanies/1', 'name'=>'Free Companies'],
-                            'pvpteam' => ['href'=>'/fftracker/'.$uri[0].'s/1', 'name'=>'PvP Teams'],
-                            default => ['href'=>'/fftracker/'.$uri[0].'s/1', 'name'=>ucfirst($uri[0]).'s'],
-                        };
-                        #Continue breadcrumb by adding link to current entity
-                        $breadArray[] = ['href' => '/fftracker/'.$uri[0].'/'.$outputArray[$uri[0]][$uri[0].'id'].'/'.rawurlencode($outputArray[$uri[0]]['name']), 'name' => $outputArray[$uri[0]]['name']];
-                        #Generate levels' list if we have members
-                        if (!empty($outputArray[$uri[0]]['members'])) {
-                            $outputArray[$uri[0]]['levels'] = array_unique(array_column($outputArray[$uri[0]]['members'], 'rank'));
-                        }
-                        #Update meta
-                        $outputArray['h1'] = $outputArray[$uri[0]]['name'];
-                        $outputArray['title'] = $outputArray[$uri[0]]['name'];
-                        $outputArray['ogdesc'] = $outputArray[$uri[0]]['name'].' on '.$outputArray['ogdesc'];
-                        #Link header/tag for API
-                        $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation', 'href' => '/api/fftracker/'.$uri[0].'/'.$outputArray[$uri[0]][$uri[0].'id']]];
-                        #Send HTTP header
-                        $headers->links($altLink);
-                        #Add link to HTML
-                        $outputArray['link_extra'] = $headers->links($altLink, 'head');
-                        #Cache age for achievements (due to random characters)
-                        if ($uri[0] === 'achievement') {
-                            $outputArray['cacheAge'] = 86400;
-                        }
-                    }
-                }
-                break;
             default:
                 $outputArray['http_error'] = 404;
                 break;

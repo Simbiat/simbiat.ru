@@ -32,19 +32,19 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '89e4dac96c646ae54975865a3fd26ca3878c70c3',
+    'reference' => '51e8c5a4e246ba3b4683628eb7418f8c2312b2c9',
     'name' => 'simbiat/simbiat.ru',
   ),
   'versions' => 
   array (
     'matomo/device-detector' => 
     array (
-      'pretty_version' => '4.3.0',
-      'version' => '4.3.0.0',
+      'pretty_version' => '4.3.1',
+      'version' => '4.3.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => '3fcceafc601444412ce65297ba4ce878ee77e450',
+      'reference' => '88e5419ee1448ccb9537e287dd09836ff9d2de3b',
     ),
     'mustangostang/spyc' => 
     array (
@@ -57,18 +57,18 @@ private static $installed = array (
     ),
     'phpmailer/phpmailer' => 
     array (
-      'pretty_version' => 'v6.5.1',
-      'version' => '6.5.1.0',
+      'pretty_version' => 'v6.5.3',
+      'version' => '6.5.3.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'dd803df5ad7492e1b40637f7ebd258fee5ca7355',
+      'reference' => 'baeb7cde6b60b1286912690ab0693c7789a31e71',
     ),
     'piwik/device-detector' => 
     array (
       'replaced' => 
       array (
-        0 => '4.3.0',
+        0 => '4.3.1',
       ),
     ),
     'simbiat/simbiat.ru' => 
@@ -78,7 +78,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '89e4dac96c646ae54975865a3fd26ca3878c70c3',
+      'reference' => '51e8c5a4e246ba3b4683628eb7418f8c2312b2c9',
     ),
     'symfony/polyfill-ctype' => 
     array (
@@ -100,12 +100,12 @@ private static $installed = array (
     ),
     'twig/twig' => 
     array (
-      'pretty_version' => 'v3.3.2',
-      'version' => '3.3.2.0',
+      'pretty_version' => 'v3.3.4',
+      'version' => '3.3.4.0',
       'aliases' => 
       array (
       ),
-      'reference' => '21578f00e83d4a82ecfa3d50752b609f13de6790',
+      'reference' => '65cb6f0b956485e1664f13d023c55298a4bb59ca',
     ),
   ),
 );

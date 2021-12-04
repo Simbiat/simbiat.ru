@@ -38,6 +38,8 @@
                 {{ include('fftracker/character.twig')}}
             {% elseif subServiceName == 'linkshell' %}
                 {{ include('fftracker/linkshell.twig')}}
+            {% elseif subServiceName == 'pvpteam' %}
+                {{ include('fftracker/pvpteam.twig')}}
             {% endif %}
         </article>
         {{pagination_bottom|raw}}

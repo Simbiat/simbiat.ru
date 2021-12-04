@@ -1,0 +1,20 @@
+<section>
+    <img class="float_left" alt="{{ linkshell.name }}" src="/img/fftracker/merged-crests/{{pvpteam.crest|slice(0,2)}}/{{pvpteam.crest|slice(2,2)}}/{{pvpteam.crest}}.png">
+    <p>PvP Team <b>"{{ pvpteam.name }}"</b> was formed on <time datetime="{{pvpteam.dates.formed|date("Y-m-d")}}">{{pvpteam.dates.formed|date("d/m/Y")}}</time> and registered on <time datetime="{{pvpteam.dates.registered|date("Y-m-d")}}">{{pvpteam.dates.registered|date("d/m/Y")}}</time> with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on <time datetime="{{pvpteam.dates.updated|date("Y-m-d")}}">{{pvpteam.dates.updated|date("d/m/Y")}}</time>.{% if pvpteam.dates.deleted %} Was disbanded on <time datetime="{{pvpteam.dates.deleted|date("Y-m-d")}}">{{pvpteam.dates.deleted|date("d/m/Y")}}</time>.{% endif %}</p>
+    <p>Operate{% if pvpteam.dates.deleted %}d{% else %}s{% endif %} on {{ pvpteam.dataCenter }}.{% if not pvpteam.dates.deleted %}{% if pvpteam.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{pvpteam.community}}" target="_blank">community</a>.{% endif %}{% endif %}</p>
+    {% if pvpteam.oldNames|length > 0 %}
+        <p>Had also been known under <i>{{ pvpteam.oldNames|length }}</i> other name{% if pvpteam.oldNames|length > 1 %}s{% endif %}:</p>
+        <ul>
+            {% for name in pvpteam.oldNames %}
+                <li>{{ name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>Current members:</p>
+        <div class="searchResults">
+            {% for entity in pvpteam.members %}
+                {{ include('common/entitycard.twig', entity) }}
+            {% endfor %}
+        </div>
+
+</section>
