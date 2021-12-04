@@ -46,7 +46,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             return false;
         }
         #Check if it has not been updated recently (10 minutes, to protect potential abuse) or if it is marked as deleted
-        if ((isset($updated['deleted']) && $updated['deleted'] !== null) || ($updated['updated'] !== NULL && (time() - strtotime($updated['updated'])) < 600)) {
+        if (isset($updated['deleted']) || (isset($updated['updated']) && (time() - strtotime($updated['updated'])) < 600)) {
             #Return entity type
             return $this::entityType;
         }
