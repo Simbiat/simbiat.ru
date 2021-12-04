@@ -11,7 +11,7 @@ class MainRouter extends Abstracts\Router
     #Supported
     protected array $subRoutes = [
         #Forum/articles
-        'forum', 'thread',
+        #'forum', 'thread',
         #Pages routing
         'about', 'fftracker', 'bictracker', 'uc', 'tests',
         #Feeds
