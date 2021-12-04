@@ -26,12 +26,6 @@ class Achievement extends Page
         $headers = (new Headers);
         #Sanitize ID
         $id = rawurldecode($path[0] ?? '');
-
-
-        #Placeholder
-        return ['http_error' => 503, 'construction' => true, 'error_page' => true];
-
-
         #Try to get details
         try {
             $outputArray['achievement'] = (new \Simbiat\fftracker\Entities\Achievement())->setId($id)->getArray();
@@ -55,8 +49,8 @@ class Achievement extends Page
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/achievement/' . $id],
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievement/lodestone/' . $id],
         ];
-        if (!empty($outputArray['dbid'])) {
-            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['dbid']];
+        if (!empty($outputArray['achievement']['dbid'])) {
+            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['achievement']['dbid']];
         }
         #Send HTTP header
         $headers->links($altLink);

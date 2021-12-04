@@ -238,3 +238,7 @@ blockquote>.copyQuote {
 .bold {
     font-weight: bold;
 }
+
+.gold {
+    color: gold;
+}

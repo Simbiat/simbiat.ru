@@ -33,7 +33,7 @@ class Achievement extends Entity
             return [];
         }
         #Get last characters with this achievement
-        $data['characters'] = $this->dbController->selectAll('SELECT * FROM (SELECT \'character\' AS `type`, `'.self::dbPrefix.'character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar` AS `icon` FROM `'.self::dbPrefix.'character_achievement` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'character`.`characterid` = `'.self::dbPrefix.'character_achievement`.`characterid` WHERE `'.self::dbPrefix.'character_achievement`.`achievementid` = :id ORDER BY `'.self::dbPrefix.'character_achievement`.`time` DESC LIMIT 10) t ORDER BY `name`', [':id'=>$this->id]);
+        $data['characters'] = $this->dbController->selectAll('SELECT * FROM (SELECT \'character\' AS `type`, `'.self::dbPrefix.'character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar` AS `icon` FROM `'.self::dbPrefix.'character_achievement` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'character`.`characterid` = `'.self::dbPrefix.'character_achievement`.`characterid` WHERE `'.self::dbPrefix.'character_achievement`.`achievementid` = :id ORDER BY `'.self::dbPrefix.'character_achievement`.`time` DESC LIMIT 50) t ORDER BY `name`', [':id'=>$this->id]);
         #Register for an update if old enough or category or howto or dbid are empty. Also check that this is not a bot (if \Simbiat\usercontrol is used).
         if ((empty($data['category']) || empty($data['subcategory']) || empty($data['howto']) || empty($data['dbid']) || (time() - strtotime($data['updated'])) >= 31536000) && !empty($data['characters']) && empty($_SESSION['UA']['bot'])) {
             (new Cron)->add('ffUpdateEntity', [$this->id, 'achievement'], priority: 2, message: 'Updating achievement with ID '.$this->id);
@@ -104,7 +104,7 @@ class Achievement extends Entity
         ];
         $this->characters = [
             'total' => intval($fromDB['count']),
-            'randoms' => $fromDB['characters'],
+            'last' => $fromDB['characters'],
         ];
     }
 

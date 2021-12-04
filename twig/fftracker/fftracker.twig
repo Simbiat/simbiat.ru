@@ -40,6 +40,8 @@
                 {{ include('fftracker/linkshell.twig')}}
             {% elseif subServiceName == 'pvpteam' %}
                 {{ include('fftracker/pvpteam.twig')}}
+            {% elseif subServiceName == 'achievement' %}
+                {{ include('fftracker/achievement.twig')}}
             {% endif %}
         </article>
         {{pagination_bottom|raw}}

@@ -1,0 +1,32 @@
+<section>
+    <img class="float_left ff_crest" alt="{{ achievement.name }}" src="/img/fftracker/icon/{{achievement.icon}}">
+    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on <time datetime="{{achievement.registered|date("Y-m-d")}}">{{achievement.registered|date("d/m/Y")}}</time> with ID <i>{{ achievement.id }}</i>{% if achievement.registered != achievement.updated %} and revised on <time datetime="{{achievement.updated|date("Y-m-d")}}">{{achievement.updated|date("d/m/Y")}}</time>{% endif %}.</p>
+    <p>By achieving it, one can receive:</p>
+    <ul>
+        {% if achievement.rewards.points %}
+            <li><i class="gold">{{ achievement.rewards.points }}</i> points</li>
+        {% endif %}
+        {% if achievement.rewards.title %}
+            <li><i class="gold">"{{ achievement.rewards.title }}"</i> title</li>
+        {% endif %}
+        {% if achievement.rewards.item.name %}
+            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{achievement.rewards.item.id}}/" target="_blank"><img class="linkIcon" src="/img/fftracker/icon/{{achievement.rewards.item.icon}}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
+        {% endif %}
+    </ul>
+    {% if achievement.howto %}
+        <p>But it won't be easy to reap these rewards. As per established rules, one is required to fulfill these conditions:</p>
+        <blockquote>{{ achievement.howto }}</blockquote>
+    {% else %}
+        <p>But it won't be easy to reap these rewards. What makes that even harder, is that it is still unknown, what the requirements are.</p>
+    {% endif %}
+    {% if achievement.characters.total > 0 %}
+        <p>Achievement has been earned by <i class="success">{{ achievement.characters.total }}</i> {% if achievement.characters.total > 1 %}people{% else %}person{% endif %}.</p>
+        <p>{% if achievement.characters.total > 1 %}Last <i>{{ achievement.characters.last|length }}</i> people{% else %}The only person{% endif %}, who received the achievement:</p>
+        <div class="searchResults">
+            {% for entity in achievement.characters.last %}
+                {{ include('common/entitycard.twig', entity) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</section>
