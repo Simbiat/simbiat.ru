@@ -35,6 +35,11 @@
             <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.png">
         {% endif %}
     </span>
-    <span class="entityName">{{name|raw}}</span>
+    <span class="entityName">
+        {% if lsrankid and lsrankid != 3 %}
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{rank}}" data-tooltip="{{rank}}" src="/img/fftracker/lsranks/{{lsrankid}}.png">
+        {% endif %}
+        {{name|raw}}
+    </span>
     <span class="entityArrow">&#10151;</span>
 </a>

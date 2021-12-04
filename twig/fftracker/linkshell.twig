@@ -1,0 +1,26 @@
+<section>
+    <img class="float_left" alt="{{ linkshell.name }}" src="
+        {%if linkshell.crossworld %}
+            /img/fftracker/crossworld_linkshell.png
+        {%else%}
+            /img/fftracker/linkshell.png
+        {% endif %}
+    ">
+    <p>{% if linkshell.crossworld %}Crossworld {% endif %}Linkshell <b>"{{ linkshell.name }}"</b> was {% if linkshell.dates.formed %}formed on <time datetime="{{linkshell.dates.formed|date("Y-m-d")}}">{{linkshell.dates.formed|date("d/m/Y")}}</time> and {% endif %}registered on <time datetime="{{linkshell.dates.registered|date("Y-m-d")}}">{{linkshell.dates.registered|date("d/m/Y")}}</time> with ID <i>{{ linkshell.id }}</i>. Last set of interviews conducted on <time datetime="{{linkshell.dates.updated|date("Y-m-d")}}">{{linkshell.dates.updated|date("d/m/Y")}}</time>.{% if linkshell.dates.deleted %} Was disbanded on <time datetime="{{linkshell.dates.deleted|date("Y-m-d")}}">{{linkshell.dates.deleted|date("d/m/Y")}}</time>.{% endif %}</p>
+    <p>Operate{% if linkshell.dates.deleted %}d{% else %}s{% endif %} on {{ linkshell.dataCenter ?? linkshell.server }}.</p>
+    {% if linkshell.oldNames|length > 0 %}
+        <p>Had also been known under <i>{{ linkshell.oldNames|length }}</i> other name{% if linkshell.oldNames|length > 1 %}s{% endif %}:</p>
+        <ul>
+            {% for name in linkshell.oldNames %}
+                <li>{{ name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>Current members:</p>
+        <div class="searchResults">
+            {% for entity in linkshell.members %}
+                {{ include('common/entitycard.twig', entity) }}
+            {% endfor %}
+        </div>
+
+</section>

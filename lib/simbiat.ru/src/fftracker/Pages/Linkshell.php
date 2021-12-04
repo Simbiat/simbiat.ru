@@ -28,13 +28,9 @@ class Linkshell extends Page
         #Sanitize ID
         $id = rawurldecode($path[0] ?? '');
 
-        #Placeholder
-        return ['http_error' => 503, 'construction' => true, 'error_page' => true];
-
-
         #Try to get details
         try {
-            if (self::crossworld) {
+            if ($this::crossworld) {
                 $outputArray['linkshell'] = (new \Simbiat\fftracker\Entities\CrossworldLinkshell())->setId($id)->getArray();
             } else {
                 $outputArray['linkshell'] = (new \Simbiat\fftracker\Entities\Linkshell())->setId($id)->getArray();
@@ -46,19 +42,22 @@ class Linkshell extends Page
         if (empty($outputArray['linkshell']['id'])) {
             return ['http_error' => 404];
         }
+        if ($this::crossworld) {
+            $outputArray['linkshell']['crossworld'] = true;
+        }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['linkshell']['dates']['updated']);
         #Continue breadcrumbs
-        $this->breadCrumb[] = ['href' => '/fftracker/'.(self::crossworld ? 'crossworld_' : '').'linkshell/' . $id, 'name' => $outputArray['linkshell']['name']];
+        $this->breadCrumb[] = ['href' => '/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id, 'name' => $outputArray['linkshell']['name']];
         #Update meta
         $this->h1 = $this->title = $outputArray['linkshell']['name'];
         $this->ogdesc = $outputArray['linkshell']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
         #Link header/tag for API
         $altLink = [
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.(self::crossworld ? 'crossworld_' : '').'linkshell/' . $id],
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.(self::crossworld ? 'crossworld_' : '').'linkshell/lodestone/' . $id],
-            ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/'.(self::crossworld ? 'crossworld_' : '').'linkshell/' . $id],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/lodestone/' . $id],
+            ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id],
         ];
         #Send HTTP header
         $headers->links($altLink);

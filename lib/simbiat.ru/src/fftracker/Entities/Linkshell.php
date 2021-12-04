@@ -36,7 +36,7 @@ class Linkshell extends Entity
         #Get old names
         $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'linkshell_names` WHERE `linkshellid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT `'.self::dbPrefix.'linkshell_character`.`characterid`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar`, `'.self::dbPrefix.'linkshell_rank`.`rank`, `'.self::dbPrefix.'linkshell_rank`.`lsrankid` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_rank`.`lsrankid`=`'.self::dbPrefix.'linkshell_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'linkshell_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'linkshell_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'linkshell_character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, `'.self::dbPrefix.'linkshell_rank`.`rank`, `'.self::dbPrefix.'linkshell_rank`.`lsrankid` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_rank`.`lsrankid`=`'.self::dbPrefix.'linkshell_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'linkshell_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'linkshell_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['serverid']);
         if ($data['crossworld']) {
@@ -152,7 +152,7 @@ class Linkshell extends Entity
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
+                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
                             )',
                             [
                                 ':characterid'=>$member,
@@ -165,16 +165,17 @@ class Linkshell extends Entity
                     }
                     #Insert/update character relationship with linkshell
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'linkshell_character` (`linkshellid`, `characterid`, `rankid`, `current`) VALUES (:linkshellid, :memberid, (SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), 1) ON DUPLICATE KEY UPDATE `rankid`=(SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), `current`=1;',
+                        'INSERT INTO `'.self::dbPrefix.'linkshell_character` (`linkshellid`, `characterid`, `rankid`, `current`) VALUES (:linkshellid, :memberid, (SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank LIMIT 1), 1) ON DUPLICATE KEY UPDATE `rankid`=(SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), `current`=1;',
                         [
                             ':linkshellid'=>$this->id,
                             ':memberid'=>$member,
-                            ':rank'=>(empty($details['rank']) ? 'Member' : $details['rank'])
+                            ':rank'=>(empty($details['lsrank']) ? 'Member' : $details['lsrank'])
                         ],
                     ];
                 }
             }
             #Running the queries we've accumulated
+            #(new \Simbiat\Tests)->testDump($queries);
             $this->dbController->query($queries);
             #Schedule proper update of any newly added characters
             if (!empty($this->lodestone['members'])) {

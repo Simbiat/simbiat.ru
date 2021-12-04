@@ -200,6 +200,16 @@ blockquote>.copyQuote {
     padding-left: 0.1rem;
     font-weight: normal;
 }
+.entityRank {
+    overflow: hidden;
+    text-overflow: clip;
+    display: block;
+    height: 1.5rem;
+    font-size: smaller;
+    line-height: 1.025rem;
+    float: left;
+    padding-left: 0.1rem;
+}
 
 .searchForm {
     text-align: center;

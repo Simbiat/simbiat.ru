@@ -36,6 +36,8 @@
                 {{ include('common/pages/list.twig')}}
             {% elseif subServiceName == 'character' %}
                 {{ include('fftracker/character.twig')}}
+            {% elseif subServiceName == 'linkshell' %}
+                {{ include('fftracker/linkshell.twig')}}
             {% endif %}
         </article>
         {{pagination_bottom|raw}}
