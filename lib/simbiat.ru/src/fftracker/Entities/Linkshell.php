@@ -100,7 +100,7 @@ class Linkshell extends Entity
         try {
             #Main query to insert or update a Linkshell
             $queries[] = [
-                'INSERT INTO `'.self::dbPrefix.'linkshell`(`linkshellid`, `name`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`) VALUES (:linkshellid, :name, :crossworld, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1)) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=NULL, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
+                'INSERT INTO `'.self::dbPrefix.'linkshell`(`linkshellid`, `name`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :crossworld, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=NULL, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
                 [
                     ':linkshellid'=>$this->id,
                     ':server'=>$this->lodestone['server'] ?? $this->lodestone['dataCenter'],
