@@ -85,3 +85,8 @@
     height: unset;
     cursor: zoom-out;
 }
+.galleryZoom {
+    text-decoration: none;
+    border-color: var(--color-interactive);
+    cursor: zoom-in;
+}
