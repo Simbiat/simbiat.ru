@@ -26,12 +26,6 @@ class FreeCompany extends Page
         $headers = (new Headers);
         #Sanitize ID
         $id = rawurldecode($path[0] ?? '');
-
-
-        #Placeholder
-        return ['http_error' => 503, 'construction' => true, 'error_page' => true];
-
-
         #Try to get details
         try {
             $outputArray['freecompany'] = (new \Simbiat\fftracker\Entities\FreeCompany())->setId($id)->getArray();

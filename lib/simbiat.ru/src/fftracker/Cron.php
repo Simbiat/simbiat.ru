@@ -156,15 +156,34 @@ class Cron
         try {
             $worlds = $dbCon->selectAll('
                 (
-                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, `entity` FROM `'.self::dbPrefix.'server`
+                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'linkshell\' AS `entity` FROM `'.self::dbPrefix.'server`
+                    CROSS JOIN `'.self::dbPrefix.'orderby`
+                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    WHERE `orderID` IN (1, 2, 3, 4)
+                )
+                UNION ALL
+                (
+                    SELECT `datacenter` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'crossworldlinkshell\' AS `entity` FROM `'.self::dbPrefix.'orderby`
+                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    CROSS JOIN (
+                        SELECT UNIQUE(`datacenter`) FROM `'.self::dbPrefix.'server`
+                    ) `dataCenters`
+                    CROSS JOIN (
+                        SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
+                    ) `pages`
+                    WHERE `orderID` IN (1, 2, 3, 4)
+                )
+                UNION ALL
+                (
+                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `'.self::dbPrefix.'server`
                     CROSS JOIN `'.self::dbPrefix.'orderby`
                     CROSS JOIN `'.self::dbPrefix.'count_filter`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 20 AS `page`
                     ) `pages`
-                    CROSS JOIN (
-                        SELECT \'linkshell\' AS `entity` UNION SELECT \'freecompany\' AS `entity`
-                    ) `entities`
                     WHERE `orderID` IN (1, 2, 3, 4)
                 )
                 UNION ALL
@@ -186,18 +205,6 @@ class Cron
                         SELECT 1 AS `page` UNION SELECT 20 AS `page`
                     ) `pages`
                     WHERE `orderID` IN (1, 2, 5, 6)
-                )
-                UNION ALL
-                (
-                    SELECT `datacenter` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'crossworldlinkshell\' AS `entity` FROM `'.self::dbPrefix.'orderby`
-                    CROSS JOIN `'.self::dbPrefix.'count_filter`
-                    CROSS JOIN (
-                        SELECT UNIQUE(`datacenter`) FROM `'.self::dbPrefix.'server`
-                    ) `dataCenters`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    WHERE `orderID` IN (1, 2, 3, 4)
                 )
                 UNION ALL
                 (

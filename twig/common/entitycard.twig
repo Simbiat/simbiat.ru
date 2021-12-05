@@ -13,7 +13,7 @@
     {% if crossworld %}
         {% set url = 'fftracker/crossworld_linkshell' %}
     {% else %}
-            {% set url = 'fftracker/linkshell' %}
+        {% set url = 'fftracker/linkshell' %}
     {% endif %}
 {% endif %}
 {# Actual card #}
@@ -41,6 +41,9 @@
         {% endif %}
         {% if pvprankid and pvprankid != 3 %}
             <img class="entityRank" loading="lazy" decoding="async" alt="{{rank}}" data-tooltip="{{rank}}" src="/img/fftracker/pvpranks/{{pvprankid}}.png">
+        {% endif %}
+        {% if rankid matches '/^\\d+$/' %}
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{rank}}" data-tooltip="{{rank}}" src="/img/fftracker/fcranks/{{rankid}}.png">
         {% endif %}
         {{name|raw}}
     </span>

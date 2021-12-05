@@ -42,6 +42,8 @@
                 {{ include('fftracker/pvpteam.twig')}}
             {% elseif subServiceName == 'achievement' %}
                 {{ include('fftracker/achievement.twig')}}
+            {% elseif subServiceName == 'freecompany' %}
+                {{ include('fftracker/freecompany.twig')}}
             {% endif %}
         </article>
         {{pagination_bottom|raw}}

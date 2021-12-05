@@ -1,0 +1,63 @@
+<section>
+    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ freecompany.name }}" src="/img/fftracker/merged-crests/{{freecompany.crest|slice(0,2)}}/{{freecompany.crest|slice(2,2)}}/{{freecompany.crest}}.png">
+    <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on <time datetime="{{freecompany.dates.formed|date("Y-m-d")}}">{{freecompany.dates.formed|date("d/m/Y")}}</time> and registered on <time datetime="{{freecompany.dates.registered|date("Y-m-d")}}">{{freecompany.dates.registered|date("d/m/Y")}}</time> with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on <time datetime="{{freecompany.dates.updated|date("Y-m-d")}}">{{freecompany.dates.updated|date("d/m/Y")}}</time>.{% if freecompany.dates.deleted %} Was disbanded on <time datetime="{{freecompany.dates.deleted|date("Y-m-d")}}">{{freecompany.dates.deleted|date("d/m/Y")}}</time>.{% endif %}</p>
+    <p>
+        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i> leaving tags <b>"{{ freecompany.tag }}"</b> all over the place.
+        {%if freecompany.location.estate.ward %}
+            {% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} a
+            {% if freecompany.location.estate.size == 1 %}
+                small
+            {% elseif freecompany.location.estate.size == 2 %}
+                medium
+            {% elseif freecompany.location.estate.size == 3 %}
+                large
+            {% endif %}
+            {%if freecompany.location.estate.name %}
+                base named <i>"{{ freecompany.location.estate.name }}"</i>
+            {% else %}
+                land
+            {% endif %}
+            on plot <i>{{freecompany.location.estate.plot}}</i> in ward <i>{{freecompany.location.estate.ward}}</i> of <i>{{freecompany.location.estate.area}}</i>, {{freecompany.location.estate.city}}, {{freecompany.location.estate.region}} <a class="galleryZoom" href="/img/fftracker/maps/{{freecompany.location.estate.area}}/{{freecompany.location.estate.plot}}.jpg" target="_blank" data-tooltip="{{freecompany.location.estate.area}}, plot {{freecompany.location.estate.plot}}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.png"></a>.
+        {% endif %}
+    </p>
+    {%if freecompany.location.estate.message %}
+        <p>{% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} this message on its plot placard:</p>
+        <blockquote>{{freecompany.location.estate.message|raw}}</blockquote>
+    {% endif %}
+    {%if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
+        <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
+        <ul>
+            {% for focus, value in freecompany.focus %}
+                {%if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/img/fftracker/focus/{{ focus }}.png">{{ focus }}</li>{% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if not freecompany.dates.deleted %}
+        {% if freecompany.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{freecompany.community}}" target="_blank">community</a>.{% endif %}
+        {%if freecompany.recruiting == 1 %}
+            <p>Is recruiting{%if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
+            {%if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}
+                <ul>
+                    {% for seeking, value in freecompany.seeking %}
+                        {%if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/img/fftracker/roles/{{ seeking }}.png">{{ seeking }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {% if freecompany.oldNames|length > 0 %}
+        <p>Had also been known under <i>{{ freecompany.oldNames|length }}</i> other name{% if freecompany.oldNames|length > 1 %}s{% endif %}:</p>
+        <ul>
+            {% for name in freecompany.oldNames %}
+                <li>{{ name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p>Current members:</p>
+        <div class="searchResults">
+            {% for entity in freecompany.members %}
+                {{ include('common/entitycard.twig', entity) }}
+            {% endfor %}
+        </div>
+
+</section>
