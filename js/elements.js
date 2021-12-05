@@ -8,7 +8,7 @@ function copyQuoteInit()
         //Modifying innerHTML instead of insertBefore, since block may not have any actual children in the first place, and as per https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
         //"When the element does not have a first child, then firstChild is null. The element is still appended to the parent, after the last child."
         //This results in same effect as with appendChild, that the image is inserted at the end, which is not what we want
-        item.innerHTML = '<img src="/img/copy.svg" alt="Copy block" class="copyQuote">' + item.innerHTML;
+        item.innerHTML = '<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Copy block" class="copyQuote">' + item.innerHTML;
     });
     document.querySelectorAll('.copyQuote, q').forEach(item => {
         item.addEventListener('click', copyQuote);

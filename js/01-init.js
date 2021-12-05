@@ -1,7 +1,7 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
 /*globals signInUpInit, ariaInit, webShareInit, backToTop, timer, colorValue, bicInit, detailsInit,
 colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader, tooltipInit, copyQuoteInit,
-placeholders, formInit*/
+placeholders, formInit, galleryInit*/
 /*exported pageTitle*/
 'use strict';
 
@@ -61,6 +61,7 @@ function attachListeners()
     detailsInit();
     copyQuoteInit();
     formInit();
+    galleryInit();
     //Click handling for toggling sidebar
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
         item.addEventListener('click', toggleSidebar);
