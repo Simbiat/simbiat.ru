@@ -61,7 +61,7 @@ class Cron
                         UNION ALL
                         SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'linkshell`
                         UNION ALL
-                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `'.self::dbPrefix.'achievement` WHERE `achievementid` IN (SELECT UNIQUE(`achievementid`) FROM `'.self::dbPrefix.'character_achievement`)
+                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `'.self::dbPrefix.'achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `'.self::dbPrefix.'character_achievement`)
                     ) `allEntities` WHERE `deleted` IS NULL
                     ORDER BY `updated` LIMIT :maxLines',
                 [
