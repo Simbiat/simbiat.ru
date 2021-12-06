@@ -74,7 +74,7 @@ class PvPTeam extends Entity
     {
         $this->name = $fromDB['name'];
         $this->dates = [
-            'formed' => strtotime($fromDB['formed']),
+            'formed' => (empty($fromDB['formed']) ? null : strtotime($fromDB['formed'])),
             'registered' => strtotime($fromDB['registered']),
             'updated' => strtotime($fromDB['updated']),
             'deleted' => (empty($fromDB['deleted']) ? null : strtotime($fromDB['deleted'])),
