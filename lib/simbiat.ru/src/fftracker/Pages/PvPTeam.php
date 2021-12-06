@@ -46,9 +46,14 @@ class PvPTeam extends Page
         #Link header/tag for API
         $altLink = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/pvpteam/' . $id],
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/pvpteam/' . $id.'/lodestone/'],
-            ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/pvpteam/' . $id],
         ];
+        if (empty($outputArray['pvpteam']['dates']['deleted'])) {
+            $altLink[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/pvpteam/' . $id. '/lodestone'];
+            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/pvpteam/' . $id];
+            if (!empty($outputArray['pvpteam']['community'])) {
+                $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['pvpteam']['community']];
+            }
+        }
         #Send HTTP header
         $headers->links($altLink);
         #Add link to HTML

@@ -47,9 +47,14 @@ class FreeCompany extends Page
         #Link header/tag for API
         $altLink = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/freecompany/' . $id],
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompany/' . $id.'/lodestone/'],
-            ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/freecompany/' . $id],
         ];
+        if (empty($outputArray['freecompany']['dates']['deleted'])) {
+            $altLink[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompany/' . $id. '/lodestone'];
+            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/freecompany/' . $id];
+            if (!empty($outputArray['freecompany']['community'])) {
+                $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['freecompany']['community']];
+            }
+        }
         #Send HTTP header
         $headers->links($altLink);
         #Add link to HTML
