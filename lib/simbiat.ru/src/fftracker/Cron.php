@@ -53,19 +53,16 @@ class Cron
             $dbCon = (new Controller);
             $entities = $dbCon->selectAll('
                     SELECT `type`, `id` FROM (
-                        SELECT * FROM (
-                            SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'character`
-                            UNION ALL
-                            SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'freecompany`
-                            UNION ALL
-                            SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'pvpteam`
-                            UNION ALL
-                            SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'linkshell`
-                            WHERE `deleted` IS NULL
-                        ) `nonAch`
+                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'character`
                         UNION ALL
-                        SELECT \'achievement\' AS `type`, `'.self::dbPrefix.'achievement`.`achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `'.self::dbPrefix.'achievement`
-                    ) `allEntities`
+                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'freecompany`
+                        UNION ALL
+                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'pvpteam`
+                        UNION ALL
+                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'linkshell`
+                        UNION ALL
+                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `'.self::dbPrefix.'achievement` WHERE `achievementid` IN (SELECT UNIQUE(`achievementid`) FROM `'.self::dbPrefix.'character_achievement`)
+                    ) `allEntities` WHERE `deleted` IS NULL
                     ORDER BY `updated` LIMIT :maxLines',
                 [
                     ':maxLines'=>[$limit, 'int'],
