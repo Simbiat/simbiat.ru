@@ -5,7 +5,7 @@ namespace Simbiat\fftracker;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'achievements',
+    protected array $subRoutes = ['search', 'characters', 'freecompanies', 'pvpteams', 'linkshells', 'achievements', 'statistics',
                                   'track',  'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'crossworldlinkshell', 'achievement'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
@@ -22,6 +22,7 @@ class Router extends \Simbiat\Abstracts\Router
         return match(strtolower($path[0])) {
             'search' => (new Pages\Search)->get(array_slice($path, 1)),
             'track' => (new Pages\Track)->get(array_slice($path, 1)),
+            'statistics' => (new Pages\Statistics)->get(array_slice($path, 1)),
             'character' => (new Pages\Character)->get(array_slice($path, 1)),
             'freecompany' => (new Pages\FreeCompany)->get(array_slice($path, 1)),
             'pvpteam' => (new Pages\PvPTeam)->get(array_slice($path, 1)),
