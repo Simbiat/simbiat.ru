@@ -53,7 +53,6 @@ class Linkshell extends Page
         $this->h1 = $this->title = $outputArray['linkshell']['name'];
         $this->ogdesc = $outputArray['linkshell']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
-        #Link header/tag for API
         $altLink = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id],
         ];

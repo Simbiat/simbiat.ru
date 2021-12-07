@@ -44,7 +44,6 @@ class Achievement extends Page
         $this->h1 = $this->title = $outputArray['achievement']['name'];
         $this->ogdesc = $outputArray['achievement']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
-        #Link header/tag for API
         $altLink = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/achievement/' . $id],
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievement/' . $id.'/lodestone/'],
