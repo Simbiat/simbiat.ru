@@ -6,5 +6,5 @@ class CrossworldLinkshell extends Linkshell
 {
     #Custom properties
     protected const crossworld = true;
-    protected string $idFormat = '/^[a-zA-Z0-9]{40}$/mi';
+    protected string $idFormat = '/^[a-z0-9]{40}$/m';
 }
