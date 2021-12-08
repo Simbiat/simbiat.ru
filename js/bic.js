@@ -44,6 +44,9 @@ function bicCalc()
     //Initiate request
     result.classList.add('warning');
     result.innerHTML = 'Проверяем...';
+    //Get spinner
+    let spinner = document.getElementById('bic_spinner');
+    spinner.classList.remove('hidden');
     ajax(location.protocol+'//'+location.host+'/api/bictracker/keying/'+bicKey.value+'/'+accKey.value+'/').then(data => {
         result.classList.remove(...result.classList);
         if (data === true) {
@@ -57,6 +60,7 @@ function bicCalc()
                 result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data + ' (' + accKey.value.replace(/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u, '$1<span class="success">' + data + '</span>$3') + ')';
             }
         }
+        spinner.classList.add('hidden');
     });
 }
 
