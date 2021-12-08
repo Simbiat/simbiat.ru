@@ -85,8 +85,25 @@ class Api
         if ((new HomePage)->dbConnect() === false) {
             $this->apiEcho(httpCode: '503');
         }
-        if (in_array($uri[2], ['register', 'update'])) {
-            $data = (new \Simbiat\fftracker\Cron)->UpdateEntity($uri[1], $uri[0]);
+        if ($uri[2] === 'update') {
+            $data = match ($uri[0]) {
+                'character' => (new Character)->setId($uri[1])->update(),
+                'freecompany' => (new FreeCompany)->setId($uri[1])->update(),
+                'pvpteam' => (new PvPTeam)->setId($uri[1])->update(),
+                'linkshell' => (new Linkshell)->setId($uri[1])->update(),
+                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->update(),
+                'achievement' => (new Achievement)->setId($uri[1])->update(),
+            };
+        } elseif ($uri[2] === 'register') {
+            /** @noinspection PhpVoidFunctionResultUsedInspection */
+            $data = match ($uri[0]) {
+                'character' => (new Character)->setId($uri[1])->register(),
+                'freecompany' => (new FreeCompany)->setId($uri[1])->register(),
+                'pvpteam' => (new PvPTeam)->setId($uri[1])->register(),
+                'linkshell' => (new Linkshell)->setId($uri[1])->register(),
+                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->register(),
+                'achievement' => $this->apiEcho(httpCode: '400'),
+            };
         } elseif ($uri[2] === 'lodestone') {
             $data = match ($uri[0]) {
                 'character' => (new Character)->setId($uri[1])->getFromLodestone(),

@@ -412,7 +412,7 @@ select {
     cursor: pointer;
     background-color: var(--color-article);
     color: var(--color-text);
-    margin: 0.5rem;
+    margin: 0.5rem 0 0 0;
 }
 select:active,
 select:focus,

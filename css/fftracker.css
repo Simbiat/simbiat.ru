@@ -33,6 +33,25 @@
     width: 4rem;
     height: 4rem;
 }
+#ff_track_id,
+#ff_track_type {
+    width: 22rem;
+}
+#ff_track_id_wrap,
+#ff_track_type_wrap {
+    display: block;
+    width: 22rem;
+}
+#ff_track_submit {
+    display: block;
+    margin: auto;
+}
+#ff_track_spinner {
+    width: 3rem;
+    height: 3rem;
+    display: block;
+    margin: auto;
+}
 @media (max-width: 55.599999em) {
     .ff_char_page {
         flex-direction: column;

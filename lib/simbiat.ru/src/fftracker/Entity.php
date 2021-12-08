@@ -25,6 +25,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     #Function to update the entity
     abstract protected function updateDB(): string|bool;
 
+    #Update the entity
     public function update(): string|bool
     {
         #Check if ID was set
@@ -61,6 +62,39 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             unset($this->lodestone['404']);
         }
         return $this->updateDB();
+    }
+
+    #Register the entity, if it has not been registered already
+    public function register(): bool|string
+    {
+        #Check if ID was set
+        if ($this->id === null) {
+            return false;
+        }
+        try {
+            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
+            /** @noinspection SqlResolve */
+            $check = $this->dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
+        } catch (\Throwable $e) {
+            error_log($e->getMessage()."\r\n".$e->getTraceAsString());
+            return false;
+        }
+        if ($check === true) {
+            #Entity already registered
+            return true;
+        } else {
+            #Try to get data from Lodestone
+            $this->lodestone = $this->getFromLodestone();
+            if (!is_array($this->lodestone)) {
+                return false;
+            }
+            if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
+                return '404';
+            } else {
+                unset($this->lodestone['404']);
+            }
+            return $this->updateDB();
+        }
     }
 
     #Function to update the entity

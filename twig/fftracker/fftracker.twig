@@ -44,6 +44,8 @@
                 {{ include('fftracker/achievement.twig')}}
             {% elseif subServiceName == 'freecompany' %}
                 {{ include('fftracker/freecompany.twig')}}
+            {% elseif subServiceName == 'track' %}
+                {{ include('fftracker/track.twig')}}
             {% endif %}
         </article>
         {{pagination_bottom|raw}}
