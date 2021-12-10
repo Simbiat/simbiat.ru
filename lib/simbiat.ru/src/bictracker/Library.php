@@ -58,6 +58,7 @@ class Library
         $currentDate = strtotime(date('d.m.Y', time()));
         #Get date of current library
         $libDate = $this->bicDate();
+        echo $currentDate.'<br>'.$libDate;
         $libDate = strtotime(date('d.m.Y', intval($libDate)));
         while ($libDate <= $currentDate) {
             try {
@@ -347,14 +348,14 @@ class Library
                     #Set `DateIn` for "bad" entries. We are assuming, that affected entries were added at least at the time of BIC library creation. Another case of "bad" data.
                     $queries[] = ['UPDATE `'.self::dbPrefix.'list` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
                     $queries[] = ['UPDATE `'.self::dbPrefix.'accounts` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
-                    #Increase $libDate by 1 day
-                    $libDate = $libDate + 86400;
                     $queries[] = [
                         'UPDATE `'.self::dbPrefix.'settings` SET `value`=:date WHERE `setting`=\'date\';',
                         [':date' => $libDate],
                     ];
                     #Run queries for BICs removals and library update
                     $this->dbController->query($queries);
+                    #Increase $libDate by 1 day
+                    $libDate = $libDate + 86400;
                     #Remove library file
                     @unlink($download);
                     $this->log($libDate, 'Успешное обновление', $manual);
