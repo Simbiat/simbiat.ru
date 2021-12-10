@@ -55,6 +55,10 @@ class HomePage
 
     public function canonical(): void
     {
+        if (empty($_SERVER['HTTP_HOST'])) {
+            #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
+            self::$headers->clientReturn('403', true);
+        }
         #Force HTTPS
         $this->forceSecure();
         #Force WWW
