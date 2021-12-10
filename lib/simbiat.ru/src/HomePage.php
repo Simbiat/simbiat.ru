@@ -170,10 +170,10 @@ class HomePage
             #Get content
             $content = str_replace('%expires%', date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight')), file_get_contents($GLOBALS['siteconfig']['maindir'].'/static/.well-known/security.txt'));
             (new Common)->zEcho($content, 'week');
-        } elseif (is_file($GLOBALS['siteconfig']['maindir'].'/static/'.$request)) {
+        } elseif (@is_file($GLOBALS['siteconfig']['maindir'].'static/'.$request)) {
             #Check if exists in static folder
-            return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'/static/'.$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
-        } elseif (is_file($GLOBALS['siteconfig']['maindir'].$request)) {
+            return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'static/'.$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
+        } elseif (@is_file($GLOBALS['siteconfig']['maindir'].$request)) {
             #Attempt to send the file
             if (preg_match('/^('.implode('|', $GLOBALS['siteconfig']['prohibited']).').*$/i', $request) === 0) {
                 return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
