@@ -360,11 +360,11 @@ class HomePage
             session_write_close();
         }
         #Cache page if cache age is set up
-        if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
-            self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
-        } else {
+        #if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
+            #self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
+        #} else {
             (new Common)->zEcho($output, $cacheStrat);
-        }
+        #}
         exit;
     }
 }
