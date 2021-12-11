@@ -76,7 +76,7 @@ trait Traits
             #Check if path exists
             if (!is_dir($finalPath)) {
                 #Create it recursively
-                mkdir($finalPath, recursive: true);
+                @mkdir($finalPath, recursive: true);
             }
             #Check if file with hash name exists
             if (!file_exists($finalPath.$hash.'.png')) {
@@ -103,7 +103,7 @@ trait Traits
             #Create directory if missing
             if (!is_dir(dirname($to))) {
                 #Create it recursively
-                mkdir(dirname($to), recursive: true);
+                @mkdir(dirname($to), recursive: true);
             }
             #Copy to actual location
             copy(sys_get_temp_dir().'/'.basename($to), $to);
