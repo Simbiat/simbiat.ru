@@ -189,6 +189,8 @@ class Character extends Entity
             }
             #Reduce number of <br>s in biography
             $this->lodestone['bio'] = $this->removeBrs($this->lodestone['bio'] ?? '');
+            #Try to download avatar
+            $this->avatarDownload($this->lodestone['avatar']);
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `'.self::dbPrefix.'character`(
@@ -364,5 +366,17 @@ class Character extends Entity
             error_log($e->getMessage()."\r\n".$e->getTraceAsString());
             return false;
         }
+    }
+
+    #Helper function to download avatars
+    private function avatarDownload(string $avatar): void
+    {
+        #Get link for portrait
+        $portrait = str_replace('c0_96x96', 'l0_640x873', $avatar);
+        #Get destination
+        $name = str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96'], '', $avatar);
+        $dir = substr($name, 0, 2).'/'.substr($name, 2, 2).'/';
+        $this->imageDownload($avatar, $GLOBALS['siteconfig']['ffxiv_avatars'].'96x96'.'/'.$dir.$name);
+        $this->imageDownload($portrait, $GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$dir.$name);
     }
 }

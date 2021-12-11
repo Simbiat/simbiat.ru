@@ -28,7 +28,7 @@
         {% elseif type == 'achievement' %}
             <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/icons/{{icon}}">
         {% elseif type == 'character' %}
-            <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/avatar/{{icon}}c0_96x96.jpg">
+            <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/avatars/96x96/{{icon|slice(0,2)}}/{{icon|slice(2,2)}}/{{icon}}.jpg">
         {% elseif type == 'freecompany' or type == 'pvpteam' %}
             <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/merged-crests/{{icon|slice(0,2)}}/{{icon|slice(2,2)}}/{{icon}}.png">
         {% elseif type == 'linkshell' %}

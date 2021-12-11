@@ -94,4 +94,19 @@ trait Traits
             @unlink($imgFolder . $groupId . '.png');
         }
     }
+
+    #Function to download avatar
+    private function imageDownload(string $from, string $to): void
+    {
+        #Download to temp
+        if (file_put_contents(sys_get_temp_dir().'/'.basename($to), @fopen($from, 'r'))) {
+            #Create directory if missing
+            if (!is_dir(dirname($to))) {
+                #Create it recursively
+                mkdir(dirname($to), recursive: true);
+            }
+            #Copy to actual location
+            copy(sys_get_temp_dir().'/'.basename($to), $to);
+        }
+    }
 }
