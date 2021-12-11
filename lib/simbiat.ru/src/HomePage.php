@@ -156,9 +156,6 @@ class HomePage
             #Stream FFXIV icons
             $imgPath = preg_replace('/^(img\/fftracker\/icon\/)(.+)/i', 'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/$2', $request);
             (new Sharing)->proxyFile($imgPath, 'week');
-        } elseif (preg_match('/^(favicon\.ico)|(img\/favicons\/favicon\.ico)$/i', $request) === 1) {
-            #Process favicon
-            (new Sharing)->fileEcho($GLOBALS['siteconfig']['favicon']);
         } elseif (preg_match('/^(bic)($|\/.*)/i', $request) === 1) {
             #Redicrect 'bic' to 'bictracker'
             self::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/' . (preg_replace('/^(bic)($|\/.*)/i', 'bictracker$2', $request)), true, true, false);
@@ -173,15 +170,9 @@ class HomePage
         } elseif (@is_file($GLOBALS['siteconfig']['maindir'].'static/'.$request)) {
             #Check if exists in static folder
             return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'static/'.$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
-        } elseif (@is_file($GLOBALS['siteconfig']['maindir'].$request)) {
-            #Attempt to send the file
-            if (preg_match('/^('.implode('|', $GLOBALS['siteconfig']['prohibited']).').*$/i', $request) === 0) {
-                return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
-            } else {
-                return 403;
-            }
-        } else {
-            #Create HTMLCache object to check for cache
+        #Caching logic seems to be greatly affecting performance on PROD. Needs revising
+        #} else {
+            /*#Create HTMLCache object to check for cache
             self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
             #Attempt to use cache
             $output = self::$HTMLCache->get('', true, false);
@@ -196,7 +187,7 @@ class HomePage
                     }
                 }
                 self::$HTMLCache->cacheOutput($output);
-            }
+            }*/
         }
         #Return 0, since we did not hit anything
         return 0;
@@ -229,7 +220,7 @@ class HomePage
             ['rel' => 'preload', 'href' => '/js/'.$this->filesVersion($GLOBALS['siteconfig']['jsdir']).'.js', 'as' => 'script'],
         ]);
         #Send headers
-        self::$headers->links($GLOBALS['siteconfig']['links']);
+        #self::$headers->links($GLOBALS['siteconfig']['links']);
     }
 
     #Database connection
