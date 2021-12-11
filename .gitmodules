@@ -58,3 +58,9 @@
 	path = img/fftracker/merged-crests
 	url = https://github.com/Simbiat/FFXIV-Crests
 	branch = main
+[submodule "img/fftracker/icons"]
+	path = img/fftracker/icons
+	url = https://github.com/Simbiat/FFXIV-Icons
+[submodule "img/fftracker/avatars"]
+	path = img/fftracker/avatars
+	url = https://github.com/Simbiat/FFXIV-Avatars
