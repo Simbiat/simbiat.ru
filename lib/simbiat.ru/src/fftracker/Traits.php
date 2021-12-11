@@ -107,6 +107,7 @@ trait Traits
             }
             #Copy to actual location
             @copy(sys_get_temp_dir().'/'.basename($to), $to);
+            @unlink(sys_get_temp_dir().'/'.basename($to));
         }
     }
 }
