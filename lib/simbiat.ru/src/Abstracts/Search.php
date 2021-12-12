@@ -42,7 +42,7 @@ abstract class Search
             }
         }
         #Cache DB controller
-        $this->dbController = (new Controller);
+        $this->dbController = $GLOBALS['dbController'];
     }
 
     public final function search(string $what = '', int $limit = 15): array

@@ -13,7 +13,7 @@ class Bans
     {
         #Cache DB controller, if not done already
         if (self::$dbController === null) {
-            self::$dbController = new Controller;
+            self::$dbController = $GLOBALS['dbController'];
         }
     }
 

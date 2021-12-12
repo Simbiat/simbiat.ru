@@ -28,7 +28,7 @@ trait Common
         try {
             #Cache DB controller, if not done already
             if (self::$dbController === NULL) {
-                self::$dbController = new Controller;
+                self::$dbController = $GLOBALS['dbController'];
             }
             self::$dbController->query(
                 'INSERT INTO `uc__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `uc__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',

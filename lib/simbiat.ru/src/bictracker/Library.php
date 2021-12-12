@@ -40,7 +40,7 @@ class Library
     public function __construct()
     {
         #Cache DB controller
-        $this->dbController = (new Controller);
+        $this->dbController = $GLOBALS['dbController'];
     }
 
 

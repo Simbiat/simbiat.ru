@@ -62,7 +62,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Cache DB controller, if not done already
         if (self::$dbController === NULL) {
             try {
-                self::$dbController = new Controller;
+                self::$dbController = $GLOBALS['dbController'];
                 $this->security = new Security;
             } catch (\Exception $e) {
                 #Do nothing, session will fail to be opened on `open` call

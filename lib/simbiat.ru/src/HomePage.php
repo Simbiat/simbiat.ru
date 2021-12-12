@@ -171,10 +171,10 @@ class HomePage
                 (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings']));
                 self::$dbup = true;
                 #Cache controller
-                $dbController = (new Controller);
+                $GLOBALS['dbController'] = (new Controller);
                 #Check for maintenance
-                self::$dbUpdate = boolval($dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
-                $dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
+                self::$dbUpdate = boolval($GLOBALS['dbController']->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
+                $GLOBALS['dbController']->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
                 #In some cases these extra checks are not required
                 if ($extraChecks === true) {
                     #Check if maintenance
@@ -240,7 +240,7 @@ class HomePage
         $twigVars['link_tags'] = self::$headers->links($GLOBALS['siteconfig']['links'], 'head');
         if (self::$dbup) {
             #Update default variables with values from database
-            $twigVars = array_merge($twigVars, (new Controller)->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
+            $twigVars = array_merge($twigVars, $GLOBALS['dbController']->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
         } else {
             #Enforce 503 error
             $error = 503;

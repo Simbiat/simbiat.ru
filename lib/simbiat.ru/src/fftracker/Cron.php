@@ -50,7 +50,7 @@ class Cron
             $limit = 1;
         }
         try {
-            $dbCon = (new Controller);
+            $dbCon = $GLOBALS['dbController'];
             $entities = $dbCon->selectAll('
                     SELECT `type`, `id` FROM (
                         SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'character`
@@ -85,7 +85,7 @@ class Cron
     {
         try {
             #Cache controller
-            $dbController = (new Controller);
+            $dbController = $GLOBALS['dbController'];
             #Get the freshest character ID
             $characterId = $dbController->selectValue('SELECT `characterid` FROM `' . self::dbPrefix . 'character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
             #Grab its data from Lodestone
@@ -138,7 +138,7 @@ class Cron
                     ];
                 }
             }
-            return (new Controller)->query($queries);
+            return $GLOBALS['dbController']->query($queries);
         } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
@@ -148,7 +148,7 @@ class Cron
     public function registerNew(): bool|string
     {
         $Lodestone = (new Lodestone);
-        $dbCon = (new Controller);
+        $dbCon = $GLOBALS['dbController'];
         #Generate list of pages to parse (every hour 256 pages to scan, 2 seconds delay for each?)
         try {
             $worlds = $dbCon->selectAll('

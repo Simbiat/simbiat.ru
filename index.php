@@ -61,6 +61,9 @@ if (preg_match('/^cli(-server)?$/i', php_sapi_name()) === 1) {
     $CLI = false;
 }
 
+#Global Database Controller object for saving resources
+$dbController = null;
+
 #If not CLI - do redirects and other HTTP-related stuff
 if ($CLI) {
     #Process Cron
@@ -117,7 +120,7 @@ if ($CLI) {
             $vars = [
                 'h1' => 'Home',
                 'serviceName' => 'landing',
-                'notice' => (new Controller)->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
+                'notice' => $GLOBALS['dbController']->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
             ];
         } else {
             $vars = [];

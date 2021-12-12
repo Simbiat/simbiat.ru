@@ -53,7 +53,7 @@ class Statistics
         #Get ArrayHelpers object for optimization
         $ArrayHelpers = (new ArrayHelpers);
         #Get connection object for slight optimization
-        $dbCon = (new Controller);
+        $dbCon = $GLOBALS['dbController'];
         switch ($type) {
             case 'genetics':
                 #Get statistics by clan

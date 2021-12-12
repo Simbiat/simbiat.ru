@@ -26,7 +26,7 @@ abstract class Entity
             throw new \LogicException(get_class($this) . ' must have a non-empty `dbPrefix` constant.');
         }
         #ALl entities are expected to use database somehow, thus using
-        $this->dbController = (new Controller);
+        $this->dbController = $GLOBALS['dbController'];
         #Set debug flag
         $this->debug = $debug;
     }

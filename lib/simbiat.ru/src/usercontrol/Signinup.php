@@ -13,7 +13,7 @@ class Signinup
     {
         #Cache DB controller, if not done already
         if (self::$dbController === NULL) {
-            self::$dbController = new Controller;
+            self::$dbController = $GLOBALS['dbController'];
         }
     }
 
