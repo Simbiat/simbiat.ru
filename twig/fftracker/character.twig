@@ -36,7 +36,7 @@
         {% if not character.avatarID %}
             <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1%}male{% else %}female{% endif %}{{character.biology.race}}.png">
         {% else %}
-            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/avatars/640x873/{{character.avatarID|slice(0,2)}}/{{character.avatarID|slice(2,2)}}/{{character.avatarID}}.jpg">
+            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/avatars/640x873/{{character.id}}.jpg">
         {% endif %}
     </section>
     <section class="ff_char_block">

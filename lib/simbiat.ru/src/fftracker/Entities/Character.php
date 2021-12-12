@@ -375,8 +375,7 @@ class Character extends Entity
         $portrait = str_replace('c0_96x96', 'l0_640x873', $avatar);
         #Get destination
         $name = str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96'], '', $avatar);
-        $dir = substr($name, 0, 2).'/'.substr($name, 2, 2).'/';
-        $this->imageDownload($avatar, $GLOBALS['siteconfig']['ffxiv_avatars'].'96x96'.'/'.$dir.$name);
-        $this->imageDownload($portrait, $GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$dir.$name);
+        $this->imageDownload($avatar, $GLOBALS['siteconfig']['ffxiv_avatars'].'96x96'.'/'.$this->id.'.jpg');
+        $this->imageDownload($portrait, $GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$this->id.'.jpg');
     }
 }

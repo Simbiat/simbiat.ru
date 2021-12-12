@@ -128,49 +128,49 @@ class Statistics
                 if (!$nocache && !empty($json['characters']['changes']['name'])) {
                     $data['characters']['changes']['name'] = $json['characters']['changes']['name'];
                 } else {
-                    $data['characters']['changes']['name'] = $dbCon->countUnique(''.self::dbPrefix.'character_names', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['changes']['name'] = $dbCon->countUnique(''.self::dbPrefix.'character_names', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['changes']['name'], 'value', 'name');
                 }
                 #Most reincarnation
                 if (!$nocache && !empty($json['characters']['changes']['clan'])) {
                     $data['characters']['changes']['clan'] = $json['characters']['changes']['clan'];
                 } else {
-                    $data['characters']['changes']['clan'] = $dbCon->countUnique(''.self::dbPrefix.'character_clans', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['changes']['clan'] = $dbCon->countUnique(''.self::dbPrefix.'character_clans', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['changes']['clan'], 'value', 'name');
                 }
                 #Most servers
                 if (!$nocache && !empty($json['characters']['changes']['server'])) {
                     $data['characters']['changes']['server'] = $json['characters']['changes']['server'];
                 } else {
-                    $data['characters']['changes']['server'] = $dbCon->countUnique(''.self::dbPrefix.'character_servers', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['changes']['server'] = $dbCon->countUnique(''.self::dbPrefix.'character_servers', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['changes']['server'], 'value', 'name');
                 }
                 #Most companies
                 if (!$nocache && !empty($json['characters']['groups']['Free Companies'])) {
                     $data['characters']['groups']['Free Companies'] = $json['characters']['groups']['Free Companies'];
                 } else {
-                    $data['characters']['groups']['Free Companies'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['Free Companies'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
                 }
                 #Most PvP teams
                 if (!$nocache && !empty($json['characters']['groups']['PvP Teams'])) {
                     $data['characters']['groups']['PvP Teams'] = $json['characters']['groups']['PvP Teams'];
                 } else {
-                    $data['characters']['groups']['PvP Teams'] = $dbCon->countUnique(''.self::dbPrefix.'pvpteam_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['PvP Teams'] = $dbCon->countUnique(''.self::dbPrefix.'pvpteam_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
                 }
                 #Most x-linkshells
                 if (!$nocache && !empty($json['characters']['groups']['Linkshells'])) {
                     $data['characters']['groups']['Linkshells'] = $json['characters']['groups']['Linkshells'];
                 } else {
-                    $data['characters']['groups']['Linkshells'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['Linkshells'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
                 }
                 #Most linkshells
                 if (!$nocache && !empty($json['characters']['groups']['linkshell'])) {
                     $data['characters']['groups']['linkshell'] = $json['characters']['groups']['linkshell'];
                 } else {
-                    $data['characters']['groups']['linkshell'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['linkshell'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['linkshell'], 'value', 'name');
                 }
                 #Groups affiliation
@@ -210,7 +210,7 @@ class Statistics
                 if (!$nocache && !empty($json['characters']['most_pvp'])) {
                     $data['characters']['most_pvp'] = $json['characters']['most_pvp'];
                 } else {
-                    $data['characters']['most_pvp'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`, `pvp_matches` AS `count` FROM `'.self::dbPrefix.'character` ORDER BY `'.self::dbPrefix.'character`.`pvp_matches` DESC LIMIT 20');
+                    $data['characters']['most_pvp'] = $dbCon->SelectAll('SELECT `'.self::dbPrefix.'character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`, `pvp_matches` AS `count` FROM `'.self::dbPrefix.'character` ORDER BY `'.self::dbPrefix.'character`.`pvp_matches` DESC LIMIT 20');
                 }
                 break;
             case 'freecompanies':
@@ -450,7 +450,7 @@ class Statistics
                 if (!$nocache && !empty($json['bugs']['noClan'])) {
                     $data['bugs']['noClan'] = $json['bugs']['noClan'];
                 } else {
-                    $data['bugs']['noClan'] = $dbCon->SelectAll('SELECT `characterid` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `'.self::dbPrefix.'character` WHERE `clanid` IS NULL AND `deleted` IS NULL ORDER BY `name`;');
+                    $data['bugs']['noClan'] = $dbCon->SelectAll('SELECT `characterid` AS `id`, `name`, `characterid` AS `icon`, \'character\' AS `type` FROM `'.self::dbPrefix.'character` WHERE `clanid` IS NULL AND `deleted` IS NULL ORDER BY `name`;');
                 }
                 #Groups with no members
                 if (!$nocache && !empty($json['bugs']['noMembers'])) {

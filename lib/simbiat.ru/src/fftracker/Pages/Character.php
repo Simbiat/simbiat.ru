@@ -43,7 +43,7 @@ class Character extends Page
         #Try to exit early based on modification date
         $this->lastModified($outputArray['character']['dates']['updated']);
         #Reset avatar
-        if (!is_file($GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.substr($outputArray['character']['avatarID'], 0, 2).'/'.substr($outputArray['character']['avatarID'], 2, 2).'/'.$outputArray['character']['avatarID'].'.jpg')) {
+        if (!is_file($GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$id.'.jpg')) {
             $outputArray['character']['avatarID'] = null;
         }
         #Continue breadcrumbs

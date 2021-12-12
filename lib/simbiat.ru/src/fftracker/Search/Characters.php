@@ -10,7 +10,7 @@ class Characters extends Search
     #Name of the table to search use
     protected string $table = 'ffxiv__character';
     #List of fields
-    protected string $fields = '`characterid` as `id`, `name`, `avatar` AS `icon`, `updated`';
+    protected string $fields = '`characterid` as `id`, `name`, `characterid` AS `icon`, `updated`';
     #Default order (for main page, for example)
     protected string $orderDefault = '`Updated` DESC';
     #Order for list pages
