@@ -33,19 +33,12 @@ spl_autoload_register(function ($class) {
 
 #Load composer libraries
 use Simbiat\Cron;
-use Simbiat\Database\Controller;
 use Simbiat\Api;
 use Simbiat\HomePage;
 use Simbiat\MainRouter;
 
 #Get config file
 require_once __DIR__. '/config.php';
-
-#################
-#Load old classes. To be removed in future
-#################
-#set_include_path(get_include_path().PATH_SEPARATOR.__DIR__ . '/backend');
-#spl_autoload_register(function ($class_name) {include str_replace('\\', '/', $class_name) . '.php';});
 
 #Determine if test server to enable or disable display_errors
 if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'local.simbiat.ru' && $_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
