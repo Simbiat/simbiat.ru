@@ -71,15 +71,13 @@ if ($CLI) {
 } else {
     $HomePage->canonical();
     #Send common headers
-    $HomePage->commonHeaders();
+    $HomePage::$headers->secFetch();
     #Process requests to files
     if (!empty($_SERVER['REQUEST_URI'])) {
         $fileResult = $HomePage->filesRequests($_SERVER['REQUEST_URI']);
         if ($fileResult === 200) {
             exit;
         } else {
-            #Send HTML specific headers
-            $HomePage->htmlHeaders();
             #Exploding further processing
             $uri = explode('/', $_SERVER['REQUEST_URI']);
             #Check if API
@@ -96,6 +94,7 @@ if ($CLI) {
                 try {
                     #Send links
                     $HomePage->commonLinks();
+                    #echo 'here';exit;
                     #Connect to DB
                     if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
                         $vars = (new MainRouter)->route($uri);
@@ -111,8 +110,6 @@ if ($CLI) {
             }
         }
     } else {
-        #Send HTML specific headers
-        $HomePage->htmlHeaders();
         #Send links
         $HomePage->commonLinks();
         #Connect to DB

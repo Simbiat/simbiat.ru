@@ -59,46 +59,10 @@ class HomePage
             #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
             self::$headers->clientReturn('403', true);
         }
-        #Force HTTPS
-        $this->forceSecure();
-        #Force WWW
-        $this->forceWWW();
-        #Trim URI
-        $this->trimURI();
+        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes
+        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/';
-    }
-
-    #Redirect to HTTPS
-    private function forceSecure(): void
-    {
-        if (
-                #If HTTPS is not set or is set as 'off' - assume HTTP protocol
-                (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') &&
-                #If the above is true, it does not mean we are on HTTP, because there can be a special reverse proxy/balancer case. Thus, we check X-FORWARDED-* headers
-                (empty($_SERVER['HTTP_X_FORWARDED_PROTO']) || $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https') &&
-                (empty($_SERVER['HTTP_X_FORWARDED_SSL']) || $_SERVER['HTTP_X_FORWARDED_SSL'] === 'off') &&
-                #This one is for Microsoft balancers and apps
-                (empty($_SERVER['HTTP_FRONT_END_HTTPS']) || $_SERVER['HTTP_FRONT_END_HTTPS'] === 'off')
-            ) {
-            #Redirect to HTTPS, while keeping the port, in case it's not standard
-            self::$headers->redirect('https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], true, true, false);
-        }
-    }
-
-    #Function to force www version of the website, unless on subdomain
-    private function forceWWW(): void
-    {
-        if (preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1) {
-            #Redirect to www version
-            self::$headers->redirect('https://'.'www.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], true, true, false);
-        }
-    }
-
-    #Function to trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes
-    private function trimURI(): void
-    {
-        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
     }
 
     #Function returns version of the file based on number of files and date of the newest file
@@ -179,23 +143,6 @@ class HomePage
         return 0;
     }
 
-    #Function to send headers common for all items
-    public function commonHeaders(): void
-    {
-        self::$headers->performance()->secFetch()->security('strict', [], [], [], ['GET', 'HEAD', 'POST']);
-    }
-
-    #Function to send HTML only headers
-    public function htmlHeaders(): void
-    {
-        #Ensure, that API does not get feature-policy header (since not used)
-        if (preg_match('/^api(\/.*)?/i', $_SERVER['REQUEST_URI']) === 1) {
-            self::$headers->contentPolicy($GLOBALS['siteconfig']['allowedDirectives'], false);
-        } else {
-            self::$headers->features(['web-share' => '\'self\''])->contentPolicy($GLOBALS['siteconfig']['allowedDirectives'], false);
-        }
-    }
-
     #Function to send common Link headers
     public function commonLinks(): void
     {
@@ -206,7 +153,7 @@ class HomePage
             ['rel' => 'preload', 'href' => '/js/'.$this->filesVersion($GLOBALS['siteconfig']['jsdir']).'.js', 'as' => 'script'],
         ]);
         #Send headers
-        #self::$headers->links($GLOBALS['siteconfig']['links']);
+        self::$headers->links($GLOBALS['siteconfig']['links']);
     }
 
     #Database connection
