@@ -84,15 +84,15 @@ class Bic extends Entity
     {
         $arrayHelpers = (new ArrayHelpers());
         #Pad stuff
-        $fromDB['BIC'] = $this->padBic($fromDB['BIC']);
+        $fromDB['BIC'] = $this->padBic(strval($fromDB['BIC']));
         if (!empty($fromDB['PrntBIC'])) {
-            $fromDB['PrntBIC'] = $this->padBic($fromDB['PrntBIC']);
+            $fromDB['PrntBIC'] = $this->padBic(strval($fromDB['PrntBIC']));
         }
         if (!empty($fromDB['RKC'])) {
-            $fromDB['RKC'] = $this->padBic($fromDB['RKC']);
+            $fromDB['RKC'] = $this->padBic(strval($fromDB['RKC']));
         }
         if (!empty($fromDB['OLD_NEWNUM'])) {
-            $fromDB['OLD_NEWNUM'] = $this->padBic($fromDB['OLD_NEWNUM']);
+            $fromDB['OLD_NEWNUM'] = $this->padBic(strval($fromDB['OLD_NEWNUM']));
         }
         #Get authorized branch
         if (!empty($fromDB['PrntBIC'])) {
@@ -117,8 +117,8 @@ class Bic extends Entity
             #Get successor details for restrictions
             foreach ($fromDB['accounts'][$key]['restrictions'] as $keyRstr => $restriction) {
                 if (!empty($restriction['SuccessorBIC'])) {
-                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `' . self::dbPrefix . 'list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic($restriction['SuccessorBIC'])]);
-                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->padBic($fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC']);
+                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `' . self::dbPrefix . 'list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic(strval($restriction['SuccessorBIC']))]);
+                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->padBic(strval($fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC']));
                 }
             }
         }
@@ -183,7 +183,7 @@ class Bic extends Entity
             $banks = [];
         } else {
             foreach ($banks as $key=>$bank) {
-                $banks[$key]['id'] = $this->padBic($bank['id']);
+                $banks[$key]['id'] = $this->padBic(strval($bank['id']));
                 $predecessor = $this->predecessors($bank['VKEY']);
                 if (!empty($predecessor)) {
                     $banks = array_merge($banks, $predecessor);
@@ -206,7 +206,7 @@ class Bic extends Entity
         } else {
             #Get successors for each successor
             foreach ($bank as $key=>$item) {
-                $bank[$key]['id'] = $this->padBic($item['id']);
+                $bank[$key]['id'] = $this->padBic(strval($item['id']));
                 if (!empty($item[0]['VKEYDEL']) && $item[0]['VKEYDEL'] !== $vkey && $bank[0]['VKEYDEL'] !== $bank[0]['VKEY']) {
                     $bank[$key] = array_merge($item, $this->successors($item[0]['id']));
                 }
@@ -227,14 +227,14 @@ class Bic extends Entity
         if (empty($bank)) {
             return $banks;
         } else {
-            $banks[] = $bank;
-            $bank['id'] = $this->padBic($bank['id']);
+            $bank['id'] = $this->padBic(strval($bank['id']));
             if (!empty($bank['RKC'])) {
-                $bank['RKC'] = $this->padBic($bank['RKC']);
+                $bank['RKC'] = $this->padBic(strval($bank['RKC']));
             }
             if (!empty($bank['PrntBIC'])) {
-                $bank['PrntBIC'] = $this->padBic($bank['PrntBIC']);
+                $bank['PrntBIC'] = $this->padBic(strval($bank['PrntBIC']));
             }
+            $banks[] = $bank;
             #Get RKC for RKC
             if (!empty($bank['RKC']) && $bank['RKC'] !== $bic && $bank['RKC'] !== $bank['id']) {
                 $banks = array_merge($banks, $this->rkcChain($bank['RKC']));
@@ -255,16 +255,16 @@ class Bic extends Entity
         if (empty($bank)) {
             return $banks;
         } else {
-            $banks[] = $bank;
-            $bank['id'] = $this->padBic($bank['id']);
+            $bank['id'] = $this->padBic(strval($bank['id']));
             if (!empty($bank['PrntBIC'])) {
-                $bank['PrntBIC'] = $this->padBic($bank['PrntBIC']);
+                $bank['PrntBIC'] = $this->padBic(strval($bank['PrntBIC']));
             }
             if (!empty($bank['RKC'])) {
-                $bank['RKC'] = $this->padBic($bank['RKC']);
+                $bank['RKC'] = $this->padBic(strval($bank['RKC']));
             }
+            $banks[] = $bank;
             #Get authorized branch of authorized branch
-            if (!empty($bank['PrntBIC']) && $bank['PrntBIC'] !== $bic && isset($bank['id']) && $bank['PrntBIC'] !== $bank['id']) {
+            if (!empty($bank['PrntBIC']) && $bank['PrntBIC'] !== $bic && !empty($bank['id']) && $bank['PrntBIC'] !== $bank['id']) {
                 $banks = array_merge($banks, $this->bicUf($bank['PrntBIC']));
             }
         }
@@ -282,7 +282,7 @@ class Bic extends Entity
             $banks = [];
         } else {
             foreach ($banks as $key=>$bank) {
-                $banks[$key]['id'] = $this->padBic($bank['id']);
+                $banks[$key]['id'] = $this->padBic(strval($bank['id']));
                 $predecessor = $this->getBranches($bank['id']);
                 if (!empty($predecessor)) {
                     $banks = array_merge($banks, $predecessor);
