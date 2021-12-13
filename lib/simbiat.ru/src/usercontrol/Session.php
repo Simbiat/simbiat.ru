@@ -19,46 +19,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
         session_name('__Host-sess_'.preg_replace('/[^a-zA-Z0-9\-_]/', '', $_SERVER['HTTP_HOST']));
-        #Additionally limit cookie to default, that is current domain only. If we manually set it to something, browsers will ignore the cookie due to __Host-' prefix.
-        #ini_set('session.cookie_domain', '');
-        #Set serialization method
-        ini_set('session.serialize_handler', 'php_serialize');
-        #Dissallow permanent storage of session ID cookies
-        ini_set('session.cookie_lifetime', '0');
-        #ENforce use of cookies for session ID storage
-        ini_set('session.use_cookies', 'On');
-        ini_set('session.use_only_cookies', 'On');
-        #Enforce strict mode to prevent an attacker initialized session ID of being used
-        ini_set('session.use_strict_mode', 'On');
-        #Enforce HTTP only to prevent JavaScript injection
-        ini_set('session.cookie_httponly', 'On');
-        #Allow session ID cookies only in case of HTTPS
-        ini_set('session.cookie_secure', 'On');
-        #Allow cookies only for same domain
-        ini_set('session.cookie_samesite', 'Strict');
-        #Set maximum life of session for garbage collector
         if ($sessionLife < 0) {
             $sessionLife = 300;
         }
-        ini_set('session.gc_maxlifetime', strval($sessionLife));
         $this->sessionLife = $sessionLife;
-        #Ensure that garbage collector is always triggered
-        ini_set('session.gc_probability', '1');
-        ini_set('session.gc_divisor', '1');
-        #Disable transparent session ID management (life through URI values)
-        ini_set('session.use_trans_sid', 'Off');
-        #Set length of session IDs
-        ini_set('session.hash_bits_per_character', '6');
-        ini_set('session.sid_length', '256');
-        #Set hash function
-        ini_set('session.hash_function', 'sha3-512');
-        #While we do not expect any files to be created, we change the default directory to the one which is not expected to be readable by the outside world
-        ini_set('session.save_path', __DIR__.'/sessionsdata/');
-        #Allow upload progress tracking
-        ini_set('session.upload_progress.enabled', 'On');
-        ini_set('session.upload_progress.cleanup', 'On');
-        #Since we are modifying data available even for new sessions (on 1st read), leaving lazy_write On (default) will prevent from session data to be written, unless something else is added, which may not happen. Thus turning it off. This can reduce performance a little bit, but this will also help with mitigations of session fixation/hijacking.
-        ini_set('session.lazy_write', 'Off');
         #Cache DB controller, if not done already
         if (self::$dbController === NULL) {
             try {

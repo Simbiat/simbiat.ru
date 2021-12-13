@@ -37,18 +37,8 @@ class HomePage
 
     public function __construct(bool $PROD = false)
     {
-        #Set output compression to 9 for consistency
-        ini_set('zlib.output_compression_level', '9');
-        #Enforce UTC timezone
-        ini_set('date.timezone', 'UTC');
-        date_default_timezone_set('UTC');
-        #Set path to error log
-        ini_set('error_log', getcwd().'/error.log');
         #Update static value
         self::$PROD = $PROD;
-        #Enable/disable display of errors
-        ini_set('display_errors', strval(intval(!self::$PROD)));
-        ini_set('display_startup_errors', strval(intval(!self::$PROD)));
         #Cache headers object
         self::$headers = new Headers;
     }
@@ -116,7 +106,8 @@ class HomePage
             header('Content-Disposition: inline; filename="security.txt"');
             #Get content
             $content = str_replace('%expires%', date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight')), file_get_contents($GLOBALS['siteconfig']['maindir'].'/static/.well-known/security.txt'));
-            (new Common)->zEcho($content, 'week');
+            #(new Common)->zEcho($content, 'week');
+            echo $content;
         } elseif (@is_file($GLOBALS['siteconfig']['maindir'].'static/'.$request)) {
             #Check if exists in static folder
             return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'static/'.$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
@@ -310,7 +301,8 @@ class HomePage
         #if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
             #self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
         #} else {
-            (new Common)->zEcho($output, $cacheStrat);
+            #(new Common)->zEcho($output, $cacheStrat);
+            echo $output;
         #}
         exit;
     }
