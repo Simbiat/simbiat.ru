@@ -96,9 +96,6 @@ class HomePage
         } elseif (preg_match('/^css\/\d+\.css$/i', $request) === 1) {
             #Process CSS
             (new Common)->reductor($GLOBALS['siteconfig']['cssdir'], 'css', true, '', 'aggressive');
-        } elseif (preg_match('/^(bic)($|\/.*)/i', $request) === 1) {
-            #Redicrect 'bic' to 'bictracker'
-            self::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/' . (preg_replace('/^(bic)($|\/.*)/i', 'bictracker$2', $request)), true, true, false);
         } elseif (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
             #'2022-12-31T21:00:00.000Z'
             #Send headers, that will identify this as actual file
@@ -106,11 +103,8 @@ class HomePage
             header('Content-Disposition: inline; filename="security.txt"');
             #Get content
             $content = str_replace('%expires%', date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight')), file_get_contents($GLOBALS['siteconfig']['maindir'].'/static/.well-known/security.txt'));
-            #(new Common)->zEcho($content, 'week');
             echo $content;
-        } elseif (@is_file($GLOBALS['siteconfig']['maindir'].'static/'.$request)) {
-            #Check if exists in static folder
-            return (new Sharing)->fileEcho($GLOBALS['siteconfig']['maindir'].'static/'.$request, allowedMime: $GLOBALS['siteconfig']['allowedMime'], exit: true);
+            exit;
         #Caching logic seems to be greatly affecting performance on PROD. Needs revising
         #} else {
             /*#Create HTMLCache object to check for cache
