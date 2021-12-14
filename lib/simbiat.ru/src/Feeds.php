@@ -55,7 +55,7 @@ class Feeds
                             'uri' => 'https://'.$_SERVER['HTTP_HOST'].'/',
                         ]],
                         'icon' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/simbiat.png',
-                        'logo' => 'https://'.$_SERVER['HTTP_HOST'].'/img/ogimage.png',
+                        'logo' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/ogimage.png',
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [
