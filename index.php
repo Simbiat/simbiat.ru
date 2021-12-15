@@ -5,32 +5,6 @@ declare(strict_types=1);
 
 require __DIR__. '/composer/vendor/autoload.php';
 
-#PSR-4 Autoloader for own libraries
-spl_autoload_register(function ($class) {
-    #Project's prefix
-    $prefix = 'Simbiat\\';
-    #Generate list of folders to search in
-    $libraries = glob(__DIR__.'/lib/*', GLOB_ONLYDIR);
-    #Check if class uses the prefix
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        #No, move to the next registered autoloader
-        return;
-    }
-    #Get the relative class name
-    $relative_class = substr($class, $len);
-    #Itterate over libraries
-    foreach ($libraries as $dir) {
-        #Set file path
-        $file = $dir.'/src/'.str_replace('\\', '/', $relative_class) . '.php';
-        #Check if file exists
-        if (file_exists($file)) {
-            #Require file
-            require $file;
-        }
-    }
-});
-
 #Load composer libraries
 use Simbiat\Cron;
 use Simbiat\Api;
