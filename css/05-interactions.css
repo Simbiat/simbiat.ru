@@ -569,3 +569,37 @@ main::-webkit-scrollbar {
     display: block;
     content: attr(data-tooltip);
 }
+
+/*Snackbar notifications*/
+#snacksContainer {
+    visibility: hidden;
+    position: absolute;
+    bottom: var(--footer-height);
+    width: 100%;
+    margin: 0 auto;
+}
+.snackbar {
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    background-color: var(--color-block);
+    color: var(--color-text);
+    text-align: center;
+    visibility: visible;
+    display: flex;
+    position: relative;
+    padding: 0.25rem;
+    height: 2rem;
+    line-height: 2rem;
+    z-index: 3;
+    margin: 1rem auto;
+}
+.snack_text {
+    vertical-align: top;
+    flex: 1
+}
+.snack_close {
+    display: inline-block;
+    float: right;
+}
