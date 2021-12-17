@@ -1,8 +1,28 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ freecompany.name }}" src="/img/fftracker/merged-crests/{{freecompany.crest|slice(0,2)}}/{{freecompany.crest|slice(2,2)}}/{{freecompany.crest}}.png">
+    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ freecompany.name }}"
+        {% if freecompany.crest %}
+            src="/img/fftracker/merged-crests/{{freecompany.crest|slice(0,2)}}/{{freecompany.crest|slice(2,2)}}/{{freecompany.crest}}.png"
+        {% else %}
+            {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
+                src="/img/fftracker/cities/2.png"
+            {% elseif freecompany.grandCompany == 'Immortal Flames' %}
+                src="/img/fftracker/cities/5.png"
+            {% elseif freecompany.grandCompany == 'Maelstrom' %}
+                src="/img/fftracker/cities/4.png"
+            {% endif %}
+        {% endif %}
+    >
     <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on <time datetime="{{freecompany.dates.formed|date("Y-m-d")}}">{{freecompany.dates.formed|date("d/m/Y")}}</time> and registered on <time datetime="{{freecompany.dates.registered|date("Y-m-d")}}">{{freecompany.dates.registered|date("d/m/Y")}}</time> with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on <time datetime="{{freecompany.dates.updated|date("Y-m-d")}}">{{freecompany.dates.updated|date("d/m/Y")}}</time>.{% if freecompany.dates.deleted %} Was disbanded on <time datetime="{{freecompany.dates.deleted|date("Y-m-d")}}">{{freecompany.dates.deleted|date("d/m/Y")}}</time>.{% endif %}</p>
     <p>
-        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i> leaving tags <b>"{{ freecompany.tag }}"</b> all over the place.
+        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>, leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ freecompany.grandCompany }}"
+        {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
+            src="/img/fftracker/cities/2.png"
+        {% elseif freecompany.grandCompany == 'Immortal Flames' %}
+            src="/img/fftracker/cities/5.png"
+        {% elseif freecompany.grandCompany == 'Maelstrom' %}
+            src="/img/fftracker/cities/4.png"
+        {% endif %}
+        >{% endif %}<i>{{ freecompany.grandCompany }}</i>.
         {%if freecompany.location.estate.ward %}
             {% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} a
             {% if freecompany.location.estate.size == 1 %}
