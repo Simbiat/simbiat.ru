@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 
 class PvPTeam extends Page
@@ -23,7 +24,7 @@ class PvPTeam extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $headers = (new Headers);
+        $headers = HomePage::$headers;
         #Sanitize ID
         $id = rawurldecode($path[0] ?? '');
         #Try to get details

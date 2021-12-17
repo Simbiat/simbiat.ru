@@ -4,6 +4,7 @@ namespace Simbiat\bictracker\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\AccountKeying;
+use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 
 class Keying extends Page
@@ -31,7 +32,7 @@ class Keying extends Page
                 $outputArray['bic_value'] = $path[0];
                 $outputArray['acc_value'] = $path[1];
                 $this->h1 = $this->title = 'Ключевание счёта '.$path[1];
-                $outputArray['link_extra'] = (new Headers)->links([['href' => '/api/bictracker/keying/'.$path[0].'/'.$path[1], 'rel' => 'alternate', 'title' => 'Ссылка на API', 'type' => 'application/json; charset=utf-8'],], 'head');
+                $outputArray['link_extra'] = HomePage::$headers->links([['href' => '/api/bictracker/keying/'.$path[0].'/'.$path[1], 'rel' => 'alternate', 'title' => 'Ссылка на API', 'type' => 'application/json; charset=utf-8'],], 'head');
             }
             if (is_numeric($outputArray['checkResult'])) {
                 $outputArray['properKey'] = preg_replace('/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $path[1]);

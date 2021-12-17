@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 
 class Session implements \SessionHandlerInterface, \SessionIdInterface, \SessionUpdateTimestampHandlerInterface
 {
@@ -26,7 +27,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Cache DB controller, if not done already
         if (self::$dbController === NULL) {
             try {
-                self::$dbController = $GLOBALS['dbController'];
+                self::$dbController = HomePage::$dbController;
                 $this->security = new Security;
             } catch (\Exception $e) {
                 #Do nothing, session will fail to be opened on `open` call

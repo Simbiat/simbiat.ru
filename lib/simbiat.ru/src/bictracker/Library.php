@@ -4,6 +4,7 @@ namespace Simbiat\bictracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 
 class Library
 {
@@ -40,7 +41,7 @@ class Library
     public function __construct()
     {
         #Cache DB controller
-        $this->dbController = $GLOBALS['dbController'];
+        $this->dbController = HomePage::$dbController;
     }
 
 

@@ -3,14 +3,12 @@ declare(strict_types=1);
 namespace Simbiat;
 
 #Some functions in this class can be realized in .htaccess files, but I am implementing the logic in PHP for more control and fewer dependencies on server software (not all web servers support htaccess files)
-
 use DateTimeInterface;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
-use Simbiat\HTTP20\Sharing;
 use Simbiat\usercontrol\Bans;
 use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
@@ -30,6 +28,8 @@ class HomePage
     public static bool $dbup = false;
     #Maintenance flag
     public static bool $dbUpdate = false;
+    #Database controller object
+    public static ?Controller $dbController = NULL;
     #HTMLCache object
     public static ?HTMLCache $HTMLCache = NULL;
     #HTTP headers object
@@ -156,10 +156,10 @@ class HomePage
                 (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings']));
                 self::$dbup = true;
                 #Cache controller
-                $GLOBALS['dbController'] = (new Controller);
+                self::$dbController = (new Controller);
                 #Check for maintenance
-                self::$dbUpdate = boolval($GLOBALS['dbController']->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
-                $GLOBALS['dbController']->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
+                self::$dbUpdate = boolval(self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
+                self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
                 #In some cases these extra checks are not required
                 if ($extraChecks === true) {
                     #Check if maintenance
@@ -225,7 +225,7 @@ class HomePage
         $twigVars['link_tags'] = self::$headers->links($GLOBALS['siteconfig']['links'], 'head');
         if (self::$dbup) {
             #Update default variables with values from database
-            $twigVars = array_merge($twigVars, $GLOBALS['dbController']->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
+            $twigVars = array_merge($twigVars, self::$dbController->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
         } else {
             #Enforce 503 error
             $error = 503;

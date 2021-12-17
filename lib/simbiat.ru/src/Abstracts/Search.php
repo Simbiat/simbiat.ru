@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 
 abstract class Search
 {
@@ -42,7 +43,7 @@ abstract class Search
             }
         }
         #Cache DB controller
-        $this->dbController = $GLOBALS['dbController'];
+        $this->dbController = HomePage::$dbController;
     }
 
     public final function search(string $what = '', int $limit = 15): array

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 
 class Security
@@ -65,7 +66,7 @@ class Security
     {
         #Cache DB controller, if not done already
         if (self::$dbController === NULL) {
-            self::$dbController = $GLOBALS['dbController'];
+            self::$dbController = HomePage::$dbController;
         }
         #Validate password
         if (password_verify($password, $hash)) {
@@ -189,7 +190,7 @@ class Security
             'referer' => @$_SERVER['HTTP_REFERER'],
         ]);
         #Send 403 error code in header, with option to force close connection
-        (new Headers)->clientReturn('403', $exit);
+        HomePage::$headers->clientReturn('403', $exit);
         return false;
     }
 

@@ -4,6 +4,7 @@ namespace Simbiat\fftracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 use Simbiat\LodestoneModules\Converters;
 
 class Statistics
@@ -53,7 +54,7 @@ class Statistics
         #Get ArrayHelpers object for optimization
         $ArrayHelpers = (new ArrayHelpers);
         #Get connection object for slight optimization
-        $dbCon = $GLOBALS['dbController'];
+        $dbCon = HomePage::$dbController;
         switch ($type) {
             case 'genetics':
                 #Get statistics by clan

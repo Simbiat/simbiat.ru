@@ -103,9 +103,9 @@ class Feeds
                 }
                 #Generate the feed
                 if ($format === 'atom') {
-                    (new Atom)->Atom($GLOBALS['siteconfig']['site_name'].': '.$title, $GLOBALS['dbController']->selectAll($query), feed_settings: $settings);
+                    (new Atom)->Atom($GLOBALS['siteconfig']['site_name'].': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
                 } elseif ($format === 'rss') {
-                    (new RSS)->RSS($GLOBALS['siteconfig']['site_name'].': '.$title, $GLOBALS['dbController']->selectAll($query), feed_settings: $settings);
+                    (new RSS)->RSS($GLOBALS['siteconfig']['site_name'].': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
                 }
             }
         }
@@ -121,7 +121,7 @@ class Feeds
     private function sitemap(array $uri): array
     {
         #Cache Headers object
-        $headers = (new Headers);
+        $headers = HomePage::$headers;
         #Check that not empty
         if (empty($uri)) {
             #Redirect to HTML index
@@ -191,14 +191,14 @@ class Feeds
                                     #Get links
                                     $uri[2] = intval($uri[2]);
                                     $links = match($uri[1]) {
-                                        'bic' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'bictracker/bic/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` ORDER BY `NameP` ASC LIMIT '.$uri[2].', 50000'),
-                                        'forum' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'thread/\', `threadid`, \'/\') AS `loc`, `date` AS `lastmod`, `title` AS `name` FROM `forum__thread` ORDER BY `title` ASC LIMIT '.$uri[2].', 50000'),
-                                        'ff_achievement' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/achievement/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
-                                        'ff_character' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/character/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
-                                        'ff_freecompany' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/freecompany/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
-                                        'ff_linkshell' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/linkshell/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` FORCE INDEX (`name_order`) WHERE `crossworld` = 0 ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
-                                        'ff_crossworldlinkshell' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/crossworld_linkshell/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` FORCE INDEX (`name_order`) WHERE `crossworld` = 1 ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
-                                        'ff_pvpteam' => $GLOBALS['dbController']->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/pvpteam/\', `pvpteamid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
+                                        'bic' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'bictracker/bic/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` ORDER BY `NameP` ASC LIMIT '.$uri[2].', 50000'),
+                                        'forum' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'thread/\', `threadid`, \'/\') AS `loc`, `date` AS `lastmod`, `title` AS `name` FROM `forum__thread` ORDER BY `title` ASC LIMIT '.$uri[2].', 50000'),
+                                        'ff_achievement' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/achievement/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
+                                        'ff_character' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/character/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
+                                        'ff_freecompany' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/freecompany/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
+                                        'ff_linkshell' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/linkshell/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` FORCE INDEX (`name_order`) WHERE `crossworld` = 0 ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
+                                        'ff_crossworldlinkshell' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/crossworld_linkshell/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` FORCE INDEX (`name_order`) WHERE `crossworld` = 1 ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
+                                        'ff_pvpteam' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/pvpteam/\', `pvpteamid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
                                         default => [],
                                     };
                                 }
@@ -242,7 +242,7 @@ class Feeds
             ['loc'=>$baseurl.'general/', 'name'=>'General links'],
         ];
         #Get countable links
-        $counts = $GLOBALS['dbController']->selectAll('
+        $counts = HomePage::$dbController->selectAll('
             SELECT \'forum\' AS `link`, \'Forums\' AS `name`, COUNT(*) AS `count` FROM `forum__thread`
             UNION ALL
             SELECT \'bic\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`

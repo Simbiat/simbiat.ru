@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 
 class Bans
 {
@@ -13,7 +14,7 @@ class Bans
     {
         #Cache DB controller, if not done already
         if (self::$dbController === null) {
-            self::$dbController = $GLOBALS['dbController'];
+            self::$dbController = HomePage::$dbController;
         }
     }
 

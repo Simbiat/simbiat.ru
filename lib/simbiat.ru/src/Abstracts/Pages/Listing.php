@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\HTTP20\Headers;
+use Simbiat\HomePage;
 use Simbiat\HTTP20\HTML;
 
 class Listing extends Page
@@ -40,7 +40,7 @@ class Listing extends Page
         #If int is returned, we have a bad page
         if (is_int($outputArray['listOfEntities'])) {
             #Redirect
-            (new Headers)->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/'.$this->subServiceName.'/' . ($path[1] ?? ''), false, true, false);
+            HomePage::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/'.$this->subServiceName.'/' . ($path[1] ?? ''), false, true, false);
         } else {
             #Get the freshest date
             $dates = array_column($outputArray['listOfEntities']['entities'], 'updated');

@@ -87,7 +87,7 @@ if ($CLI) {
             $vars = [
                 'h1' => 'Home',
                 'serviceName' => 'landing',
-                'notice' => $GLOBALS['dbController']->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
+                'notice' => HomePage::$dbController->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
             ];
         } else {
             $vars = [];

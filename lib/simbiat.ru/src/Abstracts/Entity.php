@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 
 abstract class Entity
 {
@@ -26,7 +27,7 @@ abstract class Entity
             throw new \LogicException(get_class($this) . ' must have a non-empty `dbPrefix` constant.');
         }
         #ALl entities are expected to use database somehow, thus using
-        $this->dbController = $GLOBALS['dbController'];
+        $this->dbController = HomePage::$dbController;
         #Set debug flag
         $this->debug = $debug;
     }

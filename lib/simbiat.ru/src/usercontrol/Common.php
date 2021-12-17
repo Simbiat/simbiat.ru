@@ -5,6 +5,7 @@ namespace Simbiat\usercontrol;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Simbiat\Database\Controller;
+use Simbiat\HomePage;
 
 trait Common
 {
@@ -28,7 +29,7 @@ trait Common
         try {
             #Cache DB controller, if not done already
             if (self::$dbController === NULL) {
-                self::$dbController = $GLOBALS['dbController'];
+                self::$dbController = HomePage::$dbController;
             }
             self::$dbController->query(
                 'INSERT INTO `uc__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `uc__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
