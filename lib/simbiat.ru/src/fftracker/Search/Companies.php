@@ -10,7 +10,7 @@ class Companies extends Search
     #Name of the table to search use
     protected string $table = 'ffxiv__freecompany';
     #List of fields
-    protected string $fields = '`freecompanyid` as `id`, `name`, `crest` AS `icon`, `updated`';
+    protected string $fields = '`freecompanyid` as `id`, `name`, COALESCE(`crest`, `grandcompanyid`) AS `icon`, `updated`';
     #Default order (for main page, for example)
     protected string $orderDefault = '`Updated` DESC';
     #Order for list pages

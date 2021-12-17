@@ -236,7 +236,7 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['ranking']['monthly'])) {
                     $data['freecompany']['ranking']['monthly'] = $json['freecompany']['ranking']['monthly'];
                 } else {
-                    $data['freecompany']['ranking']['monthly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `'.self::dbPrefix.'freecompany`.`name`, `'.self::dbPrefix.'freecompany`.`crest` AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`monthly`)*100 AS `ratio` FROM `'.self::dbPrefix.'freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `'.self::dbPrefix.'freecompany_ranking` `sub`)) `tempresult` INNER JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
+                    $data['freecompany']['ranking']['monthly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `'.self::dbPrefix.'freecompany`.`name`, COALESCE(`'.self::dbPrefix.'freecompany`.`crest`, `'.self::dbPrefix.'freecompany`.`grandcompanyid`) AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`monthly`)*100 AS `ratio` FROM `'.self::dbPrefix.'freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `'.self::dbPrefix.'freecompany_ranking` `sub`)) `tempresult` INNER JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
                     if (count($data['freecompany']['ranking']['monthly']) > 1) {
                         $data['freecompany']['ranking']['monthly'] = $ArrayHelpers->topAndBottom($data['freecompany']['ranking']['monthly'], 20);
                     } else {
@@ -247,7 +247,7 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['ranking']['weekly'])) {
                     $data['freecompany']['ranking']['weekly'] = $json['freecompany']['ranking']['weekly'];
                 } else {
-                    $data['freecompany']['ranking']['weekly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `'.self::dbPrefix.'freecompany`.`name`, `'.self::dbPrefix.'freecompany`.`crest` AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`weekly`)*100 AS `ratio` FROM `'.self::dbPrefix.'freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `'.self::dbPrefix.'freecompany_ranking` `sub`)) `tempresult` INNER JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
+                    $data['freecompany']['ranking']['weekly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `'.self::dbPrefix.'freecompany`.`name`, COALESCE(`'.self::dbPrefix.'freecompany`.`crest`, `'.self::dbPrefix.'freecompany`.`grandcompanyid`) AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`weekly`)*100 AS `ratio` FROM `'.self::dbPrefix.'freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `'.self::dbPrefix.'freecompany_ranking` `sub`)) `tempresult` INNER JOIN `'.self::dbPrefix.'freecompany` ON `'.self::dbPrefix.'freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
                     if (count($data['freecompany']['ranking']['weekly']) > 1) {
                         $data['freecompany']['ranking']['weekly'] = $ArrayHelpers->topAndBottom($data['freecompany']['ranking']['weekly'], 20);
                     } else {
@@ -457,7 +457,7 @@ class Statistics
                     $data['bugs']['noMembers'] = $json['bugs']['noMembers'];
                 } else {
                     $data['bugs']['noMembers'] = $dbCon->SelectAll(
-                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, `crest` AS `icon` FROM `'.self::dbPrefix.'freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `'.self::dbPrefix.'character` WHERE `freecompanyid` IS NOT NULL)
+                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, COALESCE(`crest`, `grandcompanyid`) AS `icon` FROM `'.self::dbPrefix.'freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `'.self::dbPrefix.'character` WHERE `freecompanyid` IS NOT NULL)
                         UNION
                         SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, NULL AS `icon` FROM `'.self::dbPrefix.'linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `'.self::dbPrefix.'linkshell_character`)
                         UNION
