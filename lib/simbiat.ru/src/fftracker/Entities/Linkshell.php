@@ -134,7 +134,7 @@ class Linkshell extends Entity
                 if (!isset($this->lodestone['members'][$member])) {
                     #Update status for the character
                     $queries[] = [
-                        'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `linkshellid`=:pvpId AND `characterid`=:characterid;',
+                        'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `linkshellid`=:linkshellId AND `characterid`=:characterid;',
                         [
                             ':characterid'=>$member,
                             ':linkshellId'=>$this->id,
@@ -177,7 +177,6 @@ class Linkshell extends Entity
                 }
             }
             #Running the queries we've accumulated
-            #(new \Simbiat\Tests)->testDump($queries);
             $this->dbController->query($queries);
             #Schedule proper update of any newly added characters
             if (!empty($this->lodestone['members'])) {
