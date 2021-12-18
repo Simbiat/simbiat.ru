@@ -16,13 +16,13 @@
             <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
         </div>
     </li>
-    <li class="navElement">
-        {% if breadcrumbs%}
+    {% if breadcrumbs%}
+        <li class="navElement">
             <div class="navLine navBread">
                 {{ breadcrumbs|raw }}
             </div>
-        {% endif %}
-    </li>
+        </li>
+    {% endif %}
     <!--
     <li class="navElement">
         <div class="navLine">
