@@ -85,46 +85,62 @@ class Api
         if ((new HomePage)->dbConnect() === false) {
             $this->apiEcho(httpCode: '503');
         }
-        if ($uri[2] === 'update') {
-            $data = match ($uri[0]) {
-                'character' => (new Character)->setId($uri[1])->update(),
-                'freecompany' => (new FreeCompany)->setId($uri[1])->update(),
-                'pvpteam' => (new PvPTeam)->setId($uri[1])->update(),
-                'linkshell' => (new Linkshell)->setId($uri[1])->update(),
-                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->update(),
-                'achievement' => (new Achievement)->setId($uri[1])->update(),
-            };
-        } elseif ($uri[2] === 'register') {
-            /** @noinspection PhpVoidFunctionResultUsedInspection */
-            $data = match ($uri[0]) {
-                'character' => (new Character)->setId($uri[1])->register(),
-                'freecompany' => (new FreeCompany)->setId($uri[1])->register(),
-                'pvpteam' => (new PvPTeam)->setId($uri[1])->register(),
-                'linkshell' => (new Linkshell)->setId($uri[1])->register(),
-                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->register(),
-                'achievement' => $this->apiEcho(httpCode: '400'),
-            };
-        } elseif ($uri[2] === 'lodestone') {
-            $data = match ($uri[0]) {
-                'character' => (new Character)->setId($uri[1])->getFromLodestone(),
-                'freecompany' => (new FreeCompany)->setId($uri[1])->getFromLodestone(),
-                'pvpteam' => (new PvPTeam)->setId($uri[1])->getFromLodestone(),
-                'linkshell' => (new Linkshell)->setId($uri[1])->getFromLodestone(),
-                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->getFromLodestone(),
-                'achievement' => (new Achievement)->setId($uri[1])->getFromLodestone(),
-            };
-        } else {
-            $data = match ($uri[0]) {
-                'character' => (new Character)->setId($uri[1])->getArray(),
-                'freecompany' => (new FreeCompany)->setId($uri[1])->getArray(),
-                'pvpteam' => (new PvPTeam)->setId($uri[1])->getArray(),
-                'linkshell' => (new Linkshell)->setId($uri[1])->getArray(),
-                'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->getArray(),
-                'achievement' => (new Achievement)->setId($uri[1])->getArray(),
-            };
+        $data = null;
+        try {
+            if ($uri[2] === 'update') {
+                $data = match ($uri[0]) {
+                    'character' => (new Character)->setId($uri[1])->update(),
+                    'freecompany' => (new FreeCompany)->setId($uri[1])->update(),
+                    'pvpteam' => (new PvPTeam)->setId($uri[1])->update(),
+                    'linkshell' => (new Linkshell)->setId($uri[1])->update(),
+                    'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->update(),
+                    'achievement' => (new Achievement)->setId($uri[1])->update(),
+                };
+            } else if ($uri[2] === 'register') {
+                /** @noinspection PhpVoidFunctionResultUsedInspection */
+                $data = match ($uri[0]) {
+                    'character' => (new Character)->setId($uri[1])->register(),
+                    'freecompany' => (new FreeCompany)->setId($uri[1])->register(),
+                    'pvpteam' => (new PvPTeam)->setId($uri[1])->register(),
+                    'linkshell' => (new Linkshell)->setId($uri[1])->register(),
+                    'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->register(),
+                    'achievement' => $this->apiEcho(httpCode: '400'),
+                };
+                if ($data === '404') {
+                    $this->apiEcho(httpCode: '404');
+                }
+            } else if ($uri[2] === 'lodestone') {
+                $data = match ($uri[0]) {
+                    'character' => (new Character)->setId($uri[1])->getFromLodestone(),
+                    'freecompany' => (new FreeCompany)->setId($uri[1])->getFromLodestone(),
+                    'pvpteam' => (new PvPTeam)->setId($uri[1])->getFromLodestone(),
+                    'linkshell' => (new Linkshell)->setId($uri[1])->getFromLodestone(),
+                    'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->getFromLodestone(),
+                    'achievement' => (new Achievement)->setId($uri[1])->getFromLodestone(),
+                };
+                if (!empty($data['404']) && $data['404'] === true) {
+                    $this->apiEcho(httpCode: '404');
+                }
+            } else {
+                $data = match ($uri[0]) {
+                    'character' => (new Character)->setId($uri[1])->getArray(),
+                    'freecompany' => (new FreeCompany)->setId($uri[1])->getArray(),
+                    'pvpteam' => (new PvPTeam)->setId($uri[1])->getArray(),
+                    'linkshell' => (new Linkshell)->setId($uri[1])->getArray(),
+                    'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($uri[1])->getArray(),
+                    'achievement' => (new Achievement)->setId($uri[1])->getArray(),
+                };
+                if (empty($data['id'])) {
+                    $this->apiEcho(httpCode: '404');
+                }
+            }
+        } catch(\Throwable $e) {
+            if (preg_match('/^ID .* has incorrect format\.$/i', $e->getMessage()) === 1) {
+                $this->apiEcho(httpCode: '400');
+            }
         }
         #Check if empty
-        if (!isset($data)) {
+        if (empty($data)) {
             $this->apiEcho(httpCode: '404');
         } else {
             #Send additional headers
@@ -164,10 +180,17 @@ class Api
         if ($uri[0] === 'bic') {
             #Connect to DB
             if ((new HomePage)->dbConnect()) {
+                $data = null;
                 #Get data
-                $data = (new bictracker\Bic)->setId($uri[1])->getArray();
+                try {
+                    $data = (new bictracker\Bic)->setId($uri[1])->getArray();
+                } catch(\Throwable $e) {
+                    if (preg_match('/^ID .* has incorrect format\.$/i', $e->getMessage()) === 1) {
+                        $this->apiEcho(httpCode: '400');
+                    }
+                }
                 #Check if empty
-                if (empty($data)) {
+                if (empty($data['id'])) {
                     $this->apiEcho(httpCode: '404');
                 } else {
                     #Send additional headers
