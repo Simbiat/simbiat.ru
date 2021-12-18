@@ -130,9 +130,9 @@ class Feeds
             #Check that format was provided
             if (empty($uri[0])) {
                 #Check for Accept header
-                $format = $headers->notAccept(['application/xml', 'text/plain', 'text/html']);
+                $format = $headers->notAccept(['application/xml', 'text/xml', 'text/plain', 'text/html']);
                 $format = match($format) {
-                    'application/xml' => 'xml',
+                    'application/xml', 'text/xml' => 'xml',
                     'text/plain' => 'txt',
                     'text/html' => 'html',
                 };
@@ -141,6 +141,11 @@ class Feeds
             } else {
                 $uri[0] = strtolower($uri[0]);
                 if (in_array($uri[0], ['html', 'xml', 'txt'])) {
+                    $format = match($uri[0]) {
+                        'html' => $headers->notAccept(['text/html']),
+                        'txt' => $headers->notAccept(['text/plain']),
+                        'xml' => $headers->notAccept(['application/xml']),
+                    };
                     #Check if initial page was provided
                     if (empty($uri[1])) {
                         #Redirect to index
