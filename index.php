@@ -64,7 +64,6 @@ if ($CLI) {
                 try {
                     #Send links
                     $HomePage->commonLinks();
-                    #echo 'here';exit;
                     #Connect to DB
                     if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
                         $vars = (new MainRouter)->route($uri);

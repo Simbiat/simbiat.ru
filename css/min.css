@@ -1,0 +1,3252 @@
+/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
+
+/* Document
+   ========================================================================== */
+
+/**
+ * 1. Correct the line height in all browsers.
+ * 2. Prevent adjustments of font size after orientation changes in iOS.
+ */
+
+html {
+  line-height: 1.15; /* 1 */
+  /*-webkit prefixed version is required only for Firefox, the rest now use proper setting*/
+  -webkit-text-size-adjust: 100%; /* 2 */
+  text-size-adjust: 100%; /* 2 */
+}
+
+/* Sections
+   ========================================================================== */
+
+/**
+ * Remove the margin in all browsers.
+ */
+
+body {
+  margin: 0;
+}
+
+/**
+ * Render the `main` element consistently in IE.
+ */
+
+main {
+  display: block;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Firefox, and Safari.
+ */
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* Grouping content
+   ========================================================================== */
+
+/**
+ * 1. Add the correct box sizing in Firefox.
+ * 2. Show the overflow in Edge and IE.
+ */
+
+hr {
+  box-sizing: content-box; /* 1 */
+  height: 0; /* 1 */
+  overflow: visible; /* 2 */
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+
+pre {
+  font-family: monospace, monospace; /* 1 */
+  font-size: 1em; /* 2 */
+}
+
+/* Text-level semantics
+   ========================================================================== */
+
+/**
+ * Remove the gray background on active links in IE 10.
+ */
+
+a {
+  background-color: transparent;
+}
+
+/**
+ * 1. Remove the bottom border in Chrome 57-
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+ */
+
+abbr[title] {
+  border-bottom: none; /* 1 */
+  text-decoration: underline dotted; /* 2 */
+}
+
+/**
+ * Add the correct font weight in Chrome, Edge, and Safari.
+ */
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+
+code,
+kbd,
+samp {
+  font-family: monospace, monospace; /* 1 */
+  font-size: 1em; /* 2 */
+}
+
+/**
+ * Add the correct font size in all browsers.
+ */
+
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` elements from affecting the line height in
+ * all browsers.
+ */
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Embedded content
+   ========================================================================== */
+
+/**
+ * Remove the border on images inside links in IE 10.
+ */
+
+img {
+  border-style: none;
+}
+
+/* Forms
+   ========================================================================== */
+
+/**
+ * 1. Change the font styles in all browsers.
+ * 2. Remove the margin in Firefox and Safari.
+ */
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  line-height: 1.15; /* 1 */
+  margin: 0; /* 2 */
+}
+
+/**
+ * Show the overflow in IE.
+ * 1. Show the overflow in Edge.
+ */
+
+button,
+input { /* 1 */
+  overflow: visible;
+}
+
+/**
+ * Remove the inheritance of text transform in Edge, Firefox, and IE.
+ * 1. Remove the inheritance of text transform in Firefox.
+ */
+
+button,
+select { /* 1 */
+  text-transform: none;
+}
+
+/**
+ * Correct the inability to style clickable types in iOS and Safari.
+ */
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+}
+
+/**
+ * Remove the inner border and padding in Firefox.
+ */
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/**
+ * Restore the focus styles unset by the previous rule.
+ */
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+ * Correct the padding in Firefox.
+ */
+
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+/**
+ * 1. Correct the text wrapping in Edge and IE.
+ * 2. Correct the color inheritance from `fieldset` elements in IE.
+ * 3. Remove the padding so developers are not caught out when they zero out
+ *    `fieldset` elements in all browsers.
+ */
+
+legend {
+  box-sizing: border-box; /* 1 */
+  color: inherit; /* 2 */
+  display: table; /* 1 */
+  max-width: 100%; /* 1 */
+  padding: 0; /* 3 */
+  white-space: normal; /* 1 */
+}
+
+/**
+ * Add the correct vertical alignment in Chrome, Firefox, and Opera.
+ */
+
+progress {
+  vertical-align: baseline;
+}
+
+/**
+ * Remove the default vertical scrollbar in IE 10+.
+ */
+
+textarea {
+  overflow: auto;
+}
+
+/**
+ * 1. Add the correct box sizing in IE 10.
+ * 2. Remove the padding in IE 10.
+ */
+
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Chrome.
+ */
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/**
+ * 1. Correct the odd appearance in Chrome and Safari.
+ * 2. Correct the outline style in Safari.
+ */
+
+[type="search"] {
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
+}
+
+/**
+ * Remove the inner padding in Chrome and Safari on macOS.
+ */
+
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * 1. Correct the inability to style clickable types in iOS and Safari.
+ * 2. Change font properties to `inherit` in Safari.
+ */
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+/* Interactive
+   ========================================================================== */
+
+/*
+ * Add the correct display in Edge, IE 10+, and Firefox.
+ */
+
+details {
+  display: block;
+}
+
+/*
+ * Add the correct display in all browsers.
+ */
+
+summary {
+  display: list-item;
+}
+
+/* Misc
+   ========================================================================== */
+
+/**
+ * Add the correct display in IE 10+.
+ */
+
+template {
+  display: none;
+}
+
+/**
+ * Add the correct display in IE 10.
+ */
+
+[hidden] {
+  display: none;
+}
+/*! HTML5 Boilerplate v8.0.0 | MIT License | https://html5boilerplate.com/ */
+
+/* main.css 2.1.0 | MIT License | https://github.com/h5bp/main.css#readme */
+/*
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+  color: #222;
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight:
+ * https://twitter.com/miketaylr/status/12228805301
+ *
+ * Vendor-prefixed and regular ::selection selectors cannot be combined:
+ * https://stackoverflow.com/a/16982510/7133471
+ *
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+  background-color: #b3d4fc;
+  text-shadow: none;
+}
+
+::selection {
+  background-color: #b3d4fc;
+  text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/*
+ * Remove the gap between audio, canvas, iframes,
+ * images, videos and the bottom of their containers:
+ * https://github.com/h5bp/html5-boilerplate/issues/440
+ */
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+  vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+  resize: vertical;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Hide visually and from screen readers
+ */
+
+.hidden,
+[hidden] {
+  display: none !important;
+}
+
+/*
+ * Hide only visually, but have it available for screen readers:
+ * https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+ *
+ * 1. For long content, line feeds are not interpreted as spaces and small width
+ *    causes content to wrap 1 word per line:
+ *    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+ */
+
+.sr-only {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+  /* 1 */
+}
+
+/*
+ * Extends the .sr-only class to allow the element
+ * to be focusable when navigated to via the keyboard:
+ * https://www.drupal.org/node/897638
+ */
+
+.sr-only.focusable:active,
+.sr-only.focusable:focus {
+  clip: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  position: static;
+  white-space: inherit;
+  width: auto;
+}
+
+/*
+ * Hide visually and from screen readers, but maintain layout
+ */
+
+.invisible {
+  visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix::before,
+.clearfix::after {
+  content: " ";
+  display: table;
+}
+
+.clearfix::after {
+  clear: both;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+  /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+  (-webkit-min-device-pixel-ratio: 1.25),
+  (min-resolution: 1.25dppx),
+  (min-resolution: 120dpi) {
+  /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid the additional HTTP request:
+   https://www.phpied.com/delay-loading-your-print-css/
+   ========================================================================== */
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    background-color: #fff !important;
+    color: #000 !important;
+    /* Black prints faster */
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]::after {
+    content: " (" attr(title) ")";
+  }
+
+  /*
+   * Don't show links that are fragment identifiers,
+   * or use the `javascript:` pseudo protocol
+   */
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+
+  pre {
+    white-space: pre-wrap !important;
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  /*
+   * Printing Tables:
+   * https://web.archive.org/web/20180815150934/http://css-discuss.incutio.com/wiki/Printing_Tables
+   */
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
+
+/*If changing colors, remember to adjust them in:
+manifest.webmanifest
+browserconfig.xml
+metatags.twig (MS Tile and theme-color)
+errors\teapot.twig*/
+:root {
+    /*Meant for main body*/
+    --color-body: hsl(256, 20%, 10%);
+    /*Slightly lighter color for more elevated blocks*/
+    --color-block: hsl(256, 20%, 15%);
+    /*Color for blocks where readable text is meant to be*/
+    --color-article: hsl(256, 20%, 20%);
+    /*Color for main text*/
+    --color-text: hsl(0, 20%, 95%);
+    /*Color for links*/
+    --color-interactive: hsl(196, 65%, 76%);
+    /*Color indicating success of some action*/
+    --color-success: hsl(132, 64%, 72%);
+    /*Color indicating failure of some action*/
+    --color-failure: hsl(344, 77%, 79%);
+    /*Color indicating a warning*/
+    --color-warning: hsl(43, 77%, 57%);
+    /*Color for disabled elements*/
+    --color-disabled: hsl(0, 0%, 50%);
+
+    /*Borders styling*/
+    --border-dark: hsl(192, 50%, 20%);
+    --border-light: hsl(192, 50%, 30%);
+    --border-width: 0.125rem;
+    --border-radius: 0.75rem;
+    --border-shadow: drop-shadow(0.05rem 0.05rem 0.1rem var(--border-light)) drop-shadow(-0.05rem -0.05rem 0.1rem var(--border-light));
+    --border-color-inset: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
+    --border-color-outset: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+
+    /*Sizes*/
+    --footer-height: 4rem;
+    --header-height: 4rem;
+    --grid-gap: 1rem;
+    --showpassword-width: 2.5rem;
+
+    /*Fonts based on what StackExchange and GitHub use. Because less stuff to download in the client*/
+    --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI Variable", "Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    --font-serif: Georgia,Cambria,"Times New Roman",Times,serif;
+    --font-mono: ui-monospace,"Cascadia Mono","Segoe UI Mono","Liberation Mono",Menlo,Monaco,Consolas,monospace;
+
+    /*Coordinates for cursor. Updated through JS. Stored like this to avoid inline CSS for CSP. Intentionally set to 'none' to invalidate them by default.*/
+    --cursorX: none;
+    --cursorY: none;
+}
+/*Grid styling*/
+header {
+    grid-area: header;
+}
+#content {
+    grid-area: content;
+}
+#navigation {
+    grid-area: navigation;
+}
+#sidebar {
+    grid-area: sidebar;
+}
+footer {
+    grid-area: footer;
+    height: var(--footer-height);
+}
+body {
+    display: grid;
+    gap: var(--grid-gap);
+}
+
+/*Main blocks styling*/
+body {
+    background-color: var(--color-body);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    /*If we do not disable it, Chrome adds an ugly color on clickable elements.
+    Not needed, since I adjust :active for them.*/
+    -webkit-tap-highlight-color: transparent;
+}
+main {
+    margin: 0 auto 0 auto;
+    overflow: auto;
+    scroll-behavior: smooth;
+    border-radius: var(--border-radius);
+}
+article {
+    background-color: var(--color-article);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+    padding: 0.5rem 0.5rem;
+}
+footer, header {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    background-color: var(--color-block);
+}
+header {
+    top: 0;
+    height: var(--header-height);
+    border-bottom-color: var(--border-light);
+    border-bottom-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-bottom-style: solid;
+    /*Reset common radius*/
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+footer {
+    bottom: 0;
+    height: var(--footer-height);
+    border-top-color: var(--border-dark);
+    border-top-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-top-style: solid;
+    /*Reset common radius*/
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+#navigation, #sidebar {
+    position: -webkit-sticky;
+    position: sticky;
+}
+main, #navigation, #sidebar {
+    height: calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2);
+}
+
+#navigation {
+    left: 0;
+    border-width: var(--border-width);
+}
+#sidebar {
+    right: 0;
+}
+
+del, s {
+    text-decoration: line-through;
+}
+ins {
+    text-decoration: underline;
+}
+time, em {
+    font-style: italic;
+}
+
+mark {
+    color: var(--color-article);
+    background-color: var(--color-text);
+}
+
+output {
+    font-family: var(--font-mono);
+    text-decoration: underline dotted 0.1rem var(--color-success);
+}
+
+/*Styling for code and keyboard buttons*/
+/*Keyboard is based on https://github.com/auth0/kbd/blob/gh-pages/kbd.css*/
+kbd {
+    font-family: var(--font-mono);
+    display: inline-block;
+    border-radius: var(--border-radius);
+    padding: 0 0.25rem;
+    box-shadow: 0.1rem 0.1rem 0.1rem #777;
+    margin: 0.1rem;
+    font-size: 1rem;
+    vertical-align: text-bottom;
+    background-color: var(--color-disabled);
+    color: var(--color-text);
+    cursor: default;
+    font-variant: small-caps;
+    font-weight: bold;
+    letter-spacing: 0.1rem;
+    -webkit-user-select: none;
+    user-select: none;
+}
+kbd:active, kbd:active * {
+    color: black;
+    box-shadow: 0.1rem 0.1rem 0 #444 inset;
+}
+
+code, samp {
+    font-family: var(--font-mono);
+    white-space: pre;
+    display: block;
+    /*Using em for font instead of rem, so that it will depend on parent's size, not on root size*/
+    font-size: 0.9em;
+    line-height: 1.25;
+    page-break-inside: avoid;
+    word-wrap: break-word;
+    max-width: calc(100% - 1rem);
+    box-sizing: border-box;
+    overflow: auto;
+    border-width: calc(var(--border-width) * 2);
+    border-style: dashed;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+    border-left: calc(var(--border-width) * 3) solid var(--color-warning);
+    background-color: var(--color-block);
+    margin: 0.5rem;
+    padding: 0.2rem;
+}
+samp,
+samp.success {
+    border-left: calc(var(--border-width) * 3) solid var(--color-success);
+}
+samp.failure {
+    border-left: calc(var(--border-width) * 3) solid var(--color-failure);
+}
+
+cite {
+    font-style: italic;
+}
+cite:before {
+    content: '\2760';
+    margin-left: 0.25rem;
+    padding-right: 0.1rem;
+}
+cite:after {
+    content: '\275D';
+    margin-right: 0.25rem;
+    padding-left: 0.1rem;
+}
+
+blockquote {
+    display: block;
+    font-size: 1rem;
+    width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
+    border-width: calc(var(--border-width) * 1.5);
+    border-style: dashed;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+    border-left: calc(var(--border-width) * 2) solid var(--color-disabled);
+    background-color: var(--color-block);
+    margin: 0.5rem;
+    padding: 1rem;
+    position: relative;
+}
+blockquote::before {
+    content: '\2760';
+    padding-right: 0.1rem;
+    color: var(--color-disabled);
+    position: absolute;
+    top: -1.75rem;
+    left: 0.25rem;
+    font-size: 2rem;
+    font-style: italic;
+}
+blockquote::after {
+    content: '\275D';
+    padding-left: 0.1rem;
+    color: var(--color-disabled);
+    position: absolute;
+    bottom: -1.25rem;
+    right: 0.5rem;
+    font-size: 2rem;
+    font-style: italic;
+}
+figure.quote {
+    max-width: calc(100% - 1rem);
+    margin: 0;
+    position: relative;
+}
+figure.quote > figcaption {
+    color: var(--color-disabled);
+    font-style: italic;
+    font-size: 0.75rem;
+    position: absolute;
+    left: 2.25rem;
+    z-index: 1;
+}
+figure.quote > figcaption::after {
+    content: ':';
+}
+q {
+    font-style: italic;
+    border-color: var(--color-disabled);
+    border-width: calc(var(--border-width)*2);
+    border-style: dotted;
+    border-top: none;
+    border-bottom: none;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    cursor: pointer;
+}
+q::before {
+    content: '\2760';
+    padding-right: 0.1rem;
+    color: var(--color-disabled);
+}
+q::after {
+    content: '\275D';
+    padding-left: 0.1rem;
+    color: var(--color-disabled);
+}
+
+/*Styling of pop-ups*/
+dialog {
+    background-color: var(--color-body);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    border-style: solid;
+    width: 50vw;
+    height: 50vh;
+}
+dialog::backdrop {
+    background-color: hsla(256, 20%, 10%, 0.75);
+}
+/*Helps with auto-scroll positioning (when using anchors)*/
+article, h1, h2, h3, h4, h5, h6 {
+    scroll-padding: 1rem 0 0 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    padding: 0.1rem;
+}
+h1:target, h2:target, h3:target, h4:target, h5:target, h6:target {
+    animation: anchor-flash 1.5s ease-in-out 0s;
+}
+/*Add anchor symbol to left of headers by default*/
+h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+    content: '\2693';
+    font-size: small;
+    vertical-align: middle;
+}
+/*Remove the anchor symbol for page title in header*/
+#h1title::before {
+    content: unset;
+}
+
+/*Progress and meter*/
+progress[value],
+progress:not([value]),
+progress::-webkit-progress-bar,
+progress::-webkit-progress-value {
+    appearance: none;
+    border-radius: var(--border-radius);
+}
+progress {
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+    height: 1.25rem;
+    position: relative;
+}
+progress[value]::-webkit-progress-value {
+    background-image: linear-gradient(to right, var(--color-failure), var(--color-success));
+    transition: width 0.5s;
+}
+progress[value]::after {
+    content: attr(value) '%';
+    position: absolute;
+    top: -0.25rem;
+    width: inherit;
+    text-align: center;
+    font-weight: bold;
+    color: var(--color-text);
+    filter: var(--border-shadow);
+}
+progress::-webkit-progress-bar {
+    background-color: var(--color-article);
+    box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+    padding: 0.1rem;
+}
+progress:not([value]) {
+    border-color: var(--color-disabled);
+}
+
+/*Apparently due to bug (which is not considered a bug) in Chrome, when using 'appearance: none', you can no longer style the meter at all
+https://bugs.chromium.org/p/chromium/issues/detail?id=632510 */
+meter {
+    /*appearance: none;
+    border-radius: var(--border-radius);
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-inset);*/
+    height: 2rem;
+    position: relative;
+    -moz-user-modify: read-only;
+    -webkit-user-modify: read-only;
+}
+meter::-webkit-meter-optimum-value,
+meter::-webkit-meter-suboptimum-value,
+meter::-webkit-meter-even-less-good-value {
+    border-radius: var(--border-radius);
+}
+meter[value]::after {
+    content: attr(value) attr(data-unit);
+    position: absolute;
+    top: 0.25rem;
+    width: inherit;
+    text-align: center;
+    font-weight: bold;
+    color: var(--color-text);
+    filter: var(--border-shadow);
+}
+meter::-webkit-meter-bar {
+    box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+    background-color: var(--color-article);
+}
+meter::-webkit-meter-optimum-value {
+    background-image: linear-gradient(to right, white, var(--color-success), lightgreen);
+}
+meter::-webkit-meter-suboptimum-value {
+    background-image: linear-gradient(to right, white, var(--color-warning), orange);
+}
+meter::-webkit-meter-even-less-good-value {
+    background-image: linear-gradient(to right, white, var(--color-failure), lightcoral);
+}
+
+/*Paragraphs*/
+p {
+    margin: 0.25rem;
+    text-indent: 1rem;
+}
+p+p {
+    margin-top: 0.25rem;
+}
+p::first-letter {
+    font-weight: bold;
+    color: var(--color-success);
+    text-transform: uppercase;
+}
+p.noLetter::first-letter {
+    font-weight: unset;
+    color: unset;
+    text-transform: unset;
+}
+article+article {
+    margin-top: 1.5rem;
+}
+
+/*Tables styling*/
+table {
+    border-radius: var(--border-radius);
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    border-spacing: 0;
+    border-collapse: separate;
+    width: 100%;
+    table-layout: fixed;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+table tr td,
+table tr th {
+    border-right-width: var(--border-width);
+    border-right-style: solid;
+    border-right-color: var(--border-light);
+    border-bottom-width: var(--border-width);
+    border-bottom-style: solid;
+    border-bottom-color: var(--border-light);
+}
+table tr th:last-child,
+table tr td:last-child {
+    border-right-width: var(--border-width);
+    border-right-style: none;
+    border-right-color: var(--border-color-outset);
+}
+table tr:last-child td,
+table tr:last-child th {
+    border-bottom-width: var(--border-width);
+    border-bottom-style: none;
+    border-bottom-color: var(--border-color-outset);
+}
+table thead,
+table tfoot {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    background-color: var(--color-block);
+}
+/* top-left border-radius */
+table :not(tfoot) tr:first-child th:first-child,
+table :not(tfoot) tr:first-child td:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: 0;
+}
+
+/* top-right border-radius */
+table :not(tfoot) tr:first-child th:last-child,
+table :not(tfoot) tr:first-child td:last-child {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: 0;
+}
+
+/* bottom-left border-radius */
+table :not(thead) tr:last-child th:first-child,
+table :not(thead) tr:last-child td:first-child {
+    border-bottom-left-radius: var(--border-radius);
+}
+
+/* bottom-right border-radius */
+table :not(thead) tr:last-child th:last-child,
+table :not(thead) tr:last-child td:last-child{
+    border-bottom-right-radius: var(--border-radius);
+}
+/*Handle thead and tfoot borders*/
+table thead tr:first-child th,
+table thead tr:first-child td {
+    border-top-style: none;
+}
+table thead tr:last-child th,
+table thead tr:last-child td {
+    border-bottom-style: solid;
+    border-bottom-width: var(--border-width);
+    border-bottom-color: var(--border-light);
+}
+table tfoot tr:last-child th,
+table tfoot tr:last-child td {
+    border-bottom-style: none;
+}
+table tfoot tr:first-child th,
+table tfoot tr:first-child td {
+    border-top-style: solid;
+    border-top-width: var(--border-width);
+    border-top-color: var(--border-light);
+}
+table tr:first-child th,
+table tr:first-child td {
+    border-top-style: none;
+}
+table caption {
+    font-weight: bold;
+    font-style: italic;
+}
+
+li {
+    min-height: 2rem;
+}
+*:focus {
+    outline-color: var(--color-interactive);
+}
+::selection {
+    color: var(--color-article);
+    background-color: var(--color-text);
+}
+
+/*Links styling*/
+a {
+    color: var(--color-interactive);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    border-style: outset;
+    border-radius: var(--border-radius);
+    border-color: transparent;
+    padding: 0.1rem;
+    border-width: var(--border-width);
+    outline: none;
+}
+a:link {
+    text-decoration-line: underline;
+}
+a:visited {
+    text-decoration: none;
+    border-style: inset;
+}
+a:hover, a:focus, a:active {
+    text-decoration: none;
+    border-color: var(--color-interactive);
+}
+a:active {
+    filter: brightness(0.7);
+}
+
+/*Inputs styling*/
+input,
+button,
+::file-selector-button {
+    background-color: var(--color-article);
+    color: var(--color-text);
+    /*Border colors are reversed to make the elements "popup"*/
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    outline: none;
+    box-sizing: border-box;
+    height: clamp(1.5rem, 2rem, 2.5rem);
+}
+/*Special styling for buttons*/
+button,
+input[type=submit],
+input[type=button],
+input[type=reset],
+::file-selector-button {
+    color: var(--color-interactive);
+    font-weight: bold;
+    margin: 0.5rem;
+    cursor: pointer;
+}
+
+/*Style border when input is selected or hovered over*/
+input:focus,
+input:hover,
+input:active,
+button:focus,
+button:hover,
+button:active,
+::file-selector-button:focus,
+::file-selector-button:hover,
+::file-selector-button:active {
+    border-color: var(--border-color-outset);
+    filter: var(--border-shadow);
+}
+button:active,
+input[type=submit]:active,
+input[type=button]:active,
+input[type=reset]:active,
+input[type=image]:active,
+::file-selector-button:active {
+    border-color: var(--border-color-inset);
+    filter: brightness(0.7);
+}
+::file-selector-button {
+    margin: 0.1rem;
+}
+input[type=file] {
+    /*Need to set a height, that will not cut the button*/
+    height: 2.4rem;
+    cursor: pointer;
+}
+
+/*Border for valid/invalid input*/
+input:valid:focus:not([type=submit]):not([type=button]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]) {
+    border-color: var(--color-success);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
+}
+input:invalid:focus:not(:placeholder-shown):not([type=submit]):not([type=button]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]),
+input[required]:invalid:not([type=submit]):not([type=button]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]) {
+    border-color: var(--color-failure);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-failure), -0.1rem -0.1rem 0.75rem var(--color-failure);
+}
+/*Label styling*/
+/*Used to adjust placement of labels*/
+.float_label_div {
+    position: relative;
+    /*0.5rem margin on bottom and top, yet center the element in parent*/
+    margin: 0.5rem auto;
+    text-align: left;
+    display: inline-block;
+}
+/*Common label settings*/
+input[type=text]+label,
+input[type=url]+label,
+input[type=email]+label,
+input[type=password]+label,
+input[type=number]+label,
+input[type=search]+label,
+input[type=tel]+label,
+input[type=date]+label,
+input[type=datetime-local]+label,
+input[type=time]+label,
+input[type=month]+label,
+input[type=week]+label,
+input[type=color]+label,
+input[type=file]+label,
+input[type=range]+label,
+textarea+label,
+select+label {
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    position: absolute;
+    display: block;
+    color: var(--color-interactive);
+    cursor: text;
+    -webkit-user-select: none;
+    user-select: none;
+}
+/*Visually hide placeholder since we are using label instead of it*/
+input[type=text]::placeholder,
+input[type=url]::placeholder,
+input[type=email]::placeholder,
+input[type=password]::placeholder,
+input[type=number]::placeholder,
+input[type=search]::placeholder,
+input[type=tel]::placeholder,
+input[type=date]::placeholder,
+input[type=datetime-local]::placeholder,
+input[type=time]::placeholder,
+input[type=month]::placeholder,
+input[type=week]::placeholder,
+input[type=color]::placeholder,
+input[type=file]::placeholder,
+input[type=range]::placeholder,
+textarea::placeholder,
+select::placeholder{
+    opacity: 0;
+}
+/*Style label when placeholder is shown. Essentially place it instead of placeholder.*/
+input[type=text]:placeholder-shown+label,
+input[type=url]:placeholder-shown+label,
+input[type=email]:placeholder-shown+label,
+input[type=password]:placeholder-shown+label,
+input[type=number]:placeholder-shown+label,
+input[type=search]:placeholder-shown+label,
+input[type=tel]:placeholder-shown+label,
+input[type=date]:placeholder-shown+label,
+input[type=datetime-local]:placeholder-shown+label,
+input[type=time]:placeholder-shown+label,
+input[type=month]:placeholder-shown+label,
+input[type=week]:placeholder-shown+label,
+input[type=color]:placeholder-shown+label,
+input[type=file]:placeholder-shown+label,
+input[type=range]:placeholder-shown+label,
+textarea:placeholder-shown+label,
+select:placeholder-shown+label {
+    transform-origin: left bottom;
+    transform: translate(0,2.125rem) scale(1.25);
+    top: -1.75rem;
+    left: 0.5rem;
+}
+select:placeholder-shown+label {
+    left: 1rem;
+}
+/*Move label to top on select and when placeholder is not shown*/
+input[type=text]:not(:placeholder-shown)+label,
+input[type=url]:not(:placeholder-shown)+label,
+input[type=email]:not(:placeholder-shown)+label,
+input[type=password]:not(:placeholder-shown)+label,
+input[type=number]:not(:placeholder-shown)+label,
+input[type=search]:not(:placeholder-shown)+label,
+input[type=tel]:not(:placeholder-shown)+label,
+input[type=date]:not(:placeholder-shown)+label,
+input[type=datetime-local]:not(:placeholder-shown)+label,
+input[type=time]:not(:placeholder-shown)+label,
+input[type=month]:not(:placeholder-shown)+label,
+input[type=week]:not(:placeholder-shown)+label,
+input[type=color]:not(:placeholder-shown)+label,
+input[type=file]:not(:placeholder-shown)+label,
+input[type=range]:not(:placeholder-shown)+label,
+textarea:not(:placeholder-shown)+label,
+select:not(:placeholder-shown)+label,
+input[type=text]:focus+label,
+input[type=url]:focus+label,
+input[type=email]:focus+label,
+input[type=password]:focus+label,
+input[type=number]:focus+label,
+input[type=search]:focus+label,
+input[type=tel]:focus+label,
+input[type=date]:focus+label,
+input[type=datetime-local]:focus+label,
+input[type=time]:focus+label,
+input[type=month]:focus+label,
+input[type=week]:focus+label,
+input[type=color]:focus+label,
+input[type=file]:focus+label,
+input[type=range]:focus+label,
+textarea:focus+label,
+select:focus+label {
+    transform: translate(0, 0) scale(1);
+    top: -0.75rem;
+    left: 0.5rem;
+    filter: var(--border-shadow);
+    cursor: default;
+}
+select:not(:placeholder-shown)+label,
+select:focus+label {
+    left: 1rem;
+}
+/*Some input types make more sense with pointer cursor*/
+input[type=radio],
+input[type=checkbox],
+input[type=radio]+label,
+input[type=checkbox]+label {
+    cursor: pointer;
+}
+/*Hide incremental buttons for number field. You can't style them (only replace), thus better remove completely by default for consistent look*/
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+/*Mark fields as required, when they are*/
+input[required]+label:after {
+    content: '*';
+    color: var(--color-failure);
+}
+/*Color for date picker icon*/
+::-webkit-calendar-picker-indicator {
+    filter: invert(75%) sepia(66%) saturate(203%) hue-rotate(161deg) brightness(95%) contrast(93%);
+    cursor: pointer;
+}
+input[type=image] {
+    padding: 0.2rem;
+}
+
+/*Textarea*/
+textarea {
+    background-color: var(--color-article);
+    color: var(--color-text);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+}
+textarea:hover {
+    outline: none;
+    filter: var(--border-shadow);
+}
+textarea:focus, textarea:active {
+    outline: none;
+    border-color: var(--border-color-inset);
+    filter: var(--border-shadow);
+}
+textarea::-webkit-resizer {
+    border-bottom-right-radius: var(--border-radius);
+    border-top-left-radius: var(--border-radius);
+}
+
+/*Add a more obvious styling for summary tag by making it more like a link*/
+summary {
+    color: var(--color-interactive);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*Show details marker to right*/
+details>.rightSummary {
+    list-style: none;
+}
+.rightSummary::-webkit-details-marker {
+    display: none
+}
+
+.rightSummary::after {
+    content: ' ▷';
+}
+details[open] .rightSummary:after {
+    content: ' ▼';
+}
+
+/*Color picker*/
+input[type=color] {
+    position: relative;
+    min-width: 15ch;
+    cursor: pointer;
+    padding: 0;
+}
+input[type=color]::-webkit-color-swatch-wrapper {
+    padding: 0;
+    width: 50%;
+}
+input[type=color]::-webkit-color-swatch {
+    border: none;
+    border-radius: var(--border-radius);
+}
+input[type=color]::after {
+    content: attr(value);
+    position: absolute;
+    top: 0.25rem;
+    right: 0.1rem;
+}
+
+/*Range input*/
+input[type=range] {
+    appearance: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+    background-color: var(--color-block);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    height: 0.5rem;
+}
+input[type=range]::-webkit-slider-thumb {
+    background-color: var(--color-interactive);
+    appearance: none;
+    display: block;
+    height: 1rem;
+    width: 1rem;
+    border-radius: var(--border-radius);
+    margin-top: -0.25rem;
+    border: none;
+    cursor: pointer;
+}
+
+/*Checkboxes and radio*/
+.radio_and_label {
+    white-space: nowrap;
+    vertical-align: middle;
+    color: var(--color-text);
+    margin: 0.4rem auto;
+    height: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+.radio_and_label input[type=radio]+label,
+.radio_and_label input[type=checkbox]+label {
+    margin-left: 0.4rem;
+}
+input[type=checkbox],
+input[type=radio] {
+    display: none;
+}
+input[type=checkbox]+label::before,
+input[type=radio]+label::before {
+    margin-right: 0.25rem;
+    font-family: var(--font-mono);
+    font-weight: bolder;
+    color: var(--color-interactive);
+    /*Maxes the symbol bolder*/
+    text-shadow: 0.02rem 0.02rem var(--color-interactive);
+}
+input[type=checkbox]+label:focus::before,
+input[type=checkbox]+label:hover::before,
+input[type=checkbox]+label:active::before,
+input[type=radio]+label:focus::before,
+input[type=radio]+label:hover::before,
+input[type=radio]+label:active::before {
+    filter: var(--border-shadow);
+}
+input[type=checkbox]:checked+label::before {
+    content: '\1F5F9';
+}
+input[type=checkbox]:not(checked)+label::before {
+    content: '\2610';
+}
+input[type=radio]:checked+label::before {
+    content: '\29BF';
+}
+input[type=radio]:not(checked)+label::before {
+    content: '\2B58';
+}
+
+/*Select and option styling*/
+select {
+    min-width: 15ch;
+    border-width: var(--border-width);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    border-radius: var(--border-radius);
+    padding: 0.25em 0.5em;
+    cursor: pointer;
+    background-color: var(--color-article);
+    color: var(--color-text);
+    margin: 0.5rem 0 0 0;
+}
+select:active,
+select:focus,
+select:focus-within,
+select:hover {
+    outline: none;
+    border-color: var(--border-color-outset);
+    filter: var(--border-shadow);
+}
+option {
+    border-radius: calc(var(--border-radius)/2);
+}
+
+
+/*Scrollbar*/
+::-webkit-scrollbar {
+    width: 1rem;
+    background-color: var(--color-article);
+    border-radius: var(--border-radius);
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0.45rem hsla(0, 0%, 0%, 0.3);
+    border-radius: var(--border-radius);
+    background-color: var(--color-article);
+}
+::-webkit-scrollbar-track-piece {
+    box-shadow: inset 0 0 0.45rem hsla(0, 0%, 0%, 0.3);
+    border-radius: var(--border-radius);
+    background-color: var(--color-article);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+}
+::-webkit-scrollbar-corner {
+    background-color: var(--color-block);
+}
+::-webkit-resizer {
+    background-color: var(--color-article);
+    color: var(--color-interactive);
+    background-image: linear-gradient(135deg, var(--color-interactive) 16.67%, var(--color-block) 16.67%, var(--color-block) 50%, var(--color-interactive) 50%, var(--color-interactive) 66.67%, var(--color-block) 66.67%, var(--color-block) 100%);
+    background-size: 0.7rem 0.7rem;
+}
+
+/*Thumb*/
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-body);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+}
+::-webkit-scrollbar-thumb:hover {
+    border-color: var(--color-interactive);
+    background-color: var(--color-block);
+}
+::-webkit-scrollbar-thumb:active {
+    border-color: var(--color-interactive);
+    background-color: var(--color-article);
+}
+
+/*Buttons*/
+::-webkit-scrollbar-button {
+    background-color: var(--color-block);
+    color: var(--color-interactive);
+    border-style: solid;
+    border-color: var(--color-interactive);
+    background-repeat: no-repeat;
+    border-radius: var(--border-radius);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+/* Up */
+::-webkit-scrollbar-button:vertical:decrement {
+    border-width: 0 0.5rem 1rem 0.5rem;
+    border-color: transparent transparent var(--color-interactive) transparent;
+}
+::-webkit-scrollbar-button:vertical:decrement:hover {
+    border-color: transparent transparent var(--color-interactive) transparent;
+}
+/* Down */
+::-webkit-scrollbar-button:vertical:increment
+{
+    border-width: 1rem 0.5rem 0 0.5rem;
+    border-color: var(--color-interactive) transparent transparent transparent;
+}
+::-webkit-scrollbar-button:vertical:increment:hover
+{
+    border-color: var(--color-interactive) transparent transparent transparent;
+}
+/* Left */
+::-webkit-scrollbar-button:horizontal:decrement {
+    border-width: 0.5rem 1rem 0.5rem 0;
+    border-color: transparent var(--color-interactive) transparent transparent;
+}
+::-webkit-scrollbar-button:horizontal:decrement:hover {
+    border-color: transparent var(--color-interactive) transparent transparent;
+}
+/* Right */
+::-webkit-scrollbar-button:horizontal:increment {
+    border-width: 0.5rem 0 0.5rem 1rem;
+    border-color: transparent transparent transparent var(--color-interactive);
+}
+::-webkit-scrollbar-button:horizontal:increment:hover {
+    border-color: transparent transparent transparent var(--color-interactive);
+}
+/*Hide doubled buttons*/
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:end:decrement,
+::-webkit-scrollbar-button:horizontal:start:increment,
+::-webkit-scrollbar-button:horizontal:end:decrement
+{
+    display: none;
+}
+main::-webkit-scrollbar {
+    margin-left: 2rem;
+}
+
+/*Style tooltips*/
+[data-tooltip] {
+    text-decoration: underline dotted;
+    cursor: pointer;
+}
+#tooltip {
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    background-color: var(--color-block);
+    color: var(--color-text);
+    text-align: center;
+    padding: 0.25rem;
+    z-index: 3;
+    margin: 1rem auto;
+    height: 2rem;
+    line-height: 2rem;
+    overflow: hidden;
+    text-overflow: clip;
+    word-break: keep-all;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+#tooltip {
+    display: none;
+    position: absolute;
+    left: var(--cursorX);
+    top: var(--cursorY);
+}
+#tooltip[data-tooltip] {
+    display: block;
+    transform: translate3d(var(--cursorX) px, var(--cursorY) px, 0px);
+    text-decoration: none;
+}
+#tooltip[data-tooltip]::before {
+    display: block;
+    content: attr(data-tooltip);
+}
+
+/*Snackbar notifications*/
+#snacksContainer {
+    visibility: hidden;
+    position: absolute;
+    bottom: var(--footer-height);
+    width: 100%;
+    margin: 0 auto;
+}
+.snackbar {
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    background-color: var(--color-block);
+    color: var(--color-text);
+    text-align: center;
+    visibility: visible;
+    display: flex;
+    position: relative;
+    padding: 0.25rem;
+    height: 2rem;
+    line-height: 2rem;
+    z-index: 3;
+    margin: 1rem auto;
+}
+.snack_text {
+    vertical-align: top;
+    flex: 1
+}
+.snack_close {
+    display: inline-block;
+    float: right;
+}
+.failure, .error {
+    color: var(--color-failure);
+    font-weight: bold;
+}
+.warning, .notice, .attention {
+     color: var(--color-warning);
+}
+.success {
+    color: var(--color-success);
+}
+.disabled, *[disabled], *[aria-disabled] {
+     color: var(--color-disabled);
+ }
+.linkIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+    /*Negative margin to align with text*/
+    margin: 0 0.25rem 0.25rem 0.25rem;
+}
+/*We do not need the negative margin in footer*/
+footer address a .linkIcon {
+    margin-top: 0.25rem;
+}
+.shown {
+    display: block!important;
+}
+.aboutSection {
+    text-align: center;
+    font-size: small;
+}
+#http_error{
+    text-align: center;
+}
+#http_error img {
+    max-width: 20rem;
+    max-height: 20rem;
+}
+.zeroMargin {
+    margin: 0
+}
+.bottomMargin {
+    margin-bottom: 2rem;
+}
+.float_left {
+    float: left;
+}
+.float_right {
+    float: right;
+}
+.clear::after {
+    content: ' ';
+    display: block;
+    height: 0;
+    clear: both;
+}
+.avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    filter: var(--border-shadow);
+}
+.tagList {
+    display: flex;
+    flex-direction: row;
+    font-style: italic;
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+}
+.tagList li {
+    margin: 0.1rem 0.1rem 0.1rem 0.5rem;
+    background-color: var(--color-block);
+    padding: 0.1rem 0.25rem 0.1rem 0.1rem;
+    border-radius: var(--border-radius);
+}
+.tagList li::before {
+    content: '#';
+    color: var(--border-light);
+}
+.fadeIn {
+    animation: fadein 0.5s;
+}
+.fadeOut {
+    animation: fadeout 0.5s;
+}
+.copyQuote {
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0.25em;
+    border-radius: 25%;
+    border-style: solid;
+    border-color: transparent;
+    border-width: var(--border-width);
+    float: left;
+    cursor: pointer;
+    margin-right: 0.25em;
+}
+blockquote>.copyQuote {
+    float: right;
+}
+.copyQuote:hover,
+.copyQuote:focus,
+.copyQuote:active {
+    border-color: var(--color-interactive);
+}
+.copyQuote:active {
+    border-color: var(--color-interactive);
+    filter: brightness(70%);
+}
+
+/*Color unicode emojis with plain color. This allows a bit more standardization across systems*/
+[class^='emoji'], [class*=' emoji']  {
+    color: transparent;
+}
+.emojiGreen {
+    text-shadow: 0 0 0 var(--color-success);
+}
+.emojiRed {
+    text-shadow: 0 0 0 var(--color-failure);
+}
+.emojiOrange {
+    text-shadow: 0 0 0 var(--color-warning);
+}
+.emojiBlue {
+    text-shadow: 0 0 0 var(--color-interactive);
+}
+.emojiWhite {
+    text-shadow: 0 0 0 var(--color-text);
+}
+
+/*Style search results along with entity cards*/
+.searchResults {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.searchCount {
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+.entityCard {
+    width: 25%;
+    height: 2rem;
+    background-color: var(--color-block);
+    margin: 0.2rem;
+    border-color: var(--border-color-outset);
+    padding: 0;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.entityIcon, .entityArrow {
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    vertical-align: middle;
+    display: block;
+    float: left;
+}
+.entityIcon {
+    text-align: center;
+}
+.entityArrow {
+    font-size: 1.5rem;
+    text-align: right;
+    width: 1.2rem;
+}
+.entityIcon>img {
+    border-top-left-radius: calc(var(--border-radius) - var(--border-width));
+    border-bottom-left-radius: calc(var(--border-radius) - var(--border-width));
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+    overflow: hidden;
+    vertical-align: top;
+}
+.entityName {
+    width: calc(100% - 3.5rem);
+    overflow: hidden;
+    text-overflow: clip;
+    word-break: break-word;
+    display: block;
+    height: 2rem;
+    font-size: smaller;
+    line-height: 1.025rem;
+    float: left;
+    color: var(--color-text);
+    border-left: 0.1rem solid var(--border-light);
+    border-right: 0.1rem solid var(--border-dark);
+    padding-left: 0.1rem;
+    font-weight: normal;
+}
+.entityRank {
+    overflow: hidden;
+    text-overflow: clip;
+    display: block;
+    height: 1.5rem;
+    font-size: smaller;
+    line-height: 1.025rem;
+    float: left;
+    padding-left: 0.1rem;
+}
+
+.searchForm {
+    text-align: center;
+}
+#searchLabel,
+#searchField {
+    width: 100%;
+}
+
+.relative {
+    position: relative;
+}
+
+.spin {
+    animation: spin 4s linear infinite;
+}
+.refresh.spin,
+.refresh.spin:hover,
+.refresh.focus,
+.refresh.active {
+    border: none;
+    filter: none;
+    cursor: wait;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.gold {
+    color: gold;
+}
+@-moz-document url-prefix() {
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+    input[type=color]::-moz-focus-inner {
+        border: none;
+        padding: 0;
+        border-radius: var(--border-radius);
+        width: 50%;
+    }
+    input[type=color]::-moz-color-swatch {
+        border: none;
+        padding: 0;
+        border-radius: var(--border-radius);
+    }
+    input[type=range]::-moz-range-track {
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background-color: var(--color-block);
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        height: 0.5rem;
+    }
+    input[type=range]::-moz-range-thumb {
+        background-color: var(--color-interactive);
+        appearance: none;
+        display: block;
+        height: 1rem;
+        width: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: -0.25rem;
+        border: none;
+        cursor: pointer;
+    }
+    input[type=range]::-moz-range-progress {
+        background-color: var(--color-interactive);
+        cursor: pointer;
+    }
+    progress {
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background-color: var(--color-article);
+        border-color: transparent;
+        height: 1.25rem;
+    }
+    progress:indeterminate {
+        border-color: transparent;
+        height: 1.25rem;
+    }
+    progress:not(indeterminate) {
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--border-color-inset);
+    }
+    :indeterminate::-moz-progress-bar {
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--border-color-inset);
+        height: 1.25rem;
+        position: relative;
+    }
+    progress::-moz-progress-bar {
+        appearance: none;
+        border-radius: var(--border-radius);
+        background-color: var(--color-article);
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background-image: linear-gradient(to right, var(--color-failure), var(--color-success));
+    }
+    progress:indeterminate::-moz-progress-bar {
+        background-image: none;
+    }
+    meter {
+        height: 1rem;
+        border-radius: var(--border-radius);
+        border-width: var(--border-width);
+        border-style: solid;
+        border-color: var(--border-color-inset);
+        box-shadow: 0 0.1rem 0.3rem hsla(0, 0%, 0%, 0.25) inset;
+        background-color: var(--color-article);
+    }
+    meter:-moz-meter-optimum::-moz-meter-bar,
+    meter:-moz-meter-sub-optimum::-moz-meter-bar,
+    meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        border-radius: var(--border-radius);
+    }
+    meter:-moz-meter-optimum::-moz-meter-bar {
+        background-image: linear-gradient(to right, white, var(--color-success), lightgreen);
+    }
+    meter:-moz-meter-sub-optimum::-moz-meter-bar {
+        background-image: linear-gradient(to right, white, var(--color-warning), orange);
+    }
+    meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+        background-image: linear-gradient(to right, white, var(--color-failure), lightcoral);
+    }
+    body {
+        scrollbar-color: var(--color-block) var(--color-body);
+        scrollbar-width: auto;
+    }
+}
+#footerLinks, #footerContacts, #footerCopyright {
+    font-size: 0.7rem;
+}
+#footerLinks {
+    margin-top: -0.1rem;
+}
+#footerContacts .linkIcon {
+    filter: brightness(70%);
+}
+#footerContacts .linkIcon:hover,
+#footerContacts .linkIcon:active,
+#footerContacts .linkIcon:focus {
+    filter: brightness(125%);
+}
+#footerContacts a {
+    outline: none;
+}
+#footerContacts {
+    display: inline-block;
+}
+#footerSitemap {
+    display: inline-block;
+    text-decoration: underline var(--color-interactive);
+    position: relative;
+    margin: auto 0.5rem;
+    border-style: outset;
+    border-radius: var(--border-radius);
+    border-color: transparent;
+    padding: 0.1rem;
+    border-width: 0.1rem;
+}
+#footerSitemap:hover, #footerSitemap:active, #footerSitemap:focus {
+    border-color: var(--color-interactive);
+    text-decoration: none;
+}
+#footerSitemap #sitemapLinks {
+    position: absolute;
+    width: 10rem;
+    height: 1.5rem;
+    top: -2.25rem;
+    left: -3.5rem;
+    background-color: var(--color-block);
+    line-height: 1.5rem;
+}
+#footerSitemap[open] summary:after {
+    content: ' ▲';
+}
+#footerLinks a {
+    margin: auto 0.5rem;
+}
+#sitemapLinks {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+}
+.back-to-top {
+    color: var(--color-interactive);
+    display: inline-block;
+    font-weight: 900;
+    cursor: pointer;
+    margin: 0 3rem 0 3rem;
+}
+#footerContacts a:hover,
+#footerContacts a:focus,
+#footerContacts a:active {
+    border-color: transparent;
+}
+#header_logo {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    letter-spacing: 0.25rem;
+    font-weight: bold;
+    color: var(--border-light);
+    line-height: 2rem;
+    height: 2rem;
+}
+#header_logo img,
+#header_logo span {
+    height: 2rem;
+    line-height: 2rem;
+    display: inline-block;
+}
+#header_logo img {
+    margin-bottom: 0.4rem;
+}
+#header_logo span {
+    width: 11rem;
+}
+#header_logo span:first-of-type {
+    text-align: right;
+    margin-right: -0.7rem;
+}
+#header_logo span:last-of-type {
+    text-align: left;
+    margin-left: -0.5rem;
+}
+#h1title,
+#shareButton {
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1rem;
+    height: 1rem;
+}
+#shareButton {
+    width: 1rem;
+    margin-bottom: 0.7rem;
+    margin-left: 0.5rem;
+    cursor: pointer
+}
+#shareButton:hover,
+#shareButton:focus,
+#shareButton:active {
+    filter: var(--border-shadow);
+}
+#shareButton:active {
+    filter: brightness(0.7);
+}
+#h1div {
+    width: 100%;
+    height: 1rem;
+    margin-top: 0.5rem;
+}
+#h1title {
+    max-width: calc(100% - 0.5rem - 1rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    height: 1.1rem;
+    letter-spacing: 0.1rem;
+}
+#logoNav {
+    position: relative;
+    display: inline-block;
+}
+#logoIcon, #showNav {
+    position: absolute;
+}
+#loginForm {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+}
+
+/*Center form content*/
+#signinup {
+    text-align: center;
+}
+
+/*Limit width*/
+#signinup .float_label_div,
+#signinup_email,
+#signinup_password {
+    /*Width corresponds to characters.
+    10 looks the lowest number that makes placeholders more or less readable.
+    Longer than 65 characters is unnecessary, since we limit username at 64. 65 is used since with 64 there is a higher chance of truncation*/
+    width: clamp(calc(10ch + var(--showpassword-width)), calc(20ch + var(--showpassword-width)), calc(65ch + var(--showpassword-width)));
+}
+
+/*Override global highlights since form is present on all pages by default*/
+/*Border for valid/invalid input*/
+#signinup_email, #signinup_password {
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    box-shadow: none;
+}
+#signinup_email:invalid:focus:not(:placeholder-shown),
+#signinup_email[required]:invalid:focus:placeholder-shown,
+#signinup_password:invalid:focus:not(:placeholder-shown),
+#signinup_password[required]:invalid:focus:placeholder-shown {
+    border-color: var(--color-failure);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-failure), -0.1rem -0.1rem 0.75rem var(--color-failure);
+}
+#signinup_email:valid:focus,
+#signinup_password:valid:focus {
+    border-color: var(--color-success);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color-success), -0.1rem -0.1rem 0.75rem var(--color-success);
+}
+
+/*Adjust submit button width based on text*/
+#signinup_submit {
+    width: auto;
+}
+
+/*Pad text inside input to allow placement for an eye icon*/
+#signinup_password {
+    padding-left: 5ch;
+}
+
+/*Style eye icon*/
+.showpassword {
+    color: var(--color-interactive);
+    position: absolute;
+    top: -0.3rem;
+    left: 0.25rem;
+    cursor: pointer;
+    display: none;
+    content: '\1F441';
+    width: var(--showpassword-width);
+    font-size: 1.75rem;
+    text-align: center;
+}
+
+/*Add eye icon to class for ease of use*/
+#signinup_password~.showpassword:before {
+    content: '\1F441';
+}
+
+/*Add diagonal line to the eye icon if it's text field*/
+#signinup_password[type^=text]~.showpassword:after {
+    content: '\2571';
+    position: absolute;
+    left: 0.25rem;
+    font-weight: bold;
+    color: var(--color-failure);
+}
+
+/*Show eye icon only when field is focused or there is text there*/
+#signinup_password:focus~.showpassword,
+#signinup_password:not(:placeholder-shown)~.showpassword {
+    display: block;
+}
+
+/*Style text of password requirement*/
+#password_req {
+    display: none;
+    text-align: left;
+}
+
+#signinup_password:focus~#password_req,
+#signinup_password:not(:placeholder-shown)~#password_req,
+#signinup_password:focus~.pass_str_div,
+#signinup_password:not(:placeholder-shown)~.pass_str_div {
+    display: block;
+}
+
+#signinup_password:valid~#password_req {
+    color: var(--color-success);
+}
+
+#signinup_password:invalid~#password_req {
+    color: var(--color-failure);
+}
+
+/*Style password strength*/
+.pass_str_div {
+    display: none;
+    color: var(--color-text);
+    text-align: left;
+}
+.password_weak,
+.password_strength {
+    color: var(--color-failure);
+    font-weight: 400;
+}
+.password_medium {
+    color: var(--color-warning);
+    font-weight: 500;
+}
+.password_strong {
+    color: var(--color-success);
+    font-weight: 700;
+}
+.password_very_strong {
+    font-weight: 900;
+    background: linear-gradient(to bottom, hsl(41, 33%, 72%) 22%, hsl(38, 38%, 28%) 24%, hsl(41, 33%, 72%) 26%, hsl(41, 33%, 72%) 27%, hsl(45, 100%, 85%) 40%, hsl(40, 59%, 50%) 78%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+#navigation {
+    border-style: solid;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+}
+
+#navList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    position: relative;
+    overflow-y: auto;
+}
+#navList .navElement:first-child a,
+#showSidebar a {
+    width: calc(100% - 0.2rem);
+    border: none;
+}
+#navList .navElement:nth-child(2) {
+    height: auto;
+}
+#navList .navElement:first-child,
+#showSidebar {
+    height: 2.5rem;
+}
+#showSidebar {
+    border-radius: var(--border-radius);
+}
+#navList .navElement:first-child:hover,
+#navList .navElement:first-child:active,
+#navList .navElement:first-child:focus,
+#showSidebar:hover,
+#showSidebar:active,
+#showSidebar:focus {
+    background-color: var(--color-article);
+}
+.navIcon {
+    width: 2rem;
+    height: 2rem;
+    margin: 0.1rem 0.4rem 0.4em 0.1rem;
+}
+.navElement {
+    width: calc(100% - 0.2rem);
+    border-color: transparent;
+    border-radius: var(--border-radius);
+    border-style: outset;
+    border-width: 0.1rem;
+}
+.navElement details {
+    display: inline-block;
+    width: calc(100% - 0.2rem);
+}
+.navLine {
+    cursor: pointer;
+}
+.navItem {
+    min-height: 2rem;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+}
+.navCat {
+    padding: .1rem;
+    border-radius: var(--border-radius);
+    text-decoration: underline var(--color-interactive);
+}
+.navCat:focus-within, .navCat:hover, .navCat:active, .navCat[open] {
+    background-color: var(--color-article);
+    text-decoration: none;
+}
+.navCat summary {
+    width: calc(100% - 0.2rem);
+}
+.navCat summary:hover, .navCat summary:active, .navCat summary:focus, .navCat summary:focus-within {
+    text-decoration: none;
+    outline: none;
+}
+.navCat ul {
+    list-style-type: '\1F359';
+    padding-left: 3.5rem;
+}
+.navCat ul li .navItem {
+    box-sizing: border-box;
+}
+.navCat ul .current {
+    list-style-type: '\1F358';
+}
+.navCat ul .current a {
+    font-weight: normal;
+    font-style: italic;
+}
+.navElement:hover, .navElement:active, .navElement:focus, .navElement:focus-within {
+    border-color: var(--color-interactive);
+    text-decoration: none;
+    outline: none;
+}
+.navLine:hover .navIcon,
+.navLine:active .navIcon,
+.navLine:focus .navIcon,
+.navLine details[open] .navIcon {
+    filter: brightness(200%) contrast(70%);
+}
+.navBread {
+    margin-left: 2.75rem;
+    margin-top: -0.75rem;
+}
+.navBread:hover,
+.navBread:focus-within,
+.navBread:active,
+#navList .navElement:nth-child(2):hover,
+#navList .navElement:nth-child(2):focus-within,
+#navList .navElement:nth-child(2):active {
+    border-color: transparent;
+}
+nav[aria-label='breadcrumb 1'],
+#ol_breadcrumbs_1 li {
+    display: inline-block;
+}
+nav[aria-label='breadcrumb 1'] {
+    width: 100%;
+    font-size: 0.6rem;
+}
+#ol_breadcrumbs_1 {
+    padding-left: 0;
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+#ol_breadcrumbs_1 li:first-child {
+    display: none;
+}
+#ol_breadcrumbs_1 li:last-child a {
+    font-weight: normal;
+    text-decoration: none;
+}
+#ol_breadcrumbs_1 li::before {
+    content: '❮';
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 0.1rem;
+}
+#ol_breadcrumbs_1 li:nth-child(2)::before {
+    transform: rotate(90deg);
+    display: inline-block;
+}
+#history_terms,
+#history_privacy,
+#history_security {
+    margin-top: 5rem;
+}
+#me {
+    width: 8rem;
+    height: 8rem;
+}
+/* The actual timeline (the vertical ruler) */
+.timeline {
+    position: relative;
+    margin: 1rem auto;
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 0.5rem;
+    background-color: var(--color-body);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -0.25rem;
+    border-radius: var(--border-radius);
+}
+
+/* Container around content */
+.timeline_block {
+    position: relative;
+    background-color: var(--color-block);
+    width: calc(50% - 2rem);
+    border-radius: var(--border-radius);
+    margin: 1rem 0 1rem 0;
+}
+
+/* The circles on the timeline */
+.timeline_block::after {
+    content: '';
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    right: -2.75rem;
+    background-color: var(--color-block);
+    border-width: 0.25rem;
+    border-style: solid;
+    border-color: var(--border-light);
+    top: 1rem;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+/* Place the container to the left */
+.timeline_start {
+    left: 0;
+}
+.timeline_start .timeline_time {
+    text-align: right;
+    width: 100%;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Place the container to the right */
+.timeline_end {
+    left: calc(50% + 2rem);
+}
+.timeline_end .timeline_time {
+    text-align: left;
+    width: 100%;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.timeline_start::before,
+.timeline_end::before {
+    content: ' ';
+    height: 0;
+    position: absolute;
+    top: 1rem;
+    width: 0;
+    z-index: 1;
+}
+
+/* Add arrows to the left container (pointing right) */
+.timeline_start::before {
+    right: -0.9rem;
+    border-style: solid;
+    border-width: .75rem 0 .75rem .75rem;
+    border-color: transparent transparent transparent var(--color-text);
+}
+
+/* Add arrows to the right container (pointing left) */
+.timeline_end::before {
+    left: -0.9rem;
+    border-style: solid;
+    border-width: .75rem .75rem .75rem 0;
+    border-color: transparent var(--color-text) transparent transparent;
+}
+
+/* Fix the circle for containers on the right side */
+.timeline_end::after {
+    left: -2.75rem;
+}
+
+/* The actual content */
+.timeline_content {
+    padding: 0.5rem;
+    position: relative;
+}
+/*Flash on target*/
+.timeline_block:target {
+    animation: timeline-flash 1.5s ease-in-out 0s;
+}
+
+.timeline_header {
+    margin: 0 0 1rem 0;
+    color: var(--color-text);
+}
+
+.timeline_icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    /*Negative margin to align with text*/
+    margin: 0 0.25rem 0.25rem 0.25rem;
+}
+.timeline_icon_current {
+    width: 1.25rem;
+    height: 1.25rem;
+    /*Negative margin to align with text*/
+    margin: 0 0.25rem 0.25rem 0.25rem;
+}
+
+.timeline_responsibilitiesList {
+    list-style: '\2692';
+    margin-top: 0;
+}
+
+.timeline_achievementsList {
+    list-style: '\1F3C6';
+    margin-top: 0;
+}
+.timeline_shortcut {
+    text-align: center;
+}
+
+.timeline_current {
+    border-width: 0.1rem;
+    border-style: dashed;
+    border-color: var(--color-success);
+}
+
+.timeline_elapsed {
+    margin-bottom: 1rem;
+}
+/*Pagination styling*/
+ol[id^='ol_pagination'] {
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+li[id^='li_pagination'] {
+    display: inline-block;
+}
+[id^='a_pagination'] {
+    display: inline-block;
+    min-width: 2rem;
+    height: 2rem;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2rem;
+    margin: 0.25rem;
+    border-style: outset;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--color-interactive);
+    color: var(--color-interactive);
+    cursor: pointer;
+}
+a[id^='a_pagination']:hover,
+a[id^='a_pagination']:focus {
+    background-color: var(--color-block);
+}
+.pagination_currentpage>[id^='a_pagination'] {
+    border-style: inset;
+    border-color: var(--color-success);
+    color: var(--color-success);
+    cursor: not-allowed;
+}
+[id^='a_pagination'][id$='prev'],
+[id^='a_pagination'][id$='next'],
+[id^='a_pagination'][id$='first'],
+[id^='a_pagination'][id$='last'] {
+    border-color: var(--color-interactive);
+    color: var(--color-interactive);
+    cursor: pointer;
+}
+span[id^='a_pagination'][id$='prev'],
+span[id^='a_pagination'][id$='next'],
+span[id^='a_pagination'][id$='first'],
+span[id^='a_pagination'][id$='last'] {
+    border-color: var(--color-disabled);
+    color: var(--color-disabled);
+    border-style: inset;
+    cursor: not-allowed;
+}
+@keyframes anchor-flash {
+    from {
+        background: var(--color-interactive);
+    }
+    to {
+        background: inherit;
+    }
+}
+@keyframes timeline-flash {
+    from {
+        background: var(--color-interactive);
+    }
+    to {
+        background: var(--color-block);
+    }
+}
+@keyframes fadein {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+@keyframes fadeout {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+@keyframes spin {
+    100% {
+        transform:rotate(360deg);
+    }
+}
+.bicChain {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+#bicRefresh {
+    margin-left: 1rem;
+    top: -0.5rem;
+    position: absolute;
+}
+#bic_spinner {
+    width: 3rem;
+    height: 3rem;
+    display: inline;
+    margin: auto;
+}
+#se_copyright {
+    text-align: center;
+    font-style: italic;
+    margin: 3rem auto 1rem auto;
+}
+#ff_portrait_img {
+    width: 95%;
+    border-radius: var(--border-radius);
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    border-style: solid;
+}
+.ff_char_page {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+.ff_char_page > section {
+    flex-grow: 1;
+    width: fit-content;
+    max-width: 100%;
+    flex-basis: 45%;
+    padding: 0.1rem;
+}
+.ff_char_block .entityCard {
+    min-width: 45%;
+}
+.ff_char_page .searchResults {
+    justify-content: flex-start;
+}
+.ff_crest {
+    width: 4rem;
+    height: 4rem;
+}
+#ff_track_id,
+#ff_track_type {
+    width: 22rem;
+}
+#ff_track_id_wrap,
+#ff_track_type_wrap {
+    display: block;
+    width: 22rem;
+}
+#ff_track_submit {
+    display: block;
+    margin: auto;
+}
+#ff_track_spinner {
+    width: 3rem;
+    height: 3rem;
+    display: block;
+    margin: auto;
+}
+@media (max-width: 55.599999em) {
+    .ff_char_page {
+        flex-direction: column;
+    }
+}
+#galleryOverlay {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-body);
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    z-index: 10;
+}
+#galleryClose {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    z-index: 2;
+}
+#galleryGrid {
+    opacity: 0.90;
+    display: grid;
+    grid-template-rows: 3rem calc(100vh - 6rem) 3rem;
+    grid-template-columns: 5rem calc(100vw - 10rem) 5rem;
+    grid-template-areas:
+        'galleryPrevious galleryNameBlock galleryNext'
+        'galleryPrevious galleryImage galleryNext'
+        'galleryPrevious galleryCounter galleryNext';
+}
+#galleryPrevious,
+#galleryNext {
+    background-color: var(--color-body);
+    height: 100vh;
+    width: 5rem;
+    color: var(--color-interactive);
+    font-weight: bolder;
+    font-size: 5rem;
+    vertical-align: middle;
+    text-align: center;
+    line-height: calc(100vh - 5rem);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
+#galleryPrevious {
+    grid-area: galleryPrevious;
+}
+#galleryNext {
+    grid-area: galleryNext;
+}
+#galleryImage {
+    grid-area: galleryImage;
+    height: calc(100vh - 6rem);
+    width: calc(100vw - 10rem);
+    overflow: auto;
+}
+#galleryCounter, #galleryNameBlock {
+    background-color: var(--color-body);
+    height: 3rem;
+    width: calc(100vw - 10rem);
+    vertical-align: middle;
+    text-align: center;
+    line-height: 3rem;
+}
+#galleryNameBlock {
+    grid-area: galleryNameBlock;
+    font-weight: bold;
+}
+#galleryCounter {
+    grid-area: galleryCounter;
+    font-style: italic;
+}
+#galleryPrevious:focus,
+#galleryNext:focus,
+#galleryPrevious:hover,
+#galleryNext:hover,
+#galleryPrevious:active,
+#galleryNext:active {
+    filter: brightness(2);
+}
+#galleryLoadedImage {
+    height: 100%;
+    cursor: zoom-in;
+    margin: auto;
+    display: block;
+}
+#galleryLoadedImage.zoomedIn {
+    height: unset;
+    cursor: zoom-out;
+}
+.galleryZoom {
+    text-decoration: none;
+    border-color: var(--color-interactive);
+    cursor: zoom-in;
+}
+/*Using em based on experiments from https://zellwk.com/blog/media-query-units/
+and https://medium.com/@barrypeng6/why-should-not-use-rem-unit-in-media-query-5645d0163ce5
+since they show em as most consistent*/
+
+/*Adjust body grid*/
+@media (max-width: 44.599999em) {
+    body {
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
+        grid-template-areas:
+            'header header'
+            'content content'
+            'footer footer';
+    }
+}
+@media (min-width: 44.599999em) and (max-width: 55.599999em) {
+    body {
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
+        grid-template-areas:
+          'header header'
+          'navigation content'
+          'footer footer';
+    }
+}
+@media (min-width: 55.599999em) and (max-width: 62em) {
+    body {
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: var(--header-height) 6rem calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3) var(--footer-height);
+        grid-template-areas:
+          'header header'
+          'navigation sidebar'
+          'navigation content'
+          'footer footer';
+    }
+}
+@media (min-width: 62em) {
+    body {
+        grid-template-columns: 1fr 3fr 1fr;
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
+        grid-template-areas:
+          'header header header'
+          'navigation content sidebar'
+          'footer footer footer';
+    }
+}
+
+/*Adjust snackbars*/
+@media (max-width: 44.599999em) {
+    .snackbar {
+        width: 90vw;
+    }
+}
+@media (min-width: 44.599999em) {
+    .snackbar {
+        width: 75vw;
+    }
+}
+
+/*Adjust variables*/
+@media (max-height: 20.599999em) {
+    :root {
+        --header-height: 2.5rem;
+        --footer-height: 1.25rem;
+    }
+}
+@media (max-width: 18.599999em) {
+    :root {
+        --header-height: 2.5rem;
+        --footer-height: 1.25rem;
+    }
+}
+@media (min-height: 20.599999em) and (max-height: 30em) {
+    :root {
+        --footer-height: 2.5rem;
+    }
+}
+@media (min-width: 18.599999rem) and (max-width: 44.599999em) {
+    :root {
+        --header-height: 2.5rem;
+        --footer-height: 2.5rem;
+    }
+}
+
+/*Adjust height of #content and #navigation, on widths when we change placement for narrow screens*/
+@media (min-width: 48.599999em) and (max-width: 55.599999em) {
+    #content {
+        height: calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3);
+    }
+}
+@media (max-width: 44.599999em) {
+    #content {
+        max-width: 100vw;
+    }
+}
+@media (min-width: 44.599999em) {
+    #content {
+        max-width: 100ch;
+        width: 100%
+    }
+}
+@media (max-width: 55.599999em) {
+    #content, #navigation {
+        height: calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2);
+    }
+}
+@media (max-width: 44.599999em) {
+    #navigation {
+        grid-area: none;
+        position: absolute;
+        width: 100vw;
+        /*Using !important to enforce stretching, because otherwise height will be same as for main block*/
+        height: 100vh!important;
+        z-index: 1;
+        display: none;
+        background-color: var(--color-body);
+        border: none;
+        border-radius: 0;
+    }
+}
+
+/*Adjust elements in footer on smaller screens to provide more space for main content*/
+@media (max-height: 30em) {
+    #footerContacts {
+        display: none;
+    }
+}
+@media (max-width: 44.599999em) {
+    #footerContacts {
+        display: none;
+    }
+}
+@media (max-height: 20.599999em) {
+    #footerLinks, #footerCopyright {
+        display: none;
+    }
+}
+@media (max-width: 18.599999em) {
+    #footerLinks, #footerCopyright {
+        display: none;
+    }
+}
+@media (max-height: 20.599999em) {
+    #leftBTT {
+        position: absolute;
+        top: -0.25rem;
+        left: 25%;
+    }
+    #rightBTT {
+        position: absolute;
+        top: -0.25rem;
+        right: 25%;
+    }
+}
+@media (max-width: 18.599999em) {
+    #leftBTT {
+        position: absolute;
+        top: -0.25rem;
+        left: 0;
+    }
+    #rightBTT {
+        position: absolute;
+        top: -0.25rem;
+        right: 0;
+    }
+}
+@media (min-width: 18.599999rem) and (max-width: 44.599999em) {
+    #leftBTT {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    #rightBTT {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
+/*Adjust header elements on smaller screens to provide more space for main content*/
+@media (max-height: 20.599999em) {
+    #h1div {
+        width: calc(100% - 3rem);
+        display: inline-block;
+    }
+    #header_logo {
+        width: 2rem;
+        display: inline-block;
+        margin-top: 0.25rem;
+    }
+    #header_logo img {
+        display: inline-block;
+        left: 1rem;
+        position: absolute!important;
+    }
+    #header_logo span {
+        display: none!important;
+    }
+    #logoIcon {
+        left: -1.25rem;
+        top: -1.75rem;
+    }
+}
+@media (max-width: 44.599999em) {
+    #h1div {
+        width: calc(100% - 3rem);
+        display: inline-block;
+    }
+    #header_logo {
+        width: 2rem;
+        display: inline-block;
+        margin-top: 0.25rem;
+    }
+    #header_logo img {
+        display: inline-block;
+        left: 1rem;
+        /*position: absolute;*/
+    }
+    #header_logo span {
+        display: none;
+    }
+    #logoIcon {
+        left: -1.25rem;
+        top: -1.75rem;
+    }
+}
+@media (max-width: 18.599999em) {
+    #h1title {
+        width: calc(100% - 3rem);
+    }
+}
+@media (min-width: 44.599999em) {
+    #header_logo img, #header_logo span {
+        display: inline-block;
+        position: relative;
+    }
+}
+
+/*Adjust some buttons*/
+@media (max-width: 44.599999em) {
+    #hideNav {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}
+@media (max-width: 55.599999em) {
+    #hideSidebar {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    #showSidebar, #hideSidebar {
+        display: block;
+    }
+}
+@media (max-height: 20.599999em) {
+    #showNav {
+        left: -1.25rem;
+        top: -1.75rem;
+    }
+}
+@media (max-width: 44.599999em) {
+    #showNav {
+        left: -1.25rem;
+        top: -1.75rem;
+    }
+}
+@media (max-width: 44.599999em) {
+    #showNav {
+        display: block;
+    }
+    #showSidebar {
+        margin-top: 2rem;
+    }
+}
+@media (min-width: 44.599999em) {
+    #showNav, #hideNav {
+        display: none;
+    }
+}
+@media (min-width: 55.599999em) {
+    #showSidebar, #hideSidebar {
+        display: none;
+    }
+}
+
+/*Adjust sidebar*/
+@media (max-width: 55.599999em) {
+    #sidebar {
+        grid-area: unset;
+        display: none;
+        margin: auto;
+        background-color: var(--color-body);
+        height: 100vh;
+        width: 100vw;
+        z-index: 2;
+    }
+    #loginForm {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+    }
+}
+@media (min-width: 55.599999em) and (max-width: 62em) {
+    #sidebar {
+        height: 6rem;
+    }
+}
+@media (max-width: 62em) {
+    #radio_signinup br {
+        display: none;
+    }
+    #rememberme_div {
+        display: inline-flex;
+    }
+}
+@media (min-width: 62em) {
+    #rememberme_div {
+        display: flex;
+    }
+}

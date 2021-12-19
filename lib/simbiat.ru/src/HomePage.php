@@ -55,36 +55,6 @@ class HomePage
         self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/';
     }
 
-    #Function returns version of the file based on number of files and date of the newest file
-    public function filesVersion(string|array $files): string
-    {
-        #Check if a string
-        if (is_string($files)) {
-            #Convert to array
-           $files = [$files];
-        }
-        #Prepare array of dates
-        $dates = [];
-        #Iterate array
-        foreach ($files as $file) {
-            #Check if string is file
-            if (is_file($file)) {
-                #Add date to list
-                $dates[] = filemtime($file);
-            } else {
-                #Check if directory
-                if (is_dir($file)) {
-                    $fileList = (new \RecursiveIteratorIterator((new \RecursiveDirectoryIterator($file, \FilesystemIterator::FOLLOW_SYMLINKS | \FilesystemIterator::SKIP_DOTS)), \RecursiveIteratorIterator::SELF_FIRST));
-                    foreach ($fileList as $subFile) {
-                        #Add date to list
-                        $dates[] = $subFile->getMTime();
-                    }
-                }
-            }
-        }
-        return strval(max($dates));
-    }
-
     #Function to process some special files
     public function filesRequests(string $request): int
     {
@@ -133,12 +103,13 @@ class HomePage
     {
         #Update list with dynamic values
         $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
-            ['rel' => 'canonical', 'href' => 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$_SERVER['REQUEST_URI']],
-            ['rel' => 'stylesheet preload', 'href' => '/css/'.$this->filesVersion($GLOBALS['siteconfig']['cssdir']).'.css', 'as' => 'style'],
-            ['rel' => 'preload', 'href' => '/js/'.$this->filesVersion($GLOBALS['siteconfig']['jsdir']).'.js', 'as' => 'script'],
+            ['rel' => 'canonical', 'href' => self::$canonical],
+            ['rel' => 'stylesheet preload', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
+            ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
         ]);
         #Send headers
         self::$headers->links($GLOBALS['siteconfig']['links']);
+        #header('SourceMap: /js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js.map');
     }
 
     #Database connection
@@ -204,8 +175,8 @@ class HomePage
     {
         #Set Twig loader
         $twigLoader = new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']);
-        #Initiate Twig itself (use caching only for PROD environment)
-        $twig = new Environment($twigLoader, ['cache' => (self::$PROD ? $GLOBALS['siteconfig']['cachedir'].'/twig' : false)]);
+        #Initiate Twig itself
+        $twig = new Environment($twigLoader, ['cache' => $GLOBALS['siteconfig']['cachedir'].'/twig']);
         #Set default variables
         $twigVars = [
             'domain' => $GLOBALS['siteconfig']['domain'],
@@ -213,8 +184,8 @@ class HomePage
             'site_name' => $GLOBALS['siteconfig']['site_name'],
         ];
         #Set versions of CSS and JS
-        $twigVars['css_version'] = $this->filesVersion($GLOBALS['siteconfig']['cssdir']);
-        $twigVars['js_version'] = $this->filesVersion($GLOBALS['siteconfig']['jsdir']);
+        $twigVars['css_version'] = filemtime($GLOBALS['siteconfig']['cssdir'].'min.css');
+        $twigVars['js_version'] = filemtime($GLOBALS['siteconfig']['jsdir'].'min.js');
         #Flag for Save-Data header
         if (isset($_SERVER['HTTP_SAVE_DATA']) && preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA']) === 1) {
             $twigVars['save_data'] = 'true';
