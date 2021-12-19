@@ -110,6 +110,7 @@ class HomePage
         #Send headers
         self::$headers->links($GLOBALS['siteconfig']['links']);
         header('SourceMap: /js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js.map', false);
+        header('SourceMap: /css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css.map', false);
     }
 
     #Database connection
