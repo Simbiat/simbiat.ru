@@ -59,7 +59,6 @@ class Library
         $currentDate = strtotime(date('d.m.Y', time()));
         #Get date of current library
         $libDate = $this->bicDate();
-        echo $currentDate.'<br>'.$libDate;
         $libDate = strtotime(date('d.m.Y', intval($libDate)));
         while ($libDate <= $currentDate) {
             try {
