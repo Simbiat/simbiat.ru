@@ -109,7 +109,7 @@ class HomePage
         ]);
         #Send headers
         self::$headers->links($GLOBALS['siteconfig']['links']);
-        #header('SourceMap: /js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js.map');
+        header('SourceMap: /js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js.map', false);
     }
 
     #Database connection
@@ -154,7 +154,7 @@ class HomePage
                 session_set_save_handler(new Session, true);
                 session_start();
                 if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
-                    $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418, 'aggressive');
+                    $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418);
                 }
                 #Process POST data if any
                 (new MainRouter)->postProcess();
@@ -171,7 +171,7 @@ class HomePage
      * @throws LoaderError
      * @throws \Exception
      */
-    public function twigProc(array $extraVars = [], ?int $error = NULL, string $cacheStrat = '')
+    public function twigProc(array $extraVars = [], ?int $error = NULL)
     {
         #Set Twig loader
         $twigLoader = new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']);
@@ -266,7 +266,6 @@ class HomePage
         #if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
             #self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
         #} else {
-            #(new Common)->zEcho($output, $cacheStrat);
             echo $output;
         #}
         exit;
