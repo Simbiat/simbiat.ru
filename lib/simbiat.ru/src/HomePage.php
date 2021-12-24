@@ -49,10 +49,12 @@ class HomePage
             #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
             self::$headers->clientReturn('403', true);
         }
-        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes
-        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
+        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes, but keep page
+        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?(?!page=\d*).*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
         #Set canonical link, that may be used in the future
-        self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/';
+        self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$_SERVER['REQUEST_URI'];
+        #Remove page number as well
+        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
     }
 
     #Function to process some special files
@@ -60,13 +62,7 @@ class HomePage
     {
         #Remove query string, if present (that is everything after ?)
         $request = preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
-        if (preg_match('/^js\/\d+\.js$/i', $request) === 1) {
-            #Process JS
-            (new Common)->reductor($GLOBALS['siteconfig']['jsdir'], 'js', false, '', 'aggressive');
-        } elseif (preg_match('/^css\/\d+\.css$/i', $request) === 1) {
-            #Process CSS
-            (new Common)->reductor($GLOBALS['siteconfig']['cssdir'], 'css', true, '', 'aggressive');
-        } elseif (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
+        if (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
             #'2022-12-31T21:00:00.000Z'
             #Send headers, that will identify this as actual file
             header('Content-Type: text/plain; charset=utf-8');
@@ -104,7 +100,7 @@ class HomePage
         #Update list with dynamic values
         $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
             ['rel' => 'canonical', 'href' => self::$canonical],
-            ['rel' => 'stylesheet preload', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
+            ['rel' => 'stylesheet', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
             ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
         ]);
         #Send headers
