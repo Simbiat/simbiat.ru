@@ -72,8 +72,8 @@ class HomePage
             echo $content;
             exit;
         #Caching logic seems to be greatly affecting performance on PROD. Needs revising
-        #} else {
-            /*#Create HTMLCache object to check for cache
+        } else {
+            #Create HTMLCache object to check for cache
             self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
             #Attempt to use cache
             $output = self::$HTMLCache->get('', true, false);
@@ -88,7 +88,7 @@ class HomePage
                     }
                 }
                 self::$HTMLCache->cacheOutput($output);
-            }*/
+            }
         }
         #Return 0, since we did not hit anything
         return 0;
@@ -100,7 +100,7 @@ class HomePage
         #Update list with dynamic values
         $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
             ['rel' => 'canonical', 'href' => self::$canonical],
-            ['rel' => 'stylesheet', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
+            ['rel' => 'stylesheet preload', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
             ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
         ]);
         #Send headers
