@@ -11,7 +11,7 @@
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
-            {% if http_error != 403 and http_error != 404%}
+            {% if http_error != 400 and http_error != 403 and http_error != 404%}
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
         {% endif %}
@@ -34,7 +34,7 @@
                         {% else %}
                             {{ include('errors/construction.twig') }}
                         {% endif %}
-                        {% if not(error_page) and http_error != 403 and http_error != 404%}
+                        {% if not(error_page) and http_error != 400 and http_error != 403 and http_error != 404%}
                             <p>Page will refresh in <span id="refresh_timer">60</span> seconds.</p>
                         {% endif %}
                     </article>

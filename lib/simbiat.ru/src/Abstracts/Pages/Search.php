@@ -24,6 +24,10 @@ class Search extends Page
         $this->typesCheck();
         #Sanitize search value
         $decodedSearch = preg_replace($this->regexSearch, '', rawurldecode($path[0] ?? ''));
+        #Check if the new value is just the set of operators and if it is - consider bad request
+        if (preg_match('/[+\-<>~()"*]+/u', $decodedSearch)) {
+            return ['http_error' => 400];
+        }
         #If value is empty, ensure it's an empty string
         if (empty($decodedSearch)) {
             $decodedSearch = '';
