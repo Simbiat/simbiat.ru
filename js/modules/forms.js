@@ -46,7 +46,7 @@ function searchAction(event)
     if (search.value === '') {
         form.action = form.getAttribute('data-baseURL');
     } else {
-        form.action = form.getAttribute('data-baseURL') + search.value;
+        form.action = form.getAttribute('data-baseURL') + encodeURIComponent(search.value);
     }
     //Ensure that form will use GET method. This adds unnecessary question mark to the end of the URL, but it's better than form resubmit prompt
     form.method = 'get';
