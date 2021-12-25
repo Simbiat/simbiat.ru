@@ -63,29 +63,9 @@ class Router_bck
             return $outputArray;
         }
         $uri[0] = strtolower($uri[0]);
-        switch ($uri[0]) {
-            #Lodestone tests
-            case 'lodestone':
-                if (empty($uri[1])) {
-                    (new Tests)->ffTest(true);
-                    exit;
-                }
-                $uri[1] = strtolower($uri[1]);
-                switch ($uri[1]) {
-                    case 'full':
-                        (new Tests)->ffTest(true);
-                        exit;
-                    case 'freecompany':
-                    case 'linkshell':
-                    case 'pvpteam':
-                    case 'character':
-                        (new Tests)->ffTest(false, $uri[1], $uri[2] ?? '');
-                        exit;
-                }
-                break;
-            case 'optimize':
-                (new Tests)->testDump((new optimizeTables)->setMaintenance("sys__settings","setting","maintenance","value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
-                exit;
+        if ($uri[0] == 'optimize') {
+            (new Tests)->testDump((new optimizeTables)->setMaintenance("sys__settings", "setting", "maintenance", "value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
+            exit;
         }
         $outputArray['http_error'] = 400;
         return $outputArray;

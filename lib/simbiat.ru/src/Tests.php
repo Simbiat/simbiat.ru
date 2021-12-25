@@ -15,31 +15,6 @@ class Tests
     #$data = $Lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
     #$data = $Lodestone->getWorldStatus(true)->getResult();
     #$data = $Lodestone->getDeepDungeon(2, '', '', '')->getResult();
-    public function ffTest(bool $full, string $type = '', string $id = '')
-    {
-        if ($full) {
-            #Run full test
-            new LodestoneTest;
-        } else {
-            $Lodestone = (new Lodestone)->setLanguage('eu')->setUseragent('Simbiat Software');
-            switch($type) {
-                case 'freecompany':
-                    $Lodestone->getFreeCompany($id)->getFreeCompanyMembers($id);
-                    break;
-                case 'linkshell':
-                    $Lodestone->getLinkshellMembers($id);
-                    break;
-                case 'pvpteam':
-                    $Lodestone->getPvPTeam($id);
-                    break;
-                case 'character':
-                    $Lodestone->getCharacter($id);
-                    break;
-            }
-            $this->testDump($Lodestone->getResult());
-        }
-        exit;
-    }
 
     #Function to test file upload using PUT
     public function uploadPut(string $filepath): void
