@@ -47,7 +47,11 @@
 <meta name="twitter:creator" content="@{{ twitter_card.name }}" />
 <meta name="twitter:creator:id" content="{{ twitter_card.id }}" />
 <meta name="twitter:description" content="{{ ogdesc }}" />
-<meta name="twitter:image" content="{{ domain }}/img/favicons/simbiat.png" />
+{% if favicon %}
+    <meta name="twitter:image" content="{{ domain }}{{ favicon }}" />
+{% else %}
+    <meta name="twitter:image" content="{{ domain }}/img/favicons/simbiat.png" />
+{% endif %}
 <meta name="twitter:image:alt" content="{{site_name}} logo" />
 
 <!-- MS Tiles -->
@@ -74,37 +78,41 @@
 <meta name="apple-mobile-web-app-title" content="{{site_name}}" />
 
 <!-- Preloads -->
-<link href="/img/logo.svg" title="logo.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/share.svg" title="share.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/navigation/home.svg" title="home.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/navigation/blog.svg" title="blog.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/navigation/fftracker.svg" title="fftracker.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/navigation/bictracker.svg" title="bictracker.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/navigation/about.svg" title="about.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/logo.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/share.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/navigation/home.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/navigation/blog.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/navigation/fftracker.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/navigation/bictracker.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/navigation/about.svg" rel="preload" type="image/svg+xml" as="image">
 
 <!-- Favicons -->
-<link href="/img/logo.svg" title="logo.svg" rel="icon" type="image/svg+xml">
-<link href="/img/favicons/favicon.ico" title="favicon.ico" rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48">
-<link href="/img/favicons/favicon-16x16.png" title="favicon-16x16.png" rel="icon" type="image/png" sizes="16x16">
-<link href="/img/favicons/favicon-32x32.png" title="favicon-32x32.png" rel="icon" type="image/png" sizes="32x32">
-<link href="/img/favicons/android/36x36.png" title="36x36.png" rel="icon" type="image/png" sizes="36x36">
-<link href="/img/favicons/android/48x48.png" title="48x48.png" rel="icon" type="image/png" sizes="48x48">
-<link href="/img/favicons/android/72x72.png" title="72x72.png" rel="icon" type="image/png" sizes="72x72">
-<link href="/img/favicons/android/96x96.png" title="96x96.png" rel="icon" type="image/png" sizes="96x96">
-<link href="/img/favicons/android/144x144.png" title="144x144.png" rel="icon" type="image/png" sizes="144x144">
-<link href="/img/favicons/android/192x192.png" title="192x192.png" rel="icon" type="image/png" sizes="192x192">
-<link href="/img/favicons/android/384x384.png" title="384x384.png" rel="icon" type="image/png" sizes="384x384">
-<link href="/img/favicons/android/512x512.png" title="512x512.png" rel="icon" type="image/png" sizes="512x512">
-<link href="/img/favicons/apple/57x57.png" title="57x57.png" rel="apple-touch-icon" type="image/png" sizes="57x57">
-<link href="/img/favicons/apple/60x60.png" title="60x60.png" rel="apple-touch-icon" type="image/png" sizes="60x60">
-<link href="/img/favicons/apple/72x72.png" title="72x72.png" rel="apple-touch-icon" type="image/png" sizes="72x72">
-<link href="/img/favicons/apple/76x76.png" title="76x76.png" rel="apple-touch-icon" type="image/png" sizes="76x76">
-<link href="/img/favicons/apple/114x114.png" title="114x114.png" rel="apple-touch-icon" type="image/png" sizes="114x114">
-<link href="/img/favicons/apple/120x120.png" title="120x120.png" rel="apple-touch-icon" type="image/png" sizes="120x120">
-<link href="/img/favicons/apple/144x144.png" title="144x144.png" rel="apple-touch-icon" type="image/png" sizes="144x144">
-<link href="/img/favicons/apple/152x152.png" title="152x152.png" rel="apple-touch-icon" type="image/png" sizes="152x152">
-<link href="/img/favicons/apple/180x180.png" title="180x180.png" rel="apple-touch-icon" type="image/png" sizes="180x180">
-<link href="/img/favicons/safari-pinned-tab.svg" title="safari-pinned-tab.svg" rel="mask-icon" type="image/svg+xml" color="#000000">
+{% if favicon %}
+    <link href="{{ favicon }}" rel="icon" type="image/png">
+{% else %}
+    <link href="/img/logo.svg" title="SVG" rel="icon" type="image/svg+xml">
+    <link href="/img/favicons/favicon.ico" title="ICON" rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48">
+    <link href="/img/favicons/favicon-16x16.png" title="16x16" rel="icon" type="image/png" sizes="16x16">
+    <link href="/img/favicons/favicon-32x32.png" title="32x32" rel="icon" type="image/png" sizes="32x32">
+    <link href="/img/favicons/android/36x36.png" title="36x36" rel="icon" type="image/png" sizes="36x36">
+    <link href="/img/favicons/android/48x48.png" title="48x48" rel="icon" type="image/png" sizes="48x48">
+    <link href="/img/favicons/android/72x72.png" title="72x72" rel="icon" type="image/png" sizes="72x72">
+    <link href="/img/favicons/android/96x96.png" title="96x96" rel="icon" type="image/png" sizes="96x96">
+    <link href="/img/favicons/android/144x144.png" title="144x144" rel="icon" type="image/png" sizes="144x144">
+    <link href="/img/favicons/android/192x192.png" title="192x192" rel="icon" type="image/png" sizes="192x192">
+    <link href="/img/favicons/android/384x384.png" title="384x384" rel="icon" type="image/png" sizes="384x384">
+    <link href="/img/favicons/android/512x512.png" title="512x512" rel="icon" type="image/png" sizes="512x512">
+    <link href="/img/favicons/apple/57x57.png" title="57x57" rel="apple-touch-icon" type="image/png" sizes="57x57">
+    <link href="/img/favicons/apple/60x60.png" title="60x60" rel="apple-touch-icon" type="image/png" sizes="60x60">
+    <link href="/img/favicons/apple/72x72.png" title="72x72" rel="apple-touch-icon" type="image/png" sizes="72x72">
+    <link href="/img/favicons/apple/76x76.png" title="76x76" rel="apple-touch-icon" type="image/png" sizes="76x76">
+    <link href="/img/favicons/apple/114x114.png" title="114x114" rel="apple-touch-icon" type="image/png" sizes="114x114">
+    <link href="/img/favicons/apple/120x120.png" title="120x120" rel="apple-touch-icon" type="image/png" sizes="120x120">
+    <link href="/img/favicons/apple/144x144.png" title="144x144" rel="apple-touch-icon" type="image/png" sizes="144x144">
+    <link href="/img/favicons/apple/152x152.png" title="152x152" rel="apple-touch-icon" type="image/png" sizes="152x152">
+    <link href="/img/favicons/apple/180x180.png" title="180x180" rel="apple-touch-icon" type="image/png" sizes="180x180">
+    <link href="/img/favicons/safari-pinned-tab.svg" title="Safari" rel="mask-icon" type="image/svg+xml" color="#000000">
+{% endif %}
 
 <!-- Manifest -->
-<link href="/manifest.webmanifest" title="manifest.webmanifest" rel="manifest" type="application/manifest+json">
+<link href="/manifest.webmanifest" rel="manifest" type="application/manifest+json">

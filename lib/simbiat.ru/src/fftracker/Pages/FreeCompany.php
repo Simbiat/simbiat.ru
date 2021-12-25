@@ -45,7 +45,6 @@ class FreeCompany extends Page
         $this->h1 = $this->title = $outputArray['freecompany']['name'];
         $this->ogdesc = $outputArray['freecompany']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
-        #Link header/tag for API
         $this->altLinks = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/freecompany/' . $id],
         ];
@@ -54,6 +53,14 @@ class FreeCompany extends Page
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/freecompany/' . $id];
             if (!empty($outputArray['freecompany']['community'])) {
                 $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['freecompany']['community']];
+            }
+        }
+        #Try to change favicon
+        if (!empty($outputArray['freecompany']['crest'])) {
+            #Get full path
+            $fullPath = substr($outputArray['freecompany']['crest'], 0, 2).'/'.substr($outputArray['freecompany']['crest'], 2, 2).'/'.$outputArray['freecompany']['crest'].'.png';
+            if (is_file($GLOBALS['siteconfig']['merged_crests'].$fullPath)) {
+                $outputArray['favicon'] = '/img/fftracker/merged-crests/'.$fullPath;
             }
         }
         return $outputArray;
