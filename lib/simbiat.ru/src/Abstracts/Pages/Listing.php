@@ -29,9 +29,11 @@ class Listing extends Page
         #Set page number
         $page = intval($_GET['page'] ?? 1);
         #Sanitize search value
-        $decodedSearch = preg_replace($this->regexSearch, '', rawurldecode($path[1] ?? ''));
+        $decodedSearch = preg_replace($this->regexSearch, '', rawurldecode($path[0] ?? ''));
+        #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future
+        $decodedSearch = preg_replace('/:/i', '', $decodedSearch);
         #Check if the new value is just the set of operators and if it is - consider bad request
-        if (preg_match('/[+\-<>~()"*]+/u', $decodedSearch)) {
+        if (preg_match('/^[+\-<>~()"*]+$/i', $decodedSearch)) {
             return ['http_error' => 400];
         }
         #If value is empty, ensure it's an empty string
