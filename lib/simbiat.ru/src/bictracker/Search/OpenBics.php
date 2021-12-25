@@ -27,7 +27,7 @@ class OpenBics extends Search
         'Adr',
     ];
     #List of optional columns for direct comparison
-    protected array $direct = [
+    protected array $exact = [
         'BIC',
         'OLD_NEWNUM',
         'RegN',

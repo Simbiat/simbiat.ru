@@ -22,7 +22,7 @@ class PVP extends Search
         'name',
     ];
     #List of optional columns for direct comparison
-    protected array $direct = [
+    protected array $exact = [
         'pvpteamid',
         'name',
     ];

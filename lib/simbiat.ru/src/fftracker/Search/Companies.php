@@ -26,7 +26,7 @@ class Companies extends Search
         'estate_message',
     ];
     #List of optional columns for direct comparison
-    protected array $direct = [
+    protected array $exact = [
         'freecompanyid',
         'name',
         'tag',

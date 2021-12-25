@@ -29,8 +29,8 @@ abstract class Search
     #the more weight/relevancy condition with it will have (if true)
     #List of FULLTEXT columns
     protected array $fulltext = [];
-    #List of optional columns for direct comparison
-    protected array $direct = [];
+    #List of optional columns for exact comparison
+    protected array $exact = [];
     #List of optional columns for LIKE %% comparison
     protected array $like = [];
 
@@ -49,7 +49,15 @@ abstract class Search
     public final function search(string $what = '', int $limit = 15): array
     {
         try {
-            return ['count' => $this->countEntities($what), 'results' => $this->selectEntities($what, $limit)];
+            #Count first
+            $results = ['count' => $this->countEntities($what)];
+            #Do actual search only if count is not 0
+            if ($results['count'] > 0) {
+                $results['results'] = $this->selectEntities($what, $limit);
+            } else {
+                $results['results'] = [];
+            }
+            return $results;
         } catch (\Throwable $throwable) {
             error_log($throwable->getMessage()."\r\n".$throwable->getTraceAsString());
             return [];
@@ -85,9 +93,35 @@ abstract class Search
     {
         try {
             if ($what !== '') {
-                #Set binding
-                $binding = $this->binding($what);
-                return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy($what) . ' > 0)', $binding);
+                #Check if search term has %
+                if (preg_match('/%/i', $what) === 1) {
+                    $like = true;
+                } else {
+                    $like = false;
+                }
+                #Prepare results
+                $results = 0;
+                #Get exact comparison results
+                if (!empty($this->exact) && !$like) {
+                    $results = $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->exact() . ')', [':what' => [$what, 'string']]);
+                }
+                #If something was found - return results
+                if (!empty($results)) {
+                    return $results;
+                }
+                if (empty($like)) {
+                    if (empty($this->fulltext)) {
+                        return 0;
+                    }
+                    #Get fulltext results
+                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0)', [':match' => [$what, 'match']]);
+                } else {
+                    if (empty($this->like)) {
+                        return 0;
+                    }
+                    #Search using LIKE
+                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().')', [':like' => [$what, 'string']]);
+                }
             } else {
                 return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
             }
@@ -102,9 +136,35 @@ abstract class Search
     {
         try {
             if ($what !== '') {
-                #Set binding
-                $binding = $this->binding($what);
-                return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->relevancy($what) . ' as `relevance` FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy($what).' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, $binding);
+                #Check if search term has %
+                if (preg_match('/%/i', $what) === 1) {
+                    $like = true;
+                } else {
+                    $like = false;
+                }
+                #Prepare results array
+                $results = [];
+                #Get exact comparison results
+                if (!empty($this->exact) && !$like) {
+                    $results = $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->exact() . ') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'string']]);
+                }
+                #If something was found - return results
+                if (!empty($results)) {
+                    return $results;
+                }
+                if (empty($like)) {
+                    if (empty($this->fulltext)) {
+                        return [];
+                    }
+                    #Get fulltext results
+                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':match' => [$what, 'match']]);
+                } else {
+                    if (empty($this->like)) {
+                        return [];
+                    }
+                    #Search using LIKE
+                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':like' => [$what, 'string']]);
+                }
             } else {
                 return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
             }
@@ -114,47 +174,28 @@ abstract class Search
         }
     }
 
-    #Helper function to generate bindings
-    protected final function binding(string $what): array
+    #Generate WHERE for direct comparison
+    protected final function exact(): string
     {
-        #Add FULLTEXT
-        $result = [':match' => [$what, 'match']];
-        #Add direct comparison
-        if (!empty($this->direct) || (!empty($this->whereSearch) && preg_match('/:what/u', $this->whereSearch) === 1)) {
-            $result[':what'] = [$what, 'string'];
-        }
-        #Add %LIKE% string
-        if (!empty($this->like) || (!empty($this->whereSearch) && preg_match('/:like/u', $this->whereSearch) === 1)) {
-            $result[':like'] = [$what, 'like'];
-        }
-        return $result;
+        return '`'.implode('` = :what OR `', $this->exact).'` = :what';
+    }
+
+    #Generate WHERE for %LIKE% comparison
+    protected final function like(): string
+    {
+        return '`'.implode('` LIKE :like OR `', $this->like).'` LIKE :like';
     }
 
     #Helper function to generate relevancy statement
-    protected final function relevancy(string $what): string
+    protected final function relevancy(): string
     {
         $result = '(';
-        #Add direct comparisons. If any of them is valid - this is the row we are looking for, thus give it the highest relevance, if condition is true.
-        #Using 10000 as base since it seems to be far larger than any other possible relevance value.
-        $factor = count($this->direct);
-        foreach ($this->direct as $key=>$field) {
-            $result .= 'IF(`'.$field.'` = :what, '.(($factor-$key)*10000).', 0) + ';
-        }
-        #Add LIKE comparisons. LIKE is more fuzzy, but it helps find hits inside of words, unlike FULLTEXT.
-        #Weight is calculated based on length of the search term - the longer the term, the larger the weight.
-        #Using divider is 100, because maximum length for FULLTEXT is 84, which is quite reasonable, and it is unlikely someone will be searching for something longer.
-        #If one does, though - it will simply add more weight. If no - value will be less than 1, which is common for partial hits with FULLTEXT.
-        $weight = strlen($what)/100;
-        $factor = count($this->like);
-        foreach ($this->like as $key=>$field) {
-            $result .= 'IF(`'.$field.'` LIKE :like, '.(($factor-$key)*$weight).', 0) + ';
-        }
         #Add FULLTEXT comparisons.
         $factor = count($this->fulltext);
         foreach ($this->fulltext as $key=>$field) {
             $result .= '(MATCH (`'.$field.'`) AGAINST (:match IN BOOLEAN MODE))*'.($factor-$key).' + ';
         }
         #Remove last +, close the brackets and return
-        return trim($result, ' + ').')';
+        return trim($result, ' +').')';
     }
 }

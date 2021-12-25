@@ -23,7 +23,7 @@ class Achievements extends Search
         'howto',
     ];
     #List of optional columns for direct comparison
-    protected array $direct = [
+    protected array $exact = [
         'achievementid',
         'name',
     ];

@@ -23,7 +23,7 @@ class Characters extends Search
         'biography',
     ];
     #List of optional columns for direct comparison
-    protected array $direct = [
+    protected array $exact = [
         'characterid',
         'name',
     ];

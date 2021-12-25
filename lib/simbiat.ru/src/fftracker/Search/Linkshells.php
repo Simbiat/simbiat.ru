@@ -22,7 +22,7 @@ class Linkshells extends Search
         'name',
     ];
     #List of optional columns for direct comparison
-    protected array $direct = [
+    protected array $exact = [
         'linkshellid',
         'name',
     ];
