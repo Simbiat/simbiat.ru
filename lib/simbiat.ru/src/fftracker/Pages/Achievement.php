@@ -50,12 +50,8 @@ class Achievement extends Page
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievement/' . $id.'/lodestone/'],
         ];
         if (!empty($outputArray['achievement']['dbid'])) {
-            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['achievement']['dbid']];
+            $this->altLinks = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['achievement']['dbid']];
         }
-        #Send HTTP header
-        $headers->links($altLink);
-        #Add link to HTML
-        $outputArray['link_extra'] = $headers->links($altLink, 'head');
         return $outputArray;
     }
 }

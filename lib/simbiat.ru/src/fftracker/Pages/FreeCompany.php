@@ -46,20 +46,16 @@ class FreeCompany extends Page
         $this->ogdesc = $outputArray['freecompany']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
         #Link header/tag for API
-        $altLink = [
+        $this->altLinks = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/freecompany/' . $id],
         ];
         if (empty($outputArray['freecompany']['dates']['deleted'])) {
-            $altLink[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompany/' . $id. '/lodestone'];
-            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/freecompany/' . $id];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompany/' . $id. '/lodestone'];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/freecompany/' . $id];
             if (!empty($outputArray['freecompany']['community'])) {
-                $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['freecompany']['community']];
+                $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['freecompany']['community']];
             }
         }
-        #Send HTTP header
-        $headers->links($altLink);
-        #Add link to HTML
-        $outputArray['link_extra'] = $headers->links($altLink, 'head');
         return $outputArray;
     }
 }

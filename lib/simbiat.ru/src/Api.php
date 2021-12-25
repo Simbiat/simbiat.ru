@@ -146,9 +146,13 @@ class Api
             #Send additional headers
             $headers = HomePage::$headers;
             if (isset($data['updated'])) {
-                $headers->lastModified($data['updated'], true);
+                if (!HomePage::$staleReturn) {
+                    $headers->lastModified($data['updated'], true);
+                }
             }
-            $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/fftracker/'.$uri[0].'/'.$uri[1]]]);
+            if (!HomePage::$staleReturn) {
+                $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/fftracker/' . $uri[0] . '/' . $uri[1]]]);
+            }
         }
         #Send data
         return $data;
@@ -194,9 +198,11 @@ class Api
                     $this->apiEcho(httpCode: '404');
                 } else {
                     #Send additional headers
-                    $headers = HomePage::$headers;
-                    $headers->lastModified(strtotime($data['Updated']), true);
-                    $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/bictracker/bic/'.$uri[1]]]);
+                    if (!HomePage::$staleReturn) {
+                        $headers = HomePage::$headers;
+                        $headers->lastModified(strtotime($data['Updated']), true);
+                        $headers->links([['rel' => 'alternate', 'type' => 'text/html', 'title' => 'HTML representation', 'href' => '/bictracker/bic/' . $uri[1]]]);
+                    }
                 }
                 #Send data
                 return $data;
@@ -225,7 +231,9 @@ class Api
         #Convert data to JSON
         $data = json_encode($data, JSON_PRETTY_PRINT|JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
         #Send HTTP response code to client
-        HomePage::$headers->clientReturn($httpCode, false);
+        if (!HomePage::$staleReturn) {
+            HomePage::$headers->clientReturn($httpCode, false);
+        }
         #Send content-type
         header('Content-Type: application/json; charset=utf-8');
         #Send data

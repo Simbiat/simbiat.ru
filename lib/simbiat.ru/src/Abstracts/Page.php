@@ -2,12 +2,15 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
+use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 
 abstract class Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [];
+    #Alternative representations of the content
+    protected array $altLinks = [];
     #Sub service name
     protected string $subServiceName = '';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -50,6 +53,14 @@ abstract class Page
         $page['h1'] = $this->h1;
         $page['ogdesc'] = $this->ogdesc;
         $page['cacheAge'] = $this->cacheAge;
+        if (!empty($this->altLinks)) {
+            #Send HTTP header
+            if (!HomePage::$staleReturn) {
+                HomePage::$headers->links($this->altLinks);
+            }
+            #Add link to HTML
+            $page['link_extra'] = HomePage::$headers->links($this->altLinks, 'head');
+        }
         return $page;
     }
 
@@ -66,7 +77,9 @@ abstract class Page
         #Set Last Modified to the time
         $this->lastModified = $time;
         #Send the header
-        (new Headers)->lastModified($this->lastModified, true);
+        if (!HomePage::$staleReturn) {
+            HomePage::$headers->lastModified($this->lastModified, true);
+        }
         #Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
         $this->headerSent = true;
     }

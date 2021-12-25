@@ -6,6 +6,8 @@ use Simbiat\Abstracts\Page;
 
 class Search extends Page
 {
+    #Cache age, in case we prefer the generated page to be cached
+    protected int $cacheAge = 1440;
     #Linking types to classes
     protected array $types = [];
     #Items to display per page for search results per type

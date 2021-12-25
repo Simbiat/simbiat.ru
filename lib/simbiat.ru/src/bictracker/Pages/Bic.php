@@ -20,13 +20,10 @@ class Bic extends Page
     protected string $h1 = 'Детали организации из БИК трекера';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Детали организации из БИК трекера';
-    #Cache age, in case we prefer the generated page to be cached
-    protected int $cacheAge = 259200;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $headers = HomePage::$headers;
         #Sanitize BIC
         $BIC = rawurldecode($path[0] ?? '');
         #Try to get details
@@ -60,11 +57,7 @@ class Bic extends Page
         $this->h1 = $this->title = $outputArray['bicdetails']['NameP'];
         $this->ogdesc = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') в БИК трекере';
         #Link header/tag for API
-        $altLink = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bic/' . $BIC]];
-        #Send HTTP header
-        $headers->links($altLink);
-        #Add link to HTML
-        $outputArray['link_extra'] = $headers->links($altLink, 'head');
+        $this->altLinks = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bic/' . $BIC]];
         return $outputArray;
     }
 }

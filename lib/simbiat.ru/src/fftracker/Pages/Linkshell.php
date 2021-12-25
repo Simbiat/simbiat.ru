@@ -54,20 +54,16 @@ class Linkshell extends Page
         $this->h1 = $this->title = $outputArray['linkshell']['name'];
         $this->ogdesc = $outputArray['linkshell']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
-        $altLink = [
+        $this->altLinks = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id],
         ];
         if (empty($outputArray['linkshell']['dates']['deleted'])) {
-            $altLink[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id.'/lodestone/'];
-            $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id.'/lodestone/'];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/'.($this::crossworld ? 'crossworld_' : '').'linkshell/' . $id];
             if (!empty($outputArray['linkshell']['community'])) {
-                $altLink[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['linkshell']['community']];
+                $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['linkshell']['community']];
             }
         }
-        #Send HTTP header
-        $headers->links($altLink);
-        #Add link to HTML
-        $outputArray['link_extra'] = $headers->links($altLink, 'head');
         return $outputArray;
     }
 }

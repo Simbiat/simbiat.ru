@@ -190,7 +190,9 @@ class Security
             'referer' => @$_SERVER['HTTP_REFERER'],
         ]);
         #Send 403 error code in header, with option to force close connection
-        HomePage::$headers->clientReturn('403', $exit);
+        if (!HomePage::$staleReturn) {
+            HomePage::$headers->clientReturn('403', $exit);
+        }
         return false;
     }
 

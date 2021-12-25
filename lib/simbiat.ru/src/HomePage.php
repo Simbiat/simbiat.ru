@@ -7,7 +7,6 @@ use DateTimeInterface;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
-use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
 use Simbiat\usercontrol\Bans;
 use Simbiat\usercontrol\Security;
@@ -34,6 +33,8 @@ class HomePage
     public static ?HTMLCache $HTMLCache = NULL;
     #HTTP headers object
     public static ?Headers $headers = NULL;
+    #Flag indicating that cached view has been served already
+    public static bool $staleReturn = false;
 
     public function __construct(bool $PROD = false)
     {
@@ -47,7 +48,9 @@ class HomePage
     {
         if (empty($_SERVER['HTTP_HOST'])) {
             #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
-            self::$headers->clientReturn('403', true);
+            if (!HomePage::$staleReturn) {
+                self::$headers->clientReturn('403', true);
+            }
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes, but keep page
         $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?(?!page=\d*).*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
@@ -76,18 +79,31 @@ class HomePage
             #Create HTMLCache object to check for cache
             self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
             #Attempt to use cache
-            $output = self::$HTMLCache->get('', true, false);
+            $output = self::$HTMLCache->get('', true, false, true);
             if (!empty($output)) {
                 #Cache hit, we need to connect to DB and initiate session to write data about it
-                if ($this->dbConnect(true) === true) {
-                    #Process POST data if any
-                    (new MainRouter)->postProcess();
-                    #Close session right after if it opened
-                    if (session_status() === PHP_SESSION_ACTIVE) {
-                        session_write_close();
+                try {
+                    if ($this->dbConnect(true) === true) {
+                        #Process POST data if any
+                        (new MainRouter)->postProcess();
+                        #Close session right after if it opened
+                        if (session_status() === PHP_SESSION_ACTIVE) {
+                            session_write_close();
+                        }
+                    }
+                } catch (\Throwable) {
+                    #Do nothing, consider cache failure
+                } finally {
+                    if ($output['stale']) {
+                        #Cache is stale, but we output it still and then update it in background
+                        header('X-Server-Cache-Stale: true');
+                        self::$HTMLCache->cacheOutput($output, exit: false);
+                        self::$staleReturn = true;
+                    } else {
+                        #Output cache regardless
+                        self::$HTMLCache->cacheOutput($output);
                     }
                 }
-                self::$HTMLCache->cacheOutput($output);
             }
         }
         #Return 0, since we did not hit anything
@@ -104,9 +120,11 @@ class HomePage
             ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
         ]);
         #Send headers
-        self::$headers->links($GLOBALS['siteconfig']['links']);
-        header('SourceMap: /js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js.map', false);
-        header('SourceMap: /css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css.map', false);
+        if (!self::$staleReturn) {
+            self::$headers->links($GLOBALS['siteconfig']['links']);
+            header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
+            header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
+        }
     }
 
     #Database connection
@@ -121,7 +139,7 @@ class HomePage
         #Check in case we accidentally call this for 2nd time
         if (self::$dbup === false) {
             try {
-                (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings']));
+                (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings'])->setOption(\PDO::ATTR_TIMEOUT, 1));
                 self::$dbup = true;
                 #Cache controller
                 self::$dbController = (new Controller);
@@ -146,7 +164,7 @@ class HomePage
         }
         if ($extraChecks === true) {
             #Try to start session. It's not critical for the whole site, thus it's ok for it to fail
-            if (session_status() !== PHP_SESSION_DISABLED) {
+            if (session_status() !== PHP_SESSION_DISABLED && !self::$staleReturn) {
                 #Use custom session handler
                 session_set_save_handler(new Session, true);
                 session_start();
@@ -170,6 +188,9 @@ class HomePage
      */
     public function twigProc(array $extraVars = [], ?int $error = NULL)
     {
+        if (self::$staleReturn === true) {
+            ob_start();
+        }
         #Set Twig loader
         $twigLoader = new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']);
         #Initiate Twig itself
@@ -211,7 +232,9 @@ class HomePage
             if (!$twigVars['static_page']) {
                 $twigVars['title'] = $twigVars['site_name'] . ': ' . (self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : strval($error)));
                 $twigVars['h1'] = $twigVars['title'];
-                self::$headers->clientReturn(strval($error), false);
+                if (!HomePage::$staleReturn) {
+                    self::$headers->clientReturn(strval($error), false);
+                }
             }
         }
         #Merge with extra variables provided
@@ -256,15 +279,24 @@ class HomePage
         #Render page
         $output = $twig->render('index.twig', $twigVars);
         #Close session
-        if (session_status() === PHP_SESSION_ACTIVE) {
+        if (session_status() === PHP_SESSION_ACTIVE && !self::$staleReturn) {
             session_write_close();
         }
         #Cache page if cache age is set up
-        #if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
-            #self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
-        #} else {
-            echo $output;
-        #}
+        if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
+            if (self::$staleReturn) {
+                self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']), direct: false);
+                @ob_end_clean();
+            } else {
+                self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
+            }
+        } else {
+            if (self::$staleReturn === true) {
+                @ob_end_clean();
+            } else {
+                echo $output;
+            }
+        }
         exit;
     }
 }

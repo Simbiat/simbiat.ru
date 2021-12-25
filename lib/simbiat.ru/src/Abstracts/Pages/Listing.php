@@ -8,6 +8,8 @@ use Simbiat\HTTP20\HTML;
 
 class Listing extends Page
 {
+    #Cache age, in case we prefer the generated page to be cached
+    protected int $cacheAge = 1440;
     #Linking types to classes
     protected array $types = [];
     #Regex to sanitize search value (remove disallowed characters)
@@ -44,7 +46,9 @@ class Listing extends Page
         #If int is returned, we have a bad page
         if (is_int($outputArray['listOfEntities'])) {
             #Redirect
-            HomePage::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/'.$this->subServiceName.'/' . ($path[1] ?? ''), false, true, false);
+            if (!HomePage::$staleReturn) {
+                HomePage::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $this->subServiceName . '/' . ($path[1] ?? ''), false, true, false);
+            }
         } else {
             #Get the freshest date
             $dates = array_column($outputArray['listOfEntities']['entities'], 'updated');

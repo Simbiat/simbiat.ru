@@ -125,31 +125,41 @@ class Feeds
         #Check that not empty
         if (empty($uri)) {
             #Redirect to HTML index
-            $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/sitemap/html/index', true, true, false);
+            if (!HomePage::$staleReturn) {
+                $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/sitemap/html/index', true, true, false);
+            }
         } else {
             #Check that format was provided
             if (empty($uri[0])) {
                 #Check for Accept header
-                $format = $headers->notAccept(['application/xml', 'text/xml', 'text/plain', 'text/html']);
+                if (!HomePage::$staleReturn) {
+                    $format = $headers->notAccept(['application/xml', 'text/xml', 'text/plain', 'text/html']);
+                }
                 $format = match($format) {
                     'application/xml', 'text/xml' => 'xml',
                     'text/plain' => 'txt',
                     'text/html' => 'html',
                 };
                 #Redirect to index page based on acceptable headers
-                $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/sitemap/'.$format.'/index', true, true, false);
+                if (!HomePage::$staleReturn) {
+                    $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/sitemap/' . $format . '/index', true, true, false);
+                }
             } else {
                 $uri[0] = strtolower($uri[0]);
                 if (in_array($uri[0], ['html', 'xml', 'txt'])) {
-                    $format = match($uri[0]) {
-                        'html' => $headers->notAccept(['text/html']),
-                        'txt' => $headers->notAccept(['text/plain']),
-                        'xml' => $headers->notAccept(['application/xml']),
-                    };
+                    if (!HomePage::$staleReturn) {
+                        $format = match ($uri[0]) {
+                            'html' => $headers->notAccept(['text/html']),
+                            'txt' => $headers->notAccept(['text/plain']),
+                            'xml' => $headers->notAccept(['application/xml']),
+                        };
+                    }
                     #Check if initial page was provided
                     if (empty($uri[1])) {
                         #Redirect to index
-                        $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/sitemap/'.$uri[0].'/index', true, true, false);
+                        if (!HomePage::$staleReturn) {
+                            $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/sitemap/' . $uri[0] . '/index', true, true, false);
+                        }
                     } else {
                         $uri[1] = strtolower($uri[1]);
                         #Set base URL
@@ -190,7 +200,9 @@ class Feeds
                         } else {
                             if (empty($uri[2])) {
                                 #Redirect to 1st page
-                                $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/sitemap/'.$uri[0].'/'.$uri[1].'/1', true, true, false);
+                                if (!HomePage::$staleReturn) {
+                                    $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/sitemap/' . $uri[0] . '/' . $uri[1] . '/1', true, true, false);
+                                }
                             } else {
                                 if (is_numeric($uri[2])) {
                                     #Get links
