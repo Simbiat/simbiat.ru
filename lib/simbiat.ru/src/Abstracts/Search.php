@@ -114,13 +114,13 @@ abstract class Search
                         return 0;
                     }
                     #Get fulltext results
-                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0)', [':match' => [$what, 'match']]);
+                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0)', [':what' => [$what, 'match']]);
                 } else {
                     if (empty($this->like)) {
                         return 0;
                     }
                     #Search using LIKE
-                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().')', [':like' => [$what, 'string']]);
+                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().')', [':what' => [$what, 'string']]);
                 }
             } else {
                 return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
@@ -157,13 +157,13 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':match' => [$what, 'match']]);
+                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'match']]);
                 } else {
                     if (empty($this->like)) {
                         return [];
                     }
                     #Search using LIKE
-                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':like' => [$what, 'string']]);
+                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'string']]);
                 }
             } else {
                 return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
@@ -183,7 +183,7 @@ abstract class Search
     #Generate WHERE for %LIKE% comparison
     protected final function like(): string
     {
-        return '`'.implode('` LIKE :like OR `', $this->like).'` LIKE :like';
+        return '`'.implode('` LIKE :what OR `', $this->like).'` LIKE :what';
     }
 
     #Helper function to generate relevancy statement
@@ -193,7 +193,7 @@ abstract class Search
         #Add FULLTEXT comparisons.
         $factor = count($this->fulltext);
         foreach ($this->fulltext as $key=>$field) {
-            $result .= '(MATCH (`'.$field.'`) AGAINST (:match IN BOOLEAN MODE))*'.($factor-$key).' + ';
+            $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor-$key).' + ';
         }
         #Remove last +, close the brackets and return
         return trim($result, ' +').')';
