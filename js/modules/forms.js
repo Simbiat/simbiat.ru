@@ -5,7 +5,7 @@
 const textInputTypes = ['email', 'password', 'search', 'tel', 'text', 'url', ];
 
 //List of other input types, that do not make much sense to be tracked through keypress or paste events
-//Including date/time types, even though some of them may fallback to textual fields. Doing this, since you can't predict this by checking browser version.
+//Including date/time types, even though some of them may fall back to textual fields. Doing this, since you can't predict this by checking browser version.
 //Not including hidden (since it's hidden), image (since its purpose is unclear by default),
 //range (unclear how to track to actually determine, that user stopped interaction),
 //reset and submit (due to their purpose)
@@ -46,7 +46,7 @@ function searchAction(event)
     if (search.value === '') {
         form.action = form.getAttribute('data-baseURL');
     } else {
-        form.action = form.getAttribute('data-baseURL') + encodeURIComponent(search.value);
+        form.action = form.getAttribute('data-baseURL') + rawurlencode(search.value);
     }
     //Ensure that form will use GET method. This adds unnecessary question mark to the end of the URL, but it's better than form resubmit prompt
     form.method = 'get';
@@ -186,4 +186,16 @@ function nextInput(initial, reverse = false)
         }
     }
     return false;
+}
+
+//Function replicating PHP's rawurlencode for consistency.
+function rawurlencode(str)
+{
+    str = str + '';
+    return encodeURIComponent(str)
+        .replace(/!/ug, '%21')
+        .replace(/'/ug, '%27')
+        .replace(/\(/ug, '%28')
+        .replace(/\)/ug, '%29')
+        .replace(/\*/ug, '%2A');
 }
