@@ -52,12 +52,16 @@ class HomePage
                 self::$headers->clientReturn('403', true);
             }
         }
-        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes, but keep page
-        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?(?!page=\d*).*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
+        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes, but keep page. Also lower the case.
+        $_SERVER['REQUEST_URI'] = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?(?!page=\d*).*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/'))));
+        #Remove "friendly" portion of the links
+        $_SERVER['REQUEST_URI'] = preg_replace('/(^.*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', $_SERVER['REQUEST_URI']);
+        #Force _ in crossworldlinkshell
+        $_SERVER['REQUEST_URI'] = preg_replace('/crossworldlinkshell/iu', 'crossworld_linkshell', $_SERVER['REQUEST_URI']);
         #Set canonical link, that may be used in the future
-        self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$_SERVER['REQUEST_URI'];
+        self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$_SERVER['REQUEST_URI'];
         #Remove page number as well
-        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'])), '/')));
+        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/')));
     }
 
     #Function to process some special files
