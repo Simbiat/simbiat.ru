@@ -356,18 +356,15 @@ class Library
                     $this->dbController->query($queries);
                     #Increase $libDate by 1 day
                     $libDate = $libDate + 86400;
-                    #Remove library file
-                    @unlink($download);
                     $this->log($libDate, 'Успешное обновление', $manual);
                 }
             } catch(\Exception $e) {
-                if (!empty($download)) {
-                    #Remove library file, if failure was while processing it
-                    @unlink($download);
-                }
                 $error = $e->getMessage()."\r\n".$e->getTraceAsString();
                 $this->log($libDate, $error, $manual);
                 return $error;
+            } finally {
+                #Remove all library related files if any were identified
+                array_map('unlink', glob( sys_get_temp_dir().'/*_ED807_full.*'));
             }
         }
         return true;
