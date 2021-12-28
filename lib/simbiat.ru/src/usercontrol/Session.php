@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
-use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 
 class Session implements \SessionHandlerInterface, \SessionIdInterface, \SessionUpdateTimestampHandlerInterface
@@ -10,7 +9,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     #Attach common settings
     use Common;
 
-    #Default life time for session in seconds (5 minutes)
+    #Default lifetime for session in seconds (5 minutes)
     private int $sessionLife;
 
     #Cache of security object
@@ -29,7 +28,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             try {
                 self::$dbController = HomePage::$dbController;
                 $this->security = new Security;
-            } catch (\Exception $e) {
+            } catch (\Throwable) {
                 #Do nothing, session will fail to be opened on `open` call
             }
         }
@@ -129,7 +128,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 'INSERT INTO `uc__seo_pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                 [
                     #What page is being viewed
-                    ':page' => rawurldecode((empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256))),
+                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),
                     #Optional referer (if sent from other sources)
                     ':referer' => [
                         (empty($_SERVER['HTTP_REFERER']) ? '' : substr($_SERVER['HTTP_REFERER'], 0, 256)),
@@ -159,7 +158,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     (empty($ip) ? NULL : $ip),
                     (empty($ip) ? 'null' : 'string'),
                 ],
-                #Useragent details only for logged in users for ability of review of active sessions
+                #Useragent details only for logged-in users for ability of review of active sessions
                 ':os' => [
                         (empty($data['UA']['os']) ? NULL : $data['UA']['os']),
                         (empty($data['UA']['os']) ? 'null' : 'string'),
@@ -168,13 +167,13 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                         (empty($data['UA']['client']) ? NULL : $data['UA']['client']),
                         (empty($data['UA']['client']) ? 'null' : 'string'),
                     ],
-                #Either user name (if logged in) or bot name, if it's a bot
+                #Either username (if logged in) or bot name, if it's a bot
                 ':username' => [
                     (empty($username) ? NULL : $username),
                     (empty($username) ? 'null' : 'string'),
                 ],
                 #What page is being viewed
-                ':page' => rawurldecode((empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256))),
+                ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),
                 #Actual session data
                 ':data' => [
                     (empty($data) ? '' : $this->security->encrypt(serialize($data))),
