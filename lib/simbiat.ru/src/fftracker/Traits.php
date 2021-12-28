@@ -86,7 +86,7 @@ trait Traits
             return $hash;
         } catch (\Throwable $throwable) {
             if ($debug) {
-                error_log($throwable->getMessage() . "\r\n" . $throwable->getTraceAsString());
+                error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage() . "\r\n" . $throwable->getTraceAsString());
             }
             return null;
         } finally {

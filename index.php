@@ -56,7 +56,7 @@ if ($CLI) {
                     #Process API request
                     (new Api)->uriParse(array_slice($uri, 1));
                 } catch (Throwable $throwable) {
-                    error_log('Failed on API call `'.$_SERVER['REQUEST_URI'].'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+                    error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
                 }
                 #Ensure we exit no matter what happens in API gateway
                 exit;
@@ -71,7 +71,7 @@ if ($CLI) {
                         $vars = [];
                     }
                 } catch (Throwable $throwable) {
-                    error_log('Failed to generate page `'.$_SERVER['REQUEST_URI'].'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+                    error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
                     $vars = ['http_error' => 500];
                 }
                 #Generate page

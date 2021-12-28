@@ -363,7 +363,7 @@ class Character extends Entity
             ];
             return $this->dbController->query($queries);
         } catch (\Throwable $e) {
-            error_log($e->getMessage()."\r\n".$e->getTraceAsString());
+            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$e->getMessage()."\r\n".$e->getTraceAsString());
             return false;
         }
     }

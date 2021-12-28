@@ -649,7 +649,7 @@ class Library
             );
         } catch (\Throwable $exception) {
             #Just log to file. Generally we do not lose much if this fails
-            error_log($exception->getMessage()."\r\n".$exception->getTraceAsString());
+            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$exception->getMessage()."\r\n".$exception->getTraceAsString());
         }
     }
 
