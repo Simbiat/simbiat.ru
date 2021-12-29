@@ -26,7 +26,7 @@ class Statistics extends Page
     {
         $headers = HomePage::$headers;
         #Sanitize ID
-        $id = rawurldecode($path[0] ?? '');
+        $id = $path[0] ?? '';
 
 
         #Placeholder

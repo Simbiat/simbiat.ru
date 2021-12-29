@@ -69,7 +69,7 @@ class HomePage
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$_SERVER['REQUEST_URI'];
         #Remove page number as well
-        $_SERVER['REQUEST_URI'] = rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/')));
+        $_SERVER['REQUEST_URI'] = trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/'));
     }
 
     #Function to process some special files
@@ -312,6 +312,7 @@ class HomePage
         exit;
     }
 
+    #Helper function to log errors with identifying the page
     public static function error_log(\Throwable $error, string $extra = ''): void
     {
         #Determine page link

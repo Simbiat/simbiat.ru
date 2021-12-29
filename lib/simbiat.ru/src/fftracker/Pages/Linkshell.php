@@ -27,7 +27,7 @@ class Linkshell extends Page
     {
         $headers = HomePage::$headers;
         #Sanitize ID
-        $id = rawurldecode($path[0] ?? '');
+        $id = $path[0] ?? '';
         #Try to get details
         try {
             if ($this::crossworld) {

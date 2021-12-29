@@ -25,7 +25,7 @@ class Bic extends Page
     protected function generate(array $path): array
     {
         #Sanitize BIC
-        $BIC = rawurldecode($path[0] ?? '');
+        $BIC = $path[0] ?? '';
         #Try to get details
         try {
             $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->setId($BIC)->getArray();

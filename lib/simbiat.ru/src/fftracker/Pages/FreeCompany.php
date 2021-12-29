@@ -26,7 +26,7 @@ class FreeCompany extends Page
     {
         $headers = HomePage::$headers;
         #Sanitize ID
-        $id = rawurldecode($path[0] ?? '');
+        $id = $path[0] ?? '';
         #Try to get details
         try {
             $outputArray['freecompany'] = (new \Simbiat\fftracker\Entities\FreeCompany())->setId($id)->getArray();

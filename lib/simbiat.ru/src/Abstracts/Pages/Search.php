@@ -25,7 +25,7 @@ class Search extends Page
         #Check if types are set
         $this->typesCheck();
         #Sanitize search value
-        $decodedSearch = preg_replace($this->regexSearch, '', rawurldecode($path[0] ?? ''));
+        $decodedSearch = preg_replace($this->regexSearch, '', $path[0] ?? '');
         #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future
         $decodedSearch = preg_replace('/:/i', '', $decodedSearch);
         #Check if the new value is just the set of operators and if it is - consider bad request

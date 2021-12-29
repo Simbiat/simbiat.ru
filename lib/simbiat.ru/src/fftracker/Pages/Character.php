@@ -26,7 +26,7 @@ class Character extends Page
     {
         $headers = HomePage::$headers;
         #Sanitize ID
-        $id = rawurldecode($path[0] ?? '');
+        $id = $path[0] ?? '';
         #Try to get details
         try {
             $outputArray['character'] = (new \Simbiat\fftracker\Entities\Character)->setId($id)->getArray();
