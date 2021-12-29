@@ -66,10 +66,10 @@ class HomePage
         self::$canonical = preg_replace('/(^.*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
         self::$canonical = preg_replace('/crossworldlinkshell/iu', 'crossworld_linkshell', self::$canonical);
+        #Update REQUEST_URI
+        $_SERVER['REQUEST_URI'] = trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', self::$canonical)), '/'));
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
-        #Remove page number as well
-        $_SERVER['REQUEST_URI'] = trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', self::$canonical)), '/'));
     }
 
     #Function to process some special files
