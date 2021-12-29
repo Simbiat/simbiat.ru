@@ -58,8 +58,8 @@ abstract class Search
                 $results['results'] = [];
             }
             return $results;
-        } catch (\Throwable $throwable) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+        } catch (\Throwable $e) {
+            HomePage::error_log($e);
             return [];
         }
     }
@@ -81,8 +81,8 @@ abstract class Search
         }
         try {
             return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->listItems, $this->listItems * ($page - 1), true)];
-        } catch (\Throwable $throwable) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+        } catch (\Throwable $e) {
+            \Simbiat\HomePage::error_log($e);
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
     }
@@ -125,8 +125,8 @@ abstract class Search
             } else {
                 return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
             }
-        } catch (\Throwable $throwable) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+        } catch (\Throwable $e) {
+            \Simbiat\HomePage::error_log($e);
             return 0;
         }
     }
@@ -168,8 +168,8 @@ abstract class Search
             } else {
                 return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
             }
-        } catch (\Throwable $throwable) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
+        } catch (\Throwable $e) {
+            \Simbiat\HomePage::error_log($e);
             return [];
         }
     }

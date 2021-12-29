@@ -647,9 +647,9 @@ class Library
                     ':message' => [$message, 'string'],
                 ]
             );
-        } catch (\Throwable $exception) {
+        } catch (\Throwable $e) {
             #Just log to file. Generally we do not lose much if this fails
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$exception->getMessage()."\r\n".$exception->getTraceAsString());
+            HomePage::error_log($e);
         }
     }
 

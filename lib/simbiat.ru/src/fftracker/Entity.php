@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker;
 
+use Simbiat\HomePage;
+
 abstract class Entity extends \Simbiat\Abstracts\Entity
 {
     protected const dbPrefix = 'ffxiv__';
@@ -43,7 +45,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 $updated = $this->dbController->selectRow('SELECT `updated`, `deleted` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
             }
         } catch (\Throwable $e) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$e->getMessage()."\r\n".$e->getTraceAsString());
+            HomePage::error_log($e);
             return false;
         }
         #Check if it has not been updated recently (10 minutes, to protect potential abuse) or if it is marked as deleted
@@ -76,7 +78,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             /** @noinspection SqlResolve */
             $check = $this->dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$e->getMessage()."\r\n".$e->getTraceAsString());
+            HomePage::error_log($e);
             return false;
         }
         if ($check === true) {

@@ -63,7 +63,7 @@ abstract class Entity
             }
         } catch (\Throwable $exception) {
             $error = $exception->getMessage().$exception->getTraceAsString();
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$error);
+            HomePage::error_log($exception);
             #Rethrow exception, if using debug mode
             if ($this->debug) {
                 die('<pre>'.$error.'</pre>');

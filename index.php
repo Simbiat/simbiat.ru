@@ -21,78 +21,72 @@ if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'local.simbia
     $HomePage = new HomePage(true);
 }
 
-#Check if we are in CLI
-if (preg_match('/^cli(-server)?$/i', php_sapi_name()) === 1) {
-    $CLI = true;
-} else {
-    $CLI = false;
-}
-
-#Global Database Controller object for saving resources
-$dbController = null;
-
 #If not CLI - do redirects and other HTTP-related stuff
-if ($CLI) {
-    #Process Cron
-    $HomePage->dbConnect(false);
-    (new Cron)->process(50);
-    #Ensure we exit no matter what happens with CRON
-    exit;
-} else {
-    $HomePage->canonical();
-    #Send common headers
-    $HomePage::$headers->secFetch();
-    #Process requests to files
-    if (!empty($_SERVER['REQUEST_URI'])) {
-        $fileResult = $HomePage->filesRequests($_SERVER['REQUEST_URI']);
-        if ($fileResult === 200) {
-            exit;
-        } else {
-            #Exploding further processing
-            $uri = explode('/', $_SERVER['REQUEST_URI']);
-            #Check if API
-            if (strcasecmp($uri[0], 'api') === 0) {
-                try {
-                    #Process API request
-                    (new Api)->uriParse(array_slice($uri, 1));
-                } catch (Throwable $throwable) {
-                    error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
-                }
-                #Ensure we exit no matter what happens in API gateway
+try {
+    if ($HomePage::$CLI) {
+        #Process Cron
+        $HomePage->dbConnect(false);
+        (new Cron)->process(50);
+        #Ensure we exit no matter what happens with CRON
+        exit;
+    } else {
+        $HomePage->canonical();
+        #Send common headers
+        $HomePage::$headers->secFetch();
+        #Process requests to files
+        if (!empty($_SERVER['REQUEST_URI'])) {
+            $fileResult = $HomePage->filesRequests($_SERVER['REQUEST_URI']);
+            if ($fileResult === 200) {
                 exit;
             } else {
-                try {
-                    #Send links
-                    $HomePage->commonLinks();
-                    #Connect to DB
-                    if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
-                        $vars = (new MainRouter)->route($uri);
-                    } else {
-                        $vars = [];
+                #Exploding further processing
+                $uri = explode('/', $_SERVER['REQUEST_URI']);
+                #Check if API
+                if (strcasecmp($uri[0], 'api') === 0) {
+                    try {
+                        #Process API request
+                        (new Api)->uriParse(array_slice($uri, 1));
+                    } catch (Throwable $e) {
+                        $HomePage::error_log($e);
                     }
-                } catch (Throwable $throwable) {
-                    error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage()."\r\n".$throwable->getTraceAsString());
-                    $vars = ['http_error' => 500];
+                    #Ensure we exit no matter what happens in API gateway
+                    exit;
+                } else {
+                    try {
+                        #Send links
+                        $HomePage->commonLinks();
+                        #Connect to DB
+                        if ($HomePage->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
+                            $vars = (new MainRouter)->route($uri);
+                        } else {
+                            $vars = [];
+                        }
+                    } catch (Throwable $e) {
+                        $HomePage::error_log($e);
+                        $vars = ['http_error' => 500];
+                    }
+                    #Generate page
+                    $HomePage->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
                 }
-                #Generate page
-                $HomePage->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
             }
-        }
-    } else {
-        #Send links
-        $HomePage->commonLinks();
-        #Connect to DB
-        if ($HomePage->dbConnect(true)) {
-            $vars = [
-                'h1' => 'Home',
-                'serviceName' => 'landing',
-                'notice' => HomePage::$dbController->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
-            ];
         } else {
-            $vars = [];
+            #Send links
+            $HomePage->commonLinks();
+            #Connect to DB
+            if ($HomePage->dbConnect(true)) {
+                $vars = [
+                    'h1' => 'Home',
+                    'serviceName' => 'landing',
+                    'notice' => $HomePage::$dbController->selectAll('SELECT `text` FROM `forum__thread` ORDER BY `date` DESC LIMIT 1')[0]['text'],
+                ];
+            } else {
+                $vars = [];
+            }
+            #Generate page
+            $HomePage->twigProc($vars);
         }
-        #Generate page
-        $HomePage->twigProc($vars);
     }
+} catch (Throwable $e) {
+    $HomePage::error_log($e);
 }
 exit;

@@ -84,9 +84,9 @@ trait Traits
                 copy($imgFolder.$groupId.'.png', $finalPath.$hash.'.png');
             }
             return $hash;
-        } catch (\Throwable $throwable) {
+        } catch (\Throwable $e) {
             if ($debug) {
-                error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$throwable->getMessage() . "\r\n" . $throwable->getTraceAsString());
+                \Simbiat\HomePage::error_log($e);
             }
             return null;
         } finally {

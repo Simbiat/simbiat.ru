@@ -5,6 +5,7 @@ namespace Simbiat\fftracker\Entities;
 use Simbiat\Cron;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
+use Simbiat\HomePage;
 use Simbiat\Lodestone;
 
 class FreeCompany extends Entity
@@ -320,7 +321,7 @@ class FreeCompany extends Entity
             ];
             return $this->dbController->query($queries);
         } catch (\Throwable $e) {
-            error_log('Failed on URI `'.($_SERVER['REQUEST_URI'] ?? '').'`'."\r\n".$e->getMessage()."\r\n".$e->getTraceAsString());
+            HomePage::error_log($e);
             return false;
         }
     }

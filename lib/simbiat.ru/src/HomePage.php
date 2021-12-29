@@ -35,6 +35,8 @@ class HomePage
     public static ?Headers $headers = NULL;
     #Flag indicating that cached view has been served already
     public static bool $staleReturn = false;
+    #Flag indicating whether we are in CLI
+    public static bool $CLI = false;
 
     public function __construct(bool $PROD = false)
     {
@@ -42,6 +44,12 @@ class HomePage
         self::$PROD = $PROD;
         #Cache headers object
         self::$headers = new Headers;
+        #Check if we are in CLI
+        if (preg_match('/^cli(-server)?$/i', php_sapi_name()) === 1) {
+            self::$CLI = true;
+        } else {
+            self::$CLI = false;
+        }
     }
 
     public function canonical(): void
@@ -302,5 +310,20 @@ class HomePage
             }
         }
         exit;
+    }
+
+    public static function error_log(\Throwable $error, string $extra = ''): void
+    {
+        #Determine page link
+        if (self::$CLI) {
+            $page = 'CLI';
+        } else {
+            if (empty($_SERVER['REQUEST_URI'])) {
+                $page = 'index.php';
+            } else {
+                $page = $_SERVER['REQUEST_URI'];
+            }
+        }
+        error_log('Failed on `'.$page.'`'."\r\n".$error->getMessage()."\r\n".$error->getTraceAsString().(empty($extra) ? '' : "\r\n".'Extra information provided: '.$extra));
     }
 }
