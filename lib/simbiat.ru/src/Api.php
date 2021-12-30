@@ -9,10 +9,6 @@ use Simbiat\fftracker\Entities\FreeCompany;
 use Simbiat\fftracker\Entities\Linkshell;
 use Simbiat\fftracker\Entities\PvPTeam;
 use Simbiat\HTTP20\Common;
-use Simbiat\HTTP20\Headers;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 class Api
 {
@@ -157,13 +153,6 @@ class Api
     }
 
     #Process BICTracker
-
-    /**
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     * @throws \Exception
-     */
     private function bicTracker(array $uri): array|bool|int
     {
         #Check that next value is appropriate
@@ -210,10 +199,14 @@ class Api
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
         } elseif ($uri[0] === 'dbupdate') {
             if (HomePage::$dbup === true) {
-                if ((new bictracker\Library)->update(true) === true) {
-                    return true;
-                } else {
-                    return false;
+                try {
+                    if ((new bictracker\Library)->update(true) === true) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (\Throwable) {
+                    $this->apiEcho(httpCode: '503');
                 }
             } else {
                 $this->apiEcho(httpCode: '503');
