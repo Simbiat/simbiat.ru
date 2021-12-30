@@ -273,7 +273,7 @@ class HomePage
         #Set Twig loader
         $twigLoader = new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']);
         #Initiate Twig itself
-        $twig = new Environment($twigLoader, ['cache' => $GLOBALS['siteconfig']['cachedir'].'/twig']);
+        $twig = new Environment($twigLoader, ['cache' => $GLOBALS['siteconfig']['templatesdir'].'/cache', 'auto_reload' => !self::$PROD,]);
         #Set default variables
         $twigVars = [
             'domain' => $GLOBALS['siteconfig']['domain'],

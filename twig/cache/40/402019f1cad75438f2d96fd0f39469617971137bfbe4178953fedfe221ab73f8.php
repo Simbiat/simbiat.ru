@@ -1,0 +1,108 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+
+/* common/elements/search.twig */
+class __TwigTemplate_c0f6de0274db017ea78a38ff3c612d084448d3972fba69e0b8f0200efbbf4789 extends Template
+{
+    private $source;
+    private $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = [])
+    {
+        $macros = $this->macros;
+        // line 1
+        echo "<article>
+    <details>
+        <summary class=\"rightSummary aboutSection\">";
+        // line 3
+        if ((($context["serviceName"] ?? null) == "bictracker")) {
+            echo "Помощь по поиску";
+        } else {
+            echo "Search help";
+        }
+        echo "</summary>
+        ";
+        // line 4
+        if ((($context["serviceName"] ?? null) == "bictracker")) {
+            // line 5
+            echo "            <p>Поиск вначале осуществляется для точных совпадений, для ускорения выдачи по точным ID или именам. Если точных совпадений не найдено, то будет осуществлён полнотекстовый поиск.</p>
+            <p>YВы можете использовать следующие контрольные символы для управления выдачей:</p>
+            <ul>
+                <li><b>+</b> перед словом делает его обязательным (иначе слова считаются <i>опциональными</i>)</li>
+                <li><b>-</b> перед словом исключает результаты с ним из выборки</li>
+                <li><b>&gt;</b> перед словом увеличивает вес результатов с ним</li>
+                <li><b>&lt;</b> перед словом уменьшает вес результатов с ним</li>
+                <li><b>~</b> перед словом сделает вес результатов с ним <i>отрицательным</i>, опуская их в выборке, но не исключая как <b>-</b></li>
+                <li><b>*</b> после слова позволяет искать все результирующие слова, <i>начинающиеся</i> с него</li>
+                <li><b>&quot;</b> вокруг слова или фразы позволят осуществить строгий поиск, без применения возможных естественных изменений слов</li>
+                <li><b>(&nbsp;)</b> позволяют группировать слова для создания сложных условий поиска</li>
+            </ul>
+            <p>Если вам всё равно не удаётся найти нужное, попробуйте использовать <b>%</b> символ для неточного поиска, но имейте в виду, что такой поиск может занять значительное время..</p>
+        ";
+        } elseif ((        // line 18
+($context["serviceName"] ?? null) == "fftracker")) {
+            // line 19
+            echo "            <p>Search is first done for exact match of the value, to provide faster results for exact IDs or names. If no match is found, full text search is done searching for the whole word.</p>
+            <p>You can try using these control symbols to adjust search:</p>
+            <ul>
+                <li><b>+</b> before a word will make it required (otherwise words are considered <i>optional</i>)</li>
+                <li><b>-</b> before a word will exclude all matches containing it</li>
+                <li><b>&gt;</b> before a word will increase relevance of results containing it</li>
+                <li><b>&lt;</b> before a word will decrease relevance of results containing it</li>
+                <li><b>~</b> before a word will make relevance of results containing it <i>negative</i>, pushing them to the bottom, but not excluding like <b>-</b></li>
+                <li><b>*</b> after a word will allow searching for resulting words that <i>start</i> from it</li>
+                <li><b>&quot;</b> enclosing a word or a phrase will search for it literally without any possible natural search conditions applied to it</li>
+                <li><b>(&nbsp;)</b> allow you to group words for more complex conditions</li>
+            </ul>
+            <p>If you still do not find what you are looking for you can try adding <b>%</b> symbol for a fuzzy search, but note, that then search can take quite a long while.</p>
+        ";
+        }
+        // line 33
+        echo "    </details>
+</article>
+";
+    }
+
+    public function getTemplateName()
+    {
+        return "common/elements/search.twig";
+    }
+
+    public function isTraitable()
+    {
+        return false;
+    }
+
+    public function getDebugInfo()
+    {
+        return array (  84 => 33,  68 => 19,  66 => 18,  51 => 5,  49 => 4,  41 => 3,  37 => 1,);
+    }
+
+    public function getSourceContext()
+    {
+        return new Source("", "common/elements/search.twig", "C:\\Users\\simbi\\OneDrive\\Documents\\!Personal\\Coding\\WebServer\\htdocs\\twig\\common\\elements\\search.twig");
+    }
+}
