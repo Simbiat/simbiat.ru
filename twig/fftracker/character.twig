@@ -55,7 +55,7 @@
             {% endif %}
         </p>
         <p>
-            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{character.location.cityid}}" class="linkIcon" src="/img/fftracker/cities/{{character.location.cityid}}.png"><i>{{character.location.city}}</i>, <i>{{character.location.region}}</i>{% if character.location.server%} on {{character.location.server}} of {{character.location.datacenter}}{% endif %}.
+            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{character.location.city}}" class="linkIcon" src="/img/fftracker/cities/{{character.location.cityid}}.png"><i>{{character.location.city}}</i>, <i>{{character.location.region}}</i>{% if character.location.server%} on {{character.location.server}} of {{character.location.datacenter}}{% endif %}.
             {% if character.location.previousServers %}
                 Has also been seen on
                 {% for server in character.location.previousServers %}
