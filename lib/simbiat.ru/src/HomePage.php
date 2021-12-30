@@ -50,6 +50,9 @@ class HomePage
         } else {
             self::$CLI = false;
         }
+        #Get all POST and GET keys to lower case
+        $_POST = array_change_key_case($_POST, CASE_LOWER);
+        $_GET = array_change_key_case($_GET, CASE_LOWER);
     }
 
     public function canonical(): void
@@ -60,16 +63,24 @@ class HomePage
                 self::$headers->clientReturn('403', true);
             }
         }
-        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes, but keep page. Also lower the case.
-        self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?(?!page=\d*).*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/'))));
+        #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
+        self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/'))));
         #Remove bad UTF
         self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
         #Remove "friendly" portion of the links
         self::$canonical = preg_replace('/(^.*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
         self::$canonical = preg_replace('/crossworldlinkshell/iu', 'crossworld_linkshell', self::$canonical);
-        #Update REQUEST_URI
-        $_SERVER['REQUEST_URI'] = trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', self::$canonical)), '/'));
+        #Update REQUEST_URI to avoid potentially to ensure the data returned will be consistent
+        $_SERVER['REQUEST_URI'] = self::$canonical;
+        #For canonical, though, we need to ensure, that it does have a trailing slash
+        if (preg_match('/\/\?/iu', self::$canonical) !== 1) {
+            self::$canonical = preg_replace('/([^\/])$/iu', '$1/', self::$canonical);
+        }
+        #And also return page query, if present
+        if (isset($_GET['page'])) {
+            self::$canonical .= '?page='.$_GET['page'];
+        }
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
     }
@@ -93,8 +104,8 @@ class HomePage
             #Create HTMLCache object to check for cache
             self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
             #Attempt to use cache
-            $output = self::$HTMLCache->get('', true, false, true);
-            if (!empty($output)) {
+            $output = self::$HTMLCache->get(self::$canonical, true, false, true);
+            if (!empty($output) && !isset($_POST['cachereset']) && !isset($_GET['cachereset'])) {
                 #Cache hit, we need to connect to DB and initiate session to write data about it
                 try {
                     if ($this->dbConnect(true) === true) {
@@ -290,6 +301,11 @@ class HomePage
         if (!empty($twigVars['breadcrumbs'])) {
             $twigVars['breadcrumbs'] = (new HTTP20\HTML)->breadcrumbs($twigVars['breadcrumbs']);
         }
+        #Generate link for cache reset, if page uses cache
+        if (!empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
+            $twigVars['cacheReset'] = parse_url(self::$canonical);
+            $twigVars['cacheReset'] = self::$canonical.(empty($twigVars['cacheReset']['query']) ? '?cacheReset=true' : '&cacheReset=true');
+        }
         #Render page
         $output = $twig->render('index.twig', $twigVars);
         #Close session
@@ -299,10 +315,10 @@ class HomePage
         #Cache page if cache age is set up
         if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
             if (self::$staleReturn) {
-                self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']), direct: false);
+                self::$HTMLCache->set($output, self::$canonical, intval($twigVars['cacheAge']), direct: false);
                 @ob_end_clean();
             } else {
-                self::$HTMLCache->set($output, '', intval($twigVars['cacheAge']));
+                self::$HTMLCache->set($output, self::$canonical, intval($twigVars['cacheAge']));
             }
         } else {
             if (self::$staleReturn === true) {

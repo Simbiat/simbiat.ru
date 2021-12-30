@@ -24,7 +24,7 @@
         <p>{% if achievement.characters.total > 1 %}Last <i>{{ achievement.characters.last|length }}</i> people{% else %}The only person{% endif %}, who received the achievement:</p>
         <div class="searchResults">
             {% for entity in achievement.characters.last %}
-                {{ include('common/entitycard.twig', entity) }}
+                {{ include('common/elements/entitycard.twig', entity) }}
             {% endfor %}
         </div>
     {% endif %}

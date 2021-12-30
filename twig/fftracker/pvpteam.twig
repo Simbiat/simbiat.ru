@@ -13,7 +13,7 @@
     <p>Current members:</p>
         <div class="searchResults">
             {% for entity in pvpteam.members %}
-                {{ include('common/entitycard.twig', entity) }}
+                {{ include('common/elements/entitycard.twig', entity) }}
             {% endfor %}
         </div>
 

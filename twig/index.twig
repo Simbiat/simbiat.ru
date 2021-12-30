@@ -53,7 +53,7 @@
                 {% endif %}
             </main>
             <aside id="sidebar" aria-label="Sidebar">
-                <div id="hideSidebar"><input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" type="image" src="/img/close.svg"></div>
+                <div id="hideSidebar"><input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" data-tooltip="Close sidebar" type="image" src="/img/close.svg"></div>
                     {% if http_error != 'database' and maintenance == 0 %}
                         <section id="loginForm">
                             {{ include('common/layout/noscript.twig') }}

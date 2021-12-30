@@ -132,7 +132,7 @@
         <h3>Головн{%if bicdetails.PrntBIC|length > 1%}ые{%else%}ая{%endif%} организаци{%if bicdetails.PrntBIC|length > 1%}и{% else %}я{%endif%}</h3>
         <div class="searchResults bicChain">
             {% for bank in bicdetails.PrntBIC %}
-                {{ include('common/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
+                {{ include('common/elements/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
             {%endfor%}
         </div>
     {%endif%}
@@ -141,14 +141,14 @@
         <div class="searchResults">
             {% for branch in bicdetails.branches %}
                 {% if not branch.DateOut %}
-                    {{ include('common/entitycard.twig', branch) }}
+                    {{ include('common/elements/entitycard.twig', branch) }}
                 {% endif %}
             {%endfor%}
         </div>
         <div class="searchResults">
             {% for branch in bicdetails.branches %}
                 {% if branch.DateOut %}
-                    {{ include('common/entitycard.twig', branch) }}
+                    {{ include('common/elements/entitycard.twig', branch) }}
                 {% endif %}
             {%endfor%}
         </div>
@@ -157,7 +157,7 @@
         <h3>Организаци{%if bicdetails.sameBIC|length > 1%}и{% else %}я{%endif%} с тем же <abbr data-tooltip="Банковский идентификационный код">БИК</abbr></h3>
         <div class="searchResults">
             {% for bank in bicdetails.sameBIC %}
-                {{ include('common/entitycard.twig', bank) }}
+                {{ include('common/elements/entitycard.twig', bank) }}
             {%endfor%}
         </div>
     {% endif %}
@@ -165,7 +165,7 @@
         <h3>Организаци{%if bicdetails.sameAddress|length > 1%}и{% else %}я{%endif%} с тем же адресом</h3>
         <div class="searchResults">
             {% for bank in bicdetails.sameAddress %}
-                {{ include('common/entitycard.twig', bank) }}
+                {{ include('common/elements/entitycard.twig', bank) }}
             {%endfor%}
         </div>
     {% endif %}
@@ -244,7 +244,7 @@
             <h3>Расчётно-кассовы{%if bicdetails.DBF.misc.RKC|length > 1%}е{%else%}й{%endif%} центр{%if bicdetails.DBF.misc.RKC|length > 1%}ы{%endif%} согласно DBF</h3>
             <div class="searchResults bicChain">
                 {% for bank in bicdetails.DBF.misc.RKC %}
-                    {{ include('common/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
+                    {{ include('common/elements/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
                 {%endfor%}
             </div>
         {%endif%}
@@ -252,7 +252,7 @@
             <h3>Преемник{%if bicdetails.DBF.successors|length > 1%}и{%endif%} согласно DBF</h3>
             <div class="searchResults bicChain">
                 {% for bank in bicdetails.DBF.successors %}
-                    {{ include('common/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
+                    {{ include('common/elements/entitycard.twig', bank) }}{%if not loop.last%} >>> {%endif%}
                 {%endfor%}
             </div>
         {%endif%}
@@ -260,7 +260,7 @@
             <h3>Предшественник{%if bicdetails.DBF.predecessors|length > 1 or bicdetails.DBF.predecessors.0|length > 1%}и{%endif%} согласно DBF</h3>
             <div class="searchResults">
                 {% for predecessor in bicdetails.DBF.predecessors %}
-                    {{ include('common/entitycard.twig', predecessor) }}
+                    {{ include('common/elements/entitycard.twig', predecessor) }}
                 {%endfor%}
             </div>
         {%endif%}

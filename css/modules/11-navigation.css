@@ -20,7 +20,7 @@
     width: calc(100% - 0.2rem);
     border: none;
 }
-#navList .navElement:nth-child(2) {
+#navList .navElement.liBread {
     height: auto;
 }
 #navList .navElement:first-child,
@@ -111,9 +111,9 @@
 .navBread:hover,
 .navBread:focus-within,
 .navBread:active,
-#navList .navElement:nth-child(2):hover,
-#navList .navElement:nth-child(2):focus-within,
-#navList .navElement:nth-child(2):active {
+#navList .navElement.liBread:hover,
+#navList .navElement.liBread:focus-within,
+#navList .navElement.liBread:active {
     border-color: transparent;
 }
 nav[aria-label='breadcrumb 1'],

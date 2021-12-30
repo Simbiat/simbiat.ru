@@ -1,8 +1,8 @@
 <div id="header_logo">
     <span>Simbiat</span>
-    <div id="logoNav"><input id="showNav" class="navIcon" alt="Show navigation" type="image" src="/img/menu.svg"><img loading="lazy" decoding="async" alt="logo" id="logoIcon" src="/img/logo.svg"></div>
+    <div id="logoNav"><input id="showNav" class="navIcon" alt="Show navigation" data-tooltip="Show navigation" type="image" src="/img/menu.svg"><img loading="lazy" decoding="async" alt="logo" id="logoIcon" data-tooltip="Simbiat Software" src="/img/logo.svg"></div>
     <span>Software</span>
 </div>
 <div id="h1div">
-    <h1 id="h1title">{{ h1|raw }}</h1><img loading="lazy" decoding="async" id="shareButton" class="hidden" alt="share page" src="/img/share.svg">
+    <h1 id="h1title">{% if cacheReset %}<a href="{{ cacheReset }}" target="_self" data-tooltip="Click to attempt to reset page's cache"><img class="linkIcon" src="/img/refresh.svg" alt="Reset cache">{% endif %}{{ h1|raw }}{% if cacheReset %}</a>{% endif %}</h1><img loading="lazy" decoding="async" id="shareButton" class="hidden" alt="Share page" data-tooltip="Share page" src="/img/share.svg">
 </div>

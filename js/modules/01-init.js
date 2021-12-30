@@ -71,7 +71,7 @@ function attachListeners()
         item.addEventListener('click', toggleNav);
     });
     //Add IDs to H1-H6 tags and handle onclick events to copy anchor links
-    document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(item => {
+    document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6').forEach(item => {
         idToHeader(item);
         item.addEventListener('click', anchorFromHeader);
     });

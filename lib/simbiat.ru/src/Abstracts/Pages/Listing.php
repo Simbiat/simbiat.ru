@@ -32,6 +32,9 @@ class Listing extends Page
         }
         #Set page number
         $page = intval($_GET['page'] ?? 1);
+        if ($page < 1) {
+            $page = 1;
+        }
         #Sanitize search value
         $decodedSearch = preg_replace($this->regexSearch, '', $path[1] ?? '');
         #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future

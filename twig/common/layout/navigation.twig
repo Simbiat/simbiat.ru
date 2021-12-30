@@ -7,17 +7,17 @@
 <div id="hideNav"><input id="hideNavIcon" class="navIcon" alt="Close navigation" type="image" src="/img/close.svg"></div>
 <div class="navElement">
     <div class="navLine" id="showSidebar">
-        <a class="navItem" href="#" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Login" src="/img/navigation/login.svg"><span itemprop="name">Login</span></a>
+        <a class="navItem" href="#" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Login" data-tooltip="Login" src="/img/navigation/login.svg"><span itemprop="name">Login</span></a>
     </div>
 </div>
 <ul id="navList">
     <li class="navElement">
         <div class="navLine">
-            <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
+            <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" data-tooltip="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
         </div>
     </li>
     {% if breadcrumbs%}
-        <li class="navElement">
+        <li class="navElement liBread">
             <div class="navLine navBread">
                 {{ breadcrumbs|raw }}
             </div>
@@ -41,7 +41,7 @@
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if serviceName == 'fftracker'%}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
+                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="FFXIV Tracker" data-tooltip="FFXIV Tracker" src="/img/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
                 <ul>
                     <li{% if subServiceName == 'statistics'%} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics/" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
                     <li{% if serviceName == 'fftracker' and (subServiceName == 'search' or searchvalue is defined)%} class="current"{% endif %}><a class="navItem" href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
@@ -58,7 +58,7 @@
     <li class="navElement" lang="ru-RU">
         <div class="navLine">
             <details class="navCat" {% if serviceName == 'bictracker'%}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="БИК Трекер" src="/img/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
+                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="БИК Трекер" data-tooltip="БИК Трекер" src="/img/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
                 <ul>
                     <li{% if serviceName == 'bictracker' and (subServiceName == 'search' or searchvalue is defined)%} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
                     <li{% if (subServiceName == 'open' and searchvalue is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut)%} class="current"{% endif %}><a class="navItem" href="/bictracker/open/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
@@ -71,7 +71,7 @@
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if serviceName == 'about'%}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" src="/img/navigation/about.svg"><span itemprop="name">About</span></summary>
+                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="About" src="/img/navigation/about.svg"><span itemprop="name">About</span></summary>
                 <ul>
                     <li{% if subServiceName == 'me'%} class="current"{% endif %}><a class="navItem" href="/about/me/" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
                     <li{% if subServiceName == 'website'%} class="current"{% endif %}><a class="navItem" href="/about/website/" target="_self" itemprop="url"><span itemprop="name">Website</span></a></li>

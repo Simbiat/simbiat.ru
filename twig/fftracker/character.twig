@@ -87,7 +87,7 @@
                     {% for entity in character.groups %}
                         <div>
                             {% if entity.current %}<span class="emojiGreen">&#10004;</span>{% else %}<span class="emojiRed">&#10060;</span>{% endif %}
-                            {{ include('common/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
+                            {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
                         </div>
                     {% endfor %}
                 </div>
@@ -99,7 +99,7 @@
             <h2>Last achievements</h2>
             <div class="searchResults">
                 {% for entity in character.achievements|slice(0,10) %}
-                    {{ include('common/entitycard.twig', entity) }}
+                    {{ include('common/elements/entitycard.twig', entity) }}
                 {% endfor %}
             </div>
         </section>

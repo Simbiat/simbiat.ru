@@ -60,6 +60,7 @@
     margin: 0;
     height: 1.1rem;
     letter-spacing: 0.1rem;
+    cursor: unset;
 }
 #logoNav {
     position: relative;
@@ -67,4 +68,10 @@
 }
 #logoIcon, #showNav {
     position: absolute;
+}
+#h1title a {
+    font-weight: unset;
+    color: unset;
+    text-decoration: unset;
+    border: unset;
 }

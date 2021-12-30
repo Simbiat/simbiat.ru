@@ -2,13 +2,11 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
-use Simbiat\bictracker\Library;
-
 class Listing extends \Simbiat\Abstracts\Pages\Listing
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/bictracker', 'name' => 'БИК Трекер']
+        ['href' => '/fftracker', 'name' => 'FFXIV Tracker']
     ];
     #Sub service name
     protected string $subServiceName = 'characters';
