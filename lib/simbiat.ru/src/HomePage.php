@@ -62,6 +62,8 @@ class HomePage
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes, but keep page. Also lower the case.
         self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?(?!page=\d*).*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/'))));
+        #Remove bad UTF
+        self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
         #Remove "friendly" portion of the links
         self::$canonical = preg_replace('/(^.*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
