@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat;
 
-#Some functions in this class can be realized in .htaccess files, but I am implementing the logic in PHP for more control and fewer dependencies on server software (not all web servers support htaccess files)
 use DateTimeInterface;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
@@ -38,10 +37,14 @@ class HomePage
     #Flag indicating whether we are in CLI
     public static bool $CLI = false;
 
-    public function __construct(bool $PROD = false)
+    public function __construct()
     {
-        #Update static value
-        self::$PROD = $PROD;
+        #Determine if test server. Currently, effects only HTML caching.
+        if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'local.simbiat.ru' && $_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
+            self::$PROD = false;
+        } else {
+            self::$PROD = true;
+        }
         #Cache headers object
         self::$headers = new Headers;
         #Check if we are in CLI
@@ -53,6 +56,79 @@ class HomePage
         #Get all POST and GET keys to lower case
         $_POST = array_change_key_case($_POST, CASE_LOWER);
         $_GET = array_change_key_case($_GET, CASE_LOWER);
+        $this->init();
+    }
+
+    #Initial routing logic
+    private function init(): void
+    {
+        #If not CLI - do redirects and other HTTP-related stuff
+        try {
+            if (self::$CLI) {
+                #Process Cron
+                $this->dbConnect();
+                (new Cron)->process(50);
+                #Ensure we exit no matter what happens with CRON
+                exit;
+            } else {
+                $this->canonical();
+                #Send common headers
+                $this::$headers->secFetch();
+                #Process requests to files
+                if (!empty($_SERVER['REQUEST_URI'])) {
+                    $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
+                    if ($fileResult === 200) {
+                        exit;
+                    } else {
+                        #Exploding further processing
+                        $uri = explode('/', $_SERVER['REQUEST_URI']);
+                        #Check if API
+                        if (strcasecmp($uri[0], 'api') === 0) {
+                            try {
+                                #Process API request
+                                (new Api)->uriParse(array_slice($uri, 1));
+                            } catch (\Throwable $e) {
+                                $this::error_log($e);
+                            }
+                            #Ensure we exit no matter what happens in API gateway
+                            exit;
+                        } else {
+                            try {
+                                #Send links
+                                $this->commonLinks();
+                                #Connect to DB
+                                if ($this->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
+                                    $vars = (new MainRouter)->route($uri);
+                                } else {
+                                    $vars = [];
+                                }
+                            } catch (\Throwable $e) {
+                                $this::error_log($e);
+                                $vars = ['http_error' => 500];
+                            }
+                            #Generate page
+                            $this->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
+                        }
+                    }
+                } else {
+                    #Send links
+                    $this->commonLinks();
+                    #Connect to DB
+                    if ($this->dbConnect(true)) {
+                        $vars = [
+                            'h1' => 'Home',
+                            'serviceName' => 'landing',
+                        ];
+                    } else {
+                        $vars = [];
+                    }
+                    #Generate page
+                    $this->twigProc($vars);
+                }
+            }
+        } catch (\Throwable $e) {
+            $this::error_log($e);
+        }
     }
 
     public function canonical(): void
