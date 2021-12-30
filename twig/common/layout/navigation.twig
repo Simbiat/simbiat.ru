@@ -16,7 +16,7 @@
             <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" data-tooltip="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
         </div>
     </li>
-    {% if breadcrumbs%}
+    {% if breadcrumbs and breadcrumbsLevels > 1%}
         <li class="navElement liBread">
             <div class="navLine navBread">
                 {{ breadcrumbs|raw }}

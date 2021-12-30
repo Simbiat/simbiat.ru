@@ -19,13 +19,12 @@ class Api
     /**
      * @throws \Exception
      */
-    public function uriParse(array $uri): array
+    public function uriParse(array $uri): void
     {
         #Check if uri is empty
         if (empty($uri)) {
             $this->apiEcho(httpCode: '400');
         }
-        $uri[0] = strtolower($uri[0]);
         switch ($uri[0]){
             case 'bictracker':
                 $data = $this->bicTracker(array_slice($uri, 1));
@@ -34,8 +33,11 @@ class Api
                 $data = $this->ffTracker(array_slice($uri, 1));
                 break;
             case 'cron':
-                (new HomePage)->dbConnect();
-                (new Cron)->process();
+                if (HomePage::$dbup === false) {
+                    (new Cron)->process();
+                } else {
+                    $this->apiEcho(httpCode: '503');
+                }
                 exit;
             default:
                 #Not supported (yet)
@@ -48,15 +50,12 @@ class Api
         } else {
             $this->apiEcho($data);
         }
-        return [];
+        exit;
     }
 
     #Process FFTracker
 
     /**
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
      * @throws \Exception
      */
     private function ffTracker(array $uri): string|array|bool
@@ -65,7 +64,6 @@ class Api
         if (empty($uri[0])) {
             $this->apiEcho(httpCode: '400');
         }
-        $uri[0] = strtolower($uri[0]);
         #Check if supported
         if (!in_array($uri[0], ['achievement', 'character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'pvpteam'])) {
             $this->apiEcho(httpCode: '404');
@@ -75,14 +73,14 @@ class Api
             $this->apiEcho(httpCode: '400');
         }
         if (!empty($uri[2])) {
-            if (in_array(strtolower($uri[2]), ['register', 'update', 'get', 'lodestone'])){
+            if (in_array($uri[2], ['register', 'update', 'get', 'lodestone'])){
                 $uri[2] = strtolower($uri[2]);
             }
         } else {
             $uri[2] = '';
         }
         #Connect to DB
-        if ((new HomePage)->dbConnect() === false) {
+        if (HomePage::$dbup === false) {
             $this->apiEcho(httpCode: '503');
         }
         $data = null;
@@ -172,7 +170,6 @@ class Api
         if (empty($uri[0])) {
             $this->apiEcho(httpCode: '400');
         }
-        $uri[0] = strtolower($uri[0]);
         #Check if supported
         if (!in_array($uri[0], ['bic', 'keying', 'dbupdate'])) {
             $this->apiEcho(httpCode: '404');
@@ -183,7 +180,7 @@ class Api
         }
         if ($uri[0] === 'bic') {
             #Connect to DB
-            if ((new HomePage)->dbConnect()) {
+            if (HomePage::$dbup === true) {
                 $data = null;
                 #Get data
                 try {
@@ -212,7 +209,7 @@ class Api
         } elseif ($uri[0] === 'keying') {
             return (new AccountKeying)->accCheck($uri[1], $uri[2]);
         } elseif ($uri[0] === 'dbupdate') {
-            if ((new HomePage)->dbConnect()) {
+            if (HomePage::$dbup === true) {
                 if ((new bictracker\Library)->update(true) === true) {
                     return true;
                 } else {

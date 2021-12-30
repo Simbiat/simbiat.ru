@@ -74,56 +74,35 @@ class HomePage
                 $this->canonical();
                 #Send common headers
                 $this::$headers->secFetch();
-                #Process requests to files
-                if (!empty($_SERVER['REQUEST_URI'])) {
-                    $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
-                    if ($fileResult === 200) {
-                        exit;
-                    } else {
-                        #Exploding further processing
-                        $uri = explode('/', $_SERVER['REQUEST_URI']);
-                        #Check if API
-                        if (strcasecmp($uri[0], 'api') === 0) {
-                            try {
-                                #Process API request
-                                (new Api)->uriParse(array_slice($uri, 1));
-                            } catch (\Throwable $e) {
-                                $this::error_log($e);
-                            }
-                            #Ensure we exit no matter what happens in API gateway
-                            exit;
-                        } else {
-                            try {
-                                #Send links
-                                $this->commonLinks();
-                                #Connect to DB
-                                if ($this->dbConnect(true) || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
-                                    $vars = (new MainRouter)->route($uri);
-                                } else {
-                                    $vars = [];
-                                }
-                            } catch (\Throwable $e) {
-                                $this::error_log($e);
-                                $vars = ['http_error' => 500];
-                            }
-                            #Generate page
-                            $this->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
-                        }
-                    }
+                #Process requests to file or cache
+                $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
+                if ($fileResult === 200) {
+                    exit;
                 } else {
-                    #Send links
-                    $this->commonLinks();
-                    #Connect to DB
-                    if ($this->dbConnect(true)) {
-                        $vars = [
-                            'h1' => 'Home',
-                            'serviceName' => 'landing',
-                        ];
-                    } else {
-                        $vars = [];
+                    #Exploding further processing
+                    $uri = explode('/', $_SERVER['REQUEST_URI']);
+                    try {
+                        #Check if API
+                        if ($uri[0] === 'api') {
+                            #Attempt to connect to DB
+                            $this->dbConnect();
+                        } else {
+                            #Send links
+                            $this->commonLinks();
+                            #Attempt to connect to DB
+                            $this->dbConnect(true);
+                        }
+                        if (self::$dbup || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
+                            $vars = (new MainRouter)->route($uri);
+                        } else {
+                            $vars = [];
+                        }
+                    } catch (\Throwable $e) {
+                        $this::error_log($e);
+                        $vars = ['http_error' => 500];
                     }
                     #Generate page
-                    $this->twigProc($vars);
+                    $this->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
                 }
             }
         } catch (\Throwable $e) {
@@ -140,7 +119,7 @@ class HomePage
             }
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'])), '/'))));
+        self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))));
         #Remove bad UTF
         self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
         #Remove "friendly" portion of the links
@@ -229,10 +208,9 @@ class HomePage
     }
 
     #Database connection
-
     /**
-     * @throws SyntaxError
      * @throws RuntimeError
+     * @throws SyntaxError
      * @throws LoaderError
      */
     public function dbConnect(bool $extraChecks = false): bool
@@ -258,7 +236,7 @@ class HomePage
                         $this->twigProc(error: 403);
                     }
                 }
-            } catch (\Exception) {
+            } catch (\Throwable) {
                 self::$dbup = false;
                 return false;
             }
@@ -375,6 +353,7 @@ class HomePage
         $twigVars['XCSRFToken'] = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
         #Generate breadcrumbs
         if (!empty($twigVars['breadcrumbs'])) {
+            $twigVars['breadcrumbsLevels'] = count($twigVars['breadcrumbs']);
             $twigVars['breadcrumbs'] = (new HTTP20\HTML)->breadcrumbs($twigVars['breadcrumbs']);
         }
         #Generate link for cache reset, if page uses cache

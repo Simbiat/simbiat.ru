@@ -10,6 +10,9 @@ class MainRouter extends Abstracts\Router
 {
     #Supported
     protected array $subRoutes = [
+        #Empty string implies homepage
+        '',
+        'api',
         #Forum/articles
         #'forum', 'thread',
         #Pages routing
@@ -30,11 +33,17 @@ class MainRouter extends Abstracts\Router
     protected function pageGen(array $path): array
     {
         #Some extra processing for bictracker
-        if (strtolower($path[0]) === 'bictracker') {
+        if ($path[0] === 'bictracker') {
             #Tell that content is intended for Russians
             header('Content-Language: ru-RU');
         }
-        return match(strtolower($path[0])) {
+        #Check if API
+        if ($path[0] === 'api') {
+            (new Api)->uriParse(array_slice($path, 1));
+            #Ensure we exit
+            exit;
+        }
+        return match($path[0]) {
             #Forum/Articles
             'forum' => (new Show)->forum($path),
             'thread' => (new Show)->thread($path),
@@ -42,11 +51,12 @@ class MainRouter extends Abstracts\Router
             'about' => (new About\Router)->route(array_slice($path, 1)),
             'bictracker' => (new bictracker\Router)->route(array_slice($path, 1)),
             'fftracker' => (new fftracker\Router)->route(array_slice($path, 1)),
-                #'uc', 'tests' => (new MainRouter)->route(array_slice($uri, 1)),
+            #'uc', 'tests' => (new MainRouter)->route(array_slice($uri, 1)),
             #Feeds
             'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($path),
             #Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
+            '' => ['h1' => 'Home', 'serviceName' => 'landing',],
             default => $this->error(['404']),
         };
     }
