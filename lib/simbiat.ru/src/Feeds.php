@@ -19,7 +19,7 @@ class Feeds
         if (empty($uri[0])) {
             return ['http_error' => 404];
         } else {
-            return match(strtolower($uri[0])) {
+            return match($uri[0]) {
                 'sitemap' => $this->sitemap(array_slice($uri, 1)),
                 'atom' => $this->feed(array_slice($uri, 1)),
                 'rss' => $this->feed(array_slice($uri, 1), 'rss'),
@@ -37,7 +37,6 @@ class Feeds
     {
         #Check if empty
         if (!empty($uri[0])) {
-            $uri[0] = strtolower($uri[0]);
             $title = match($uri[0]) {
                 'bicchanged' => 'Изменения банков',
                 'bicdeleted' => 'Удаленные банки',
@@ -145,7 +144,6 @@ class Feeds
                     $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/sitemap/' . $format . '/index', true, true, false);
                 }
             } else {
-                $uri[0] = strtolower($uri[0]);
                 if (in_array($uri[0], ['html', 'xml', 'txt'])) {
                     if (!HomePage::$staleReturn) {
                         $format = match ($uri[0]) {
@@ -161,7 +159,6 @@ class Feeds
                             $headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/sitemap/' . $uri[0] . '/index', true, true, false);
                         }
                     } else {
-                        $uri[1] = strtolower($uri[1]);
                         #Set base URL
                         $baseurl = 'https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/';
                         #Prepare list of links

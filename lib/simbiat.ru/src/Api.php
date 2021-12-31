@@ -68,11 +68,7 @@ class Api
         if (empty($uri[1])) {
             $this->apiEcho(httpCode: '400');
         }
-        if (!empty($uri[2])) {
-            if (in_array($uri[2], ['register', 'update', 'get', 'lodestone'])){
-                $uri[2] = strtolower($uri[2]);
-            }
-        } else {
+        if (empty($uri[2])) {
             $uri[2] = '';
         }
         #Connect to DB

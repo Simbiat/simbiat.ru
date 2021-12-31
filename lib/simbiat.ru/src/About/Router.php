@@ -18,7 +18,7 @@ class Router extends \Simbiat\Abstracts\Router
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
-        return match(strtolower($path[0])) {
+        return match($path[0]) {
             'me' => (new Pages\Me)->get(array_slice($path, 1)),
             'website' => (new Pages\Website)->get(array_slice($path, 1)),
             'tech' => (new Pages\Tech)->get(array_slice($path, 1)),

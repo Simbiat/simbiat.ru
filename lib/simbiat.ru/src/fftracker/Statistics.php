@@ -18,7 +18,6 @@ class Statistics
     {
         $data = [];
         #Sanitize type
-        $type = strtolower($type);
         if (!in_array($type, ['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'])) {
             $type = 'genetics';
         }
