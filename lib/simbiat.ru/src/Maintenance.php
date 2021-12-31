@@ -135,7 +135,7 @@ class Maintenance
     }
 
     #Function to send alert database going down
-    public function dbDown(): void
+    public function dbDown(?string $message = null): void
     {
         #Get directory
         $dir = sys_get_temp_dir();
@@ -145,7 +145,7 @@ class Maintenance
                 #Send mail
 
                 #Generate flag
-                file_put_contents($dir . '/noDB.flag', 'Database is down');
+                file_put_contents($dir . '/noDB.flag', 'Database is down: '.($message ?? ''));
             }
         } else {
             @unlink($dir.'/noDB.flag');

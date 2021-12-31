@@ -223,6 +223,7 @@ class HomePage
             try {
                 (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings'])->setOption(\PDO::ATTR_TIMEOUT, 1));
                 self::$dbup = true;
+                $healthCheck->dbDown();
                 #Cache controller
                 self::$dbController = (new Controller);
                 #Check for maintenance
@@ -239,11 +240,11 @@ class HomePage
                         $this->twigProc(error: 403);
                     }
                 }
-            } catch (\Throwable) {
+            } catch (\Throwable $error) {
                 self::$dbup = false;
                 #Trigger mail alert if PROD
                 if (self::$PROD) {
-                    $healthCheck->dbDown();
+                    $healthCheck->dbDown($error->getMessage()."\r\n".$error->getTraceAsString());
                 }
                 return false;
             }
