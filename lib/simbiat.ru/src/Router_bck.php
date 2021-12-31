@@ -53,24 +53,6 @@ class Router_bck
         return $outputArray;
     }
 
-    #Function to route tests
-    public function tests(array $uri): array
-    {
-        $outputArray = [];
-        #Forbid if on PROD
-        if (HomePage::$PROD === true || empty($uri)) {
-            $outputArray['http_error'] = 403;
-            return $outputArray;
-        }
-        $uri[0] = strtolower($uri[0]);
-        if ($uri[0] == 'optimize') {
-            (new Tests)->testDump((new optimizeTables)->setMaintenance("sys__settings", "setting", "maintenance", "value")->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
-            exit;
-        }
-        $outputArray['http_error'] = 400;
-        return $outputArray;
-    }
-
     #Function to prepare data for FFTracker depending on the URI
     /**
      * @throws \JsonException

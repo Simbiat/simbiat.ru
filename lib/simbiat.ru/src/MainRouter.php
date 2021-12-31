@@ -12,6 +12,7 @@ class MainRouter extends Abstracts\Router
         #Empty string implies homepage
         '',
         'api',
+        'tests',
         #Forum/articles
         #'forum', 'thread',
         #Pages routing
@@ -50,7 +51,8 @@ class MainRouter extends Abstracts\Router
             'about' => (new About\Router)->route(array_slice($path, 1)),
             'bictracker' => (new bictracker\Router)->route(array_slice($path, 1)),
             'fftracker' => (new fftracker\Router)->route(array_slice($path, 1)),
-            #'uc', 'tests' => (new MainRouter)->route(array_slice($uri, 1)),
+            #'uc',
+            'tests' => $this->tests(array_slice($path, 1)),
             #Feeds
             'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($path),
             #Errors
@@ -78,6 +80,23 @@ class MainRouter extends Abstracts\Router
             $outputArray['http_error'] = intval($uri[0]);
         }
         $outputArray['error_page'] = true;
+        return $outputArray;
+    }
+
+    #Function to route tests
+    private function tests(array $uri): array
+    {
+        $outputArray = [];
+        #Forbid if on PROD
+        if (HomePage::$PROD === true || empty($uri)) {
+            $outputArray['http_error'] = 403;
+            return $outputArray;
+        }
+        if ($uri[0] == 'optimize') {
+            (new Tests)->testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
+            exit;
+        }
+        $outputArray['http_error'] = 400;
         return $outputArray;
     }
 }
