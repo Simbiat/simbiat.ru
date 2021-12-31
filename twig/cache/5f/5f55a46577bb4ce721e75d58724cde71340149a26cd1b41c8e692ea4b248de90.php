@@ -37,17 +37,17 @@ class __TwigTemplate_ad47d01c09780ec9f8b616f5d9b696dfc4ee741e7eb1874a3de57708b61
         if ((($context["serviceName"] ?? null) == "bictracker")) {
             // line 2
             echo "    <p>Показано ";
-            echo twig_escape_filter($this->env, twig_length_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["listOfEntities"] ?? null), "entities", [], "any", false, false, false, 2)), "html", null, true);
+            echo twig_escape_filter($this->env, twig_length_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["searchresult"] ?? null), "entities", [], "any", false, false, false, 2)), "html", null, true);
             echo " записей из ";
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["listOfEntities"] ?? null), "count", [], "any", false, false, false, 2), "html", null, true);
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["searchresult"] ?? null), "count", [], "any", false, false, false, 2), "html", null, true);
             echo ".</p>
 ";
         } else {
             // line 4
             echo "    <p>Showing ";
-            echo twig_escape_filter($this->env, twig_length_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["listOfEntities"] ?? null), "entities", [], "any", false, false, false, 4)), "html", null, true);
+            echo twig_escape_filter($this->env, twig_length_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["searchresult"] ?? null), "entities", [], "any", false, false, false, 4)), "html", null, true);
             echo " from total of ";
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["listOfEntities"] ?? null), "count", [], "any", false, false, false, 4), "html", null, true);
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, ($context["searchresult"] ?? null), "count", [], "any", false, false, false, 4), "html", null, true);
             echo ".</p>
 ";
         }
@@ -56,7 +56,7 @@ class __TwigTemplate_ad47d01c09780ec9f8b616f5d9b696dfc4ee741e7eb1874a3de57708b61
     ";
         // line 7
         $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, ($context["listOfEntities"] ?? null), "entities", [], "any", false, false, false, 7));
+        $context['_seq'] = twig_ensure_traversable(twig_get_attribute($this->env, $this->source, ($context["searchresult"] ?? null), "entities", [], "any", false, false, false, 7));
         $context['loop'] = [
           'parent' => $context['_parent'],
           'index0' => 0,

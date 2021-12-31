@@ -61,8 +61,8 @@
                 <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="БИК Трекер" data-tooltip="БИК Трекер" src="/img/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
                 <ul>
                     <li{% if serviceName == 'bictracker' and (subServiceName == 'search' or searchvalue is defined)%} class="current"{% endif %}><a class="navItem" href="/bictracker/search/" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
-                    <li{% if (subServiceName == 'open' and searchvalue is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut)%} class="current"{% endif %}><a class="navItem" href="/bictracker/open/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
-                    <li{% if (subServiceName == 'closed' and searchvalue is not defined) or (subServiceName == 'bic' and bicdetails.DateOut)%} class="current"{% endif %}><a class="navItem" href="/bictracker/closed/" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
+                    <li{% if (subServiceName == 'openbics' and searchvalue is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut)%} class="current"{% endif %}><a class="navItem" href="/bictracker/openbics/" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
+                    <li{% if (subServiceName == 'closedbics' and searchvalue is not defined) or (subServiceName == 'bic' and bicdetails.DateOut)%} class="current"{% endif %}><a class="navItem" href="/bictracker/closedbics/" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
                     <li{% if subServiceName == 'keying'%} class="current"{% endif %}><a class="navItem" href="/bictracker/keying/" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a></li>
                 </ul>
             </details>

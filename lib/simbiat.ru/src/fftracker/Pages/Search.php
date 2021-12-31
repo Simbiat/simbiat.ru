@@ -18,11 +18,11 @@ class Search extends \Simbiat\Abstracts\Pages\Search
     protected string $ogdesc = 'FFXIV Tracker Search';
     #Linking types to classes
     protected array $types = [
-        'characters' => '\Simbiat\fftracker\Search\Characters',
-        'freecompanies' => '\Simbiat\fftracker\Search\Companies',
-        'pvpteams' => '\Simbiat\fftracker\Search\PVP',
-        'linkshells' => '\Simbiat\fftracker\Search\Linkshells',
-        'achievements' => '\Simbiat\fftracker\Search\Achievements',
+        'characters' => ['name' => 'Characters', 'class' => '\Simbiat\fftracker\Search\Characters'],
+        'freecompanies' => ['name' => 'Free Companies', 'class' => '\Simbiat\fftracker\Search\Companies'],
+        'pvpteams' => ['name' => 'PvP Teams', 'class' => '\Simbiat\fftracker\Search\PVP'],
+        'linkshells' => ['name' => 'Linkshells', 'class' => '\Simbiat\fftracker\Search\Linkshells'],
+        'achievements' => ['name' => 'Achievements', 'class' => '\Simbiat\fftracker\Search\Achievements'],
     ];
     #Items to display per page for search results per type
     protected int $searchItems = 6;

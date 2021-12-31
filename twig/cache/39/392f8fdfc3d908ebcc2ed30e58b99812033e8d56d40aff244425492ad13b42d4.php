@@ -96,14 +96,14 @@ class __TwigTemplate_3ca0a67a390d6f2111906533c624b156eddec0c99bb4ce1b92db841c625
                 echo "
             ";
             } elseif ((            // line 25
-($context["subServiceName"] ?? null) == "open")) {
+($context["subServiceName"] ?? null) == "openbics")) {
                 // line 26
                 echo "                ";
                 echo twig_include($this->env, $context, "common/pages/list.twig");
                 echo "
             ";
             } elseif ((            // line 27
-($context["subServiceName"] ?? null) == "closed")) {
+($context["subServiceName"] ?? null) == "closedbics")) {
                 // line 28
                 echo "                ";
                 echo twig_include($this->env, $context, "common/pages/list.twig");

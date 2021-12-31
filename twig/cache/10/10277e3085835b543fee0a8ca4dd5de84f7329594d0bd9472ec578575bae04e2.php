@@ -173,16 +173,16 @@ class __TwigTemplate_7129bd5d58ffc5899fe456644bb264dfa7fb96f8a9c3d9aa442694a5416
         echo "><a class=\"navItem\" href=\"/bictracker/search/\" target=\"_self\" itemprop=\"url\"><span itemprop=\"name\">Поиск</span></a></li>
                     <li";
         // line 64
-        if ((((($context["subServiceName"] ?? null) == "open") &&  !array_key_exists("searchvalue", $context)) || ((($context["subServiceName"] ?? null) == "bic") &&  !twig_get_attribute($this->env, $this->source, ($context["bicdetails"] ?? null), "DateOut", [], "any", false, false, false, 64)))) {
+        if ((((($context["subServiceName"] ?? null) == "openbics") &&  !array_key_exists("searchvalue", $context)) || ((($context["subServiceName"] ?? null) == "bic") &&  !twig_get_attribute($this->env, $this->source, ($context["bicdetails"] ?? null), "DateOut", [], "any", false, false, false, 64)))) {
             echo " class=\"current\"";
         }
-        echo "><a class=\"navItem\" href=\"/bictracker/open/\" target=\"_self\" itemprop=\"url\"><span itemprop=\"name\">Открытые БИК</span></a></li>
+        echo "><a class=\"navItem\" href=\"/bictracker/openbics/\" target=\"_self\" itemprop=\"url\"><span itemprop=\"name\">Открытые БИК</span></a></li>
                     <li";
         // line 65
-        if ((((($context["subServiceName"] ?? null) == "closed") &&  !array_key_exists("searchvalue", $context)) || ((($context["subServiceName"] ?? null) == "bic") && twig_get_attribute($this->env, $this->source, ($context["bicdetails"] ?? null), "DateOut", [], "any", false, false, false, 65)))) {
+        if ((((($context["subServiceName"] ?? null) == "closedbics") &&  !array_key_exists("searchvalue", $context)) || ((($context["subServiceName"] ?? null) == "bic") && twig_get_attribute($this->env, $this->source, ($context["bicdetails"] ?? null), "DateOut", [], "any", false, false, false, 65)))) {
             echo " class=\"current\"";
         }
-        echo "><a class=\"navItem\" href=\"/bictracker/closed/\" target=\"_self\" itemprop=\"url\"><span itemprop=\"name\">Закрытые БИК</span></a></li>
+        echo "><a class=\"navItem\" href=\"/bictracker/closedbics/\" target=\"_self\" itemprop=\"url\"><span itemprop=\"name\">Закрытые БИК</span></a></li>
                     <li";
         // line 66
         if ((($context["subServiceName"] ?? null) == "keying")) {

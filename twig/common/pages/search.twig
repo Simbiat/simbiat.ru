@@ -24,9 +24,9 @@
     {% endif %}
     {% for type, subResult in searchresult %}
         <p>
-            {% if type == 'openBics' %}
+            {% if type == 'openbics' %}
                 Открытых БИК:
-            {% elseif type == 'closedBics' %}
+            {% elseif type == 'closedbics' %}
                 Закрытых БИК:
             {% elseif type == 'achievements' %}
                 Achievements:
@@ -41,10 +41,10 @@
             {% endif %}
             {% if subResult.count>subResult.results|length %}
                 {# Set list link #}
-                {% if type == 'openBics' %}
-                    {% set listURL = '/bictracker/open/' %}
-                {% elseif type == 'closedBics' %}
-                    {% set listURL = '/bictracker/closed/' %}
+                {% if type == 'openbics' %}
+                    {% set listURL = '/bictracker/openbics/' %}
+                {% elseif type == 'closedbics' %}
+                    {% set listURL = '/bictracker/closedbics/' %}
                 {% elseif type == 'achievements' %}
                     {% set listURL = '/fftracker/achievements/' %}
                 {% elseif type == 'characters' %}

@@ -22,9 +22,9 @@
                 {{ include('common/pages/search.twig')}}
             {% elseif subServiceName == 'bic' %}
                 {{ include('bictracker/bic.twig')}}
-            {% elseif subServiceName == 'open' %}
+            {% elseif subServiceName == 'openbics' %}
                 {{ include('common/pages/list.twig')}}
-            {% elseif subServiceName == 'closed' %}
+            {% elseif subServiceName == 'closedbics' %}
                 {{ include('common/pages/list.twig')}}
             {% endif %}
         </article>

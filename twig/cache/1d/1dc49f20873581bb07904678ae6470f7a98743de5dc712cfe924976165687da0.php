@@ -126,12 +126,12 @@ class __TwigTemplate_bd876f576dc1290f05347d6ecb158d94a3f398eaf7bfe41c3757b40c7af
             echo "        <p>
             ";
             // line 27
-            if (($context["type"] == "openBics")) {
+            if (($context["type"] == "openbics")) {
                 // line 28
                 echo "                Открытых БИК:
             ";
             } elseif ((            // line 29
-$context["type"] == "closedBics")) {
+$context["type"] == "closedbics")) {
                 // line 30
                 echo "                Закрытых БИК:
             ";
@@ -168,16 +168,16 @@ $context["type"] == "linkshells")) {
                 echo "                ";
                 // line 44
                 echo "                ";
-                if (($context["type"] == "openBics")) {
+                if (($context["type"] == "openbics")) {
                     // line 45
                     echo "                    ";
-                    $context["listURL"] = "/bictracker/open/";
+                    $context["listURL"] = "/bictracker/openbics/";
                     // line 46
                     echo "                ";
-                } elseif (($context["type"] == "closedBics")) {
+                } elseif (($context["type"] == "closedbics")) {
                     // line 47
                     echo "                    ";
-                    $context["listURL"] = "/bictracker/closed/";
+                    $context["listURL"] = "/bictracker/closedbics/";
                     // line 48
                     echo "                ";
                 } elseif (($context["type"] == "achievements")) {

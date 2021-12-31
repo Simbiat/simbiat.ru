@@ -20,8 +20,8 @@ class Search extends \Simbiat\Abstracts\Pages\Search
     protected string $ogdesc = 'Поиск по БИК Трекеру';
     #Linking types to classes
     protected array $types = [
-        'openBics' => '\Simbiat\bictracker\Search\OpenBics',
-        'closedBics' => '\Simbiat\bictracker\Search\ClosedBics',
+        'openbics' => ['name' => 'Открытые БИК', 'class' => '\Simbiat\bictracker\Search\OpenBics'],
+        'closedbics' => ['name' => 'Закрытые БИК', 'class' => '\Simbiat\bictracker\Search\ClosedBics'],
     ];
     #Regex to sanitize search value (remove disallowed characters)
     protected string $regexSearch = '/[^\P{Cyrillic}a-zA-Z0-9!@#\$%&*()\-+=|?<> ]/i';

@@ -5,7 +5,7 @@ namespace Simbiat\bictracker;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['keying', 'search', 'bic', 'open', 'closed'];
+    protected array $subRoutes = ['keying', 'search', 'bic', 'openbics', 'closedbics'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/bictracker/', 'name'=>'БИК Трекер']
@@ -22,7 +22,7 @@ class Router extends \Simbiat\Abstracts\Router
             'search' => (new Pages\Search)->get(array_slice($path, 1)),
             'keying' => (new Pages\Keying)->get(array_slice($path, 1)),
             'bic' => (new Pages\Bic)->get(array_slice($path, 1)),
-            'open', 'closed' => (new Pages\Listing)->get($path),
+            'openbics', 'closedbics' => (new Pages\Listing)->get($path),
         };
     }
 }
