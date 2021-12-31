@@ -18,7 +18,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function __construct(int $sessionLife = 300)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
-        session_name('__Host-sess_'.preg_replace('/[^a-zA-Z0-9\-_]/', '', $_SERVER['HTTP_HOST']));
+        session_name('__Host-sess_'.preg_replace('/[^a-zA-Z0-9\-_]/', '', $_SERVER['HTTP_HOST'] ?? 'simbiat'));
         if ($sessionLife < 0) {
             $sessionLife = 300;
         }

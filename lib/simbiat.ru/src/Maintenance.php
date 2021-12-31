@@ -23,7 +23,8 @@ class Maintenance
     {
         try {
             return (new Session)->gc(300);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            HomePage::error_log($e);
             return false;
         }
     }
@@ -59,14 +60,14 @@ class Maintenance
                 ];
             }
         }
+        $result = true;
         if (!empty($queries)) {
             try {
                 $result = HomePage::$dbController->query($queries);
-            } catch (\Throwable) {
+            } catch (\Throwable $e) {
+                HomePage::error_log($e);
                 $result = false;
             }
-        } else {
-            $result = true;
         }
         return $result;
     }
@@ -82,14 +83,16 @@ class Maintenance
         #Clean Cron errors
         $queries[] = 'DELETE FROM `cron__errors` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
         try {
-            return HomePage::$dbController->query($queries);
-        } catch (\Throwable) {
-            return false;
+            $result = HomePage::$dbController->query($queries);
+        } catch (\Throwable $e) {
+            HomePage::error_log($e);
+            $result = false;
         }
+        return $result;
     }
 
     #Clean statistical data
-    public function statisticsClean(): bool
+    public function statisticsClean(): bool|string
     {
         $queries = [];
         #Remove pages that have not been viewed in 2 years
@@ -97,10 +100,12 @@ class Maintenance
         #Remove visitors who have not come in 2 years
         $queries[] = 'DELETE FROM `uc__seo_visitors` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
-            return HomePage::$dbController->query($queries);
-        } catch (\Throwable) {
-            return false;
+            $result = HomePage::$dbController->query($queries);
+        } catch (\Throwable $e) {
+            HomePage::error_log($e);
+            $result = false;
         }
+        return $result;
     }
 
     #Function to get available disk space
