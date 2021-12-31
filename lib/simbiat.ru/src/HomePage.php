@@ -215,6 +215,9 @@ class HomePage
      */
     public function dbConnect(bool $extraChecks = false): bool
     {
+        $healthCheck = (new Maintenance);
+        #Check space availability
+        $healthCheck->noSpace();
         #Check in case we accidentally call this for 2nd time
         if (self::$dbup === false) {
             try {
@@ -238,6 +241,10 @@ class HomePage
                 }
             } catch (\Throwable) {
                 self::$dbup = false;
+                #Trigger mail alert if PROD
+                if (self::$PROD) {
+                    $healthCheck->dbDown();
+                }
                 return false;
             }
         }

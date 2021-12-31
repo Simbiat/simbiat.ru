@@ -90,6 +90,7 @@ return array(
     'Simbiat\\LodestoneModules\\Routes' => $baseDir . '/../lib/lodestone-parser/src/LodestoneModules/Routes.php',
     'Simbiat\\LodestoneTest' => $baseDir . '/../lib/lodestone-parser/src/LodestoneTest.php',
     'Simbiat\\MainRouter' => $baseDir . '/../lib/simbiat.ru/src/MainRouter.php',
+    'Simbiat\\Maintenance' => $baseDir . '/../lib/simbiat.ru/src/Maintenance.php',
     'Simbiat\\Router_bck' => $baseDir . '/../lib/simbiat.ru/src/Router_bck.php',
     'Simbiat\\SafeFileName' => $baseDir . '/../lib/filename-sanitizer/src/SafeFileName.php',
     'Simbiat\\SandClock' => $baseDir . '/../lib/sand-clock/src/SandClock.php',

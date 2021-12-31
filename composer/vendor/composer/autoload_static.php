@@ -145,6 +145,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\LodestoneModules\\Routes' => __DIR__ . '/../..' . '/../lib/lodestone-parser/src/LodestoneModules/Routes.php',
         'Simbiat\\LodestoneTest' => __DIR__ . '/../..' . '/../lib/lodestone-parser/src/LodestoneTest.php',
         'Simbiat\\MainRouter' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/MainRouter.php',
+        'Simbiat\\Maintenance' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Maintenance.php',
         'Simbiat\\Router_bck' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Router_bck.php',
         'Simbiat\\SafeFileName' => __DIR__ . '/../..' . '/../lib/filename-sanitizer/src/SafeFileName.php',
         'Simbiat\\SandClock' => __DIR__ . '/../..' . '/../lib/sand-clock/src/SandClock.php',
