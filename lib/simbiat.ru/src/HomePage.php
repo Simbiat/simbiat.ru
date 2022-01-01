@@ -319,7 +319,7 @@ class HomePage
             #Server error page
             $twigVars['http_error'] = (self::$dbup === false ? 'database' : (self::$dbUpdate === true ? 'maintenance' : $error));
             if (!$twigVars['static_page']) {
-                $twigVars['title'] = $twigVars['site_name'] . ': ' . (self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : strval($error)));
+                $twigVars['title'] = (self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : 'Error '.$error));
                 $twigVars['h1'] = $twigVars['title'];
                 if (!HomePage::$staleReturn) {
                     self::$headers->clientReturn(strval($error), false);
@@ -341,7 +341,9 @@ class HomePage
                 $twigVars['h1'] = $twigVars['title'];
             }
             #Add site name to it
-            $twigVars['title'] = $twigVars['title'].' on '.$twigVars['site_name'];
+            if (empty($twigVars['http_error'])) {
+                $twigVars['title'] = $twigVars['title'] . ' on ' . $twigVars['site_name'];
+            }
         }
         #Set OG values to global ones, if empty
         if (empty($twigVars['ogdesc'])) {
