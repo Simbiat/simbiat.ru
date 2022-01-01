@@ -4,6 +4,7 @@ namespace Simbiat;
 
 use DateTimeInterface;
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
@@ -411,15 +412,19 @@ class HomePage
     }
 
     #Helper function to send mails
-    public static function sendMail(string $to, string $subject, string $body): bool
+    public static function sendMail(string $to, string $subject, string $body, bool $debug = false): bool
     {
         $mail = new PHPMailer(true);
         try {
             #Server settings
             #Enable verbose debug output
-            $mail->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_SERVER;
-            #$mail->Debugoutput = 'error_log';
-            $mail->Debugoutput = 'html';
+            if ($debug) {
+                $mail->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
+                $mail->Debugoutput = 'html';
+            } else {
+                $mail->SMTPDebug = SMTP::DEBUG_OFF;
+                $mail->Debugoutput = 'error_log';
+            }
             #Send using SMTP
             $mail->isSMTP();
             #Set the SMTP server to send through
@@ -427,21 +432,26 @@ class HomePage
             #Enable SMTP authentication
             $mail->SMTPAuth = true;
             $mail->SMTPAutoTLS = true;
+            $mail->AuthType = 'LOGIN';
             #SMTP username
             $mail->Username = $GLOBALS['siteconfig']['smtp']['user'];
             #SMTP password
             $mail->Password = $GLOBALS['siteconfig']['smtp']['password'];
             #Enable implicit TLS encryption
-            #$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            #TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-            #$mail->Port = 465;
-            $mail->Port = 587;
+            $mail->Port = 25;
 
             #Recipients
             $mail->setFrom($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name'], false);
             $mail->addAddress($to);
             $mail->addReplyTo($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']);
+
+            #DKIM
+            $mail->DKIM_domain = $mail->Host;
+            $mail->DKIM_private = $GLOBALS['siteconfig']['DKIM']['key'];
+            $mail->DKIM_selector = 'DKIM';
+            $mail->DKIM_passphrase = '';
+            $mail->DKIM_identity = $mail->From;
 
             #Content
             #Set email format to HTML

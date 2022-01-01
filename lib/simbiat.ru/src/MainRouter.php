@@ -97,7 +97,7 @@ class MainRouter extends Abstracts\Router
             exit;
         }
         if ($uri[0] == 'mail') {
-            HomePage::sendMail('simbiat@outlook.com', 'Test Mail', 'Test body');
+            HomePage::sendMail('simbiat@outlook.com', 'Test Mail', 'Test body', true);
             exit;
         }
         $outputArray['http_error'] = 400;
