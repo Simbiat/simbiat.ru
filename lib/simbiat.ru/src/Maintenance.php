@@ -130,7 +130,11 @@ class Maintenance
                 }
             }
         } else {
-            @unlink($dir.'/noSpace.flag');
+            if (is_file($dir.'/noSpace.flag')) {
+                @unlink($dir . '/noSpace.flag');
+                #Send mail
+                HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Low space', $percentage . '% of space is now free. Alert resolved.');
+            }
         }
     }
 
@@ -148,7 +152,11 @@ class Maintenance
                 file_put_contents($dir . '/noDB.flag', 'Database is down: '.($message ?? ''));
             }
         } else {
-            @unlink($dir.'/noDB.flag');
+            if (is_file($dir.'/noDB.flag')) {
+                @unlink($dir . '/noDB.flag');
+                #Send mail
+                HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Database is down', 'Database appears to started up again.');
+            }
         }
     }
 
