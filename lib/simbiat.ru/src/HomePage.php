@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use DateTimeInterface;
+use PHPMailer\PHPMailer\PHPMailer;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
@@ -407,5 +408,54 @@ class HomePage
             }
         }
         error_log('Failed on `'.$page.'`'."\r\n".$error->getMessage()."\r\n".$error->getTraceAsString().(empty($extra) ? '' : "\r\n".'Extra information provided: '.$extra));
+    }
+
+    #Helper function to send mails
+    public static function sendMail(string $to, string $subject, string $body): bool
+    {
+        $mail = new PHPMailer(true);
+        try {
+            #Server settings
+            #Enable verbose debug output
+            $mail->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_SERVER;
+            #$mail->Debugoutput = 'error_log';
+            $mail->Debugoutput = 'html';
+            #Send using SMTP
+            $mail->isSMTP();
+            #Set the SMTP server to send through
+            $mail->Host = $GLOBALS['siteconfig']['smtp']['host'];
+            #Enable SMTP authentication
+            $mail->SMTPAuth = true;
+            $mail->SMTPAutoTLS = true;
+            #SMTP username
+            $mail->Username = $GLOBALS['siteconfig']['smtp']['user'];
+            #SMTP password
+            $mail->Password = $GLOBALS['siteconfig']['smtp']['password'];
+            #Enable implicit TLS encryption
+            #$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            #TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            #$mail->Port = 465;
+            $mail->Port = 587;
+
+            #Recipients
+            $mail->setFrom($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name'], false);
+            $mail->addAddress($to);
+            $mail->addReplyTo($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']);
+
+            #Content
+            #Set email format to HTML
+            $mail->isHTML(true);
+            #Use UTF8
+            $mail->CharSet = PHPMailer::CHARSET_UTF8;
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+
+            $mail->send();
+            return true;
+        } catch (\Throwable $e) {
+            self::error_log($e);
+            return false;
+        }
     }
 }

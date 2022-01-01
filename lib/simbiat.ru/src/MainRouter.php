@@ -96,6 +96,10 @@ class MainRouter extends Abstracts\Router
             (new Tests)->testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
             exit;
         }
+        if ($uri[0] == 'mail') {
+            HomePage::sendMail('simbiat@outlook.com', 'Test Mail', 'Test body');
+            exit;
+        }
         $outputArray['http_error'] = 400;
         return $outputArray;
     }
