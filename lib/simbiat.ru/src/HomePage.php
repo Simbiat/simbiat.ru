@@ -441,7 +441,7 @@ class HomePage
             $mail->Password = $GLOBALS['siteconfig']['smtp']['password'];
             #Enable implicit TLS encryption
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 25;
+            $mail->Port = 587;
 
             #Recipients
             $mail->setFrom($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name'], false);
