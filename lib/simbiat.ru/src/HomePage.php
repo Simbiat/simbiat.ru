@@ -242,8 +242,8 @@ class HomePage
                         $this->twigProc(error: 403);
                     }
                 }
-                #Try to start session
-                if (session_status() !== PHP_SESSION_DISABLED && !self::$staleReturn) {
+                #Try to start session if it's not started yet, and we are not serving stale content
+                if (session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
                     session_set_save_handler(new Session, true);
                     session_start();
                 }
