@@ -243,7 +243,7 @@ class HomePage
                     }
                 }
                 #Try to start session if it's not started yet, and we are not serving stale content
-                if (session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
+                if (!self::$CLI && session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
                     session_set_save_handler(new Session, true);
                     session_start();
                 }
