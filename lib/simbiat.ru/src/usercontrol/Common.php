@@ -24,9 +24,11 @@ trait Common
             $extras = json_encode($extras, JSON_PRETTY_PRINT|JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
         }
         #Get IP
-        $ip = $this->getIP();
+        $ip = @$_SESSION['IP'] ?? null;
         #Get username
-        $userid = @$_SESSION['userid'];
+        $userid = @$_SESSION['userid'] ?? null;
+        #Get User Agent
+        $ua = @$_SESSION['UA']['full'] ?? null;
         try {
             #Cache DB controller, if not done already
             if (self::$dbController === NULL) {
@@ -46,8 +48,8 @@ trait Common
                         (empty($ip) ? 'null' : 'string'),
                     ],
                     ':ua' => [
-                        (empty($_SERVER['HTTP_USER_AGENT']) ? NULL : $_SERVER['HTTP_USER_AGENT']),
-                        (empty($_SERVER['HTTP_USER_AGENT']) ? 'null' : 'string'),
+                        (empty($ua) ? NULL : $ua),
+                        (empty($ua) ? 'null' : 'string'),
                     ],
                     ':extras' => [
                         (empty($extras) ? NULL : $extras),
@@ -127,6 +129,6 @@ trait Common
         if (empty($client)) {
             $client = NULL;
         }
-        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL)];
+        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT']];
     }
 }
