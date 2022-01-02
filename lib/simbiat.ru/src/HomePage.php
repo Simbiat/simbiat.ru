@@ -328,6 +328,10 @@ class HomePage
         }
         #Merge with extra variables provided
         $twigVars = array_merge($twigVars, $extraVars);
+        #Handle unsupported browsers
+        if (empty($twigVars['unsupported'])) {
+            $twigVars['unsupported'] = false;
+        }
         #Set title if it's empty
         if (empty($twigVars['title'])) {
             $twigVars['title'] = $twigVars['site_name'];
