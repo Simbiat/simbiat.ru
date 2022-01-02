@@ -242,6 +242,11 @@ class HomePage
                         $this->twigProc(error: 403);
                     }
                 }
+                #Try to start session
+                if (session_status() !== PHP_SESSION_DISABLED && !self::$staleReturn) {
+                    session_set_save_handler(new Session, true);
+                    session_start();
+                }
             } catch (\Throwable $error) {
                 self::$dbup = false;
                 #Trigger mail alert if PROD
@@ -250,11 +255,6 @@ class HomePage
                 }
                 return false;
             }
-        }
-        #Try to start session
-        if (session_status() !== PHP_SESSION_DISABLED && !self::$staleReturn) {
-            session_set_save_handler(new Session, true);
-            session_start();
         }
         if ($extraChecks === true && !self::$staleReturn) {
             #Show that client is unsupported

@@ -68,17 +68,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         } else {
             $data = [];
         }
-        if (empty($data['UA'])) {
-            #Add UserAgent data
-            #This is done to make the data readily available as soon as session is created and somewhat improve performance
-            $data['UA'] = $this->getUA();
-        }
-        #Add CSRF token, if missing
-        if (empty($data['CSRF'])) {
-            $data['CSRF'] = $this->security->genCSRF();
-        } else {
-            @header('X-CSRF-Token: '.$data['CSRF'], true);
-        }
+        $this->IPUA($data);
         return serialize($data);
     }
 
@@ -89,23 +79,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Deserialize to check if UserAgent data is present
         $data = unserialize($data);
-        if (empty($data['UA'])) {
-            #Add UserAgent data
-            $data['UA'] = $this->getUA();
-        }
-        #Force generation of CSRF token if missing
-        if (empty($data['CSRF'])) {
-            $data['CSRF'] = $this->security->genCSRF();
-        } else {
-            @header('X-CSRF-Token: '.$data['CSRF'], true);
-        }
+        $this->IPUA($data);
         #Cache username (to prevent reading from Session)
         $username = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
-        #Get IP
-        if (empty($data['IP'])) {
-            #Add UserAgent data
-            $data['IP'] = $this->getIP();
-        }
         #Prepare empty array
         $queries = [];
         #Update SEO related tables
@@ -240,5 +216,25 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         return self::$dbController->query('UPDATE `uc__sessions` SET `time`= UTC_TIMESTAMP() WHERE `sessionid` = :id;', [':id'=>$id]);
+    }
+
+    private function IPUA(array &$data): void
+    {
+        if (empty($data['UA'])) {
+            #Add UserAgent data
+            #This is done to make the data readily available as soon as session is created and somewhat improve performance
+            $data['UA'] = $this->getUA();
+        }
+        if (empty($data['IP'])) {
+            #Add IP data
+            #This is done to make the data readily available as soon as session is created and somewhat improve performance
+            $data['IP'] = $this->getIP();
+        }
+        #Add CSRF token, if missing
+        if (empty($data['CSRF'])) {
+            $data['CSRF'] = $this->security->genCSRF();
+        } else {
+            @header('X-CSRF-Token: '.$data['CSRF'], true);
+        }
     }
 }
