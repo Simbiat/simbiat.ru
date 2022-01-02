@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
-use Simbiat\colloquium\Show;
+use Simbiat\Forum\Show;
 use Simbiat\usercontrol\Signinup;
 
 class MainRouter extends Abstracts\Router

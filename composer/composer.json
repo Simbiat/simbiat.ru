@@ -34,7 +34,6 @@
           "../lib/AccountKeying/src",
           "../lib/array2table/src",
           "../lib/ArrayHelpers/src",
-          "../lib/colloquium/src",
           "../lib/Cron/src",
           "../lib/cute-bytes/src",
           "../lib/database/src",

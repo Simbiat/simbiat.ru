@@ -14,10 +14,6 @@
 	path = lib/ArrayHelpers
 	url = https://github.com/Simbiat/ArrayHelpers
 	branch = main
-[submodule "lib/colloquium"]
-	path = lib/colloquium
-	url = https://github.com/Simbiat/colloquium
-	branch = main
 [submodule "lib/Cron"]
 	path = lib/Cron
 	url = https://github.com/Simbiat/Cron
