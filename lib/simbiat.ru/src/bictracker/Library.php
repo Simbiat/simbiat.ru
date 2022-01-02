@@ -69,7 +69,6 @@ class Library
                     $libDate = $libDate + 86400;
                     continue;
                 } elseif ($download === false) {
-                    $this->log($libDate, 'Lib date = '.$libDate.'; Current date = '.$currentDate, $manual);
                     #If date is current one, then assume that file is simply not available yet
                     if ($libDate >= $currentDate) {
                         $this->log($libDate, 'Библиотека за день не найдена: скорее всего, ещё не опубликована', $manual);
