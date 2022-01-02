@@ -102,17 +102,20 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Cache username (to prevent reading from Session)
         $username = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
         #Get IP
-        $ip = $this->getIP();
+        if (empty($data['IP'])) {
+            #Add UserAgent data
+            $data['IP'] = $this->getIP();
+        }
         #Prepare empty array
         $queries = [];
         #Update SEO related tables
-        if (self::$SEOTracking === true && empty($data['UA']['bot']) && $ip !== NULL) {
+        if (self::$SEOTracking === true && empty($data['UA']['bot']) && $data['IP'] !== NULL) {
             #Update unique visitors
             $queries[] = [
                 'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                 [
                     #Data that makes this visitor unique
-                    ':ip' => [$ip, 'string'],
+                    ':ip' => [$data['IP'], 'string'],
                     ':os' => [
                         (empty($data['UA']['os']) ? '' : $data['UA']['os']),
                         'string',
@@ -135,7 +138,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                         'string',
                     ],
                     #Data that identify this visit as unique
-                    ':ip' => [$ip, 'string'],
+                    ':ip' => [$data['IP'], 'string'],
                     ':os' => [
                         (empty($data['UA']['os']) ? '' : $data['UA']['os']),
                         'string',
@@ -155,8 +158,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 #Whether this is a bot
                 ':bot' => [(empty($data['UA']['bot']) ? 0 : 1), 'int'],
                 ':ip' => [
-                    (empty($ip) ? NULL : $ip),
-                    (empty($ip) ? 'null' : 'string'),
+                    (empty($data['IP']) ? NULL : $data['IP']),
+                    (empty($data['IP']) ? 'null' : 'string'),
                 ],
                 #Useragent details only for logged-in users for ability of review of active sessions
                 ':os' => [
