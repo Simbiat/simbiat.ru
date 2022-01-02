@@ -69,14 +69,14 @@ class Library
                     $libDate = $libDate + 86400;
                     continue;
                 } elseif ($download === false) {
+                    $this->log($libDate, 'Lib date = '.$libDate.'; Current date = '.$currentDate, $manual);
                     #If date is current one, then assume that file is simply not available yet
-                    if ($libDate === $currentDate) {
+                    if ($libDate >= $currentDate) {
                         $this->log($libDate, 'Библиотека за день не найдена: скорее всего, ещё не опубликована', $manual);
                         return true;
                     }
-                    $this->log($libDate, 'Не удалось скачать файл', $manual);
                     #Failed to download. Stop processing to avoid loosing sequence
-                    throw new \RuntimeException('Failed to download file for '.$libDate);
+                    throw new \RuntimeException('Не удалось скачать файл');
                 } else {
                     #Some files are known to have double XML definition. We need to fix this.
                     file_put_contents($download, preg_replace('/(<\?xml version="1\.0" encoding="WINDOWS-1251"\?>){2,}/i', '$1', file_get_contents($download)));
@@ -85,8 +85,7 @@ class Library
                     $loadSuccess = @$library->load(realpath($download), LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
                     if ($loadSuccess === false) {
                         #Bad file detected
-                        $this->log($libDate, 'Не удалось открыть файл', $manual);
-                        throw new \DOMException('Failed to open `'.$download.'`');
+                        throw new \DOMException('Не удалось открыть файл `'.$download.'`');
                     }
                     #Some files are in packets or envelopes, thus we need to explicitly get ED807 element and work with it.
                     $library = $library->getElementsByTagName('ED807')[0];
@@ -96,13 +95,11 @@ class Library
                     #Check date of the library
                     if (empty($this->fileDate)) {
                         #Empty date. Stop processing to avoid loosing sequence
-                        $this->log($libDate, 'Не удалось получить дату из файла', $manual);
-                        throw new \LengthException('Empty date `'.$download.'`');
+                        throw new \LengthException('Не удалось получить дату из файла `'.$download.'`');
                     }
                     if ($this->fileDate !== date('Y-m-d', $libDate)) {
                         #Date mismatch. Stop processing to avoid loosing sequence
-                        $this->log($libDate, 'Дата в файле не совпадает с ожидаемой', $manual);
-                        throw new \UnexpectedValueException('Date mismatch in `'.$download.'`');
+                        throw new \UnexpectedValueException('Дата в файле не совпадает с ожидаемой `'.$download.'`');
                     }
                     #Get entries
                     $elements = $library->getElementsByTagName('BICDirectoryEntry');
@@ -354,9 +351,9 @@ class Library
                     ];
                     #Run queries for BICs removals and library update
                     $this->dbController->query($queries);
+                    $this->log($libDate, 'Успешное обновление', $manual);
                     #Increase $libDate by 1 day
                     $libDate = $libDate + 86400;
-                    $this->log($libDate, 'Успешное обновление', $manual);
                 }
             } catch(\Exception $e) {
                 $error = $e->getMessage()."\r\n".$e->getTraceAsString();
@@ -636,15 +633,32 @@ class Library
     private function log($bicdate, $message, bool $manual = false): void
     {
         try {
-            #Sleep to ensure that log entries will be unique
-            sleep(1);
+            if ($manual) {
+                #Get IP
+                $ip = @$_SESSION['IP'] ?? null;
+                #Get username
+                $userid = @$_SESSION['userid'] ?? null;
+                #Get User Agent
+                $ua = @$_SESSION['UA']['full'] ?? null;
+            }
             #Log the entry
             $this->dbController->query(
-                'INSERT INTO `'.self::dbPrefix.'log` (`id`, `manual`, `bicdate`, `message`) VALUES (CURRENT_TIMESTAMP(), :manual, :bicdate, :message);',
+                'INSERT INTO `sys__logs`(`type`, `action`, `extra`, `userid`, `ip`, `useragent`) VALUES (5, :action, :message, :userid, :ip, :ua);',
                 [
-                    ':manual' => [$manual, 'bool'],
-                    ':bicdate' => [$bicdate, 'date'],
-                    ':message' => [$message, 'string'],
+                    ':action' => [($manual ? 'Manual' : 'Cron').' update', 'string'],
+                    ':message' => [$message.' ('.date('d.m.Y', $bicdate).')', 'string'],
+                    ':userid' => [
+                        (empty($userid) ? NULL : $userid),
+                        (empty($userid) ? 'null' : 'string'),
+                    ],
+                    ':ip' => [
+                        (empty($ip) ? NULL : $ip),
+                        (empty($ip) ? 'null' : 'string'),
+                    ],
+                    ':ua' => [
+                        (empty($ua) ? NULL : $ua),
+                        (empty($ua) ? 'null' : 'string'),
+                    ],
                 ]
             );
         } catch (\Throwable $e) {

@@ -78,8 +78,6 @@ class Maintenance
         $queries = [];
         #Clean audit logs
         $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
-        #Clean BIC logs
-        $queries[] = 'DELETE FROM `bic__log` WHERE `id`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
         #Clean Cron errors
         $queries[] = 'DELETE FROM `cron__errors` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
         try {
