@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Simbiat\Database\Controller;
 use Simbiat\HomePage;
@@ -10,7 +11,7 @@ use Simbiat\HomePage;
 trait Common
 {
     #Flag for SEO statistics
-    public static bool $SEOtracking = true;
+    public static bool $SEOTracking = true;
     #Cached DB controller
     public static ?Controller $dbController = NULL;
     #Whether SMS OTP is supported
@@ -32,7 +33,7 @@ trait Common
                 self::$dbController = HomePage::$dbController;
             }
             self::$dbController->query(
-                'INSERT INTO `uc__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `uc__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
+                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
                 [
                     ':type' => $type,
                     ':action' => $action,
@@ -55,7 +56,7 @@ trait Common
                 ]
             );
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable) {
             return false;
         }
     }
@@ -100,7 +101,7 @@ trait Common
             return NULL;
         }
         #Force full versions
-        AbstractDeviceParser::setVersionTruncation(AbstractDeviceParser::VERSION_TRUNCATION_NONE);
+        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
         #Initialize device detector
         $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT']));
         $dd->parse();

@@ -44,7 +44,7 @@ class Maintenance
             foreach ($items as $item) {
                 #Register logout action
                 $queries[] = [
-                    'INSERT INTO `uc__logs`(`userid`, `ip`, `useragent`, `type`, `action`) VALUES (:userid, :ip, :useragent, 2, \'Logged out due to cookie timeout\')',
+                    'INSERT INTO `sys__logs`(`userid`, `ip`, `useragent`, `type`, `action`) VALUES (:userid, :ip, :useragent, 2, \'Logged out due to cookie timeout\')',
                     [
                         ':userid'=>$item['userid'],
                         ':ip'=>$item['ip'],
@@ -77,7 +77,7 @@ class Maintenance
     {
         $queries = [];
         #Clean audit logs
-        $queries[] = 'DELETE FROM `uc__logs` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
+        $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
         #Clean BIC logs
         $queries[] = 'DELETE FROM `bic__log` WHERE `id`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
         #Clean Cron errors
@@ -96,9 +96,9 @@ class Maintenance
     {
         $queries = [];
         #Remove pages that have not been viewed in 2 years
-        $queries[] = 'DELETE FROM `uc__seo_pageviews` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
+        $queries[] = 'DELETE FROM `seo__pageviews` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
         #Remove visitors who have not come in 2 years
-        $queries[] = 'DELETE FROM `uc__seo_visitors` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
+        $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
             $result = HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {

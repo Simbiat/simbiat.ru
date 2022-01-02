@@ -106,10 +106,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Prepare empty array
         $queries = [];
         #Update SEO related tables
-        if (self::$SEOtracking === true && empty($data['UA']['bot']) && $ip !== NULL) {
+        if (self::$SEOTracking === true && empty($data['UA']['bot']) && $ip !== NULL) {
             #Update unique visitors
             $queries[] = [
-                'INSERT INTO `uc__seo_visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
+                'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                 [
                     #Data that makes this visitor unique
                     ':ip' => [$ip, 'string'],
@@ -125,7 +125,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             ];
             #Update page views
             $queries[] = [
-                'INSERT INTO `uc__seo_pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
+                'INSERT INTO `seo__pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                 [
                     #What page is being viewed
                     ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),

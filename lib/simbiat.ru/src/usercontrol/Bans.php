@@ -32,7 +32,7 @@ class Bans
             return true;
         }
         #Check against DB table
-        return self::$dbController->check('SELECT `ip` FROM `uc__bans_ips` WHERE `ip`=:ip', [':ip' => $ip]);
+        return self::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $ip]);
     }
 
     #Function to check whether name is banned
@@ -43,7 +43,7 @@ class Bans
     public function bannedName(string $name): bool
     {
         #Check against DB table
-        return self::$dbController->check('SELECT `name` FROM `uc__bans_names` WHERE `name`=:name', [':name' => $name]);
+        return self::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
     }
 
     #Function to check whether email is banned
@@ -59,6 +59,6 @@ class Bans
             return true;
         }
         #Check against DB table
-        return self::$dbController->check('SELECT `mail` FROM `uc__bans_mails` WHERE `mail`=:mail', [':mail' => $mail]);
+        return self::$dbController->check('SELECT `mail` FROM `ban__mails` WHERE `mail`=:mail', [':mail' => $mail]);
     }
 }
