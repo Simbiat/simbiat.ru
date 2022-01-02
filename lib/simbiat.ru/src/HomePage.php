@@ -251,18 +251,18 @@ class HomePage
                 return false;
             }
         }
-        if ($extraChecks === true) {
-            #Try to start session. It's not critical for the whole site, thus it's ok for it to fail
-            if (session_status() !== PHP_SESSION_DISABLED && !self::$staleReturn) {
-                #Use custom session handler
-                session_set_save_handler(new Session, true);
-                session_start();
-                if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
-                    $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418);
-                }
-                #Process POST data if any
-                (new MainRouter)->postProcess();
+        #Try to start session
+        if (session_status() !== PHP_SESSION_DISABLED && !self::$staleReturn) {
+            session_set_save_handler(new Session, true);
+            session_start();
+        }
+        if ($extraChecks === true && !self::$staleReturn) {
+            #Show that client is unsupported
+            if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
+                $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418);
             }
+            #Process POST data if any
+            (new MainRouter)->postProcess();
         }
         return true;
     }
@@ -380,7 +380,7 @@ class HomePage
             session_write_close();
         }
         #Cache page if cache age is set up
-        if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
+        if (self::$PROD && $twigVars['unsupported'] !== true && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
             if (self::$staleReturn) {
                 self::$HTMLCache->set($output, self::$canonical, intval($twigVars['cacheAge']), direct: false);
                 @ob_end_clean();
