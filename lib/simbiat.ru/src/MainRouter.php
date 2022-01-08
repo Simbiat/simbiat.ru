@@ -35,7 +35,7 @@ class MainRouter extends Abstracts\Router
         #Some extra processing for bictracker
         if ($path[0] === 'bictracker') {
             #Tell that content is intended for Russians
-            header('Content-Language: ru-RU');
+            @header('Content-Language: ru-RU');
         }
         #Check if API
         if ($path[0] === 'api') {
