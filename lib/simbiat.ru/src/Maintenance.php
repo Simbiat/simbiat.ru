@@ -22,7 +22,7 @@ class Maintenance
     public function sessionClean(): bool
     {
         try {
-            return (new Session)->gc(300);
+            return boolval((new Session)->gc(300));
         } catch (\Throwable $e) {
             HomePage::error_log($e);
             return false;
