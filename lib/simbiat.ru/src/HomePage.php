@@ -89,8 +89,12 @@ class HomePage
                             #Attempt to connect to DB
                             $this->dbConnect();
                         } else {
-                            #Send links
-                            $this->commonLinks();
+                            #Send some headers if we are not using stale
+                            if (!self::$staleReturn) {
+                                self::$headers->links($GLOBALS['siteconfig']['links']);
+                                header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
+                                header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
+                            }
                             #Attempt to connect to DB
                             $this->dbConnect(true);
                         }
@@ -140,6 +144,12 @@ class HomePage
         }
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
+        #Update list with dynamic values
+        $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
+            ['rel' => 'canonical', 'href' => self::$canonical],
+            ['rel' => 'stylesheet preload', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
+            ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
+        ]);
     }
 
     #Function to process some special files
@@ -159,7 +169,7 @@ class HomePage
         #Caching logic seems to be greatly affecting performance on PROD. Needs revising
         } else {
             #Create HTMLCache object to check for cache
-            self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', true));
+            self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', false));
             #Attempt to use cache
             $output = self::$HTMLCache->get(self::$canonical, true, false, true);
             if (!empty($output) && !isset($_POST['cachereset']) && !isset($_GET['cachereset'])) {
@@ -178,7 +188,6 @@ class HomePage
                 } finally {
                     if ($output['stale']) {
                         #Cache is stale, but we output it still and then update it in background
-                        header('X-Server-Cache-Stale: true');
                         self::$HTMLCache->cacheOutput($output, exit: false);
                         self::$staleReturn = true;
                     } else {
@@ -190,23 +199,6 @@ class HomePage
         }
         #Return 0, since we did not hit anything
         return 0;
-    }
-
-    #Function to send common Link headers
-    public function commonLinks(): void
-    {
-        #Update list with dynamic values
-        $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
-            ['rel' => 'canonical', 'href' => self::$canonical],
-            ['rel' => 'stylesheet preload', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
-            ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
-        ]);
-        #Send headers
-        if (!self::$staleReturn) {
-            self::$headers->links($GLOBALS['siteconfig']['links']);
-            header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
-            header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
-        }
     }
 
     #Database connection
