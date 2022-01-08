@@ -95,7 +95,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             } else {
                 unset($this->lodestone['404']);
             }
-            return $this->updateDB();
+            return $this->updateDB(true);
         }
     }
 

@@ -39,7 +39,7 @@ class PvPTeam extends Entity
         #Get members
         $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'pvpteam_character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`pvp_matches` AS `matches`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, `'.self::dbPrefix.'pvpteam_rank`.`rank`, `'.self::dbPrefix.'pvpteam_rank`.`pvprankid` FROM `'.self::dbPrefix.'pvpteam_character` LEFT JOIN `'.self::dbPrefix.'pvpteam_rank` ON `'.self::dbPrefix.'pvpteam_rank`.`pvprankid`=`'.self::dbPrefix.'pvpteam_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'pvpteam_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'pvpteam_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['datacenterid'], $data['serverid'], $data['server']);
+        unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot'])) {
             if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
@@ -91,18 +91,19 @@ class PvPTeam extends Entity
     }
 
     #Function to update the entity
-    protected function updateDB(): string|bool
+    protected function updateDB(bool $manual = false): string|bool
     {
         try {
             #Attempt to get crest
             $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
             #Main query to insert or update a PvP Team
             $queries[] = [
-                'INSERT INTO `'.self::dbPrefix.'pvpteam` (`pvpteamid`, `name`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`) VALUES (:pvpteamid, :name, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`);',
+                'INSERT INTO `'.self::dbPrefix.'pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`);',
                 [
                     ':pvpteamid'=>$this->id,
                     ':datacenter'=>$this->lodestone['dataCenter'],
                     ':name'=>$this->lodestone['name'],
+                    ':manual'=>[$manual, 'bool'],
                     ':formed'=>[$this->lodestone['formed'], 'date'],
                     ':communityid'=>[
                         (empty($this->lodestone['communityid']) ? NULL : $this->lodestone['communityid']),

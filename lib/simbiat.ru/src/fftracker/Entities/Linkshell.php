@@ -39,7 +39,7 @@ class Linkshell extends Entity
         #Get members
         $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'linkshell_character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`characterid` AS `icon`, `'.self::dbPrefix.'linkshell_rank`.`rank`, `'.self::dbPrefix.'linkshell_rank`.`lsrankid` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_rank`.`lsrankid`=`'.self::dbPrefix.'linkshell_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'linkshell_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'linkshell_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['serverid']);
+        unset($data['manual'], $data['serverid']);
         if ($data['crossworld']) {
             unset($data['server']);
         }
@@ -98,16 +98,17 @@ class Linkshell extends Entity
     }
 
     #Function to update the entity
-    protected function updateDB(): string|bool
+    protected function updateDB(bool $manual = false): string|bool
     {
         try {
             #Main query to insert or update a Linkshell
             $queries[] = [
-                'INSERT INTO `'.self::dbPrefix.'linkshell`(`linkshellid`, `name`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :crossworld, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=NULL, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
+                'INSERT INTO `'.self::dbPrefix.'linkshell`(`linkshellid`, `name`, `manual`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :manual, :crossworld, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=NULL, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
                 [
                     ':linkshellid'=>$this->id,
                     ':server'=>$this->lodestone['server'] ?? $this->lodestone['dataCenter'],
                     ':name'=>$this->lodestone['name'],
+                    ':manual'=>[$manual, 'bool'],
                     ':crossworld'=>[$this::crossworld, 'bool'],
                     ':formed'=>[
                         (empty($this->lodestone['formed']) ? NULL : $this->lodestone['formed']),
