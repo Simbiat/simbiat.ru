@@ -29,6 +29,8 @@ class Search extends \Simbiat\Abstracts\Pages\Search
     protected string $shortTitle = 'Поиск `%s`';
     #Full title to be used for description metatags when having a search value
     protected string $fullTitle = 'Поиск `%s` по БИК Трекеру';
+    #Language override, to be sent in header (if present)
+    protected string $language = 'ru-RU';
 
     #Add any extra fields, if required by overriding this function
     protected function extras(): array

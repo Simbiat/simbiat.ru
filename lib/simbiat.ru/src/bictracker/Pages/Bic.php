@@ -20,6 +20,8 @@ class Bic extends Page
     protected string $h1 = 'Детали организации из БИК трекера';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Детали организации из БИК трекера';
+    #Language override, to be sent in header (if present)
+    protected string $language = 'ru-RU';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

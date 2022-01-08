@@ -32,11 +32,6 @@ class MainRouter extends Abstracts\Router
      */
     protected function pageGen(array $path): array
     {
-        #Some extra processing for bictracker
-        if ($path[0] === 'bictracker') {
-            #Tell that content is intended for Russians
-            @header('Content-Language: ru-RU');
-        }
         #Check if API
         if ($path[0] === 'api') {
             (new Api)->uriParse(array_slice($path, 1));

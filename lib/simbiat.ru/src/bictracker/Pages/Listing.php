@@ -10,4 +10,6 @@ class Listing extends Search
     ];
     protected string $pageWord = 'страница';
     protected bool $list = true;
+    #Language override, to be sent in header (if present)
+    protected string $language = 'ru-RU';
 }

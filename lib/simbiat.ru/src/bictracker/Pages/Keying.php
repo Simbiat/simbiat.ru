@@ -21,6 +21,8 @@ class Keying extends Page
     protected string $h1 = 'Ключевание счёта';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода';
+    #Language override, to be sent in header (if present)
+    protected string $language = 'ru-RU';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

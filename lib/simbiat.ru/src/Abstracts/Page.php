@@ -25,6 +25,8 @@ abstract class Page
     protected int $lastModified = 0;
     #Flag to check if Last Modified header was sent already
     protected bool $headerSent = false;
+    #Language override, to be sent in header (if present)
+    protected string $language = '';
 
     public final function __construct()
     {
@@ -60,6 +62,10 @@ abstract class Page
             }
             #Add link to HTML
             $page['link_extra'] = HomePage::$headers->links($this->altLinks, 'head');
+        }
+        #Send page language
+        if (!empty($this->language)) {
+            header('Content-Language: '.$this->language);
         }
         return $page;
     }
