@@ -43,7 +43,7 @@ class Errors
             E_USER_DEPRECATED => 'PHP User Deprecation Notice',
         };
         #Exclude Twig cache
-        if ($level === E_DEPRECATED && preg_match('/twig\/cache\//i', $file) === 1) {
+        if ($level === E_DEPRECATED && preg_match('/twig[\\\/]cache/i', $file) === 1) {
             return false;
         }
         error_log($type.':'."\r\n\t".
