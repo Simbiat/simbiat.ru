@@ -4,6 +4,7 @@ namespace Simbiat\bictracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Database\Controller;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 
 class Library
@@ -662,7 +663,7 @@ class Library
             );
         } catch (\Throwable $e) {
             #Just log to file. Generally we do not lose much if this fails
-            HomePage::error_log($e);
+            Errors::error_log($e);
         }
     }
 

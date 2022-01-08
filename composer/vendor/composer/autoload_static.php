@@ -124,6 +124,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\Database\\Config' => __DIR__ . '/../..' . '/../lib/database/src/Database/Config.php',
         'Simbiat\\Database\\Controller' => __DIR__ . '/../..' . '/../lib/database/src/Database/Controller.php',
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/../lib/database/src/Database/Pool.php',
+        'Simbiat\\Errors' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Errors.php',
         'Simbiat\\Feeds' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Feeds.php',
         'Simbiat\\Forum\\Show' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Forum/Show.php',
         'Simbiat\\HTMLCache' => __DIR__ . '/../..' . '/../lib/HTMLCache/src/HTMLCache.php',

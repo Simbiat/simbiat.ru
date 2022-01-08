@@ -69,6 +69,7 @@ return array(
     'Simbiat\\Database\\Config' => $baseDir . '/../lib/database/src/Database/Config.php',
     'Simbiat\\Database\\Controller' => $baseDir . '/../lib/database/src/Database/Controller.php',
     'Simbiat\\Database\\Pool' => $baseDir . '/../lib/database/src/Database/Pool.php',
+    'Simbiat\\Errors' => $baseDir . '/../lib/simbiat.ru/src/Errors.php',
     'Simbiat\\Feeds' => $baseDir . '/../lib/simbiat.ru/src/Feeds.php',
     'Simbiat\\Forum\\Show' => $baseDir . '/../lib/simbiat.ru/src/Forum/Show.php',
     'Simbiat\\HTMLCache' => $baseDir . '/../lib/HTMLCache/src/HTMLCache.php',

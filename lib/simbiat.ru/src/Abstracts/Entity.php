@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Database\Controller;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 
 abstract class Entity
@@ -61,9 +62,9 @@ abstract class Entity
             } else {
                 $this->process($result);
             }
-        } catch (\Throwable $exception) {
-            $error = $exception->getMessage().$exception->getTraceAsString();
-            HomePage::error_log($exception);
+        } catch (\Throwable $e) {
+            $error = $e->getMessage().$e->getTraceAsString();
+            Errors::error_log($e);
             #Rethrow exception, if using debug mode
             if ($this->debug) {
                 die('<pre>'.$error.'</pre>');

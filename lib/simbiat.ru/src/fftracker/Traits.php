@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker;
 
 use Simbiat\Cron;
+use Simbiat\Errors;
 
 trait Traits
 {
@@ -86,7 +87,7 @@ trait Traits
             return $hash;
         } catch (\Throwable $e) {
             if ($debug) {
-                \Simbiat\HomePage::error_log($e);
+                Errors::error_log($e);
             }
             return null;
         } finally {

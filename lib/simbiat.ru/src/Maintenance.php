@@ -24,7 +24,7 @@ class Maintenance
         try {
             return boolval((new Session)->gc(300));
         } catch (\Throwable $e) {
-            HomePage::error_log($e);
+            Errors::error_log($e);
             return false;
         }
     }
@@ -65,7 +65,7 @@ class Maintenance
             try {
                 $result = HomePage::$dbController->query($queries);
             } catch (\Throwable $e) {
-                HomePage::error_log($e);
+                Errors::error_log($e);
                 $result = false;
             }
         }
@@ -83,7 +83,7 @@ class Maintenance
         try {
             $result = HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
-            HomePage::error_log($e);
+            Errors::error_log($e);
             $result = false;
         }
         return $result;
@@ -100,7 +100,7 @@ class Maintenance
         try {
             $result = HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
-            HomePage::error_log($e);
+            Errors::error_log($e);
             $result = false;
         }
         return $result;

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Database\Controller;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 
 abstract class Search
@@ -59,7 +60,7 @@ abstract class Search
             }
             return $results;
         } catch (\Throwable $e) {
-            HomePage::error_log($e);
+            Errors::error_log($e);
             return [];
         }
     }
@@ -82,7 +83,7 @@ abstract class Search
         try {
             return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->listItems, $this->listItems * ($page - 1), true)];
         } catch (\Throwable $e) {
-            \Simbiat\HomePage::error_log($e);
+            Errors::error_log($e);
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
     }
@@ -126,7 +127,7 @@ abstract class Search
                 return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
             }
         } catch (\Throwable $e) {
-            \Simbiat\HomePage::error_log($e);
+            Errors::error_log($e);
             return 0;
         }
     }
@@ -169,7 +170,7 @@ abstract class Search
                 return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
             }
         } catch (\Throwable $e) {
-            \Simbiat\HomePage::error_log($e);
+            Errors::error_log($e);
             return [];
         }
     }

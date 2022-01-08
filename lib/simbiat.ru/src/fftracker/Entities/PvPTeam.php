@@ -3,9 +3,9 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Cron;
+use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
-use Simbiat\HomePage;
 use Simbiat\Lodestone;
 
 class PvPTeam extends Entity
@@ -202,7 +202,7 @@ class PvPTeam extends Entity
             ];
             return $this->dbController->query($queries);
         } catch (\Throwable $e) {
-            HomePage::error_log($e);
+            Errors::error_log($e);
             return false;
         }
     }

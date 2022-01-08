@@ -104,7 +104,7 @@ class HomePage
                             $vars = [];
                         }
                     } catch (\Throwable $e) {
-                        $this::error_log($e);
+                        Errors::error_log($e);
                         $vars = ['http_error' => 500];
                     }
                     #Generate page
@@ -112,7 +112,7 @@ class HomePage
                 }
             }
         } catch (\Throwable $e) {
-            $this::error_log($e);
+            Errors::error_log($e);
         }
     }
 
@@ -393,22 +393,6 @@ class HomePage
         exit;
     }
 
-    #Helper function to log errors with identifying the page
-    public static function error_log(\Throwable $error, string $extra = ''): void
-    {
-        #Determine page link
-        if (self::$CLI) {
-            $page = 'CLI';
-        } else {
-            if (empty($_SERVER['REQUEST_URI'])) {
-                $page = 'index.php';
-            } else {
-                $page = $_SERVER['REQUEST_URI'];
-            }
-        }
-        error_log('Failed on `'.$page.'`'."\r\n".$error->getMessage()."\r\n".$error->getTraceAsString().(empty($extra) ? '' : "\r\n".'Extra information provided: '.$extra));
-    }
-
     #Helper function to send mails
     public static function sendMail(string $to, string $subject, string $body, bool $debug = false): bool
     {
@@ -462,7 +446,7 @@ class HomePage
             $mail->send();
             return true;
         } catch (\Throwable $e) {
-            self::error_log($e);
+            Errors::error_log($e);
             return false;
         }
     }
