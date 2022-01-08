@@ -45,8 +45,10 @@ class __TwigTemplate_32c619616d8f85303eb42626343c3eeca0c568e6b91458b64285bd2cc40
     <li><a href=\"https://www.instagram.com/simbiat19/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/instagram.svg\" alt=\"Instagram\">Instagram</a></li>
     <li><a href=\"https://kitsu.io/users/Simbiat\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/kitsu.svg\" alt=\"Kitsu\">Kitsu</a></li>
     <li><a href=\"https://www.linkedin.com/in/simbiat19/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/linkedin.svg\" alt=\"LinkedIn\">LinkedIn</a></li>
+    <li><a href=\"https://pinterest.com/simbiat19/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/pinterest.svg\" alt=\"Pinterest\">Pinterest</a></li>
     <li><a href=\"https://www.reddit.com/user/Simbiat19\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/reddit.svg\" alt=\"Reddit\">Reddit</a></li>
     <li><a href=\"skype:akuma199?chat\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/skype.svg\" alt=\"Skype\">Skype</a></li>
+    <li><a href=\"https://www.snapchat.com/add/simbiat199\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/snapchat.svg\" alt=\"Snapchat\">Snapchat</a></li>
     <li><a href=\"https://stackoverflow.com/users/2992851/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/stackoverflow.svg\" alt=\"Stack Overflow\">Stack Overflow</a></li>
     <li><a href=\"https://steamcommunity.com/id/Simbiat19\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/steam.svg\" alt=\"Steam\">Steam</a></li>
     <li><a href=\"tg://resolve?domain=SimbiatSoftware\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/telegram.svg\" alt=\"Telegram\">Telegram</a></li>
@@ -56,8 +58,6 @@ class __TwigTemplate_32c619616d8f85303eb42626343c3eeca0c568e6b91458b64285bd2cc40
     <li><a href=\"https://vk.com/simbiat19\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/VK.svg\" alt=\"VK\">VKontakte</a></li>
     <li><a href=\"https://wa.me/79057305159\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/whatsapp.svg\" alt=\"WhatsApp\">WhatsApp</a></li>
     <li><a href=\"https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/youtube.svg\" alt=\"Youtube\">Youtube</a></li>
-    <li><a href=\"https://pinterest.com/simbiat19/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/pinterest.svg\" alt=\"Pinterest\">Pinterest</a></li>
-    <li><a href=\"https://www.snapchat.com/add/simbiat199\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/snapchat.svg\" alt=\"Snapchat\">Snapchat</a></li>
 </ul>
 ";
     }
