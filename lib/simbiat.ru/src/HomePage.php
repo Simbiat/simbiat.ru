@@ -384,7 +384,7 @@ class HomePage
             session_write_close();
         }
         #Cache page if cache age is set up
-        if (self::$PROD && $twigVars['unsupported'] !== true && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
+        if (empty($error) && self::$PROD && $twigVars['unsupported'] !== true && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
             if (self::$staleReturn) {
                 self::$HTMLCache->set($output, self::$canonical, intval($twigVars['cacheAge']), direct: false);
                 @ob_end_clean();
