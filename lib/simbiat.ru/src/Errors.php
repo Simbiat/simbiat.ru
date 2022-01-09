@@ -42,9 +42,14 @@ class Errors
             E_DEPRECATED => 'PHP Deprecation Notice',
             E_USER_DEPRECATED => 'PHP User Deprecation Notice',
         };
-        #Exclude Twig cache
-        if ($level === E_DEPRECATED && preg_match('/twig[\\\\\/]cache/i', $file) === 1) {
-            return false;
+        #Excluding some warnings from processing
+        if (
+            #Exclude Twig cache
+            ($level === E_DEPRECATED && preg_match('/twig[\\\\\/]cache/i', $file) === 1) ||
+            #Exclude GD color profile warning
+            ($level === E_WARNING && preg_match('/known incorrect sRGB profile/i', $file) === 1)
+        ) {
+            return true;
         }
         error_log($type.':'."\r\n\t".
             'Page: '.$page."\r\n\t".
