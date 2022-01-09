@@ -71,7 +71,7 @@ class Character extends Entity
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getCharacter($this->id)->getCharacterJobs($this->id)->getCharacterAchievements($this->id, false, 0, false, false, true)->getResult();
         if (empty($data['characters'][$this->id]['server'])) {
-            if (@$data['characters'][$this->id] == 404) {
+            if (!empty($data['characters'][$this->id]) && $data['characters'][$this->id] == 404) {
                 return ['404' => true];
             } else {
                 if (empty($Lodestone->getLastError())) {

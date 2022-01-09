@@ -65,7 +65,7 @@ class FreeCompany extends Entity
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getFreeCompany($this->id)->getFreeCompanyMembers($this->id, 0)->getResult();
         if (empty($data['freecompanies'][$this->id]['server']) || (!empty($data['freecompanies'][$this->id]['members']) && count($data['freecompanies'][$this->id]['members']) < intval($data['freecompanies'][$this->id]['members_count'])) || (empty($data['freecompanies'][$this->id]['members']) && intval($data['freecompanies'][$this->id]['members_count']) > 0)) {
-            if (@$data['freecompanies'][$this->id] == 404) {
+            if (!empty($data['freecompanies'][$this->id]) && $data['freecompanies'][$this->id] == 404) {
                 return ['404' => true];
             } else {
                 if (empty($Lodestone->getLastError())) {

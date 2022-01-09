@@ -54,7 +54,7 @@ class PvPTeam extends Entity
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getPvPTeam($this->id)->getResult();
         if (empty($data['pvpteams'][$this->id]['dataCenter']) || empty($data['pvpteams'][$this->id]['members'])) {
-            if (@$data['pvpteams'][$this->id]['members'] == 404) {
+            if (!empty($data['pvpteams'][$this->id]['members']) && $data['pvpteams'][$this->id]['members'] == 404) {
                 return ['404' => true];
             } else {
                 if (empty($Lodestone->getLastError())) {

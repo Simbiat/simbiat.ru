@@ -61,7 +61,7 @@ class Linkshell extends Entity
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getLinkshellMembers($this->id, 0)->getResult();
         if (empty($data['linkshells'][$this->id]['server']) || (!empty($data['linkshells'][$this->id]['members']) && count($data['linkshells'][$this->id]['members']) < intval($data['linkshells'][$this->id]['memberscount'])) || (empty($data['linkshells'][$this->id]['members']) && intval($data['linkshells'][$this->id]['memberscount']) > 0)) {
-            if (@$data['linkshells'][$this->id]['members'] == 404) {
+            if (!empty($data['linkshells'][$this->id]['members']) && $data['linkshells'][$this->id]['members'] == 404) {
                 return ['404' => true];
             } else {
                 if (empty($Lodestone->getLastError())) {
