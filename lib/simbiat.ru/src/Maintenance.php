@@ -113,7 +113,7 @@ class Maintenance
         $dir = sys_get_temp_dir();
         #Get free space in percentage
         $percentage = disk_free_space($dir)*100/disk_total_space($dir);
-        if ($percentage < 5) {
+        if (HomePage::$PROD && $percentage < 5) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noSpace.flag')) {
                 #Clean files
@@ -141,7 +141,7 @@ class Maintenance
     {
         #Get directory
         $dir = sys_get_temp_dir();
-        if (!HomePage::$dbup) {
+        if (HomePage::$PROD && !HomePage::$dbup) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
