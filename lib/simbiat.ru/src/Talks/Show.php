@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\Forum;
+namespace Simbiat\Talks;
 
 use Simbiat\Database\Controller;
 use Simbiat\HomePage;
