@@ -65,7 +65,7 @@ abstract class Page
         }
         #Send page language
         if (!empty($this->language)) {
-            header('Content-Language: '.$this->language);
+            @header('Content-Language: '.$this->language);
         }
         return $page;
     }
