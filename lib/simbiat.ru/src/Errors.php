@@ -22,6 +22,10 @@ class Errors
 
     public static final function error_handler(int $level, string $message, string $file, int $line): bool
     {
+        #Checking if @ was used to suppress error reporting
+        if (!(error_reporting() & $level)) {
+            return false;
+        }
         #Determine page link
         $page = self::getPage();
         #Determine type of error
@@ -49,7 +53,7 @@ class Errors
             #Exclude GD color profile warning
             ($level === E_WARNING && preg_match('/known incorrect sRGB profile/i', $file) === 1)
         ) {
-            return true;
+            return false;
         }
         error_log($type.':'."\r\n\t".
             'Page: '.$page."\r\n\t".
