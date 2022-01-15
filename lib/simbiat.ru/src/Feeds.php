@@ -206,7 +206,7 @@ class Feeds
                                     $uri[2] = intval($uri[2]);
                                     $links = match($uri[1]) {
                                         'bic' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'bictracker/bic/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` ORDER BY `NameP` ASC LIMIT '.$uri[2].', 50000'),
-                                        'forum' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'thread/\', `threadid`, \'/\') AS `loc`, `date` AS `lastmod`, `title` AS `name` FROM `forum__thread` ORDER BY `title` ASC LIMIT '.$uri[2].', 50000'),
+                                        'forum' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'thread/\', `threadid`, \'/\') AS `loc`, `date` AS `lastmod`, `title` AS `name` FROM `talks__thread` ORDER BY `title` ASC LIMIT '.$uri[2].', 50000'),
                                         'ff_achievement' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/achievement/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
                                         'ff_character' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/character/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
                                         'ff_freecompany' => HomePage::$dbController->selectAll('SELECT CONCAT(\''.$baseurl.'fftracker/freecompany/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` FORCE INDEX (`name_order`) ORDER BY `name` ASC LIMIT '.$uri[2].', 50000'),
@@ -257,7 +257,7 @@ class Feeds
         ];
         #Get countable links
         $counts = HomePage::$dbController->selectAll('
-            SELECT \'forum\' AS `link`, \'Forums\' AS `name`, COUNT(*) AS `count` FROM `forum__thread`
+            SELECT \'forum\' AS `link`, \'Forums\' AS `name`, COUNT(*) AS `count` FROM `talks__thread`
             UNION ALL
             SELECT \'bic\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
             UNION ALL

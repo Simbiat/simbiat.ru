@@ -35,13 +35,13 @@ class Show
             $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1', true, true, false);
         }
         #Get count
-        $totalPages = intval(ceil($this->dbController->count('SELECT COUNT(*) FROM `forum__thread`')/20));
+        $totalPages = intval(ceil($this->dbController->count('SELECT COUNT(*) FROM `talks__thread`')/20));
         if ($currentPage > $totalPages) {
             $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/'.$totalPages, true, true, false);
         }
         $currentPage = intval($currentPage);
         #Get articles
-        $forum = $this->dbController->selectAll('SELECT *, `title` AS `name` FROM `forum__thread` ORDER BY `date` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
+        $forum = $this->dbController->selectAll('SELECT *, `title` AS `name` FROM `talks__thread` ORDER BY `date` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
         #Cache PrettyURL
         $pretty = (new PrettyURL());
         $cutter = (new HTMLCut());
@@ -72,7 +72,7 @@ class Show
         if (empty($threadid)) {
             $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1', true, true, false);
         } else {
-            $outputArray['article'] = $this->dbController->selectRow('SELECT *, `title` AS `name` FROM `forum__thread` WHERE `threadid` = :threadid', ['threadid'=>$threadid]);
+            $outputArray['article'] = $this->dbController->selectRow('SELECT *, `title` AS `name` FROM `talks__thread` WHERE `threadid` = :threadid', ['threadid'=>$threadid]);
             if (empty($outputArray['article'])) {
                 $outputArray['http_error'] = 404;
             } else {
