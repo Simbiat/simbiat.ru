@@ -19,10 +19,6 @@ class Bans
     }
 
     #Function to check whether IP is banned
-
-    /**
-     * @throws \Exception
-     */
     public function bannedIP(): bool
     {
         #Get IP
@@ -32,25 +28,25 @@ class Bans
             return true;
         }
         #Check against DB table
-        return self::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $ip]);
+        try {
+            return self::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $ip]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     #Function to check whether name is banned
-
-    /**
-     * @throws \Exception
-     */
     public function bannedName(string $name): bool
     {
         #Check against DB table
-        return self::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
+        try {
+            return self::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     #Function to check whether email is banned
-
-    /**
-     * @throws \Exception
-     */
     public function bannedMail(string $mail): bool
     {
         #Validate that string is a mail
@@ -59,6 +55,10 @@ class Bans
             return true;
         }
         #Check against DB table
-        return self::$dbController->check('SELECT `mail` FROM `ban__mails` WHERE `mail`=:mail', [':mail' => $mail]);
+        try {
+            return self::$dbController->check('SELECT `mail` FROM `ban__mails` WHERE `mail`=:mail', [':mail' => $mail]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }

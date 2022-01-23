@@ -18,4 +18,6 @@ class Me extends StaticPage
     protected string $h1 = 'About me';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'About me';
+    #Flag to indicate this is a static page
+    protected bool $static = true;
 }

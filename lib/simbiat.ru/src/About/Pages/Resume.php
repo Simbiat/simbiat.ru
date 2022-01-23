@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\About\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\HTTP20\HTML;
 
 class Resume extends Page
 {
@@ -19,10 +18,12 @@ class Resume extends Page
     protected string $h1 = 'Resume';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Resume';
+    #Flag to indicate this is a static page
+    protected bool $static = true;
 
     protected function generate(array $path): array
     {
-        return ['timeline' => (new HTML)->timeline(
+        return ['timeline' =>
             [
                 [
                     'startTime' => '1989-05-12 02:00:00',
@@ -69,7 +70,7 @@ class Resume extends Page
                         'Learn narrative design through gaming experiences',
                     ],
                     'achievements' => [
-                        'Posted most of game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" decoding="async" decoding="async" class="linkIcon" src="/img/social/steam.svg" alt="Steam">Steam</a>',
+                        'Posted most of the game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/steam.svg" alt="Steam">Steam</a>',
                         'Experimented with narrative in video by creating <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/youtube.svg" alt="Youtube">Welcome To My Crib</a> and <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/youtube.svg" alt="Youtube">Aqua Chronica</a> series',
                     ],
                     'description' => null,
@@ -121,8 +122,8 @@ class Resume extends Page
                         'Write technical and client documentation',
                     ],
                     'achievements' => [
-                        'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img loading="lazy" decoding="async" loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
-                        'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img loading="lazy" decoding="async" loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
+                        'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img decoding="async" loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
+                        'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img decoding="async" loading="lazy" class="linkIcon" src="/img/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
                         'Supported file storage of 8Tbs+',
                         'Administered and moderated a forum of 20,000+ users',
                         'Automated payments and donations via PayPal using vBulletin plugins',
@@ -210,7 +211,7 @@ class Resume extends Page
                         'Automated several manual processes used in the department',
                         'Standardized and optimized server-side scripts',
                         'Successfully managed 30 applications simultaneously, closing decade-long backlog for a handful of them',
-                        'Participated in <cite>Ideation</cite> program as subject matter expert for one of the winning ideas',
+                        'Participated in <cite>Ideation</cite> program as subject-matter expert for one of the winning ideas',
                         'Single-handedly supported the entire country of Kazakhstan for 2 years, fulfilling various roles including technical support, project manager, application manager, and business analyst',
                     ],
                     'description' => null,
@@ -271,8 +272,29 @@ class Resume extends Page
                     'achievements' => '<a href="/static/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>',
                     'description' => null,
                 ],
+                [
+                    'startTime' => null,
+                    'endTime' => '2021-10-28',
+                    'name' => 'Snap Inc.',
+                    'icon' => '/img/social/Snapchat.svg',
+                    'href' => 'https://www.snapchat.com/',
+                    'position' => 'Student',
+                    'responsibilities' => null,
+                    'achievements' => '<a href="https://focus.snapchat.com/student/award/Mky9cibA5QqZFG6ESU3SQiEy" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                    'description' => 'Snapchat Essentials',
+                ],
+                [
+                    'startTime' => null,
+                    'endTime' => '2022-01-18',
+                    'name' => 'Smartly.io',
+                    'icon' => '/img/icons/Smartly.svg',
+                    'href' => 'https://www.smartly.io/',
+                    'position' => 'Student',
+                    'responsibilities' => null,
+                    'achievements' => '<a href="https://www.credly.com/badges/746c851c-6bb2-4fc1-b3f4-e5902e789654/public_url" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                    'description' => 'Creative Foundational certification',
+                ],
             ]
-            , brLimit: 6)
         ];
     }
 }

@@ -11,7 +11,7 @@
 <link rel="author" href="https://www.facebook.com/simbiat19"/>
 
 <!-- Google Meta -->
-<meta itemprop="name" content="{{ title }}">
+<meta itemprop="name" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
 <meta itemprop="description" content="{{ ogdesc }}" />
 <meta itemprop="image" content="{{ ogimage }}">
 
@@ -25,7 +25,7 @@
 
 <!-- Open Graph Protocol -->
 <meta property="og:site_name" content="{{site_name}}" />
-<meta property="og:title" content="{{ title }}" />
+<meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
 <meta property="og:description" content="{{ ogdesc }}" />
 <meta property="og:url" content="{{ url }}" />
 <meta property="og:image" content="{{ ogimage }}" />
@@ -41,7 +41,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="{{ title }}" />
+<meta name="twitter:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
 <meta name="twitter:site" content="@{{ twitter_card.name }}" />
 <meta name="twitter:site:id" content="{{ twitter_card.id }}" />
 <meta name="twitter:creator" content="@{{ twitter_card.name }}" />

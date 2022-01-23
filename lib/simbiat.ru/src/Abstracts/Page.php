@@ -3,10 +3,12 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
+use Twig\Environment;
 
 abstract class Page
 {
+    #Twig
+    protected ?Environment $twig = null;
     #Current breadcrumb for navigation
     protected array $breadCrumb = [];
     #Alternative representations of the content
@@ -27,6 +29,8 @@ abstract class Page
     protected bool $headerSent = false;
     #Language override, to be sent in header (if present)
     protected string $language = '';
+    #Flag to indicate this is a static page
+    protected bool $static = false;
 
     public final function __construct()
     {
@@ -42,11 +46,21 @@ abstract class Page
 
     public final function get(array $path): array
     {
-        #Generate the page
-        $page = $this->generate($path);
-        #Send Last Modified header to potentially allow earlier exit
-        if (!$this->headerSent) {
-            $this->lastModified($this->lastModified);
+        #Send page language
+        if (!empty($this->language)) {
+            @header('Content-Language: '.$this->language);
+        }
+        #Generate the page only if no prior errors detected
+        if (empty(HomePage::$http_error) || $this->static) {
+            #Generate the page
+            $page = $this->generate($path);
+            #Send Last Modified header to potentially allow earlier exit
+            if (!$this->headerSent) {
+                $this->lastModified($this->lastModified);
+            }
+            $page = array_merge($page, HomePage::$http_error);
+        } else {
+            $page = HomePage::$http_error;
         }
         #Ensure properties are included
         $page['breadcrumbs'] = $this->breadCrumb;
@@ -61,11 +75,26 @@ abstract class Page
                 HomePage::$headers->links($this->altLinks);
             }
             #Add link to HTML
-            $page['link_extra'] = HomePage::$headers->links($this->altLinks, 'head');
+            $page['link_extra'] = $this->altLinks;
         }
-        #Send page language
-        if (!empty($this->language)) {
-            @header('Content-Language: '.$this->language);
+        #Check if we are loading a static page
+        $page['static_page'] = $this->static;
+        #Set error for Twig
+        if (!empty($page['http_error'])) {
+            $page['title'] = (HomePage::$dbup === false ? 'Database unavailable' : (HomePage::$dbUpdate === true ? 'Site maintenance' : 'Error '.$page['http_error']));
+            $page['h1'] = $page['title'];
+            if (in_array($page['http_error'], ['database', 'maintenance'])) {
+                HomePage::$headers->clientReturn('503', false);
+            } else {
+                HomePage::$headers->clientReturn(strval($page['http_error']), false);
+            }
+        }
+        #Limit Ogdesc to 120 characters
+        $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
+        #Generate link for cache reset, if page uses cache
+        if ($this->cacheAge > 0) {
+            $page['cacheReset'] = parse_url(HomePage::$canonical);
+            $page['cacheReset'] = HomePage::$canonical.(empty($page['cacheReset']['query']) ? '?cacheReset=true' : '&cacheReset=true');
         }
         return $page;
     }

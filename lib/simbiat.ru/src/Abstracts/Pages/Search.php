@@ -71,10 +71,8 @@ class Search extends Page
             $this->lastModified($date);
         }
         if ($this->list) {
-            #Generate pagination
-            $html = (new HTML);
-            $outputArray['pagination_top'] = $html->pagination($page, $outputArray['searchresult']['pages'], prefix: '?page=');
-            $outputArray['pagination_bottom'] = $html->pagination($page, $outputArray['searchresult']['pages'], prefix: '?page=');
+            #Generate pagination data
+            $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchresult']['pages'], 'prefix' => '?page='];
         }
         if (!empty($this->searchFor)) {
             if ($this->list) {

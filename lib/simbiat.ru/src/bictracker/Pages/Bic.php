@@ -42,10 +42,6 @@ class Bic extends Page
         if (!empty($outputArray['bicdetails']['Updated'])) {
             $this->lastModified($outputArray['bicdetails']['Updated']);
         }
-        #Generate timeline
-        if (!empty($outputArray['bicdetails']['restrictions'])) {
-            $outputArray['bicdetails']['restrictions'] = (new HTML)->timeline($outputArray['bicdetails']['restrictions']);
-        }
         #Continue breadcrumbs
         if (!empty($outputArray['bicdetails']['PrntBIC'])) {
             foreach(array_reverse($outputArray['bicdetails']['PrntBIC']) as $bank) {

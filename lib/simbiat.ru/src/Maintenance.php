@@ -12,9 +12,9 @@ class Maintenance
     public function filesClean(): bool
     {
         #Clean HTML cache
-        (new HTMLCache)->gc(1440, 2048);
+        $this->recursiveClean($GLOBALS['siteconfig']['cachedir'] . 'html/', 1440, 2048);
         #Clean temp directory
-        $this->tempClean();
+        $this->recursiveClean(sys_get_temp_dir(), 4320, 0);
         return true;
     }
 
@@ -159,39 +159,123 @@ class Maintenance
     }
 
     #Clean temp folder
-    private function tempClean(): void
+    private function recursiveClean(string $path, int $maxAge = 60, int $maxSize = 1024): void
     {
-        $fileSI = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(sys_get_temp_dir(), \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
-        #List of files to remove
-        $toDelete = [];
-        $oldest = time() - (86400 * 3);
-        #Iterate the files to get date first
-        #Using catch to handle potential race condition, when file gets removed by a different process before the check gets called
-        try {
-            foreach ($fileSI as $file) {
-                    #Check if file
-                    if (is_file($file)) {
-                        #If we have age restriction, check if the age
-                        $time = filemtime($file);
-                        if ($time <= $oldest) {
-                            #Add to list of files to delete
-                            $toDelete[] = $file;
-                        }
-                    }
-            }
-            #Catching Throwable, instead of \Error or \Exception, since we can't predict what exactly will happen here
-        } catch (\Throwable) {
-            #Do nothing
+        #Sanitize values
+        if ($maxAge < 0) {
+            #Reset to default 1 hour cache
+            $maxAge = 60 * 60;
+        } else {
+            #Otherwise, convert into minutes (seconds do not make sense here at all)
+            $maxAge = $maxAge * 60;
         }
-        foreach ($toDelete as $file) {
+        if ($maxSize < 0) {
+            #Consider that the size limit was removed
+            $maxSize = 0;
+        } else {
+            #Otherwise, convert to megabytes (lower than 1 MB does not make sense)
+            $maxSize = $maxSize * 1024 * 1024;
+        }
+        #Set list of empty folders (removing within iteration seems to cause fatal error)
+        $emptyDirs = [];
+        if ($maxAge > 0) {
+            #Get the oldest allowed time
+            $oldest = time() - $maxAge;
+            #Garbage collector for old files, if files pool is used
+            $sizeToRemove = 0;
+            #Initiate iterator
+            $fileSI = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
+            #List of files to remove
+            $toDelete = [];
+            #List of fresh files with their sizes
+            $fresh = [];
+            #Iterate the files to get size and date first
             #Using catch to handle potential race condition, when file gets removed by a different process before the check gets called
             try {
-                #Check if file and is old enough
-                if (is_file($file)) {
-                    #Remove the file
-                    unlink($file);
+                foreach ($fileSI as $file) {
+                    if (is_dir($file)) {
+                        #Check if empty
+                        if (!(new \RecursiveDirectoryIterator($file, \FilesystemIterator::SKIP_DOTS))->valid()) {
+                            #Remove directory
+                            $emptyDirs[] = $file;
+                        }
+                    } else {
+                        #Check if file
+                        if (is_file($file)) {
+                            #If we have age restriction, check if the age
+                            $time = filemtime($file);
+                            if ($maxSize > 0) {
+                                $size = filesize($file);
+                            } else {
+                                $size = 0;
+                            }
+                            if ($maxAge > 0 && $time <= $oldest) {
+                                #Add to list of files to delete
+                                $toDelete[] = $file;
+                                if ($maxSize > 0) {
+                                    $sizeToRemove = $sizeToRemove + $size;
+                                }
+                            } else {
+                                #Get date of files to list of fresh cache
+                                if ($maxSize > 0) {
+                                    $fresh[] = ['path' => $file, 'time' => $time, 'size' => $size];
+                                }
+                            }
+                        }
+                    }
                 }
                 #Catching Throwable, instead of \Error or \Exception, since we can't predict what exactly will happen here
+            } catch (\Throwable) {
+                #Do nothing
+            }
+            #If we have size limitation and list of fresh items is not empty
+            if ($maxSize > 0 && !empty($fresh)) {
+                #Calclate total size
+                $totalSize = array_sum(array_column($fresh,'size')) + $sizeToRemove;
+                #Check if we are already removing enough. If so - skip further checks
+                if ($totalSize - $sizeToRemove >= $maxSize) {
+                    #Sort files by time from oldest to newest
+                    usort($fresh, function ($a, $b) {
+                        return $a['time'] <=> $b['time'];
+                    });
+                    #Iterrate list
+                    foreach ($fresh as $file) {
+                        $toDelete[] = $file['path'];
+                        $sizeToRemove = $sizeToRemove + $file['size'];
+                        #Check if removing this file will be enough and break cycle if it is
+                        if ($totalSize - $sizeToRemove < $maxSize) {
+                            break;
+                        }
+                    }
+                }
+            }
+            foreach ($toDelete as $file) {
+                #Using catch to handle potential race condition, when file gets removed by a different process before the check gets called
+                try {
+                    #Check if file and is old enough
+                    if (is_file($file)) {
+                        #Remove the file
+                        unlink($file);
+                        #Remove parent directory if empty
+                        if (!(new \RecursiveDirectoryIterator(dirname($file), \FilesystemIterator::SKIP_DOTS))->valid()) {
+                            $emptyDirs[] = $file;
+                        }
+                    }
+                    #Catching Throwable, instead of \Error or \Exception, since we can't predict what exactly will happen here
+                } catch (\Throwable) {
+                    #Do nothing
+                }
+            }
+        }
+        #Garbage collector for empty directories
+        foreach ($emptyDirs as $dir) {
+            #Using catch to handle potential race condition, when directory gets removed by a different process before the check gets called
+            try {
+                @rmdir($dir);
+                #Remove parent directory if empty
+                if (!(new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS))->valid()) {
+                    @rmdir(dirname($dir));
+                }
             } catch (\Throwable) {
                 #Do nothing
             }

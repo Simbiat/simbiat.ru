@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker;
 
 use Simbiat\ArrayHelpers;
+use Simbiat\Caching;
 use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\LodestoneModules\Converters;
@@ -29,25 +30,8 @@ class Statistics
             }
             $cachePath = $GLOBALS['siteconfig']['ffstatitics_cache'].$type.'.json';
         }
-        #Check if cache file exists
-        if (is_file($cachePath)) {
-            #Read the cache
-            $json = file_get_contents($cachePath);
-            if ($json !== false && $json !== '') {
-                $json = json_decode($json, true, 512, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR);
-                if ($json !== NULL) {
-                    if (!is_array($json)) {
-                        $json = [];
-                    }
-                } else {
-                    $json = [];
-                }
-            } else {
-                $json = [];
-            }
-        } else {
-            $json = [];
-        }
+        #Get cache
+        $json = (new Caching())->getArrayFromFile($cachePath);
         #Get Lodestone object for optimization
         $Lodestone = (new Converters);
         #Get ArrayHelpers object for optimization

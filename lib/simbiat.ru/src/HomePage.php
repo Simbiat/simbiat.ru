@@ -8,14 +8,11 @@ use PHPMailer\PHPMailer\SMTP;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
+use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
 use Simbiat\usercontrol\Bans;
-use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
 use Twig\Environment;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 use Twig\Loader\FilesystemLoader;
 
 class HomePage
@@ -30,14 +27,20 @@ class HomePage
     public static bool $dbUpdate = false;
     #Database controller object
     public static ?Controller $dbController = NULL;
-    #HTMLCache object
-    public static ?HTMLCache $HTMLCache = NULL;
+    #Cache object
+    public static ?Caching $dataCache = null;
+    #Twig
+    public static ?Environment $twig = null;
     #HTTP headers object
     public static ?Headers $headers = NULL;
     #Flag indicating that cached view has been served already
     public static bool $staleReturn = false;
     #Flag indicating whether we are in CLI
     public static bool $CLI = false;
+    #HTTP method being used
+    public static ?string $method = null;
+    #Array that can contain variables indicating common HTTP errors
+    public static ?array $http_error = [];
 
     public function __construct()
     {
@@ -54,6 +57,14 @@ class HomePage
             self::$CLI = true;
         } else {
             self::$CLI = false;
+        }
+        if (is_null(self::$dataCache)) {
+            self::$dataCache = new Caching();
+        }
+        if (is_null(self::$twig)) {
+            #Initiate Twig
+            self::$twig = new Environment(new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']), ['cache' => $GLOBALS['siteconfig']['templatesdir'] . '/cache', 'auto_reload' => !HomePage::$PROD,]);
+            self::$twig->addExtension(new TwigExtension);
         }
         #Get all POST and GET keys to lower case
         $_POST = array_change_key_case($_POST, CASE_LOWER);
@@ -73,6 +84,8 @@ class HomePage
                 #Ensure we exit no matter what happens with CRON
                 exit;
             } else {
+                #Set method
+                self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
                 $this->canonical();
                 #Send common headers
                 $this::$headers->secFetch();
@@ -84,31 +97,39 @@ class HomePage
                     #Exploding further processing
                     $uri = explode('/', $_SERVER['REQUEST_URI']);
                     try {
-                        #Check if API
-                        if ($uri[0] === 'api') {
-                            #Attempt to connect to DB
-                            $this->dbConnect();
-                        } else {
-                            #Send some headers if we are not using stale
-                            if (!self::$staleReturn) {
-                                self::$headers->links($GLOBALS['siteconfig']['links']);
-                                header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
-                                header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
-                            }
-                            #Attempt to connect to DB
-                            $this->dbConnect(true);
+                        #Connect to DB
+                        $this->dbConnect();
+                        #Show that client is unsupported
+                        if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
+                            self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
+                        #Show error page if DB is down
+                        } elseif (!self::$dbup) {
+                            self::$http_error = ['http_error' => 'database'];
+                        #Show error page if maintenance is running
+                        } elseif (self::$dbUpdate) {
+                            self::$http_error = ['http_error' => 'maintenance'];
+                        #Check if banned by IP
+                        } elseif ((new Bans)->bannedIP() === true) {
+                            self::$http_error = ['http_error' => 403];
                         }
-                        if (self::$dbup || preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
-                            $vars = (new MainRouter)->route($uri);
-                        } else {
-                            $vars = [];
+                        self::$headers->links($GLOBALS['siteconfig']['links']);
+                        if ($uri[0] !== 'api') {
+                            @header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
+                            @header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
                         }
+                        #Check if we have cached the results already
+                        HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
+                        if (self::$method === 'POST') {
+                            #Process POST data if any
+                            (new MainRouter)->postProcess();
+                        }
+                        $vars = (new MainRouter)->route($uri);
                     } catch (\Throwable $e) {
                         Errors::error_log($e);
                         $vars = ['http_error' => 500];
                     }
                     #Generate page
-                    $this->twigProc($vars, (empty($vars['http_error']) ? null : $vars['http_error']));
+                    $this->twigProc($vars);
                 }
             }
         } catch (\Throwable $e) {
@@ -153,61 +174,25 @@ class HomePage
     }
 
     #Function to process some special files
+
     public function filesRequests(string $request): int
     {
         #Remove query string, if present (that is everything after ?)
         $request = preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
         if (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
-            #'2022-12-31T21:00:00.000Z'
             #Send headers, that will identify this as actual file
-            header('Content-Type: text/plain; charset=utf-8');
-            header('Content-Disposition: inline; filename="security.txt"');
-            #Get content
-            $content = str_replace('%expires%', date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight')), file_get_contents($GLOBALS['siteconfig']['maindir'].'/static/.well-known/security.txt'));
-            echo $content;
-            exit;
-        #Caching logic seems to be greatly affecting performance on PROD. Needs revising
+            @header('Content-Type: text/plain; charset=utf-8');
+            @header('Content-Disposition: inline; filename="security.txt"');
+            $this->twigProc(['expires' => date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight'))], template: 'about/security.txt.twig');
+            return 200;
         } else {
-            #Create HTMLCache object to check for cache
-            self::$HTMLCache = (new HTMLCache($GLOBALS['siteconfig']['cachedir'].'html/', false));
-            #Attempt to use cache
-            $output = self::$HTMLCache->get(self::$canonical, true, false, true);
-            if (!empty($output) && !isset($_POST['cachereset']) && !isset($_GET['cachereset'])) {
-                #Cache hit, we need to connect to DB and initiate session to write data about it
-                try {
-                    if ($this->dbConnect(true) === true) {
-                        #Process POST data if any
-                        (new MainRouter)->postProcess();
-                        #Close session right after if it opened
-                        if (session_status() === PHP_SESSION_ACTIVE) {
-                            session_write_close();
-                        }
-                    }
-                } catch (\Throwable) {
-                    #Do nothing, consider cache failure
-                } finally {
-                    if ($output['stale']) {
-                        #Cache is stale, but we output it still and then update it in background
-                        self::$HTMLCache->cacheOutput($output, exit: false);
-                        self::$staleReturn = true;
-                    } else {
-                        #Output cache regardless
-                        self::$HTMLCache->cacheOutput($output);
-                    }
-                }
-            }
+            #Return 0, since we did not hit anything
+            return 0;
         }
-        #Return 0, since we did not hit anything
-        return 0;
     }
 
     #Database connection
-    /**
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws LoaderError
-     */
-    public function dbConnect(bool $extraChecks = false): bool
+    public function dbConnect(): bool
     {
         $healthCheck = (new Maintenance);
         #Check space availability
@@ -223,17 +208,6 @@ class HomePage
                 #Check for maintenance
                 self::$dbUpdate = boolval(self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
                 self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
-                #In some cases these extra checks are not required
-                if ($extraChecks === true) {
-                    #Check if maintenance
-                    if (self::$dbUpdate && preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) !== 1) {
-                        $this->twigProc(error: 503);
-                    }
-                    #Check if banned
-                    if ((new Bans)->bannedIP() === true) {
-                        $this->twigProc(error: 403);
-                    }
-                }
                 #Try to start session if it's not started yet, and we are not serving stale content
                 if (!self::$CLI && session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
                     session_set_save_handler(new Session, true);
@@ -248,149 +222,64 @@ class HomePage
                 return false;
             }
         }
-        if ($extraChecks === true && !self::$staleReturn) {
-            #Show that client is unsupported
-            if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
-                $this->twigProc(['unsupported' => true, 'client' => $_SESSION['UA']['client']], 418);
-            }
-            #Process POST data if any
-            (new MainRouter)->postProcess();
-        }
         return true;
     }
 
     #Twig processing of the generated page
-
-    /**
-     * @throws SyntaxError
-     * @throws RuntimeError
-     * @throws LoaderError
-     * @throws \Exception
-     */
-    public function twigProc(array $extraVars = [], ?int $error = NULL)
+    public final function twigProc(array $twigVars = [], bool $cache = false, string $template = 'index.twig'): bool
     {
-        if (self::$staleReturn === true) {
-            ob_start();
+        #If method not supporting a body is requested, ensure we do not send it
+        if (!in_array(self::$method, ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])) {
+            exit;
         }
-        #Set Twig loader
-        $twigLoader = new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']);
-        #Initiate Twig itself
-        $twig = new Environment($twigLoader, ['cache' => $GLOBALS['siteconfig']['templatesdir'].'/cache', 'auto_reload' => !self::$PROD,]);
-        #Set default variables
-        $twigVars = [
-            'domain' => $GLOBALS['siteconfig']['domain'],
-            'url' => $GLOBALS['siteconfig']['domain'].'/'.$_SERVER['REQUEST_URI'],
-            'site_name' => $GLOBALS['siteconfig']['site_name'],
-        ];
-        #Set versions of CSS and JS
-        $twigVars['css_version'] = filemtime($GLOBALS['siteconfig']['cssdir'].'min.css');
-        $twigVars['js_version'] = filemtime($GLOBALS['siteconfig']['jsdir'].'min.js');
-        #Flag for Save-Data header
-        if (isset($_SERVER['HTTP_SAVE_DATA']) && preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA']) === 1) {
-            $twigVars['save_data'] = 'true';
-        } else {
-            $twigVars['save_data'] = 'false';
-        }
-        #Set link tags
-        $twigVars['link_tags'] = self::$headers->links($GLOBALS['siteconfig']['links'], 'head');
-        if (self::$dbup) {
-            #Update default variables with values from database
-            $twigVars = array_merge($twigVars, self::$dbController->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
-        } else {
-            #Enforce 503 error
-            $error = 503;
-        }
-        #Check if we are loading a static page
-        if (preg_match($GLOBALS['siteconfig']['static_pages'], $_SERVER['REQUEST_URI']) === 1) {
-            $twigVars['static_page'] = true;
-        } else {
-            $twigVars['static_page'] = false;
-        }
-        #Set error for Twig
-        if (!empty($error)) {
-            #Server error page
-            $twigVars['http_error'] = (self::$dbup === false ? 'database' : (self::$dbUpdate === true ? 'maintenance' : $error));
-            if (!$twigVars['static_page']) {
-                $twigVars['title'] = (self::$dbup === false ? 'Database unavailable' : (self::$dbUpdate === true ? 'Site maintenance' : 'Error '.$error));
-                $twigVars['h1'] = $twigVars['title'];
-                if (!HomePage::$staleReturn) {
-                    self::$headers->clientReturn(strval($error), false);
+        if ($cache) {
+            if (empty($twigVars) || self::$method !== 'GET' || isset($_GET['cachereset']) || isset($_POST['cachereset'])) {
+                return false;
+            } else {
+                try {
+                    $twigVars = array_merge($twigVars, self::$http_error);
+                    ob_end_clean();
+                    ignore_user_abort(true);
+                    ob_start();
+                    @header('Connection: close');
+                    $output = self::$twig->render($template, $twigVars);
+                    #Output data
+                    (new Common)->zEcho($output, exit: false);
+                    ob_end_flush();
+                    ob_flush();
+                    flush();
+                    if (!empty($twigVars['cache_expires_at']) && ($twigVars['cache_expires_at'] - time()) > 0) {
+                        exit;
+                    } else {
+                        return true;
+                    }
+                } catch (\Throwable) {
+                    return false;
                 }
             }
-        }
-        #Merge with extra variables provided
-        $twigVars = array_merge($twigVars, $extraVars);
-        #Handle unsupported browsers
-        if (empty($twigVars['unsupported'])) {
-            $twigVars['unsupported'] = false;
-        }
-        #Set title if it's empty
-        if (empty($twigVars['title'])) {
-            $twigVars['title'] = $twigVars['site_name'];
-            #Set H1 if it's empty
-            if (empty($twigVars['h1'])) {
-                $twigVars['h1'] = $twigVars['site_name'];
-            }
         } else {
-            #Set H1 if it's empty
-            if (empty($twigVars['h1'])) {
-                $twigVars['h1'] = $twigVars['title'];
+            ob_start();
+            try {
+                $output = self::$twig->render($template, $twigVars);
+            } catch (\Throwable) {
+                $output = 'Twig failure';
             }
-            #Add site name to it
-            if (empty($twigVars['http_error'])) {
-                $twigVars['title'] = $twigVars['title'] . ' on ' . $twigVars['site_name'];
+            #Close session
+            if (session_status() === PHP_SESSION_ACTIVE && !self::$staleReturn) {
+                session_write_close();
             }
-        }
-        #Set OG values to global ones, if empty
-        if (empty($twigVars['ogdesc'])) {
-            $twigVars['ogdesc'] = $GLOBALS['siteconfig']['ogdesc'];
-        }
-        if (empty($twigVars['ogextra'])) {
-            $twigVars['ogextra'] = $GLOBALS['siteconfig']['ogextra'];
-        }
-        if (empty($twigVars['ogimage'])) {
-            $twigVars['ogimage'] = $GLOBALS['siteconfig']['ogimage'];
-        }
-        #Limit Ogdesc to 120 characters
-        $twigVars['ogdesc'] = mb_substr($twigVars['ogdesc'], 0, 120, 'UTF-8');
-        #Twitter
-        $twigVars['twitter_card'] = $GLOBALS['siteconfig']['twitter_card'];
-        #Facebook
-        $twigVars['facebook'] = $GLOBALS['siteconfig']['facebook'];
-        #Add CSRF Token to meta
-        $twigVars['XCSRFToken'] = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
-        #Generate breadcrumbs
-        if (!empty($twigVars['breadcrumbs'])) {
-            $twigVars['breadcrumbsLevels'] = count($twigVars['breadcrumbs']);
-            $twigVars['breadcrumbs'] = (new HTTP20\HTML)->breadcrumbs($twigVars['breadcrumbs']);
-        }
-        #Generate link for cache reset, if page uses cache
-        if (!empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
-            $twigVars['cacheReset'] = parse_url(self::$canonical);
-            $twigVars['cacheReset'] = self::$canonical.(empty($twigVars['cacheReset']['query']) ? '?cacheReset=true' : '&cacheReset=true');
-        }
-        #Render page
-        $output = $twig->render('index.twig', $twigVars);
-        #Close session
-        if (session_status() === PHP_SESSION_ACTIVE && !self::$staleReturn) {
-            session_write_close();
-        }
-        #Cache page if cache age is set up
-        if (empty($error) && self::$PROD && $twigVars['unsupported'] !== true && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge'])) {
-            if (self::$staleReturn) {
-                self::$HTMLCache->set($output, self::$canonical, intval($twigVars['cacheAge']), direct: false);
-                @ob_end_clean();
-            } else {
-                self::$HTMLCache->set($output, self::$canonical, intval($twigVars['cacheAge']));
+            #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
+            if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
+                self::$dataCache->write($twigVars, age: intval($twigVars['cacheAge']));
             }
-        } else {
             if (self::$staleReturn === true) {
                 @ob_end_clean();
             } else {
-                echo $output;
+                #Output data
+                (new Common)->zEcho($output, exit: true);
             }
+            exit;
         }
-        exit;
     }
 
     #Helper function to send mails

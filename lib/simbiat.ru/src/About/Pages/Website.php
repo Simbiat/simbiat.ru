@@ -18,4 +18,6 @@ class Website extends StaticPage
     protected string $h1 = 'About Simbiat Software website';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'About Simbiat Software website';
+    #Flag to indicate this is a static page
+    protected bool $static = true;
 }

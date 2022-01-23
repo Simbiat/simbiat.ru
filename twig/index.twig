@@ -4,10 +4,12 @@
         {{ include('common/layout/metatags.twig') }}
 
         <!-- Generated links -->
-        {{ link_tags|raw }}
-        {{ link_extra|raw }}
+        {{ linkTags(link_tags, 'head') }}
+        {% if link_extra %}
+            {{ linkTags(link_extra, 'head') }}
+        {% endif %}
 
-        <title>{{ title|raw }}</title>
+        <title>{% if title %}{{ title|raw }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}</title>
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
@@ -27,7 +29,7 @@
                 {{ include('common/layout/navigation.twig') }}
             </nav>
             <main id="content" role="main">
-                {% if http_error and static_page == false%}
+                {% if http_error and static_page == false and cached_page == false %}
                     <article id="http_error">
                         {% if construction == false %}
                             {{ include('errors/'~http_error~'.twig') }}
@@ -61,7 +63,7 @@
                         </section>
                     {% else %}
                         <section id="sidebar_for_static">
-                            <div class="warning">Database is currently unavailable, and you are seeing a static page, that is not dependent on it. Sidebar elements suppressed.</div>
+                            <div class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</div>
                         </section>
                     {% endif %}
             </aside>

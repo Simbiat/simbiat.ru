@@ -18,4 +18,6 @@ class Tech extends StaticPage
     protected string $h1 = 'About Simbiat Software\'s Technology';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'About Simbiat Software\'s Technology';
+    #Flag to indicate this is a static page
+    protected bool $static = true;
 }

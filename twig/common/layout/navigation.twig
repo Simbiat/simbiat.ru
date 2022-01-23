@@ -1,9 +1,3 @@
-{# If we have an error - reset service names and breadcrumbs #}
-{% if http_error %}
-    {% set serviceName = '' %}
-    {% set subServiceName = '' %}
-    {% set breadcrumbs = '' %}
-{% endif %}
 <div id="hideNav"><input id="hideNavIcon" class="navIcon" alt="Close navigation" type="image" src="/img/close.svg"></div>
 <div class="navElement">
     <div class="navLine" id="showSidebar">
@@ -16,10 +10,10 @@
             <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" data-tooltip="Home Page" src="/img/navigation/home.svg"><span itemprop="name">Home Page</span></a>
         </div>
     </li>
-    {% if breadcrumbs and breadcrumbsLevels > 1%}
+    {% if breadcrumbs and breadcrumbs|length > 1%}
         <li class="navElement liBread">
             <div class="navLine navBread">
-                {{ breadcrumbs|raw }}
+                {{ genBread(breadcrumbs) }}
             </div>
         </li>
     {% endif %}

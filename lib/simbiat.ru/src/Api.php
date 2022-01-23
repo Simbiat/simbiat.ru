@@ -221,7 +221,7 @@ class Api
             HomePage::$headers->clientReturn($httpCode, false);
         }
         #Send content-type
-        header('Content-Type: application/json; charset=utf-8');
+        @header('Content-Type: application/json; charset=utf-8');
         #Send data
         (new Common)->zEcho($data);
         exit;

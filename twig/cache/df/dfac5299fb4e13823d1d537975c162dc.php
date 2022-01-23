@@ -60,13 +60,13 @@ class __TwigTemplate_fb17b96fd35edf5c70497cd024b85495 extends Template
     </li>
     ";
         // line 19
-        if ((($context["breadcrumbs"] ?? null) && (($context["breadcrumbsLevels"] ?? null) > 1))) {
+        if ((($context["breadcrumbs"] ?? null) && (twig_length_filter($this->env, ($context["breadcrumbs"] ?? null)) > 1))) {
             // line 20
             echo "        <li class=\"navElement liBread\">
             <div class=\"navLine navBread\">
                 ";
             // line 22
-            echo ($context["breadcrumbs"] ?? null);
+            echo call_user_func_array($this->env->getFilter('genBread')->getCallable(), [($context["breadcrumbs"] ?? null)]);
             echo "
             </div>
         </li>

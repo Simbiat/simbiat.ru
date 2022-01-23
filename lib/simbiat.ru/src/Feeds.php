@@ -232,7 +232,7 @@ class Feeds
                                     };
                                 }
                             }
-                            header('Link: '.implode(', ', $linkHeader), true);
+                            @header('Link: '.implode(', ', $linkHeader), true);
                             #Return sitemap
                             (new Sitemap)->sitemap($links, ($uri[0] === 'xml' && $uri[1] === 'index' ? 'index' : $uri[0]), true);
                         }

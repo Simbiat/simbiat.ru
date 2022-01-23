@@ -14,7 +14,9 @@
         {{ include('common/elements/search.twig')}}
     {% endif %}
     {% if subServiceName %}
-        {{pagination_top|raw}}
+        {% if pagination %}
+            {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
+        {% endif %}
         <article>
             {% if subServiceName == 'keying' %}
                 {{ include('bictracker/keying.twig')}}
@@ -28,6 +30,8 @@
                 {{ include('common/pages/list.twig')}}
             {% endif %}
         </article>
-        {{pagination_bottom|raw}}
+        {% if pagination %}
+            {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
+        {% endif %}
     {% endif %}
 </section>

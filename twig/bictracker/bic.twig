@@ -125,7 +125,7 @@
     </table>
     {% if bicdetails.restrictions %}
         <h2>История ограничений</h2>
-        {{ bicdetails.restrictions|raw }}
+        {{ timeline(bicdetails.restrictions) }}
     {% endif %}
     {%if bicdetails.PrntBIC or bicdetails.branches%}<h2>Родственные организации</h2>{%endif%}
     {%if bicdetails.PrntBIC%}

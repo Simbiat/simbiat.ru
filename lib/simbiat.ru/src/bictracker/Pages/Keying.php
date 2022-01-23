@@ -4,8 +4,6 @@ namespace Simbiat\bictracker\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\AccountKeying;
-use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
 
 class Keying extends Page
 {
@@ -23,6 +21,9 @@ class Keying extends Page
     protected string $ogdesc = 'Проверка корректности контрольного символа в номере счёта против номера банковского идентификационного кода';
     #Language override, to be sent in header (if present)
     protected string $language = 'ru-RU';
+    #Flag to indicate this is a static page
+    protected bool $static = true;
+    protected int $cacheAge = 14400;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

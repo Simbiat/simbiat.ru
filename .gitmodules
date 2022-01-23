@@ -26,10 +26,6 @@
 	path = lib/filename-sanitizer
 	url = https://github.com/Simbiat/filename-sanitizer
 	branch = master
-[submodule "lib/HTMLCache"]
-	path = lib/HTMLCache
-	url = https://github.com/Simbiat/HTMLCache
-	branch = main
 [submodule "lib/HTMLCut"]
 	path = lib/HTMLCut
 	url = https://github.com/Simbiat/HTMLCut

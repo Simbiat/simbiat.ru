@@ -38,7 +38,6 @@
           "../lib/cute-bytes/src",
           "../lib/database/src",
           "../lib/filename-sanitizer/src",
-          "../lib/HTMLCache/src",
           "../lib/HTMLCut/src",
           "../lib/HTTP20/src",
           "../lib/lodestone-parser/src",
