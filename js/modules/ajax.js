@@ -50,7 +50,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             return false;
         } else {
             addSnackbar('Request to "'+url+'" failed on fetch operation', 'failure', 10000);
-            throw err;
+            return false;
         }
     }
 }
