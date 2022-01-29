@@ -228,10 +228,6 @@ class HomePage
     #Twig processing of the generated page
     public final function twigProc(array $twigVars = [], bool $cache = false, string $template = 'index.twig'): bool
     {
-        #If method not supporting a body is requested, ensure we do not send it
-        if (!in_array(self::$method, ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])) {
-            exit;
-        }
         if ($cache) {
             if (empty($twigVars) || self::$method !== 'GET' || isset($_GET['cachereset']) || isset($_POST['cachereset'])) {
                 return false;
