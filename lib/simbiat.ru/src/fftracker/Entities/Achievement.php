@@ -32,7 +32,7 @@ class Achievement extends Entity
         #Get general information
         $data = $this->dbController->selectRow('SELECT *, (SELECT COUNT(*) FROM `'.self::dbPrefix.'character_achievement` WHERE `'.self::dbPrefix.'character_achievement`.`achievementid` = `'.self::dbPrefix.'achievement`.`achievementid`) as `count` FROM `'.self::dbPrefix.'achievement` WHERE `'.self::dbPrefix.'achievement`.`achievementid` = :id', [':id'=>$this->id]);
         #Return empty, if nothing was found
-        if (empty($data) || !is_array($data)) {
+        if (empty($data)) {
             return [];
         }
         #Get last characters with this achievement

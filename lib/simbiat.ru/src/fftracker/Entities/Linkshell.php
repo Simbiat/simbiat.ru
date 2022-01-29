@@ -31,7 +31,7 @@ class Linkshell extends Entity
         #Get general information
         $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'linkshell` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'linkshell`.`serverid`=`'.self::dbPrefix.'server`.`serverid` WHERE `linkshellid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
-        if (empty($data) || !is_array($data)) {
+        if (empty($data)) {
             return [];
         }
         #Get old names
@@ -81,13 +81,13 @@ class Linkshell extends Entity
     protected function process(array $fromDB): void
     {
         $this->name = $fromDB['name'];
+        $this->community = $fromDB['communityid'];
         $this->dates = [
             'formed' => (empty($fromDB['formed']) ? null : strtotime($fromDB['formed'])),
             'registered' => strtotime($fromDB['registered']),
             'updated' => strtotime($fromDB['updated']),
             'deleted' => (empty($fromDB['deleted']) ? null : strtotime($fromDB['deleted'])),
         ];
-        $this->community = $fromDB['communityid'];
         $this->oldNames = $fromDB['oldnames'];
         $this->members = $fromDB['members'];
         if ($this::crossworld) {

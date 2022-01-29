@@ -34,7 +34,7 @@ class Character extends Entity
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
         $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`updated`, `'.self::dbPrefix.'enemy`.`name` AS `killedby` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` LEFT JOIN `'.self::dbPrefix.'enemy` ON `'.self::dbPrefix.'character`.`enemyid` = `'.self::dbPrefix.'enemy`.`enemyid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
         #Return empty, if nothing was found
-        if (empty($data) || !is_array($data)) {
+        if (empty($data)) {
             return [];
         }
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
@@ -198,7 +198,7 @@ class Character extends Entity
                     `characterid`, `serverid`, `name`, `manual`, `registered`, `updated`, `deleted`, `enemyid`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `pvp_matches`
                 )
                 VALUES (
-                    :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, :manual, UTC_DATE(), UTC_TIMESTAMP(), NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0
+                    :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, :manual, UTC_DATE(), UTC_TIMESTAMP(), NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0
                 )
                 ON DUPLICATE KEY UPDATE
                     `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), `name`=:name, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `enemyid`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `'.self::dbPrefix.'achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `'.self::dbPrefix.'clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `'.self::dbPrefix.'nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `'.self::dbPrefix.'guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `'.self::dbPrefix.'city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1);',
@@ -227,7 +227,7 @@ class Character extends Entity
                     #Remove spaces from the job name
                     $jobNoSpace = preg_replace('/\s*/', '', $job);
                     #Check if column exists in order to avoid errors. Checking that level is not empty to not waste time on updating zeros
-                    if ($this->dbController->checkColumn(''.self::dbPrefix.'character', $jobNoSpace) && !empty($level['level'])) {
+                    if ($this->dbController->checkColumn(self::dbPrefix.'character', $jobNoSpace) && !empty($level['level'])) {
                         #Update level
                         /** @noinspection SqlResolve */
                         $queries[] = [
@@ -376,7 +376,6 @@ class Character extends Entity
         #Get link for portrait
         $portrait = str_replace('c0_96x96', 'l0_640x873', $avatar);
         #Get destination
-        $name = str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96'], '', $avatar);
         $this->imageDownload($avatar, $GLOBALS['siteconfig']['ffxiv_avatars'].'96x96'.'/'.$this->id.'.jpg');
         $this->imageDownload($portrait, $GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$this->id.'.jpg');
     }

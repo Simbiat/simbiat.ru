@@ -39,7 +39,7 @@ class FreeCompany extends Entity
         #Get general information
         $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'freecompany` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'freecompany`.`serverid`=`'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'freecompany`.`grandcompanyid`=`'.self::dbPrefix.'grandcompany`.`gcId` LEFT JOIN `'.self::dbPrefix.'timeactive` ON `'.self::dbPrefix.'freecompany`.`activeid`=`'.self::dbPrefix.'timeactive`.`activeid` LEFT JOIN `'.self::dbPrefix.'estate` ON `'.self::dbPrefix.'freecompany`.`estateid`=`'.self::dbPrefix.'estate`.`estateid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'estate`.`cityid`=`'.self::dbPrefix.'city`.`cityid` WHERE `freecompanyid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
-        if (empty($data) || !is_array($data)) {
+        if (empty($data)) {
             return [];
         }
 
@@ -271,7 +271,7 @@ class FreeCompany extends Entity
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `' . self::dbPrefix . 'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `' . self::dbPrefix . 'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
+                                :characterid, (SELECT `serverid` FROM `' . self::dbPrefix . 'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `' . self::dbPrefix . 'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
                             );',
                             [
                                 ':characterid' => $member,

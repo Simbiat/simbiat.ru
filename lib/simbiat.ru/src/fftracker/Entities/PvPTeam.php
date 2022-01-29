@@ -31,7 +31,7 @@ class PvPTeam extends Entity
         #Get general information
         $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'pvpteam` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'pvpteam`.`datacenterid`=`'.self::dbPrefix.'server`.`serverid` WHERE `pvpteamid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
-        if (empty($data) || !is_array($data)) {
+        if (empty($data)) {
             return [];
         }
         #Get old names
@@ -151,7 +151,7 @@ class PvPTeam extends Entity
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`, `pvp_matches`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
+                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
                             )',
                             [
                                 ':characterid'=>$member,
@@ -165,7 +165,7 @@ class PvPTeam extends Entity
                     }
                     #Link the character to team
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'pvpteam_character` (`pvpteamid`, `characterid`, `rankid`, `current`) VALUES (:pvpteamId, :characterid, (SELECT `pvprankid` FROM `'.self::dbPrefix.'pvpteam_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=(SELECT `pvprankid` FROM `'.self::dbPrefix.'pvpteam_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1);',
+                        'INSERT INTO `'.self::dbPrefix.'pvpteam_character` (`pvpteamid`, `characterid`, `rankid`, `current`) VALUES (:pvpteamId, :characterid, (SELECT `pvprankid` FROM `'.self::dbPrefix.'pvpteam_rank` WHERE `rank`=:rank LIMIT 1), 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=(SELECT `pvprankid` FROM `'.self::dbPrefix.'pvpteam_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1);',
                         [
                             ':characterid'=>$member,
                             ':pvpteamId'=>$this->id,
