@@ -65,6 +65,7 @@ class PvPTeam extends Entity
             }
         }
         $data = $data['pvpteams'][$this->id];
+        $data['id'] = $this->id;
         $data['404'] = false;
         unset($data['pageCurrent'], $data['pageTotal']);
         return $data;

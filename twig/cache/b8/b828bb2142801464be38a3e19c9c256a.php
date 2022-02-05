@@ -80,7 +80,7 @@ class __TwigTemplate_a9309cadf4274b8ee6e1d31a35972c7c extends Template
         if (($context["http_error"] ?? null)) {
             // line 16
             echo "            ";
-            if ((((($context["http_error"] ?? null) != 400) && (($context["http_error"] ?? null) != 403)) && (($context["http_error"] ?? null) != 404))) {
+            if (((((($context["http_error"] ?? null) != 400) && (($context["http_error"] ?? null) != 403)) && (($context["http_error"] ?? null) != 404)) && (($context["http_error"] ?? null) != 405))) {
                 // line 17
                 echo "                <meta http-equiv=\"refresh\" content=\"60\"/>
             ";
@@ -136,7 +136,7 @@ class __TwigTemplate_a9309cadf4274b8ee6e1d31a35972c7c extends Template
                 }
                 // line 39
                 echo "                        ";
-                if (((( !($context["error_page"] ?? null) && (($context["http_error"] ?? null) != 400)) && (($context["http_error"] ?? null) != 403)) && (($context["http_error"] ?? null) != 404))) {
+                if ((((( !($context["error_page"] ?? null) && (($context["http_error"] ?? null) != 400)) && (($context["http_error"] ?? null) != 403)) && (($context["http_error"] ?? null) != 404)) && (($context["http_error"] ?? null) != 405))) {
                     // line 40
                     echo "                            <p>Page will refresh in <span id=\"refresh_timer\">60</span> seconds.</p>
                         ";
@@ -190,7 +190,7 @@ class __TwigTemplate_a9309cadf4274b8ee6e1d31a35972c7c extends Template
                 <div id=\"hideSidebar\"><input id=\"hideSidebarIcon\" class=\"navIcon\" alt=\"Close sidebar\" data-tooltip=\"Close sidebar\" type=\"image\" src=\"/img/close.svg\"></div>
                     ";
             // line 59
-            if (((($context["http_error"] ?? null) != "database") && (($context["maintenance"] ?? null) == 0))) {
+            if (((($context["http_error"] ?? null) != "database") && (($context["http_error"] ?? null) != "maintenance"))) {
                 // line 60
                 echo "                        <section id=\"loginForm\">
                             ";

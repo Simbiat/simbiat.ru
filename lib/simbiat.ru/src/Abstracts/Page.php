@@ -3,12 +3,9 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\HomePage;
-use Twig\Environment;
 
 abstract class Page
 {
-    #Twig
-    protected ?Environment $twig = null;
     #Current breadcrumb for navigation
     protected array $breadCrumb = [];
     #Alternative representations of the content
@@ -31,6 +28,8 @@ abstract class Page
     protected string $language = '';
     #Flag to indicate this is a static page
     protected bool $static = false;
+    #Allowed methods
+    protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
 
     public final function __construct()
     {
@@ -52,17 +51,28 @@ abstract class Page
         }
         #Generate the page only if no prior errors detected
         if (empty(HomePage::$http_error) || $this->static) {
-            #Generate the page
-            $page = $this->generate($path);
-            #Send Last Modified header to potentially allow earlier exit
-            if (!$this->headerSent) {
-                $this->lastModified($this->lastModified);
+            #Generate list of allowed methods
+            $allowedMethods = (array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
+            #Send headers
+            @header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
+            @header('Allow: '.implode(', ', $allowedMethods));
+            #Check if allowed method is used
+            if (!in_array(HomePage::$method, $allowedMethods)) {
+                $page = ['http_error' => 405];
+            } else {
+                #Generate the page
+                $page = $this->generate($path);
+                #Send Last Modified header to potentially allow earlier exit
+                if (!$this->headerSent) {
+                    $this->lastModified($this->lastModified);
+                }
+                $page = array_merge($page, HomePage::$http_error);
             }
-            $page = array_merge($page, HomePage::$http_error);
         } else {
             $page = HomePage::$http_error;
         }
         #Ensure properties are included
+        $page['http_method'] = HomePage::$method;
         $page['breadcrumbs'] = $this->breadCrumb;
         $page['subServiceName'] = $this->subServiceName;
         $page['title'] = $this->title;

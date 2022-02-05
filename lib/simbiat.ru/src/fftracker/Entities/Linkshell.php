@@ -72,6 +72,7 @@ class Linkshell extends Entity
             }
         }
         $data = $data['linkshells'][$this->id];
+        $data['id'] = $this->id;
         $data['404'] = false;
         unset($data['pageCurrent'], $data['pageTotal']);
         return $data;

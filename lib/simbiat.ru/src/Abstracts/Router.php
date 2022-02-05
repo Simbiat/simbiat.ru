@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
+use Simbiat\HomePage;
+
 abstract class Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
@@ -50,6 +52,7 @@ abstract class Router
                 #Not supported
                 $pageData['breadcrumbs'] = $this->breadCrumb;
                 $pageData['http_error'] = 404;
+                HomePage::$headers->clientReturn('404', false);
             }
         }
         #Inherit title, H1 and description, if page does not have them and router does

@@ -3,8 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
 
 class Achievement extends Page
 {
@@ -24,7 +22,6 @@ class Achievement extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $headers = HomePage::$headers;
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
@@ -45,12 +42,15 @@ class Achievement extends Page
         $this->h1 = $this->title = $outputArray['achievement']['name'];
         $this->ogdesc = $outputArray['achievement']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
-        $altLink = [
+        $this->altLinks = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/achievement/' . $id],
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievement/' . $id.'/lodestone/'],
         ];
         if (!empty($outputArray['achievement']['dbid'])) {
-            $this->altLinks = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['achievement']['dbid']];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['achievement']['dbid']];
+        }
+        if (!empty($outputArray['achievement']['rewards']['item']['id'])) {
+            $this->altLinks[] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/' .$outputArray['achievement']['rewards']['item']['id']];
         }
         return $outputArray;
     }

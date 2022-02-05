@@ -82,6 +82,7 @@ class Character extends Entity
             }
         }
         $data = $data['characters'][$this->id];
+        $data['id'] = $this->id;
         $data['404'] = false;
         return $data;
     }

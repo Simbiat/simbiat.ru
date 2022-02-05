@@ -32,13 +32,8 @@ class MainRouter extends Abstracts\Router
      */
     protected function pageGen(array $path): array
     {
-        #Check if API
-        if ($path[0] === 'api') {
-            (new Api)->uriParse(array_slice($path, 1));
-            #Ensure we exit
-            exit;
-        }
         return match($path[0]) {
+            'api' => array_merge(['template_override' => 'api.twig'], (new Api)->route(array_slice($path, 1))),
             #Forum/Articles
             'forum' => (new Show)->forum($path),
             'thread' => (new Show)->thread($path),

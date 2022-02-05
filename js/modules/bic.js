@@ -47,17 +47,17 @@ function bicCalc()
     //Get spinner
     let spinner = document.getElementById('bic_spinner');
     spinner.classList.remove('hidden');
-    ajax(location.protocol+'//'+location.host+'/api/bictracker/keying/'+bicKey.value+'/'+accKey.value+'/').then(data => {
+    ajax(location.protocol+'//'+location.host+'/api/bictracker/keying/', {bic:bicKey.value, account:accKey.value,}, 'json', 'POST', 60000, true).then(data => {
         result.classList.remove(...result.classList);
-        if (data === true) {
+        if (data.data === true) {
             result.classList.add('success');
             result.innerHTML = 'Правильное ключевание';
         } else {
             result.classList.add('failure');
-            if (data === false) {
+            if (data.data === false) {
                 result.innerHTML = 'Непредвиденная ошибка';
             } else {
-                result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data + ' (' + accKey.value.replace(/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u, '$1<span class="success">' + data + '</span>$3') + ')';
+                result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data.data + ' (' + accKey.value.replace(/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u, '$1<span class="success">' + data.data + '</span>$3') + ')';
             }
         }
         spinner.classList.add('hidden');
@@ -84,7 +84,7 @@ function bicRefresh(event)
         refresh.classList.add('spin');
         setTimeout(async function() {
             await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'GET', 300000).then(data => {
-                if (data === true) {
+                if (data.data === true) {
                     addSnackbar('Библиотека БИК обновлена', 'success');
                 } else {
                     addSnackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);

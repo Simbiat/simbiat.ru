@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+namespace Simbiat\fftracker\Api;
+
+class PvPTeam extends General
+{
+    #Entity class name
+    protected string $entityClass = '\Simbiat\fftracker\Entities\PvPTeam';
+    #Name to show in errors
+    protected string $nameForErrors = 'PvP Team';
+    #Name for links
+    protected string $nameForLinks = 'pvpteam';
+}

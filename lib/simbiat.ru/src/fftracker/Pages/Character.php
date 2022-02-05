@@ -24,7 +24,6 @@ class Character extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $headers = HomePage::$headers;
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details

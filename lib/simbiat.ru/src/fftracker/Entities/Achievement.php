@@ -72,8 +72,10 @@ class Achievement extends Entity
                 $data = $Lodestone->searchDatabase('achievement', 0, 0, $data['characters'][$char]['achievements'][$this->id]['name'])->getResult();
                 #Remove counts elements from achievement database
                 unset($data['database']['achievement']['pageCurrent'], $data['database']['achievement']['pageTotal'], $data['database']['achievement']['total']);
-                #Flip the array of achievements (if any) to ease searching for the right element
-                $data['database']['achievement'] = array_flip(array_combine(array_keys($data['database']['achievement']), array_column($data['database']['achievement'], 'name')));
+                if (!empty($data['database']['achievement'])) {
+                    #Flip the array of achievements (if any) to ease searching for the right element
+                    $data['database']['achievement'] = array_flip(array_combine(array_keys($data['database']['achievement']), array_column($data['database']['achievement'], 'name')));
+                }
                 #Set dbid
                 if (empty($data['database']['achievement'][$data['characters'][$char]['achievements'][$this->id]['name']])) {
                     $data['characters'][$char]['achievements'][$this->id]['dbid'] = NULL;
@@ -82,7 +84,9 @@ class Achievement extends Entity
                 }
                 #Remove time
                 unset($data['characters'][$char]['achievements'][$this->id]['time']);
-                return $data['characters'][$char]['achievements'][$this->id];
+                $data = $data['characters'][$char]['achievements'][$this->id];
+                $data['id'] = $this->id;
+                return $data;
             }
         }
         return [];

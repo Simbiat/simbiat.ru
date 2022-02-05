@@ -76,6 +76,7 @@ class FreeCompany extends Entity
             }
         }
         $data = $data['freecompanies'][$this->id];
+        $data['id'] = $this->id;
         $data['404'] = false;
         return $data;
     }

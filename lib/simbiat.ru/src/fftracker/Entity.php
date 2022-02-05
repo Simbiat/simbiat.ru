@@ -51,7 +51,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         #Check if it has not been updated recently (10 minutes, to protect potential abuse) or if it is marked as deleted
         if (isset($updated['deleted']) || (isset($updated['updated']) && (time() - strtotime($updated['updated'])) < 600)) {
             #Return entity type
-            return $this::entityType;
+            return true;
         }
         #Try to get data from Lodestone
         $this->lodestone = $this->getFromLodestone();
@@ -67,11 +67,11 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     }
 
     #Register the entity, if it has not been registered already
-    public function register(): bool|string
+    public function register(): bool|int
     {
         #Check if ID was set
         if ($this->id === null) {
-            return false;
+            return 400;
         }
         try {
             #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
@@ -79,19 +79,19 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             $check = $this->dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
-            return false;
+            return 503;
         }
         if ($check === true) {
             #Entity already registered
-            return true;
+            return 403;
         } else {
             #Try to get data from Lodestone
             $this->lodestone = $this->getFromLodestone();
             if (!is_array($this->lodestone)) {
-                return false;
+                return 503;
             }
             if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
-                return '404';
+                return 404;
             } else {
                 unset($this->lodestone['404']);
             }

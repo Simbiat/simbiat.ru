@@ -1,11 +1,21 @@
 /*globals addSnackbar, getMeta*/
 /*exported ajax*/
 
-async function ajax(url, request = null, type ='json', method = 'GET', timeout = 60000)
+async function ajax(url, request = null, type ='json', method = 'GET', timeout = 60000, skipError = false)
 {
     let result;
     let controller = new AbortController();
     setTimeout(() => controller.abort(), timeout);
+    //Generate POST data if request is present
+    let formData = new FormData();
+    if (request && method === 'POST') {
+        Object.entries(request).forEach(([key, value]) => {
+            console.log(key);
+            console.log(value);
+            formData.append(key, value);
+        });
+        console.log(formData);
+    }
     //Wrapping in try to allow timeout
     try {
         let response = await fetch(url, {
@@ -15,7 +25,6 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
-                'Content-Type': 'application/json',
                 'X-CSRFToken': getMeta('X-CSRFToken'),
             },
             //Do not follow redirects. If redirected - something is wrong on API level
@@ -25,9 +34,9 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             //integrity: '', useful if we know expected hash of the response
             keepalive: false,
             signal: controller.signal,
-            body: method === 'POST' ? JSON.stringify(request) : null,
+            body: method === 'POST' ? formData : null,
         });
-        if (!response.ok) {
+        if (!response.ok && !skipError) {
             addSnackbar('Request to "'+url+'" returned code '+response.status, 'failure', 10000);
             return false;
         } else {

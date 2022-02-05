@@ -149,8 +149,8 @@ class HomePage
         self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/iu','$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))));
         #Remove bad UTF
         self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
-        #Remove "friendly" portion of the links
-        self::$canonical = preg_replace('/(^.*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
+        #Remove "friendly" portion of the links, but exclude API
+        self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
         self::$canonical = preg_replace('/crossworldlinkshell/iu', 'crossworld_linkshell', self::$canonical);
         #Update REQUEST_URI to avoid potentially to ensure the data returned will be consistent
@@ -183,7 +183,7 @@ class HomePage
             #Send headers, that will identify this as actual file
             @header('Content-Type: text/plain; charset=utf-8');
             @header('Content-Disposition: inline; filename="security.txt"');
-            $this->twigProc(['expires' => date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight'))], template: 'about/security.txt.twig');
+            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight'))]);
             return 200;
         } else {
             #Return 0, since we did not hit anything
@@ -226,7 +226,7 @@ class HomePage
     }
 
     #Twig processing of the generated page
-    public final function twigProc(array $twigVars = [], bool $cache = false, string $template = 'index.twig'): bool
+    public final function twigProc(array $twigVars = [], bool $cache = false): bool
     {
         if ($cache) {
             if (empty($twigVars) || self::$method !== 'GET' || isset($_GET['cachereset']) || isset($_POST['cachereset'])) {
@@ -238,11 +238,11 @@ class HomePage
                     ignore_user_abort(true);
                     ob_start();
                     @header('Connection: close');
-                    $output = self::$twig->render($template, $twigVars);
+                    $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
                     #Output data
                     (new Common)->zEcho($output, exit: false);
-                    ob_end_flush();
-                    ob_flush();
+                    @ob_end_flush();
+                    @ob_flush();
                     flush();
                     if (!empty($twigVars['cache_expires_at']) && ($twigVars['cache_expires_at'] - time()) > 0) {
                         exit;
@@ -256,7 +256,7 @@ class HomePage
         } else {
             ob_start();
             try {
-                $output = self::$twig->render($template, $twigVars);
+                $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
             } catch (\Throwable) {
                 $output = 'Twig failure';
             }

@@ -13,7 +13,7 @@
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
-            {% if http_error != 400 and http_error != 403 and http_error != 404%}
+            {% if http_error != 400 and http_error != 403 and http_error != 404 and http_error != 405%}
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
         {% endif %}
@@ -36,7 +36,7 @@
                         {% else %}
                             {{ include('errors/construction.twig') }}
                         {% endif %}
-                        {% if not(error_page) and http_error != 400 and http_error != 403 and http_error != 404%}
+                        {% if not(error_page) and http_error != 400 and http_error != 403 and http_error != 404 and http_error != 405%}
                             <p>Page will refresh in <span id="refresh_timer">60</span> seconds.</p>
                         {% endif %}
                     </article>
@@ -56,7 +56,7 @@
             </main>
             <aside id="sidebar" aria-label="Sidebar">
                 <div id="hideSidebar"><input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" data-tooltip="Close sidebar" type="image" src="/img/close.svg"></div>
-                    {% if http_error != 'database' and maintenance == 0 %}
+                    {% if http_error != 'database' and http_error != 'maintenance' %}
                         <section id="loginForm">
                             {{ include('common/layout/noscript.twig') }}
                             {{ include('common/layout/signinup.twig') }}

@@ -42,13 +42,13 @@ function ffTrackAdd()
         //Get spinner
         let spinner = document.getElementById('ff_track_spinner');
         spinner.classList.remove('hidden');
-        ajax(location.protocol+'//'+location.host+'/api/fftracker/'+select.value+'/'+idInput.value+'/register/').then(data => {
-            if (data === true) {
+        ajax(location.protocol+'//'+location.host+'/api/fftracker/'+select.value+'/'+idInput.value+'/', null, 'json', 'POST', 60000, true).then(data => {
+            if (data.data === true) {
                 addSnackbar(select.options[select.selectedIndex].text + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
             } else if (data === '404') {
                 addSnackbar(select.options[select.selectedIndex].text + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
             } else {
-                addSnackbar(select.options[select.selectedIndex].text + ' with ID ' + idInput.value + ' failed to be registered. Please, try again later.', 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
             spinner.classList.add('hidden');
         });
