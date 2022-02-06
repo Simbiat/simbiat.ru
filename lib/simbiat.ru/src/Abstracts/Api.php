@@ -66,6 +66,10 @@ abstract class Api
                 }
             } else {
                 $result['json_ready']['data'] = $data['response'] ?? NULL;
+                #Filter out results if data is an array
+                if (is_array($result['json_ready']['data'])) {
+                    $this->fieldFilter($result['json_ready']['data']);
+                }
                 if (!empty($data['alt_links'])) {
                     $result['json_ready']['links'] = $data['alt_links'];
                 }
@@ -83,6 +87,19 @@ abstract class Api
             return $result;
         } else {
             return $data;
+        }
+    }
+
+    #Method to filter output fields
+    protected final function fieldFilter(array &$array): void
+    {
+        $filter = explode(',', $_GET['fields'] ?? $_POST['fields'] ?? '');
+        if (!empty($filter)) {
+            foreach ($array as $field => $value) {
+                if (!in_array($field, $filter)) {
+                    unset($array[$field]);
+                }
+            }
         }
     }
 
