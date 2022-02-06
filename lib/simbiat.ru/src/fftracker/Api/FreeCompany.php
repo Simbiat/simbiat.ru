@@ -10,4 +10,9 @@ class FreeCompany extends General
     protected string $nameForErrors = 'Free Company';
     #Name for links
     protected string $nameForLinks = 'freecompany';
+    #Description of the node
+    protected array $description = [
+        'description' => 'JSON representation of Final Fantasy XIV Free Company',
+        'ID_regexp' => '/^\d+$/mi',
+    ];
 }

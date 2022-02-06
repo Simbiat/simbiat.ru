@@ -10,4 +10,9 @@ class Character extends General
     protected string $nameForErrors = 'Character';
     #Name for links
     protected string $nameForLinks = 'character';
+    #Description of the node
+    protected array $description = [
+        'description' => 'JSON representation of Final Fantasy XIV character',
+        'ID_regexp' => '/^\d+$/mi',
+    ];
 }

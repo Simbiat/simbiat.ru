@@ -10,4 +10,9 @@ class PvPTeam extends General
     protected string $nameForErrors = 'PvP Team';
     #Name for links
     protected string $nameForLinks = 'pvpteam';
+    #Description of the node
+    protected array $description = [
+        'description' => 'JSON representation of Final Fantasy XIV PvP Team',
+        'ID_regexp' => '/^[a-z0-9]{40}$/m',
+    ];
 }

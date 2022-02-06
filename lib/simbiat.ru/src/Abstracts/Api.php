@@ -16,10 +16,14 @@ abstract class Api
     protected bool $finalNode = false;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => ''];
+    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    protected array $verbs = [];
     #Flag to indicate, that no database is required for this node
     protected bool $static = false;
     #Cache age, in case we prefer the generated page to be cached
     protected int $cacheAge = 0;
+    #Description of the node
+    protected array $description = [];
 
     #This is general routing check for supported node
     public final function route(array $path): array
@@ -57,9 +61,8 @@ abstract class Api
                 if (!empty($data['endpoints'])) {
                     $result['json_ready']['reason'] = 'Unsupported endpoint';
                     $result['json_ready']['endpoints'] = $data['endpoints'];
-                } elseif (!empty($data['allowed_methods'])) {
+                } elseif ($data['http_error'] === 405) {
                     $result['json_ready']['reason'] = 'Unsupported method used';
-                    $result['json_ready']['allowed_methods'] = $data['allowed_methods'];
                 }
             } else {
                 $result['json_ready']['data'] = $data['response'] ?? NULL;
@@ -72,9 +75,9 @@ abstract class Api
                 if (!empty($data['endpoints'])) {
                     $result['json_ready']['endpoints'] = $data['endpoints'];
                 }
-                if (!empty($data['allowed_methods'])) {
-                    $result['json_ready']['allowed_methods'] = $data['allowed_methods'];
-                }
+            }
+            if (!empty($data['about'])) {
+                $result['json_ready']['about'] = $data['about'];
             }
             $result['json_ready'] = json_encode($result['json_ready'], JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
             return $result;
@@ -105,21 +108,32 @@ abstract class Api
         if ($this->finalNode && !isset($path[0])) {
             $path[0] = '';
         }
+        $result = [];
         #If this is a final node, "convert" methods to GET "actions", if such mapping is set. Required for consistency
         if ($this->finalNode) {
+            #Add description
+            if (!empty($this->description)) {
+                $result['about'] = $this->description;
+                $result['about']['verbs'] = $this->verbs;
+                $result['about']['methods'] = $this->methods;
+            }
             if (!$this->methodCheck()) {
-                return ['http_error' => 405, 'allowed_methods' => array_keys($this->methods)];
+                return array_merge($result, ['http_error' => 405]);
             }
             if (!in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET']) && !empty($this->methods[HomePage::$method])) {
                 $path[1] = $this->methods[HomePage::$method];
             }
             if (!empty(HomePage::$http_error) && !$this->static) {
-                return HomePage::$http_error;
+                return array_merge($result, HomePage::$http_error);
             }
         }
-        $result = $this->genData($path);
-        if ($this->finalNode && empty($result['cacheAge'])) {
-            $result['cacheAge'] = $this->cacheAge;
+        $result = array_merge($result, $this->genData($path));
+        #Add extra data if final node
+        if ($this->finalNode) {
+            #Add cache age if set
+            if (empty($result['cacheAge'])) {
+                $result['cacheAge'] = $this->cacheAge;
+            }
         }
         return $result;
     }

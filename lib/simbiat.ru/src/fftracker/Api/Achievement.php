@@ -12,4 +12,11 @@ class Achievement extends General
     protected string $nameForErrors = 'Achievement';
     #Name for links
     protected string $nameForLinks = 'achievement';
+    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    protected array $verbs = ['update' => 'Attempt updating entity', 'lodestone' => 'Show data grabbed directly from Lodestone'];
+    #Description of the node
+    protected array $description = [
+        'description' => 'JSON representation of Final Fantasy XIV Achievement',
+        'ID_regexp' => '/^\d+$/mi',
+    ];
 }

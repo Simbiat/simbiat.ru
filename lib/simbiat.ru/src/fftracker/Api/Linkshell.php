@@ -10,4 +10,9 @@ class Linkshell extends General
     protected string $nameForErrors = 'Linkshell';
     #Name for links
     protected string $nameForLinks = 'linkshell';
+    #Description of the node
+    protected array $description = [
+        'description' => 'JSON representation of Final Fantasy XIV Linkshell',
+        'ID_regexp' => '/^\d+$/mi',
+    ];
 }

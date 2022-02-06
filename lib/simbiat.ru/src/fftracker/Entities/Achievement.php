@@ -13,7 +13,6 @@ class Achievement extends Entity
 
     #Custom properties
     protected const entityType = 'achievement';
-    protected const idFormat = '/^\d+$/mi';
     public int $updated;
     public ?string $category = null;
     public ?string $subcategory = null;

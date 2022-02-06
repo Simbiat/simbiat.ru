@@ -8,16 +8,26 @@ use Simbiat\AccountKeying;
 class Keying extends Api
 {
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-    protected array $methods = ['GET' => '', 'POST' => ''];
+    protected array $methods = ['POST' => ''];
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
     #Flag to indicate, that no database is required for this node
     protected bool $static = true;
+    #Description of the node
+    protected array $description = [
+        'description' => 'Node for checking Russian account keying against a Russian Bank Identification Code',
+        'POST' => [
+            'bic' => 'BIC_regexp',
+            'account' => 'ACC_regexp',
+        ],
+        'BIC_regexp' => '/^[0-9]{9}$/',
+        'ACC_regexp' => '/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{14}$/',
+    ];
 
     protected function genData(array $path): array
     {
-        $bic = $_POST['bic'] ?? $path[0] ?? null;
-        $acc = $_POST['account'] ?? $path[1] ?? null;
+        $bic = $_POST['bic'] ?? null;
+        $acc = $_POST['account'] ?? null;
         #Validate values
         if (empty($bic)) {
             return ['http_error' => 400, 'reason' => 'No BIC provided'];

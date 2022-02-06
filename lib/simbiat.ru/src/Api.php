@@ -21,7 +21,6 @@ class Api extends Abstracts\Api
         return match($path[0]) {
             'fftracker' => (new fftracker\Api)->route(array_slice($path, 1)),
             'bictracker' => (new bictracker\Api)->route(array_slice($path, 1)),
-            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)],
         };
     }
 }

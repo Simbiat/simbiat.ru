@@ -31,7 +31,6 @@ class Api extends \Simbiat\Abstracts\Api
             'crossworld_linkshell' => (new Api\CrossworldLinkshell)->getData(array_slice($path, 1)),
             'pvpteam' => (new Api\PvPTeam)->getData(array_slice($path, 1)),
             'achievement' => (new Api\Achievement)->getData(array_slice($path, 1)),
-            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)],
         };
     }
 }

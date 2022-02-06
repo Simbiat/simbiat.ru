@@ -83,7 +83,7 @@ function bicRefresh(event)
     } else {
         refresh.classList.add('spin');
         setTimeout(async function() {
-            await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'GET', 300000).then(data => {
+            await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
                 if (data.data === true) {
                     addSnackbar('Библиотека БИК обновлена', 'success');
                 } else {

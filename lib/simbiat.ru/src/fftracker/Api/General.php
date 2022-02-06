@@ -11,6 +11,8 @@ abstract class General extends Api
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => '', 'PUT' => 'update', 'POST' => 'register'];
+    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
+    protected array $verbs = ['update' => 'Attempt updating entity', 'register' => 'Attempt to register entity to tracker', 'lodestone' => 'Show data grabbed directly from Lodestone'];
     #Entity class name
     protected string $entityClass = '';
     #Name to show in errors
