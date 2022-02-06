@@ -76,6 +76,9 @@ abstract class Search
         $count = $this->countEntities($what);
         #Count pages
         $pages = intval(ceil($count/$this->listItems));
+        if ($pages < 1) {
+            return ['count' => $count, 'pages' => $pages, 'entities' => []];
+        }
         #Suggest redirect if page is larger than the number of pages
         if ($page > $pages) {
             return $pages;
