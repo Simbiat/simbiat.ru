@@ -91,7 +91,6 @@ class __TwigTemplate_68b7fc13d69ce1e0e81e8887ad27689a extends Template
     <ul>
         <li><a href=\"https://www.linkedin.com/in/simbiat19/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/linkedin.svg\" alt=\"LinkedIn\">LinkedIn</a></li>
         <li><a href=\"https://career.habr.com/simbiat/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/habr.svg\" alt=\"Habr\">Habr</a></li>
-        <li><a href=\"https://stackoverflow.com/users/story/2992851/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/stackoverflow.svg\" alt=\"Stack Overflow\">Stack Overflow</a></li>
         <li>
             <p><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/icons/hh.ru.svg\" alt=\"HeadHunter\">hh.ru:</p>
             <ul>

@@ -137,7 +137,7 @@ class Maintenance
     }
 
     #Function to send alert database going down
-    public function dbDown(?string $message = null): void
+    public function dbDown(): void
     {
         #Get directory
         $dir = sys_get_temp_dir();
@@ -147,7 +147,7 @@ class Maintenance
                 #Send mail
                 HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Database is down', 'Database appears to be down! Check ASAP!');
                 #Generate flag
-                file_put_contents($dir . '/noDB.flag', 'Database is down: '.($message ?? ''));
+                file_put_contents($dir . '/noDB.flag', 'Database is down');
             }
         } else {
             if (is_file($dir.'/noDB.flag')) {
@@ -161,6 +161,12 @@ class Maintenance
     #Clean temp folder
     private function recursiveClean(string $path, int $maxAge = 60, int $maxSize = 1024): void
     {
+        #Get current maximum execution time
+        $curMaxTime = intval(ini_get('max_execution_time'));
+        #Iterration can take a long time, so let it run its course
+        set_time_limit(0);
+        #Restore execution time
+        set_time_limit($curMaxTime);
         #Sanitize values
         if ($maxAge < 0) {
             #Reset to default 1 hour cache
@@ -280,5 +286,7 @@ class Maintenance
                 #Do nothing
             }
         }
+        #Restore execution time
+        set_time_limit($curMaxTime);
     }
 }

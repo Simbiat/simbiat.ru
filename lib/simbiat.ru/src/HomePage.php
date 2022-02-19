@@ -80,6 +80,12 @@ class HomePage
             if (self::$CLI) {
                 #Process Cron
                 $this->dbConnect();
+                $healthCheck = (new Maintenance);
+                #Check if DB is down
+                $healthCheck->dbDown();
+                #Check space availability
+                $healthCheck->noSpace();
+                #Do some maintenance stuff
                 (new Cron)->process(50);
                 #Ensure we exit no matter what happens with CRON
                 exit;
@@ -194,15 +200,11 @@ class HomePage
     #Database connection
     public function dbConnect(): bool
     {
-        $healthCheck = (new Maintenance);
-        #Check space availability
-        $healthCheck->noSpace();
         #Check in case we accidentally call this for 2nd time
         if (self::$dbup === false) {
             try {
                 (new Pool)->openConnection((new Config)->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings'])->setOption(\PDO::ATTR_TIMEOUT, 1));
                 self::$dbup = true;
-                $healthCheck->dbDown();
                 #Cache controller
                 self::$dbController = (new Controller);
                 #Check for maintenance
@@ -215,10 +217,6 @@ class HomePage
                 }
             } catch (\Throwable $error) {
                 self::$dbup = false;
-                #Trigger mail alert if PROD
-                if (self::$PROD) {
-                    $healthCheck->dbDown($error->getMessage()."\r\n".$error->getTraceAsString());
-                }
                 return false;
             }
         }
