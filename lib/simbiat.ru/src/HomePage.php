@@ -215,7 +215,7 @@ class HomePage
                     session_set_save_handler(new Session, true);
                     session_start();
                 }
-            } catch (\Throwable $error) {
+            } catch (\Throwable) {
                 self::$dbup = false;
                 return false;
             }
