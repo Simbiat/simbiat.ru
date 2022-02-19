@@ -19,7 +19,7 @@ trait Traits
         foreach ($members as $member=>$details) {
             if (!$details['registered']) {
                 #Priority is higher, since they are missing a lot of data.
-                $cron->add('ffUpdateEntity', [$member, 'character'], priority: 2, message: 'Updating character with ID ' . $member);
+                $cron->add('ffUpdateEntity', [strval($member), 'character'], priority: 2, message: 'Updating character with ID ' . $member);
             }
         }
     }
