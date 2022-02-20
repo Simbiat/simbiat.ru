@@ -90,7 +90,7 @@ class Cron
             #Get the freshest character ID
             $characterId = $dbController->selectValue('SELECT `characterid` FROM `' . self::dbPrefix . 'character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
             #Grab its data from Lodestone
-            $character = (new Character)->setId($characterId)->getFromLodestone();
+            $character = (new Character)->setId(strval($characterId))->getFromLodestone();
             if (empty($character['jobs'])) {
                 return 'No jobs retrieved for character '.$characterId;
             }
