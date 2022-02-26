@@ -174,59 +174,69 @@ class __TwigTemplate_a9309cadf4274b8ee6e1d31a35972c7c extends Template
                     echo twig_include($this->env, $context, "landing.twig");
                     echo "
                     ";
-                } else {
+                } elseif ((                // line 52
+($context["serviceName"] ?? null) == "sitemap")) {
                     // line 53
                     echo "                        ";
-                    echo twig_include($this->env, $context, "stylingTest.twig");
+                    echo twig_include($this->env, $context, "sitemap.twig");
                     echo "
                     ";
+                } else {
+                    // line 55
+                    echo "                        <article id=\"http_error\">
+                            ";
+                    // line 56
+                    echo twig_include($this->env, $context, "errors/404.twig");
+                    echo "
+                        </article>
+                    ";
                 }
-                // line 55
+                // line 59
                 echo "                ";
             }
-            // line 56
+            // line 60
             echo "            </main>
             <aside id=\"sidebar\" aria-label=\"Sidebar\">
                 <div id=\"hideSidebar\"><input id=\"hideSidebarIcon\" class=\"navIcon\" alt=\"Close sidebar\" data-tooltip=\"Close sidebar\" type=\"image\" src=\"/img/close.svg\"></div>
                     ";
-            // line 59
+            // line 63
             if (((($context["http_error"] ?? null) != "database") && (($context["http_error"] ?? null) != "maintenance"))) {
-                // line 60
+                // line 64
                 echo "                        <section id=\"loginForm\">
                             ";
-                // line 61
+                // line 65
                 echo twig_include($this->env, $context, "common/layout/noscript.twig");
                 echo "
                             ";
-                // line 62
+                // line 66
                 echo twig_include($this->env, $context, "common/layout/signinup.twig");
                 echo "
                         </section>
                     ";
             } else {
-                // line 65
+                // line 69
                 echo "                        <section id=\"sidebar_for_static\">
                             <div class=\"warning\">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</div>
                         </section>
                     ";
             }
-            // line 69
+            // line 73
             echo "            </aside>
             <footer>
                 ";
-            // line 71
+            // line 75
             echo twig_include($this->env, $context, "common/layout/footer.twig");
             echo "
             </footer>
             <div id=\"tooltip\" role=\"tooltip\" aria-label=\"Tooltip\"></div>
             ";
-            // line 74
+            // line 78
             echo twig_include($this->env, $context, "common/layout/gallery.twig");
             echo "
         </body>
     ";
         }
-        // line 77
+        // line 81
         echo "</html>
 ";
     }
@@ -243,7 +253,7 @@ class __TwigTemplate_a9309cadf4274b8ee6e1d31a35972c7c extends Template
 
     public function getDebugInfo()
     {
-        return array (  230 => 77,  224 => 74,  218 => 71,  214 => 69,  208 => 65,  202 => 62,  198 => 61,  195 => 60,  193 => 59,  188 => 56,  185 => 55,  179 => 53,  173 => 51,  171 => 50,  166 => 49,  164 => 48,  159 => 47,  157 => 46,  152 => 45,  149 => 44,  145 => 42,  141 => 40,  138 => 39,  132 => 37,  126 => 35,  124 => 34,  121 => 33,  119 => 32,  113 => 29,  107 => 26,  103 => 24,  97 => 22,  95 => 21,  92 => 20,  89 => 19,  85 => 17,  82 => 16,  80 => 15,  76 => 14,  63 => 12,  60 => 11,  54 => 9,  52 => 8,  48 => 7,  42 => 4,  37 => 1,);
+        return array (  240 => 81,  234 => 78,  228 => 75,  224 => 73,  218 => 69,  212 => 66,  208 => 65,  205 => 64,  203 => 63,  198 => 60,  195 => 59,  189 => 56,  186 => 55,  180 => 53,  178 => 52,  173 => 51,  171 => 50,  166 => 49,  164 => 48,  159 => 47,  157 => 46,  152 => 45,  149 => 44,  145 => 42,  141 => 40,  138 => 39,  132 => 37,  126 => 35,  124 => 34,  121 => 33,  119 => 32,  113 => 29,  107 => 26,  103 => 24,  97 => 22,  95 => 21,  92 => 20,  89 => 19,  85 => 17,  82 => 16,  80 => 15,  76 => 14,  63 => 12,  60 => 11,  54 => 9,  52 => 8,  48 => 7,  42 => 4,  37 => 1,);
     }
 
     public function getSourceContext()

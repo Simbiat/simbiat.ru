@@ -44,7 +44,8 @@ class MainRouter extends Abstracts\Router
             #'uc',
             'tests' => $this->tests(array_slice($path, 1)),
             #Feeds
-            'sitemap', 'rss', 'atom' => (new Feeds)->uriParse($path),
+            'sitemap' => (new Sitemap\Router)->route(array_slice($path, 1)),
+            'rss', 'atom' => (new Feeds)->uriParse($path),
             #Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
             '' => ['h1' => 'Home', 'serviceName' => 'landing',],

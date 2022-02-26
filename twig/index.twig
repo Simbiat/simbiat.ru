@@ -49,8 +49,12 @@
                         {{ include('bictracker/bictracker.twig')}}
                     {% elseif serviceName == 'landing'%}
                         {{ include('landing.twig') }}
+                    {% elseif serviceName == 'sitemap'%}
+                        {{ include('sitemap.twig') }}
                     {% else %}
-                        {{ include('stylingTest.twig') }}
+                        <article id="http_error">
+                            {{ include('errors/404.twig') }}
+                        </article>
                     {% endif %}
                 {% endif %}
             </main>
