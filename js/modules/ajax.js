@@ -4,14 +4,12 @@
 async function ajax(url, request = null, type ='json', method = 'GET', timeout = 60000, skipError = false)
 {
     let result;
-    let controller = new AbortController();
+    let controller = new AbortController();// jshint ignore:line
     setTimeout(() => controller.abort(), timeout);
     //Generate POST data if request is present
     let formData = new FormData();
     if (request && method === 'POST') {
         Object.entries(request).forEach(([key, value]) => {
-            console.log(key);
-            console.log(value);
             formData.append(key, value);
         });
         console.log(formData);

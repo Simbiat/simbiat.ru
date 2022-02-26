@@ -8,7 +8,7 @@ function ariaInit(item)
     item.addEventListener('focus', ariaNationOnEvent);
     item.addEventListener('change', ariaNationOnEvent);
     item.addEventListener('input', ariaNationOnEvent);
-    //Force update the values right now
+    //Force the update of the values right now
     ariaNation(item);
 }
 

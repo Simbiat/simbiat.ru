@@ -33,6 +33,7 @@ const pageTitle = ' on Simbiat Software';
 }());
 
 document.addEventListener('DOMContentLoaded', attachListeners);
+cleanGET();
 
 //Attaches event listeners
 function attachListeners()
@@ -84,3 +85,15 @@ function attachListeners()
     tooltipInit();
 }
 
+//Remove cacheReset flag
+function cleanGET()
+{
+    let url = new URL(document.location.href);
+    let params = new URLSearchParams(url.search);// jshint ignore:line
+    params.delete('cacheReset');
+    if (params.toString() === '') {
+        window.history.replaceState(null, document.title, location.pathname + location.hash);
+    } else {
+        window.history.replaceState(null, document.title, '?' + params + location.hash);
+    }
+}
