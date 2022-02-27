@@ -41,6 +41,10 @@ class Router extends \Simbiat\Abstracts\Router
         } elseif ($format === 'xml') {
             @header('Content-Type: application/xml; charset=utf-8');
         }
+        #Ensure path is set, even though it's empty
+        if (empty($path[0])) {
+            $path[0] = '';
+        }
         $result = match($path[0]) {
             'general' => (new Pages\General)->get($path),
             'bics', 'characters', 'freecompanies', 'linkshells', 'pvpteams', 'achievements' => (new Pages\Countables)->get($path),
