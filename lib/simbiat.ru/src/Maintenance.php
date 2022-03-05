@@ -275,15 +275,17 @@ class Maintenance
         }
         #Garbage collector for empty directories
         foreach ($emptyDirs as $dir) {
-            #Using catch to handle potential race condition, when directory gets removed by a different process before the check gets called
-            try {
-                @rmdir($dir);
-                #Remove parent directory if empty
-                if (!(new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS))->valid()) {
-                    @rmdir(dirname($dir));
+            if ($dir !== $path) {
+                #Using catch to handle potential race condition, when directory gets removed by a different process before the check gets called
+                try {
+                    @rmdir($dir);
+                    #Remove parent directory if empty
+                    if (!(new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS))->valid()) {
+                        @rmdir(dirname($dir));
+                    }
+                } catch (\Throwable) {
+                    #Do nothing
                 }
-            } catch (\Throwable) {
-                #Do nothing
             }
         }
         #Restore execution time
