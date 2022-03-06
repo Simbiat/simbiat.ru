@@ -96,3 +96,5 @@ fabric.properties
 /!spares/
 /img/fftracker/avatars/
 /data/cache/twig/
+/uat.flag
+/DDL/pma__*.sql
