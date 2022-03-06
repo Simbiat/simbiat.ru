@@ -45,9 +45,7 @@ class HomePage
     public function __construct()
     {
         #Determine if test server. Currently, effects only HTML caching.
-        if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'local.simbiat.ru' && $_SERVER['SERVER_ADDR'] === $_SERVER['REMOTE_ADDR']) {
-            self::$PROD = false;
-        } else {
+        if (!is_file($GLOBALS['siteconfig']['maindir'].'uat.flag')) {
             self::$PROD = true;
         }
         #Cache headers object
