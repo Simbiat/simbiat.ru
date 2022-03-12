@@ -48,7 +48,7 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
         } catch (\Throwable) {
             $XCSRFToken = '';
         }
-        return [
+        return array_merge($defaults, [
             #List of LINK tags
             'link_tags' => $GLOBALS['siteconfig']['links'],
             #Time used as version of the JS file for cache busting
@@ -57,10 +57,6 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             'save_data' => $save_data,
             #CSRF token
             'XCSRFToken' => $XCSRFToken,
-            #Some defaults
-            'site_name' => $defaults['site_name'],
-            'domain' => $defaults['domain'],
-            'url' => $defaults['url'],
             'unsupported' => false,
             'ogdesc' => $GLOBALS['siteconfig']['ogdesc'],
             'ogextra' => $GLOBALS['siteconfig']['ogextra'],
@@ -69,6 +65,6 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             'twitter_card' => $GLOBALS['siteconfig']['twitter_card'],
             #Facebook
             'facebook' => $GLOBALS['siteconfig']['facebook'],
-        ];
+        ]);
     }
 }
