@@ -178,7 +178,7 @@ class __TwigTemplate_a9309cadf4274b8ee6e1d31a35972c7c extends Template
 ($context["serviceName"] ?? null) == "sitemap")) {
                     // line 53
                     echo "                        ";
-                    echo twig_include($this->env, $context, "sitemap.twig");
+                    echo twig_include($this->env, $context, "common/pages/sitemap.twig");
                     echo "
                     ";
                 } else {

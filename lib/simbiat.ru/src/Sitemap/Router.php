@@ -52,7 +52,7 @@ class Router extends \Simbiat\Abstracts\Router
         };
         $result['format'] = $format;
         if ($format === 'txt' || $format === 'xml') {
-            $result['template_override'] = 'sitemap.twig';
+            $result['template_override'] = 'common/pages/sitemap.twig';
         }
         return $result;
     }

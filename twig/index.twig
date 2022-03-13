@@ -50,7 +50,7 @@
                     {% elseif serviceName == 'landing'%}
                         {{ include('landing.twig') }}
                     {% elseif serviceName == 'sitemap'%}
-                        {{ include('sitemap.twig') }}
+                        {{ include('common/pages/sitemap.twig') }}
                     {% else %}
                         <article id="http_error">
                             {{ include('errors/404.twig') }}
