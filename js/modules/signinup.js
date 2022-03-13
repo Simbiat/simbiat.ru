@@ -1,5 +1,5 @@
-/*globals ariaNation*/
-/*exported signInUpInit*/
+/*globals ariaNation, submitIntercept, ajax, addSnackbar*/
+/*exported signInUpInit, singInUpSubmit*/
 
 function signInUpInit()
 {
@@ -13,6 +13,24 @@ function signInUpInit()
     });
     //Force loginRadioCheck for consistency
     loginRadioCheck();
+    //Intercept form submit
+    submitIntercept('signinup');
+}
+
+function singInUpSubmit()
+{
+    //Get form data
+    let formData = new FormData(document.getElementById('signinup'));
+    let spinner = document.getElementById('singinup_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol+'//'+location.host+'/api/uc/'+formData.get('signinup[type]')+'/', formData, 'json', 'POST', 60000, true).then(data => {
+        if (data.data === true) {
+            console.log('registered');
+        } else {
+            addSnackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
 }
 
 //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
@@ -79,23 +97,23 @@ function passwordStrength(password, extras = [])
         points++;
     }
     //Check for lower case letters
-    if (/\p{Ll}/u.test(password) === true) {
+    if (/\p{Ll}/u.test(password) === true) {// jshint ignore:line
         points++;
     }
     //Check for upper case letters
-    if (/\p{Lu}/u.test(password) === true) {
+    if (/\p{Lu}/u.test(password) === true) {// jshint ignore:line
         points++;
     }
     //Check for letters without case (glyphs)
-    if (/\p{Lo}/u.test(password) === true) {
+    if (/\p{Lo}/u.test(password) === true) {// jshint ignore:line
         points++;
     }
     //Check for numbers
-    if (/\p{N}/u.test(password) === true) {
+    if (/\p{N}/u.test(password) === true) {// jshint ignore:line
         points++;
     }
     //Check for punctuation
-    if (/[\p{P}\p{S}]/u.test(password) === true) {
+    if (/[\p{P}\p{S}]/u.test(password) === true) {// jshint ignore:line
         points++;
     }
     //Reduce point for repeating characters
@@ -126,9 +144,11 @@ function loginRadioCheck()
     let newUser = document.getElementById('radio_newuser');
     let forget = document.getElementById('radio_forget');
     let login = document.getElementById('signinup_email');
+    let loginLabel = login.labels[0];
     let password = document.getElementById('signinup_password');
     let button = document.getElementById('signinup_submit');
     let rememberme = document.getElementById('rememberme');
+    let username = document.getElementById('signinup_username');
     //Adjust elements based on the toggle
     if (existUser && existUser.checked === true) {
         //Whether password field is required
@@ -155,6 +175,9 @@ function loginRadioCheck()
         //Show or hide password requirements
         document.getElementById('password_req').classList.add('hidden');
         document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
+        //Hide username field
+        username.parentElement.classList.add('hidden');
+        username.required = false;
     }
     if (newUser && newUser.checked === true) {
         password.required = true;
@@ -170,6 +193,11 @@ function loginRadioCheck()
         rememberme.parentElement.classList.remove('hidden');
         document.getElementById('password_req').classList.remove('hidden');
         document.querySelectorAll('.pass_str_div').item(0).classList.remove('hidden');
+        login.placeholder = 'Email';
+        loginLabel.innerHTML = 'Email';
+        //Show username field
+        username.parentElement.classList.remove('hidden');
+        username.required = true;
     }
     if (forget && forget.checked === true) {
         password.required = false;
@@ -188,6 +216,11 @@ function loginRadioCheck()
         document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
         //Additionally uncheck rememberme as precaution
         rememberme.checked = false;
+        login.placeholder = 'Email or name';
+        loginLabel.innerHTML = 'Email or name';
+        //Hide username field
+        username.parentElement.classList.add('hidden');
+        username.required = false;
     }
     //Adjust Aria values
     if (password) {

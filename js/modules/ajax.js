@@ -1,5 +1,5 @@
 /*globals addSnackbar, getMeta*/
-/*exported ajax*/
+/*exported ajax, submitIntercept*/
 
 async function ajax(url, request = null, type ='json', method = 'GET', timeout = 60000, skipError = false)
 {
@@ -9,10 +9,13 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
     //Generate POST data if request is present
     let formData = new FormData();
     if (request && method === 'POST') {
-        Object.entries(request).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
-        console.log(formData);
+        if (request instanceof FormData) {
+            formData = request;
+        } else {
+            Object.entries(request).forEach(([key, value]) => {
+                formData.append(key, value);
+            });
+        }
     }
     //Wrapping in try to allow timeout
     try {
@@ -23,7 +26,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
-                'X-CSRFToken': getMeta('X-CSRFToken'),
+                'X-CSRF-Token': getMeta('X-CSRF-Token'),
             },
             //Do not follow redirects. If redirected - something is wrong on API level
             redirect: 'error',
@@ -59,5 +62,33 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             addSnackbar('Request to "'+url+'" failed on fetch operation', 'failure', 10000);
             return false;
         }
+    }
+}
+
+//Switch to determine which function to call on submit
+const submitFunctions = {
+    'signinup': 'singInUpSubmit',
+    'ff_track_register': 'ffTrackAdd',
+};
+
+//Function to intercept form submission
+function submitIntercept(formId)
+{
+    let form = document.getElementById(formId);
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window[submitFunctions[formId]]();
+            return false;
+        });
+        form.onkeydown = function(event){
+            if(event.code === 'Enter'){
+                event.preventDefault();
+                event.stopPropagation();
+                window[submitFunctions[formId]]();
+                return false;
+            }
+        };
     }
 }

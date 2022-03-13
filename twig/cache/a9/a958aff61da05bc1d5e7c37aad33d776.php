@@ -46,7 +46,7 @@ class __TwigTemplate_185a2873e97b3245b451be3b548d5992 extends Template
         echo "    <div id=\"radio_signinup\" role=\"radiogroup\">
         <span>I am</span><br>
         <span class=\"radio_and_label\">
-            <input type=\"radio\" id=\"radio_existuser\" name=\"signinup[type]\" value=\"member\" checked>
+            <input type=\"radio\" id=\"radio_existuser\" name=\"signinup[type]\" value=\"login\" checked>
             <label for=\"radio_existuser\">member</label>
         </span>
         ";
@@ -54,16 +54,20 @@ class __TwigTemplate_185a2873e97b3245b451be3b548d5992 extends Template
         if ((($context["registration"] ?? null) == 1)) {
             // line 12
             echo "            <span class=\"radio_and_label\">
-                <input type=\"radio\" id=\"radio_newuser\" name=\"signinup[type]\" value=\"newuser\">
+                <input type=\"radio\" id=\"radio_newuser\" name=\"signinup[type]\" value=\"register\">
                 <label for=\"radio_newuser\">new</label>
             </span>
         ";
         }
         // line 17
         echo "        <span class=\"radio_and_label\">
-            <input type=\"radio\" id=\"radio_forget\" name=\"signinup[type]\" value=\"forget\">
+            <input type=\"radio\" id=\"radio_forget\" name=\"signinup[type]\" value=\"remind\">
             <label for=\"radio_forget\">forgetful</label>
         </span>
+    </div>
+    <div class=\"float_label_div\">
+        <input form=\"signinup\" type=\"text\" aria-required=\"false\" name=\"signinup[username]\" id=\"signinup_username\" placeholder=\"Username\" autocomplete=\"username\" inputmode=\"text\" minlength=\"1\" maxlength=\"64\" pattern=\"^[a-zA-Z0-9.!#\$%&\\'*+\\/=?^_`{|}~-]+\$\">
+        <label for=\"signinup_username\">Username</label>
     </div>
     <div class=\"float_label_div\">
         <input form=\"signinup\" type=\"email\" required aria-required=\"true\" name=\"signinup[email]\" id=\"signinup_email\" placeholder=\"Email or name\" autocomplete=\"username\" inputmode=\"email\" minlength=\"1\" maxlength=\"320\" pattern=\"^[a-zA-Z0-9.!#\$%&\\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$\">
@@ -83,9 +87,10 @@ class __TwigTemplate_185a2873e97b3245b451be3b548d5992 extends Template
         <label for=\"rememberme\">Remember me</label>
     </div>
     <input role=\"button\" form=\"signinup\" type=\"submit\" name=\"signinup[submit]\" id=\"signinup_submit\" formaction=\"";
-        // line 39
+        // line 43
         echo twig_escape_filter($this->env, ($context["url"] ?? null), "html", null, true);
         echo "\" formmethod=\"post\" formtarget=\"_self\" value=\"Sign in/Join\">
+    <img id=\"singinup_spinner\" class=\"hidden spinner\" src=\"/img/spinner.svg\" alt=\"Submitting form...\">
 </form>
 ";
     }
@@ -102,7 +107,7 @@ class __TwigTemplate_185a2873e97b3245b451be3b548d5992 extends Template
 
     public function getDebugInfo()
     {
-        return array (  87 => 39,  63 => 17,  56 => 12,  54 => 11,  46 => 5,  42 => 3,  40 => 2,  37 => 1,);
+        return array (  91 => 43,  63 => 17,  56 => 12,  54 => 11,  46 => 5,  42 => 3,  40 => 2,  37 => 1,);
     }
 
     public function getSourceContext()

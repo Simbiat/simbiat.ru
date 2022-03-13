@@ -13,6 +13,7 @@
 /*Limit width*/
 #signinup .float_label_div,
 #signinup_email,
+#signinup_username,
 #signinup_password {
     /*Width corresponds to characters.
     10 looks the lowest number that makes placeholders more or less readable.

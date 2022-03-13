@@ -138,11 +138,11 @@ class Security
         return openssl_decrypt($data, 'AES-256-GCM', hex2bin($this->aesSettings['passphrase']), OPENSSL_RAW_DATA, $iv, $tag);
     }
 
-    #Function to help protect against CSRF. Suggested to use for forms or APIs. Needs to be used before any writes to $_SESSION
+    #Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to $_SESSION
     public function antiCSRF(array $allowOrigins = [], bool $originRequired = false, bool $exit = true): bool
     {
         #Get CSRF token
-        $token = $_POST['X-CSRFToken'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'];
+        $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
         #Get origin
         #In some cases Origin can be empty. In case of forms we can try checking Referer instead.
         #In case of proxy is being used we should try taking the data from X-Forwarded-Host.
@@ -153,7 +153,7 @@ class Security
             if (!empty($_SESSION['CSRF'])) {
                 #Check if they match. hash_equals helps mitigate timing attacks
                 if (hash_equals($_SESSION['CSRF'], $token) === true) {
-                    #Check if HTTP Origin is among allowed ones, if we want restrict them.
+                    #Check if HTTP Origin is among allowed ones, if we want to restrict them.
                     #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\HTTP20\headers->security()
                     if (empty($allowOrigins) ||
                         #If origins are limited
@@ -197,13 +197,13 @@ class Security
     }
 
     #Function to generate CSRF token
-
-    /**
-     * @throws \Exception
-     */
     public function genCSRF(): string
     {
-        $token = bin2hex(random_bytes(32));
+        try {
+            $token = bin2hex(random_bytes(32));
+        } catch (\Throwable) {
+            $token = '';
+        }
         @header('X-CSRF-Token: '.$token, true);
         return $token;
     }

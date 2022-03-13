@@ -1,5 +1,5 @@
-/*exported fftrackerInit*/
-/*globals ajax, addSnackbar*/
+/*exported fftrackerInit, ffTrackAdd*/
+/*globals ajax, addSnackbar, submitIntercept*/
 
 function fftrackerInit()
 {
@@ -12,23 +12,7 @@ function fftrackerInit()
 
     }
     //Intercept form submit
-    let form = document.getElementById('ff_track_register');
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            ffTrackAdd();
-            return false;
-        });
-        form.onkeydown = function(event){
-            if(event.code === 'Enter'){
-                event.preventDefault();
-                event.stopPropagation();
-                ffTrackAdd();
-                return false;
-            }
-        };
-    }
+    submitIntercept('ff_track_register');
 }
 
 //Track the entity

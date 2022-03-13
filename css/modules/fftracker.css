@@ -46,12 +46,6 @@
     display: block;
     margin: auto;
 }
-#ff_track_spinner {
-    width: 3rem;
-    height: 3rem;
-    display: block;
-    margin: auto;
-}
 @media (max-width: 55.599999em) {
     .ff_char_page {
         flex-direction: column;

@@ -74,7 +74,7 @@ class __TwigTemplate_9bbbb66641f28a1a895f3d2af3800a98 extends Template
             echo "\"";
         }
         echo "><label for=\"account_key\">Номер счёта</label></span>
-        <img id=\"bic_spinner\" class=\"hidden\" src=\"/img/spinner.svg\" alt=\"Проверяем ключевание...\">
+        <img id=\"bic_spinner\" class=\"hidden spinner\" src=\"/img/spinner.svg\" alt=\"Проверяем ключевание...\">
     </form>
     <p class=\"noLetter\">
         ";

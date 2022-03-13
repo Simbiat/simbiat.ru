@@ -13,8 +13,5 @@
     position: absolute;
 }
 #bic_spinner {
-    width: 3rem;
-    height: 3rem;
     display: inline;
-    margin: auto;
 }

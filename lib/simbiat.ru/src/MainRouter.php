@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\Talks\Show;
-use Simbiat\usercontrol\Signinup;
 
 class MainRouter extends Abstracts\Router
 {
@@ -51,16 +50,6 @@ class MainRouter extends Abstracts\Router
             '' => ['h1' => 'Home', 'serviceName' => 'landing',],
             default => $this->error(['404']),
         };
-    }
-
-    #Function to process (or rather relay) $_POST data
-    public function postProcess(): void
-    {
-        if (!empty($_POST)) {
-            if (!empty($_POST['signinup'])) {
-                (new Signinup)->signinup();
-            }
-        }
     }
 
     #Function to route help route error pages on frontend

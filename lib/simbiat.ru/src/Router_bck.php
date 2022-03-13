@@ -7,52 +7,6 @@ use Simbiat\HTTP20\HTML;
 
 class Router_bck
 {
-    #Function to prepare data for user control pages
-    public function usercontrol(array $uri): array
-    {
-        $headers = (new Headers);
-        $html = (new HTML);
-        #Check if URI is empty
-        if (empty($uri)) {
-            $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/registration', true, true, false);
-        }
-        #Prepare array
-        $outputArray = [
-            'serviceName' => 'usercontrol',
-            'h1' => 'User Control',
-            'title' => 'User Control',
-            'ogdesc' => 'User\'s Control Panel',
-        ];
-        #Start breadcrumbs
-        $breadArray = [
-            ['href'=>'/', 'name'=>'Home page'],
-        ];
-        $uri[0] = strtolower($uri[0]);
-        switch ($uri[0]) {
-            #Process search page
-            case 'registration':
-            case 'register':
-            case 'login':
-            case 'signin':
-            case 'signup':
-            case 'join':
-                if (empty($_SESSION['username'])) {
-                    $outputArray['subServiceName'] = 'registration';
-                    $outputArray['h1'] = $outputArray['title'] = 'User sign in/join';
-                } else {
-                    #Redirect to main page if user is already authenticated
-                    $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : ''), false, true, false);
-                }
-                break;
-            default:
-                $outputArray['http_error'] = 404;
-                break;
-        }
-        #Add breadcrumbs
-        $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
-        return $outputArray;
-    }
-
     #Function to prepare data for FFTracker depending on the URI
     /**
      * @throws \JsonException

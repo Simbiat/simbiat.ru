@@ -71,7 +71,7 @@ class __TwigTemplate_72b0574a835ea82a8d4f548ee07bf43e extends Template
         echo twig_escape_filter($this->env, ($context["ogimage"] ?? null), "html", null, true);
         echo "\">
 
-<meta name=\"X-CSRFToken\" content=\"";
+<meta name=\"X-CSRF-Token\" content=\"";
         // line 18
         echo twig_escape_filter($this->env, ($context["XCSRFToken"] ?? null), "html", null, true);
         echo "\" />

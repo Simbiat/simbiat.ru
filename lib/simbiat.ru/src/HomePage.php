@@ -10,7 +10,8 @@ use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
-use Simbiat\usercontrol\Bans;
+use Simbiat\usercontrol\Checkers;
+use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -113,7 +114,7 @@ class HomePage
                         } elseif (self::$dbUpdate) {
                             self::$http_error = ['http_error' => 'maintenance'];
                         #Check if banned by IP
-                        } elseif ((new Bans)->bannedIP() === true) {
+                        } elseif ((new Checkers)->bannedIP() === true) {
                             self::$http_error = ['http_error' => 403];
                         }
                         self::$headers->links($GLOBALS['siteconfig']['links']);
@@ -123,10 +124,6 @@ class HomePage
                         }
                         #Check if we have cached the results already
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
-                        if (self::$method === 'POST') {
-                            #Process POST data if any
-                            (new MainRouter)->postProcess();
-                        }
                         $vars = (new MainRouter)->route($uri);
                     } catch (\Throwable $e) {
                         Errors::error_log($e);
@@ -229,7 +226,7 @@ class HomePage
                 return false;
             } else {
                 try {
-                    $twigVars = array_merge($twigVars, self::$http_error);
+                    $twigVars = array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')]);
                     ob_end_clean();
                     ignore_user_abort(true);
                     ob_start();
@@ -252,7 +249,7 @@ class HomePage
         } else {
             ob_start();
             try {
-                $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
+                $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')]));
             } catch (\Throwable) {
                 $output = 'Twig failure';
             }
@@ -272,6 +269,19 @@ class HomePage
             }
             exit;
         }
+    }
+
+    #Helper function to update CSRF token for HTML pages only (so that POST API calls from pages will still succeed)
+    private function csrfUpdate(string $template): string
+    {
+        if ($template === 'index.twig') {
+            #Update CSRF only if HTML pages are used
+            $XCSRFToken = (new Security)->genCSRF();
+            $_SESSION['CSRF'] = $XCSRFToken;
+        } else {
+            $XCSRFToken = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
+        }
+        return $XCSRFToken;
     }
 
     #Helper function to send mails

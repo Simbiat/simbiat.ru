@@ -2,10 +2,9 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
-use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 
-class Bans
+class Checkers
 {
     #Attach common settings
     use Common;
@@ -50,13 +49,35 @@ class Bans
     public function bannedMail(string $mail): bool
     {
         #Validate that string is a mail
-        if (filter_var($mail, FILTER_VALIDATE_IP) === false) {
+        if (filter_var($mail, FILTER_VALIDATE_EMAIL) === false) {
             #Not an email, something is wrong, protect ourselves
             return true;
         }
         #Check against DB table
         try {
             return self::$dbController->check('SELECT `mail` FROM `ban__mails` WHERE `mail`=:mail', [':mail' => $mail]);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    #Function to check if mail is already used
+    public function usedMail(string $mail): bool
+    {
+        #Check against DB table
+        try {
+            return self::$dbController->check('SELECT `email` FROM `uc__user_to_email` WHERE `email`=:mail', [':mail' => $mail]);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    #Function to check if username is already used
+    public function usedName(string $name): bool
+    {
+        #Check against DB table
+        try {
+            return self::$dbController->check('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name]);
         } catch (\Throwable) {
             return false;
         }

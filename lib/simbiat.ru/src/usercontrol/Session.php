@@ -10,17 +10,17 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     use Common;
 
     #Default lifetime for session in seconds (5 minutes)
-    private int $sessionLife;
+    private int $sessionLife = 900;
 
     #Cache of security object
     private ?Security $security = NULL;
 
-    public function __construct(int $sessionLife = 300)
+    public function __construct(int $sessionLife = 900)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
         session_name('__Host-sess_'.preg_replace('/[^a-zA-Z0-9\-_]/', '', $_SERVER['HTTP_HOST'] ?? 'simbiat'));
         if ($sessionLife < 0) {
-            $sessionLife = 300;
+            $sessionLife = 900;
         }
         $this->sessionLife = $sessionLife;
         #Cache DB controller, if not done already

@@ -42,12 +42,6 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
         } else {
             $save_data = 'false';
         }
-        #Add CSRF Token to meta
-        try {
-            $XCSRFToken = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
-        } catch (\Throwable) {
-            $XCSRFToken = '';
-        }
         return array_merge($defaults, [
             #List of LINK tags
             'link_tags' => $GLOBALS['siteconfig']['links'],
@@ -55,8 +49,6 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             'js_version' => filemtime($GLOBALS['siteconfig']['jsdir'].'min.js'),
             #Save data flag
             'save_data' => $save_data,
-            #CSRF token
-            'XCSRFToken' => $XCSRFToken,
             'unsupported' => false,
             'ogdesc' => $GLOBALS['siteconfig']['ogdesc'],
             'ogextra' => $GLOBALS['siteconfig']['ogextra'],

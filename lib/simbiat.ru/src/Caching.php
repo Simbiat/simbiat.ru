@@ -29,7 +29,7 @@ class Caching
         try {
             if (!empty($data)) {
                 #Ensure we do not save CSRF
-                unset($data['XCSRFToken']);
+                unset($data['X-CSRF-Token']);
                 #Add headers data
                 $data['http_headers'] = headers_list();
                 #Set expiration date
@@ -86,7 +86,7 @@ class Caching
             @header('X-Server-Cache-Hit: true');
         }
         #Ensure we use fresh CSRF
-        unset($data['XCSRFToken']);
+        unset($data['X-CSRF-Token']);
         return $data;
     }
 

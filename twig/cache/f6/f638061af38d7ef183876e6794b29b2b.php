@@ -51,7 +51,7 @@ class __TwigTemplate_be6a0134f2e5df580afeb8ad277cb407 extends Template
             <label for=\"ff_track_type\" data-tooltip=\"Type of the entity you want to register\">Entity type</label>
         </div>
         <input type=\"submit\" value=\"Track\" form=\"ff_track_register\" id=\"ff_track_submit\">
-        <img id=\"ff_track_spinner\" class=\"hidden\" src=\"/img/spinner.svg\" alt=\"Registering entity...\">
+        <img id=\"ff_track_spinner\" class=\"hidden spinner\" src=\"/img/spinner.svg\" alt=\"Registering entity...\">
     </form>
 </section>
 ";

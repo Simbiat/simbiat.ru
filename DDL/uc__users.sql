@@ -8,7 +8,6 @@ create table uc__users
     password   text                                            not null comment 'Hashed password',
     strikes    tinyint(2) unsigned default 0                   not null comment 'Number of unsuccessful logins',
     pw_reset   text                                            null comment 'Password reset code',
-    activation text                                            null comment 'Activation code',
     registered timestamp           default current_timestamp() not null comment 'When user was registered',
     updated    timestamp           default current_timestamp() not null on update current_timestamp() comment 'When user was updated',
     parentid   int unsigned                                    null comment 'User ID, that added this one (if added manually)',

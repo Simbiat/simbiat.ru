@@ -242,3 +242,10 @@ blockquote>.copyQuote {
 .gold {
     color: gold;
 }
+
+.spinner {
+    width: 3rem;
+    height: 3rem;
+    display: block;
+    margin: auto;
+}

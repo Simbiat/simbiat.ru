@@ -1,7 +1,7 @@
 create table uc__user_to_group
 (
     userid  int unsigned           not null comment 'User ID',
-    groupid int unsigned default 2 not null,
+    groupid int unsigned default 2 not null comment 'Group ID',
     primary key (userid, groupid),
     constraint group_to_user
         foreign key (userid) references uc__users (userid)
