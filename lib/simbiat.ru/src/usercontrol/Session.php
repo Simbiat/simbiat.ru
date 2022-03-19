@@ -9,18 +9,18 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     #Attach common settings
     use Common;
 
-    #Default lifetime for session in seconds (5 minutes)
-    private int $sessionLife = 900;
+    #Default lifetime for session in seconds (15 minutes)
+    private int $sessionLife;
 
     #Cache of security object
     private ?Security $security = NULL;
 
-    public function __construct(int $sessionLife = 900)
+    public function __construct(int $sessionLife = 2700)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
         session_name('__Host-sess_'.preg_replace('/[^a-zA-Z0-9\-_]/', '', $_SERVER['HTTP_HOST'] ?? 'simbiat'));
         if ($sessionLife < 0) {
-            $sessionLife = 900;
+            $sessionLife = 2700;
         }
         $this->sessionLife = $sessionLife;
         #Cache DB controller, if not done already
@@ -53,13 +53,14 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         return true;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function read(string $id): string
     {
         #Get session data
-        $data = self::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+        try {
+            $data = self::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+        } catch (\Throwable) {
+            $data = '';
+        }
         if (!empty($data)) {
             #Decrypt data
             $data = $this->security->decrypt($data);
@@ -69,12 +70,11 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $data = [];
         }
         $this->IPUA($data);
+        #Login through cookie if present
+        $data = array_merge($data, (new Signinup)->cookieLogin());
         return serialize($data);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function write(string $id, string $data): bool
     {
         #Deserialize to check if UserAgent data is present
@@ -160,25 +160,31 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ],
             ],
         ];
-        return self::$dbController->query($queries);
+        try {
+            return self::$dbController->query($queries);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
-    /**
-     * @throws \Exception
-     */
     public function destroy(string $id): bool
     {
-        return self::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id'=>$id]);
+        try {
+            return self::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
-    /**
-     * @throws \Exception
-     */
     public function gc(int $max_lifetime): false|int
     {
-        if (self::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']])) {
-            return self::$dbController->getResult();
-        } else {
+        try {
+            if (self::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']])) {
+                return self::$dbController->getResult();
+            } else {
+                return false;
+            }
+        } catch (\Throwable) {
             return false;
         }
     }
@@ -194,13 +200,14 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     #########################################
     #\SessionUpdateTimestampHandlerInterface#
     #########################################
-    /**
-     * @throws \Exception
-     */
     public function validateId(string $id): bool
     {
         #Get ID
-        $sessionId = self::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id'=>$id]);
+        try {
+            $sessionId = self::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
+        } catch (\Throwable) {
+            return false;
+        }
         #Check if it was returned
         if (empty($sessionId)) {
             #No such session exists
@@ -210,12 +217,13 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         return hash_equals($sessionId, $id);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function updateTimestamp(string $id, string $data): bool
     {
-        return self::$dbController->query('UPDATE `uc__sessions` SET `time`= UTC_TIMESTAMP() WHERE `sessionid` = :id;', [':id'=>$id]);
+        try {
+            return self::$dbController->query('UPDATE `uc__sessions` SET `time`= UTC_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     private function IPUA(array &$data): void

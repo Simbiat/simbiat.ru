@@ -3,7 +3,6 @@ create table uc__users
     userid     int unsigned auto_increment comment 'User ID'
         primary key,
     username   varchar(64)                                     not null comment 'User''s username/login',
-    email      varchar(320)                                    not null comment 'User''s main mail',
     phone      bigint(15) unsigned                             null comment 'User''s phone number in international format',
     password   text                                            not null comment 'Hashed password',
     strikes    tinyint(2) unsigned default 0                   not null comment 'Number of unsuccessful logins',

@@ -226,7 +226,7 @@ class HomePage
                 return false;
             } else {
                 try {
-                    $twigVars = array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')]);
+                    $twigVars = array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]);
                     ob_end_clean();
                     ignore_user_abort(true);
                     ob_start();
@@ -249,7 +249,7 @@ class HomePage
         } else {
             ob_start();
             try {
-                $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')]));
+                $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
             } catch (\Throwable) {
                 $output = 'Twig failure';
             }

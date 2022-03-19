@@ -58,10 +58,6 @@ class Security
     }
 
     #Function to validate password
-
-    /**
-     * @throws \Exception
-     */
     public function passValid(int|string $id, string $password, string $hash): bool
     {
         #Cache DB controller, if not done already
@@ -69,32 +65,36 @@ class Security
             self::$dbController = HomePage::$dbController;
         }
         #Validate password
-        if (password_verify($password, $hash)) {
-            #Check if it needs rehashing
-            if (password_needs_rehash($hash, PASSWORD_ARGON2ID, $this->argonSettings)) {
-                #Rehash password and reset strikes (if any)
-                self::$dbController->query(
-                    'UPDATE `uc__users` SET `password`=:password, `strikes`=0 WHERE `userid`=:userid;',
-                    [
-                        ':userid' => [strval($id), 'string'],
-                        ':password' => [$this->passHash($password), 'string'],
-                    ]
-                );
+        try {
+            if (password_verify($password, $hash)) {
+                #Check if it needs rehashing
+                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, $this->argonSettings)) {
+                    #Rehash password and reset strikes (if any)
+                    self::$dbController->query(
+                        'UPDATE `uc__users` SET `password`=:password, `strikes`=0 WHERE `userid`=:userid;',
+                        [
+                            ':userid' => [strval($id), 'string'],
+                            ':password' => [$this->passHash($password), 'string'],
+                        ]
+                    );
+                } else {
+                    #Reset strikes (if any)
+                    self::$dbController->query(
+                        'UPDATE `uc__users` SET `strikes`=0 WHERE `userid`=:userid;',
+                        [
+                            ':userid' => [strval($id), 'string']
+                        ]
+                    );
+                }
+                return true;
             } else {
-                #Reset strikes (if any)
+                #Increase strike count
                 self::$dbController->query(
-                    'UPDATE `uc__users` SET `strikes`=0 WHERE `userid`=:userid;',
-                    [
-                        ':userid' => [strval($id), 'string']
-                    ]
-                );
+                    'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
+                    [':userid' => [strval($id), 'string']]);
+                return false;
             }
-            return true;
-        } else {
-            #Increase strike count
-            self::$dbController->query(
-                'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
-                [':userid' => [strval($id), 'string']]);
+        } catch (\Throwable) {
             return false;
         }
     }

@@ -21,11 +21,14 @@ function singInUpSubmit()
 {
     //Get form data
     let formData = new FormData(document.getElementById('signinup'));
+    if (!formData.get('signinup[type]')) {
+        formData.set('signinup[type]', 'logout');
+    }
     let spinner = document.getElementById('singinup_spinner');
     spinner.classList.remove('hidden');
     ajax(location.protocol+'//'+location.host+'/api/uc/'+formData.get('signinup[type]')+'/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
-            console.log('registered');
+            location.reload();
         } else {
             addSnackbar(data.reason, 'failure', 10000);
         }
@@ -144,7 +147,10 @@ function loginRadioCheck()
     let newUser = document.getElementById('radio_newuser');
     let forget = document.getElementById('radio_forget');
     let login = document.getElementById('signinup_email');
-    let loginLabel = login.labels[0];
+    let loginLabel;
+    if (login) {
+        loginLabel = login.labels[0];
+    }
     let password = document.getElementById('signinup_password');
     let button = document.getElementById('signinup_submit');
     let rememberme = document.getElementById('rememberme');
@@ -156,10 +162,10 @@ function loginRadioCheck()
         //Autocomplete suggestion for password
         password.setAttribute('autocomplete', 'current-password');
         //Autocomplete suggestion for login
-        login.setAttribute('type', 'text');
-        login.setAttribute('autocomplete', 'username');
+        login.setAttribute('type', 'email');
+        login.setAttribute('autocomplete', 'email');
         //Set pattern for login
-        login.setAttribute('pattern', '^('+userRegex+')|('+emailRegex+')$');
+        login.setAttribute('pattern', '^'+emailRegex+'$');
         //Enforce minimum length for password
         password.setAttribute('minlength', '8');
         //Adjust name of the button
@@ -182,6 +188,7 @@ function loginRadioCheck()
     if (newUser && newUser.checked === true) {
         password.required = true;
         password.setAttribute('autocomplete', 'new-password');
+        login.setAttribute('type', 'email');
         login.setAttribute('autocomplete', 'email');
         login.setAttribute('pattern', '^'+emailRegex+'$');
         password.setAttribute('minlength', '8');

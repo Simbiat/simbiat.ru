@@ -1,12 +1,10 @@
 create table uc__cookies
 (
-    cookieid  varchar(64)                           not null,
+    cookieid  varchar(256)                          not null comment 'Cookie ID'
+        primary key,
+    validator text                                  not null comment 'Encrypted validator string, to compare against cookie',
     userid    int unsigned                          not null comment 'User ID',
-    time      timestamp default current_timestamp() not null,
-    ip        varchar(45)                           not null,
-    useragent text                                  null,
-    constraint id
-        unique (cookieid),
+    time      timestamp default current_timestamp() not null on update current_timestamp() comment 'Time of last update/use of the cookie',
     constraint cookie_to_user
         foreign key (userid) references uc__users (userid)
             on update cascade on delete cascade

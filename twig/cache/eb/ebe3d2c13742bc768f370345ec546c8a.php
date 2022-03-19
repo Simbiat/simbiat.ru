@@ -52,6 +52,7 @@ class __TwigTemplate_977e6ecaafc4e654d92bccd70c904b73 extends Template
     <li><a href=\"https://stackoverflow.com/users/2992851/\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/stackoverflow.svg\" alt=\"Stack Overflow\">Stack Overflow</a></li>
     <li><a href=\"https://steamcommunity.com/id/Simbiat19\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/steam.svg\" alt=\"Steam\">Steam</a></li>
     <li><a href=\"tg://resolve?domain=SimbiatSoftware\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/telegram.svg\" alt=\"Telegram\">Telegram</a></li>
+    <li><a href=\"https://www.tiktok.com/@simbiat19\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/tiktok.svg\" alt=\"TikTok\">TikTok</a></li>
     <li><a href=\"https://www.twitch.tv/simbiat19\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/twitch.svg\" alt=\"Twitch\">Twitch</a></li>
     <li><a href=\"https://twitter.com/simbiat199\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/twitter.svg\" alt=\"Twitter\">Twitter</a></li>
     <li><a href=\"https://invite.viber.com/?g2=AQBZepIl4sHyyE27AMP%2FJhSvTIhySSA5KWMcV5NczjT2EbanY0ZoNSndR3g0eJdk\" target=\"_blank\"><img loading=\"lazy\" decoding=\"async\" class=\"linkIcon\" src=\"/img/social/viber.svg\" alt=\"Viber\">Viber</a></li>

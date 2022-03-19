@@ -34,7 +34,7 @@ class Maintenance
     {
         #Get existing cookies, that need to be cleaned
         try {
-            $items = HomePage::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 WEEK)');
+            $items = HomePage::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 MONTH)');
         } catch (\Throwable) {
             $items = [];
         }

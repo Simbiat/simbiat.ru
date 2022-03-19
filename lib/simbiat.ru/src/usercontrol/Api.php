@@ -32,13 +32,16 @@ class Api extends \Simbiat\Abstracts\Api
             switch ($_POST['signinup']['type']) {
                 #Login
                 case 'login':
-                    break;
+                    return (new Signinup)->login();
                 #New user
                 case 'register':
                     return (new Signinup)->register();
                 #Reminder
                 case 'remind':
                     break;
+                #Logout
+                case 'logout':
+                    return (new Signinup)->logout();
                 default:
                     return ['http_error' => 400, 'reason' => 'Unsupported action type provided'];
             }
