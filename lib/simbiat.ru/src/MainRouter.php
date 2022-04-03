@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\HTTP20\Common;
 use Simbiat\Talks\Show;
 
 class MainRouter extends Abstracts\Router
@@ -40,7 +41,7 @@ class MainRouter extends Abstracts\Router
             'about' => (new About\Router)->route(array_slice($path, 1)),
             'bictracker' => (new bictracker\Router)->route(array_slice($path, 1)),
             'fftracker' => (new fftracker\Router)->route(array_slice($path, 1)),
-            #'uc',
+            'uc' => (new usercontrol\Router)->route(array_slice($path, 1)),
             'tests' => $this->tests(array_slice($path, 1)),
             #Feeds
             'sitemap' => (new Sitemap\Router)->route(array_slice($path, 1)),
@@ -77,7 +78,16 @@ class MainRouter extends Abstracts\Router
             exit;
         }
         if ($uri[0] == 'mail') {
-            HomePage::sendMail('simbiat@outlook.com', 'Test Mail', 'Test body', true);
+            if (!empty($uri[1]) && $uri[1] === 'send') {
+                HomePage::sendMail('simbiat@outlook.com', 'Test Mail', ['username' => 'Simbiat'], true);
+            } else {
+                try {
+                    $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
+                } catch (\Throwable) {
+                    $output = 'Twig failure';
+                }
+                (new Common)->zEcho($output, 'live', true);
+            }
             exit;
         }
         $outputArray['http_error'] = 400;
