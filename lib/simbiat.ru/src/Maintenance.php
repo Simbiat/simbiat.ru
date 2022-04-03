@@ -111,6 +111,9 @@ class Maintenance
     {
         #Get directory
         $dir = sys_get_temp_dir();
+        if (!is_dir($dir)) {
+            mkdir($dir);
+        }
         #Get free space in percentage
         $percentage = disk_free_space($dir)*100/disk_total_space($dir);
         if (HomePage::$PROD && $percentage < 5) {
@@ -280,7 +283,7 @@ class Maintenance
                 try {
                     @rmdir($dir);
                     #Remove parent directory if empty
-                    if (!(new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS))->valid()) {
+                    if (dirname($dir) !== $path && !(new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS))->valid()) {
                         @rmdir(dirname($dir));
                     }
                 } catch (\Throwable) {
