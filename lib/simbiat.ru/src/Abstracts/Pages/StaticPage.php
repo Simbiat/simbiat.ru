@@ -16,6 +16,8 @@ class StaticPage extends Page
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = '';
+    #Cache strategy: aggressive, private, live, month, week, day, hour
+    protected string $cacheStrat = 'week';
 
     #Static pages have all the data in Twig templates, thus we just return empty array
     protected function generate(array $path): array

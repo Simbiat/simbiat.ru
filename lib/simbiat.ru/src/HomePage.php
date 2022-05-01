@@ -143,7 +143,7 @@ class HomePage
         if (empty($_SERVER['HTTP_HOST'])) {
             #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
             if (!HomePage::$staleReturn) {
-                self::$headers->clientReturn('403', true);
+                self::$headers->clientReturn('403');
             }
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
@@ -151,13 +151,13 @@ class HomePage
         #Remove bad UTF
         self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
         #Remove "friendly" portion of the links, but exclude API
-        self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z0-9]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
+        self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
         self::$canonical = preg_replace('/crossworldlinkshell/iu', 'crossworld_linkshell', self::$canonical);
         #Update REQUEST_URI to avoid potentially to ensure the data returned will be consistent
         $_SERVER['REQUEST_URI'] = self::$canonical;
         #For canonical, though, we need to ensure, that it does have a trailing slash
-        if (preg_match('/\/\?/iu', self::$canonical) !== 1) {
+        if (preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = preg_replace('/([^\/])$/iu', '$1/', self::$canonical);
         }
         #And also return page query, if present
@@ -165,7 +165,7 @@ class HomePage
             self::$canonical .= '?page='.$_GET['page'];
         }
         #Set canonical link, that may be used in the future
-        self::$canonical = 'https://'.(preg_match('/^[a-z0-9\-_~]+\.[a-z0-9\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
+        self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
         #Update list with dynamic values
         $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
             ['rel' => 'canonical', 'href' => self::$canonical],
@@ -233,7 +233,7 @@ class HomePage
                     @header('Connection: close');
                     $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
                     #Output data
-                    (new Common)->zEcho($output, exit: false);
+                    (new Common)->zEcho($output, $twigVars['cacheStrat'] ?? 'day', false);
                     @ob_end_flush();
                     @ob_flush();
                     flush();
@@ -265,7 +265,7 @@ class HomePage
                 @ob_end_clean();
             } else {
                 #Output data
-                (new Common)->zEcho($output, exit: true);
+                (new Common)->zEcho($output, $twigVars['cacheStrat'] ?? 'day');
             }
             exit;
         }
@@ -285,7 +285,7 @@ class HomePage
     }
 
     #Helper function to send mails
-    public static function sendMail(string $to, string $subject, string $body, bool $debug = false): bool
+    public static function sendMail(string $to, string $subject, string $username, array $body, bool $debug = false): bool
     {
         $mail = new PHPMailer(true);
         try {
@@ -328,11 +328,11 @@ class HomePage
 
             #Content
             #Set email format to HTML
-            $mail->isHTML(true);
+            $mail->isHTML();
             #Use UTF8
             $mail->CharSet = PHPMailer::CHARSET_UTF8;
-            $mail->Subject = $subject;
-            $mail->Body = $body;
+            $mail->Subject = $GLOBALS['siteconfig']['site_name'].': '.$subject;
+            $mail->Body = self::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username]));
 
             $mail->send();
             return true;

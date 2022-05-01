@@ -3,6 +3,7 @@ create table talks__posts
     postid    int unsigned auto_increment comment 'Post ID',
     threadid  int unsigned                                    not null comment 'ID of a thread the post belongs to',
     replyto   int unsigned                                    null comment 'Indicates an ID of a post, that this is a reply to (required to build chains)',
+    `system`  tinyint(1) unsigned default 0                   not null comment 'Flag indicating that post is system one, thus should not be deleted.',
     locked    tinyint(1) unsigned default 0                   not null comment 'Flag to indicate if post is locked from editing',
     created   timestamp           default current_timestamp() not null comment 'When post was created',
     createdby int unsigned                                    null comment 'User ID of the creator',

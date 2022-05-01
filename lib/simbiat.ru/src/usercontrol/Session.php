@@ -80,8 +80,22 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Deserialize to check if UserAgent data is present
         $data = unserialize($data);
         $this->IPUA($data);
+        #Check if userid is set and exists and reset if it does not
+        try {
+            if (!empty($data['userid']) && self::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']])) {
+                $userid = $data['userid'];
+            } else {
+                $userid = NULL;
+            }
+        } catch (\Throwable) {
+            $userid = NULL;
+        }
         #Cache username (to prevent reading from Session)
-        $username = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
+        if (empty($userid)) {
+            $username = $data['UA']['bot'] ?? NULL;
+        } else {
+            $username = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
+        }
         #Prepare empty array
         $queries = [];
         #Update SEO related tables
@@ -128,7 +142,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         #Write session data
         $queries[] = [
-            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data;',
+            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data;',
             [
                 ':id' => $id,
                 #Whether this is a bot
@@ -150,6 +164,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ':username' => [
                     (empty($username) ? NULL : $username),
                     (empty($username) ? 'null' : 'string'),
+                ],
+                ':userid' => [
+                    (empty($userid) ? NULL : $userid),
+                    (empty($userid) ? 'null' : 'int'),
                 ],
                 #What page is being viewed
                 ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),

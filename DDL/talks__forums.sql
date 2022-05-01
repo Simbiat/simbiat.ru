@@ -4,6 +4,7 @@ create table talks__forums
     name      varchar(50)                                     not null comment 'Forum name',
     parentid  int unsigned                                    null comment 'ID of the parent forum',
     type      tinyint unsigned    default 1                   not null comment 'Type of the forum',
+    `system`  tinyint(1) unsigned default 0                   null comment 'Flag indicating that forum is system one, thus should not be deleted.',
     closed    timestamp                                       null comment 'Flag indicating if the forum is closed',
     private   tinyint(1) unsigned default 1                   not null comment 'Flag indicating if forum is private',
     created   timestamp           default current_timestamp() not null comment 'When forum was created',

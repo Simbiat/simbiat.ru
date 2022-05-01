@@ -1,8 +1,9 @@
 create table uc__user_to_email
 (
-    userid     int unsigned not null comment 'User ID',
-    email      varchar(100) not null,
-    activation text         null,
+    userid     int unsigned                  not null comment 'User ID',
+    email      varchar(100)                  not null comment 'Email address',
+    subscribed tinyint(1) unsigned default 0 not null comment 'Flag indicating, that this mail should receive notifications',
+    activation text                          null comment 'Encrypted activation code',
     primary key (userid, email),
     constraint email
         unique (email),

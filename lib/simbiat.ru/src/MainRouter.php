@@ -79,7 +79,7 @@ class MainRouter extends Abstracts\Router
         }
         if ($uri[0] == 'mail') {
             if (!empty($uri[1]) && $uri[1] === 'send') {
-                HomePage::sendMail('simbiat@outlook.com', 'Test Mail', ['username' => 'Simbiat'], true);
+                HomePage::sendMail('simbiat@outlook.com', 'Test Mail', 'Simbiat', ['username' => 'Simbiat'], true);
             } else {
                 try {
                     $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);

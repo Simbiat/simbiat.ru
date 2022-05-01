@@ -58,11 +58,11 @@ class Signinup
                 ],
                 #Insert into mails database
                 [
-                    'INSERT INTO `uc__user_to_email` (`userid`, `email`, `activation`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :mail, :activation)',
+                    'INSERT INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :mail, 1, :activation)',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':mail' => $_POST['signinup']['email'],
-                        ':activation' => $activation,
+                        ':activation' => $security->passHash($activation),
                     ]
                 ],
                 #Insert into groups table
@@ -74,6 +74,9 @@ class Signinup
                 ],
             ];
             self::$dbController->query($queries);
+            #Get user ID for link generation
+            $userid = self::$dbController->selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $_POST['signinup']['username']]);
+            HomePage::sendMail($_POST['signinup']['email'], 'Account Activation', $_POST['signinup']['username'], ['activation' => $activation, 'userid' => $userid]);
             return $this->login();
         } catch (\Throwable) {
             return ['http_error' => 503, 'reason' => 'Registration failed'];

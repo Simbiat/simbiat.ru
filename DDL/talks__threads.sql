@@ -4,6 +4,7 @@ create table talks__threads
     name      varchar(100)                                    not null comment 'Thread name',
     forumid   int unsigned                                    not null comment 'Forum ID where the thread is located',
     language  varchar(35)         default 'en'                not null comment 'Main language of the thread',
+    `system`  tinyint(1) unsigned default 0                   not null comment 'Flag indicating that thread is system one, thus should not be deleted.',
     pinned    tinyint(1) unsigned default 0                   not null comment 'Flag to indicate if a thread needs to e shown above others in the list',
     closed    timestamp                                       null comment 'Flag to indicate if a thread is closed',
     private   tinyint(1) unsigned default 0                   not null comment 'Flag to indicate if thread is private',

@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
-use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 

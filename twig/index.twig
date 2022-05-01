@@ -51,6 +51,8 @@
                         {{ include('landing.twig') }}
                     {% elseif serviceName == 'sitemap'%}
                         {{ include('common/pages/sitemap.twig') }}
+                    {% elseif serviceName == 'uc'%}
+                        {{ include('usercontrol/usercontrol.twig') }}
                     {% else %}
                         <article id="http_error">
                             {{ include('errors/404.twig') }}

@@ -1,5 +1,9 @@
-{% if registration == 0 %}
-    <div class="warning">Registration is currently closed</div>
+{% if session_data.username %}
+    <div class="success">Hey, {{ session_data.username }}! You are already registered and logged in, nothing else is required.</div>
 {% else %}
-    <div>Please, use the login/registration form in the sidebar. If you're using a smaller screen, you may need to open navigation bar first using the hamburger button at the top left.</div>
+    {% if registration == 0 %}
+        <div class="warning">Registration is currently closed.</div>
+    {% else %}
+        <div>Please, use the login/registration form in the sidebar. If you're using a smaller screen, you may need to open navigation bar first using the hamburger button at the top left.</div>
+    {% endif %}
 {% endif %}

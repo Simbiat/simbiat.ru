@@ -30,6 +30,8 @@ abstract class Page
     protected bool $static = false;
     #Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
+    #Cache strategy: aggressive, private, live, month, week, day, hour
+    protected string $cacheStrat = 'day';
 
     public final function __construct()
     {
@@ -79,6 +81,7 @@ abstract class Page
         $page['h1'] = $this->h1;
         $page['ogdesc'] = $this->ogdesc;
         $page['cacheAge'] = $this->cacheAge;
+        $page['cacheStrat'] = $this->cacheStrat;
         if (!empty($this->altLinks)) {
             #Send HTTP header
             if (!HomePage::$staleReturn) {

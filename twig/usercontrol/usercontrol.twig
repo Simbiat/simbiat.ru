@@ -3,6 +3,8 @@
         <article>
             {% if subServiceName == 'registration' %}
                 {{ include('usercontrol/registration.twig')}}
+            {% elseif subServiceName == 'activation' %}
+                {{ include('usercontrol/activation.twig')}}
             {% endif %}
         </article>
     {% endif %}

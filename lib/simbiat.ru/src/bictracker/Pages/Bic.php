@@ -3,8 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\bictracker\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\HomePage;
-use Simbiat\HTTP20\HTML;
 
 class Bic extends Page
 {
