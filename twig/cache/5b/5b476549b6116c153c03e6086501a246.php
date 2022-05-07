@@ -40,7 +40,7 @@ class __TwigTemplate_29eaeaf1dfb0543bbb3c0aff943e8e5d extends Template
 <p>To do that, just click 👉 <a href=\"";
         // line 2
         echo twig_escape_filter($this->env, ($context["domain"] ?? null), "html", null, true);
-        echo "/uc/activation/";
+        echo "/uc/activate/";
         echo twig_escape_filter($this->env, ($context["userid"] ?? null), "html", null, true);
         echo "/";
         echo twig_escape_filter($this->env, ($context["activation"] ?? null), "html", null, true);

@@ -1,0 +1,9 @@
+<ul>
+    {% for email, code in emails %}
+        {% if code %}
+            <li class="mail_not_activated warning"><span>{{ email }}</span><input type="button" value="Activate" class="mail_activation" data-email="{{ email }}"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating {{ email }}..."></li>
+        {% else %}
+            <li class="mail_activated nodecor success" data-tooltip="Already activated"><span>{{ email }}</span></li>
+        {% endif %}
+    {% endfor %}
+</ul>

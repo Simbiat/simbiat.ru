@@ -332,7 +332,7 @@ class HomePage
             #Use UTF8
             $mail->CharSet = PHPMailer::CHARSET_UTF8;
             $mail->Subject = $GLOBALS['siteconfig']['site_name'].': '.$subject;
-            $mail->Body = self::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username]));
+            $mail->Body = self::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)]));
 
             $mail->send();
             return true;

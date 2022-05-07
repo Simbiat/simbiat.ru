@@ -29,30 +29,24 @@ class Activation extends Page
         $userid = $_SESSION['userid'] ?? intval($path[0]) ?? null;
         #Get activation ID
         $activation = $path[1] ?? null;
-        if (empty($userid) || (empty($_SESSION['userid']) && empty($activation))) {
+        if (empty($userid) || empty($activation)) {
             return ['http_error' => 403];
         }
         #Check if user exists
         if (!HomePage::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', [':userid' => [$userid, 'int']])) {
-            #While technically this is closer to 404, we do not want potential abuse to get user IDs, although attack vector here is unlikely
+            #While technically this is closer to 404, but we do not want potential abuse to get user IDs, although attack vector here is unlikely
             return ['http_error' => 403];
         }
         $outputArray = [];
-        #Processing depends on whether activation code is present
-        if (empty($activation)) {
-            #Show list of mails pending activation to request code resending
-            $outputArray['emails'] = HomePage::$dbController->selectPair('SELECT `email` FROM `uc__user_to_email` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
-        } else {
-            #Check if user requires activation
-            $outputArray['activation'] = HomePage::$dbController->check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]);
-            #Get list of mails for the user with activation codes
-            $emails = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
-            #Check if provided activation code fits any of those mails
-            foreach ($emails as $email=>$code) {
-                if (password_verify($activation, $code) && $this->activate($userid, $email)) {
-                    $outputArray = ['activated' => true, 'email' => $email];
-                    break;
-                }
+        #Check if user requires activation
+        $outputArray['activation'] = HomePage::$dbController->check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]);
+        #Get list of mails for the user with activation codes
+        $emails = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
+        #Check if provided activation code fits any of those mails
+        foreach ($emails as $email=>$code) {
+            if (password_verify($activation, $code) && $this->activate($userid, $email)) {
+                $outputArray = ['activated' => true, 'email' => $email];
+                break;
             }
         }
         return $outputArray;

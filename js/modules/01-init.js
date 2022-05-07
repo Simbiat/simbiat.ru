@@ -1,5 +1,5 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals signInUpInit, ariaInit, webShareInit, backToTop, timer, colorValue, bicInit, detailsInit,
+/*globals ucInit, ariaInit, webShareInit, backToTop, timer, colorValue, bicInit, detailsInit,
 colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader, tooltipInit, copyQuoteInit,
 placeholders, formInit, galleryInit, fftrackerInit*/
 /*exported pageTitle*/
@@ -56,7 +56,7 @@ function attachListeners()
         }
     });
     placeholders();
-    signInUpInit();
+    ucInit();
     webShareInit();
     bicInit();
     detailsInit();

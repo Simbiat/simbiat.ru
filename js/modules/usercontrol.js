@@ -1,7 +1,7 @@
 /*globals ariaNation, submitIntercept, ajax, addSnackbar*/
-/*exported signInUpInit, singInUpSubmit*/
+/*exported ucInit, singInUpSubmit*/
 
-function signInUpInit()
+function ucInit()
 {
     //Show password functionality
     document.querySelectorAll('.showpassword').forEach(item => {
@@ -15,6 +15,28 @@ function signInUpInit()
     loginRadioCheck();
     //Intercept form submit
     submitIntercept('signinup');
+    //Listener for mail activation buttons
+    document.querySelectorAll('.mail_activation').forEach(item => {
+        item.addEventListener('click', activationMail);
+    });
+}
+
+function activationMail(event)
+{
+    let button = event.target;
+    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
+    //Generate form data
+    let formData = new FormData();
+    formData.set('email', button.getAttribute('data-email'));
+    spinner.classList.remove('hidden');
+    ajax(location.protocol+'//'+location.host+'/api/uc/activate/', formData, 'json', 'POST', 60000, true).then(data => {
+        if (data.data === true) {
+            addSnackbar('Activation email sent', 'success');
+        } else {
+            addSnackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
 }
 
 function singInUpSubmit()

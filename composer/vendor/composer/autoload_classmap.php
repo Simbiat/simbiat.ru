@@ -158,6 +158,7 @@ return array(
     'Simbiat\\usercontrol\\Common' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Common.php',
     'Simbiat\\usercontrol\\NoDB' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/NoDB.php',
     'Simbiat\\usercontrol\\Pages\\Activation' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Activation.php',
+    'Simbiat\\usercontrol\\Pages\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Emails.php',
     'Simbiat\\usercontrol\\Router' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Router.php',
     'Simbiat\\usercontrol\\Security' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Security.php',
     'Simbiat\\usercontrol\\Session' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Session.php',

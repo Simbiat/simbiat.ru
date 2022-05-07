@@ -46,8 +46,46 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
 ";
         } else {
             // line 4
-            echo "    <div class=\"error\">Failed to confirm any emails.</div>
-";
+            echo "    ";
+            if (($context["emails"] ?? null)) {
+                // line 5
+                echo "        <ul>
+            ";
+                // line 6
+                $context['_parent'] = $context;
+                $context['_seq'] = twig_ensure_traversable(($context["emails"] ?? null));
+                foreach ($context['_seq'] as $context["email"] => $context["code"]) {
+                    // line 7
+                    echo "                <li class=";
+                    if ( !$context["code"]) {
+                        echo "\"mail_activated nodecor success\" data-tooltip=\"Already activated\"";
+                    } else {
+                        echo "\"mail_not_activated warning\"";
+                    }
+                    echo "><span>";
+                    echo twig_escape_filter($this->env, $context["email"], "html", null, true);
+                    echo "</span>";
+                    if ($context["code"]) {
+                        echo "<input type=\"button\" value=\"Activate\" class=\"mail_activation\" data-email=\"";
+                        echo twig_escape_filter($this->env, $context["email"], "html", null, true);
+                        echo "\"><img class=\"hidden spinner inline\" src=\"/img/spinner.svg\" alt=\"Activating ";
+                        echo twig_escape_filter($this->env, $context["email"], "html", null, true);
+                        echo "...\">";
+                    }
+                    echo "</li>
+            ";
+                }
+                $_parent = $context['_parent'];
+                unset($context['_seq'], $context['_iterated'], $context['email'], $context['code'], $context['_parent'], $context['loop']);
+                $context = array_intersect_key($context, $_parent) + $_parent;
+                // line 9
+                echo "        </ul>
+    ";
+            } else {
+                // line 11
+                echo "        <div class=\"error\">Failed to confirm any emails.</div>
+    ";
+            }
         }
     }
 
@@ -63,7 +101,7 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
 
     public function getDebugInfo()
     {
-        return array (  49 => 4,  39 => 2,  37 => 1,);
+        return array (  86 => 11,  82 => 9,  59 => 7,  55 => 6,  52 => 5,  49 => 4,  39 => 2,  37 => 1,);
     }
 
     public function getSourceContext()

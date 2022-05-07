@@ -5,6 +5,8 @@
                 {{ include('usercontrol/registration.twig')}}
             {% elseif subServiceName == 'activation' %}
                 {{ include('usercontrol/activation.twig')}}
+            {% elseif subServiceName == 'emails' %}
+                {{ include('usercontrol/emails.twig')}}
             {% endif %}
         </article>
     {% endif %}

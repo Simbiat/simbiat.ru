@@ -42,7 +42,7 @@ class Signinup
                 self::$dbController = HomePage::$dbController;
             }
         }
-        #Generate password adn activation strings
+        #Generate password and activation strings
         $security = (new Security);
         $password = $security->passHash($_POST['signinup']['password']);
         $activation = $security->genCSRF();
@@ -74,13 +74,48 @@ class Signinup
                 ],
             ];
             self::$dbController->query($queries);
-            #Get user ID for link generation
-            $userid = self::$dbController->selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $_POST['signinup']['username']]);
-            HomePage::sendMail($_POST['signinup']['email'], 'Account Activation', $_POST['signinup']['username'], ['activation' => $activation, 'userid' => $userid]);
+            $this->activate($_POST['signinup']['username'], $_POST['signinup']['email'], $activation);
             return $this->login();
         } catch (\Throwable) {
             return ['http_error' => 503, 'reason' => 'Registration failed'];
         }
+    }
+
+    public function activate(string $email, string $username = '', string $activation = ''): bool
+    {
+        if (empty($username)) {
+            $data = self::$dbController->selectRow('SELECT `uc__user_to_email`.`userid`, `username` FROM `uc__user_to_email` LEFT JOIN `uc__users` ON `uc__user_to_email`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $email]);
+            if (empty($data)) {
+                #Avoid potential abuse to get list of registered mails
+                return true;
+            } else {
+                $username = $data['username'];
+                $userid = $data['userid'];
+            }
+        } else {
+            #Get user ID for link generation
+            $userid = self::$dbController->selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username]);
+        }
+        if (empty($userid)) {
+            #Avoid potential abuse to get list of registered mails
+            return true;
+        }
+        #Generate activation code if none was provided (requested new activation mail)
+        if (empty($activation)) {
+            $security = (new Security);
+            $activation = $security->genCSRF();
+            #Insert into mails database
+            self::$dbController->query(
+                'UPDATE `uc__user_to_email` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',
+                [
+                    ':userid' => [$userid, 'int'],
+                    ':mail' => $email,
+                    ':activation' => $security->passHash($activation),
+                ]
+            );
+        }
+        HomePage::sendMail($email, 'Account Activation', $username, ['activation' => $activation, 'userid' => $userid]);
+        return true;
     }
 
     public function login(): array

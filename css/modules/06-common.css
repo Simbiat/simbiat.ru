@@ -249,3 +249,11 @@ blockquote>.copyQuote {
     display: block;
     margin: auto;
 }
+
+.nodecor {
+    text-decoration: none;
+}
+
+.inline {
+    display: inline;
+}
