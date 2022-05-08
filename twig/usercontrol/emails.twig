@@ -4,8 +4,8 @@
         <tr class="middle">
             <td>{{ email.email }}</td>
             <td>{% if email.activation %}<input type="button" value="Confirm" class="mail_activation" data-email="{{ email.email }}"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating {{ email.email }}...">{% else %}✅{% endif %}</td>
-            <td{% if email.activation %} class="warning"{% endif %}>{% if email.activation %}Confirm address to change setting{% else %}<span class="radio_and_label"><input id="subscription_checkbox_{{ number }}" class="mail_subscription" data-email="{{ email.email }}" type="checkbox"{% if email.subscribtion %} checked{% endif %}><label for="subscription_checkbox_{{ number }}">{% if email.subscribtion %}Unsubscribe{% else %}Subscribe{% endif %}</label></span><img class="hidden spinner inline" src="/img/spinner.svg" alt="Changing subscription for {{ email.email }}...">{% endif %}</td>
-            <td><input class="mail_deletion" data-email="{{ email.email }}" type="image" src="/img/close.svg" {% if emails|length < 2 or countActivated == 0 or not (countActivated > 0 and email.activation) %}disabled alt="Can't delete"{% else %}alt="Delete {{ email.email }}"{% endif %}></td>
+            <td{% if email.activation %} class="warning"{% endif %}>{% if email.activation %}Confirm address to change setting{% else %}<span class="radio_and_label"><input id="subscription_checkbox_{{ number }}" class="mail_subscription" data-email="{{ email.email }}" type="checkbox"{% if email.subscribed %} checked{% endif %}><label for="subscription_checkbox_{{ number }}">{% if email.subscribed %}Unsubscribe{% else %}Subscribe{% endif %}</label></span><img class="hidden spinner inline" src="/img/spinner.svg" alt="Changing subscription for {{ email.email }}...">{% endif %}</td>
+            <td><input class="mail_deletion" data-email="{{ email.email }}" type="image" src="/img/close.svg" {% if (email.activation and countActivated == 0) or (not email.activation and (emails|length < 2 or countActivated < 2)) %}disabled alt="Can't delete"{% else %}alt="Delete {{ email.email }}"{% endif %}></td>
         </tr>
     {% endfor %}
 </table>

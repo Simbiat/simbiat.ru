@@ -73,13 +73,13 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
                 echo "\" class=\"mail_subscription\" data-email=\"";
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 7), "html", null, true);
                 echo "\" type=\"checkbox\"";
-                if (twig_get_attribute($this->env, $this->source, $context["email"], "subscribtion", [], "any", false, false, false, 7)) {
+                if (twig_get_attribute($this->env, $this->source, $context["email"], "subscribed", [], "any", false, false, false, 7)) {
                     echo " checked";
                 }
                 echo "><label for=\"subscription_checkbox_";
                 echo twig_escape_filter($this->env, $context["number"], "html", null, true);
                 echo "\">";
-                if (twig_get_attribute($this->env, $this->source, $context["email"], "subscribtion", [], "any", false, false, false, 7)) {
+                if (twig_get_attribute($this->env, $this->source, $context["email"], "subscribed", [], "any", false, false, false, 7)) {
                     echo "Unsubscribe";
                 } else {
                     echo "Subscribe";
@@ -93,7 +93,7 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
             // line 8
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
             echo "\" type=\"image\" src=\"/img/close.svg\" ";
-            if ((((twig_length_filter($this->env, ($context["emails"] ?? null)) < 2) || (($context["countActivated"] ?? null) == 0)) ||  !((($context["countActivated"] ?? null) > 0) && twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 8)))) {
+            if (((twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 8) && (($context["countActivated"] ?? null) == 0)) || ( !twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 8) && ((twig_length_filter($this->env, ($context["emails"] ?? null)) < 2) || (($context["countActivated"] ?? null) < 2))))) {
                 echo "disabled alt=\"Can't delete\"";
             } else {
                 echo "alt=\"Delete ";
