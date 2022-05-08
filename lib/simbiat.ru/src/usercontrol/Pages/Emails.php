@@ -33,6 +33,7 @@ class Emails extends Page
         $outputArray = [];
         #Show list of mails pending activation to request code resending
         $outputArray['emails'] = HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$userid, 'int']]);
+        $outputArray['countActivated'] = count(array_filter(array_column($outputArray['emails'], 'activation'), function($x) { return empty($x); }));
         return $outputArray;
     }
 }

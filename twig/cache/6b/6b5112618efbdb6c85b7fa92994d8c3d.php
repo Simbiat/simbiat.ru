@@ -92,11 +92,13 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
             <td><input class=\"mail_deletion\" data-email=\"";
             // line 8
             echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
-            echo "\" alt=\"Delete ";
-            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
-            echo "\" type=\"image\" src=\"/img/close.svg\"";
-            if ((twig_length_filter($this->env, ($context["emails"] ?? null)) > 1)) {
-                echo " disabled";
+            echo "\" type=\"image\" src=\"/img/close.svg\" ";
+            if ((((twig_length_filter($this->env, ($context["emails"] ?? null)) < 2) || (($context["countActivated"] ?? null) == 0)) ||  !((($context["countActivated"] ?? null) > 0) && twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 8)))) {
+                echo "disabled alt=\"Can't delete\"";
+            } else {
+                echo "alt=\"Delete ";
+                echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
+                echo "\"";
             }
             echo "></td>
         </tr>
@@ -122,7 +124,7 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
 
     public function getDebugInfo()
     {
-        return array (  109 => 11,  94 => 8,  64 => 7,  52 => 6,  48 => 5,  45 => 4,  41 => 3,  37 => 1,);
+        return array (  111 => 11,  94 => 8,  64 => 7,  52 => 6,  48 => 5,  45 => 4,  41 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
