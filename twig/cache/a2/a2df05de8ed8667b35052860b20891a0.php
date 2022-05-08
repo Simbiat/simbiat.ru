@@ -79,7 +79,7 @@ class __TwigTemplate_a381f6a5042770e30439c178103f6510 extends Template
         // line 22
         echo "            </div>
         </div>
-        <div style=\"width: 100%; background-color: #231f2e; text-align: center; border-top-color: #1a424d;border-top-width: 2px;border-top-style: solid;border-radius: 12px 12px 0 0;padding-top: 3px;height: 20px;\">
+        <div style=\"font-size: xx-small;width: 100%; background-color: #231f2e; text-align: center; border-top-color: #1a424d;border-top-width: 2px;border-top-style: solid;border-radius: 12px 12px 0 0;padding-top: 3px;height: 25px;\">
             <div>
                 <a href=\"";
         // line 26
@@ -89,6 +89,12 @@ class __TwigTemplate_a381f6a5042770e30439c178103f6510 extends Template
         echo "/uc/unsubscribe/?token=";
         echo twig_escape_filter($this->env, ($context["unsubscribe"] ?? null), "html", null, true);
         echo "\" style=\"color:#9ad4ea\">unsubscribe</a>
+            </div>
+            <div>
+                Email generated at ";
+        // line 29
+        echo twig_escape_filter($this->env, twig_date_format_filter($this->env, "now", "c"), "html", null, true);
+        echo "
             </div>
         </div>
     </body>
@@ -108,7 +114,7 @@ class __TwigTemplate_a381f6a5042770e30439c178103f6510 extends Template
 
     public function getDebugInfo()
     {
-        return array (  86 => 26,  80 => 22,  74 => 20,  72 => 19,  68 => 18,  64 => 17,  55 => 11,  50 => 9,  43 => 5,  37 => 1,);
+        return array (  96 => 29,  86 => 26,  80 => 22,  74 => 20,  72 => 19,  68 => 18,  64 => 17,  55 => 11,  50 => 9,  43 => 5,  37 => 1,);
     }
 
     public function getSourceContext()

@@ -1,0 +1,110 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+
+/* stylingTest.twig */
+class __TwigTemplate_5c039df92def026274888b0e691d2a05 extends Template
+{
+    private $source;
+    private $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = [])
+    {
+        $macros = $this->macros;
+        // line 1
+        echo "<!-- Just a small template for testing of styling of elements. And to allow easier copy-paste of some elements. Not meant for PROD usage -->
+<article>
+    <a href=\"/#\">test link</a> <span class=\"success\">success</span> <span class=\"warning\">warning</span> <span class=\"failure\">failure</span> <span disabled>disabled</span><kbd>ctrl</kbd> Output test: 50+50=<output>100</output>
+    <span class=\"radio_and_label\"><input id=\"testCheckbox\" type=\"checkbox\"><label for=\"testCheckbox\">testCheckbox</label></span>
+    <span class=\"radio_and_label\"><input id=\"testRadio\" type=\"radio\"><label for=\"testRadio\">testRadio</label></span>
+    <br>
+    Button: <button>button</button> Input button: <input type=\"button\" value=\"button\"> Submit: <input type=\"submit\" value=\"button\"> Reset: <input type=\"reset\" value=\"button\"> Image: <input id=\"testImage\" alt=\"test image\" type=\"image\" src=\"/img/logo.svg\">
+    <br>
+    <span class=\"float_label_div\"><input id=\"testEmail\" type=\"email\" autocomplete=\"email\" inputmode=\"email\" minlength=\"1\" maxlength=\"320\" pattern=\"^[a-zA-Z0-9.!#\$%&\\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$\" required><label for=\"testEmail\">testEmail</label></span>
+    <span class=\"float_label_div\"><input id=\"testNumber\" type=\"number\" inputmode=\"decimal\"><label for=\"testNumber\">testNumber</label></span>
+    <span class=\"float_label_div\"><input id=\"testPassword\" type=\"password\" autocomplete=\"current-password\" inputmode=\"text\" minlength=\"8\" pattern=\".{8,}\"><label for=\"testPassword\">testPassword</label></span>
+    <span class=\"float_label_div\"><input id=\"testSearch\" type=\"search\" inputmode=\"search\" autocomplete=\"on\"><label for=\"testSearch\">testSearch</label></span>
+    <span class=\"float_label_div\"><input id=\"testTel\" type=\"tel\" inputmode=\"tel\" autocomplete=\"tel\"><label for=\"testTel\">testTel</label></span>
+    <span class=\"float_label_div\"><input id=\"testText\" type=\"text\" inputmode=\"text\" autocomplete=\"on\"><label for=\"testText\">testText</label></span>
+    <span class=\"float_label_div\"><input id=\"testUrl\" type=\"url\" inputmode=\"url\" autocomplete=\"url\"><label for=\"testUrl\">testUrl</label></span>
+    <br>
+    <span class=\"float_label_div\"><input id=\"testDate\" type=\"date\" inputmode=\"numeric\" autocomplete=\"bday\"><label for=\"testDate\">testDate</label></span>
+    <span class=\"float_label_div\"><input id=\"testTime\" type=\"time\" inputmode=\"numeric\"><label for=\"testTime\">testTime</label></span>
+    <span class=\"float_label_div\"><input id=\"testDateTimeLocal\" type=\"datetime-local\" inputmode=\"numeric\"><label for=\"testDateTimeLocal\">testDateTimeLocal</label></span>
+    <span class=\"float_label_div\"><input id=\"testMonth\" type=\"month\"><label for=\"testMonth\">testMonth</label></span>
+    <span class=\"float_label_div\"><input id=\"testWeek\" type=\"week\"><label for=\"testWeek\">testWeek</label></span>
+    <span class=\"float_label_div\"><input id=\"testColor\" type=\"color\"><label for=\"testColor\">testColor</label></span>
+    <span class=\"float_label_div\"><input id=\"testRange\" type=\"range\"><label for=\"testRange\">testRange</label></span>
+    <br>
+    <span class=\"float_label_div\"><textarea id=\"testTextarea\">Textarea test</textarea><label for=\"testTextarea\">testTextarea</label></span>
+    <span class=\"float_label_div\"><input id=\"testFile\" type=\"file\"><label for=\"testFile\">testFile</label></span>
+    <br>
+    <span class=\"float_label_div\"><select id=\"testSelectMultiple\" multiple><option>1</option><option>2</option><option>3</option></select><label for=\"testSelectMultiple\">testSelect</label></span>
+    <span class=\"float_label_div\"><select id=\"testSelect\"><option>1</option><option>2</option><option>3</option></select><label for=\"testSelect\">testSelect</label></span>
+    <br>
+    <progress max=\"100\"></progress> undetermined state <progress value=\"5\" max=\"100\"></progress> low progress <progress value=\"50\" max=\"100\"></progress> middle progress <progress value=\"100\" max=\"100\"></progress> full progress
+    <br>
+    <meter value=\"0\"></meter> empty meter <meter low=\".25\" optimum=\".5\" high=\".75\" value=\".5\" data-unit=\"m\"></meter> good meter <meter low=\".25\" optimum=\".85\" high=\".75\" value=\".7\"></meter> suboptimal meter <meter low=\".25\" optimum=\".2\" high=\".75\" value=\"1\"></meter> bad meter
+    <br>
+    <samp class=\"success\">Hello, world!</samp>
+    <samp class=\"failure\">Access denied</samp>
+    <br>
+    <code>
+    document.querySelector(\"#testDialog\").showModal();
+    </code>
+    <figure class=\"quote\">
+        <figcaption>Someone wise</figcaption>
+        <blockquote>Someone said something someday. It was wise.</blockquote>
+    </figure>
+    <br>
+    As Frank Herbert wrote: <q>Fear is a mind killer.</q> - thus do not murder your mind.
+    <br>
+    <dialog id=\"testDialog\"></dialog>
+    <br>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eros nibh, placerat vitae tincidunt vel, auctor vitae metus. Quisque ac turpis sed sapien pellentesque tincidunt. Fusce blandit varius ornare. Phasellus erat libero, tincidunt eget massa at, placerat efficitur nisi. Mauris at sodales magna.
+    <br>
+    Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi mattis ut tellus quis finibus. Donec quam tellus, tempor id efficitur nec, rutrum non tellus. Proin feugiat dui vel est euismod interdum. Duis faucibus, enim et vestibulum accumsan, dolor lectus venenatis dui,
+    <br>
+    nec imperdiet felis sem vitae est. Aenean egestas, ligula a scelerisque bibendum, metus lacus accumsan ligula, in ultricies arcu enim sed nunc. Mauris in vestibulum nunc. Nunc tempor mauris urna, sit amet condimentum odio hendrerit at.
+    <br>
+</article>
+";
+    }
+
+    public function getTemplateName()
+    {
+        return "stylingTest.twig";
+    }
+
+    public function getDebugInfo()
+    {
+        return array (  37 => 1,);
+    }
+
+    public function getSourceContext()
+    {
+        return new Source("", "stylingTest.twig", "C:\\Users\\simbi\\OneDrive\\Documents\\!Personal\\Coding\\WebServer\\htdocs\\twig\\stylingTest.twig");
+    }
+}

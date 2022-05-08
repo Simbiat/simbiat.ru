@@ -26,15 +26,13 @@ class Emails extends Page
     protected function generate(array $path): array
     {
         #Get user ID
-        $userid = $_SESSION['userid'] ?? intval($path[0]) ?? null;
-        #Get activation ID
-        $activation = $path[1] ?? null;
+        $userid = $_SESSION['userid'] ?? null;
         if (empty($userid)) {
             return ['http_error' => 403];
         }
         $outputArray = [];
         #Show list of mails pending activation to request code resending
-        $outputArray['emails'] = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid /*AND `activation` IS NOT NULL*/;', [':userid' => [$userid, 'int']]);
+        $outputArray['emails'] = HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$userid, 'int']]);
         return $outputArray;
     }
 }

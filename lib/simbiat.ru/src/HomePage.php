@@ -3,8 +3,6 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use DateTimeInterface;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use Simbiat\Database\Config;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
@@ -282,63 +280,5 @@ class HomePage
             $XCSRFToken = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
         }
         return $XCSRFToken;
-    }
-
-    #Helper function to send mails
-    public static function sendMail(string $to, string $subject, string $username, array $body, bool $debug = false): bool
-    {
-        $mail = new PHPMailer(true);
-        try {
-            #Server settings
-            #Enable verbose debug output
-            if ($debug) {
-                $mail->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
-                $mail->Debugoutput = 'html';
-            } else {
-                $mail->SMTPDebug = SMTP::DEBUG_OFF;
-                $mail->Debugoutput = 'error_log';
-            }
-            #Send using SMTP
-            $mail->isSMTP();
-            #Set the SMTP server to send through
-            $mail->Host = $GLOBALS['siteconfig']['smtp']['host'];
-            #Enable SMTP authentication
-            $mail->SMTPAuth = true;
-            $mail->SMTPAutoTLS = true;
-            $mail->AuthType = 'LOGIN';
-            #SMTP username
-            $mail->Username = $GLOBALS['siteconfig']['smtp']['user'];
-            #SMTP password
-            $mail->Password = $GLOBALS['siteconfig']['smtp']['password'];
-            #Enable implicit TLS encryption
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
-
-            #Recipients
-            $mail->setFrom($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name'], false);
-            $mail->addAddress($to);
-            $mail->addReplyTo($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']);
-
-            #DKIM
-            $mail->DKIM_domain = $mail->Host;
-            $mail->DKIM_private = $GLOBALS['siteconfig']['DKIM']['key'];
-            $mail->DKIM_selector = 'DKIM';
-            $mail->DKIM_passphrase = '';
-            $mail->DKIM_identity = $mail->From;
-
-            #Content
-            #Set email format to HTML
-            $mail->isHTML();
-            #Use UTF8
-            $mail->CharSet = PHPMailer::CHARSET_UTF8;
-            $mail->Subject = $GLOBALS['siteconfig']['site_name'].': '.$subject;
-            $mail->Body = self::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)]));
-
-            $mail->send();
-            return true;
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-            return false;
-        }
     }
 }

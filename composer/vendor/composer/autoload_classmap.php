@@ -156,6 +156,7 @@ return array(
     'Simbiat\\usercontrol\\Api' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api.php',
     'Simbiat\\usercontrol\\Checkers' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Checkers.php',
     'Simbiat\\usercontrol\\Common' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Common.php',
+    'Simbiat\\usercontrol\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Emails.php',
     'Simbiat\\usercontrol\\NoDB' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/NoDB.php',
     'Simbiat\\usercontrol\\Pages\\Activation' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Activation.php',
     'Simbiat\\usercontrol\\Pages\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Emails.php',

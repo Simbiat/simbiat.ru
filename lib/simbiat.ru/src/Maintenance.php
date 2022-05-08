@@ -125,7 +125,7 @@ class Maintenance
                 $percentage = disk_free_space($dir)*100/disk_total_space($dir);
                 if ($percentage < 5) {
                     #Send mail
-                    HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Low space', $percentage . '% of space left! Check ASAP!');
+                    usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Low space', $percentage . '% of space left! Check ASAP!');
                     #Generate flag
                     file_put_contents($dir . '/noSpace.flag', $percentage . '% of space left');
                 }
@@ -134,7 +134,7 @@ class Maintenance
             if (is_file($dir.'/noSpace.flag')) {
                 @unlink($dir . '/noSpace.flag');
                 #Send mail
-                HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Low space', $percentage . '% of space is now free. Alert resolved.');
+                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Low space', $percentage . '% of space is now free. Alert resolved.');
             }
         }
     }
@@ -148,7 +148,7 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
-                HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Database is down', 'Database appears to be down! Check ASAP!');
+                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Database is down', 'Database appears to be down! Check ASAP!');
                 #Generate flag
                 file_put_contents($dir . '/noDB.flag', 'Database is down');
             }
@@ -156,7 +156,7 @@ class Maintenance
             if (is_file($dir.'/noDB.flag')) {
                 @unlink($dir . '/noDB.flag');
                 #Send mail
-                HomePage::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Database is down', 'Database appears to started up again.');
+                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Database is down', 'Database appears to started up again.');
             }
         }
     }

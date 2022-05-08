@@ -44,24 +44,11 @@ class Activation extends Page
         $emails = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
         #Check if provided activation code fits any of those mails
         foreach ($emails as $email=>$code) {
-            if (password_verify($activation, $code) && $this->activate($userid, $email)) {
+            if (password_verify($activation, $code) && (new \Simbiat\usercontrol\Emails)->activate($userid, $email)) {
                 $outputArray = ['activated' => true, 'email' => $email];
                 break;
             }
         }
         return $outputArray;
-    }
-
-    private function activate(int $userid, string $email): bool
-    {
-        $queries = [
-            #Remove the code from DB
-            ['UPDATE `uc__user_to_email` SET `activation`=NULL WHERE `userid`=:userid AND `email`=:email', [':userid' => [$userid, 'int'], ':email' => $email]],
-            #Add user to register users
-            ['INSERT IGNORE INTO `uc__user_to_group`(`userid`, `groupid`) VALUES (:userid, 3)', [':userid' => [$userid, 'int']]],
-            #Remove user from unverified users
-            ['DELETE FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]],
-        ];
-        return HomePage::$dbController->query($queries);
     }
 }

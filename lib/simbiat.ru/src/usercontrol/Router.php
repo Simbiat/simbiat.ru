@@ -5,7 +5,7 @@ namespace Simbiat\usercontrol;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['activate', 'register', 'emails'];
+    protected array $subRoutes = ['activate', 'register', 'emails', 'unsubscribe'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/uc/', 'name'=>'User Cabinet']

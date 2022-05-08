@@ -9,7 +9,14 @@ class Api extends \Simbiat\Abstracts\Api
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-    protected array $verbs = ['login' => 'Login to the platform', 'register' => 'Register on the platform', 'remind' => 'Reset the password', 'logout' => 'Logout from the system', 'activate' => 'Request activation email for an email address'];
+    protected array $verbs = ['login' => 'Login to the platform',
+                                'register' => 'Register on the platform',
+                                'remind' => 'Reset the password',
+                                'logout' => 'Logout from the system',
+                                'activate' => 'Request activation email for an email address',
+                                'subscribe' => 'Subscribe to email notifications',
+                                'unsubscribe' => 'Unsubscribe from email notifications',
+    ];
 
     use Common;
 
@@ -48,7 +55,7 @@ class Api extends \Simbiat\Abstracts\Api
             return ['response' => true];
         } elseif (!empty($path[0]) && $path[0] === 'activate') {
             if (!empty($_POST['email'])) {
-                (new Signinup)->activate($_POST['email']);
+                (new Emails)->activationMail($_POST['email']);
                 return ['response' => true];
             } else {
                 return ['http_error' => 400, 'reason' => 'No email provided'];

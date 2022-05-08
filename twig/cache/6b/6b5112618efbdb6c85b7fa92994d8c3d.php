@@ -34,39 +34,79 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
     {
         $macros = $this->macros;
         // line 1
-        echo "<ul>
+        echo "<table>
+    <thead><tr><th>Email</th><th>Confirmed</th><th>Notifications</th><th>Delete</th></tr></thead>
     ";
-        // line 2
+        // line 3
         $context['_parent'] = $context;
         $context['_seq'] = twig_ensure_traversable(($context["emails"] ?? null));
-        foreach ($context['_seq'] as $context["email"] => $context["code"]) {
-            // line 3
-            echo "        ";
-            if ($context["code"]) {
-                // line 4
-                echo "            <li class=\"mail_not_activated warning\"><span>";
-                echo twig_escape_filter($this->env, $context["email"], "html", null, true);
-                echo "</span><input type=\"button\" value=\"Activate\" class=\"mail_activation\" data-email=\"";
-                echo twig_escape_filter($this->env, $context["email"], "html", null, true);
+        foreach ($context['_seq'] as $context["number"] => $context["email"]) {
+            // line 4
+            echo "        <tr class=\"middle\">
+            <td>";
+            // line 5
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 5), "html", null, true);
+            echo "</td>
+            <td>";
+            // line 6
+            if (twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 6)) {
+                echo "<input type=\"button\" value=\"Confirm\" class=\"mail_activation\" data-email=\"";
+                echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 6), "html", null, true);
                 echo "\"><img class=\"hidden spinner inline\" src=\"/img/spinner.svg\" alt=\"Activating ";
-                echo twig_escape_filter($this->env, $context["email"], "html", null, true);
-                echo "...\"></li>
-        ";
+                echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 6), "html", null, true);
+                echo "...\">";
             } else {
-                // line 6
-                echo "            <li class=\"mail_activated nodecor success\" data-tooltip=\"Already activated\"><span>";
-                echo twig_escape_filter($this->env, $context["email"], "html", null, true);
-                echo "</span></li>
-        ";
+                echo "✅";
             }
+            echo "</td>
+            <td";
+            // line 7
+            if (twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 7)) {
+                echo " class=\"warning\"";
+            }
+            echo ">";
+            if (twig_get_attribute($this->env, $this->source, $context["email"], "activation", [], "any", false, false, false, 7)) {
+                echo "Confirm address to change setting";
+            } else {
+                echo "<span class=\"radio_and_label\"><input id=\"subscription_checkbox_";
+                echo twig_escape_filter($this->env, $context["number"], "html", null, true);
+                echo "\" class=\"mail_subscription\" data-email=\"";
+                echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 7), "html", null, true);
+                echo "\" type=\"checkbox\"";
+                if (twig_get_attribute($this->env, $this->source, $context["email"], "subscribtion", [], "any", false, false, false, 7)) {
+                    echo " checked";
+                }
+                echo "><label for=\"subscription_checkbox_";
+                echo twig_escape_filter($this->env, $context["number"], "html", null, true);
+                echo "\">";
+                if (twig_get_attribute($this->env, $this->source, $context["email"], "subscribtion", [], "any", false, false, false, 7)) {
+                    echo "Unsubscribe";
+                } else {
+                    echo "Subscribe";
+                }
+                echo "</label></span><img class=\"hidden spinner inline\" src=\"/img/spinner.svg\" alt=\"Changing subscription for ";
+                echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 7), "html", null, true);
+                echo "...\">";
+            }
+            echo "</td>
+            <td><input class=\"mail_deletion\" data-email=\"";
             // line 8
-            echo "    ";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
+            echo "\" alt=\"Delete ";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
+            echo "\" type=\"image\" src=\"/img/close.svg\"";
+            if ((twig_length_filter($this->env, ($context["emails"] ?? null)) > 1)) {
+                echo " disabled";
+            }
+            echo "></td>
+        </tr>
+    ";
         }
         $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['email'], $context['code'], $context['_parent'], $context['loop']);
+        unset($context['_seq'], $context['_iterated'], $context['number'], $context['email'], $context['_parent'], $context['loop']);
         $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 9
-        echo "</ul>
+        // line 11
+        echo "</table>
 ";
     }
 
@@ -82,7 +122,7 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
 
     public function getDebugInfo()
     {
-        return array (  69 => 9,  63 => 8,  57 => 6,  47 => 4,  44 => 3,  40 => 2,  37 => 1,);
+        return array (  109 => 11,  94 => 8,  64 => 7,  52 => 6,  48 => 5,  45 => 4,  41 => 3,  37 => 1,);
     }
 
     public function getSourceContext()

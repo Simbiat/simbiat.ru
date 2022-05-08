@@ -34,7 +34,13 @@ class __TwigTemplate_0ae1d643616dd97cfbff984506ff8f83 extends Template
     {
         $macros = $this->macros;
         // line 1
-        echo "<p>Access prohibited. Contact administration, if you think this is a mistake.</p>
+        echo "<p>Access prohibited. ";
+        if ( !twig_get_attribute($this->env, $this->source, ($context["session_data"] ?? null), "username", [], "any", false, false, false, 1)) {
+            echo "Login or contact";
+        } else {
+            echo "Contact";
+        }
+        echo " administration, if you think this is a mistake.</p>
 <code>";
         // line 2
         echo twig_escape_filter($this->env, ($context["url"] ?? null), "html", null, true);
@@ -55,7 +61,7 @@ class __TwigTemplate_0ae1d643616dd97cfbff984506ff8f83 extends Template
 
     public function getDebugInfo()
     {
-        return array (  40 => 2,  37 => 1,);
+        return array (  46 => 2,  37 => 1,);
     }
 
     public function getSourceContext()
