@@ -53,6 +53,8 @@
                         {{ include('common/pages/sitemap.twig') }}
                     {% elseif serviceName == 'uc'%}
                         {{ include('usercontrol/usercontrol.twig') }}
+                    {% elseif serviceName == 'stylingTest'%}
+                        {{ include('stylingTest.twig') }}
                     {% else %}
                         <article id="http_error">
                             {{ include('errors/404.twig') }}

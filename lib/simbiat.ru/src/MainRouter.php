@@ -73,24 +73,27 @@ class MainRouter extends Abstracts\Router
             $outputArray['http_error'] = 403;
             return $outputArray;
         }
-        if ($uri[0] == 'optimize') {
-            (new Tests)->testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
-            exit;
-        }
-        if ($uri[0] == 'mail') {
-            if (!empty($uri[1]) && $uri[1] === 'send') {
-                HomePage::sendMail('simbiat@outlook.com', 'Test Mail', 'Simbiat', ['username' => 'Simbiat'], true);
-            } else {
-                try {
-                    $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
-                } catch (\Throwable) {
-                    $output = 'Twig failure';
+        switch ($uri[0]) {
+            case 'optimize':
+                (new Tests)->testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
+                exit;
+            case 'mail':
+                if (!empty($uri[1]) && $uri[1] === 'send') {
+                    usercontrol\Emails::sendMail('simbiat@outlook.com', 'Test Mail', 'Simbiat', ['username' => 'Simbiat'], true);
+                } else {
+                    try {
+                        $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
+                    } catch (\Throwable) {
+                        $output = 'Twig failure';
+                    }
+                    (new Common)->zEcho($output, 'live', true);
                 }
-                (new Common)->zEcho($output, 'live', true);
-            }
-            exit;
+                exit;
+            case 'styling':
+                return ['serviceName' => 'stylingTest'];
+            default:
+                return ['http_error' => 400];
         }
-        $outputArray['http_error'] = 400;
         return $outputArray;
     }
 }
