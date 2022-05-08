@@ -257,3 +257,8 @@ blockquote>.copyQuote {
 .inline {
     display: inline;
 }
+
+.middle {
+    text-align: center;
+    vertical-align: middle;
+}

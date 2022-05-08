@@ -391,14 +391,68 @@ input[type=radio]+label:active::before {
 input[type=checkbox]:checked+label::before {
     content: '\1F5F9';
 }
-input[type=checkbox]:not(checked)+label::before {
+input[type=checkbox]:not(:checked)+label::before {
     content: '\2610';
 }
 input[type=radio]:checked+label::before {
     content: '\29BF';
 }
-input[type=radio]:not(checked)+label::before {
+input[type=radio]:not(:checked)+label::before {
     content: '\2B58';
+}
+
+/*Style disabled elements*/
+input:disabled,
+input:disabled:active,
+input:disabled:hover,
+input:disabled:focus,
+input:disabled:focus-within,
+textarea:disabled,
+select:disabled,
+textarea:disabled:active,
+textarea:disabled:hover,
+textarea:disabled:focus,
+textarea:disabled:focus-within,
+select:disabled:active,
+select:disabled:hover,
+select:disabled:focus,
+select:disabled:focus-within {
+    color: var(--color-disabled);
+    border-color: var(--color-disabled);
+    cursor: not-allowed;
+    filter: blur(0.025rem) grayscale(1);
+    -webkit-user-select: none;
+    user-select: none;
+}
+input:disabled+label,
+input:disabled:focus+label,
+input:disabled:placeholder-shown+label,
+input[type=checkbox]:disabled+label::before,
+input[type=radio]:disabled+label::before {
+    color: var(--color-disabled);
+    cursor: not-allowed;
+    filter: blur(0.025rem) grayscale(1);
+    -webkit-user-select: none;
+    user-select: none;
+}
+textarea:disabled+label,
+select:disabled+label,
+input:disabled:not(:placeholder-shown)+label {
+    color: var(--color-disabled);
+    cursor: not-allowed;
+    -webkit-user-select: none;
+    user-select: none;
+}
+:disabled::file-selector-button,
+:disabled::file-selector-button:active,
+:disabled::file-selector-button:hover,
+:disabled::file-selector-button:focus,
+:disabled::file-selector-button:focus-within {
+    border-color: var(--color-disabled);
+    cursor: not-allowed;
+    filter: blur(0.025rem) grayscale(1);
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /*Select and option styling*/
