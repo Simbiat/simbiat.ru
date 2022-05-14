@@ -36,6 +36,10 @@ class __TwigTemplate_94c570cab6a0688012319e64d280f5c8 extends Template
         // line 1
         echo "<!-- Landing placeholder -->
 <article>
+    <p>";
+        // line 3
+        echo twig_escape_filter($this->env, ($context["client"] ?? null), "html", null, true);
+        echo "</p>
     <p>Due to release of <i>Endwalker</i> for <i>Final Fantasy XIV</i> I wanted to publish the updated version of the website on December 7th. But I did not realize that the release is on December 3rd...</p>
     <p>So... I am still releasing the update, as you can see, but some pages are not ready yet.</p>
     <p>On the bright side, besides the redesign, BIC Tracker is now properly functional again!</p>
@@ -60,9 +64,14 @@ class __TwigTemplate_94c570cab6a0688012319e64d280f5c8 extends Template
         return "landing.twig";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
-        return array (  37 => 1,);
+        return array (  41 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
