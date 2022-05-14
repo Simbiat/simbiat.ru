@@ -29,7 +29,7 @@ function activationMail(event)
     let formData = new FormData();
     formData.set('email', button.getAttribute('data-email'));
     spinner.classList.remove('hidden');
-    ajax(location.protocol+'//'+location.host+'/api/uc/activate/', formData, 'json', 'POST', 60000, true).then(data => {
+    ajax(location.protocol+'//'+location.host+'/api/uc/emails/activate/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
             addSnackbar('Activation email sent', 'success');
         } else {
@@ -48,7 +48,7 @@ function singInUpSubmit()
     }
     let spinner = document.getElementById('singinup_spinner');
     spinner.classList.remove('hidden');
-    ajax(location.protocol+'//'+location.host+'/api/uc/'+formData.get('signinup[type]')+'/', formData, 'json', 'POST', 60000, true).then(data => {
+    ajax(location.protocol+'//'+location.host+'/api/uc/signinup/'+formData.get('signinup[type]')+'/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
             location.reload();
         } else {

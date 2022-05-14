@@ -22,7 +22,7 @@ class Api extends Abstracts\Api
         return match($path[0]) {
             'fftracker' => (new fftracker\Api)->route(array_slice($path, 1)),
             'bictracker' => (new bictracker\Api)->route(array_slice($path, 1)),
-            'uc' => (new usercontrol\Api)->route(array_slice($path, 1)),
+            'uc' => (new usercontrol\Api\Api)->route(array_slice($path, 1)),
         };
     }
 }

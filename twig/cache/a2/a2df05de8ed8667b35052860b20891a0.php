@@ -91,10 +91,12 @@ class __TwigTemplate_a381f6a5042770e30439c178103f6510 extends Template
         echo "\" style=\"color:#9ad4ea\">unsubscribe</a>
             </div>
             <div>
-                Email generated at ";
+                Email generated on ";
         // line 29
-        echo twig_escape_filter($this->env, twig_date_format_filter($this->env, "now", "c"), "html", null, true);
-        echo "
+        echo twig_escape_filter($this->env, twig_date_format_filter($this->env, "now", "Y-m-d"), "html", null, true);
+        echo " at ";
+        echo twig_escape_filter($this->env, twig_date_format_filter($this->env, "now", "H:i:s"), "html", null, true);
+        echo " UTC
             </div>
         </div>
     </body>

@@ -12,8 +12,8 @@ use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Source;
 use Twig\Template;
 
-/* usercontrol/activation.twig */
-class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
+/* usercontrol/unsubscribe.twig */
+class __TwigTemplate_44e3936faf5b1ab45656531ffde2b816 extends Template
 {
     private $source;
     private $macros = [];
@@ -34,26 +34,16 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
     {
         $macros = $this->macros;
         // line 1
-        if (($context["activated"] ?? null)) {
-            // line 2
-            echo "    <div class=\"success\">Mail ";
-            echo twig_escape_filter($this->env, ($context["email"] ?? null), "html", null, true);
-            echo " confirmed";
-            if (($context["activation"] ?? null)) {
-                echo " and account activated";
-            }
-            echo ".</div>
+        echo "<p class=\"success\">Mail ";
+        echo twig_escape_filter($this->env, ($context["email"] ?? null), "html", null, true);
+        echo " unsubscribed.</p>
+<p>Some system mails (for example, password reset) may still be sent.</p>
 ";
-        } else {
-            // line 4
-            echo "    <div class=\"error\">Failed to confirm any emails.</div>
-";
-        }
     }
 
     public function getTemplateName()
     {
-        return "usercontrol/activation.twig";
+        return "usercontrol/unsubscribe.twig";
     }
 
     public function isTraitable()
@@ -63,11 +53,11 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
 
     public function getDebugInfo()
     {
-        return array (  49 => 4,  39 => 2,  37 => 1,);
+        return array (  37 => 1,);
     }
 
     public function getSourceContext()
     {
-        return new Source("", "usercontrol/activation.twig", "C:\\Users\\simbi\\OneDrive\\Documents\\!Personal\\Coding\\WebServer\\htdocs\\twig\\usercontrol\\activation.twig");
+        return new Source("", "usercontrol/unsubscribe.twig", "C:\\Users\\simbi\\OneDrive\\Documents\\!Personal\\Coding\\WebServer\\htdocs\\twig\\usercontrol\\unsubscribe.twig");
     }
 }

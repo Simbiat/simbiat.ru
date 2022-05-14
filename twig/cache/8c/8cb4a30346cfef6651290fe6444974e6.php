@@ -12,8 +12,8 @@ use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Source;
 use Twig\Template;
 
-/* usercontrol/activation.twig */
-class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
+/* errors/400.twig */
+class __TwigTemplate_14a76e8d753781f910894877c72bee94 extends Template
 {
     private $source;
     private $macros = [];
@@ -34,26 +34,25 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
     {
         $macros = $this->macros;
         // line 1
-        if (($context["activated"] ?? null)) {
-            // line 2
-            echo "    <div class=\"success\">Mail ";
-            echo twig_escape_filter($this->env, ($context["email"] ?? null), "html", null, true);
-            echo " confirmed";
-            if (($context["activation"] ?? null)) {
-                echo " and account activated";
-            }
-            echo ".</div>
+        echo "<p>I do not get what you're saying.</p>
 ";
-        } else {
-            // line 4
-            echo "    <div class=\"error\">Failed to confirm any emails.</div>
-";
+        // line 2
+        if (($context["reason"] ?? null)) {
+            echo "<samp class=\"failure\">";
+            echo twig_escape_filter($this->env, ($context["reason"] ?? null), "html", null, true);
+            echo "</samp>";
         }
+        // line 3
+        echo "<code>";
+        echo twig_escape_filter($this->env, ($context["url"] ?? null), "html", null, true);
+        echo "</code>
+<img loading=\"lazy\" decoding=\"async\" alt=\"do not understand\" src=\"/img/errors/incomprehension.svg\">
+";
     }
 
     public function getTemplateName()
     {
-        return "usercontrol/activation.twig";
+        return "errors/400.twig";
     }
 
     public function isTraitable()
@@ -63,11 +62,11 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
 
     public function getDebugInfo()
     {
-        return array (  49 => 4,  39 => 2,  37 => 1,);
+        return array (  46 => 3,  40 => 2,  37 => 1,);
     }
 
     public function getSourceContext()
     {
-        return new Source("", "usercontrol/activation.twig", "C:\\Users\\simbi\\OneDrive\\Documents\\!Personal\\Coding\\WebServer\\htdocs\\twig\\usercontrol\\activation.twig");
+        return new Source("", "errors/400.twig", "C:\\Users\\simbi\\OneDrive\\Documents\\!Personal\\Coding\\WebServer\\htdocs\\twig\\errors\\400.twig");
     }
 }

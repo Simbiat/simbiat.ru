@@ -1,5 +1,5 @@
 {% if activated %}
-    <div class="success">Mail {{ email }} confirmed{% if activation %} and account activated{% endif %}.</div>
+    <p class="success">Mail {{ email }} confirmed{% if activation %} and account activated{% endif %}.</p>
 {% else %}
-    <div class="error">Failed to confirm any emails.</div>
+    <p class="error">Failed to confirm any emails.</p>
 {% endif %}

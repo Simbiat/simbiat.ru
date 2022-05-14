@@ -135,4 +135,15 @@ class Emails
         ];
         return HomePage::$dbController->query($queries);
     }
+
+    public function subscribe(string $email): bool
+    {
+        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `email`=:email',[':email' => $email]);
+        return true;
+    }
+
+    public function unsubscribe(string $email): bool
+    {
+        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email',[':email' => $email]);
+    }
 }

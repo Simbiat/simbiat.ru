@@ -1,8 +1,13 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\usercontrol;
+namespace Simbiat\usercontrol\Api;
 
-class Api extends \Simbiat\Abstracts\Api
+use Simbiat\Abstracts\Api;
+use Simbiat\usercontrol\Common;
+use Simbiat\usercontrol\Emails;
+use Simbiat\usercontrol\Security;
+
+class Signinup extends Api
 {
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
@@ -13,9 +18,6 @@ class Api extends \Simbiat\Abstracts\Api
                                 'register' => 'Register on the platform',
                                 'remind' => 'Reset the password',
                                 'logout' => 'Logout from the system',
-                                'activate' => 'Request activation email for an email address',
-                                'subscribe' => 'Subscribe to email notifications',
-                                'unsubscribe' => 'Unsubscribe from email notifications',
     ];
 
     use Common;
@@ -39,27 +41,20 @@ class Api extends \Simbiat\Abstracts\Api
             switch ($_POST['signinup']['type']) {
                 #Login
                 case 'login':
-                    return (new Signinup)->login();
+                    return (new \Simbiat\usercontrol\Signinup)->login();
                 #New user
                 case 'register':
-                    return (new Signinup)->register();
+                    return (new \Simbiat\usercontrol\Signinup)->register();
                 #Reminder
                 case 'remind':
                     break;
                 #Logout
                 case 'logout':
-                    return (new Signinup)->logout();
+                    return (new \Simbiat\usercontrol\Signinup)->logout();
                 default:
                     return ['http_error' => 400, 'reason' => 'Unsupported action type provided'];
             }
             return ['response' => true];
-        } elseif (!empty($path[0]) && $path[0] === 'activate') {
-            if (!empty($_POST['email'])) {
-                (new Emails)->activationMail($_POST['email']);
-                return ['response' => true];
-            } else {
-                return ['http_error' => 400, 'reason' => 'No email provided'];
-            }
         } else {
             return ['http_error' => 400, 'reason' => 'No data provided'];
         }
