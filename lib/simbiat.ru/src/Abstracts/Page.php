@@ -32,6 +32,8 @@ abstract class Page
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'day';
+    #Flag indicating that authentication is required
+    protected bool $authenticationNeeded = false;
 
     public final function __construct()
     {
@@ -61,6 +63,9 @@ abstract class Page
             #Check if allowed method is used
             if (!in_array(HomePage::$method, $allowedMethods)) {
                 $page = ['http_error' => 405];
+            #Check that user is authenticated
+            } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
+                $page = ['http_error' => 403];
             } else {
                 #Generate the page
                 $page = $this->generate($path);

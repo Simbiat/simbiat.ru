@@ -24,6 +24,8 @@ abstract class Api
     protected int $cacheAge = 0;
     #Description of the node
     protected array $description = [];
+    #Flag indicating that authentication is required
+    protected bool $authenticationNeeded = false;
 
     #This is general routing check for supported node
     public final function route(array $path): array
@@ -34,8 +36,12 @@ abstract class Api
             @header('Allow: GET, HEAD, OPTIONS');
             @header('Content-Type: application/json; charset=utf-8');
         }
-        if (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes))) {
+        #Check if proper endpoint
+        if (!empty($this->subRoutes) && (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes)))) {
             $data = ['http_error' => 400, 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)];
+        #Check that user is authenticated
+        } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
+            $data = ['http_error' => 403, 'reason' => 'Authentication required'];
         } else {
             $data = $this->getData($path);
         }

@@ -1,5 +1,5 @@
 /*globals ariaNation, submitIntercept, ajax, addSnackbar*/
-/*exported ucInit, singInUpSubmit*/
+/*exported ucInit, singInUpSubmit, addMail*/
 
 function ucInit()
 {
@@ -13,11 +13,132 @@ function ucInit()
     });
     //Force loginRadioCheck for consistency
     loginRadioCheck();
-    //Intercept form submit
+    //Intercept forms submit
     submitIntercept('signinup');
+    submitIntercept('addMailForm');
     //Listener for mail activation buttons
     document.querySelectorAll('.mail_activation').forEach(item => {
         item.addEventListener('click', activationMail);
+    });
+    //Listener for mail subscription checkbox
+    document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+        item.addEventListener('click', subscribeMail);
+    });
+    //Listener for mail activation buttons
+    document.querySelectorAll('.mail_deletion').forEach(item => {
+        item.addEventListener('click', deleteMail);
+    });
+}
+
+function addMail()
+{
+    let form = document.getElementById('addMailForm');
+    //Get form data
+    let formData = new FormData(form);
+    if (!formData.get('email')) {
+        addSnackbar('Please, enter a valid email address', 'failure');
+        return false;
+    }
+    let email = formData.get('email').toString();
+    let spinner = document.getElementById('addMail_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol+'//'+location.host+'/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
+        if (data.data === true) {
+            //Add row to table
+            let row = document.getElementById('emailsList').insertRow();
+            row.classList.add('middle');
+            let cell = row.insertCell();
+            cell.innerHTML = email;
+            cell = row.insertCell();
+            cell.innerHTML ='<input type="button" value="Confirm" class="mail_activation" data-email="'+email+'" aria-invalid="false" placeholder="Confirm"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating '+email+'..." data-tooltip="Activating '+email+'...">';
+            cell = row.insertCell();
+            cell.innerHTML ='Confirm address to change setting';
+            cell.classList.add('warning');
+            cell = row.insertCell();
+            cell.innerHTML ='<td><input class="mail_deletion" data-email="'+email+'" type="image" src="/img/close.svg" alt="Delete '+email+'" aria-invalid="false" placeholder="image" data-tooltip="Delete '+email+'" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing '+email+'..." data-tooltip="Removing '+email+'...">';
+            blockDeleteMail();
+            addSnackbar('Mail added', 'success');
+        } else {
+            addSnackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+
+function deleteMail(event)
+{
+    let button = event.target;
+    let table = button.parentElement.parentElement.parentElement;
+    //Get row number
+    let tr = button.parentElement.parentElement.rowIndex - 1;
+    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
+    //Generate form data
+    let formData = new FormData();
+    formData.set('email', button.getAttribute('data-email'));
+    spinner.classList.remove('hidden');
+    ajax(location.protocol+'//'+location.host+'/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
+        if (data.data === true) {
+            table.deleteRow(tr);
+            blockDeleteMail();
+            addSnackbar('Mail removed', 'success');
+        } else {
+            addSnackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+
+//Function to block button for mail removal if we have less than 2 confirmed mails
+function blockDeleteMail()
+{
+    let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
+    document.querySelectorAll('.mail_deletion').forEach(item => {
+        //Check if row is for confirmed mail
+        if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
+            if (confirmedMail < 2) {
+                item.disabled = true;
+            } else {
+                item.disabled = false;
+            }
+        } else {
+            item.disabled = false;
+        }
+    });
+}
+
+function subscribeMail(event)
+{
+    event.preventDefault();
+    event.stopPropagation();
+    let checkbox = event.target;
+    //Get verb
+    let verb;
+    if (checkbox.checked) {
+        verb = 'subscribe';
+    } else {
+        verb = 'unsubscribe';
+    }
+    let label = checkbox.parentElement.getElementsByTagName('label')[0];
+    let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
+    //Generate form data
+    let formData = new FormData();
+    formData.set('email', checkbox.getAttribute('data-email'));
+    spinner.classList.remove('hidden');
+    ajax(location.protocol+'//'+location.host+'/api/uc/emails/'+verb+'/', formData, 'json', 'POST', 60000, true).then(data => {
+        if (data.data === true) {
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                label.innerText = 'Subscribe';
+                addSnackbar('Email unsubscribed', 'success');
+            } else {
+                checkbox.checked = true;
+                label.innerText = 'Unsubscribe';
+                addSnackbar('Email subscribed', 'success');
+            }
+        } else {
+            addSnackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
     });
 }
 

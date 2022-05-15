@@ -138,11 +138,33 @@ class Emails
 
     public function subscribe(string $email): bool
     {
-        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `email`=:email',[':email' => $email]);
+        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
     }
 
     public function unsubscribe(string $email): bool
     {
-        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email',[':email' => $email]);
+        if (empty($_SESSION['userid'])) {
+            return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email', [':email' => $email]);
+        } else {
+            return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
+        }
+    }
+
+    public function delete(string $email): bool
+    {
+        return HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
+    }
+
+    public function add(string $email): array
+    {
+        #Check if email is already registered
+        if (HomePage::$dbController->check('SELECT `email` FROM `uc__user_to_email` WHERE `email`=:email', [':email' => $email])) {
+            return ['http_error' => 409, 'reason' => 'Email already registered'];
+        }
+        #Add email
+        if (!HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email])) {
+            return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
+        }
+        return ['response' => $this->activationMail($email)];
     }
 }

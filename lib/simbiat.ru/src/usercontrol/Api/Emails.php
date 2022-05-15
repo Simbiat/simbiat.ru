@@ -19,6 +19,8 @@ class Emails extends Api
                                 'subscribe' => 'Subscribe to email notifications',
                                 'unsubscribe' => 'Unsubscribe from email notifications',
     ];
+    #Flag indicating that authentication is required
+    protected bool $authenticationNeeded = true;
 
     use Common;
 
@@ -30,15 +32,23 @@ class Emails extends Api
         if (empty($path[0])) {
             $path[0] = 'add';
         }
-        if ($path[0] === 'activate') {
-            if (!empty($_POST['email'])) {
+        if (empty($_POST['email'])) {
+            return ['http_error' => 400, 'reason' => 'No email provided'];
+        }
+        switch ($path[0]) {
+            case 'activate':
                 (new \Simbiat\usercontrol\Emails)->activationMail($_POST['email']);
                 return ['response' => true];
-            } else {
-                return ['http_error' => 400, 'reason' => 'No email provided'];
-            }
-        } else {
-            return ['http_error' => 400, 'reason' => 'No data provided'];
+            case 'add':
+                return (new \Simbiat\usercontrol\Emails)->add($_POST['email']);
+            case 'delete':
+                return ['response' => (new \Simbiat\usercontrol\Emails)->delete($_POST['email'])];
+            case 'subscribe':
+                return ['response' => (new \Simbiat\usercontrol\Emails)->subscribe($_POST['email'])];
+            case 'unsubscribe':
+                return ['response' => (new \Simbiat\usercontrol\Emails)->unsubscribe($_POST['email'])];
+            default:
+                return ['http_error' => 400, 'reason' => 'Unsupported verb'];
         }
     }
 }

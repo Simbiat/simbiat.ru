@@ -36,17 +36,23 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
         // line 1
         if (($context["activated"] ?? null)) {
             // line 2
-            echo "    <div class=\"success\">Mail ";
+            echo "    <p class=\"success\">Mail ";
             echo twig_escape_filter($this->env, ($context["email"] ?? null), "html", null, true);
             echo " confirmed";
             if (($context["activation"] ?? null)) {
                 echo " and account activated";
             }
-            echo ".</div>
+            echo ".</p>
 ";
         } else {
             // line 4
-            echo "    <div class=\"error\">Failed to confirm any emails.</div>
+            echo "    <p class=\"error\">Failed to confirm any emails.</p>
+";
+        }
+        // line 6
+        if (twig_get_attribute($this->env, $this->source, ($context["session_data"] ?? null), "username", [], "any", false, false, false, 6)) {
+            // line 7
+            echo "    <p>You can check list of all your registered mails <a href=\"\">here</a>.</p>
 ";
         }
     }
@@ -63,7 +69,7 @@ class __TwigTemplate_c116c3b39ff5e4d71e7bb90e655dd40f extends Template
 
     public function getDebugInfo()
     {
-        return array (  49 => 4,  39 => 2,  37 => 1,);
+        return array (  55 => 7,  53 => 6,  49 => 4,  39 => 2,  37 => 1,);
     }
 
     public function getSourceContext()

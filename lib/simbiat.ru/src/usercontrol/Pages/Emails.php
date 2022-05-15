@@ -21,18 +21,15 @@ class Emails extends Page
     protected string $ogdesc = 'List of linked emails';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
+    #Flag indicating that authentication is required
+    protected bool $authenticationNeeded = true;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        #Get user ID
-        $userid = $_SESSION['userid'] ?? null;
-        if (empty($userid)) {
-            return ['http_error' => 403];
-        }
         $outputArray = [];
         #Show list of mails pending activation to request code resending
-        $outputArray['emails'] = HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$userid, 'int']]);
+        $outputArray['emails'] = HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$_SESSION['userid'], 'int']]);
         $outputArray['countActivated'] = count(array_filter(array_column($outputArray['emails'], 'activation'), function($x) { return empty($x); }));
         return $outputArray;
     }

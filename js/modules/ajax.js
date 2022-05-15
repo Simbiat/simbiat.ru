@@ -68,6 +68,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
 //Switch to determine which function to call on submit
 const submitFunctions = {
     'signinup': 'singInUpSubmit',
+    'addMailForm': 'addMail',
     'ff_track_register': 'ffTrackAdd',
 };
 
