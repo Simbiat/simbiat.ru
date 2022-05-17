@@ -160,7 +160,8 @@ samp,
 samp.success {
     border-left: calc(var(--border-width) * 3) solid var(--color-success);
 }
-samp.failure {
+samp.failure,
+samp.error {
     border-left: calc(var(--border-width) * 3) solid var(--color-failure);
 }
 
@@ -381,7 +382,7 @@ p {
 p+p {
     margin-top: 0.25rem;
 }
-p::first-letter {
+p:not(.failure):not(.warning):not(.success):not(.error)::first-letter {
     font-weight: bold;
     color: var(--color-success);
     text-transform: uppercase;

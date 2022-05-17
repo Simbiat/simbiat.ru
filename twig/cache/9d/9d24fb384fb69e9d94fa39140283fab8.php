@@ -81,11 +81,11 @@ class __TwigTemplate_009eb9563b966db22b8569747157e21c extends Template
             </span>
         </div>
         <div class=\"float_label_div\">
-            <input form=\"signinup\" type=\"text\" aria-required=\"false\" name=\"signinup[username]\" id=\"signinup_username\" placeholder=\"Username\" autocomplete=\"username\" inputmode=\"text\" minlength=\"1\" maxlength=\"64\" pattern=\"^[a-zA-Z0-9.!#\$%&\\'*+\\/=?^_`{|}~-]+\$\">
+            <input form=\"signinup\" type=\"text\" aria-required=\"false\" name=\"signinup[username]\" id=\"signinup_username\" placeholder=\"Username\" autocomplete=\"username\" inputmode=\"text\" minlength=\"1\" maxlength=\"64\" pattern=\"^[a-zA-Z0-9.!#\$%&'*+\\/=?^_`{|}~-]+\$\">
             <label for=\"signinup_username\">Username</label>
         </div>
         <div class=\"float_label_div\">
-            <input form=\"signinup\" type=\"email\" required aria-required=\"true\" name=\"signinup[email]\" id=\"signinup_email\" placeholder=\"Email\" autocomplete=\"email\" inputmode=\"email\" minlength=\"1\" maxlength=\"320\" pattern=\"^[a-zA-Z0-9.!#\$%&\\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$\">
+            <input form=\"signinup\" type=\"email\" required aria-required=\"true\" name=\"signinup[email]\" id=\"signinup_email\" placeholder=\"Email\" autocomplete=\"email\" inputmode=\"email\" minlength=\"1\" maxlength=\"320\" pattern=\"^[a-zA-Z0-9.!#\$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$\">
             <label for=\"signinup_email\">Email</label>
         </div>
         <div class=\"float_label_div\">

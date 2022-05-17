@@ -34,7 +34,7 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
     {
         $macros = $this->macros;
         // line 1
-        echo "<table>
+        echo "<table id=\"emailsList\">
     <thead><tr><th>Email</th><th>Confirmed</th><th>Notifications</th><th>Delete</th></tr></thead>
     ";
         // line 3
@@ -56,7 +56,7 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 6), "html", null, true);
                 echo "...\">";
             } else {
-                echo "✅";
+                echo "<span class=\"mail_confirmed\">✅</span>";
             }
             echo "</td>
             <td";
@@ -100,7 +100,9 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
                 echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
                 echo "\"";
             }
-            echo "></td>
+            echo "><img class=\"hidden spinner inline\" src=\"/img/spinner.svg\" alt=\"Removing ";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["email"], "email", [], "any", false, false, false, 8), "html", null, true);
+            echo "...\"></td>
         </tr>
     ";
         }
@@ -109,6 +111,14 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
         $context = array_intersect_key($context, $_parent) + $_parent;
         // line 11
         echo "</table>
+<form role=\"form\" id=\"addMailForm\" name=\"addMailForm\" autocomplete=\"on\" class=\"middle\">
+    <div class=\"float_label_div\">
+        <input form=\"addMailForm\" type=\"email\" aria-required=\"false\" name=\"email\" id=\"addMail\" placeholder=\"Email\" autocomplete=\"email\" inputmode=\"email\" minlength=\"1\" maxlength=\"320\" pattern=\"^[a-zA-Z0-9.!#\$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$\">
+        <label for=\"addMail\">Email</label>
+    </div>
+    <input role=\"button\" form=\"addMailForm\" type=\"submit\" name=\"addMail[submit]\" id=\"addMail_submit\" formaction=\"/api/uc/emails/add/\" formmethod=\"post\" formtarget=\"_self\" value=\"Add\">
+    <img id=\"addMail_spinner\" class=\"hidden spinner\" src=\"/img/spinner.svg\" alt=\"Adding email...\">
+</form>
 ";
     }
 
@@ -124,7 +134,7 @@ class __TwigTemplate_a7b8644b19d8087dea3490e7a9c33d59 extends Template
 
     public function getDebugInfo()
     {
-        return array (  111 => 11,  94 => 8,  64 => 7,  52 => 6,  48 => 5,  45 => 4,  41 => 3,  37 => 1,);
+        return array (  113 => 11,  94 => 8,  64 => 7,  52 => 6,  48 => 5,  45 => 4,  41 => 3,  37 => 1,);
     }
 
     public function getSourceContext()
