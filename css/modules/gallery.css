@@ -70,10 +70,12 @@
 #galleryPrevious:focus,
 #galleryNext:focus,
 #galleryPrevious:hover,
-#galleryNext:hover,
+#galleryNext:hover {
+    filter: brightness(2);
+}
 #galleryPrevious:active,
 #galleryNext:active {
-    filter: brightness(2);
+    filter: brightness(0.7);
 }
 #galleryLoadedImage {
     height: 100%;
@@ -89,4 +91,157 @@
     text-decoration: none;
     border-color: var(--color-interactive);
     cursor: zoom-in;
+}
+#galleryLoadedImage.noZoom {
+    cursor: default;
+}
+
+/*Carousel of images*/
+.imageCarousel {
+    height: 10rem;
+    background-color: var(--color-body);
+    border-radius: var(--border-radius);
+    display: grid;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    justify-items: stretch;
+    grid-template-columns: 1fr 23fr 1fr;
+    grid-template-areas:
+        'prev list next'
+}
+.imageCarousel figure {
+    height: 10rem;
+}
+.imageCarousel>ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    grid-area: list;
+}
+/*Next two settings are required to hide scrollbar, but keep scroll functionality*/
+.imageCarousel>ul {
+    overflow: overlay hidden;
+}
+.imageCarousel>ul::-webkit-scrollbar {
+    display: none;
+}
+.imageCarousel li {
+    list-style: none;
+}
+.imageCarousel figure>a {
+    text-decoration-line: underline;
+    border: none;
+    position: relative;
+    height: 5rem;
+    display: block;
+}
+.imageCarousel figure>a>div:hover,
+.imageCarousel figure>a>div:focus,
+.imageCarousel figure>a>div:active {
+    border-color: var(--color-interactive);
+    border-style: solid;
+    border-width: var(--border-width);
+}
+.imageCarousel figure>a>img,
+.imageCarousel figcaption,
+.imageCarousel figure>a>div {
+    width: 10rem;
+}
+.imageCarousel figure>a>img,
+.imageCarousel figure>a>div {
+    height: 5rem;
+}
+.imageCarousel figcaption {
+    height: 4rem;
+    overflow: clip;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+.imageCarousel figure {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+}
+.imageCarouselPrev,
+.imageCarouselNext {
+    height: 10rem;
+    font-size: 3rem;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 10rem;
+    font-weight: bolder;
+    color: var(--color-interactive);
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    background-color: var(--color-body);
+}
+.imageCarouselPrev {
+    grid-area: prev;
+    border-bottom-left-radius: var(--border-radius);
+    border-top-left-radius: var(--border-radius);
+}
+.imageCarouselNext {
+    grid-area: next;
+    border-bottom-right-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+.imageCarouselPrev:focus,
+.imageCarouselNext:focus,
+.imageCarouselPrev:hover,
+.imageCarouselNext:hover,
+.imageCarouselPrev:active,
+.imageCarouselNext:active {
+    border-color: var(--color-interactive);
+    border-style: solid;
+    border-width: var(--border-width);
+    background-color: var(--color-block);
+}
+.imageCarouselPrev.disabled,
+.imageCarouselNext.disabled {
+    color: var(--color-disabled);
+    cursor: default;
+}
+.imageCarouselPrev.disabled:active,
+.imageCarouselNext.disabled:active {
+    filter: brightness(1);
+}
+.imageCarouselPrev.disabled:focus,
+.imageCarouselNext.disabled:focus,
+.imageCarouselPrev.disabled:hover,
+.imageCarouselNext.disabled:hover,
+.imageCarouselPrev.disabled:active,
+.imageCarouselNext.disabled:active {
+    border: none;
+    background-color: var(--color-body);
+}
+.imageCarouselPrev:active,
+.imageCarouselNext:active {
+    filter: brightness(0.7);
+}
+.imageCarousel figure>a>img,
+.imageCarousel figure>a>div {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+}
+.imageCarousel figure>a>div {
+    color: var(--color-text);
+    background-color: var(--color-body);
+    filter: opacity(0.75);
+    text-align: center;
+    vertical-align: middle;
+    line-height: 5rem;
+    font-weight: bold;
 }

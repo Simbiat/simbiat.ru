@@ -5,7 +5,7 @@ let galleryList = [];
 function galleryInit()
 {
     //Attach trigger for opening overlay
-    Array.from(document.getElementsByClassName('galleryZoom')).forEach(item => {
+    document.querySelectorAll('.galleryZoom').forEach(item => {
         item.addEventListener('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -18,6 +18,54 @@ function galleryInit()
     //Attach triggers for navigation
     document.getElementById('galleryPrevious').addEventListener('click', galleryPrevious);
     document.getElementById('galleryNext').addEventListener('click', galleryNext);
+    //Attach scroll triggers to carousel scrolling
+    document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
+        item.addEventListener('click', scrollCarousel);
+    });
+    //Disabled scrolling buttons for carousels, that require this. Doing in separate cycle to avoid triggering it twice
+    document.querySelectorAll('.imageCarousel').forEach(item => {
+        carouselDisable(item);
+    });
+}
+
+function scrollCarousel(event)
+{
+    let scrollButton = event.target;
+    let ul = scrollButton.parentElement.getElementsByTagName('ul')[0];
+    //Get width to scroll based on width of one of the images
+    let img = ul.getElementsByTagName('img')[0];
+    let width = img.width;
+    if (scrollButton.classList.contains('imageCarouselPrev')) {
+        ul.scrollLeft -= width;
+    } else {
+        ul.scrollLeft += width;
+    }
+    carouselDisable(scrollButton.parentElement);
+}
+
+function carouselDisable(carousel)
+{
+    //Get previous and next buttons
+    let prev = carousel.getElementsByClassName('imageCarouselPrev')[0];
+    let next = carousel.getElementsByClassName('imageCarouselNext')[0];
+    //Get UL to get scroll details
+    let ul = carousel.getElementsByTagName('ul')[0];
+    //Get maximum scrollLeft value
+    let max = ul.scrollWidth - ul.offsetWidth;
+    if (ul.scrollLeft === 0) {
+        prev.classList.add('disabled');
+        prev.addEventListener('click', scrollCarousel);
+    } else {
+        prev.classList.remove('disabled');
+        prev.removeEventListener('click', scrollCarousel);
+    }
+    if (ul.scrollLeft >= max) {
+        next.classList.add('disabled');
+        next.addEventListener('click', scrollCarousel);
+    } else {
+        next.classList.remove('disabled');
+        next.removeEventListener('click', scrollCarousel);
+    }
 }
 
 function galleryOpen(image)
@@ -51,7 +99,7 @@ function galleryLoadImage()
     document.getElementById('galleryTotal').innerText = galleryList.length.toString();
     document.getElementById('galleryCurrent').innerText = galleryCurrent.toString();
     document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="'+name+'" src="'+image.href+'">';
-    document.getElementById('galleryLoadedImage').addEventListener('click', galleryZoom);
+    document.getElementById('galleryLoadedImage').addEventListener('load', checkZoom);
 }
 
 function galleryClose()
@@ -92,6 +140,18 @@ function galleryNext()
     }
     //Load image
     galleryLoadImage(galleryCurrent);
+}
+
+function checkZoom()
+{
+    let image = document.getElementById('galleryLoadedImage');
+    if (image.naturalHeight <= image.height) {
+        image.classList.add('noZoom');
+        image.removeEventListener('click', galleryZoom);
+    } else {
+        image.classList.remove('noZoom');
+        image.addEventListener('click', galleryZoom);
+    }
 }
 
 function galleryZoom()
