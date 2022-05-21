@@ -3,9 +3,9 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\HTTP20\HTML;
-use Simbiat\usercontrol\Security;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension implements GlobalsInterface
@@ -19,6 +19,16 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('linkTags', [HomePage::$headers, 'links'], ['is_safe' => ['html']]),
         ];
     }
+
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('basename', function($string) {
+                return basename($string);
+            }),
+        ];
+    }
+
     public function getGlobals(): array
     {
         $defaults = [
