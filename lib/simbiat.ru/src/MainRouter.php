@@ -83,7 +83,8 @@ class MainRouter extends Abstracts\Router
                 } else {
                     try {
                         $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
-                    } catch (\Throwable) {
+                    } catch (\Throwable $exception) {
+                        (new Errors)->error_log($exception);
                         $output = 'Twig failure';
                     }
                     (new Common)->zEcho($output, 'live', true);

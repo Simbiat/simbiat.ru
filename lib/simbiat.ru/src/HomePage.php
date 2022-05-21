@@ -248,7 +248,8 @@ class HomePage
             ob_start();
             try {
                 $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
-            } catch (\Throwable) {
+            } catch (\Throwable $exception) {
+                (new Errors)->error_log($exception);
                 $output = 'Twig failure';
             }
             #Close session
