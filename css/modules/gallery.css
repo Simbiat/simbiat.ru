@@ -145,9 +145,7 @@
 .imageCarousel figure>a>div:hover,
 .imageCarousel figure>a>div:focus,
 .imageCarousel figure>a>div:active {
-    border-color: var(--color-interactive);
-    border-style: solid;
-    border-width: var(--border-width);
+    filter: opacity(.25);
 }
 .imageCarousel figure>a>img,
 .imageCarousel figcaption,
