@@ -1,6 +1,6 @@
 create table talks__attachments
 (
-    fileid    int unsigned                                not null comment 'File ID',
+    fileid    int unsigned auto_increment comment 'File ID',
     postid    int unsigned                                not null comment 'ID of the post to which the file is attached',
     name      varchar(128)                                not null comment 'Name of the file to be shown to humans',
     mime      varchar(100)                                not null comment 'MIME Type',
