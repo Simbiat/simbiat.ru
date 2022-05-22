@@ -86,15 +86,19 @@ function galleryOpen(image)
 function galleryLoadImage()
 {
     //Get element from array
-    let image = galleryList[galleryCurrent - 1];
+    let link = galleryList[galleryCurrent - 1];
+    //Get image
+    let image = link.getElementsByTagName('img')[0];// jshint ignore:line
+    //Get figcaption
+    let caption = link.parentElement.getElementsByTagName('figcaption')[0];
     //Get name
-    let name = image.getAttribute('data-tooltip') ?? image.getAttribute('title') ?? image.href.replace(/^.*[\\\/]/u, '');// jshint ignore:line
+    let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');// jshint ignore:line
     //Update elements
-    document.getElementById('galleryName').innerText = name;
-    document.getElementById('galleryNameLink').innerHTML = '<a href="'+image.href+'" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a>';
+    document.getElementById('galleryName').innerHTML = (caption ? caption.innerHTML : name);
+    document.getElementById('galleryNameLink').innerHTML = '<a href="'+link.href+'" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a>';
     document.getElementById('galleryTotal').innerText = galleryList.length.toString();
     document.getElementById('galleryCurrent').innerText = galleryCurrent.toString();
-    document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="'+name+'" src="'+image.href+'">';
+    document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="'+name+'" src="'+link.href+'">';
     document.getElementById('galleryLoadedImage').addEventListener('load', checkZoom);
 }
 
