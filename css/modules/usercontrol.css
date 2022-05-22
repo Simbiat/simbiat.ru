@@ -1,8 +1,0 @@
-.mail_activated {
-    list-style-type: '✅';
-    list-style-position: outside;
-}
-.mail_not_activated {
-    list-style-type: '☐ ';
-    list-style-position: outside;
-}

@@ -34,25 +34,35 @@ class __TwigTemplate_94c570cab6a0688012319e64d280f5c8 extends Template
     {
         $macros = $this->macros;
         // line 1
-        echo "<!-- Landing placeholder -->
-<article>
-    <p>Due to release of <i>Endwalker</i> for <i>Final Fantasy XIV</i> I wanted to publish the updated version of the website on December 7th. But I did not realize that the release is on December 3rd...</p>
-    <p>So... I am still releasing the update, as you can see, but some pages are not ready yet.</p>
-    <p>On the bright side, besides the redesign, BIC Tracker is now properly functional again!</p>
-    <p>I will restore other FFTracker pages over the weekend, and the rest (including proper landing page) will come later on.</p>
-    <p>At least, that's the plan.</p>
-    <br>
-    <p>UPDATE as of 05.12.2021: most of FFTracker pages are now working. Exceptions are entity registration and statistics (including those on Free Companies' pages). The latter are planned to be transferred to images, instead of Google Charts, so may take a bit more time to be restored.</p>
-    <br>
-    <p>UPDATE as of 08.12.2021: FF entity registration page is now up.</p>
-    <p>During first days of running I noticed that some images are not being loaded on the pages. Those are images which are \"proxied\" from Lodestone since they do not comply with Crossorigin (which I pointed to them like half a year ago). In order to maintain high level of security of the website I will start saving images for characters and achievements locally on every update. Unfortunately, considering the amount of files, that will result in, I will hit limits of current hosting. As such I made decision to finally migrate to a VPS instead of shared hosting, which will remove limit of files storage and help me provide even higher level of security and performance. At least theoretically. As such, it is possible to see some disruption of the service during migration in near future (hopefully by the end of the week). I apologize for any possible inconveniences caused by this.</p>
-    <br>
-    <p>UPDATE as of 10.12.2021: Moved to VPS. If you are reading this, means that DNS was updated as well, so everything should be working as expected.</p>
-    <p>I also noticed that TTFB timings from VPS seem to be extremely long (23 seconds!), so am looking into what may be the cause of that.</p>
-    <br>
-    <p>UPDATE as of 12.12.2021: Significant improvement in TTFB already (so far 5-7 seconds instead of 20-60), but still have some ideas on potential further improvements.</p>
-</article>
+        $context['_parent'] = $context;
+        $context['_seq'] = twig_ensure_traversable(($context["posts"] ?? null));
+        foreach ($context['_seq'] as $context["_key"] => $context["post"]) {
+            // line 2
+            echo "    <article>
+        <div class=\"articleHeader\">
+            <h2 class=\"articleName\" id=\"post_";
+            // line 4
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["post"], "postid", [], "any", false, false, false, 4), "html", null, true);
+            echo "\">";
+            echo twig_escape_filter($this->env, twig_get_attribute($this->env, $this->source, $context["post"], "name", [], "any", false, false, false, 4), "html", null, true);
+            echo "</h2>
+            <time class=\"articleTime\" datetime=\"";
+            // line 5
+            echo twig_escape_filter($this->env, twig_date_format_filter($this->env, twig_get_attribute($this->env, $this->source, $context["post"], "created", [], "any", false, false, false, 5), "c"), "html", null, true);
+            echo "\">";
+            echo twig_escape_filter($this->env, twig_date_format_filter($this->env, twig_get_attribute($this->env, $this->source, $context["post"], "created", [], "any", false, false, false, 5), "d/m/Y H:i"), "html", null, true);
+            echo "</time>
+        </div>
+        <section class=\"articleText\">";
+            // line 7
+            echo twig_nl2br(twig_get_attribute($this->env, $this->source, $context["post"], "text", [], "any", false, false, false, 7));
+            echo "</section>
+    </article>
 ";
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['post'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
     }
 
     public function getTemplateName()
@@ -60,9 +70,14 @@ class __TwigTemplate_94c570cab6a0688012319e64d280f5c8 extends Template
         return "landing.twig";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
-        return array (  37 => 1,);
+        return array (  58 => 7,  51 => 5,  45 => 4,  41 => 2,  37 => 1,);
     }
 
     public function getSourceContext()
