@@ -54,17 +54,13 @@ function carouselDisable(carousel)
     let max = ul.scrollWidth - ul.offsetWidth;
     if (ul.scrollLeft === 0) {
         prev.classList.add('disabled');
-        prev.addEventListener('click', scrollCarousel);
     } else {
         prev.classList.remove('disabled');
-        prev.removeEventListener('click', scrollCarousel);
     }
     if (ul.scrollLeft >= max) {
         next.classList.add('disabled');
-        next.addEventListener('click', scrollCarousel);
     } else {
         next.classList.remove('disabled');
-        next.removeEventListener('click', scrollCarousel);
     }
 }
 
