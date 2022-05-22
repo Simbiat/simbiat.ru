@@ -94,7 +94,7 @@ function galleryLoadImage()
     //Get name
     let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');// jshint ignore:line
     //Update elements
-    document.getElementById('galleryName').innerHTML = (caption ? caption.innerHTML : name);
+    document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
     document.getElementById('galleryNameLink').innerHTML = '<a href="'+link.href+'" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a>';
     document.getElementById('galleryTotal').innerText = galleryList.length.toString();
     document.getElementById('galleryCurrent').innerText = galleryCurrent.toString();
