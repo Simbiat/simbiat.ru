@@ -9,7 +9,7 @@ function galleryInit()
         item.addEventListener('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            galleryOpen(event.target);
+            galleryOpen(event.target, true);
             return false;
         });
     });
@@ -22,6 +22,8 @@ function galleryInit()
     document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
         item.addEventListener('click', scrollCarousel);
     });
+    //Get list of images
+    galleryCount();
     //Disabled scrolling buttons for carousels, that require this. Doing in separate cycle to avoid triggering it twice
     document.querySelectorAll('.imageCarousel').forEach(item => {
         carouselDisable(item);
@@ -64,10 +66,8 @@ function carouselDisable(carousel)
     }
 }
 
-function galleryOpen(image)
+function galleryOpen(image, hashUpdate)
 {
-    //Get list of images
-    galleryCount();
     //Get current image
     let link;
     if (image.tagName.toLowerCase() === 'a') {
@@ -78,12 +78,12 @@ function galleryOpen(image)
     //Get current index
     galleryCurrent = galleryGetIndex(link);
     //Load image
-    galleryLoadImage();
+    galleryLoadImage(hashUpdate);
     //Show overlay
     document.getElementById('galleryOverlay').classList.remove('hidden');
 }
 
-function galleryLoadImage()
+function galleryLoadImage(hashUpdate)
 {
     //Get element from array
     let link = galleryList[galleryCurrent - 1];
@@ -100,6 +100,16 @@ function galleryLoadImage()
     document.getElementById('galleryCurrent').innerText = galleryCurrent.toString();
     document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="'+name+'" src="'+link.href+'">';
     document.getElementById('galleryLoadedImage').addEventListener('load', checkZoom);
+    //Update URL
+    if (hashUpdate) {
+        let url = new URL(document.location.href);
+        let hash = url.hash;
+        if (hash) {
+            window.history.pushState('Image ' + galleryCurrent.toString(), document.title, document.location.href.replace(hash, '#gallery=' + galleryCurrent.toString()));
+        } else {
+            window.history.pushState('Image ' + galleryCurrent.toString(), document.title, document.location.href + '#gallery=' + galleryCurrent.toString());
+        }
+    }
 }
 
 function galleryClose()

@@ -1,7 +1,7 @@
 // JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
 /*globals ucInit, ariaInit, webShareInit, backToTop, timer, colorValue, bicInit, detailsInit,
 colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader, tooltipInit, copyQuoteInit,
-placeholders, formInit, galleryInit, fftrackerInit*/
+placeholders, formInit, galleryInit, fftrackerInit, galleryOpen, galleryList, addSnackbar*/
 /*exported pageTitle*/
 'use strict';
 
@@ -32,11 +32,11 @@ const pageTitle = ' on Simbiat Software';
     }
 }());
 
-document.addEventListener('DOMContentLoaded', attachListeners);
-cleanGET();
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('hashchange', function() {hashCheck(false);});
 
-//Attaches event listeners
-function attachListeners()
+//Runs initialization routines
+function init()
 {
     //Back-to-top buttons
     document.getElementById('content').addEventListener('scroll', backToTop);
@@ -83,6 +83,8 @@ function attachListeners()
     }
     //Floating tooltip
     tooltipInit();
+    cleanGET();
+    hashCheck(true);
 }
 
 //Remove cacheReset flag
@@ -95,5 +97,24 @@ function cleanGET()
         window.history.replaceState(null, document.title, location.pathname + location.hash);
     } else {
         window.history.replaceState(null, document.title, '?' + params + location.hash);
+    }
+}
+
+//Special processing for special hash links
+function hashCheck(hashUpdate)
+{
+    let url = new URL(document.location.href);
+    let hash = url.hash;
+    const galleryLink = new RegExp('#gallery=\\d+', 'ui');
+    if (galleryLink.test(hash)) {
+        let imageID = hash.replace(/(#gallery=)(\d+)/ui, '$2');
+        if (imageID) {
+            if (galleryList[imageID - 1]) {
+                galleryOpen(galleryList[imageID - 1], hashUpdate);
+            } else {
+                addSnackbar('Image number '+imageID+' not found on page', 'failure');
+                window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));
+            }
+        }
     }
 }
