@@ -9,7 +9,7 @@
             {{ linkTags(link_extra, 'head') }}
         {% endif %}
 
-        <title>{% if title %}{{ title|raw }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}</title>
+        <title>{% if title %}{{ title|raw }} on {{ site_name }}{% else %}{{ site_name }}{% endif %}</title>
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
