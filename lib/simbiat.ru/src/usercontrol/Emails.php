@@ -140,7 +140,11 @@ class Emails
 
     public function subscribe(string $email): bool
     {
-        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
+        if (empty($_SESSION['userid'])) {
+            return false;
+        } else {
+            return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
+        }
     }
 
     public function unsubscribe(string $email): bool
@@ -154,7 +158,11 @@ class Emails
 
     public function delete(string $email): bool
     {
-        return HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
+        if (empty($_SESSION['userid'])) {
+            return false;
+        } else {
+            return HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
+        }
     }
 
     public function add(string $email): array
