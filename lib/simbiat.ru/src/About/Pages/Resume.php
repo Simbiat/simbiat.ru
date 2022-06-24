@@ -254,7 +254,7 @@ class Resume extends Page
                 ],
                 [
                     'startTime' => '2021-09-20',
-                    'endTime' => null,
+                    'endTime' => '2022-06-30',
                     'name' => 'Smartly.io',
                     'icon' => '/img/icons/Smartly.svg',
                     'href' => 'https://www.smartly.io/',
