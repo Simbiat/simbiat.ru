@@ -167,6 +167,6 @@ class Emails
         if (!HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email])) {
             return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
         }
-        return ['response' => $this->activationMail($email)];
+        return ['status' => 201, 'response' => $this->activationMail($email)];
     }
 }
