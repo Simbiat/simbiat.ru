@@ -8,7 +8,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
     setTimeout(() => controller.abort(), timeout);
     //Generate POST data if request is present
     let formData = new FormData();
-    if (request && method === 'POST') {
+    if (request && ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) > -1) {
         if (request instanceof FormData) {
             formData = request;
         } else {
@@ -35,7 +35,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             //integrity: '', useful if we know expected hash of the response
             keepalive: false,
             signal: controller.signal,
-            body: method === 'POST' ? formData : null,
+            body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) > -1 ? formData : null,
         });
         if (!response.ok && !skipError) {
             addSnackbar('Request to "'+url+'" returned code '+response.status, 'failure', 10000);

@@ -89,6 +89,12 @@ class HomePage
             } else {
                 #Set method
                 self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
+                #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
+                $this::$headers->multiPartFormParse();
+                if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
+                    $_POST = $this::$headers::$_PUT ?: $this::$headers::$_DELETE ?: $this::$headers::$_PATCH ?: [];
+                };
+                #Set canonical URL
                 $this->canonical();
                 #Send common headers
                 $this::$headers->secFetch();
