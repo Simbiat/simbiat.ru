@@ -34,7 +34,7 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
         $defaults = [
             'site_name' => $GLOBALS['siteconfig']['site_name'],
             'domain' => $GLOBALS['siteconfig']['domain'],
-            'url' => $GLOBALS['siteconfig']['domain'].'/'.$_SERVER['REQUEST_URI'],
+            'url' => $GLOBALS['siteconfig']['domain'].'/'.($_SERVER['REQUEST_URI'] ?? 'no_request_uri'),
             'maintenance' => 1,
             'registration' => 0,
         ];
