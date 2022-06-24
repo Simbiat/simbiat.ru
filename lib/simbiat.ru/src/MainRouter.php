@@ -87,7 +87,7 @@ class MainRouter extends Abstracts\Router
                 exit;
             case 'mail':
                 if (!empty($uri[1]) && $uri[1] === 'send') {
-                    usercontrol\Emails::sendMail('simbiat@outlook.com', 'Test Mail', 'Simbiat', ['username' => 'Simbiat'], true);
+                    usercontrol\Emails::sendMail('simbiat@outlook.com', 'Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
                 } else {
                     try {
                         $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
