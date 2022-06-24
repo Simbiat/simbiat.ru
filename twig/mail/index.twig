@@ -27,7 +27,7 @@
         </div>
         <div style="font-size: xx-small;width: 100%; background-color: #231f2e; text-align: center; border-top-color: #1a424d;border-top-width: 2px;border-top-style: solid;border-radius: 12px 12px 0 0;padding-top: 3px;height: 25px;">
             <div>
-                <a href="{{ domain }}/about/contacts/" style="color:#9ad4ea">contact us</a> or <a href="{{ domain }}/uc/unsubscribe/?token={{ unsubscribe }}" style="color:#9ad4ea">unsubscribe</a>
+                <a href="{{ domain }}/about/contacts/" style="color:#9ad4ea">contact us</a> or <a href="{{ domain }}/uc/unsubscribe/?token={{ unsubscribe|url_encode }}" style="color:#9ad4ea">unsubscribe</a>
             </div>
             <div>
                 Email generated on {{ 'now'|date('Y-m-d') }} at {{ 'now'|date('H:i:s') }} UTC
