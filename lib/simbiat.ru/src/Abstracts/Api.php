@@ -63,7 +63,6 @@ abstract class Api
                 } else {
                     $result['json_ready']['status'] = $data['http_error'];
                 }
-                HomePage::$headers->clientReturn(strval($result['json_ready']['status']), false);
                 if (!empty($data['endpoints'])) {
                     $result['json_ready']['reason'] = 'Unsupported endpoint';
                     $result['json_ready']['endpoints'] = $data['endpoints'];
@@ -85,6 +84,12 @@ abstract class Api
                 if (!empty($data['endpoints'])) {
                     $result['json_ready']['endpoints'] = $data['endpoints'];
                 }
+                if (!empty($data['status'])) {
+                    $result['json_ready']['status'] = $data['status'];
+                }
+            }
+            if ($result['json_ready']['status'] !== 200) {
+                HomePage::$headers->clientReturn(strval($result['json_ready']['status']), false);
             }
             if (!empty($data['about'])) {
                 $result['json_ready']['about'] = $data['about'];

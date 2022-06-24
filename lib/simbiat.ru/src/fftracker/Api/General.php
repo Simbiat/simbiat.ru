@@ -62,6 +62,10 @@ abstract class General extends Api
             HomePage::$headers->lastModified($data['dates']['updated'], true);
         }
         $result = ['response' => $data];
+        #Return 201 if we were registering an entity
+        if ($path[1] === 'register' && $data === true) {
+            $result['status'] = 201;
+        }
         #Link header/tag for API
         $result['alt_links'] = [
             ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/fftracker/'.$this->nameForLinks.'/' . $path[0]],

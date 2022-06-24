@@ -2,11 +2,9 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
-use Simbiat\Abstracts\Page;
-use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
+use Simbiat\Abstracts\Pages\StaticPage;
 
-class Track extends Page
+class Track extends StaticPage
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
@@ -24,9 +22,6 @@ class Track extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $headers = HomePage::$headers;
-        #Sanitize ID
-        $id = $path[0] ?? '';
         return [];
     }
 }

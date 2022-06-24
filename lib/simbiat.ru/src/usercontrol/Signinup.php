@@ -75,13 +75,13 @@ class Signinup
             ];
             self::$dbController->query($queries);
             (new Emails)->activationMail($_POST['signinup']['username'], $_POST['signinup']['email'], $activation);
-            return $this->login();
+            return $this->login(true);
         } catch (\Throwable) {
             return ['http_error' => 503, 'reason' => 'Registration failed'];
         }
     }
 
-    public function login(): array
+    public function login(bool $afterRegister = false): array
     {
         #Validating data
         if (empty($_POST['signinup']['email'])) {
@@ -134,7 +134,11 @@ class Signinup
             $this->rememberMe();
         }
         session_regenerate_id(true);
-        return ['response' => true];
+        if ($afterRegister) {
+            return ['status' => 201, 'response' => true];
+        } else {
+            return ['response' => true];
+        }
     }
 
     public function cookieLogin(): array
