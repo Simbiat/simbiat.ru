@@ -122,9 +122,10 @@ function subscribeMail(event)
     let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
     //Generate form data
     let formData = new FormData();
+    formData.set('verb', verb);
     formData.set('email', checkbox.getAttribute('data-email'));
     spinner.classList.remove('hidden');
-    ajax(location.protocol+'//'+location.host+'/api/uc/emails/'+verb+'/', formData, 'json', 'POST', 60000, true).then(data => {
+    ajax(location.protocol+'//'+location.host+'/api/uc/emails/'+verb+'/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
             if (checkbox.checked) {
                 checkbox.checked = false;

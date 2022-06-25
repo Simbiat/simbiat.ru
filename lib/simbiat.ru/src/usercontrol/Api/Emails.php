@@ -11,7 +11,7 @@ class Emails extends Api
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-    protected array $methods = ['POST' => 'add', 'DELETE' => 'delete'];
+    protected array $methods = ['POST' => 'add', 'DELETE' => 'delete', 'PATCH' => ''];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add email',
                                 'delete' => 'Delete mail',
@@ -28,6 +28,12 @@ class Emails extends Api
     {
         if (HomePage::$method === 'DELETE') {
             $path[0] = 'delete';
+        } elseif (HomePage::$method === 'PATCH') {
+            if (empty($_POST['verb'])) {
+                return ['http_error' => 400, 'reason' => 'No verb provided'];
+            } else {
+                $path[0] = $_POST['verb'];
+            }
         }
         if (empty($path[0])) {
             $path[0] = 'add';
