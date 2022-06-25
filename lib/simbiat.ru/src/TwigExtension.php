@@ -23,9 +23,21 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
     public function getFilters(): array
     {
         return [
-            new TwigFilter('basename', function($string) {
+            new TwigFilter('basename', function(string $string) {
                 return basename($string);
             }),
+            new TwigFilter('timeTag', function(string $string, string $format = 'd/m/Y H:i', string $classes = '') {
+                try {
+                    $datetime = new \DateTime($string);
+                } catch (\Throwable) {
+                    $datetime = new \DateTime();
+                    $datetime->setTimestamp(intval($string));
+                }
+                return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
+            }, ['is_safe' => ['html']]),
+            new TwigFilter('tooltip', function(string $string) {
+                return '<img class="tooltipFootnote" alt="tooltip" src="/img/tooltip.svg" data-tooltip="'.$string.'">';
+            }, ['is_safe' => ['html']]),
         ];
     }
 

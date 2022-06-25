@@ -2,7 +2,7 @@
     <article>
         <div class="articleHeader">
             <h2 class="articleName" id="post_{{ post.postid }}">{{ post.name }}</h2>
-            <time class="articleTime" datetime="{{ post.created|date("c") }}">{{ post.created|date("d/m/Y H:i") }}</time>
+            {{ post.created|timeTag("d/m/Y H:i", "articleTime") }}
         </div>
         <section class="articleText">{{ post.text|raw|nl2br }}</section>
     </article>

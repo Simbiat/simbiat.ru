@@ -657,3 +657,13 @@ main::-webkit-scrollbar {
     display: inline-block;
     float: right;
 }
+
+.tooltipFootnote {
+    color: var(--color-interactive);
+    width: 1rem;
+    height: 1rem;
+    padding: 0.1rem;
+    cursor: pointer;
+    top: -0.3rem;
+    position: relative;
+}
