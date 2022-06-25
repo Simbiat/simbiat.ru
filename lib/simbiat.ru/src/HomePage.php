@@ -256,7 +256,12 @@ class HomePage
                 $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
             } catch (\Throwable $exception) {
                 (new Errors)->error_log($exception);
-                $output = 'Twig failure';
+                self::$headers->clientReturn('503', false);
+                try {
+                    $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? NULL]));
+                } catch (\Throwable) {
+                    $output = 'Twig failure';
+                }
             }
             #Close session
             if (session_status() === PHP_SESSION_ACTIVE && !self::$staleReturn) {
