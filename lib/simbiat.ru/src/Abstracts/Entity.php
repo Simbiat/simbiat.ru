@@ -21,7 +21,7 @@ abstract class Entity
     #Debug flag
     protected bool $debug = false;
 
-    public final function __construct(bool $debug = true)
+    public final function __construct(bool $debug = false)
     {
         #All entities are expected to have a dbPrefix
         if(empty($this::dbPrefix)) {
@@ -67,6 +67,7 @@ abstract class Entity
             Errors::error_log($e);
             #Rethrow exception, if using debug mode
             if ($this->debug) {
+                echo 'here';
                 die('<pre>'.$error.'</pre>');
             }
         } finally {
