@@ -27,6 +27,9 @@ create table talks__posts
 )
     comment 'List of all posts';
 
+create index created
+    on talks__posts (created desc);
+
 create fulltext index text
     on talks__posts (text);
 

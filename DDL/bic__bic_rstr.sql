@@ -14,3 +14,6 @@ create table bic__bic_rstr
 )
     comment 'Список ограничений наложенных на участника';
 
+create index RstrDate
+    on bic__bic_rstr (RstrDate desc);
+

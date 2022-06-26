@@ -59,11 +59,8 @@ create table bic__list
 create fulltext index Adr
     on bic__list (Adr);
 
-create index DATEDEL
-    on bic__list (DateOut);
-
-create index DT_IZM
-    on bic__list (Updated);
+create index DateOut
+    on bic__list (DateOut desc);
 
 create fulltext index NameP
     on bic__list (NameP);
@@ -76,6 +73,9 @@ create index REGN
 
 create index RKC
     on bic__list (RKC);
+
+create index Updated
+    on bic__list (Updated desc);
 
 create index VKEY
     on bic__list (VKEY);

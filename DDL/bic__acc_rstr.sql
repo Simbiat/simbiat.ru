@@ -18,3 +18,6 @@ create table bic__acc_rstr
 )
     comment 'Список ограничений наложенных на счета';
 
+create index AccRstrDate
+    on bic__acc_rstr (AccRstrDate desc);
+

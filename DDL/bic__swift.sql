@@ -12,6 +12,12 @@ create table bic__swift
 )
     comment 'Коды SWIFT';
 
+create index DateOut
+    on bic__swift (DateOut desc);
+
+create index DefaultSWBIC
+    on bic__swift (DefaultSWBIC desc);
+
 create index SWBIC
     on bic__swift (SWBIC);
 

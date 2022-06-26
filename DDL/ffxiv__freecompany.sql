@@ -80,5 +80,5 @@ create fulltext index tag
     on ffxiv__freecompany (tag);
 
 create index updated
-    on ffxiv__freecompany (updated);
+    on ffxiv__freecompany (updated desc);
 

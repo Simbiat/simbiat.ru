@@ -12,3 +12,6 @@ create table ffxiv__freecompany_ranking
 )
     comment 'Companies'' weekly and monthly rankings linked to members count';
 
+create index date
+    on ffxiv__freecompany_ranking (date desc);
+

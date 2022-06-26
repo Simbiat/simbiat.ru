@@ -17,5 +17,5 @@ create index ach
     on ffxiv__character_achievement (achievementid);
 
 create index time
-    on ffxiv__character_achievement (time);
+    on ffxiv__character_achievement (time desc);
 

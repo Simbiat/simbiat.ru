@@ -33,5 +33,5 @@ create index registered
     on ffxiv__pvpteam (registered);
 
 create index updated
-    on ffxiv__pvpteam (updated);
+    on ffxiv__pvpteam (updated desc);
 

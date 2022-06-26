@@ -36,5 +36,5 @@ create index registered
     on ffxiv__linkshell (registered);
 
 create index updated
-    on ffxiv__linkshell (updated);
+    on ffxiv__linkshell (updated desc);
 

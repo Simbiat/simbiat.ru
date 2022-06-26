@@ -93,5 +93,5 @@ create index registered
     on ffxiv__character (registered);
 
 create index updated
-    on ffxiv__character (updated);
+    on ffxiv__character (updated desc);
 

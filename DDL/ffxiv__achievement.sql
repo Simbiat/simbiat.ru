@@ -32,5 +32,5 @@ create index name_order
     on ffxiv__achievement (name);
 
 create index updated
-    on ffxiv__achievement (updated);
+    on ffxiv__achievement (updated desc);
 
