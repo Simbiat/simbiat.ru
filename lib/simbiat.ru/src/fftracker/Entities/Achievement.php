@@ -14,6 +14,7 @@ class Achievement extends Entity
     #Custom properties
     protected const entityType = 'achievement';
     public int $updated;
+    public int $registered;
     public ?string $category = null;
     public ?string $subcategory = null;
     public ?string $icon = null;
@@ -96,6 +97,7 @@ class Achievement extends Entity
     {
         $this->name = $fromDB['name'];
         $this->updated = strtotime($fromDB['updated']);
+        $this->registered = strtotime($fromDB['registered']);
         $this->category = $fromDB['category'];
         $this->subcategory = $fromDB['subcategory'];
         $this->icon = $fromDB['icon'];

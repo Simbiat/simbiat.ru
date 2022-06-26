@@ -75,10 +75,6 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             'ogdesc' => $GLOBALS['siteconfig']['ogdesc'],
             'ogextra' => $GLOBALS['siteconfig']['ogextra'],
             'ogimage' => $GLOBALS['siteconfig']['ogimage'],
-            #Twitter
-            'twitter_card' => $GLOBALS['siteconfig']['twitter_card'],
-            #Facebook
-            'facebook' => $GLOBALS['siteconfig']['facebook'],
         ]);
     }
 }

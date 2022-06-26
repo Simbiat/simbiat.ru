@@ -3,6 +3,7 @@ create table ffxiv__achievement
     achievementid smallint unsigned                     not null comment 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)'
         primary key,
     name          varchar(100)                          not null comment 'Name of achievement',
+    registered    date      default current_timestamp() not null comment 'When achievement was initially added to tracker',
     updated       timestamp default current_timestamp() not null on update current_timestamp() comment 'When achievement was last updated on the tracker',
     category      varchar(30)                           null comment 'Category of the achievement',
     subcategory   varchar(30)                           null comment 'Subcategory of the achievement',
