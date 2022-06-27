@@ -57,6 +57,7 @@ function addMail()
             cell = row.insertCell();
             cell.innerHTML ='<td><input class="mail_deletion" data-email="'+email+'" type="image" src="/img/close.svg" alt="Delete '+email+'" aria-invalid="false" placeholder="image" data-tooltip="Delete '+email+'" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing '+email+'..." data-tooltip="Removing '+email+'...">';
             blockDeleteMail();
+            form.reset();
             addSnackbar('Mail added', 'success');
         } else {
             addSnackbar(data.reason, 'failure', 10000);
@@ -95,11 +96,7 @@ function blockDeleteMail()
     document.querySelectorAll('.mail_deletion').forEach(item => {
         //Check if row is for confirmed mail
         if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
-            if (confirmedMail < 2) {
-                item.disabled = true;
-            } else {
-                item.disabled = false;
-            }
+            item.disabled = confirmedMail < 2;
         } else {
             item.disabled = false;
         }
@@ -149,9 +146,10 @@ function activationMail(event)
     let spinner = button.parentElement.getElementsByClassName('spinner')[0];
     //Generate form data
     let formData = new FormData();
+    formData.set('verb', 'activate');
     formData.set('email', button.getAttribute('data-email'));
     spinner.classList.remove('hidden');
-    ajax(location.protocol+'//'+location.host+'/api/uc/emails/activate/', formData, 'json', 'POST', 60000, true).then(data => {
+    ajax(location.protocol+'//'+location.host+'/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
             addSnackbar('Activation email sent', 'success');
         } else {
