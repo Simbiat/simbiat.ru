@@ -167,9 +167,14 @@ class Emails
 
     public function add(string $email): array
     {
-        #Check if email is already registered
-        if (HomePage::$dbController->check('SELECT `email` FROM `uc__user_to_email` WHERE `email`=:email', [':email' => $email])) {
-            return ['http_error' => 409, 'reason' => 'Email already registered'];
+        $checkers = new Checkers;
+        #Check if mail is banned or in use
+        if (
+            $checkers->bannedMail($_POST['signinup']['email']) ||
+            $checkers->usedMail($_POST['signinup']['email'])
+        ) {
+            #Do not provide details on why exactly it failed to avoid email spoofing
+            return ['http_error' => 403, 'reason' => 'Bad email provided'];
         }
         #Add email
         if (!HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email])) {

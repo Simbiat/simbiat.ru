@@ -24,7 +24,7 @@ class Signinup
         if (mb_strlen($_POST['signinup']['password'], 'UTF-8') < 8) {
             return ['http_error' => 400, 'reason' => 'Password is shorter than 8 symbols'];
         }
-        #Check if banned
+        #Check if banned or in use
         $checkers = new Checkers;
         if ($checkers->bannedIP() ||
             $checkers->bannedMail($_POST['signinup']['email']) ||
@@ -32,6 +32,7 @@ class Signinup
             $checkers->usedMail($_POST['signinup']['email']) ||
             $checkers->usedName($_POST['signinup']['username'])
         ) {
+            #Do not provide details on why exactly it failed to avoid email spoofing
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Establish DB
