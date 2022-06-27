@@ -170,8 +170,8 @@ class Emails
         $checkers = new Checkers;
         #Check if mail is banned or in use
         if (
-            $checkers->bannedMail($_POST['signinup']['email']) ||
-            $checkers->usedMail($_POST['signinup']['email'])
+            $checkers->bannedMail($email) ||
+            $checkers->usedMail($email)
         ) {
             #Do not provide details on why exactly it failed to avoid email spoofing
             return ['http_error' => 403, 'reason' => 'Bad email provided'];
