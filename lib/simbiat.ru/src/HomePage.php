@@ -158,7 +158,7 @@ class HomePage
         self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|character|freecompany|pvpteam|linkshell|crossworldlinkshell|crossworld_linkshell|achievement)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
         self::$canonical = preg_replace('/crossworldlinkshell/iu', 'crossworld_linkshell', self::$canonical);
-        #Update REQUEST_URI to avoid potentially to ensure the data returned will be consistent
+        #Update REQUEST_URI to ensure the data returned will be consistent
         $_SERVER['REQUEST_URI'] = self::$canonical;
         #For canonical, though, we need to ensure, that it does have a trailing slash
         if (preg_match('/\/\?/u', self::$canonical) !== 1) {

@@ -18,6 +18,7 @@ abstract class Router
     protected string $ogdesc = '';
     #Service name
     protected string $serviceName = '';
+    protected string $redirectMain = '';
 
     public final function __construct()
     {
@@ -36,6 +37,9 @@ abstract class Router
         $pageData = [];
         #Main page of the segment is called
         if (empty($path)) {
+            if (!empty($this->redirectMain) && preg_match('/^\/.+\/$/iu', $this->redirectMain) === 1) {
+                HomePage::$headers->redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
+            }
             $pageData['breadcrumbs'] = $this->breadCrumb;
         } else {
             #Check if supported path

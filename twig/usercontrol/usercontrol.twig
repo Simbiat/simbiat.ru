@@ -1,3 +1,9 @@
+<section class="vertical_tabs">
+    {% if subServiceName == 'profile' %}<span class="nav_tab active">Profile</span>{% else %}<a class="nav_tab" href="/uc/profile/">Profile</a>{% endif %}
+    {% if subServiceName == 'emails' %}<span class="nav_tab active">Emails</span>{% else %}<a class="nav_tab" href="/uc/emails/">Emails</a>{% endif %}
+    {% if subServiceName == 'password' %}<span class="nav_tab active">Password</span>{% else %}<a class="nav_tab" href="/uc/password/">Password</a>{% endif %}
+    {% if subServiceName == 'removal' %}<span class="nav_tab active danger">Removal</span>{% else %}<a class="nav_tab danger" href="/uc/removal/">Removal</a>{% endif %}
+</section>
 <section>
     {% if subServiceName %}
         <article>
@@ -9,6 +15,12 @@
                 {{ include('usercontrol/emails.twig')}}
             {% elseif subServiceName == 'unsubscribe' %}
                 {{ include('usercontrol/unsubscribe.twig')}}
+            {% elseif subServiceName == 'profile' %}
+                {{ include('usercontrol/profile.twig')}}
+            {% elseif subServiceName == 'password' %}
+                {{ include('usercontrol/password.twig')}}
+            {% elseif subServiceName == 'removal' %}
+                {{ include('usercontrol/removal.twig')}}
             {% endif %}
         </article>
     {% endif %}

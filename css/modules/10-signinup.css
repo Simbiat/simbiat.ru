@@ -49,6 +49,8 @@
 }
 
 /*Pad text inside input to allow placement for an eye icon*/
+#current_password,
+#new_password,
 #signinup_password {
     padding-left: 5ch;
 }
@@ -68,11 +70,15 @@
 }
 
 /*Add eye icon to class for ease of use*/
+#current_password~.showpassword:before,
+#new_password~.showpassword:before,
 #signinup_password~.showpassword:before {
     content: '\1F441';
 }
 
 /*Add diagonal line to the eye icon if it's text field*/
+#current_password[type^=text]~.showpassword:after,
+#new_password[type^=text]~.showpassword:after,
 #signinup_password[type^=text]~.showpassword:after {
     content: '\2571';
     position: absolute;
@@ -82,6 +88,10 @@
 }
 
 /*Show eye icon only when field is focused or there is text there*/
+#current_password:focus~.showpassword,
+#current_password:not(:placeholder-shown)~.showpassword,
+#new_password:focus~.showpassword,
+#new_password:not(:placeholder-shown)~.showpassword,
 #signinup_password:focus~.showpassword,
 #signinup_password:not(:placeholder-shown)~.showpassword {
     display: block;

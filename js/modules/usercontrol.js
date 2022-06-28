@@ -1,5 +1,5 @@
 /*globals ariaNation, submitIntercept, ajax, addSnackbar*/
-/*exported ucInit, singInUpSubmit, addMail*/
+/*exported ucInit, singInUpSubmit, addMail, passwordChange*/
 
 function ucInit()
 {
@@ -16,6 +16,7 @@ function ucInit()
     //Intercept forms submit
     submitIntercept('signinup');
     submitIntercept('addMailForm');
+    submitIntercept('password_change');
     //Listener for mail activation buttons
     document.querySelectorAll('.mail_activation').forEach(item => {
         item.addEventListener('click', activationMail);
@@ -28,6 +29,13 @@ function ucInit()
     document.querySelectorAll('.mail_deletion').forEach(item => {
         item.addEventListener('click', deleteMail);
     });
+    let new_password = document.getElementById('new_password');
+    if (new_password) {
+
+        ['focus', 'change', 'input',].forEach(function (e) {
+            new_password.addEventListener(e, passwordStrengthOnEvent);
+        });
+    }
 }
 
 function addMail()
@@ -178,6 +186,22 @@ function singInUpSubmit()
     });
 }
 
+function passwordChange()
+{
+    //Get form data
+    let formData = new FormData(document.getElementById('password_change'));
+    let spinner = document.getElementById('pw_change_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol+'//'+location.host+'/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        if (data.data === true) {
+            addSnackbar('Password changed', 'success');
+        } else {
+            addSnackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+
 //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
 const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
 //Regex for username. This is NOT JS Regex, thus it has doubled slashes.
@@ -202,10 +226,8 @@ function showPassToggle(event)
 //Password strength check. Purely as advise, nothing more.
 function passwordStrengthOnEvent(event)
 {
-    //Attempt to get extra values to check against
-
     //Get element where we will be showing strength
-    let strengthField = event.target.parentElement.querySelectorAll('.password_strength').item(0);
+    let strengthField = document.querySelectorAll('.password_strength').item(0);
     //Get strength
     let strength = passwordStrength(event.target.value);
     //Set text

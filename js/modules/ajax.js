@@ -1,5 +1,5 @@
 /*globals addSnackbar, getMeta*/
-/*exported ajax, submitIntercept*/
+/*exported ajax*/
 
 async function ajax(url, request = null, type ='json', method = 'GET', timeout = 60000, skipError = false)
 {
@@ -62,34 +62,5 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             addSnackbar('Request to "'+url+'" failed on fetch operation', 'failure', 10000);
             return false;
         }
-    }
-}
-
-//Switch to determine which function to call on submit
-const submitFunctions = {
-    'signinup': 'singInUpSubmit',
-    'addMailForm': 'addMail',
-    'ff_track_register': 'ffTrackAdd',
-};
-
-//Function to intercept form submission
-function submitIntercept(formId)
-{
-    let form = document.getElementById(formId);
-    if (form) {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            window[submitFunctions[formId]]();
-            return false;
-        });
-        form.onkeydown = function(event){
-            if(event.code === 'Enter'){
-                event.preventDefault();
-                event.stopPropagation();
-                window[submitFunctions[formId]]();
-                return false;
-            }
-        };
     }
 }

@@ -69,13 +69,7 @@ class Security
                 #Check if it needs rehashing
                 if (password_needs_rehash($hash, PASSWORD_ARGON2ID, $this->argonSettings)) {
                     #Rehash password and reset strikes (if any)
-                    self::$dbController->query(
-                        'UPDATE `uc__users` SET `password`=:password, `strikes`=0 WHERE `userid`=:userid;',
-                        [
-                            ':userid' => [strval($id), 'string'],
-                            ':password' => [$this->passHash($password), 'string'],
-                        ]
-                    );
+                    $this->passChange($id, $password);
                 } else {
                     #Reset strikes (if any)
                     self::$dbController->query(
@@ -102,6 +96,22 @@ class Security
     public function passHash(string $password): string
     {
         return password_hash($password, PASSWORD_ARGON2ID, $this->argonSettings);
+    }
+
+    #Function to change the password
+    public function passChange(int|string $id, string $password): bool
+    {
+        #Cache DB controller, if not done already
+        if (self::$dbController === NULL) {
+            self::$dbController = HomePage::$dbController;
+        }
+        return self::$dbController->query(
+            'UPDATE `uc__users` SET `password`=:password, `strikes`=0 WHERE `userid`=:userid;',
+            [
+                ':userid' => [strval($id), 'string'],
+                ':password' => [$this->passHash($password), 'string'],
+            ]
+        );
     }
 
     #Function to encrypt stuff

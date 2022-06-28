@@ -1,5 +1,5 @@
 /*globals addSnackbar*/
-/*exported formInit*/
+/*exported formInit, submitIntercept*/
 //List of input types, that are "textual" by default, thus can be tracked through keypress and paste events. In essence,
 // these are types, that support maxlength attribute
 const textInputTypes = ['email', 'password', 'search', 'tel', 'text', 'url', ];
@@ -37,6 +37,37 @@ function formInit()
 
         }
     });
+}
+
+
+//Switch to determine which function to call on submit
+const submitFunctions = {
+    'signinup': 'singInUpSubmit',
+    'addMailForm': 'addMail',
+    'ff_track_register': 'ffTrackAdd',
+    'password_change': 'passwordChange',
+};
+
+//Function to intercept form submission
+function submitIntercept(formId)
+{
+    let form = document.getElementById(formId);
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window[submitFunctions[formId]]();
+            return false;
+        });
+        form.onkeydown = function(event){
+            if(event.code === 'Enter'){
+                event.preventDefault();
+                event.stopPropagation();
+                window[submitFunctions[formId]]();
+                return false;
+            }
+        };
+    }
 }
 
 function searchAction(event)

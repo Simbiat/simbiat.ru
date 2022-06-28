@@ -5,20 +5,20 @@ namespace Simbiat\usercontrol\Pages;
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
 
-class Emails extends Page
+class Password extends Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/uc/emails', 'name' => 'Emails']
+        ['href' => '/uc/password', 'name' => 'Password']
     ];
     #Sub service name
-    protected string $subServiceName = 'emails';
+    protected string $subServiceName = 'password';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = 'Emails';
+    protected string $title = 'Password';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $h1 = 'List of linked emails';
+    protected string $h1 = 'Password change';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'List of linked emails';
+    protected string $ogdesc = 'Page to change password';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
     #Flag indicating that authentication is required
@@ -28,9 +28,6 @@ class Emails extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        #Show list of mails pending activation to request code resending
-        $outputArray['emails'] = HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$_SESSION['userid'], 'int']]);
-        $outputArray['countActivated'] = count(array_filter(array_column($outputArray['emails'], 'activation'), function($x) { return empty($x); }));
         return $outputArray;
     }
 }
