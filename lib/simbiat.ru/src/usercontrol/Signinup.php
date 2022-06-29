@@ -180,6 +180,8 @@ class Signinup
                     #Wrong password
                     return [];
                 }
+                #Reste strikes if any
+                $security->resetStrikes($savedData['userid']);
                 #Update cookie
                 $this->rememberMe($data['id'], $savedData['userid']);
                 return ['userid' => $savedData['userid'], 'username' => $savedData['username']];
@@ -254,5 +256,41 @@ class Signinup
         } catch (\Throwable) {
             #Do nothing, since not critical
         }
+    }
+
+    public function remind(): array
+    {
+        if (empty($_POST['signinup']['email'])) {
+            return ['http_error' => 400, 'reason' => 'No email/name provided'];
+        }
+        #Establish DB
+        if (self::$dbController === NULL) {
+            if (empty(HomePage::$dbController)) {
+                return ['http_error' => 503, 'reason' => 'Database unavailable'];
+            } else {
+                self::$dbController = HomePage::$dbController;
+            }
+        }
+        #Get password of the user, while also checking if it exists
+        try {
+            $credentials = self::$dbController->selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__user_to_email`.`email` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__user_to_email`.`email`=:mail) AND `uc__user_to_email`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
+                [':mail' => $_POST['signinup']['email']]
+            );
+        } catch (\Throwable) {
+            $credentials = null;
+        }
+        #Process only if user was found
+        if (!empty($credentials)) {
+            try {
+                $security = new Security();
+                $token = $security->genCSRF();
+                #Write the reset token to DB
+                self::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => $security->passHash($token)]);
+                (new Emails)->sendMail($credentials['email'], 'Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
+            } catch (\Throwable) {
+                return ['http_error' => 503, 'reason' => 'Registration failed'];
+            }
+        }
+        return ['response' => true];
     }
 }

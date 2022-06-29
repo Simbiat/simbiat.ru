@@ -74,6 +74,7 @@
 #new_password~.showpassword:before,
 #signinup_password~.showpassword:before {
     content: '\1F441';
+    font-size: smaller;
 }
 
 /*Add diagonal line to the eye icon if it's text field*/

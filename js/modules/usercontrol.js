@@ -178,7 +178,11 @@ function singInUpSubmit()
     spinner.classList.remove('hidden');
     ajax(location.protocol+'//'+location.host+'/api/uc/signinup/'+formData.get('signinup[type]')+'/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
-            location.reload();
+            if (formData.get('signinup[type]') === 'remind') {
+                addSnackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+            } else {
+                location.reload();
+            }
         } else {
             addSnackbar(data.reason, 'failure', 10000);
         }

@@ -22,12 +22,25 @@ class Password extends Page
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = true;
+    protected bool $authenticationNeeded = false;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         $outputArray = [];
+        if (empty($_SESSION['userid'])) {
+            #Check if password reset is being attempted
+            if (!empty($path[0]) && preg_match('/\d+/u', $path[0]) === 1) {
+                #Check token
+                if (empty($path[1])) {
+                    return ['http_error' => 403];
+                }
+                $outputArray = ['userid' => $path[0], 'token' => $path[1]];
+            } else {
+                #Not authorized
+                return ['http_error' => 403];
+            }
+        }
         return $outputArray;
     }
 }

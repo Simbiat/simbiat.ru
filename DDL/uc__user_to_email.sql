@@ -12,3 +12,6 @@ create table uc__user_to_email
             on update cascade on delete cascade
 );
 
+create index subscribed
+    on uc__user_to_email (subscribed desc);
+

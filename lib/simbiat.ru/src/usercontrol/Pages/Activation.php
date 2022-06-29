@@ -34,7 +34,7 @@ class Activation extends Page
         }
         #Check if user exists
         if (!HomePage::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', [':userid' => [$userid, 'int']])) {
-            #While technically this is closer to 404, but we do not want potential abuse to get user IDs, although attack vector here is unlikely
+            #While technically this is closer to 404, we do not want potential abuse to get user IDs, although attack vector here is unlikely
             return ['http_error' => 403];
         }
         $outputArray = [];

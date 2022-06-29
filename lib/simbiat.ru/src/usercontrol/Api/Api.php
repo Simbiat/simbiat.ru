@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol\Api;
 
+use Simbiat\usercontrol\Security;
+
 class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges

@@ -21,6 +21,8 @@ class Emails extends Api
     ];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
+    #Flag to indicate need to validate CSRF
+    protected bool $CSRF = true;
 
     use Common;
 

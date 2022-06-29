@@ -72,12 +72,7 @@ class Security
                     $this->passChange($id, $password);
                 } else {
                     #Reset strikes (if any)
-                    self::$dbController->query(
-                        'UPDATE `uc__users` SET `strikes`=0 WHERE `userid`=:userid;',
-                        [
-                            ':userid' => [strval($id), 'string']
-                        ]
-                    );
+                    $this->resetStrikes($id);
                 }
                 return true;
             } else {
@@ -90,6 +85,20 @@ class Security
         } catch (\Throwable) {
             return false;
         }
+    }
+
+    public function resetStrikes(int|string $id): bool
+    {
+        #Cache DB controller, if not done already
+        if (self::$dbController === NULL) {
+            self::$dbController = HomePage::$dbController;
+        }
+        return self::$dbController->query(
+            'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
+            [
+                ':userid' => [strval($id), 'string']
+            ]
+        );
     }
 
     #Function to hash password. Used mostly as a wrapper in case of future changes
@@ -106,7 +115,7 @@ class Security
             self::$dbController = HomePage::$dbController;
         }
         return self::$dbController->query(
-            'UPDATE `uc__users` SET `password`=:password, `strikes`=0 WHERE `userid`=:userid;',
+            'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
                 ':userid' => [strval($id), 'string'],
                 ':password' => [$this->passHash($password), 'string'],

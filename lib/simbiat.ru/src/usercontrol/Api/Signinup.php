@@ -4,8 +4,6 @@ namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
 use Simbiat\usercontrol\Common;
-use Simbiat\usercontrol\Emails;
-use Simbiat\usercontrol\Security;
 
 class Signinup extends Api
 {
@@ -19,6 +17,8 @@ class Signinup extends Api
                                 'remind' => 'Reset the password',
                                 'logout' => 'Logout from the system',
     ];
+    #Flag to indicate need to validate CSRF
+    protected bool $CSRF = true;
 
     use Common;
 
@@ -32,29 +32,13 @@ class Signinup extends Api
             if ($path[0] !== $_POST['signinup']['type']) {
                 return ['http_error' => 400, 'reason' => 'Action type does not match the verb'];
             }
-            #Cache security
-            $security = new Security();
-            #Check CSRF
-            if (!$security->antiCSRF(exit: false)) {
-                return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
-            }
-            switch ($_POST['signinup']['type']) {
-                #Login
-                case 'login':
-                    return (new \Simbiat\usercontrol\Signinup)->login();
-                #New user
-                case 'register':
-                    return (new \Simbiat\usercontrol\Signinup)->register();
-                #Reminder
-                case 'remind':
-                    break;
-                #Logout
-                case 'logout':
-                    return (new \Simbiat\usercontrol\Signinup)->logout();
-                default:
-                    return ['http_error' => 400, 'reason' => 'Unsupported action type provided'];
-            }
-            return ['response' => true];
+            return match ($_POST['signinup']['type']) {
+                'login' => (new \Simbiat\usercontrol\Signinup)->login(),
+                'register' => (new \Simbiat\usercontrol\Signinup)->register(),
+                'remind' => (new \Simbiat\usercontrol\Signinup)->remind(),
+                'logout' => (new \Simbiat\usercontrol\Signinup)->logout(),
+                default => ['http_error' => 400, 'reason' => 'Unsupported action type provided'],
+            };
         } else {
             return ['http_error' => 400, 'reason' => 'No data provided'];
         }

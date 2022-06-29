@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\HomePage;
+use Simbiat\usercontrol\Security;
 
 abstract class Api
 {
@@ -26,6 +27,8 @@ abstract class Api
     protected array $description = [];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
+    #Flag to indicate need to validate CSRF
+    protected bool $CSRF = false;
 
     #This is general routing check for supported node
     public final function route(array $path): array
@@ -42,6 +45,8 @@ abstract class Api
         #Check that user is authenticated
         } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
+        } elseif ($this->CSRF && !(new Security())->antiCSRF(exit: false)) {
+            $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             $data = $this->getData($path);
         }
