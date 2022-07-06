@@ -2,9 +2,10 @@
 let notificationIndex = 0;
 
 //Add snackbar notification
-function addSnackbar(text, color = 'text', milliseconds = 3000) {
+function addSnackbar(text: string, color: string = '', milliseconds = 3000): void
+{
     //Get container
-    const snacks = document.getElementById('snacksContainer');
+    const snacks = document.getElementById('snacksContainer') as HTMLDivElement;
     //Generate element
     let snack = document.createElement('dialog');
     //Set ID for notification
@@ -16,13 +17,15 @@ function addSnackbar(text, color = 'text', milliseconds = 3000) {
     //Add text
     snack.innerHTML = '<span class="snack_text">' + text + '</span><input id="closeSnack' + id + '" class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image">';
     //Add class for color
-    snack.classList.add(color);
+    if (color) {
+        snack.classList.add(color);
+    }
     //Add element to parent
     snacks.appendChild(snack);
     //Add animation class
     snack.classList.add('fadeIn');
     //Add event listener to close button
-    document.getElementById('closeSnack' + id).addEventListener('click', function() {removeSnack(snack);});
+    (document.getElementById('closeSnack' + id) as HTMLInputElement).addEventListener('click', function() {removeSnack(snack);});
     //Set time to remove the child
     if (milliseconds > 0) {
         setTimeout(function() {
@@ -31,9 +34,10 @@ function addSnackbar(text, color = 'text', milliseconds = 3000) {
     }
 }
 
-function removeSnack(snack) {
+function removeSnack(snack: HTMLDialogElement): void
+{
     //Get container
-    const snacks = document.getElementById('snacksContainer');
+    const snacks = document.getElementById('snacksContainer') as HTMLDivElement;
     //Animate removal
     snack.classList.remove('fadeIn');
     snack.classList.add('fadeOut');

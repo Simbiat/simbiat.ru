@@ -9,29 +9,6 @@ const pageTitle = ' on Simbiat Software';
 
 //Stuff to do on load
 
-// Avoid `console` errors in browsers that lack a console.
-(function() {
-    let method;
-    const noop = function () {};
-    const methods = [
-        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-        'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn',
-    ];
-    let length = methods.length;
-    const console = window.console = window.console || {};
-
-    while (length--) {
-        method = methods[length];
-
-        // Only stub undefined methods.
-        if (!console[method]) {
-            console[method] = noop;
-        }
-    }
-}());
-
 document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('hashchange', function() {hashCheck(false);});
 
@@ -39,12 +16,13 @@ window.addEventListener('hashchange', function() {hashCheck(false);});
 function init()
 {
     //Back-to-top buttons
-    document.getElementById('content').addEventListener('scroll', backToTop);
+    let content = document.getElementById('content') as HTMLDivElement;
+    content.addEventListener('scroll', backToTop);
     //Register automated aria-invalid attribute adding
     Array.from(document.getElementsByTagName('input')).forEach(item => {
         ariaInit(item);
         //Add placeholder, if not present. Required more as a precaution for text-like inputs with no placeholder
-        if (item.hasAttribute('placeholder') === false) {
+        if (!item.hasAttribute('placeholder')) {
             item.setAttribute('placeholder', item.value || item.type || 'placeholder');
         }
         //Attach listeners for color picker
@@ -73,7 +51,7 @@ function init()
     });
     //Add IDs to H1-H6 tags and handle onclick events to copy anchor links
     document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6').forEach(item => {
-        idToHeader(item);
+        idToHeader(item as HTMLHeadingElement);
         item.addEventListener('click', anchorFromHeader);
     });
     //Counter for refresh timer
@@ -91,7 +69,7 @@ function init()
 function cleanGET()
 {
     let url = new URL(document.location.href);
-    let params = new URLSearchParams(url.search);// jshint ignore:line
+    let params = new URLSearchParams(url.search);
     params.delete('cacheReset');
     if (params.toString() === '') {
         window.history.replaceState(null, document.title, location.pathname + location.hash);
@@ -101,16 +79,16 @@ function cleanGET()
 }
 
 //Special processing for special hash links
-function hashCheck(hashUpdate)
+function hashCheck(hashUpdate: boolean)
 {
     let url = new URL(document.location.href);
     let hash = url.hash;
     const galleryLink = new RegExp('#gallery=\\d+', 'ui');
     if (galleryLink.test(hash)) {
-        let imageID = hash.replace(/(#gallery=)(\d+)/ui, '$2');
+        let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
         if (imageID) {
             if (galleryList[imageID - 1]) {
-                galleryOpen(galleryList[imageID - 1], hashUpdate);
+                galleryOpen(galleryList[imageID - 1] as HTMLElement, hashUpdate);
             } else {
                 addSnackbar('Image number '+imageID+' not found on page', 'failure');
                 window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));

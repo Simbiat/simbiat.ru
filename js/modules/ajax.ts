@@ -1,23 +1,11 @@
 /*globals addSnackbar, getMeta*/
 /*exported ajax*/
 
-async function ajax(url, request = null, type ='json', method = 'GET', timeout = 60000, skipError = false)
+async function ajax(url: string, formData: FormData | null = null, type ='json', method = 'GET', timeout = 60000, skipError = false): Promise<any>
 {
     let result;
-    let controller = new AbortController();// jshint ignore:line
+    let controller = new AbortController();
     setTimeout(() => controller.abort(), timeout);
-    //Generate POST data if request is present
-    let formData = new FormData();
-    if (request && ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) > -1) {
-        if (request instanceof FormData) {
-            formData = request;
-        } else {
-            Object.entries(request).forEach(([key, value]) => {
-                formData.append(key, value);
-            });
-        }
-    }
-    //Wrapping in try to allow timeout
     try {
         let response = await fetch(url, {
             method: method,
@@ -26,7 +14,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             cache: 'no-cache',
             credentials: 'same-origin',
             headers: {
-                'X-CSRF-Token': getMeta('X-CSRF-Token'),
+                'X-CSRF-Token': getMeta('X-CSRF-Token') ?? '',
             },
             //Do not follow redirects. If redirected - something is wrong on API level
             redirect: 'error',
@@ -35,7 +23,7 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             //integrity: '', useful if we know expected hash of the response
             keepalive: false,
             signal: controller.signal,
-            body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) > -1 ? formData : null,
+            body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
         });
         if (!response.ok && !skipError) {
             addSnackbar('Request to "'+url+'" returned code '+response.status, 'failure', 10000);
@@ -54,13 +42,11 @@ async function ajax(url, request = null, type ='json', method = 'GET', timeout =
             }
         }
         return result;
-    } catch(err) {
+    } catch(err: any) {
         if (err.name === 'AbortError') {
             addSnackbar('Request to "'+url+'" timed out after '+timeout+' milliseconds', 'failure', 10000);
-            return false;
         } else {
             addSnackbar('Request to "'+url+'" failed on fetch operation', 'failure', 10000);
-            return false;
         }
     }
 }

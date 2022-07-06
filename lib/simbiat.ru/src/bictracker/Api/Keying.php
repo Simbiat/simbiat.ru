@@ -20,14 +20,14 @@ class Keying extends Api
             'bic' => 'BIC_regexp',
             'account' => 'ACC_regexp',
         ],
-        'BIC_regexp' => '/^[0-9]{9}$/',
-        'ACC_regexp' => '/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{14}$/',
+        'BIC_regexp' => '/^\d{9}$/',
+        'ACC_regexp' => '/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/',
     ];
 
     protected function genData(array $path): array
     {
-        $bic = $_POST['bic'] ?? null;
-        $acc = $_POST['account'] ?? null;
+        $bic = $_POST['bic_key'] ?? null;
+        $acc = $_POST['account_key'] ?? null;
         #Validate values
         if (empty($bic)) {
             return ['http_error' => 400, 'reason' => 'No BIC provided'];
