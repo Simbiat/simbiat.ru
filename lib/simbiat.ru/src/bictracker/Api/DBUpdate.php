@@ -27,6 +27,9 @@ class DBUpdate extends Api
         } catch (\Throwable) {
             return ['http_error' => 503, 'reason' => 'Unknown error during request processing'];
         }
-        return ['response' => $data === true];
+        if (is_string($data)) {
+            return ['http_error' => 503, 'reason' => $data];
+        }
+        return ['response' => $data];
     }
 }

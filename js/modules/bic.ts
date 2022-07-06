@@ -90,11 +90,23 @@ function bicRefresh(event: Event): void
             await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
                 if (data.data === true) {
                     addSnackbar('Библиотека БИК обновлена', 'success');
+                    refresh.classList.remove('spin');
+                } else if (typeof data.data === 'number') {
+                    //Create date from timestamp
+                    let timestamp: Date = new Date(data.data * 1000);
+                    //Get time block
+                    let dateTime = document.getElementsByClassName('bic_date')[0] as HTMLTimeElement;
+                    //Update its value
+                    dateTime.setAttribute('datetime', timestamp.toISOString());
+                    dateTime.innerHTML = ('0'+String(timestamp.getUTCDate())).slice(-2) + '.' + ('0'+String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
+                    addSnackbar('Применено обновление за '+dateTime.innerHTML, 'success');
+                    refresh.classList.remove('spin');
+                    bicRefresh(event);
                 } else {
                     addSnackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                    refresh.classList.remove('spin');
                 }
             });
-            refresh.classList.remove('spin');
         }, 500);
     }
 }

@@ -50,7 +50,7 @@ class Library
     /**
      * @throws \Exception
      */
-    public function update(bool $manual = false): string|bool
+    public function update(bool $manual = false): string|bool|int
     {
         if (empty($this->dbController)) {
             return false;
@@ -60,7 +60,7 @@ class Library
         $currentDate = strtotime(date('d.m.Y', time()));
         #Get date of current library
         $libDate = $this->bicDate();
-        $libDate = strtotime(date('d.m.Y', intval($libDate)));
+        $libDate = $libDateInitial = strtotime(date('d.m.Y', intval($libDate)));
         while ($libDate <= $currentDate) {
             try {
                 $download = $this->download($libDate);
@@ -352,6 +352,9 @@ class Library
                     #Run queries for BICs removals and library update
                     $this->dbController->query($queries);
                     $this->log($libDate, 'Успешное обновление', $manual);
+                    if ($manual && $libDate !== $libDateInitial) {
+                        return $libDate;
+                    }
                     #Increase $libDate by 1 day
                     $libDate = $libDate + 86400;
                 }

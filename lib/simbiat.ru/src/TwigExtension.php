@@ -27,11 +27,16 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
                 return basename($string);
             }),
             new TwigFilter('timeTag', function(string $string, string $format = 'd/m/Y H:i', string $classes = '') {
-                try {
-                    $datetime = new \DateTime($string);
-                } catch (\Throwable) {
+                if (preg_match('/\d{10}/', $string) === 1) {
                     $datetime = new \DateTime();
                     $datetime->setTimestamp(intval($string));
+                } else {
+                    try {
+                        $datetime = new \DateTime($string);
+                    } catch (\Throwable) {
+                        $datetime = new \DateTime();
+                        $datetime->setTimestamp(intval($string));
+                    }
                 }
                 return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
             }, ['is_safe' => ['html']]),
