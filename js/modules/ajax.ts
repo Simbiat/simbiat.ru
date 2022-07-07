@@ -1,6 +1,3 @@
-/*globals addSnackbar, getMeta*/
-/*exported ajax*/
-
 async function ajax(url: string, formData: FormData | null = null, type ='json', method = 'GET', timeout = 60000, skipError = false): Promise<any>
 {
     let result;
@@ -26,7 +23,7 @@ async function ajax(url: string, formData: FormData | null = null, type ='json',
             body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
         });
         if (!response.ok && !skipError) {
-            addSnackbar('Request to "'+url+'" returned code '+response.status, 'failure', 10000);
+            new Snackbar().add('Request to "'+url+'" returned code '+response.status, 'failure', 10000);
             return false;
         } else {
             if (type === 'json') {
@@ -44,9 +41,9 @@ async function ajax(url: string, formData: FormData | null = null, type ='json',
         return result;
     } catch(err: any) {
         if (err.name === 'AbortError') {
-            addSnackbar('Request to "'+url+'" timed out after '+timeout+' milliseconds', 'failure', 10000);
+            new Snackbar().add('Request to "'+url+'" timed out after '+timeout+' milliseconds', 'failure', 10000);
         } else {
-            addSnackbar('Request to "'+url+'" failed on fetch operation', 'failure', 10000);
+            new Snackbar().add('Request to "'+url+'" failed on fetch operation', 'failure', 10000);
         }
     }
 }

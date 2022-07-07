@@ -1,6 +1,3 @@
-/*globals ariaNation, submitIntercept, ajax, addSnackbar*/
-/*exported ucInit, singInUpSubmit, addMail, passwordChange*/
-
 function ucInit(): void
 {
     //Show password functionality
@@ -43,7 +40,7 @@ function addMail(): boolean | void
     //Get form data
     let formData = new FormData(form);
     if (!formData.get('email')) {
-        addSnackbar('Please, enter a valid email address', 'failure');
+        new Snackbar().add('Please, enter a valid email address', 'failure');
         return false;
     }
     let email = String(formData.get('email'));
@@ -65,9 +62,9 @@ function addMail(): boolean | void
             cell.innerHTML ='<td><input class="mail_deletion" data-email="'+email+'" type="image" src="/img/close.svg" alt="Delete '+email+'" aria-invalid="false" placeholder="image" data-tooltip="Delete '+email+'" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing '+email+'..." data-tooltip="Removing '+email+'...">';
             blockDeleteMail();
             form.reset();
-            addSnackbar('Mail added', 'success');
+            new Snackbar().add('Mail added', 'success');
         } else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -88,9 +85,9 @@ function deleteMail(event: Event): void
         if (data.data === true) {
             table.deleteRow(tr);
             blockDeleteMail();
-            addSnackbar('Mail removed', 'success');
+            new Snackbar().add('Mail removed', 'success');
         } else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -134,14 +131,14 @@ function subscribeMail(event: Event): void
             if (checkbox.checked) {
                 checkbox.checked = false;
                 label.innerText = 'Subscribe';
-                addSnackbar('Email unsubscribed', 'success');
+                new Snackbar().add('Email unsubscribed', 'success');
             } else {
                 checkbox.checked = true;
                 label.innerText = 'Unsubscribe';
-                addSnackbar('Email subscribed', 'success');
+                new Snackbar().add('Email subscribed', 'success');
             }
         } else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -158,9 +155,9 @@ function activationMail(event: Event): void
     spinner.classList.remove('hidden');
     ajax(location.protocol+'//'+location.host+'/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
-            addSnackbar('Activation email sent', 'success');
+            new Snackbar().add('Activation email sent', 'success');
         } else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -178,12 +175,12 @@ function singInUpSubmit(): void
     ajax(location.protocol+'//'+location.host+'/api/uc/signinup/'+formData.get('signinup[type]')+'/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
             if (formData.get('signinup[type]') === 'remind') {
-                addSnackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+                new Snackbar().add('If respective account is registered an email has been sent with password reset link.', 'success');
             } else {
                 location.reload();
             }
         } else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -197,9 +194,9 @@ function passwordChange(): void
     spinner.classList.remove('hidden');
     ajax(location.protocol+'//'+location.host+'/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
-            addSnackbar('Password changed', 'success');
+            new Snackbar().add('Password changed', 'success');
         } else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });

@@ -1,5 +1,3 @@
-/*globals addSnackbar*/
-/*exported copyQuoteInit, placeholders, detailsInit*/
 /*These are functions, that are used to somehow style or standardise different elements*/
 
 function copyQuoteInit(): void
@@ -34,9 +32,9 @@ function copyQuote(event: Event):void
             break;
     }
     navigator.clipboard.writeText(String(node.textContent)).then(function() {
-        addSnackbar(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
+        new Snackbar().add(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
     }, function() {
-        addSnackbar('Failed to copy '+tag,'failure');
+        new Snackbar().add('Failed to copy '+tag,'failure');
     });
 }
 

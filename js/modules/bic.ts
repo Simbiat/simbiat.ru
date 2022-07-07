@@ -1,6 +1,3 @@
-/*globals ajax, pageTitle, updateHistory, addSnackbar*/
-/*exported bicInit*/
-
 function bicInit(): void
 {
     let bicKey = document.getElementById('bic_key');
@@ -89,7 +86,7 @@ function bicRefresh(event: Event): void
         setTimeout(async function() {
             await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
                 if (data.data === true) {
-                    addSnackbar('Библиотека БИК обновлена', 'success');
+                    new Snackbar().add('Библиотека БИК обновлена', 'success');
                     refresh.classList.remove('spin');
                 } else if (typeof data.data === 'number') {
                     //Create date from timestamp
@@ -99,11 +96,11 @@ function bicRefresh(event: Event): void
                     //Update its value
                     dateTime.setAttribute('datetime', timestamp.toISOString());
                     dateTime.innerHTML = ('0'+String(timestamp.getUTCDate())).slice(-2) + '.' + ('0'+String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
-                    addSnackbar('Применено обновление за '+dateTime.innerHTML, 'success');
+                    new Snackbar().add('Применено обновление за '+dateTime.innerHTML, 'success');
                     refresh.classList.remove('spin');
                     bicRefresh(event);
                 } else {
-                    addSnackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                    new Snackbar().add('Не удалось обновить библиотеку БИК', 'failure', 10000);
                     refresh.classList.remove('spin');
                 }
             });

@@ -19,13 +19,13 @@ function init() {
     });
     placeholders();
     ucInit();
-    webShareInit();
+    new WebShare();
     bicInit();
     detailsInit();
     copyQuoteInit();
     formInit();
-    galleryInit();
     fftrackerInit();
+    new Gallery();
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
         item.addEventListener('click', toggleSidebar);
     });
@@ -40,7 +40,7 @@ function init() {
     if (refreshTimer) {
         timer(refreshTimer, false);
     }
-    tooltipInit();
+    new Tooltip();
     cleanGET();
     hashCheck(true);
 }
@@ -62,13 +62,237 @@ function hashCheck(hashUpdate) {
     if (galleryLink.test(hash)) {
         let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
         if (imageID) {
-            if (galleryList[imageID - 1]) {
-                galleryOpen(galleryList[imageID - 1], hashUpdate);
+            if (Gallery.images[imageID - 1]) {
+                new Gallery().open(Gallery.images[imageID - 1], hashUpdate);
             }
             else {
-                addSnackbar('Image number ' + imageID + ' not found on page', 'failure');
+                new Snackbar().add('Image number ' + imageID + ' not found on page', 'failure');
                 window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));
             }
+        }
+    }
+}
+class Gallery {
+    current = 1;
+    static images = [];
+    constructor() {
+        document.querySelectorAll('.galleryZoom').forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this.open(event.target, true);
+                return false;
+            });
+        });
+        document.getElementById('galleryClose').addEventListener('click', this.close.bind(this));
+        document.getElementById('galleryPrevious').addEventListener('click', this.previous.bind(this));
+        document.getElementById('galleryNext').addEventListener('click', this.next.bind(this));
+        document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
+            item.addEventListener('click', (event) => { this.scroll(event); });
+        });
+        this.count();
+        document.querySelectorAll('.imageCarousel').forEach(item => {
+            this.disable(item);
+        });
+    }
+    scroll(event) {
+        let scrollButton = event.target;
+        let ul = scrollButton.parentElement.getElementsByTagName('ul')[0];
+        let img = ul.getElementsByTagName('img')[0];
+        let width = img.width;
+        if (scrollButton.classList.contains('imageCarouselPrev')) {
+            ul.scrollLeft -= width;
+        }
+        else {
+            ul.scrollLeft += width;
+        }
+        this.disable(scrollButton.parentElement);
+    }
+    disable(carousel) {
+        let prev = carousel.getElementsByClassName('imageCarouselPrev')[0];
+        let next = carousel.getElementsByClassName('imageCarouselNext')[0];
+        let ul = carousel.getElementsByTagName('ul')[0];
+        let max = ul.scrollWidth - ul.offsetWidth;
+        if (ul.scrollLeft === 0) {
+            prev.classList.add('disabled');
+        }
+        else {
+            prev.classList.remove('disabled');
+        }
+        if (ul.scrollLeft >= max) {
+            next.classList.add('disabled');
+        }
+        else {
+            next.classList.remove('disabled');
+        }
+    }
+    open(image, hashUpdate) {
+        let link;
+        if (image.tagName.toLowerCase() === 'a') {
+            link = image;
+        }
+        else {
+            link = image.closest('a');
+        }
+        this.current = this.getIndex(link);
+        this.loadImage(hashUpdate);
+        document.getElementById('galleryOverlay').classList.remove('hidden');
+    }
+    loadImage(hashUpdate) {
+        let link = Gallery.images[this.current - 1];
+        let image = link.getElementsByTagName('img')[0];
+        let caption = link.parentElement.getElementsByTagName('figcaption')[0];
+        let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
+        document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
+        document.getElementById('galleryNameLink').innerHTML = '<a href="' + link.href + '" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a>';
+        document.getElementById('galleryTotal').innerText = Gallery.images.length.toString();
+        document.getElementById('galleryCurrent').innerText = this.current.toString();
+        document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="' + name + '" src="' + link.href + '">';
+        document.getElementById('galleryLoadedImage').addEventListener('load', this.checkZoom.bind(this));
+        if (hashUpdate) {
+            let url = new URL(document.location.href);
+            let hash = url.hash;
+            if (hash) {
+                window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href.replace(hash, '#gallery=' + this.current.toString()));
+            }
+            else {
+                window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href + '#gallery=' + this.current.toString());
+            }
+        }
+    }
+    close() {
+        document.getElementById('galleryOverlay').classList.add('hidden');
+    }
+    count() {
+        Gallery.images = [];
+        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
+    }
+    getIndex(link) {
+        return Gallery.images.indexOf(link) + 1;
+    }
+    previous() {
+        this.current = this.current - 1;
+        if (this.current < 1) {
+            this.current = Gallery.images.length;
+        }
+        this.loadImage(true);
+    }
+    next() {
+        this.current = this.current + 1;
+        if (this.current > Gallery.images.length) {
+            this.current = 1;
+        }
+        this.loadImage(true);
+    }
+    checkZoom() {
+        let image = document.getElementById('galleryLoadedImage');
+        if (image.naturalHeight <= image.height) {
+            image.classList.add('noZoom');
+            image.removeEventListener('click', this.zoom.bind(this));
+        }
+        else {
+            image.classList.remove('noZoom');
+            image.addEventListener('click', this.zoom.bind(this));
+        }
+    }
+    zoom() {
+        let image = document.getElementById('galleryLoadedImage');
+        if (image.classList.contains('zoomedIn')) {
+            image.classList.remove('zoomedIn');
+        }
+        else {
+            image.classList.add('zoomedIn');
+        }
+    }
+}
+class Snackbar {
+    snacks;
+    notificationIndex = 0;
+    constructor() {
+        this.snacks = document.getElementById('snacksContainer');
+    }
+    add(text, color = '', milliseconds = 3000) {
+        let snack = document.createElement('dialog');
+        let id = this.notificationIndex++;
+        snack.setAttribute('id', 'snackbar' + id);
+        snack.setAttribute('role', 'alert');
+        snack.classList.add('snackbar');
+        snack.innerHTML = '<span class="snack_text">' + text + '</span><input id="closeSnack' + id + '" class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image">';
+        if (color) {
+            snack.classList.add(color);
+        }
+        this.snacks.appendChild(snack);
+        snack.classList.add('fadeIn');
+        snack.addEventListener('click', () => { this.delete(snack); });
+        if (milliseconds > 0) {
+            setTimeout(() => {
+                this.delete(snack);
+            }, milliseconds);
+        }
+    }
+    delete(snack) {
+        snack.classList.remove('fadeIn');
+        snack.classList.add('fadeOut');
+        snack.addEventListener('animationend', () => { this.snacks.removeChild(snack); });
+    }
+}
+class Tooltip {
+    tooltip;
+    x = 0;
+    y = 0;
+    constructor() {
+        this.tooltip = document.getElementById('tooltip');
+        if (this.tooltip) {
+            document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach(item => {
+                if (!item.parentElement.hasAttribute('data-tooltip')) {
+                    item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
+                }
+            });
+            document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
+                item.setAttribute('tabindex', '0');
+            });
+            document.addEventListener('mousemove', this.onMouseMove.bind(this));
+            document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
+                item.addEventListener('focus', this.onFocus.bind(this));
+            });
+            document.querySelectorAll(':not([data-tooltip])').forEach(item => {
+                item.addEventListener('focus', this.remove.bind(this));
+            });
+        }
+    }
+    onMouseMove(event) {
+        this.update(event.target);
+        this.x = event.clientX;
+        this.y = event.clientY;
+        this.tooltipCursor();
+    }
+    onFocus(event) {
+        this.update(event.target);
+        let coordinates = event.target.getBoundingClientRect();
+        this.x = coordinates.x;
+        this.y = coordinates.y - this.tooltip.offsetHeight * 1.5;
+        this.tooltipCursor();
+    }
+    remove() {
+        this.tooltip.removeAttribute('data-tooltip');
+    }
+    tooltipCursor() {
+        if (this.y + this.tooltip.offsetHeight > window.innerHeight) {
+            this.y = window.innerHeight - this.tooltip.offsetHeight * 2;
+        }
+        if (this.x + this.tooltip.offsetWidth > window.innerWidth) {
+            this.x = window.innerWidth - this.tooltip.offsetWidth * 1.5;
+        }
+        document.documentElement.style.setProperty('--cursorX', this.x + 'px');
+        document.documentElement.style.setProperty('--cursorY', this.y + 'px');
+    }
+    update(element) {
+        let parent = element.parentElement;
+        if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
+            this.tooltip.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
+        }
+        else {
+            this.tooltip.removeAttribute('data-tooltip');
         }
     }
 }
@@ -130,6 +354,58 @@ function updateHistory(newUrl, title) {
     document.title = title;
     window.history.pushState(title, title, newUrl);
 }
+async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
+    let result;
+    let controller = new AbortController();
+    setTimeout(() => controller.abort(), timeout);
+    try {
+        let response = await fetch(url, {
+            method: method,
+            mode: 'same-origin',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRF-Token': getMeta('X-CSRF-Token') ?? '',
+            },
+            redirect: 'error',
+            referrer: window.location.href,
+            referrerPolicy: 'same-origin',
+            keepalive: false,
+            signal: controller.signal,
+            body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
+        });
+        if (!response.ok && !skipError) {
+            new Snackbar().add('Request to "' + url + '" returned code ' + response.status, 'failure', 10000);
+            return false;
+        }
+        else {
+            if (type === 'json') {
+                result = await response.json();
+            }
+            else if (type === 'blob') {
+                result = await response.blob();
+            }
+            else if (type === 'array') {
+                result = await response.arrayBuffer();
+            }
+            else if (type === 'form') {
+                result = await response.formData();
+            }
+            else {
+                result = await response.text();
+            }
+        }
+        return result;
+    }
+    catch (err) {
+        if (err.name === 'AbortError') {
+            new Snackbar().add('Request to "' + url + '" timed out after ' + timeout + ' milliseconds', 'failure', 10000);
+        }
+        else {
+            new Snackbar().add('Request to "' + url + '" failed on fetch operation', 'failure', 10000);
+        }
+    }
+}
 function ariaInit(item) {
     item.addEventListener('focus', ariaNationOnEvent);
     item.addEventListener('change', ariaNationOnEvent);
@@ -156,77 +432,6 @@ function ariaNation(inputElement) {
 }
 function ariaNationOnEvent(event) {
     ariaNation(event.target);
-}
-function webShareInit() {
-    let shareButton = document.getElementById('shareButton');
-    if (shareButton) {
-        if (navigator.share !== undefined) {
-            shareButton.classList.remove('hidden');
-            shareButton.addEventListener('click', webShare);
-        }
-        else {
-            shareButton.classList.add('hidden');
-        }
-    }
-}
-function webShare() {
-    return navigator.share({
-        title: document.title,
-        text: getMeta('og:description') ?? getMeta('description') ?? '',
-        url: document.location.href,
-    });
-}
-async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
-    let result;
-    let controller = new AbortController();
-    setTimeout(() => controller.abort(), timeout);
-    try {
-        let response = await fetch(url, {
-            method: method,
-            mode: 'same-origin',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRF-Token': getMeta('X-CSRF-Token') ?? '',
-            },
-            redirect: 'error',
-            referrer: window.location.href,
-            referrerPolicy: 'same-origin',
-            keepalive: false,
-            signal: controller.signal,
-            body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
-        });
-        if (!response.ok && !skipError) {
-            addSnackbar('Request to "' + url + '" returned code ' + response.status, 'failure', 10000);
-            return false;
-        }
-        else {
-            if (type === 'json') {
-                result = await response.json();
-            }
-            else if (type === 'blob') {
-                result = await response.blob();
-            }
-            else if (type === 'array') {
-                result = await response.arrayBuffer();
-            }
-            else if (type === 'form') {
-                result = await response.formData();
-            }
-            else {
-                result = await response.text();
-            }
-        }
-        return result;
-    }
-    catch (err) {
-        if (err.name === 'AbortError') {
-            addSnackbar('Request to "' + url + '" timed out after ' + timeout + ' milliseconds', 'failure', 10000);
-        }
-        else {
-            addSnackbar('Request to "' + url + '" failed on fetch operation', 'failure', 10000);
-        }
-    }
 }
 function backToTop(event) {
     if (event.target.scrollTop === 0) {
@@ -324,7 +529,7 @@ function bicRefresh(event) {
         setTimeout(async function () {
             await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
                 if (data.data === true) {
-                    addSnackbar('Библиотека БИК обновлена', 'success');
+                    new Snackbar().add('Библиотека БИК обновлена', 'success');
                     refresh.classList.remove('spin');
                 }
                 else if (typeof data.data === 'number') {
@@ -332,12 +537,12 @@ function bicRefresh(event) {
                     let dateTime = document.getElementsByClassName('bic_date')[0];
                     dateTime.setAttribute('datetime', timestamp.toISOString());
                     dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
-                    addSnackbar('Применено обновление за ' + dateTime.innerHTML, 'success');
+                    new Snackbar().add('Применено обновление за ' + dateTime.innerHTML, 'success');
                     refresh.classList.remove('spin');
                     bicRefresh(event);
                 }
                 else {
-                    addSnackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                    new Snackbar().add('Не удалось обновить библиотеку БИК', 'failure', 10000);
                     refresh.classList.remove('spin');
                 }
             });
@@ -371,9 +576,9 @@ function copyQuote(event) {
             break;
     }
     navigator.clipboard.writeText(String(node.textContent)).then(function () {
-        addSnackbar(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
+        new Snackbar().add(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
     }, function () {
-        addSnackbar('Failed to copy ' + tag, 'failure');
+        new Snackbar().add('Failed to copy ' + tag, 'failure');
     });
 }
 function placeholders() {
@@ -428,13 +633,13 @@ function ffTrackAdd() {
         spinner.classList.remove('hidden');
         ajax(location.protocol + '//' + location.host + '/api/fftracker/' + select.value + '/' + idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
-                addSnackbar(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
+                new Snackbar().add(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
             }
             else if (data === '404') {
-                addSnackbar(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
+                new Snackbar().add(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
             }
             else {
-                addSnackbar(data.reason, 'failure', 10000);
+                new Snackbar().add(data.reason, 'failure', 10000);
             }
             spinner.classList.add('hidden');
         });
@@ -615,137 +820,6 @@ function rawurlencode(str) {
         .replace(/\)/ug, '%29')
         .replace(/\*/ug, '%2A');
 }
-let galleryCurrent = 1;
-let galleryList = [];
-function galleryInit() {
-    document.querySelectorAll('.galleryZoom').forEach(item => {
-        item.addEventListener('click', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            galleryOpen(event.target, true);
-            return false;
-        });
-    });
-    document.getElementById('galleryClose').addEventListener('click', galleryClose);
-    document.getElementById('galleryPrevious').addEventListener('click', galleryPrevious);
-    document.getElementById('galleryNext').addEventListener('click', galleryNext);
-    document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
-        item.addEventListener('click', scrollCarousel);
-    });
-    galleryCount();
-    document.querySelectorAll('.imageCarousel').forEach(item => {
-        carouselDisable(item);
-    });
-}
-function scrollCarousel(event) {
-    let scrollButton = event.target;
-    let ul = scrollButton.parentElement.getElementsByTagName('ul')[0];
-    let img = ul.getElementsByTagName('img')[0];
-    let width = img.width;
-    if (scrollButton.classList.contains('imageCarouselPrev')) {
-        ul.scrollLeft -= width;
-    }
-    else {
-        ul.scrollLeft += width;
-    }
-    carouselDisable(scrollButton.parentElement);
-}
-function carouselDisable(carousel) {
-    let prev = carousel.getElementsByClassName('imageCarouselPrev')[0];
-    let next = carousel.getElementsByClassName('imageCarouselNext')[0];
-    let ul = carousel.getElementsByTagName('ul')[0];
-    let max = ul.scrollWidth - ul.offsetWidth;
-    if (ul.scrollLeft === 0) {
-        prev.classList.add('disabled');
-    }
-    else {
-        prev.classList.remove('disabled');
-    }
-    if (ul.scrollLeft >= max) {
-        next.classList.add('disabled');
-    }
-    else {
-        next.classList.remove('disabled');
-    }
-}
-function galleryOpen(image, hashUpdate) {
-    let link;
-    if (image.tagName.toLowerCase() === 'a') {
-        link = image;
-    }
-    else {
-        link = image.closest('a');
-    }
-    galleryCurrent = galleryGetIndex(link);
-    galleryLoadImage(hashUpdate);
-    document.getElementById('galleryOverlay').classList.remove('hidden');
-}
-function galleryLoadImage(hashUpdate) {
-    let link = galleryList[galleryCurrent - 1];
-    let image = link.getElementsByTagName('img')[0];
-    let caption = link.parentElement.getElementsByTagName('figcaption')[0];
-    let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
-    document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
-    document.getElementById('galleryNameLink').innerHTML = '<a href="' + link.href + '" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a>';
-    document.getElementById('galleryTotal').innerText = galleryList.length.toString();
-    document.getElementById('galleryCurrent').innerText = galleryCurrent.toString();
-    document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="' + name + '" src="' + link.href + '">';
-    document.getElementById('galleryLoadedImage').addEventListener('load', checkZoom);
-    if (hashUpdate) {
-        let url = new URL(document.location.href);
-        let hash = url.hash;
-        if (hash) {
-            window.history.pushState('Image ' + galleryCurrent.toString(), document.title, document.location.href.replace(hash, '#gallery=' + galleryCurrent.toString()));
-        }
-        else {
-            window.history.pushState('Image ' + galleryCurrent.toString(), document.title, document.location.href + '#gallery=' + galleryCurrent.toString());
-        }
-    }
-}
-function galleryClose() {
-    document.getElementById('galleryOverlay').classList.add('hidden');
-}
-function galleryCount() {
-    galleryList = [];
-    galleryList = Array.from(document.querySelectorAll('.galleryZoom'));
-}
-function galleryGetIndex(link) {
-    return galleryList.indexOf(link) + 1;
-}
-function galleryPrevious() {
-    galleryCurrent = galleryCurrent - 1;
-    if (galleryCurrent < 1) {
-        galleryCurrent = galleryList.length;
-    }
-    galleryLoadImage(true);
-}
-function galleryNext() {
-    galleryCurrent = galleryCurrent + 1;
-    if (galleryCurrent > galleryList.length) {
-        galleryCurrent = 1;
-    }
-    galleryLoadImage(true);
-}
-function checkZoom() {
-    let image = document.getElementById('galleryLoadedImage');
-    if (image.naturalHeight <= image.height) {
-        image.classList.add('noZoom');
-        image.removeEventListener('click', galleryZoom);
-    }
-    else {
-        image.classList.remove('noZoom');
-        image.addEventListener('click', galleryZoom);
-    }
-}
-function galleryZoom() {
-    let image = document.getElementById('galleryLoadedImage');
-    if (image.classList.contains('zoomedIn')) {
-        image.classList.remove('zoomedIn');
-    }
-    else {
-        image.classList.add('zoomedIn');
-    }
-}
 function idToHeader(hTag) {
     if (!hTag.hasAttribute('id')) {
         let id = String(hTag.textContent).replaceAll(/\s/gmu, `_`).replaceAll(/[^\p{L}\p{N}_\-]/gmu, ``).replaceAll(/(^.{1,64})(.*$)/gmu, `$1`);
@@ -760,94 +834,10 @@ function idToHeader(hTag) {
 }
 function anchorFromHeader(event) {
     navigator.clipboard.writeText(window.location.href.replaceAll(/(^[^#]*)(#.*)?$/gmu, `$1`) + '#' + event.target.getAttribute('id')).then(function () {
-        addSnackbar('Anchor link for "' + event.target.textContent + '" copied to clipboard', 'success');
+        new Snackbar().add('Anchor link for "' + event.target.textContent + '" copied to clipboard', 'success');
     }, function () {
-        addSnackbar('Failed to copy anchor link for "' + event.target.textContent + '"', 'failure');
+        new Snackbar().add('Failed to copy anchor link for "' + event.target.textContent + '"', 'failure');
     });
-}
-let notificationIndex = 0;
-function addSnackbar(text, color = '', milliseconds = 3000) {
-    const snacks = document.getElementById('snacksContainer');
-    let snack = document.createElement('dialog');
-    let id = notificationIndex++;
-    snack.setAttribute('id', 'snackbar' + id);
-    snack.setAttribute('role', 'alert');
-    snack.classList.add('snackbar');
-    snack.innerHTML = '<span class="snack_text">' + text + '</span><input id="closeSnack' + id + '" class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image">';
-    if (color) {
-        snack.classList.add(color);
-    }
-    snacks.appendChild(snack);
-    snack.classList.add('fadeIn');
-    document.getElementById('closeSnack' + id).addEventListener('click', function () { removeSnack(snack); });
-    if (milliseconds > 0) {
-        setTimeout(function () {
-            removeSnack(snack);
-        }, milliseconds);
-    }
-}
-function removeSnack(snack) {
-    const snacks = document.getElementById('snacksContainer');
-    snack.classList.remove('fadeIn');
-    snack.classList.add('fadeOut');
-    snack.addEventListener('animationend', function () { snacks.removeChild(snack); });
-}
-function tooltipInit() {
-    addTooltips();
-    tabForTips();
-    document.onmousemove = function (e) {
-        tooltip(e.target);
-        let x = e.clientX, y = e.clientY;
-        tooltipCursor(x, y);
-    };
-    document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
-        item.addEventListener('focus', function (e) {
-            tooltip(e.target);
-            let coordinates = e.target.getBoundingClientRect();
-            let block = document.getElementById('tooltip');
-            let x = coordinates.x, y = coordinates.y - block.offsetHeight * 1.5;
-            tooltipCursor(x, y);
-        });
-    });
-    document.querySelectorAll(':not([data-tooltip])').forEach(item => {
-        item.addEventListener('focus', function () {
-            let block = document.getElementById('tooltip');
-            block.removeAttribute('data-tooltip');
-        });
-    });
-}
-function tooltipCursor(x, y) {
-    let block = document.getElementById('tooltip');
-    if (y + block.offsetHeight > window.innerHeight) {
-        y = window.innerHeight - block.offsetHeight * 2;
-    }
-    if (x + block.offsetWidth > window.innerWidth) {
-        x = window.innerWidth - block.offsetWidth * 1.5;
-    }
-    document.documentElement.style.setProperty('--cursorX', x + 'px');
-    document.documentElement.style.setProperty('--cursorY', y + 'px');
-}
-function tabForTips() {
-    document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
-        item.setAttribute('tabindex', '0');
-    });
-}
-function addTooltips() {
-    document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach(item => {
-        if (!item.parentElement.hasAttribute('data-tooltip')) {
-            item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
-        }
-    });
-}
-function tooltip(element) {
-    let parent = element.parentElement;
-    let block = document.getElementById('tooltip');
-    if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
-        block.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
-    }
-    else {
-        block.removeAttribute('data-tooltip');
-    }
 }
 function ucInit() {
     document.querySelectorAll('.showpassword').forEach(item => {
@@ -880,7 +870,7 @@ function addMail() {
     let form = document.getElementById('addMailForm');
     let formData = new FormData(form);
     if (!formData.get('email')) {
-        addSnackbar('Please, enter a valid email address', 'failure');
+        new Snackbar().add('Please, enter a valid email address', 'failure');
         return false;
     }
     let email = String(formData.get('email'));
@@ -901,10 +891,10 @@ function addMail() {
             cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
             blockDeleteMail();
             form.reset();
-            addSnackbar('Mail added', 'success');
+            new Snackbar().add('Mail added', 'success');
         }
         else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -921,10 +911,10 @@ function deleteMail(event) {
         if (data.data === true) {
             table.deleteRow(tr);
             blockDeleteMail();
-            addSnackbar('Mail removed', 'success');
+            new Snackbar().add('Mail removed', 'success');
         }
         else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -962,16 +952,16 @@ function subscribeMail(event) {
             if (checkbox.checked) {
                 checkbox.checked = false;
                 label.innerText = 'Subscribe';
-                addSnackbar('Email unsubscribed', 'success');
+                new Snackbar().add('Email unsubscribed', 'success');
             }
             else {
                 checkbox.checked = true;
                 label.innerText = 'Unsubscribe';
-                addSnackbar('Email subscribed', 'success');
+                new Snackbar().add('Email subscribed', 'success');
             }
         }
         else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -985,10 +975,10 @@ function activationMail(event) {
     spinner.classList.remove('hidden');
     ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
-            addSnackbar('Activation email sent', 'success');
+            new Snackbar().add('Activation email sent', 'success');
         }
         else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -1003,14 +993,14 @@ function singInUpSubmit() {
     ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
             if (formData.get('signinup[type]') === 'remind') {
-                addSnackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+                new Snackbar().add('If respective account is registered an email has been sent with password reset link.', 'success');
             }
             else {
                 location.reload();
             }
         }
         else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -1021,10 +1011,10 @@ function passwordChange() {
     spinner.classList.remove('hidden');
     ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
-            addSnackbar('Password changed', 'success');
+            new Snackbar().add('Password changed', 'success');
         }
         else {
-            addSnackbar(data.reason, 'failure', 10000);
+            new Snackbar().add(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -1179,6 +1169,28 @@ function loginRadioCheck() {
     }
     if (password) {
         ariaNation(password);
+    }
+}
+class WebShare {
+    shareButton;
+    constructor() {
+        this.shareButton = document.getElementById('shareButton');
+        if (this.shareButton) {
+            if (navigator.share !== undefined) {
+                this.shareButton.classList.remove('hidden');
+                this.shareButton.addEventListener('click', this.share);
+            }
+            else {
+                this.shareButton.classList.add('hidden');
+            }
+        }
+    }
+    share() {
+        return navigator.share({
+            title: document.title,
+            text: getMeta('og:description') ?? getMeta('description') ?? '',
+            url: document.location.href,
+        });
     }
 }
 //# sourceMappingURL=min.js.map

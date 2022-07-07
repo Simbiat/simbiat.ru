@@ -16,13 +16,14 @@
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": false,
         //Compiler options
-        "module": "ESNext",
+        "module": "None",
         "target": "ESNext",
+        "moduleResolution": "nodenext",
         "sourceMap": true,
-        "sourceRoot": "/js/modules/",
+        "sourceRoot": "/js/",
         "removeComments": true,
-        "outDir": "../",
-        "outFile": "../min.js",
+        "outDir": "./",
+        "outFile": "./min.js",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
@@ -33,7 +34,9 @@
     },
     //Include only .ts files in the same dir
     "include": [
-        "*.ts"
+        "init.ts",
+        "classes/*.ts",
+        "modules/*.ts"
     ],
     "exclude": [
         "node_modules"

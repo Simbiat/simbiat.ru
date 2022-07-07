@@ -1,10 +1,4 @@
-// JSHint in PHPStorm does not look for functions in all files, thus silencing errors for appropriate functions (done in all files)
-/*globals ucInit, ariaInit, webShareInit, backToTop, timer, colorValue, bicInit, detailsInit,
-colorValueOnEvent, toggleSidebar, toggleNav, idToHeader, anchorFromHeader, tooltipInit, copyQuoteInit,
-placeholders, formInit, galleryInit, fftrackerInit, galleryOpen, galleryList, addSnackbar*/
-/*exported pageTitle*/
 'use strict';
-
 const pageTitle = ' on Simbiat Software';
 
 //Stuff to do on load
@@ -35,13 +29,13 @@ function init()
     });
     placeholders();
     ucInit();
-    webShareInit();
+    new WebShare();
     bicInit();
     detailsInit();
     copyQuoteInit();
     formInit();
-    galleryInit();
     fftrackerInit();
+    new Gallery();
     //Click handling for toggling sidebar
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
         item.addEventListener('click', toggleSidebar);
@@ -60,7 +54,7 @@ function init()
         timer(refreshTimer, false);
     }
     //Floating tooltip
-    tooltipInit();
+    new Tooltip();
     cleanGET();
     hashCheck(true);
 }
@@ -87,10 +81,10 @@ function hashCheck(hashUpdate: boolean)
     if (galleryLink.test(hash)) {
         let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
         if (imageID) {
-            if (galleryList[imageID - 1]) {
-                galleryOpen(galleryList[imageID - 1] as HTMLElement, hashUpdate);
+            if (Gallery.images[imageID - 1]) {
+                new Gallery().open(Gallery.images[imageID - 1] as HTMLElement, hashUpdate);
             } else {
-                addSnackbar('Image number '+imageID+' not found on page', 'failure');
+                new Snackbar().add('Image number '+imageID+' not found on page', 'failure');
                 window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));
             }
         }

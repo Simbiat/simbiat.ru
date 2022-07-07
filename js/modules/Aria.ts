@@ -1,5 +1,3 @@
-/*exported ariaInit*/
-
 //Accessibility related functions
 
 //General initialization

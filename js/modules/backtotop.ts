@@ -1,5 +1,3 @@
-/*exported backToTop*/
-
 function backToTop(event: Event): void
 {
     //Check position of the scroll

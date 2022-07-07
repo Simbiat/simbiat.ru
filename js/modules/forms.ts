@@ -1,7 +1,5 @@
-/*globals addSnackbar*/
-/*exported formInit, submitIntercept*/
 //List of input types, that are "textual" by default, thus can be tracked through keypress and paste events. In essence,
-// these are types, that support maxlength attribute
+//these are types, that support maxlength attribute
 const textInputTypes = ['email', 'password', 'search', 'tel', 'text', 'url', ];
 
 //List of other input types, that do not make much sense to be tracked through keypress or paste events
