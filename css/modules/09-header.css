@@ -28,24 +28,25 @@
     margin-left: -0.5rem;
 }
 #h1title,
-#shareButton {
+web-share {
     display: inline-block;
     font-size: 1rem;
     line-height: 1rem;
     height: 1rem;
 }
-#shareButton {
+web-share {
     width: 1rem;
     margin-bottom: 0.7rem;
     margin-left: 0.5rem;
-    cursor: pointer
+    cursor: pointer;
+    vertical-align: top;
 }
-#shareButton:hover,
-#shareButton:focus,
-#shareButton:active {
+web-share:hover,
+web-share:focus,
+web-share:active {
     filter: var(--border-shadow);
 }
-#shareButton:active {
+web-share:active {
     filter: brightness(0.7);
 }
 #h1div {

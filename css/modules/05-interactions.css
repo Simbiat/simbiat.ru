@@ -589,7 +589,7 @@ main::-webkit-scrollbar {
     text-decoration: underline dotted;
     cursor: pointer;
 }
-#tooltip {
+tool-tip {
     border-radius: var(--border-radius);
     border-style: solid;
     border-width: var(--border-width);
@@ -607,25 +607,23 @@ main::-webkit-scrollbar {
     word-break: keep-all;
     width: -moz-fit-content;
     width: fit-content;
-}
-#tooltip {
     display: none;
     position: absolute;
     left: var(--cursorX);
     top: var(--cursorY);
 }
-#tooltip[data-tooltip] {
+tool-tip[data-tooltip] {
     display: block;
     transform: translate3d(var(--cursorX) px, var(--cursorY) px, 0px);
     text-decoration: none;
 }
-#tooltip[data-tooltip]::before {
+tool-tip[data-tooltip]::before {
     display: block;
     content: attr(data-tooltip);
 }
 
 /*Snackbar notifications*/
-#snacksContainer {
+snack-bar {
     visibility: hidden;
     position: absolute;
     bottom: var(--footer-height);

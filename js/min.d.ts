@@ -9,32 +9,33 @@ declare class Gallery {
     scroll(event: Event): void;
     disable(carousel: HTMLElement): void;
     open(image: HTMLElement, hashUpdate: boolean): void;
-    loadImage(hashUpdate: boolean): void;
+    private loadImage;
     close(): void;
-    count(): void;
-    getIndex(link: HTMLAnchorElement): number;
     previous(): void;
     next(): void;
-    checkZoom(): void;
+    private checkZoom;
     zoom(): void;
 }
 declare class Snackbar {
     private readonly snacks;
-    private notificationIndex;
+    private static notificationIndex;
     constructor();
     add(text: string, color?: string, milliseconds?: number): void;
-    delete(snack: HTMLDialogElement): void;
 }
-declare class Tooltip {
-    private readonly tooltip;
+declare class SnackbarClose extends HTMLElement {
+    private readonly snackbar;
+    private readonly snack;
+    constructor();
+    close(): void;
+}
+declare class Tooltip extends HTMLElement {
     private x;
     private y;
     constructor();
     onMouseMove(event: MouseEvent): void;
     onFocus(event: Event): void;
-    remove(): void;
-    tooltipCursor(): void;
-    update(element: HTMLElement): void;
+    private tooltipCursor;
+    private update;
 }
 declare function getMeta(metaName: string): string | null;
 declare function timer(target: HTMLElement, increase?: boolean): void;
@@ -90,8 +91,7 @@ declare function showPassToggle(event: Event): void;
 declare function passwordStrengthOnEvent(event: Event): void;
 declare function passwordStrength(password: string): string;
 declare function loginRadioCheck(): void;
-declare class WebShare {
-    private readonly shareButton;
+declare class WebShare extends HTMLElement {
     constructor();
     share(): Promise<void>;
 }

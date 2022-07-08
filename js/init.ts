@@ -29,7 +29,6 @@ function init()
     });
     placeholders();
     ucInit();
-    new WebShare();
     bicInit();
     detailsInit();
     copyQuoteInit();
@@ -53,8 +52,12 @@ function init()
     if (refreshTimer) {
         timer(refreshTimer, false);
     }
+    //Web-share button
+    customElements.define('web-share', WebShare);
     //Floating tooltip
-    new Tooltip();
+    customElements.define('tool-tip', Tooltip);
+    //Snackbar close button
+    customElements.define('snack-close', SnackbarClose);
     cleanGET();
     hashCheck(true);
 }

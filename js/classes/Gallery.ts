@@ -23,15 +23,19 @@ class Gallery
         document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
             item.addEventListener('click', (event: Event) => { this.scroll(event as Event) });
         });
+        (document.getElementById('imageCarouselList') as HTMLUListElement).addEventListener('scroll', (event: Event) => {this.disable(((event.target as HTMLUListElement).parentElement as HTMLDivElement))});
         //Get list of images
-        this.count();
+        //Reset array
+        Gallery.images = [];
+        //Populate array
+        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
         //Disabled scrolling buttons for carousels, that require this. Doing in separate cycle to avoid triggering it twice
         document.querySelectorAll('.imageCarousel').forEach(item => {
             this.disable(item as HTMLElement);
         });
     }
 
-    scroll(event: Event): void
+    public scroll(event: Event): void
     {
         let scrollButton = event.target as HTMLElement;
         let ul = (scrollButton.parentElement as HTMLElement).getElementsByTagName('ul')[0] as HTMLUListElement;
@@ -46,7 +50,7 @@ class Gallery
         this.disable(scrollButton.parentElement as HTMLElement);
     }
 
-    disable(carousel: HTMLElement): void
+    public disable(carousel: HTMLElement): void
     {
         //Get previous and next buttons
         let prev = carousel.getElementsByClassName('imageCarouselPrev')[0] as HTMLDivElement;
@@ -67,7 +71,7 @@ class Gallery
         }
     }
 
-    open(image: HTMLElement, hashUpdate: boolean): void
+    public open(image: HTMLElement, hashUpdate: boolean): void
     {
         //Get current image
         let link;
@@ -77,14 +81,14 @@ class Gallery
             link = image.closest('a');
         }
         //Get current index
-        this.current = this.getIndex(link as HTMLAnchorElement);
+        this.current = Gallery.images.indexOf(link as HTMLAnchorElement) + 1;
         //Load image
         this.loadImage(hashUpdate);
         //Show overlay
         (document.getElementById('galleryOverlay') as HTMLDivElement).classList.remove('hidden');
     }
 
-    loadImage(hashUpdate: boolean): void
+    private loadImage(hashUpdate: boolean): void
     {
         //Get element from array
         let link = Gallery.images[this.current - 1] as HTMLAnchorElement;
@@ -113,25 +117,19 @@ class Gallery
         }
     }
 
-    close(): void
+    public close(): void
     {
+        //Update URL
+        let url = new URL(document.location.href);
+        let hash = url.hash;
+        if (hash) {
+            window.history.pushState(document.title, document.title, document.location.href.replace(hash, ''));
+        }
+        //Hide the gallery
         (document.getElementById('galleryOverlay') as HTMLDivElement).classList.add('hidden');
     }
 
-    count(): void
-    {
-        //Reset array
-        Gallery.images = [];
-        //Populate array
-        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
-    }
-
-    getIndex(link: HTMLAnchorElement): number
-    {
-        return Gallery.images.indexOf(link) + 1;
-    }
-
-    previous(): void
+    public previous(): void
     {
         this.current = this.current - 1;
         //Scroll over
@@ -142,7 +140,7 @@ class Gallery
         this.loadImage(true);
     }
 
-    next(): void
+    public next(): void
     {
         this.current = this.current + 1;
         //Scroll over
@@ -153,7 +151,7 @@ class Gallery
         this.loadImage(true);
     }
 
-    checkZoom(): void
+    private checkZoom(): void
     {
         let image = document.getElementById('galleryLoadedImage') as HTMLImageElement;
         if (image.naturalHeight <= image.height) {
@@ -165,7 +163,7 @@ class Gallery
         }
     }
 
-    zoom(): void
+    public zoom(): void
     {
         let image = document.getElementById('galleryLoadedImage') as HTMLImageElement;
         if (image.classList.contains('zoomedIn')) {

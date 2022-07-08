@@ -1,21 +1,19 @@
-class WebShare
+class WebShare extends HTMLElement
 {
-    private readonly shareButton: HTMLImageElement;
-
     constructor() {
-        this.shareButton = document.getElementById('shareButton') as HTMLImageElement;
-        if (this.shareButton) {
+        super();
+        if (this) {
             //Register WebShare if supported
             if (navigator.share !== undefined) {
-                this.shareButton.classList.remove('hidden');
-                this.shareButton.addEventListener('click', this.share);
+                this.classList.remove('hidden');
+                this.addEventListener('click', this.share);
             } else {
-                this.shareButton.classList.add('hidden');
+                this.classList.add('hidden');
             }
         }
     }
 
-    share(): Promise<void>
+    public share(): Promise<void>
     {
         return navigator.share({
             title: document.title,

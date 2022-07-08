@@ -19,7 +19,6 @@ function init() {
     });
     placeholders();
     ucInit();
-    new WebShare();
     bicInit();
     detailsInit();
     copyQuoteInit();
@@ -40,7 +39,9 @@ function init() {
     if (refreshTimer) {
         timer(refreshTimer, false);
     }
-    new Tooltip();
+    customElements.define('web-share', WebShare);
+    customElements.define('tool-tip', Tooltip);
+    customElements.define('snack-close', SnackbarClose);
     cleanGET();
     hashCheck(true);
 }
@@ -90,7 +91,9 @@ class Gallery {
         document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
             item.addEventListener('click', (event) => { this.scroll(event); });
         });
-        this.count();
+        document.getElementById('imageCarouselList').addEventListener('scroll', (event) => { this.disable(event.target.parentElement); });
+        Gallery.images = [];
+        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
         document.querySelectorAll('.imageCarousel').forEach(item => {
             this.disable(item);
         });
@@ -134,7 +137,7 @@ class Gallery {
         else {
             link = image.closest('a');
         }
-        this.current = this.getIndex(link);
+        this.current = Gallery.images.indexOf(link) + 1;
         this.loadImage(hashUpdate);
         document.getElementById('galleryOverlay').classList.remove('hidden');
     }
@@ -161,14 +164,12 @@ class Gallery {
         }
     }
     close() {
+        let url = new URL(document.location.href);
+        let hash = url.hash;
+        if (hash) {
+            window.history.pushState(document.title, document.title, document.location.href.replace(hash, ''));
+        }
         document.getElementById('galleryOverlay').classList.add('hidden');
-    }
-    count() {
-        Gallery.images = [];
-        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
-    }
-    getIndex(link) {
-        return Gallery.images.indexOf(link) + 1;
     }
     previous() {
         this.current = this.current - 1;
@@ -207,58 +208,67 @@ class Gallery {
 }
 class Snackbar {
     snacks;
-    notificationIndex = 0;
+    static notificationIndex = 0;
     constructor() {
-        this.snacks = document.getElementById('snacksContainer');
+        this.snacks = document.getElementsByTagName('snack-bar')[0];
     }
     add(text, color = '', milliseconds = 3000) {
-        let snack = document.createElement('dialog');
-        let id = this.notificationIndex++;
-        snack.setAttribute('id', 'snackbar' + id);
-        snack.setAttribute('role', 'alert');
-        snack.classList.add('snackbar');
-        snack.innerHTML = '<span class="snack_text">' + text + '</span><input id="closeSnack' + id + '" class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image">';
-        if (color) {
-            snack.classList.add(color);
+        if (this.snacks) {
+            let snack = document.createElement('dialog');
+            let id = Snackbar.notificationIndex++;
+            snack.setAttribute('id', 'snackbar' + id);
+            snack.setAttribute('role', 'alert');
+            snack.classList.add('snackbar');
+            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            if (color) {
+                snack.classList.add(color);
+            }
+            this.snacks.appendChild(snack);
+            snack.classList.add('fadeIn');
         }
-        this.snacks.appendChild(snack);
-        snack.classList.add('fadeIn');
-        snack.addEventListener('click', () => { this.delete(snack); });
-        if (milliseconds > 0) {
-            setTimeout(() => {
-                this.delete(snack);
-            }, milliseconds);
-        }
-    }
-    delete(snack) {
-        snack.classList.remove('fadeIn');
-        snack.classList.add('fadeOut');
-        snack.addEventListener('animationend', () => { this.snacks.removeChild(snack); });
     }
 }
-class Tooltip {
-    tooltip;
+class SnackbarClose extends HTMLElement {
+    snackbar;
+    snack;
+    constructor() {
+        super();
+        this.snack = this.parentElement;
+        this.snackbar = document.getElementsByTagName('snack-bar')[0];
+        this.addEventListener('click', this.close);
+        let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0');
+        if (closeIn > 0) {
+            setTimeout(() => {
+                this.close();
+            }, closeIn);
+        }
+    }
+    close() {
+        this.snack.classList.remove('fadeIn');
+        this.snack.classList.add('fadeOut');
+        this.snack.addEventListener('animationend', () => { this.snackbar.removeChild(this.snack); });
+    }
+}
+class Tooltip extends HTMLElement {
     x = 0;
     y = 0;
     constructor() {
-        this.tooltip = document.getElementById('tooltip');
-        if (this.tooltip) {
-            document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach(item => {
-                if (!item.parentElement.hasAttribute('data-tooltip')) {
-                    item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
-                }
-            });
-            document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
-                item.setAttribute('tabindex', '0');
-            });
-            document.addEventListener('mousemove', this.onMouseMove.bind(this));
-            document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
-                item.addEventListener('focus', this.onFocus.bind(this));
-            });
-            document.querySelectorAll(':not([data-tooltip])').forEach(item => {
-                item.addEventListener('focus', this.remove.bind(this));
-            });
-        }
+        super();
+        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach(item => {
+            if (!item.parentElement.hasAttribute('data-tooltip')) {
+                item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
+            }
+        });
+        document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
+            item.setAttribute('tabindex', '0');
+        });
+        document.addEventListener('mousemove', this.onMouseMove.bind(this));
+        document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
+            item.addEventListener('focus', this.onFocus.bind(this));
+        });
+        document.querySelectorAll(':not([data-tooltip])').forEach(item => {
+            item.addEventListener('focus', () => { this.removeAttribute('data-tooltip'); });
+        });
     }
     onMouseMove(event) {
         this.update(event.target);
@@ -270,18 +280,15 @@ class Tooltip {
         this.update(event.target);
         let coordinates = event.target.getBoundingClientRect();
         this.x = coordinates.x;
-        this.y = coordinates.y - this.tooltip.offsetHeight * 1.5;
+        this.y = coordinates.y - this.offsetHeight * 1.5;
         this.tooltipCursor();
     }
-    remove() {
-        this.tooltip.removeAttribute('data-tooltip');
-    }
     tooltipCursor() {
-        if (this.y + this.tooltip.offsetHeight > window.innerHeight) {
-            this.y = window.innerHeight - this.tooltip.offsetHeight * 2;
+        if (this.y + this.offsetHeight > window.innerHeight) {
+            this.y = window.innerHeight - this.offsetHeight * 2;
         }
-        if (this.x + this.tooltip.offsetWidth > window.innerWidth) {
-            this.x = window.innerWidth - this.tooltip.offsetWidth * 1.5;
+        if (this.x + this.offsetWidth > window.innerWidth) {
+            this.x = window.innerWidth - this.offsetWidth * 1.5;
         }
         document.documentElement.style.setProperty('--cursorX', this.x + 'px');
         document.documentElement.style.setProperty('--cursorY', this.y + 'px');
@@ -289,10 +296,10 @@ class Tooltip {
     update(element) {
         let parent = element.parentElement;
         if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
-            this.tooltip.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
+            this.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
         }
         else {
-            this.tooltip.removeAttribute('data-tooltip');
+            this.removeAttribute('data-tooltip');
         }
     }
 }
@@ -1171,17 +1178,16 @@ function loginRadioCheck() {
         ariaNation(password);
     }
 }
-class WebShare {
-    shareButton;
+class WebShare extends HTMLElement {
     constructor() {
-        this.shareButton = document.getElementById('shareButton');
-        if (this.shareButton) {
+        super();
+        if (this) {
             if (navigator.share !== undefined) {
-                this.shareButton.classList.remove('hidden');
-                this.shareButton.addEventListener('click', this.share);
+                this.classList.remove('hidden');
+                this.addEventListener('click', this.share);
             }
             else {
-                this.shareButton.classList.add('hidden');
+                this.classList.add('hidden');
             }
         }
     }

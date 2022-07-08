@@ -78,8 +78,11 @@
             <footer>
                 {{ include('common/layout/footer.twig') }}
             </footer>
-            <div id="tooltip" role="tooltip" aria-label="Tooltip"></div>
+        <over-lays>
             {{ include('common/layout/gallery.twig') }}
+            <tool-tip id="tooltip" role="tooltip" aria-label="Tooltip"></tool-tip>
+            <snack-bar role="dialog"></snack-bar>
+        </over-lays>
         </body>
     {%endif%}
 </html>

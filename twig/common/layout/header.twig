@@ -4,5 +4,5 @@
     <span>Software</span>
 </div>
 <div id="h1div">
-    <h1 id="h1title">{% if cacheReset %}<a href="{{ cacheReset }}" target="_self" data-tooltip="Click to attempt to reset page's cache"><img class="linkIcon" src="/img/refresh.svg" alt="Reset cache">{% endif %}{{ h1|default(title)|default(site_name)|raw }}{% if cacheReset %}</a>{% endif %}</h1><img loading="lazy" decoding="async" id="shareButton" class="hidden" alt="Share page" data-tooltip="Share page" src="/img/share.svg">
+    <h1 id="h1title">{% if cacheReset %}<a href="{{ cacheReset }}" target="_self" data-tooltip="Click to attempt to reset page's cache"><img class="linkIcon" src="/img/refresh.svg" alt="Reset cache">{% endif %}{{ h1|default(title)|default(site_name)|raw }}{% if cacheReset %}</a>{% endif %}</h1><web-share class="hidden"><img loading="lazy" decoding="async" id="shareButton" alt="Share page" data-tooltip="Share page" src="/img/share.svg"></web-share>
 </div>
