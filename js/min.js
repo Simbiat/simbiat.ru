@@ -67,7 +67,7 @@ function hashCheck(hashUpdate) {
                 new Gallery().open(Gallery.images[imageID - 1], hashUpdate);
             }
             else {
-                new Snackbar().add('Image number ' + imageID + ' not found on page', 'failure');
+                new Snackbar('Image number ' + imageID + ' not found on page', 'failure');
                 window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));
             }
         }
@@ -77,56 +77,27 @@ class Gallery {
     current = 1;
     static images = [];
     constructor() {
-        document.querySelectorAll('.galleryZoom').forEach(item => {
-            item.addEventListener('click', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                this.open(event.target, true);
-                return false;
-            });
-        });
-        document.getElementById('galleryClose').addEventListener('click', this.close.bind(this));
-        document.getElementById('galleryPrevious').addEventListener('click', this.previous.bind(this));
-        document.getElementById('galleryNext').addEventListener('click', this.next.bind(this));
-        document.querySelectorAll('.imageCarouselPrev, .imageCarouselNext').forEach(item => {
-            item.addEventListener('click', (event) => { this.scroll(event); });
-        });
-        document.getElementById('imageCarouselList').addEventListener('scroll', (event) => { this.disable(event.target.parentElement); });
-        Gallery.images = [];
         Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
-        document.querySelectorAll('.imageCarousel').forEach(item => {
-            this.disable(item);
-        });
-    }
-    scroll(event) {
-        let scrollButton = event.target;
-        let ul = scrollButton.parentElement.getElementsByTagName('ul')[0];
-        let img = ul.getElementsByTagName('img')[0];
-        let width = img.width;
-        if (scrollButton.classList.contains('imageCarouselPrev')) {
-            ul.scrollLeft -= width;
-        }
-        else {
-            ul.scrollLeft += width;
-        }
-        this.disable(scrollButton.parentElement);
-    }
-    disable(carousel) {
-        let prev = carousel.getElementsByClassName('imageCarouselPrev')[0];
-        let next = carousel.getElementsByClassName('imageCarouselNext')[0];
-        let ul = carousel.getElementsByTagName('ul')[0];
-        let max = ul.scrollWidth - ul.offsetWidth;
-        if (ul.scrollLeft === 0) {
-            prev.classList.add('disabled');
-        }
-        else {
-            prev.classList.remove('disabled');
-        }
-        if (ul.scrollLeft >= max) {
-            next.classList.add('disabled');
-        }
-        else {
-            next.classList.remove('disabled');
+        if (Gallery.images.length > 0) {
+            Gallery.images.forEach(item => {
+                item.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.open(event.target, true);
+                    return false;
+                });
+            });
+            customElements.define('gallery-close', GalleryClose);
+            customElements.define('image-carousel', CarouselList);
+            if (Gallery.images.length > 1) {
+                document.getElementById('galleryPrevious').addEventListener('click', this.previous.bind(this));
+                document.getElementById('galleryNext').addEventListener('click', this.next.bind(this));
+            }
+            else {
+                document.getElementById('galleryPrevious').classList.add('disabled');
+                document.getElementById('galleryNext').classList.add('disabled');
+            }
+            document.getElementById('galleryLoadedImage').addEventListener('load', this.checkZoom.bind(this));
         }
     }
     open(image, hashUpdate) {
@@ -140,6 +111,9 @@ class Gallery {
         this.current = Gallery.images.indexOf(link) + 1;
         this.loadImage(hashUpdate);
         document.getElementById('galleryOverlay').classList.remove('hidden');
+        if (Gallery.images.length > 1) {
+            document.addEventListener('keydown', this.keyNav.bind(this));
+        }
     }
     loadImage(hashUpdate) {
         let link = Gallery.images[this.current - 1];
@@ -147,11 +121,9 @@ class Gallery {
         let caption = link.parentElement.getElementsByTagName('figcaption')[0];
         let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
         document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
-        document.getElementById('galleryNameLink').innerHTML = '<a href="' + link.href + '" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a>';
+        document.getElementById('galleryNameLink').href = document.getElementById('galleryLoadedImage').src = link.href;
         document.getElementById('galleryTotal').innerText = Gallery.images.length.toString();
         document.getElementById('galleryCurrent').innerText = this.current.toString();
-        document.getElementById('galleryImage').innerHTML = '<img id="galleryLoadedImage" loading="lazy" decoding="async" alt="' + name + '" src="' + link.href + '">';
-        document.getElementById('galleryLoadedImage').addEventListener('load', this.checkZoom.bind(this));
         if (hashUpdate) {
             let url = new URL(document.location.href);
             let hash = url.hash;
@@ -162,14 +134,6 @@ class Gallery {
                 window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href + '#gallery=' + this.current.toString());
             }
         }
-    }
-    close() {
-        let url = new URL(document.location.href);
-        let hash = url.hash;
-        if (hash) {
-            window.history.pushState(document.title, document.title, document.location.href.replace(hash, ''));
-        }
-        document.getElementById('galleryOverlay').classList.add('hidden');
     }
     previous() {
         this.current = this.current - 1;
@@ -184,6 +148,31 @@ class Gallery {
             this.current = 1;
         }
         this.loadImage(true);
+    }
+    keyNav(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (['ArrowUp', 'ArrowRight', 'PageDown'].includes(event.code)) {
+            this.next();
+            return false;
+        }
+        else if (['ArrowDown', 'ArrowLeft', 'PageUp'].includes(event.code)) {
+            this.previous();
+            return false;
+        }
+        else if (event.code === 'End') {
+            this.current = Gallery.images.length;
+            this.loadImage(true);
+            return false;
+        }
+        else if (event.code === 'Home') {
+            this.current = 1;
+            this.loadImage(true);
+            return false;
+        }
+        else {
+            return true;
+        }
     }
     checkZoom() {
         let image = document.getElementById('galleryLoadedImage');
@@ -206,13 +195,75 @@ class Gallery {
         }
     }
 }
+class GalleryClose extends HTMLElement {
+    constructor() {
+        super();
+        this.addEventListener('click', this.close);
+    }
+    close() {
+        let url = new URL(document.location.href);
+        let hash = url.hash;
+        if (hash) {
+            window.history.pushState(document.title, document.title, document.location.href.replace(hash, ''));
+        }
+        document.getElementById('galleryOverlay').classList.add('hidden');
+    }
+}
+class CarouselList extends HTMLElement {
+    list;
+    next;
+    previous;
+    maxScroll = 0;
+    constructor() {
+        super();
+        this.list = this.getElementsByClassName('imageCarouselList')[0];
+        this.next = this.getElementsByClassName('imageCarouselNext')[0];
+        this.previous = this.getElementsByClassName('imageCarouselPrev')[0];
+        if (this.list && this.next && this.previous) {
+            this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
+            this.list.addEventListener('scroll', () => {
+                this.disableScroll.bind(this);
+            });
+            [this.next, this.previous].forEach(item => {
+                item.addEventListener('click', (event) => {
+                    this.toScroll(event);
+                });
+            });
+            this.disableScroll();
+        }
+    }
+    toScroll(event) {
+        let scrollButton = event.target;
+        let img = this.list.getElementsByTagName('img')[0];
+        let width = img.width;
+        if (scrollButton.classList.contains('imageCarouselPrev')) {
+            this.list.scrollLeft -= width;
+        }
+        else {
+            this.list.scrollLeft += width;
+        }
+        this.disableScroll();
+    }
+    disableScroll() {
+        if (this.list.scrollLeft === 0) {
+            this.previous.classList.add('disabled');
+        }
+        else {
+            this.previous.classList.remove('disabled');
+        }
+        if (this.list.scrollLeft >= this.maxScroll) {
+            this.next.classList.add('disabled');
+        }
+        else {
+            this.next.classList.remove('disabled');
+        }
+    }
+}
 class Snackbar {
     snacks;
     static notificationIndex = 0;
-    constructor() {
+    constructor(text, color = '', milliseconds = 3000) {
         this.snacks = document.getElementsByTagName('snack-bar')[0];
-    }
-    add(text, color = '', milliseconds = 3000) {
         if (this.snacks) {
             let snack = document.createElement('dialog');
             let id = Snackbar.notificationIndex++;
@@ -382,7 +433,7 @@ async function ajax(url, formData = null, type = 'json', method = 'GET', timeout
             body: ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
         });
         if (!response.ok && !skipError) {
-            new Snackbar().add('Request to "' + url + '" returned code ' + response.status, 'failure', 10000);
+            new Snackbar('Request to "' + url + '" returned code ' + response.status, 'failure', 10000);
             return false;
         }
         else {
@@ -406,10 +457,10 @@ async function ajax(url, formData = null, type = 'json', method = 'GET', timeout
     }
     catch (err) {
         if (err.name === 'AbortError') {
-            new Snackbar().add('Request to "' + url + '" timed out after ' + timeout + ' milliseconds', 'failure', 10000);
+            new Snackbar('Request to "' + url + '" timed out after ' + timeout + ' milliseconds', 'failure', 10000);
         }
         else {
-            new Snackbar().add('Request to "' + url + '" failed on fetch operation', 'failure', 10000);
+            new Snackbar('Request to "' + url + '" failed on fetch operation', 'failure', 10000);
         }
     }
 }
@@ -536,7 +587,7 @@ function bicRefresh(event) {
         setTimeout(async function () {
             await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
                 if (data.data === true) {
-                    new Snackbar().add('Библиотека БИК обновлена', 'success');
+                    new Snackbar('Библиотека БИК обновлена', 'success');
                     refresh.classList.remove('spin');
                 }
                 else if (typeof data.data === 'number') {
@@ -544,12 +595,12 @@ function bicRefresh(event) {
                     let dateTime = document.getElementsByClassName('bic_date')[0];
                     dateTime.setAttribute('datetime', timestamp.toISOString());
                     dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
-                    new Snackbar().add('Применено обновление за ' + dateTime.innerHTML, 'success');
+                    new Snackbar('Применено обновление за ' + dateTime.innerHTML, 'success');
                     refresh.classList.remove('spin');
                     bicRefresh(event);
                 }
                 else {
-                    new Snackbar().add('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                    new Snackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
                     refresh.classList.remove('spin');
                 }
             });
@@ -583,9 +634,9 @@ function copyQuote(event) {
             break;
     }
     navigator.clipboard.writeText(String(node.textContent)).then(function () {
-        new Snackbar().add(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
+        new Snackbar(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
     }, function () {
-        new Snackbar().add('Failed to copy ' + tag, 'failure');
+        new Snackbar('Failed to copy ' + tag, 'failure');
     });
 }
 function placeholders() {
@@ -640,13 +691,13 @@ function ffTrackAdd() {
         spinner.classList.remove('hidden');
         ajax(location.protocol + '//' + location.host + '/api/fftracker/' + select.value + '/' + idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
-                new Snackbar().add(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
+                new Snackbar(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
             }
             else if (data === '404') {
-                new Snackbar().add(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
+                new Snackbar(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
             }
             else {
-                new Snackbar().add(data.reason, 'failure', 10000);
+                new Snackbar(data.reason, 'failure', 10000);
             }
             spinner.classList.add('hidden');
         });
@@ -841,9 +892,9 @@ function idToHeader(hTag) {
 }
 function anchorFromHeader(event) {
     navigator.clipboard.writeText(window.location.href.replaceAll(/(^[^#]*)(#.*)?$/gmu, `$1`) + '#' + event.target.getAttribute('id')).then(function () {
-        new Snackbar().add('Anchor link for "' + event.target.textContent + '" copied to clipboard', 'success');
+        new Snackbar('Anchor link for "' + event.target.textContent + '" copied to clipboard', 'success');
     }, function () {
-        new Snackbar().add('Failed to copy anchor link for "' + event.target.textContent + '"', 'failure');
+        new Snackbar('Failed to copy anchor link for "' + event.target.textContent + '"', 'failure');
     });
 }
 function ucInit() {
@@ -877,7 +928,7 @@ function addMail() {
     let form = document.getElementById('addMailForm');
     let formData = new FormData(form);
     if (!formData.get('email')) {
-        new Snackbar().add('Please, enter a valid email address', 'failure');
+        new Snackbar('Please, enter a valid email address', 'failure');
         return false;
     }
     let email = String(formData.get('email'));
@@ -898,10 +949,10 @@ function addMail() {
             cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
             blockDeleteMail();
             form.reset();
-            new Snackbar().add('Mail added', 'success');
+            new Snackbar('Mail added', 'success');
         }
         else {
-            new Snackbar().add(data.reason, 'failure', 10000);
+            new Snackbar(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -918,10 +969,10 @@ function deleteMail(event) {
         if (data.data === true) {
             table.deleteRow(tr);
             blockDeleteMail();
-            new Snackbar().add('Mail removed', 'success');
+            new Snackbar('Mail removed', 'success');
         }
         else {
-            new Snackbar().add(data.reason, 'failure', 10000);
+            new Snackbar(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -959,16 +1010,16 @@ function subscribeMail(event) {
             if (checkbox.checked) {
                 checkbox.checked = false;
                 label.innerText = 'Subscribe';
-                new Snackbar().add('Email unsubscribed', 'success');
+                new Snackbar('Email unsubscribed', 'success');
             }
             else {
                 checkbox.checked = true;
                 label.innerText = 'Unsubscribe';
-                new Snackbar().add('Email subscribed', 'success');
+                new Snackbar('Email subscribed', 'success');
             }
         }
         else {
-            new Snackbar().add(data.reason, 'failure', 10000);
+            new Snackbar(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -982,10 +1033,10 @@ function activationMail(event) {
     spinner.classList.remove('hidden');
     ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
-            new Snackbar().add('Activation email sent', 'success');
+            new Snackbar('Activation email sent', 'success');
         }
         else {
-            new Snackbar().add(data.reason, 'failure', 10000);
+            new Snackbar(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -1000,14 +1051,14 @@ function singInUpSubmit() {
     ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
         if (data.data === true) {
             if (formData.get('signinup[type]') === 'remind') {
-                new Snackbar().add('If respective account is registered an email has been sent with password reset link.', 'success');
+                new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
             }
             else {
                 location.reload();
             }
         }
         else {
-            new Snackbar().add(data.reason, 'failure', 10000);
+            new Snackbar(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });
@@ -1018,10 +1069,10 @@ function passwordChange() {
     spinner.classList.remove('hidden');
     ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
         if (data.data === true) {
-            new Snackbar().add('Password changed', 'success');
+            new Snackbar('Password changed', 'success');
         }
         else {
-            new Snackbar().add(data.reason, 'failure', 10000);
+            new Snackbar(data.reason, 'failure', 10000);
         }
         spinner.classList.add('hidden');
     });

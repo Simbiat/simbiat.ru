@@ -6,21 +6,31 @@ declare class Gallery {
     private current;
     static images: Array<HTMLElement>;
     constructor();
-    scroll(event: Event): void;
-    disable(carousel: HTMLElement): void;
     open(image: HTMLElement, hashUpdate: boolean): void;
     private loadImage;
-    close(): void;
     previous(): void;
     next(): void;
+    keyNav(event: KeyboardEvent): boolean;
     private checkZoom;
     zoom(): void;
+}
+declare class GalleryClose extends HTMLElement {
+    constructor();
+    close(): void;
+}
+declare class CarouselList extends HTMLElement {
+    private readonly list;
+    private readonly next;
+    private readonly previous;
+    private readonly maxScroll;
+    constructor();
+    toScroll(event: Event): void;
+    disableScroll(): void;
 }
 declare class Snackbar {
     private readonly snacks;
     private static notificationIndex;
-    constructor();
-    add(text: string, color?: string, milliseconds?: number): void;
+    constructor(text: string, color?: string, milliseconds?: number);
 }
 declare class SnackbarClose extends HTMLElement {
     private readonly snackbar;

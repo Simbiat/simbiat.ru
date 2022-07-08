@@ -32,9 +32,9 @@ function copyQuote(event: Event):void
             break;
     }
     navigator.clipboard.writeText(String(node.textContent)).then(function() {
-        new Snackbar().add(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
+        new Snackbar(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
     }, function() {
-        new Snackbar().add('Failed to copy '+tag,'failure');
+        new Snackbar('Failed to copy '+tag,'failure');
     });
 }
 

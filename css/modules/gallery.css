@@ -8,7 +8,7 @@
     margin: 0;
     z-index: 10;
 }
-#galleryClose {
+gallery-close {
     position: absolute;
     right: 0.5rem;
     top: 0.5rem;
@@ -67,15 +67,20 @@
     grid-area: galleryCounter;
     font-style: italic;
 }
-#galleryPrevious:focus,
-#galleryNext:focus,
-#galleryPrevious:hover,
-#galleryNext:hover {
+#galleryPrevious:focus:not(.disabled),
+#galleryNext:focus:not(.disabled),
+#galleryPrevious:hover:not(.disabled),
+#galleryNext:hover:not(.disabled) {
     filter: brightness(2);
 }
-#galleryPrevious:active,
-#galleryNext:active {
+#galleryPrevious:active:not(.disabled),
+#galleryNext:active:not(.disabled) {
     filter: brightness(0.7);
+}
+#galleryPrevious.disabled,
+#galleryNext.disabled {
+    cursor: default;
+    color: var(--color-disabled);
 }
 #galleryLoadedImage {
     height: 100%;
@@ -97,7 +102,7 @@
 }
 
 /*Carousel of images*/
-.imageCarousel {
+image-carousel {
     height: 10rem;
     background-color: var(--color-body);
     border-radius: var(--border-radius);
@@ -110,10 +115,10 @@
     grid-template-areas:
         'prev list next'
 }
-.imageCarousel figure {
+image-carousel figure {
     height: 10rem;
 }
-.imageCarousel>ul {
+image-carousel>ul {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -126,37 +131,39 @@
     grid-area: list;
 }
 /*Next two settings are required to hide scrollbar, but keep scroll functionality*/
-.imageCarousel>ul {
-    overflow: overlay hidden;
+image-carousel>ul {
+    overflow: auto hidden;
+    /*For Firefox*/
+    scrollbar-width: none;
 }
-.imageCarousel>ul::-webkit-scrollbar {
+image-carousel>ul::-webkit-scrollbar {
     display: none;
 }
-.imageCarousel li {
+image-carousel li {
     list-style: none;
 }
-.imageCarousel figure>a {
+image-carousel figure>a {
     text-decoration-line: underline;
     border: none;
     position: relative;
     height: 5rem;
     display: block;
 }
-.imageCarousel figure>a>div:hover,
-.imageCarousel figure>a>div:focus,
-.imageCarousel figure>a>div:active {
+image-carousel figure>a>div:hover,
+image-carousel figure>a>div:focus,
+image-carousel figure>a>div:active {
     filter: opacity(.25);
 }
-.imageCarousel figure>a>img,
-.imageCarousel figcaption,
-.imageCarousel figure>a>div {
+image-carousel figure>a>img,
+image-carousel figcaption,
+image-carousel figure>a>div {
     width: 10rem;
 }
-.imageCarousel figure>a>img,
-.imageCarousel figure>a>div {
+image-carousel figure>a>img,
+image-carousel figure>a>div {
     height: 5rem;
 }
-.imageCarousel figcaption {
+image-carousel figcaption {
     height: 4rem;
     overflow: clip;
     margin-top: 0.5rem;
@@ -167,7 +174,7 @@
     text-overflow: ellipsis;
     text-align: center;
 }
-.imageCarousel figure {
+image-carousel figure {
     margin-left: 0.25rem;
     margin-right: 0.25rem;
 }
@@ -228,13 +235,13 @@
 .imageCarouselNext:active {
     filter: brightness(0.7);
 }
-.imageCarousel figure>a>img,
-.imageCarousel figure>a>div {
+image-carousel figure>a>img,
+image-carousel figure>a>div {
     position: absolute;
     top: 0.75rem;
     left: 0;
 }
-.imageCarousel figure>a>div {
+image-carousel figure>a>div {
     color: var(--color-text);
     background-color: var(--color-body);
     filter: opacity(0.75);

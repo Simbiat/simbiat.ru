@@ -20,8 +20,8 @@ function idToHeader(hTag: HTMLHeadingElement) {
 function anchorFromHeader(event: Event) {
     //Generate and copy anchor link to clipboard
     navigator.clipboard.writeText(window.location.href.replaceAll(/(^[^#]*)(#.*)?$/gmu, `$1`) + '#' + (event.target as HTMLHeadingElement).getAttribute('id')).then(function() {
-        new Snackbar().add('Anchor link for "' + (event.target as HTMLHeadingElement).textContent + '" copied to clipboard', 'success');
+        new Snackbar('Anchor link for "' + (event.target as HTMLHeadingElement).textContent + '" copied to clipboard', 'success');
     }, function() {
-        new Snackbar().add('Failed to copy anchor link for "' + (event.target as HTMLHeadingElement).textContent + '"','failure');
+        new Snackbar('Failed to copy anchor link for "' + (event.target as HTMLHeadingElement).textContent + '"','failure');
     });
 }

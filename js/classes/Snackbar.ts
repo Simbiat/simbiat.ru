@@ -3,13 +3,9 @@ class Snackbar
     private readonly snacks: HTMLDivElement;
     private static notificationIndex: number = 0;
 
-    constructor()
+    constructor(text: string, color: string = '', milliseconds = 3000)
     {
         this.snacks = document.getElementsByTagName('snack-bar')[0] as HTMLDivElement;
-    }
-
-    public add(text: string, color: string = '', milliseconds = 3000): void
-    {
         if (this.snacks) {
             //Generate element
             let snack = document.createElement('dialog');
@@ -20,7 +16,7 @@ class Snackbar
             //Add snackbar class
             snack.classList.add('snackbar');
             //Add text
-            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="'+milliseconds+'"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
             //Add class for color
             if (color) {
                 snack.classList.add(color);
@@ -52,7 +48,7 @@ class SnackbarClose extends HTMLElement
         }
     }
 
-    public close()
+    public close(): void
     {
         //Animate removal
         this.snack.classList.remove('fadeIn');

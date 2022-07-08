@@ -1,6 +1,6 @@
-<div class="imageCarousel">
+<image-carousel>
     <div class="imageCarouselPrev">❰</div>
-    <ul id="imageCarouselList">
+    <ul class="imageCarouselList">
         {% for image in images %}
             {%  if image.href %}
                 <li>
@@ -16,4 +16,4 @@
         {% endfor %}
     </ul>
     <div class="imageCarouselNext">❱</div>
-</div>
+</image-carousel>

@@ -32,11 +32,11 @@ function ffTrackAdd(): void
         spinner.classList.remove('hidden');
         ajax(location.protocol+'//'+location.host+'/api/fftracker/'+select.value+'/'+idInput.value+'/', null, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
-                new Snackbar().add(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
+                new Snackbar(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
             } else if (data === '404') {
-                new Snackbar().add(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
+                new Snackbar(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
             } else {
-                new Snackbar().add(data.reason, 'failure', 10000);
+                new Snackbar(data.reason, 'failure', 10000);
             }
             spinner.classList.add('hidden');
         });

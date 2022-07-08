@@ -1,9 +1,9 @@
 <div id="galleryOverlay" role="dialog" aria-label="Gallery overlay" class="hidden">
-    <div id="galleryClose"><input id="closeGalleryIcon" class="navIcon" alt="Close gallery" data-tooltip="Close gallery" type="image" src="/img/close.svg"></div>
+    <gallery-close><input id="closeGalleryIcon" class="navIcon" alt="Close gallery" data-tooltip="Close gallery" type="image" src="/img/close.svg"></gallery-close>
     <div id="galleryGrid">
         <div id="galleryPrevious">&#10096;</div>
-        <div id="galleryNameBlock"><span id="galleryName">Name</span><span id="galleryNameLink"></span></div>
-        <div id="galleryImage"></div>
+        <div id="galleryNameBlock"><span id="galleryName">Name</span><a id="galleryNameLink" href="" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" alt="Open in new tab" src="/img/newtab.svg"></a></div>
+        <div id="galleryImage"><img id="galleryLoadedImage" loading="lazy" decoding="async" alt="'+name+'" src=""></div>
         <div id="galleryCounter"><span id="galleryCurrent">0</span><span id="gallerySlash">/</span><span id="galleryTotal">0</span></div>
         <div id="galleryNext">&#10097;</div>
     </div>

@@ -87,7 +87,7 @@ function hashCheck(hashUpdate: boolean)
             if (Gallery.images[imageID - 1]) {
                 new Gallery().open(Gallery.images[imageID - 1] as HTMLElement, hashUpdate);
             } else {
-                new Snackbar().add('Image number '+imageID+' not found on page', 'failure');
+                new Snackbar('Image number '+imageID+' not found on page', 'failure');
                 window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));
             }
         }
