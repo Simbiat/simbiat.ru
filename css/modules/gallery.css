@@ -1,4 +1,4 @@
-#galleryOverlay {
+gallery-overlay {
     width: 100vw;
     height: 100vh;
     background-color: var(--color-body);
@@ -24,8 +24,8 @@ gallery-close {
         'galleryPrevious galleryImage galleryNext'
         'galleryPrevious galleryCounter galleryNext';
 }
-#galleryPrevious,
-#galleryNext {
+gallery-prev,
+gallery-next {
     background-color: var(--color-body);
     height: 100vh;
     width: 5rem;
@@ -39,13 +39,13 @@ gallery-close {
     -webkit-user-select: none;
     user-select: none;
 }
-#galleryPrevious {
+gallery-prev {
     grid-area: galleryPrevious;
 }
-#galleryNext {
+gallery-next {
     grid-area: galleryNext;
 }
-#galleryImage {
+gallery-image {
     grid-area: galleryImage;
     height: calc(100vh - 6rem);
     width: calc(100vw - 10rem);
@@ -67,18 +67,18 @@ gallery-close {
     grid-area: galleryCounter;
     font-style: italic;
 }
-#galleryPrevious:focus:not(.disabled),
-#galleryNext:focus:not(.disabled),
-#galleryPrevious:hover:not(.disabled),
-#galleryNext:hover:not(.disabled) {
+gallery-prev:focus:not(.disabled),
+gallery-next:focus:not(.disabled),
+gallery-prev:hover:not(.disabled),
+gallery-next:hover:not(.disabled) {
     filter: brightness(2);
 }
-#galleryPrevious:active:not(.disabled),
-#galleryNext:active:not(.disabled) {
+gallery-prev:active:not(.disabled),
+gallery-next:active:not(.disabled) {
     filter: brightness(0.7);
 }
-#galleryPrevious.disabled,
-#galleryNext.disabled {
+gallery-prev.disabled,
+gallery-next.disabled {
     cursor: default;
     color: var(--color-disabled);
 }

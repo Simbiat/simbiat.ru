@@ -1,62 +1,61 @@
-class Gallery
+class Gallery extends HTMLElement
 {
-    private current: number = 1;
-    public static images: Array<HTMLElement> = [];
+    //ID of currently opened image
+    private _current: number = 0;
+    //Array of the images
+    public images: Array<HTMLElement> = [];
 
-    constructor()
+    public get current(): number
     {
+        return this._current;
+    }
+
+    public set current(value: number)
+    {
+        if (value < 0) {
+            //Scroll to last
+            this._current = this.images.length -1;
+        } else if (value > this.images.length - 1) {
+            //Scroll to first
+            this._current = 0;
+        } else {
+            this._current = value;
+        }
+        if (this.images.length > 1 || this.classList.contains('hidden')) {
+            this.open();
+        }
+    }
+
+    constructor() {
+        super();
         //Get list of images
-        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
-        if (Gallery.images.length > 0) {
+        this.images = Array.from(document.querySelectorAll('.galleryZoom'));
+        //Extra processing only if there are actual images
+        if (this.images.length > 0) {
+            //Define buttons
+            customElements.define('gallery-close', GalleryClose);
+            customElements.define('gallery-prev', GalleryPrev);
+            customElements.define('gallery-next', GalleryNext);
+            customElements.define('gallery-image', GalleryImage);
             //Attach trigger for opening overlay
-            Gallery.images.forEach(item => {
+            this.images.forEach((item, index: number) => {
                 item.addEventListener('click', (event: Event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    this.open(event.target as HTMLElement, true);
+                    this.current = index;
                     return false;
                 });
             });
-            //Attach trigger for closing the overlay
-            customElements.define('gallery-close', GalleryClose);
-            //Define image carousels
-            customElements.define('image-carousel', CarouselList);
             //Attach triggers for navigation
-            if (Gallery.images.length > 1) {
-                (document.getElementById('galleryPrevious') as HTMLDivElement).addEventListener('click', this.previous.bind(this));
-                (document.getElementById('galleryNext') as HTMLDivElement).addEventListener('click', this.next.bind(this));
-            } else {
-                (document.getElementById('galleryPrevious') as HTMLDivElement).classList.add('disabled');
-                (document.getElementById('galleryNext') as HTMLDivElement).classList.add('disabled');
-            }
-            (document.getElementById('galleryLoadedImage') as HTMLDivElement).addEventListener('load', this.checkZoom.bind(this));
+            this.addEventListener('keydown', this.keyNav.bind(this));
         }
     }
 
-    public open(image: HTMLElement, hashUpdate: boolean): void
+    public open(): void
     {
-        //Get current image
-        let link;
-        if (image.tagName.toLowerCase() === 'a') {
-            link = image;
-        } else {
-            link = image.closest('a');
-        }
-        //Get current index
-        this.current = Gallery.images.indexOf(link as HTMLAnchorElement) + 1;
-        //Load image
-        this.loadImage(hashUpdate);
-        //Show overlay
-        (document.getElementById('galleryOverlay') as HTMLDivElement).classList.remove('hidden');
-        if (Gallery.images.length > 1) {
-            document.addEventListener('keydown', this.keyNav.bind(this));
-        }
-    }
-
-    private loadImage(hashUpdate: boolean): void
-    {
+        this.tabIndex = 99;
         //Get element from array
-        let link = Gallery.images[this.current - 1] as HTMLAnchorElement;
+        let link = this.images[this.current] as HTMLAnchorElement;
         //Get image
         let image = link.getElementsByTagName('img')[0] as HTMLImageElement;
         //Get figcaption
@@ -66,88 +65,142 @@ class Gallery
         //Update elements
         (document.getElementById('galleryName') as HTMLDivElement).innerHTML = caption ? caption.innerHTML : name;
         (document.getElementById('galleryNameLink') as HTMLAnchorElement).href = (document.getElementById('galleryLoadedImage') as HTMLImageElement).src = link.href;
-        (document.getElementById('galleryTotal') as HTMLDivElement).innerText = Gallery.images.length.toString();
-        (document.getElementById('galleryCurrent') as HTMLDivElement).innerText = this.current.toString();
+        (document.getElementById('galleryTotal') as HTMLDivElement).innerText = this.images.length.toString();
+        (document.getElementById('galleryCurrent') as HTMLDivElement).innerText = (this.current + 1).toString();
+        //Show overlay
+        this.classList.remove('hidden');
         //Update URL
-        if (hashUpdate) {
-            let url = new URL(document.location.href);
-            let hash = url.hash;
-            if (hash) {
-                window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href.replace(hash, '#gallery=' + this.current.toString()));
-            } else {
-                window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href + '#gallery=' + this.current.toString());
-            }
-        }
+        this.history();
+        this.focus();
+    }
+
+    public close(): void
+    {
+        this.tabIndex = -1;
+        //Hide overlay
+        this.classList.add('hidden');
+        //Update URL
+        this.history();
+        //Focus on 1st focusable element to help with keyboard navigation. If not done, focus may stay on close button.
+        (document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0] as HTMLElement).focus();
     }
 
     public previous(): void
     {
-        this.current = this.current - 1;
-        //Scroll over
-        if (this.current < 1) {
-            this.current = Gallery.images.length;
-        }
-        //Load image
-        this.loadImage(true);
+        this.current--;
     }
 
     public next(): void
     {
-        this.current = this.current + 1;
-        //Scroll over
-        if (this.current > Gallery.images.length) {
-            this.current = 1;
-        }
-        //Load image
-        this.loadImage(true);
+        this.current++;
     }
 
     //Navigation with keyboard
-    public keyNav(event: KeyboardEvent): boolean
+    private keyNav(event: KeyboardEvent): boolean
     {
-        //Need to find way to remove it on closure
-        //Close on Escape and Backspace
-        //Navigation on hashchange got broken
-        event.preventDefault();
         event.stopPropagation();
-        if (['ArrowUp', 'ArrowRight', 'PageDown'].includes(event.code)) {
+        if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(event.code)) {
             this.next();
             return false;
-        } else if (['ArrowDown', 'ArrowLeft', 'PageUp'].includes(event.code)) {
+        } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.code)) {
             this.previous();
             return false;
         } else if (event.code === 'End') {
-            this.current = Gallery.images.length;
-            this.loadImage(true);
+            this.current = this.images.length - 1;
             return false;
         } else if (event.code === 'Home') {
-            this.current = 1;
-            this.loadImage(true);
+            this.current = 0;
+            return false;
+        } else if (['Escape', 'Backspace'].includes(event.code)) {
+            this.close();
             return false;
         } else {
             return true;
         }
     }
 
+    private history(): void
+    {
+        const url = new URL(document.location.href);
+        const newIndex = (this.current + 1).toString();
+        let newUrl: string;
+        let newTitle: string;
+        if (this.classList.contains('hidden')) {
+            newTitle = document.title.replace(/(.*)(, Image )(\d+)/ui, '$1');
+            newUrl = document.location.href.replace(url.hash, '');
+        } else {
+            newTitle = document.title.replace(/(.+ on Simbiat Software)(, Image \d+)?/ui, '$1, Image ' + newIndex);
+            newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
+        }
+        //Update only if there is URL change
+        if (document.location.href !== newUrl) {
+            document.title = newTitle;
+            window.history.pushState(newTitle, newTitle, newUrl);
+        }
+    }
+}
+
+class GalleryImage extends HTMLElement
+{
+    private image: HTMLImageElement;
+
+    constructor() {
+        super();
+        this.image = document.getElementById('galleryLoadedImage') as HTMLImageElement;
+        this.image.addEventListener('load', this.checkZoom.bind(this));
+    }
+
     private checkZoom(): void
     {
-        let image = document.getElementById('galleryLoadedImage') as HTMLImageElement;
-        if (image.naturalHeight <= image.height) {
-            image.classList.add('noZoom');
-            image.removeEventListener('click', this.zoom.bind(this));
+        if (this.image.naturalHeight <= this.image.height) {
+            this.image.classList.add('noZoom');
+            this.image.removeEventListener('click', this.zoom.bind(this));
         } else {
-            image.classList.remove('noZoom');
-            image.addEventListener('click', this.zoom.bind(this));
+            this.image.classList.remove('noZoom');
+            this.image.addEventListener('click', this.zoom.bind(this));
         }
     }
 
     public zoom(): void
     {
-        let image = document.getElementById('galleryLoadedImage') as HTMLImageElement;
-        if (image.classList.contains('zoomedIn')) {
-            image.classList.remove('zoomedIn');
+        if (this.image.classList.contains('zoomedIn')) {
+            this.image.classList.remove('zoomedIn');
         } else {
-            image.classList.add('zoomedIn');
+            this.image.classList.add('zoomedIn');
+        }
+    }
+}
+
+class GalleryPrev extends HTMLElement
+{
+    private overlay: Gallery;
+
+    constructor() {
+        super();
+        this.overlay = (document.getElementsByTagName('gallery-overlay')[0] as Gallery);
+        if (this.overlay.images.length > 1) {
+            this.addEventListener('click', () => {
+                this.overlay.previous();
+            });
+        } else {
+            this.classList.add('disabled');
+        }
+    }
+}
+
+class GalleryNext extends HTMLElement
+{
+    private overlay: Gallery;
+
+    constructor() {
+        super();
+        this.overlay = (document.getElementsByTagName('gallery-overlay')[0] as Gallery);
+        if (this.overlay.images.length > 1) {
+            this.addEventListener('click', () => {
+                this.overlay.next();
+            });
+        } else {
+            this.classList.add('disabled');
         }
     }
 }
@@ -157,19 +210,9 @@ class GalleryClose extends HTMLElement
     constructor()
     {
         super();
-        this.addEventListener('click', this.close);
-    }
-
-    public close(): void
-    {
-        //Update URL
-        let url = new URL(document.location.href);
-        let hash = url.hash;
-        if (hash) {
-            window.history.pushState(document.title, document.title, document.location.href.replace(hash, ''));
-        }
-        //Hide the gallery
-        (document.getElementById('galleryOverlay') as HTMLDivElement).classList.add('hidden');
+        this.addEventListener('click', () => {
+            (document.getElementsByTagName('gallery-overlay')[0] as Gallery).close();
+        });
     }
 }
 
@@ -199,7 +242,7 @@ class CarouselList extends HTMLElement
                     this.toScroll(event as Event)
                 });
             });
-            //Disabled scrolling buttons for carousels, that require this. Doing in separate cycle to avoid triggering it twice
+            //Disabled scrolling buttons for carousels, that require this
             this.disableScroll();
         }
     }

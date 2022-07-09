@@ -4,7 +4,7 @@ const pageTitle = ' on Simbiat Software';
 //Stuff to do on load
 
 document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('hashchange', function() {hashCheck(false);});
+window.addEventListener('hashchange', function() {hashCheck();});
 
 //Runs initialization routines
 function init()
@@ -34,7 +34,6 @@ function init()
     copyQuoteInit();
     formInit();
     fftrackerInit();
-    new Gallery();
     //Click handling for toggling sidebar
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
         item.addEventListener('click', toggleSidebar);
@@ -58,8 +57,12 @@ function init()
     customElements.define('tool-tip', Tooltip);
     //Snackbar close button
     customElements.define('snack-close', SnackbarClose);
+    //Gallery overlay
+    customElements.define('gallery-overlay', Gallery);
+    //Define image carousels
+    customElements.define('image-carousel', CarouselList);
     cleanGET();
-    hashCheck(true);
+    hashCheck();
 }
 
 //Remove cacheReset flag
@@ -76,20 +79,23 @@ function cleanGET()
 }
 
 //Special processing for special hash links
-function hashCheck(hashUpdate: boolean)
+function hashCheck()
 {
     let url = new URL(document.location.href);
     let hash = url.hash;
+    let Gallery = document.getElementsByTagName('gallery-overlay')[0] as Gallery;
     const galleryLink = new RegExp('#gallery=\\d+', 'ui');
     if (galleryLink.test(hash)) {
         let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
         if (imageID) {
             if (Gallery.images[imageID - 1]) {
-                new Gallery().open(Gallery.images[imageID - 1] as HTMLElement, hashUpdate);
+                Gallery.current = imageID - 1;
             } else {
                 new Snackbar('Image number '+imageID+' not found on page', 'failure');
                 window.history.replaceState(null, document.title, document.location.href.replace(hash, ''));
             }
         }
+    } else {
+        Gallery.close();
     }
 }

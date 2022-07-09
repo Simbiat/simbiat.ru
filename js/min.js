@@ -1,7 +1,7 @@
 'use strict';
 const pageTitle = ' on Simbiat Software';
 document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('hashchange', function () { hashCheck(false); });
+window.addEventListener('hashchange', function () { hashCheck(); });
 function init() {
     let content = document.getElementById('content');
     content.addEventListener('scroll', backToTop);
@@ -24,7 +24,6 @@ function init() {
     copyQuoteInit();
     formInit();
     fftrackerInit();
-    new Gallery();
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
         item.addEventListener('click', toggleSidebar);
     });
@@ -42,8 +41,10 @@ function init() {
     customElements.define('web-share', WebShare);
     customElements.define('tool-tip', Tooltip);
     customElements.define('snack-close', SnackbarClose);
+    customElements.define('gallery-overlay', Gallery);
+    customElements.define('image-carousel', CarouselList);
     cleanGET();
-    hashCheck(true);
+    hashCheck();
 }
 function cleanGET() {
     let url = new URL(document.location.href);
@@ -56,15 +57,16 @@ function cleanGET() {
         window.history.replaceState(null, document.title, '?' + params + location.hash);
     }
 }
-function hashCheck(hashUpdate) {
+function hashCheck() {
     let url = new URL(document.location.href);
     let hash = url.hash;
+    let Gallery = document.getElementsByTagName('gallery-overlay')[0];
     const galleryLink = new RegExp('#gallery=\\d+', 'ui');
     if (galleryLink.test(hash)) {
         let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
         if (imageID) {
             if (Gallery.images[imageID - 1]) {
-                new Gallery().open(Gallery.images[imageID - 1], hashUpdate);
+                Gallery.current = imageID - 1;
             }
             else {
                 new Snackbar('Image number ' + imageID + ' not found on page', 'failure');
@@ -72,141 +74,182 @@ function hashCheck(hashUpdate) {
             }
         }
     }
+    else {
+        Gallery.close();
+    }
 }
-class Gallery {
-    current = 1;
-    static images = [];
+class Gallery extends HTMLElement {
+    _current = 0;
+    images = [];
+    get current() {
+        return this._current;
+    }
+    set current(value) {
+        if (value < 0) {
+            this._current = this.images.length - 1;
+        }
+        else if (value > this.images.length - 1) {
+            this._current = 0;
+        }
+        else {
+            this._current = value;
+        }
+        if (this.images.length > 1 || this.classList.contains('hidden')) {
+            this.open();
+        }
+    }
     constructor() {
-        Gallery.images = Array.from(document.querySelectorAll('.galleryZoom'));
-        if (Gallery.images.length > 0) {
-            Gallery.images.forEach(item => {
+        super();
+        this.images = Array.from(document.querySelectorAll('.galleryZoom'));
+        if (this.images.length > 0) {
+            customElements.define('gallery-close', GalleryClose);
+            customElements.define('gallery-prev', GalleryPrev);
+            customElements.define('gallery-next', GalleryNext);
+            customElements.define('gallery-image', GalleryImage);
+            this.images.forEach((item, index) => {
                 item.addEventListener('click', (event) => {
                     event.preventDefault();
                     event.stopPropagation();
-                    this.open(event.target, true);
+                    this.current = index;
                     return false;
                 });
             });
-            customElements.define('gallery-close', GalleryClose);
-            customElements.define('image-carousel', CarouselList);
-            if (Gallery.images.length > 1) {
-                document.getElementById('galleryPrevious').addEventListener('click', this.previous.bind(this));
-                document.getElementById('galleryNext').addEventListener('click', this.next.bind(this));
-            }
-            else {
-                document.getElementById('galleryPrevious').classList.add('disabled');
-                document.getElementById('galleryNext').classList.add('disabled');
-            }
-            document.getElementById('galleryLoadedImage').addEventListener('load', this.checkZoom.bind(this));
+            this.addEventListener('keydown', this.keyNav.bind(this));
         }
     }
-    open(image, hashUpdate) {
-        let link;
-        if (image.tagName.toLowerCase() === 'a') {
-            link = image;
-        }
-        else {
-            link = image.closest('a');
-        }
-        this.current = Gallery.images.indexOf(link) + 1;
-        this.loadImage(hashUpdate);
-        document.getElementById('galleryOverlay').classList.remove('hidden');
-        if (Gallery.images.length > 1) {
-            document.addEventListener('keydown', this.keyNav.bind(this));
-        }
-    }
-    loadImage(hashUpdate) {
-        let link = Gallery.images[this.current - 1];
+    open() {
+        this.tabIndex = 99;
+        let link = this.images[this.current];
         let image = link.getElementsByTagName('img')[0];
         let caption = link.parentElement.getElementsByTagName('figcaption')[0];
         let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
         document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
         document.getElementById('galleryNameLink').href = document.getElementById('galleryLoadedImage').src = link.href;
-        document.getElementById('galleryTotal').innerText = Gallery.images.length.toString();
-        document.getElementById('galleryCurrent').innerText = this.current.toString();
-        if (hashUpdate) {
-            let url = new URL(document.location.href);
-            let hash = url.hash;
-            if (hash) {
-                window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href.replace(hash, '#gallery=' + this.current.toString()));
-            }
-            else {
-                window.history.pushState('Image ' + this.current.toString(), document.title, document.location.href + '#gallery=' + this.current.toString());
-            }
-        }
+        document.getElementById('galleryTotal').innerText = this.images.length.toString();
+        document.getElementById('galleryCurrent').innerText = (this.current + 1).toString();
+        this.classList.remove('hidden');
+        this.history();
+        this.focus();
+    }
+    close() {
+        this.tabIndex = -1;
+        this.classList.add('hidden');
+        this.history();
+        document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0].focus();
     }
     previous() {
-        this.current = this.current - 1;
-        if (this.current < 1) {
-            this.current = Gallery.images.length;
-        }
-        this.loadImage(true);
+        this.current--;
     }
     next() {
-        this.current = this.current + 1;
-        if (this.current > Gallery.images.length) {
-            this.current = 1;
-        }
-        this.loadImage(true);
+        this.current++;
     }
     keyNav(event) {
-        event.preventDefault();
         event.stopPropagation();
-        if (['ArrowUp', 'ArrowRight', 'PageDown'].includes(event.code)) {
+        if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(event.code)) {
             this.next();
             return false;
         }
-        else if (['ArrowDown', 'ArrowLeft', 'PageUp'].includes(event.code)) {
+        else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.code)) {
             this.previous();
             return false;
         }
         else if (event.code === 'End') {
-            this.current = Gallery.images.length;
-            this.loadImage(true);
+            this.current = this.images.length - 1;
             return false;
         }
         else if (event.code === 'Home') {
-            this.current = 1;
-            this.loadImage(true);
+            this.current = 0;
+            return false;
+        }
+        else if (['Escape', 'Backspace'].includes(event.code)) {
+            this.close();
             return false;
         }
         else {
             return true;
         }
     }
-    checkZoom() {
-        let image = document.getElementById('galleryLoadedImage');
-        if (image.naturalHeight <= image.height) {
-            image.classList.add('noZoom');
-            image.removeEventListener('click', this.zoom.bind(this));
+    history() {
+        const url = new URL(document.location.href);
+        const newIndex = (this.current + 1).toString();
+        let newUrl;
+        let newTitle;
+        if (this.classList.contains('hidden')) {
+            newTitle = document.title.replace(/(.*)(, Image )(\d+)/ui, '$1');
+            newUrl = document.location.href.replace(url.hash, '');
         }
         else {
-            image.classList.remove('noZoom');
-            image.addEventListener('click', this.zoom.bind(this));
+            newTitle = document.title.replace(/(.+ on Simbiat Software)(, Image \d+)?/ui, '$1, Image ' + newIndex);
+            newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
+        }
+        if (document.location.href !== newUrl) {
+            document.title = newTitle;
+            window.history.pushState(newTitle, newTitle, newUrl);
+        }
+    }
+}
+class GalleryImage extends HTMLElement {
+    image;
+    constructor() {
+        super();
+        this.image = document.getElementById('galleryLoadedImage');
+        this.image.addEventListener('load', this.checkZoom.bind(this));
+    }
+    checkZoom() {
+        if (this.image.naturalHeight <= this.image.height) {
+            this.image.classList.add('noZoom');
+            this.image.removeEventListener('click', this.zoom.bind(this));
+        }
+        else {
+            this.image.classList.remove('noZoom');
+            this.image.addEventListener('click', this.zoom.bind(this));
         }
     }
     zoom() {
-        let image = document.getElementById('galleryLoadedImage');
-        if (image.classList.contains('zoomedIn')) {
-            image.classList.remove('zoomedIn');
+        if (this.image.classList.contains('zoomedIn')) {
+            this.image.classList.remove('zoomedIn');
         }
         else {
-            image.classList.add('zoomedIn');
+            this.image.classList.add('zoomedIn');
+        }
+    }
+}
+class GalleryPrev extends HTMLElement {
+    overlay;
+    constructor() {
+        super();
+        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
+        if (this.overlay.images.length > 1) {
+            this.addEventListener('click', () => {
+                this.overlay.previous();
+            });
+        }
+        else {
+            this.classList.add('disabled');
+        }
+    }
+}
+class GalleryNext extends HTMLElement {
+    overlay;
+    constructor() {
+        super();
+        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
+        if (this.overlay.images.length > 1) {
+            this.addEventListener('click', () => {
+                this.overlay.next();
+            });
+        }
+        else {
+            this.classList.add('disabled');
         }
     }
 }
 class GalleryClose extends HTMLElement {
     constructor() {
         super();
-        this.addEventListener('click', this.close);
-    }
-    close() {
-        let url = new URL(document.location.href);
-        let hash = url.hash;
-        if (hash) {
-            window.history.pushState(document.title, document.title, document.location.href.replace(hash, ''));
-        }
-        document.getElementById('galleryOverlay').classList.add('hidden');
+        this.addEventListener('click', () => {
+            document.getElementsByTagName('gallery-overlay')[0].close();
+        });
     }
 }
 class CarouselList extends HTMLElement {

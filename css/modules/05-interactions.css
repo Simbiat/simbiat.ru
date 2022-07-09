@@ -644,7 +644,7 @@ snack-bar {
     padding: 0.25rem;
     height: 2rem;
     line-height: 2rem;
-    z-index: 3;
+    z-index: 99;
     margin: 1rem auto;
 }
 .snack_text {

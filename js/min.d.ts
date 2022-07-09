@@ -1,22 +1,36 @@
 declare const pageTitle = " on Simbiat Software";
 declare function init(): void;
 declare function cleanGET(): void;
-declare function hashCheck(hashUpdate: boolean): void;
-declare class Gallery {
-    private current;
-    static images: Array<HTMLElement>;
+declare function hashCheck(): void;
+declare class Gallery extends HTMLElement {
+    private _current;
+    images: Array<HTMLElement>;
+    get current(): number;
+    set current(value: number);
     constructor();
-    open(image: HTMLElement, hashUpdate: boolean): void;
-    private loadImage;
+    open(): void;
+    close(): void;
     previous(): void;
     next(): void;
-    keyNav(event: KeyboardEvent): boolean;
+    private keyNav;
+    private history;
+}
+declare class GalleryImage extends HTMLElement {
+    private image;
+    constructor();
     private checkZoom;
     zoom(): void;
 }
+declare class GalleryPrev extends HTMLElement {
+    private overlay;
+    constructor();
+}
+declare class GalleryNext extends HTMLElement {
+    private overlay;
+    constructor();
+}
 declare class GalleryClose extends HTMLElement {
     constructor();
-    close(): void;
 }
 declare class CarouselList extends HTMLElement {
     private readonly list;
