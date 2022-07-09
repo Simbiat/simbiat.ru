@@ -234,7 +234,7 @@ class CarouselList extends HTMLElement
             this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
             //Attache logic to disable scroll buttons conditionally
             this.list.addEventListener('scroll', () => {
-                this.disableScroll.bind(this);
+                this.disableScroll();
             });
             //Attach scroll triggers to carousel buttons
             [this.next, this.previous].forEach(item => {

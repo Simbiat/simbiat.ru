@@ -265,7 +265,7 @@ class CarouselList extends HTMLElement {
         if (this.list && this.next && this.previous) {
             this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
             this.list.addEventListener('scroll', () => {
-                this.disableScroll.bind(this);
+                this.disableScroll();
             });
             [this.next, this.previous].forEach(item => {
                 item.addEventListener('click', (event) => {
