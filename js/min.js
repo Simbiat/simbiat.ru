@@ -3,8 +3,7 @@ const pageTitle = ' on Simbiat Software';
 document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('hashchange', function () { hashCheck(); });
 function init() {
-    let content = document.getElementById('content');
-    content.addEventListener('scroll', backToTop);
+    customElements.define('back-to-top', BackToTop);
     Array.from(document.getElementsByTagName('input')).forEach(item => {
         ariaInit(item);
         if (!item.hasAttribute('placeholder')) {
@@ -397,6 +396,27 @@ class Tooltip extends HTMLElement {
         }
     }
 }
+class WebShare extends HTMLElement {
+    constructor() {
+        super();
+        if (this) {
+            if (navigator.share !== undefined) {
+                this.classList.remove('hidden');
+                this.addEventListener('click', this.share);
+            }
+            else {
+                this.classList.add('hidden');
+            }
+        }
+    }
+    share() {
+        return navigator.share({
+            title: document.title,
+            text: getMeta('og:description') ?? getMeta('description') ?? '',
+            url: document.location.href,
+        });
+    }
+}
 function getMeta(metaName) {
     const metas = Array.from(document.getElementsByTagName('meta'));
     let tag = metas.find(obj => {
@@ -533,23 +553,6 @@ function ariaNation(inputElement) {
 }
 function ariaNationOnEvent(event) {
     ariaNation(event.target);
-}
-function backToTop(event) {
-    if (event.target.scrollTop === 0) {
-        document.querySelectorAll('.back-to-top').forEach(item => {
-            item.classList.add('hidden');
-            item.removeEventListener('click', scrollToTop);
-        });
-    }
-    else {
-        document.querySelectorAll('.back-to-top').forEach(item => {
-            item.classList.remove('hidden');
-            item.addEventListener('click', scrollToTop);
-        });
-    }
-}
-function scrollToTop() {
-    document.getElementById('content').scrollTop = 0;
 }
 function bicInit() {
     let bicKey = document.getElementById('bic_key');
@@ -1272,25 +1275,31 @@ function loginRadioCheck() {
         ariaNation(password);
     }
 }
-class WebShare extends HTMLElement {
+class BackToTop extends HTMLElement {
+    static content;
+    static BTTs;
     constructor() {
         super();
-        if (this) {
-            if (navigator.share !== undefined) {
-                this.classList.remove('hidden');
-                this.addEventListener('click', this.share);
+        if (!BackToTop.content) {
+            BackToTop.content = document.getElementById('content');
+            BackToTop.BTTs = Array.from(document.getElementsByTagName('back-to-top'));
+            BackToTop.content.addEventListener('scroll', this.toggleButtons.bind(this));
+        }
+        this.addEventListener('click', () => { BackToTop.content.scrollTop = 0; });
+    }
+    toggleButtons() {
+        if (BackToTop.BTTs) {
+            if (BackToTop.content.scrollTop === 0) {
+                BackToTop.BTTs.forEach((item) => {
+                    item.classList.add('hidden');
+                });
             }
             else {
-                this.classList.add('hidden');
+                BackToTop.BTTs.forEach((item) => {
+                    item.classList.remove('hidden');
+                });
             }
         }
-    }
-    share() {
-        return navigator.share({
-            title: document.title,
-            text: getMeta('og:description') ?? getMeta('description') ?? '',
-            url: document.location.href,
-        });
     }
 }
 //# sourceMappingURL=min.js.map

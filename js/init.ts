@@ -10,8 +10,7 @@ window.addEventListener('hashchange', function() {hashCheck();});
 function init()
 {
     //Back-to-top buttons
-    let content = document.getElementById('content') as HTMLDivElement;
-    content.addEventListener('scroll', backToTop);
+    customElements.define('back-to-top', BackToTop);
     //Register automated aria-invalid attribute adding
     Array.from(document.getElementsByTagName('input')).forEach(item => {
         ariaInit(item);

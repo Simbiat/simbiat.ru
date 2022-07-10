@@ -57,7 +57,7 @@
     border-style: solid;
     border-color: var(--border-color-inset);
 }
-.back-to-top {
+back-to-top {
     color: var(--color-interactive);
     display: inline-block;
     font-weight: 900;

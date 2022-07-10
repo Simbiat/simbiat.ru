@@ -61,6 +61,10 @@ declare class Tooltip extends HTMLElement {
     private tooltipCursor;
     private update;
 }
+declare class WebShare extends HTMLElement {
+    constructor();
+    share(): Promise<void>;
+}
 declare function getMeta(metaName: string): string | null;
 declare function timer(target: HTMLElement, increase?: boolean): void;
 declare function colorValue(target: HTMLInputElement): void;
@@ -72,8 +76,6 @@ declare function ajax(url: string, formData?: FormData | null, type?: string, me
 declare function ariaInit(item: HTMLInputElement): void;
 declare function ariaNation(inputElement: HTMLInputElement): void;
 declare function ariaNationOnEvent(event: Event): void;
-declare function backToTop(event: Event): void;
-declare function scrollToTop(): void;
 declare function bicInit(): void;
 declare function bicCalc(): void | boolean;
 declare function bicStyle(element: HTMLSpanElement, newClass: string, text?: string): void;
@@ -115,7 +117,9 @@ declare function showPassToggle(event: Event): void;
 declare function passwordStrengthOnEvent(event: Event): void;
 declare function passwordStrength(password: string): string;
 declare function loginRadioCheck(): void;
-declare class WebShare extends HTMLElement {
+declare class BackToTop extends HTMLElement {
+    private static content;
+    private static BTTs;
     constructor();
-    share(): Promise<void>;
+    toggleButtons(): void;
 }
