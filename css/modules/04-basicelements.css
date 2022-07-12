@@ -277,6 +277,7 @@ h1, h2, h3, h4, h5, h6 {
     cursor: pointer;
     border-radius: var(--border-radius);
     padding: 0.1rem;
+    width: fit-content;
 }
 h1:target, h2:target, h3:target, h4:target, h5:target, h6:target {
     animation: anchor-flash 1.5s ease-in-out 0s;

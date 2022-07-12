@@ -585,7 +585,7 @@ main::-webkit-scrollbar {
 }
 
 /*Style tooltips*/
-[data-tooltip] {
+[data-tooltip]:not(q) {
     text-decoration: underline dotted;
     cursor: pointer;
 }

@@ -29,8 +29,8 @@ function init()
     placeholders();
     ucInit();
     bicInit();
-    detailsInit();
-    copyQuoteInit();
+    new Details();
+    new Quotes();
     formInit();
     fftrackerInit();
     //Click handling for toggling sidebar

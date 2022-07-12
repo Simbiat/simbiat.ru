@@ -35,7 +35,8 @@
     //Include only .ts files in the same dir
     "include": [
         "init.ts",
-        "classes/*.ts",
+        "CustomElements/Autonomous/*.ts",
+        "CustomElements/BuiltIn/*.ts",
         "modules/*.ts"
     ],
     "exclude": [

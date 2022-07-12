@@ -19,8 +19,8 @@ function init() {
     placeholders();
     ucInit();
     bicInit();
-    detailsInit();
-    copyQuoteInit();
+    new Details();
+    new Quotes();
     formInit();
     fftrackerInit();
     document.querySelectorAll('#showSidebar, #hideSidebar').forEach(item => {
@@ -75,346 +75,6 @@ function hashCheck() {
     }
     else {
         Gallery.close();
-    }
-}
-class Gallery extends HTMLElement {
-    _current = 0;
-    images = [];
-    get current() {
-        return this._current;
-    }
-    set current(value) {
-        if (value < 0) {
-            this._current = this.images.length - 1;
-        }
-        else if (value > this.images.length - 1) {
-            this._current = 0;
-        }
-        else {
-            this._current = value;
-        }
-        if (this.images.length > 1 || this.classList.contains('hidden')) {
-            this.open();
-        }
-    }
-    constructor() {
-        super();
-        this.images = Array.from(document.querySelectorAll('.galleryZoom'));
-        if (this.images.length > 0) {
-            customElements.define('gallery-close', GalleryClose);
-            customElements.define('gallery-prev', GalleryPrev);
-            customElements.define('gallery-next', GalleryNext);
-            customElements.define('gallery-image', GalleryImage);
-            this.images.forEach((item, index) => {
-                item.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.current = index;
-                    return false;
-                });
-            });
-            this.addEventListener('keydown', this.keyNav.bind(this));
-        }
-    }
-    open() {
-        this.tabIndex = 99;
-        let link = this.images[this.current];
-        let image = link.getElementsByTagName('img')[0];
-        let caption = link.parentElement.getElementsByTagName('figcaption')[0];
-        let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
-        document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
-        document.getElementById('galleryNameLink').href = document.getElementById('galleryLoadedImage').src = link.href;
-        document.getElementById('galleryTotal').innerText = this.images.length.toString();
-        document.getElementById('galleryCurrent').innerText = (this.current + 1).toString();
-        this.classList.remove('hidden');
-        this.history();
-        this.focus();
-    }
-    close() {
-        this.tabIndex = -1;
-        this.classList.add('hidden');
-        this.history();
-        document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0].focus();
-    }
-    previous() {
-        this.current--;
-    }
-    next() {
-        this.current++;
-    }
-    keyNav(event) {
-        event.stopPropagation();
-        if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(event.code)) {
-            this.next();
-            return false;
-        }
-        else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.code)) {
-            this.previous();
-            return false;
-        }
-        else if (event.code === 'End') {
-            this.current = this.images.length - 1;
-            return false;
-        }
-        else if (event.code === 'Home') {
-            this.current = 0;
-            return false;
-        }
-        else if (['Escape', 'Backspace'].includes(event.code)) {
-            this.close();
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-    history() {
-        const url = new URL(document.location.href);
-        const newIndex = (this.current + 1).toString();
-        let newUrl;
-        let newTitle;
-        if (this.classList.contains('hidden')) {
-            newTitle = document.title.replace(/(.*)(, Image )(\d+)/ui, '$1');
-            newUrl = document.location.href.replace(url.hash, '');
-        }
-        else {
-            newTitle = document.title.replace(/(.+ on Simbiat Software)(, Image \d+)?/ui, '$1, Image ' + newIndex);
-            newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
-        }
-        if (document.location.href !== newUrl) {
-            document.title = newTitle;
-            window.history.pushState(newTitle, newTitle, newUrl);
-        }
-    }
-}
-class GalleryImage extends HTMLElement {
-    image;
-    constructor() {
-        super();
-        this.image = document.getElementById('galleryLoadedImage');
-        this.image.addEventListener('load', this.checkZoom.bind(this));
-    }
-    checkZoom() {
-        if (this.image.naturalHeight <= this.image.height) {
-            this.image.classList.add('noZoom');
-            this.image.removeEventListener('click', this.zoom.bind(this));
-        }
-        else {
-            this.image.classList.remove('noZoom');
-            this.image.addEventListener('click', this.zoom.bind(this));
-        }
-    }
-    zoom() {
-        if (this.image.classList.contains('zoomedIn')) {
-            this.image.classList.remove('zoomedIn');
-        }
-        else {
-            this.image.classList.add('zoomedIn');
-        }
-    }
-}
-class GalleryPrev extends HTMLElement {
-    overlay;
-    constructor() {
-        super();
-        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
-        if (this.overlay.images.length > 1) {
-            this.addEventListener('click', () => {
-                this.overlay.previous();
-            });
-        }
-        else {
-            this.classList.add('disabled');
-        }
-    }
-}
-class GalleryNext extends HTMLElement {
-    overlay;
-    constructor() {
-        super();
-        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
-        if (this.overlay.images.length > 1) {
-            this.addEventListener('click', () => {
-                this.overlay.next();
-            });
-        }
-        else {
-            this.classList.add('disabled');
-        }
-    }
-}
-class GalleryClose extends HTMLElement {
-    constructor() {
-        super();
-        this.addEventListener('click', () => {
-            document.getElementsByTagName('gallery-overlay')[0].close();
-        });
-    }
-}
-class CarouselList extends HTMLElement {
-    list;
-    next;
-    previous;
-    maxScroll = 0;
-    constructor() {
-        super();
-        this.list = this.getElementsByClassName('imageCarouselList')[0];
-        this.next = this.getElementsByClassName('imageCarouselNext')[0];
-        this.previous = this.getElementsByClassName('imageCarouselPrev')[0];
-        if (this.list && this.next && this.previous) {
-            this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
-            this.list.addEventListener('scroll', () => {
-                this.disableScroll();
-            });
-            [this.next, this.previous].forEach(item => {
-                item.addEventListener('click', (event) => {
-                    this.toScroll(event);
-                });
-            });
-            this.disableScroll();
-        }
-    }
-    toScroll(event) {
-        let scrollButton = event.target;
-        let img = this.list.getElementsByTagName('img')[0];
-        let width = img.width;
-        if (scrollButton.classList.contains('imageCarouselPrev')) {
-            this.list.scrollLeft -= width;
-        }
-        else {
-            this.list.scrollLeft += width;
-        }
-        this.disableScroll();
-    }
-    disableScroll() {
-        if (this.list.scrollLeft === 0) {
-            this.previous.classList.add('disabled');
-        }
-        else {
-            this.previous.classList.remove('disabled');
-        }
-        if (this.list.scrollLeft >= this.maxScroll) {
-            this.next.classList.add('disabled');
-        }
-        else {
-            this.next.classList.remove('disabled');
-        }
-    }
-}
-class Snackbar {
-    snacks;
-    static notificationIndex = 0;
-    constructor(text, color = '', milliseconds = 3000) {
-        this.snacks = document.getElementsByTagName('snack-bar')[0];
-        if (this.snacks) {
-            let snack = document.createElement('dialog');
-            let id = Snackbar.notificationIndex++;
-            snack.setAttribute('id', 'snackbar' + id);
-            snack.setAttribute('role', 'alert');
-            snack.classList.add('snackbar');
-            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
-            if (color) {
-                snack.classList.add(color);
-            }
-            this.snacks.appendChild(snack);
-            snack.classList.add('fadeIn');
-        }
-    }
-}
-class SnackbarClose extends HTMLElement {
-    snackbar;
-    snack;
-    constructor() {
-        super();
-        this.snack = this.parentElement;
-        this.snackbar = document.getElementsByTagName('snack-bar')[0];
-        this.addEventListener('click', this.close);
-        let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0');
-        if (closeIn > 0) {
-            setTimeout(() => {
-                this.close();
-            }, closeIn);
-        }
-    }
-    close() {
-        this.snack.classList.remove('fadeIn');
-        this.snack.classList.add('fadeOut');
-        this.snack.addEventListener('animationend', () => { this.snackbar.removeChild(this.snack); });
-    }
-}
-class Tooltip extends HTMLElement {
-    x = 0;
-    y = 0;
-    constructor() {
-        super();
-        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach(item => {
-            if (!item.parentElement.hasAttribute('data-tooltip')) {
-                item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
-            }
-        });
-        document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
-            item.setAttribute('tabindex', '0');
-        });
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
-        document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
-            item.addEventListener('focus', this.onFocus.bind(this));
-        });
-        document.querySelectorAll(':not([data-tooltip])').forEach(item => {
-            item.addEventListener('focus', () => { this.removeAttribute('data-tooltip'); });
-        });
-    }
-    onMouseMove(event) {
-        this.update(event.target);
-        this.x = event.clientX;
-        this.y = event.clientY;
-        this.tooltipCursor();
-    }
-    onFocus(event) {
-        this.update(event.target);
-        let coordinates = event.target.getBoundingClientRect();
-        this.x = coordinates.x;
-        this.y = coordinates.y - this.offsetHeight * 1.5;
-        this.tooltipCursor();
-    }
-    tooltipCursor() {
-        if (this.y + this.offsetHeight > window.innerHeight) {
-            this.y = window.innerHeight - this.offsetHeight * 2;
-        }
-        if (this.x + this.offsetWidth > window.innerWidth) {
-            this.x = window.innerWidth - this.offsetWidth * 1.5;
-        }
-        document.documentElement.style.setProperty('--cursorX', this.x + 'px');
-        document.documentElement.style.setProperty('--cursorY', this.y + 'px');
-    }
-    update(element) {
-        let parent = element.parentElement;
-        if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
-            this.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
-        }
-        else {
-            this.removeAttribute('data-tooltip');
-        }
-    }
-}
-class WebShare extends HTMLElement {
-    constructor() {
-        super();
-        if (this) {
-            if (navigator.share !== undefined) {
-                this.classList.remove('hidden');
-                this.addEventListener('click', this.share);
-            }
-            else {
-                this.classList.add('hidden');
-            }
-        }
-    }
-    share() {
-        return navigator.share({
-            title: document.title,
-            text: getMeta('og:description') ?? getMeta('description') ?? '',
-            url: document.location.href,
-        });
     }
 }
 function getMeta(metaName) {
@@ -653,63 +313,11 @@ function bicRefresh(event) {
         }, 500);
     }
 }
-function copyQuoteInit() {
-    document.querySelectorAll('samp, code, blockquote').forEach(item => {
-        item.innerHTML = '<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Copy block" class="copyQuote">' + item.innerHTML;
-    });
-    document.querySelectorAll('.copyQuote, q').forEach(item => {
-        item.addEventListener('click', copyQuote);
-    });
-}
-function copyQuote(event) {
-    let node = event.target;
-    if (node.tagName.toLowerCase() !== 'q') {
-        node = node.parentElement;
-    }
-    let tag;
-    switch (node.tagName.toLowerCase()) {
-        case 'samp':
-            tag = 'sample';
-            break;
-        case 'code':
-            tag = 'code';
-            break;
-        case 'blockquote':
-        case 'q':
-            tag = 'quote';
-            break;
-    }
-    navigator.clipboard.writeText(String(node.textContent)).then(function () {
-        new Snackbar(tag.charAt(0).toUpperCase() + tag.slice(1) + ' copied to clipboard', 'success');
-    }, function () {
-        new Snackbar('Failed to copy ' + tag, 'failure');
-    });
-}
 function placeholders() {
     Array.from(document.getElementsByTagName('textarea')).forEach(item => {
         if (!item.hasAttribute('placeholder')) {
             item.setAttribute('placeholder', item.value || item.type || 'placeholder');
         }
-    });
-}
-function detailsInit() {
-    document.querySelectorAll('details').forEach((details, _, list) => {
-        details.ontoggle = _ => {
-            if (details.open && !details.classList.contains('persistent')) {
-                list.forEach(tag => {
-                    if (tag !== details && !tag.classList.contains('persistent')) {
-                        tag.open = false;
-                    }
-                });
-            }
-        };
-    });
-    window.addEventListener('click', function (event) {
-        document.querySelectorAll('details').forEach((details) => {
-            if (details.classList.contains('popup') && !details.contains(event.target)) {
-                details.open = false;
-            }
-        });
     });
 }
 function fftrackerInit() {
@@ -1300,6 +908,410 @@ class BackToTop extends HTMLElement {
                 });
             }
         }
+    }
+}
+class Gallery extends HTMLElement {
+    _current = 0;
+    images = [];
+    get current() {
+        return this._current;
+    }
+    set current(value) {
+        if (value < 0) {
+            this._current = this.images.length - 1;
+        }
+        else if (value > this.images.length - 1) {
+            this._current = 0;
+        }
+        else {
+            this._current = value;
+        }
+        if (this.images.length > 1 || this.classList.contains('hidden')) {
+            this.open();
+        }
+    }
+    constructor() {
+        super();
+        this.images = Array.from(document.querySelectorAll('.galleryZoom'));
+        if (this.images.length > 0) {
+            customElements.define('gallery-close', GalleryClose);
+            customElements.define('gallery-prev', GalleryPrev);
+            customElements.define('gallery-next', GalleryNext);
+            customElements.define('gallery-image', GalleryImage);
+            this.images.forEach((item, index) => {
+                item.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.current = index;
+                    return false;
+                });
+            });
+            this.addEventListener('keydown', this.keyNav.bind(this));
+        }
+    }
+    open() {
+        this.tabIndex = 99;
+        let link = this.images[this.current];
+        let image = link.getElementsByTagName('img')[0];
+        let caption = link.parentElement.getElementsByTagName('figcaption')[0];
+        let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
+        document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
+        document.getElementById('galleryNameLink').href = document.getElementById('galleryLoadedImage').src = link.href;
+        document.getElementById('galleryTotal').innerText = this.images.length.toString();
+        document.getElementById('galleryCurrent').innerText = (this.current + 1).toString();
+        this.classList.remove('hidden');
+        this.history();
+        this.focus();
+    }
+    close() {
+        this.tabIndex = -1;
+        this.classList.add('hidden');
+        this.history();
+        document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0].focus();
+    }
+    previous() {
+        this.current--;
+    }
+    next() {
+        this.current++;
+    }
+    keyNav(event) {
+        event.stopPropagation();
+        if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(event.code)) {
+            this.next();
+            return false;
+        }
+        else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(event.code)) {
+            this.previous();
+            return false;
+        }
+        else if (event.code === 'End') {
+            this.current = this.images.length - 1;
+            return false;
+        }
+        else if (event.code === 'Home') {
+            this.current = 0;
+            return false;
+        }
+        else if (['Escape', 'Backspace'].includes(event.code)) {
+            this.close();
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    history() {
+        const url = new URL(document.location.href);
+        const newIndex = (this.current + 1).toString();
+        let newUrl;
+        let newTitle;
+        if (this.classList.contains('hidden')) {
+            newTitle = document.title.replace(/(.*)(, Image )(\d+)/ui, '$1');
+            newUrl = document.location.href.replace(url.hash, '');
+        }
+        else {
+            newTitle = document.title.replace(/(.+ on Simbiat Software)(, Image \d+)?/ui, '$1, Image ' + newIndex);
+            newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
+        }
+        if (document.location.href !== newUrl) {
+            document.title = newTitle;
+            window.history.pushState(newTitle, newTitle, newUrl);
+        }
+    }
+}
+class GalleryImage extends HTMLElement {
+    image;
+    constructor() {
+        super();
+        this.image = document.getElementById('galleryLoadedImage');
+        this.image.addEventListener('load', this.checkZoom.bind(this));
+    }
+    checkZoom() {
+        if (this.image.naturalHeight <= this.image.height) {
+            this.image.classList.add('noZoom');
+            this.image.removeEventListener('click', this.zoom.bind(this));
+        }
+        else {
+            this.image.classList.remove('noZoom');
+            this.image.addEventListener('click', this.zoom.bind(this));
+        }
+    }
+    zoom() {
+        if (this.image.classList.contains('zoomedIn')) {
+            this.image.classList.remove('zoomedIn');
+        }
+        else {
+            this.image.classList.add('zoomedIn');
+        }
+    }
+}
+class GalleryPrev extends HTMLElement {
+    overlay;
+    constructor() {
+        super();
+        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
+        if (this.overlay.images.length > 1) {
+            this.addEventListener('click', () => {
+                this.overlay.previous();
+            });
+        }
+        else {
+            this.classList.add('disabled');
+        }
+    }
+}
+class GalleryNext extends HTMLElement {
+    overlay;
+    constructor() {
+        super();
+        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
+        if (this.overlay.images.length > 1) {
+            this.addEventListener('click', () => {
+                this.overlay.next();
+            });
+        }
+        else {
+            this.classList.add('disabled');
+        }
+    }
+}
+class GalleryClose extends HTMLElement {
+    constructor() {
+        super();
+        this.addEventListener('click', () => {
+            document.getElementsByTagName('gallery-overlay')[0].close();
+        });
+    }
+}
+class CarouselList extends HTMLElement {
+    list;
+    next;
+    previous;
+    maxScroll = 0;
+    constructor() {
+        super();
+        this.list = this.getElementsByClassName('imageCarouselList')[0];
+        this.next = this.getElementsByClassName('imageCarouselNext')[0];
+        this.previous = this.getElementsByClassName('imageCarouselPrev')[0];
+        if (this.list && this.next && this.previous) {
+            this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
+            this.list.addEventListener('scroll', () => {
+                this.disableScroll();
+            });
+            [this.next, this.previous].forEach(item => {
+                item.addEventListener('click', (event) => {
+                    this.toScroll(event);
+                });
+            });
+            this.disableScroll();
+        }
+    }
+    toScroll(event) {
+        let scrollButton = event.target;
+        let img = this.list.getElementsByTagName('img')[0];
+        let width = img.width;
+        if (scrollButton.classList.contains('imageCarouselPrev')) {
+            this.list.scrollLeft -= width;
+        }
+        else {
+            this.list.scrollLeft += width;
+        }
+        this.disableScroll();
+    }
+    disableScroll() {
+        if (this.list.scrollLeft === 0) {
+            this.previous.classList.add('disabled');
+        }
+        else {
+            this.previous.classList.remove('disabled');
+        }
+        if (this.list.scrollLeft >= this.maxScroll) {
+            this.next.classList.add('disabled');
+        }
+        else {
+            this.next.classList.remove('disabled');
+        }
+    }
+}
+class Snackbar {
+    snacks;
+    static notificationIndex = 0;
+    constructor(text, color = '', milliseconds = 3000) {
+        this.snacks = document.getElementsByTagName('snack-bar')[0];
+        if (this.snacks) {
+            let snack = document.createElement('dialog');
+            let id = Snackbar.notificationIndex++;
+            snack.setAttribute('id', 'snackbar' + id);
+            snack.setAttribute('role', 'alert');
+            snack.classList.add('snackbar');
+            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            if (color) {
+                snack.classList.add(color);
+            }
+            this.snacks.appendChild(snack);
+            snack.classList.add('fadeIn');
+        }
+    }
+}
+class SnackbarClose extends HTMLElement {
+    snackbar;
+    snack;
+    constructor() {
+        super();
+        this.snack = this.parentElement;
+        this.snackbar = document.getElementsByTagName('snack-bar')[0];
+        this.addEventListener('click', this.close);
+        let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0');
+        if (closeIn > 0) {
+            setTimeout(() => {
+                this.close();
+            }, closeIn);
+        }
+    }
+    close() {
+        this.snack.classList.remove('fadeIn');
+        this.snack.classList.add('fadeOut');
+        this.snack.addEventListener('animationend', () => { this.snackbar.removeChild(this.snack); });
+    }
+}
+class Tooltip extends HTMLElement {
+    x = 0;
+    y = 0;
+    constructor() {
+        super();
+        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach(item => {
+            if (!item.parentElement.hasAttribute('data-tooltip')) {
+                item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
+            }
+        });
+        document.querySelectorAll('[data-tooltip]:not([tabindex])').forEach(item => {
+            item.setAttribute('tabindex', '0');
+        });
+        document.addEventListener('mousemove', this.onMouseMove.bind(this));
+        document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
+            item.addEventListener('focus', this.onFocus.bind(this));
+        });
+        document.querySelectorAll(':not([data-tooltip])').forEach(item => {
+            item.addEventListener('focus', () => { this.removeAttribute('data-tooltip'); });
+        });
+    }
+    onMouseMove(event) {
+        this.update(event.target);
+        this.x = event.clientX;
+        this.y = event.clientY;
+        this.tooltipCursor();
+    }
+    onFocus(event) {
+        this.update(event.target);
+        let coordinates = event.target.getBoundingClientRect();
+        this.x = coordinates.x;
+        this.y = coordinates.y - this.offsetHeight * 1.5;
+        this.tooltipCursor();
+    }
+    tooltipCursor() {
+        if (this.y + this.offsetHeight > window.innerHeight) {
+            this.y = window.innerHeight - this.offsetHeight * 2;
+        }
+        if (this.x + this.offsetWidth > window.innerWidth) {
+            this.x = window.innerWidth - this.offsetWidth * 1.5;
+        }
+        document.documentElement.style.setProperty('--cursorX', this.x + 'px');
+        document.documentElement.style.setProperty('--cursorY', this.y + 'px');
+    }
+    update(element) {
+        let parent = element.parentElement;
+        if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
+            this.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
+        }
+        else {
+            this.removeAttribute('data-tooltip');
+        }
+    }
+}
+class WebShare extends HTMLElement {
+    constructor() {
+        super();
+        if (this) {
+            if (navigator.share !== undefined) {
+                this.classList.remove('hidden');
+                this.addEventListener('click', this.share);
+            }
+            else {
+                this.classList.add('hidden');
+            }
+        }
+    }
+    share() {
+        return navigator.share({
+            title: document.title,
+            text: getMeta('og:description') ?? getMeta('description') ?? '',
+            url: document.location.href,
+        });
+    }
+}
+class Quotes {
+    constructor() {
+        document.querySelectorAll('samp, code, blockquote').forEach(item => {
+            item.innerHTML = '<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">' + item.innerHTML;
+        });
+        Array.from(document.getElementsByTagName('q')).forEach(item => {
+            item.setAttribute('data-tooltip', 'Click to copy quote');
+        });
+        document.querySelectorAll('.copyQuote, q').forEach(item => {
+            item.addEventListener('click', (event) => { this.copy(event.target); });
+        });
+    }
+    copy(node) {
+        if (node.tagName.toLowerCase() !== 'q') {
+            node = node.parentElement;
+        }
+        let tag;
+        switch (node.tagName.toLowerCase()) {
+            case 'samp':
+                tag = 'Sample';
+                break;
+            case 'code':
+                tag = 'Code';
+                break;
+            case 'blockquote':
+            case 'q':
+                tag = 'Quote';
+                break;
+        }
+        navigator.clipboard.writeText(String(node.textContent)).then(function () {
+            new Snackbar(tag + ' copied to clipboard', 'success');
+        }, function () {
+            new Snackbar('Failed to copy ' + tag.toLowerCase(), 'failure');
+        });
+        return String(node.textContent);
+    }
+}
+class Details {
+    static list;
+    constructor() {
+        Details.list = Array.from(document.getElementsByTagName('details'));
+        Details.list.forEach((item, _, list) => {
+            item.ontoggle = _ => {
+                if (item.open && !item.classList.contains('persistent')) {
+                    list.forEach(tag => {
+                        if (tag !== item && !tag.classList.contains('persistent')) {
+                            tag.open = false;
+                        }
+                    });
+                }
+            };
+        });
+        Details.list.forEach((item) => {
+            item.addEventListener('click', (event) => { this.reset(event.target); });
+        });
+    }
+    reset(target) {
+        Details.list.forEach((details) => {
+            if (details.open && details !== target && !details.contains(target)) {
+                details.open = false;
+            }
+        });
     }
 }
 //# sourceMappingURL=min.js.map
