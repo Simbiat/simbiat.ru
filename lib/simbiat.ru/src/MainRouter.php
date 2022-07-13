@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\HTTP20\Common;
-use Simbiat\Talks\Show;
 
 class MainRouter extends Abstracts\Router
 {
