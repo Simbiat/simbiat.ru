@@ -8,7 +8,7 @@ class A
             return A._instance;
         }
         document.querySelectorAll('a[target="_blank"]').forEach(anchor => {
-            if (!anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('galleryZoom')) {
+            if (!anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('galleryZoom') && !anchor.classList.contains('footerLink')) {
                 anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
             }
         });
