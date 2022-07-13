@@ -70,6 +70,8 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             $save_data = 'false';
         }
         return array_merge($defaults, [
+            #PROD flag
+            'isPROD' => HomePage::$PROD,
             #List of LINK tags
             'link_tags' => $GLOBALS['siteconfig']['links'],
             #Time used as version of the JS file for cache busting

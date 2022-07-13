@@ -76,3 +76,8 @@ web-share:active {
     text-decoration: unset;
     border: unset;
 }
+#prodLink {
+    width: 1rem;
+    vertical-align: top;
+    filter: sepia(1);
+}
