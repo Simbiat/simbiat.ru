@@ -1,9 +1,13 @@
 class Details
 {
     public static list: HTMLDetailsElement[];
+    private static _instance: null | Details = null;
 
     constructor()
     {
+        if (Details._instance) {
+            return Details._instance;
+        }
         Details.list = Array.from(document.getElementsByTagName('details'));
         //Close all details except currently selected one
         Details.list.forEach((item,_,list)=>{
@@ -21,6 +25,7 @@ class Details
         Details.list.forEach((item) => {
             item.addEventListener('click', (event) => {this.reset(event.target as HTMLDetailsElement)});
         });
+        Details._instance = this;
     }
 
     public reset(target: HTMLDetailsElement)

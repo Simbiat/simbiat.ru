@@ -598,7 +598,7 @@ tool-tip {
     color: var(--color-text);
     text-align: center;
     padding: 0.25rem;
-    z-index: 3;
+    z-index: 99;
     margin: 1rem auto;
     height: 2rem;
     line-height: 2rem;
@@ -664,4 +664,11 @@ snack-bar {
     cursor: pointer;
     top: -0.3rem;
     position: relative;
+}
+
+.newTabIcon {
+    width: 0.75rem;
+    height: 0.75rem;
+    vertical-align: super;
+    margin: 0;
 }

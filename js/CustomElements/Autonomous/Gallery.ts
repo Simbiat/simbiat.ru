@@ -123,19 +123,19 @@ class Gallery extends HTMLElement
     {
         const url = new URL(document.location.href);
         const newIndex = (this.current + 1).toString();
+        const regexTitle = new RegExp('(.+'+pageTitle+')(, Image \\d+)?', 'ui');
         let newUrl: string;
         let newTitle: string;
         if (this.classList.contains('hidden')) {
             newTitle = document.title.replace(/(.*)(, Image )(\d+)/ui, '$1');
             newUrl = document.location.href.replace(url.hash, '');
         } else {
-            newTitle = document.title.replace(/(.+ on Simbiat Software)(, Image \d+)?/ui, '$1, Image ' + newIndex);
+            newTitle = document.title.replace(regexTitle, '$1, Image ' + newIndex);
             newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
         }
         //Update only if there is URL change
         if (document.location.href !== newUrl) {
-            document.title = newTitle;
-            window.history.pushState(newTitle, newTitle, newUrl);
+            updateHistory(newUrl, newTitle);
         }
     }
 }

@@ -1,7 +1,12 @@
 class Quotes
 {
+    private static _instance: null | Quotes = null;
+
     constructor()
     {
+        if (Quotes._instance) {
+            return Quotes._instance;
+        }
         //Add a visual button for sample, code and blockquote tags
         document.querySelectorAll('samp, code, blockquote').forEach(item => {
             //Modifying innerHTML instead of insertBefore, since block may not have any actual children in the first place, and as per https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
@@ -16,6 +21,7 @@ class Quotes
         document.querySelectorAll('.copyQuote, q').forEach(item => {
             item.addEventListener('click', (event: Event) => {this.copy(event.target as HTMLElement)});
         });
+        Quotes._instance = this;
     }
 
     //Copy the text of q tag or respective block
