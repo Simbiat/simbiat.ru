@@ -43,6 +43,10 @@ class Signinup
                 self::$dbController = HomePage::$dbController;
             }
         }
+        #Check if registration is enabled
+        if (boolval(self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'')) === false) {
+            return ['http_error' => 503, 'reason' => 'Registration is currently disabled'];
+        }
         #Generate password and activation strings
         $security = (new Security);
         $password = $security->passHash($_POST['signinup']['password']);
