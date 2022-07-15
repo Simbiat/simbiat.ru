@@ -13,13 +13,14 @@ function init()
     new Input();
     //Minor standardization of textarea
     new Textarea();
+    //Customization of forms
+    new Form();
     ucInit();
     bicInit();
     //Customization for details tags
     new Details();
     //Customization for code and quote blocks
     new Quotes();
-    formInit();
     fftrackerInit();
     //Click handling for toggling sidebar
     new Aside();

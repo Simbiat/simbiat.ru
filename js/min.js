@@ -5,11 +5,11 @@ window.addEventListener('hashchange', function () { hashCheck(); });
 function init() {
     new Input();
     new Textarea();
+    new Form();
     ucInit();
     bicInit();
     new Details();
     new Quotes();
-    formInit();
     fftrackerInit();
     new Aside();
     new Nav();
@@ -317,6 +317,25 @@ class SnackbarClose extends HTMLElement {
         this.snack.addEventListener('animationend', () => { this.snackbar.removeChild(this.snack); });
     }
 }
+class Timer extends HTMLElement {
+    interval = null;
+    constructor() {
+        super();
+        this.interval = setInterval(() => {
+            if (parseInt(this.innerHTML) > 0 || Boolean(this.getAttribute('data-negative'))) {
+                if (Boolean(this.getAttribute('data-increase'))) {
+                    this.innerHTML = String(parseInt(this.innerHTML) + 1);
+                }
+                else {
+                    this.innerHTML = String(parseInt(this.innerHTML) - 1);
+                }
+            }
+            else {
+                clearInterval(Number(this.interval));
+            }
+        }, 1000);
+    }
+}
 class Tooltip extends HTMLElement {
     x = 0;
     y = 0;
@@ -392,6 +411,33 @@ class WebShare extends HTMLElement {
         });
     }
 }
+class A {
+    static _instance = null;
+    constructor() {
+        if (A._instance) {
+            return A._instance;
+        }
+        document.querySelectorAll('a[target="_blank"]').forEach(anchor => {
+            if (!anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('galleryZoom') && !anchor.classList.contains('footerLink')) {
+                anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+            }
+        });
+        A._instance = this;
+    }
+}
+class Aside {
+    static _instance = null;
+    sidebarDiv = null;
+    constructor() {
+        if (Aside._instance) {
+            return Aside._instance;
+        }
+        this.sidebarDiv = document.getElementById('sidebar');
+        document.getElementById('showSidebar').addEventListener('click', () => { this.sidebarDiv.classList.add('shown'); });
+        document.getElementById('hideSidebar').addEventListener('click', () => { this.sidebarDiv.classList.remove('shown'); });
+        Aside._instance = this;
+    }
+}
 class Details {
     static list;
     static _instance = null;
@@ -458,6 +504,65 @@ class Headings {
         else {
             return '';
         }
+    }
+}
+class Input {
+    static _instance = null;
+    constructor() {
+        if (Input._instance) {
+            return Input._instance;
+        }
+        Array.from(document.getElementsByTagName('input')).forEach(item => {
+            this.init(item);
+        });
+        Input._instance = this;
+    }
+    init(inputElement) {
+        inputElement.addEventListener('focus', () => { this.ariaNation(inputElement); });
+        inputElement.addEventListener('change', () => { this.ariaNation(inputElement); });
+        inputElement.addEventListener('input', () => { this.ariaNation(inputElement); });
+        this.ariaNation(inputElement);
+    }
+    ariaNation(inputElement) {
+        inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
+        if (!inputElement.hasAttribute('placeholder')) {
+            inputElement.setAttribute('placeholder', inputElement.value || inputElement.type || 'placeholder');
+        }
+        if (!inputElement.getAttribute('type')) {
+            inputElement.setAttribute('type', 'text');
+        }
+        let type = inputElement.type ?? inputElement.getAttribute('type') ?? 'text';
+        if (['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'checkbox', 'radio', 'file',].includes(String(type))) {
+            if (inputElement.required) {
+                inputElement.setAttribute('aria-required', String(true));
+            }
+            else {
+                inputElement.setAttribute('aria-required', String(false));
+            }
+        }
+        if (type === 'checkbox') {
+            inputElement.setAttribute('role', 'checkbox');
+            inputElement.setAttribute('aria-checked', String(inputElement.checked));
+            if (inputElement.indeterminate) {
+                inputElement.setAttribute('aria-checked', 'mixed');
+            }
+        }
+        if (type === 'checkbox') {
+            inputElement.setAttribute('value', inputElement.value);
+        }
+    }
+}
+class Nav {
+    static _instance = null;
+    navDiv = null;
+    constructor() {
+        if (Nav._instance) {
+            return Nav._instance;
+        }
+        this.navDiv = document.getElementById('navigation');
+        document.getElementById('showNav').addEventListener('click', () => { this.navDiv.classList.add('shown'); });
+        document.getElementById('hideNav').addEventListener('click', () => { this.navDiv.classList.remove('shown'); });
+        Nav._instance = this;
     }
 }
 class Quotes {
@@ -777,6 +882,32 @@ function ffTrackTypeChange(target) {
     }
     idInput.setAttribute('pattern', pattern);
 }
+const submitFunctions = {
+    'signinup': 'singInUpSubmit',
+    'addMailForm': 'addMail',
+    'ff_track_register': 'ffTrackAdd',
+    'password_change': 'passwordChange',
+};
+function submitIntercept(formId) {
+    let form = document.getElementById(formId);
+    if (form && submitFunctions[formId]) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window[submitFunctions[formId]]();
+            return false;
+        });
+        form.onkeydown = function (event) {
+            if (event.code === 'Enter') {
+                event.preventDefault();
+                event.stopPropagation();
+                window[submitFunctions[formId]]();
+                return false;
+            }
+            return true;
+        };
+    }
+}
 function ucInit() {
     document.querySelectorAll('.showpassword').forEach(item => {
         item.addEventListener('click', showPassToggle);
@@ -827,6 +958,8 @@ function addMail() {
             cell.classList.add('warning');
             cell = row.insertCell();
             cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
+            let input = cell.getElementsByTagName('input')[0];
+            new Input().init(input);
             blockDeleteMail();
             form.reset();
             new Snackbar('Mail added', 'success');
@@ -1106,270 +1239,132 @@ function loginRadioCheck() {
         username.required = false;
     }
     if (password) {
-        ariaNation(password);
+        new Input().ariaNation(password);
     }
 }
-class Timer extends HTMLElement {
-    interval = null;
-    constructor() {
-        super();
-        this.interval = setInterval(() => {
-            if (parseInt(this.innerHTML) > 0 || Boolean(this.getAttribute('data-negative'))) {
-                if (Boolean(this.getAttribute('data-increase'))) {
-                    this.innerHTML = String(parseInt(this.innerHTML) + 1);
-                }
-                else {
-                    this.innerHTML = String(parseInt(this.innerHTML) - 1);
-                }
-            }
-            else {
-                clearInterval(Number(this.interval));
-            }
-        }, 1000);
-    }
-}
-class Aside {
+class Form {
     static _instance = null;
-    sidebarDiv = null;
     constructor() {
-        if (Aside._instance) {
-            return Aside._instance;
+        if (Form._instance) {
+            return Form._instance;
         }
-        this.sidebarDiv = document.getElementById('sidebar');
-        document.getElementById('showSidebar').addEventListener('click', () => { this.sidebarDiv.classList.add('shown'); });
-        document.getElementById('hideSidebar').addEventListener('click', () => { this.sidebarDiv.classList.remove('shown'); });
-        Aside._instance = this;
-    }
-}
-class Nav {
-    static _instance = null;
-    navDiv = null;
-    constructor() {
-        if (Nav._instance) {
-            return Nav._instance;
-        }
-        this.navDiv = document.getElementById('navigation');
-        document.getElementById('showNav').addEventListener('click', () => { this.navDiv.classList.add('shown'); });
-        document.getElementById('hideNav').addEventListener('click', () => { this.navDiv.classList.remove('shown'); });
-        Nav._instance = this;
-    }
-}
-const textInputTypes = ['email', 'password', 'search', 'tel', 'text', 'url',];
-const nonTextInputTypes = ['checkbox', 'color', 'date', 'datetime-local', 'file', 'month', 'number', 'radio', 'time', 'week',];
-function formInit() {
-    document.querySelectorAll('form').forEach((item) => {
-        item.addEventListener('keypress', formEnter);
-    });
-    document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item) => {
-        item.addEventListener('input', searchAction);
-        item.addEventListener('change', searchAction);
-        item.addEventListener('focus', searchAction);
-    });
-    document.querySelectorAll('form input').forEach((item) => {
-        if (textInputTypes.includes(item.type)) {
-            item.addEventListener('keydown', inputBackSpace);
+        document.querySelectorAll('form').forEach((item) => {
+            item.addEventListener('keypress', (event) => { this.formEnter(event); });
+        });
+        document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item) => {
+            item.addEventListener('input', this.searchAction);
+            item.addEventListener('change', this.searchAction);
+            item.addEventListener('focus', this.searchAction);
+        });
+        document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item) => {
+            item.addEventListener('keydown', this.inputBackSpace.bind(this));
             if (item.getAttribute('maxlength')) {
-                item.addEventListener('input', autoNext);
-                item.addEventListener('change', autoNext);
-                item.addEventListener('paste', pasteSplit);
+                item.addEventListener('input', this.autoNext.bind(this));
+                item.addEventListener('change', this.autoNext.bind(this));
+                item.addEventListener('paste', this.pasteSplit.bind(this));
             }
-        }
-        if (nonTextInputTypes.includes(item.type)) {
-        }
-    });
-}
-const submitFunctions = {
-    'signinup': 'singInUpSubmit',
-    'addMailForm': 'addMail',
-    'ff_track_register': 'ffTrackAdd',
-    'password_change': 'passwordChange',
-};
-function submitIntercept(formId) {
-    let form = document.getElementById(formId);
-    if (form && submitFunctions[formId]) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
+        });
+        Form._instance = this;
+    }
+    formEnter(event) {
+        let form = event.target.form;
+        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host + form.getAttribute('data-baseURL') !== form.action))) {
             event.stopPropagation();
-            window[submitFunctions[formId]]();
+            event.preventDefault();
             return false;
-        });
-        form.onkeydown = function (event) {
-            if (event.code === 'Enter') {
-                event.preventDefault();
-                event.stopPropagation();
-                window[submitFunctions[formId]]();
-                return false;
-            }
-            return true;
-        };
-    }
-}
-function searchAction(event) {
-    let search = event.target;
-    let form = search.form;
-    if (search.value === '') {
-        form.action = String(form.getAttribute('data-baseURL'));
-    }
-    else {
-        form.action = form.getAttribute('data-baseURL') + rawurlencode(search.value);
-    }
-    form.method = 'get';
-}
-function formEnter(event) {
-    let form = event.target.form;
-    if ((event.code === 'Enter' || event.code === 'NumpadEnter') && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host + form.getAttribute('data-baseURL') !== form.action))) {
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-    }
-}
-function inputBackSpace(event) {
-    let current = event.target;
-    if (event.code === 'Backspace' && !current.value) {
-        let moveTo = nextInput(current, true);
-        if (moveTo) {
-            moveTo.focus();
-            moveTo.selectionStart = moveTo.selectionEnd = moveTo.value.length;
         }
     }
-}
-function autoNext(event) {
-    let current = event.target;
-    let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
-    if (maxLength && current.value.length === maxLength && current.validity.valid) {
-        let moveTo = nextInput(current, false);
-        if (moveTo) {
-            moveTo.focus();
-        }
-    }
-}
-async function pasteSplit(event) {
-    let permission = await navigator.permissions.query({ name: 'clipboard-read', }).catch(() => {
-        console.error('Your browser does not support clipboard-read permission.');
-    });
-    if (permission && permission.state !== 'denied') {
-        navigator.clipboard.readText().then(result => {
-            let buffer = result.toString();
-            let current = event.target;
-            let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
-            while (current && maxLength && buffer.length > maxLength) {
-                current.value = buffer.substring(0, maxLength);
-                current.dispatchEvent(new Event('input', {
-                    bubbles: true,
-                    cancelable: true,
-                }));
-                if (!current.validity.valid) {
-                    return false;
-                }
-                buffer = buffer.substring(maxLength);
-                current = nextInput(current, false);
-                if (current) {
-                    current.focus();
-                    maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
-                }
-            }
-            if (current) {
-                current.value = buffer;
-                current.dispatchEvent(new Event('input', {
-                    bubbles: true,
-                    cancelable: true,
-                }));
-            }
-            return true;
-        });
-    }
-}
-function nextInput(initial, reverse = false) {
-    let form = initial.form;
-    if (form) {
-        let previous;
-        for (let moveTo of form.querySelectorAll('input')) {
-            if (reverse) {
-                if (moveTo === initial) {
-                    if (previous) {
-                        return previous;
-                    }
-                    else {
-                        return false;
-                    }
-                }
-            }
-            else {
-                if (previous && previous === initial) {
-                    return moveTo;
-                }
-            }
-            previous = moveTo;
-        }
-    }
-    return false;
-}
-class Input {
-    static _instance = null;
-    constructor() {
-        if (Input._instance) {
-            return Input._instance;
-        }
-        Array.from(document.getElementsByTagName('input')).forEach(item => {
-            ariaInit(item);
-            if (!item.hasAttribute('placeholder')) {
-                item.setAttribute('placeholder', item.value || item.type || 'placeholder');
-            }
-            if (item.type === 'color') {
-                item.addEventListener('focus', colorValueOnEvent);
-                item.addEventListener('change', colorValueOnEvent);
-                item.addEventListener('input', colorValueOnEvent);
-                colorValue(item);
-            }
-        });
-        Input._instance = this;
-    }
-}
-function ariaInit(item) {
-    item.addEventListener('focus', ariaNationOnEvent);
-    item.addEventListener('change', ariaNationOnEvent);
-    item.addEventListener('input', ariaNationOnEvent);
-    ariaNation(item);
-}
-function ariaNation(inputElement) {
-    inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
-    if (inputElement.hasAttribute('type') && ['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'checkbox', 'radio', 'file',].includes(String(inputElement.getAttribute('type')))) {
-        if (inputElement.required) {
-            inputElement.setAttribute('aria-required', String(true));
+    searchAction(event) {
+        let search = event.target;
+        let form = search.form;
+        if (search.value === '') {
+            form.action = String(form.getAttribute('data-baseURL'));
         }
         else {
-            inputElement.setAttribute('aria-required', String(false));
+            form.action = form.getAttribute('data-baseURL') + rawurlencode(search.value);
         }
+        form.method = 'get';
     }
-    if (inputElement.hasAttribute('type') && inputElement.getAttribute('type') === 'checkbox') {
-        inputElement.setAttribute('role', 'checkbox');
-        inputElement.setAttribute('aria-checked', String(inputElement.checked));
-        if (inputElement.indeterminate) {
-            inputElement.setAttribute('aria-checked', 'mixed');
-        }
-    }
-}
-function ariaNationOnEvent(event) {
-    ariaNation(event.target);
-}
-function colorValue(target) {
-    target.setAttribute('value', target.value);
-}
-function colorValueOnEvent(event) {
-    colorValue(event.target);
-}
-class A {
-    static _instance = null;
-    constructor() {
-        if (A._instance) {
-            return A._instance;
-        }
-        document.querySelectorAll('a[target="_blank"]').forEach(anchor => {
-            if (!anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('galleryZoom') && !anchor.classList.contains('footerLink')) {
-                anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+    inputBackSpace(event) {
+        let current = event.target;
+        if (event.code === 'Backspace' && !current.value) {
+            let moveTo = this.nextInput(current, true);
+            if (moveTo) {
+                moveTo.focus();
+                moveTo.selectionStart = moveTo.selectionEnd = moveTo.value.length;
             }
+        }
+    }
+    autoNext(event) {
+        let current = event.target;
+        let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
+        if (maxLength && current.value.length === maxLength && current.validity.valid) {
+            let moveTo = this.nextInput(current, false);
+            if (moveTo) {
+                moveTo.focus();
+            }
+        }
+    }
+    nextInput(initial, reverse = false) {
+        let form = initial.form;
+        if (form) {
+            let previous;
+            for (let moveTo of form.querySelectorAll('input')) {
+                if (reverse) {
+                    if (moveTo === initial) {
+                        if (previous) {
+                            return previous;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (previous && previous === initial) {
+                        return moveTo;
+                    }
+                }
+                previous = moveTo;
+            }
+        }
+        return false;
+    }
+    async pasteSplit(event) {
+        let permission = await navigator.permissions.query({ name: 'clipboard-read', }).catch(() => {
+            console.error('Your browser does not support clipboard-read permission.');
         });
-        A._instance = this;
+        if (permission && permission.state !== 'denied') {
+            navigator.clipboard.readText().then(result => {
+                let buffer = result.toString();
+                let current = event.target;
+                let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
+                while (current && maxLength && buffer.length > maxLength) {
+                    current.value = buffer.substring(0, maxLength);
+                    current.dispatchEvent(new Event('input', {
+                        bubbles: true,
+                        cancelable: true,
+                    }));
+                    if (!current.validity.valid) {
+                        return false;
+                    }
+                    buffer = buffer.substring(maxLength);
+                    current = this.nextInput(current, false);
+                    if (current) {
+                        current.focus();
+                        maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
+                    }
+                }
+                if (current) {
+                    current.value = buffer;
+                    current.dispatchEvent(new Event('input', {
+                        bubbles: true,
+                        cancelable: true,
+                    }));
+                }
+                return true;
+            });
+        }
     }
 }
 //# sourceMappingURL=min.js.map

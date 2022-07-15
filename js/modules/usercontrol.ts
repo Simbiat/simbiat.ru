@@ -60,6 +60,8 @@ function addMail(): boolean | void
             cell.classList.add('warning');
             cell = row.insertCell();
             cell.innerHTML ='<td><input class="mail_deletion" data-email="'+email+'" type="image" src="/img/close.svg" alt="Delete '+email+'" aria-invalid="false" placeholder="image" data-tooltip="Delete '+email+'" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing '+email+'..." data-tooltip="Removing '+email+'...">';
+            let input = cell.getElementsByTagName('input')[0] as HTMLInputElement;
+            new Input().init(input);
             blockDeleteMail();
             form.reset();
             new Snackbar('Mail added', 'success');
@@ -395,6 +397,6 @@ function loginRadioCheck(): void
     }
     //Adjust Aria values
     if (password) {
-        ariaNation(password);
+        new Input().ariaNation(password);
     }
 }

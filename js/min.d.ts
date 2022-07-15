@@ -56,6 +56,10 @@ declare class SnackbarClose extends HTMLElement {
     constructor();
     close(): void;
 }
+declare class Timer extends HTMLElement {
+    private readonly interval;
+    constructor();
+}
 declare class Tooltip extends HTMLElement {
     private x;
     private y;
@@ -69,6 +73,15 @@ declare class WebShare extends HTMLElement {
     constructor();
     share(): Promise<void>;
 }
+declare class A {
+    private static _instance;
+    constructor();
+}
+declare class Aside {
+    private static _instance;
+    private sidebarDiv;
+    constructor();
+}
 declare class Details {
     static list: HTMLDetailsElement[];
     private static _instance;
@@ -79,6 +92,17 @@ declare class Headings {
     private static _instance;
     constructor();
     copyLink(target: HTMLHeadingElement): string;
+}
+declare class Input {
+    private static _instance;
+    constructor();
+    init(inputElement: HTMLInputElement): void;
+    ariaNation(inputElement: HTMLInputElement): void;
+}
+declare class Nav {
+    private static _instance;
+    private navDiv;
+    constructor();
 }
 declare class Quotes {
     private static _instance;
@@ -102,6 +126,10 @@ declare function bicRefresh(event: Event): void;
 declare function fftrackerInit(): void;
 declare function ffTrackAdd(): void;
 declare function ffTrackTypeChange(target: HTMLSelectElement): void;
+declare const submitFunctions: {
+    [key: string]: string;
+};
+declare function submitIntercept(formId: string): void;
 declare function ucInit(): void;
 declare function addMail(): boolean | void;
 declare function deleteMail(event: Event): void;
@@ -116,43 +144,13 @@ declare function showPassToggle(event: Event): void;
 declare function passwordStrengthOnEvent(event: Event): void;
 declare function passwordStrength(password: string): string;
 declare function loginRadioCheck(): void;
-declare class Timer extends HTMLElement {
-    private readonly interval;
-    constructor();
-}
-declare class Aside {
-    private static _instance;
-    private sidebarDiv;
-    constructor();
-}
-declare class Nav {
-    private static _instance;
-    private navDiv;
-    constructor();
-}
-declare const textInputTypes: string[];
-declare const nonTextInputTypes: string[];
-declare function formInit(): void;
-declare const submitFunctions: {
-    [key: string]: string;
-};
-declare function submitIntercept(formId: string): void;
-declare function searchAction(event: Event): void;
-declare function formEnter(event: KeyboardEvent): void | boolean;
-declare function inputBackSpace(event: Event): void;
-declare function autoNext(event: Event): void;
-declare function pasteSplit(event: Event): Promise<void>;
-declare function nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | boolean;
-declare class Input {
+declare class Form {
     private static _instance;
     constructor();
-}
-declare function ariaInit(item: HTMLInputElement): void;
-declare function ariaNation(inputElement: HTMLInputElement): void;
-declare function ariaNationOnEvent(event: Event): void;
-declare function colorValue(target: HTMLInputElement): void;
-declare function colorValueOnEvent(event: Event): void;
-declare class A {
-    private static _instance;
-    constructor();
+    formEnter(event: KeyboardEvent): void | boolean;
+    searchAction(event: Event): void;
+    private inputBackSpace;
+    private autoNext;
+    nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | boolean;
+    private pasteSplit;
 }
