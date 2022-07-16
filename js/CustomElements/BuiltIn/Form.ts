@@ -20,9 +20,9 @@ class Form
         });
         //Update action links of forms with dynamic actions (expected to be search forms only at the time of writing)
         document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item)=>{
-            item.addEventListener('input', this.searchAction);
-            item.addEventListener('change', this.searchAction);
-            item.addEventListener('focus', this.searchAction);
+            item.addEventListener('input', this.searchAction.bind(this));
+            item.addEventListener('change', this.searchAction.bind(this));
+            item.addEventListener('focus', this.searchAction.bind(this));
         });
         //List of input types, that are "textual" by default, thus can be tracked through keypress and paste events. In essence, these are types, that support maxlength attribute
         document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item)=>{
@@ -54,10 +54,22 @@ class Form
         if (search.value === '') {
             form.action = String(form.getAttribute('data-baseURL'));
         } else {
-            form.action = form.getAttribute('data-baseURL') + rawurlencode(search.value);
+            form.action = form.getAttribute('data-baseURL') + this.rawurlencode(search.value);
         }
         //Ensure that form will use GET method. This adds unnecessary question mark to the end of the URL, but it's better than form resubmit prompt
         form.method = 'get';
+    }
+
+    //Function replicating PHP's rawurlencode for consistency.
+    public rawurlencode(str: string): string
+    {
+        str = str + '';
+        return encodeURIComponent(str)
+            .replace(/!/ug, '%21')
+            .replace(/'/ug, '%27')
+            .replace(/\(/ug, '%28')
+            .replace(/\)/ug, '%29')
+            .replace(/\*/ug, '%2A');
     }
 
     //Track backspace and focus previous input field, if input is empty, when it's pressed

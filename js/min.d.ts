@@ -88,6 +88,17 @@ declare class Details {
     constructor();
     reset(target: HTMLDetailsElement): void;
 }
+declare class Form {
+    private static _instance;
+    constructor();
+    formEnter(event: KeyboardEvent): void | boolean;
+    searchAction(event: Event): void;
+    rawurlencode(str: string): string;
+    private inputBackSpace;
+    private autoNext;
+    nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | boolean;
+    private pasteSplit;
+}
 declare class Headings {
     private static _instance;
     constructor();
@@ -113,12 +124,11 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
+declare function ajax(url: string, formData?: FormData | null, type?: string, method?: string, timeout?: number, skipError?: boolean): Promise<any>;
 declare function getMeta(metaName: string): string | null;
 declare function updateHistory(newUrl: string, title: string): void;
 declare function cleanGET(): void;
 declare function hashCheck(): void;
-declare function rawurlencode(str: string): string;
-declare function ajax(url: string, formData?: FormData | null, type?: string, method?: string, timeout?: number, skipError?: boolean): Promise<any>;
 declare function bicInit(): void;
 declare function bicCalc(): void | boolean;
 declare function bicStyle(element: HTMLSpanElement, newClass: string, text?: string): void;
@@ -144,13 +154,3 @@ declare function showPassToggle(event: Event): void;
 declare function passwordStrengthOnEvent(event: Event): void;
 declare function passwordStrength(password: string): string;
 declare function loginRadioCheck(): void;
-declare class Form {
-    private static _instance;
-    constructor();
-    formEnter(event: KeyboardEvent): void | boolean;
-    searchAction(event: Event): void;
-    private inputBackSpace;
-    private autoNext;
-    nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | boolean;
-    private pasteSplit;
-}

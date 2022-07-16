@@ -470,6 +470,140 @@ class Details {
         });
     }
 }
+class Form {
+    static _instance = null;
+    constructor() {
+        if (Form._instance) {
+            return Form._instance;
+        }
+        document.querySelectorAll('form').forEach((item) => {
+            item.addEventListener('keypress', (event) => { this.formEnter(event); });
+        });
+        document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item) => {
+            item.addEventListener('input', this.searchAction.bind(this));
+            item.addEventListener('change', this.searchAction.bind(this));
+            item.addEventListener('focus', this.searchAction.bind(this));
+        });
+        document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item) => {
+            item.addEventListener('keydown', this.inputBackSpace.bind(this));
+            if (item.getAttribute('maxlength')) {
+                item.addEventListener('input', this.autoNext.bind(this));
+                item.addEventListener('change', this.autoNext.bind(this));
+                item.addEventListener('paste', this.pasteSplit.bind(this));
+            }
+        });
+        Form._instance = this;
+    }
+    formEnter(event) {
+        let form = event.target.form;
+        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host + form.getAttribute('data-baseURL') !== form.action))) {
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+        }
+    }
+    searchAction(event) {
+        let search = event.target;
+        let form = search.form;
+        if (search.value === '') {
+            form.action = String(form.getAttribute('data-baseURL'));
+        }
+        else {
+            form.action = form.getAttribute('data-baseURL') + this.rawurlencode(search.value);
+        }
+        form.method = 'get';
+    }
+    rawurlencode(str) {
+        str = str + '';
+        return encodeURIComponent(str)
+            .replace(/!/ug, '%21')
+            .replace(/'/ug, '%27')
+            .replace(/\(/ug, '%28')
+            .replace(/\)/ug, '%29')
+            .replace(/\*/ug, '%2A');
+    }
+    inputBackSpace(event) {
+        let current = event.target;
+        if (event.code === 'Backspace' && !current.value) {
+            let moveTo = this.nextInput(current, true);
+            if (moveTo) {
+                moveTo.focus();
+                moveTo.selectionStart = moveTo.selectionEnd = moveTo.value.length;
+            }
+        }
+    }
+    autoNext(event) {
+        let current = event.target;
+        let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
+        if (maxLength && current.value.length === maxLength && current.validity.valid) {
+            let moveTo = this.nextInput(current, false);
+            if (moveTo) {
+                moveTo.focus();
+            }
+        }
+    }
+    nextInput(initial, reverse = false) {
+        let form = initial.form;
+        if (form) {
+            let previous;
+            for (let moveTo of form.querySelectorAll('input')) {
+                if (reverse) {
+                    if (moveTo === initial) {
+                        if (previous) {
+                            return previous;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    if (previous && previous === initial) {
+                        return moveTo;
+                    }
+                }
+                previous = moveTo;
+            }
+        }
+        return false;
+    }
+    async pasteSplit(event) {
+        let permission = await navigator.permissions.query({ name: 'clipboard-read', }).catch(() => {
+            console.error('Your browser does not support clipboard-read permission.');
+        });
+        if (permission && permission.state !== 'denied') {
+            navigator.clipboard.readText().then(result => {
+                let buffer = result.toString();
+                let current = event.target;
+                let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
+                while (current && maxLength && buffer.length > maxLength) {
+                    current.value = buffer.substring(0, maxLength);
+                    current.dispatchEvent(new Event('input', {
+                        bubbles: true,
+                        cancelable: true,
+                    }));
+                    if (!current.validity.valid) {
+                        return false;
+                    }
+                    buffer = buffer.substring(maxLength);
+                    current = this.nextInput(current, false);
+                    if (current) {
+                        current.focus();
+                        maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
+                    }
+                }
+                if (current) {
+                    current.value = buffer;
+                    current.dispatchEvent(new Event('input', {
+                        bubbles: true,
+                        cancelable: true,
+                    }));
+                }
+                return true;
+            });
+        }
+    }
+}
 class Headings {
     static _instance = null;
     constructor() {
@@ -621,63 +755,6 @@ class Textarea {
         Textarea._instance = this;
     }
 }
-function getMeta(metaName) {
-    const metas = Array.from(document.getElementsByTagName('meta'));
-    let tag = metas.find(obj => {
-        return obj.name === metaName;
-    });
-    if (tag) {
-        return tag.getAttribute('content');
-    }
-    else {
-        return null;
-    }
-}
-function updateHistory(newUrl, title) {
-    document.title = title;
-    window.history.pushState(title, title, newUrl);
-}
-function cleanGET() {
-    let url = new URL(document.location.href);
-    let params = new URLSearchParams(url.search);
-    params.delete('cacheReset');
-    if (params.toString() === '') {
-        window.history.replaceState(document.title, document.title, location.pathname + location.hash);
-    }
-    else {
-        window.history.replaceState(document.title, document.title, '?' + params + location.hash);
-    }
-}
-function hashCheck() {
-    let url = new URL(document.location.href);
-    let hash = url.hash;
-    let Gallery = document.getElementsByTagName('gallery-overlay')[0];
-    const galleryLink = new RegExp('#gallery=\\d+', 'ui');
-    if (galleryLink.test(hash)) {
-        let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
-        if (imageID) {
-            if (Gallery.images[imageID - 1]) {
-                Gallery.current = imageID - 1;
-            }
-            else {
-                new Snackbar('Image number ' + imageID + ' not found on page', 'failure');
-                window.history.replaceState(document.title, document.title, document.location.href.replace(hash, ''));
-            }
-        }
-    }
-    else {
-        Gallery.close();
-    }
-}
-function rawurlencode(str) {
-    str = str + '';
-    return encodeURIComponent(str)
-        .replace(/!/ug, '%21')
-        .replace(/'/ug, '%27')
-        .replace(/\(/ug, '%28')
-        .replace(/\)/ug, '%29')
-        .replace(/\*/ug, '%2A');
-}
 async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
     let result;
     let controller = new AbortController();
@@ -728,6 +805,54 @@ async function ajax(url, formData = null, type = 'json', method = 'GET', timeout
         else {
             new Snackbar('Request to "' + url + '" failed on fetch operation', 'failure', 10000);
         }
+    }
+}
+function getMeta(metaName) {
+    const metas = Array.from(document.getElementsByTagName('meta'));
+    let tag = metas.find(obj => {
+        return obj.name === metaName;
+    });
+    if (tag) {
+        return tag.getAttribute('content');
+    }
+    else {
+        return null;
+    }
+}
+function updateHistory(newUrl, title) {
+    document.title = title;
+    window.history.pushState(title, title, newUrl);
+}
+function cleanGET() {
+    let url = new URL(document.location.href);
+    let params = new URLSearchParams(url.search);
+    params.delete('cacheReset');
+    if (params.toString() === '') {
+        window.history.replaceState(document.title, document.title, location.pathname + location.hash);
+    }
+    else {
+        window.history.replaceState(document.title, document.title, '?' + params + location.hash);
+    }
+}
+function hashCheck() {
+    let url = new URL(document.location.href);
+    let hash = url.hash;
+    let Gallery = document.getElementsByTagName('gallery-overlay')[0];
+    const galleryLink = new RegExp('#gallery=\\d+', 'ui');
+    if (galleryLink.test(hash)) {
+        let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
+        if (imageID) {
+            if (Gallery.images[imageID - 1]) {
+                Gallery.current = imageID - 1;
+            }
+            else {
+                new Snackbar('Image number ' + imageID + ' not found on page', 'failure');
+                window.history.replaceState(document.title, document.title, document.location.href.replace(hash, ''));
+            }
+        }
+    }
+    else {
+        Gallery.close();
     }
 }
 function bicInit() {
@@ -1240,131 +1365,6 @@ function loginRadioCheck() {
     }
     if (password) {
         new Input().ariaNation(password);
-    }
-}
-class Form {
-    static _instance = null;
-    constructor() {
-        if (Form._instance) {
-            return Form._instance;
-        }
-        document.querySelectorAll('form').forEach((item) => {
-            item.addEventListener('keypress', (event) => { this.formEnter(event); });
-        });
-        document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item) => {
-            item.addEventListener('input', this.searchAction);
-            item.addEventListener('change', this.searchAction);
-            item.addEventListener('focus', this.searchAction);
-        });
-        document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item) => {
-            item.addEventListener('keydown', this.inputBackSpace.bind(this));
-            if (item.getAttribute('maxlength')) {
-                item.addEventListener('input', this.autoNext.bind(this));
-                item.addEventListener('change', this.autoNext.bind(this));
-                item.addEventListener('paste', this.pasteSplit.bind(this));
-            }
-        });
-        Form._instance = this;
-    }
-    formEnter(event) {
-        let form = event.target.form;
-        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host + form.getAttribute('data-baseURL') !== form.action))) {
-            event.stopPropagation();
-            event.preventDefault();
-            return false;
-        }
-    }
-    searchAction(event) {
-        let search = event.target;
-        let form = search.form;
-        if (search.value === '') {
-            form.action = String(form.getAttribute('data-baseURL'));
-        }
-        else {
-            form.action = form.getAttribute('data-baseURL') + rawurlencode(search.value);
-        }
-        form.method = 'get';
-    }
-    inputBackSpace(event) {
-        let current = event.target;
-        if (event.code === 'Backspace' && !current.value) {
-            let moveTo = this.nextInput(current, true);
-            if (moveTo) {
-                moveTo.focus();
-                moveTo.selectionStart = moveTo.selectionEnd = moveTo.value.length;
-            }
-        }
-    }
-    autoNext(event) {
-        let current = event.target;
-        let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
-        if (maxLength && current.value.length === maxLength && current.validity.valid) {
-            let moveTo = this.nextInput(current, false);
-            if (moveTo) {
-                moveTo.focus();
-            }
-        }
-    }
-    nextInput(initial, reverse = false) {
-        let form = initial.form;
-        if (form) {
-            let previous;
-            for (let moveTo of form.querySelectorAll('input')) {
-                if (reverse) {
-                    if (moveTo === initial) {
-                        if (previous) {
-                            return previous;
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                }
-                else {
-                    if (previous && previous === initial) {
-                        return moveTo;
-                    }
-                }
-                previous = moveTo;
-            }
-        }
-        return false;
-    }
-    async pasteSplit(event) {
-        let permission = await navigator.permissions.query({ name: 'clipboard-read', }).catch(() => {
-            console.error('Your browser does not support clipboard-read permission.');
-        });
-        if (permission && permission.state !== 'denied') {
-            navigator.clipboard.readText().then(result => {
-                let buffer = result.toString();
-                let current = event.target;
-                let maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
-                while (current && maxLength && buffer.length > maxLength) {
-                    current.value = buffer.substring(0, maxLength);
-                    current.dispatchEvent(new Event('input', {
-                        bubbles: true,
-                        cancelable: true,
-                    }));
-                    if (!current.validity.valid) {
-                        return false;
-                    }
-                    buffer = buffer.substring(maxLength);
-                    current = this.nextInput(current, false);
-                    if (current) {
-                        current.focus();
-                        maxLength = parseInt(current.getAttribute('maxlength') ?? '0');
-                    }
-                }
-                if (current) {
-                    current.value = buffer;
-                    current.dispatchEvent(new Event('input', {
-                        bubbles: true,
-                        cancelable: true,
-                    }));
-                }
-                return true;
-            });
-        }
     }
 }
 //# sourceMappingURL=min.js.map
