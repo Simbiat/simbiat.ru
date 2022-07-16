@@ -202,7 +202,7 @@ class HomePage
         #Check in case we accidentally call this for 2nd time
         if (self::$dbup === false) {
             try {
-                (new Pool)->openConnection((new Config)->setHost(port: $GLOBALS['siteconfig']['database']['port'])->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings'])->setOption(\PDO::ATTR_TIMEOUT, 1));
+                (new Pool)->openConnection((new Config)->setHost($GLOBALS['siteconfig']['database']['host'], $GLOBALS['siteconfig']['database']['port'])->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings'])->setOption(\PDO::ATTR_TIMEOUT, 1)->setOption(\PDO::MYSQL_ATTR_SSL_CA, $GLOBALS['siteconfig']['database']['ssl']['ca'])->setOption(\PDO::MYSQL_ATTR_SSL_CERT, $GLOBALS['siteconfig']['database']['ssl']['cert'])->setOption(\PDO::MYSQL_ATTR_SSL_KEY, $GLOBALS['siteconfig']['database']['ssl']['key'])->setOption(\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT , true));
                 self::$dbup = true;
                 #Cache controller
                 self::$dbController = (new Controller);
