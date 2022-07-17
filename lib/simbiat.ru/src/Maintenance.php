@@ -4,6 +4,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Database\Pool;
 use Simbiat\usercontrol\Session;
 
 class Maintenance
@@ -148,7 +149,7 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
-                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Database is down');
+                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)]);
                 #Generate flag
                 file_put_contents($dir . '/noDB.flag', 'Database is down');
             }

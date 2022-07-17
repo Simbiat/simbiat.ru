@@ -93,7 +93,7 @@ class HomePage
                 $this::$headers->multiPartFormParse();
                 if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
                     $_POST = $this::$headers::$_PUT ?: $this::$headers::$_DELETE ?: $this::$headers::$_PATCH ?: [];
-                };
+                }
                 #Set canonical URL
                 $this->canonical();
                 #Send common headers

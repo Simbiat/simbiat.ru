@@ -1,5 +1,11 @@
 {% if subject == '[Alert]: Database is down' %}
     <p>Database appears to be down! Check ASAP!</p>
+    <p>Connection details:</p>
+    {% if errors %}
+        <pre>
+            {{ errors }}
+        </pre>
+    {% endif %}
 {% else %}
     <p>Database appears to started up again.</p>
 {% endif %}
