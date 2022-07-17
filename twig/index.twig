@@ -37,7 +37,7 @@
                             {{ include('errors/construction.twig') }}
                         {% endif %}
                         {% if not(error_page) and http_error not in [400, 403, 404, 405,'twig'] %}
-                            <p>Page will refresh in <time-r id="refresh_timer">10</time-r> seconds.</p>
+                            <p>Page will refresh in <time-r id="refresh_timer">60</time-r> seconds.</p>
                         {% endif %}
                     </article>
                 {% else %}

@@ -332,6 +332,9 @@ class Timer extends HTMLElement {
             }
             else {
                 clearInterval(Number(this.interval));
+                if (this.id === 'refresh_timer') {
+                    location.reload();
+                }
             }
         }, 1000);
     }
