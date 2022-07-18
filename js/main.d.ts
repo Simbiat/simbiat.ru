@@ -1,5 +1,10 @@
 declare const pageTitle = " on Simbiat Software";
 declare function init(): void;
+declare function ajax(url: string, formData?: FormData | null, type?: string, method?: string, timeout?: number, skipError?: boolean): Promise<any>;
+declare function getMeta(metaName: string): string | null;
+declare function updateHistory(newUrl: string, title: string): void;
+declare function cleanGET(): void;
+declare function hashCheck(): void;
 declare class BackToTop extends HTMLElement {
     private static content;
     private static BTTs;
@@ -124,11 +129,6 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
-declare function ajax(url: string, formData?: FormData | null, type?: string, method?: string, timeout?: number, skipError?: boolean): Promise<any>;
-declare function getMeta(metaName: string): string | null;
-declare function updateHistory(newUrl: string, title: string): void;
-declare function cleanGET(): void;
-declare function hashCheck(): void;
 declare function bicInit(): void;
 declare function bicCalc(): void | boolean;
 declare function bicStyle(element: HTMLSpanElement, newClass: string, text?: string): void;

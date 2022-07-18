@@ -1,4 +1,3 @@
-'use strict';
 const pageTitle = ' on Simbiat Software';
 
 //Stuff to do on load
