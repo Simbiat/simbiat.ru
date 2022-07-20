@@ -99,7 +99,7 @@ abstract class Page
         $page['static_page'] = $this->static;
         #Set error for Twig
         if (!empty($page['http_error'])) {
-            $page['h1'] .= ' ('.(HomePage::$dbup === false ? 'Database unavailable' : (HomePage::$dbUpdate === true ? 'Site maintenance' : 'Error '.$page['http_error'])).')';
+            //$page['h1'] .= ' ('.(HomePage::$dbup === false ? 'Database unavailable' : (HomePage::$dbUpdate === true ? 'Site maintenance' : 'Error '.$page['http_error'])).')';
             if (in_array($page['http_error'], ['database', 'maintenance'])) {
                 HomePage::$headers->clientReturn('503', false);
             } else {

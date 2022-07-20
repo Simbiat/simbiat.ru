@@ -13,7 +13,7 @@
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error%}
-            {% if http_error not in [400, 403, 404, 405,'twig'] %}
+            {% if http_error not in [400, 403, 404, 405,'twig'] and static_page == false and cached_page == false and construction == false %}
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
         {% endif %}
@@ -70,8 +70,14 @@
                             {{ include('common/layout/signinup.twig') }}
                         </section>
                     {% else %}
-                        <section id="sidebar_for_static">
-                            <div class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</div>
+                        <section id="sidebar_no_db">
+                            {% if http_error == 'database' %}
+                                <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
+                                <p class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+                            {% else %}
+                                <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.svg">
+                                <p class="warning">Database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+                            {% endif %}
                         </section>
                     {% endif %}
             </aside>

@@ -1,8 +1,16 @@
-#loginForm {
+#loginForm,
+#sidebar_no_db {
     border-width: var(--border-width);
     border-radius: var(--border-radius);
     border-style: solid;
     border-color: var(--border-color-inset);
+}
+
+#sidebar_no_db img {
+    width: 3rem;
+    height: 3rem;
+    margin: 0.25rem;
+    float: left;
 }
 
 /*Center form content*/
@@ -117,30 +125,4 @@
 
 #signinup_password:invalid~#password_req {
     color: var(--color-failure);
-}
-
-/*Style password strength*/
-.pass_str_div {
-    display: none;
-    color: var(--color-text);
-    text-align: left;
-}
-.password_weak,
-.password_strength {
-    color: var(--color-failure);
-    font-weight: 400;
-}
-.password_medium {
-    color: var(--color-warning);
-    font-weight: 500;
-}
-.password_strong {
-    color: var(--color-success);
-    font-weight: 700;
-}
-.password_very_strong {
-    font-weight: 900;
-    background: linear-gradient(to bottom, hsl(41, 33%, 72%) 22%, hsl(38, 38%, 28%) 24%, hsl(41, 33%, 72%) 26%, hsl(41, 33%, 72%) 27%, hsl(45, 100%, 85%) 40%, hsl(40, 59%, 50%) 78%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }

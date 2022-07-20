@@ -1,3 +1,49 @@
+/*Style password strength*/
+.pass_str_div {
+    display: none;
+    color: var(--color-text);
+    text-align: left;
+}
+.password_weak,
+.password_strength {
+    color: var(--color-failure);
+    font-weight: 400;
+}
+.password_medium {
+    color: var(--color-warning);
+    font-weight: 500;
+}
+.password_strong {
+    color: var(--color-success);
+    font-weight: 700;
+}
+.password_very_strong {
+    font-weight: 900;
+    background: linear-gradient(to bottom, hsl(41, 33%, 72%) 22%, hsl(38, 38%, 28%) 24%, hsl(41, 33%, 72%) 26%, hsl(41, 33%, 72%) 27%, hsl(45, 100%, 85%) 40%, hsl(40, 59%, 50%) 78%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/*Styling of password change*/
+#password_change {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+#password_change>.float_label_div {
+    display: block;
+}
+#password_requirement {
+    margin-top: 1rem;
+}
+#password_submit {
+    margin-bottom: 1rem;
+}
+
+/*Tabs styling for user control pages*/
 .vertical_tabs {
     border-style: solid;
     border-width: var(--border-width);
@@ -51,22 +97,4 @@
 }
 .vertical_tabs>.nav_tab.danger:hover {
     filter: none;
-}
-
-#password_change {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-}
-#password_change>.float_label_div {
-    display: block;
-}
-#password_requirement {
-    margin-top: 1rem;
-}
-#password_submit {
-    margin-bottom: 1rem;
 }

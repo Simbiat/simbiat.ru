@@ -55,7 +55,7 @@ web-share:active {
     margin-top: 0.5rem;
 }
 #h1title {
-    max-width: calc(100% - 0.5rem - 1rem);
+    max-width: calc(100% - 0.5rem - 4rem);
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
@@ -80,4 +80,7 @@ web-share:active {
     width: 1rem;
     vertical-align: top;
     filter: sepia(1);
+}
+#h1div .linkIcon {
+    vertical-align: top;
 }

@@ -125,6 +125,518 @@ function hashCheck() {
         Gallery.close();
     }
 }
+function bicInit() {
+    let bicKey = document.getElementById('bic_key');
+    let accKey = document.getElementById('account_key');
+    if (bicKey && accKey) {
+        bicKey.addEventListener('input', bicCalc);
+        accKey.addEventListener('input', bicCalc);
+    }
+    let refresh = document.getElementById('bicRefresh');
+    if (refresh) {
+        refresh.addEventListener('click', bicRefresh);
+    }
+}
+function bicCalc() {
+    let form = document.getElementById('bic_keying');
+    let formData = new FormData(form);
+    let result = document.getElementById('accCheckResult');
+    let bicKey = String(formData.get('bic_key'));
+    let accKey = String(formData.get('account_key'));
+    let bicKeySample = document.getElementById('bic_key_sample');
+    let accKeySample = document.getElementById('account_key_sample');
+    result.classList.remove(...result.classList);
+    if (/^\d{9}$/u.exec(bicKey) === null) {
+        result.classList.add('failure');
+        result.innerHTML = 'Неверный формат БИКа';
+        bicStyle(bicKeySample, 'warning', 'БИК');
+        return;
+    }
+    else {
+        bicStyle(bicKeySample, 'success', bicKey);
+    }
+    if (/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u.exec(accKey) === null) {
+        result.classList.add('failure');
+        result.innerHTML = 'Неверный формат счёта';
+        bicStyle(accKeySample, 'warning', 'СЧЁТ');
+        return;
+    }
+    else {
+        bicStyle(accKeySample, 'success', accKey);
+    }
+    updateHistory(location.protocol + '//' + location.host + '/bictracker/keying/' + bicKey + '/' + accKey + '/', 'Ключевание счёта ' + accKey + pageTitle);
+    result.classList.add('warning');
+    result.innerHTML = 'Проверяем...';
+    let spinner = document.getElementById('bic_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/bictracker/keying/', formData, 'json', 'POST', 60000, true).then(data => {
+        result.classList.remove(...result.classList);
+        if (data.data === true) {
+            result.classList.add('success');
+            result.innerHTML = 'Правильное ключевание';
+        }
+        else {
+            result.classList.add('failure');
+            if (data.data === false) {
+                result.innerHTML = 'Непредвиденная ошибка';
+            }
+            else {
+                result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data.data + ' (' + accKey.replace(/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u, '$1<span class="success">' + data.data + '</span>$3') + ')';
+            }
+        }
+        spinner.classList.add('hidden');
+    });
+    return;
+}
+function bicStyle(element, newClass, text = '') {
+    element.classList.remove(...element.classList);
+    element.classList.add(newClass);
+    element.innerHTML = text;
+}
+function bicRefresh(event) {
+    let refresh = event.target;
+    if (refresh.classList.contains('spin')) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    else {
+        refresh.classList.add('spin');
+        setTimeout(async function () {
+            await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
+                if (data.data === true) {
+                    new Snackbar('Библиотека БИК обновлена', 'success');
+                    refresh.classList.remove('spin');
+                }
+                else if (typeof data.data === 'number') {
+                    let timestamp = new Date(data.data * 1000);
+                    let dateTime = document.getElementsByClassName('bic_date')[0];
+                    dateTime.setAttribute('datetime', timestamp.toISOString());
+                    dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
+                    new Snackbar('Применено обновление за ' + dateTime.innerHTML, 'success');
+                    refresh.classList.remove('spin');
+                    bicRefresh(event);
+                }
+                else {
+                    new Snackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                    refresh.classList.remove('spin');
+                }
+            });
+        }, 500);
+    }
+}
+function fftrackerInit() {
+    let select = document.getElementById('ff_track_type');
+    if (select) {
+        select.addEventListener('change', function (event) {
+            ffTrackTypeChange(event.target);
+        });
+    }
+    submitIntercept('ff_track_register');
+}
+function ffTrackAdd() {
+    let idInput = document.getElementById('ff_track_id');
+    let select = document.getElementById('ff_track_type');
+    let selectedOption = select.selectedOptions[0];
+    let selectText;
+    if (selectedOption) {
+        selectText = selectedOption.text;
+    }
+    else {
+        selectText = 'Character';
+    }
+    if (idInput && select) {
+        let spinner = document.getElementById('ff_track_spinner');
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/fftracker/' + select.value + '/' + idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
+            if (data.data === true) {
+                new Snackbar(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
+            }
+            else if (data === '404') {
+                new Snackbar(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+}
+function ffTrackTypeChange(target) {
+    let idInput = document.getElementById('ff_track_id');
+    let pattern = '^\\d+$';
+    switch (target.value) {
+        case 'character':
+        case 'freecompany':
+        case 'linkshell':
+            pattern = '^\\d{1,20}$';
+            break;
+        case 'pvpteam':
+        case 'crossworld_linkshell':
+            pattern = '^[0-9a-z]{40}$';
+            break;
+    }
+    idInput.setAttribute('pattern', pattern);
+}
+const submitFunctions = {
+    'signinup': 'singInUpSubmit',
+    'addMailForm': 'addMail',
+    'ff_track_register': 'ffTrackAdd',
+    'password_change': 'passwordChange',
+};
+function submitIntercept(formId) {
+    let form = document.getElementById(formId);
+    if (form && submitFunctions[formId]) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window[submitFunctions[formId]]();
+            return false;
+        });
+        form.onkeydown = function (event) {
+            if (event.code === 'Enter') {
+                event.preventDefault();
+                event.stopPropagation();
+                window[submitFunctions[formId]]();
+                return false;
+            }
+            return true;
+        };
+    }
+}
+function ucInit() {
+    document.querySelectorAll('.showpassword').forEach(item => {
+        item.addEventListener('click', showPassToggle);
+    });
+    document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
+        item.addEventListener('change', loginRadioCheck);
+    });
+    loginRadioCheck();
+    submitIntercept('signinup');
+    submitIntercept('addMailForm');
+    submitIntercept('password_change');
+    document.querySelectorAll('.mail_activation').forEach(item => {
+        item.addEventListener('click', activationMail);
+    });
+    document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+        item.addEventListener('click', subscribeMail);
+    });
+    document.querySelectorAll('.mail_deletion').forEach(item => {
+        item.addEventListener('click', deleteMail);
+    });
+    let new_password = document.getElementById('new_password');
+    if (new_password) {
+        ['focus', 'change', 'input',].forEach(function (e) {
+            new_password.addEventListener(e, passwordStrengthOnEvent);
+        });
+    }
+}
+function addMail() {
+    let form = document.getElementById('addMailForm');
+    let formData = new FormData(form);
+    if (!formData.get('email')) {
+        new Snackbar('Please, enter a valid email address', 'failure');
+        return false;
+    }
+    let email = String(formData.get('email'));
+    let spinner = document.getElementById('addMail_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
+        if (data.data === true) {
+            let row = document.getElementById('emailsList').insertRow();
+            row.classList.add('middle');
+            let cell = row.insertCell();
+            cell.innerHTML = email;
+            cell = row.insertCell();
+            cell.innerHTML = '<input type="button" value="Confirm" class="mail_activation" data-email="' + email + '" aria-invalid="false" placeholder="Confirm"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating ' + email + '..." data-tooltip="Activating ' + email + '...">';
+            cell = row.insertCell();
+            cell.innerHTML = 'Confirm address to change setting';
+            cell.classList.add('warning');
+            cell = row.insertCell();
+            cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
+            let input = cell.getElementsByTagName('input')[0];
+            new Input().init(input);
+            blockDeleteMail();
+            form.reset();
+            new Snackbar('Mail added', 'success');
+        }
+        else {
+            new Snackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+function deleteMail(event) {
+    let button = event.target;
+    let table = button.parentElement.parentElement.parentElement;
+    let tr = button.parentElement.parentElement.rowIndex - 1;
+    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
+    let formData = new FormData();
+    formData.set('email', button.getAttribute('data-email') ?? '');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
+        if (data.data === true) {
+            table.deleteRow(tr);
+            blockDeleteMail();
+            new Snackbar('Mail removed', 'success');
+        }
+        else {
+            new Snackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+function blockDeleteMail() {
+    let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
+    document.querySelectorAll('.mail_deletion').forEach(item => {
+        if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
+            item.disabled = confirmedMail < 2;
+        }
+        else {
+            item.disabled = false;
+        }
+    });
+}
+function subscribeMail(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    let checkbox = event.target;
+    let verb;
+    if (checkbox.checked) {
+        verb = 'subscribe';
+    }
+    else {
+        verb = 'unsubscribe';
+    }
+    let label = checkbox.parentElement.getElementsByTagName('label')[0];
+    let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
+    let formData = new FormData();
+    formData.set('verb', verb);
+    formData.set('email', checkbox.getAttribute('data-email') ?? '');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/uc/emails/' + verb + '/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        if (data.data === true) {
+            if (checkbox.checked) {
+                checkbox.checked = false;
+                label.innerText = 'Subscribe';
+                new Snackbar('Email unsubscribed', 'success');
+            }
+            else {
+                checkbox.checked = true;
+                label.innerText = 'Unsubscribe';
+                new Snackbar('Email subscribed', 'success');
+            }
+        }
+        else {
+            new Snackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+function activationMail(event) {
+    let button = event.target;
+    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
+    let formData = new FormData();
+    formData.set('verb', 'activate');
+    formData.set('email', button.getAttribute('data-email') ?? '');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        if (data.data === true) {
+            new Snackbar('Activation email sent', 'success');
+        }
+        else {
+            new Snackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+function singInUpSubmit() {
+    let formData = new FormData(document.getElementById('signinup'));
+    if (!formData.get('signinup[type]')) {
+        formData.set('signinup[type]', 'logout');
+    }
+    let spinner = document.getElementById('singinup_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
+        if (data.data === true) {
+            if (formData.get('signinup[type]') === 'remind') {
+                new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+            }
+            else {
+                location.reload();
+            }
+        }
+        else {
+            new Snackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+function passwordChange() {
+    let formData = new FormData(document.getElementById('password_change'));
+    let spinner = document.getElementById('pw_change_spinner');
+    spinner.classList.remove('hidden');
+    ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        if (data.data === true) {
+            new Snackbar('Password changed', 'success');
+        }
+        else {
+            new Snackbar(data.reason, 'failure', 10000);
+        }
+        spinner.classList.add('hidden');
+    });
+}
+const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
+const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}';
+function showPassToggle(event) {
+    event.preventDefault();
+    let eyeIcon = event.target;
+    let passField = eyeIcon.parentElement.getElementsByTagName('input').item(0);
+    if (passField.type === 'password') {
+        passField.type = 'text';
+        eyeIcon.title = 'Hide password';
+    }
+    else {
+        passField.type = 'password';
+        eyeIcon.title = 'Show password';
+    }
+}
+function passwordStrengthOnEvent(event) {
+    let strengthField = document.querySelectorAll('.password_strength').item(0);
+    let strength = passwordStrength(event.target.value);
+    strengthField.innerHTML = strength;
+    strengthField.classList.remove('password_weak', 'password_medium', 'password_strong', 'password_very_strong');
+    if (strength === 'very strong') {
+        strengthField.classList.add('password_very_strong');
+    }
+    else {
+        strengthField.classList.add('password_' + strength);
+    }
+}
+function passwordStrength(password) {
+    let points = 0;
+    if (/.{8,}/u.test(password)) {
+        points++;
+    }
+    if (/.{16,}/u.test(password)) {
+        points++;
+    }
+    if (/.{32,}/u.test(password)) {
+        points++;
+    }
+    if (/.{64,}/u.test(password)) {
+        points++;
+    }
+    if (/\p{Ll}/u.test(password)) {
+        points++;
+    }
+    if (/\p{Lu}/u.test(password)) {
+        points++;
+    }
+    if (/\p{Lo}/u.test(password)) {
+        points++;
+    }
+    if (/\p{N}/u.test(password)) {
+        points++;
+    }
+    if (/[\p{P}\p{S}]/u.test(password)) {
+        points++;
+    }
+    if (/(.)\1{2,}/u.test(password)) {
+        points--;
+    }
+    if (points <= 2) {
+        return 'weak';
+    }
+    else if (2 < points && points < 5) {
+        return 'medium';
+    }
+    else if (points === 5) {
+        return 'strong';
+    }
+    else {
+        return 'very strong';
+    }
+}
+function loginRadioCheck() {
+    let existUser = document.getElementById('radio_existuser');
+    let newUser = document.getElementById('radio_newuser');
+    let forget = document.getElementById('radio_forget');
+    let login = document.getElementById('signinup_email');
+    let loginLabel;
+    if (login && login.labels) {
+        loginLabel = login.labels[0];
+    }
+    let password = document.getElementById('signinup_password');
+    let button = document.getElementById('signinup_submit');
+    let rememberme = document.getElementById('rememberme');
+    let username = document.getElementById('signinup_username');
+    if (existUser && existUser.checked) {
+        password.required = true;
+        password.setAttribute('autocomplete', 'current-password');
+        login.setAttribute('type', 'email');
+        login.setAttribute('autocomplete', 'email');
+        login.setAttribute('pattern', '^' + emailRegex + '$');
+        password.setAttribute('minlength', '8');
+        button.value = 'Sign in';
+        ['focus', 'change', 'input',].forEach(function (e) {
+            password.removeEventListener(e, passwordStrengthOnEvent);
+        });
+        password.parentElement.classList.remove('hidden');
+        rememberme.parentElement.classList.remove('hidden');
+        document.getElementById('password_req').classList.add('hidden');
+        document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
+        username.parentElement.classList.add('hidden');
+        username.required = false;
+    }
+    if (newUser && newUser.checked) {
+        password.required = true;
+        password.setAttribute('autocomplete', 'new-password');
+        login.setAttribute('type', 'email');
+        login.setAttribute('autocomplete', 'email');
+        login.setAttribute('pattern', '^' + emailRegex + '$');
+        password.setAttribute('minlength', '8');
+        button.value = 'Join';
+        ['focus', 'change', 'input',].forEach(function (e) {
+            password.addEventListener(e, passwordStrengthOnEvent);
+        });
+        password.parentElement.classList.remove('hidden');
+        rememberme.parentElement.classList.remove('hidden');
+        document.getElementById('password_req').classList.remove('hidden');
+        document.querySelectorAll('.pass_str_div').item(0).classList.remove('hidden');
+        login.placeholder = 'Email';
+        if (loginLabel) {
+            loginLabel.innerHTML = 'Email';
+        }
+        username.parentElement.classList.remove('hidden');
+        username.required = true;
+    }
+    if (forget && forget.checked) {
+        password.required = false;
+        password.removeAttribute('autocomplete');
+        login.setAttribute('type', 'text');
+        login.setAttribute('autocomplete', 'username');
+        login.setAttribute('pattern', '^(' + userRegex + ')|(' + emailRegex + ')$');
+        password.removeAttribute('minlength');
+        button.value = 'Remind';
+        ['focus', 'change', 'input',].forEach(function (e) {
+            password.removeEventListener(e, passwordStrengthOnEvent);
+        });
+        password.parentElement.classList.add('hidden');
+        rememberme.parentElement.classList.add('hidden');
+        document.getElementById('password_req').classList.add('hidden');
+        document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
+        rememberme.checked = false;
+        login.placeholder = 'Email or name';
+        if (loginLabel) {
+            loginLabel.innerHTML = 'Email or name';
+        }
+        username.parentElement.classList.add('hidden');
+        username.required = false;
+    }
+    if (password) {
+        new Input().ariaNation(password);
+    }
+}
 class BackToTop extends HTMLElement {
     static content;
     static BTTs;
@@ -856,518 +1368,6 @@ class Textarea {
             }
         });
         Textarea._instance = this;
-    }
-}
-function bicInit() {
-    let bicKey = document.getElementById('bic_key');
-    let accKey = document.getElementById('account_key');
-    if (bicKey && accKey) {
-        bicKey.addEventListener('input', bicCalc);
-        accKey.addEventListener('input', bicCalc);
-    }
-    let refresh = document.getElementById('bicRefresh');
-    if (refresh) {
-        refresh.addEventListener('click', bicRefresh);
-    }
-}
-function bicCalc() {
-    let form = document.getElementById('bic_keying');
-    let formData = new FormData(form);
-    let result = document.getElementById('accCheckResult');
-    let bicKey = String(formData.get('bic_key'));
-    let accKey = String(formData.get('account_key'));
-    let bicKeySample = document.getElementById('bic_key_sample');
-    let accKeySample = document.getElementById('account_key_sample');
-    result.classList.remove(...result.classList);
-    if (/^\d{9}$/u.exec(bicKey) === null) {
-        result.classList.add('failure');
-        result.innerHTML = 'Неверный формат БИКа';
-        bicStyle(bicKeySample, 'warning', 'БИК');
-        return;
-    }
-    else {
-        bicStyle(bicKeySample, 'success', bicKey);
-    }
-    if (/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u.exec(accKey) === null) {
-        result.classList.add('failure');
-        result.innerHTML = 'Неверный формат счёта';
-        bicStyle(accKeySample, 'warning', 'СЧЁТ');
-        return;
-    }
-    else {
-        bicStyle(accKeySample, 'success', accKey);
-    }
-    updateHistory(location.protocol + '//' + location.host + '/bictracker/keying/' + bicKey + '/' + accKey + '/', 'Ключевание счёта ' + accKey + pageTitle);
-    result.classList.add('warning');
-    result.innerHTML = 'Проверяем...';
-    let spinner = document.getElementById('bic_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/bictracker/keying/', formData, 'json', 'POST', 60000, true).then(data => {
-        result.classList.remove(...result.classList);
-        if (data.data === true) {
-            result.classList.add('success');
-            result.innerHTML = 'Правильное ключевание';
-        }
-        else {
-            result.classList.add('failure');
-            if (data.data === false) {
-                result.innerHTML = 'Непредвиденная ошибка';
-            }
-            else {
-                result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data.data + ' (' + accKey.replace(/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u, '$1<span class="success">' + data.data + '</span>$3') + ')';
-            }
-        }
-        spinner.classList.add('hidden');
-    });
-    return;
-}
-function bicStyle(element, newClass, text = '') {
-    element.classList.remove(...element.classList);
-    element.classList.add(newClass);
-    element.innerHTML = text;
-}
-function bicRefresh(event) {
-    let refresh = event.target;
-    if (refresh.classList.contains('spin')) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
-    else {
-        refresh.classList.add('spin');
-        setTimeout(async function () {
-            await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
-                if (data.data === true) {
-                    new Snackbar('Библиотека БИК обновлена', 'success');
-                    refresh.classList.remove('spin');
-                }
-                else if (typeof data.data === 'number') {
-                    let timestamp = new Date(data.data * 1000);
-                    let dateTime = document.getElementsByClassName('bic_date')[0];
-                    dateTime.setAttribute('datetime', timestamp.toISOString());
-                    dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
-                    new Snackbar('Применено обновление за ' + dateTime.innerHTML, 'success');
-                    refresh.classList.remove('spin');
-                    bicRefresh(event);
-                }
-                else {
-                    new Snackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
-                    refresh.classList.remove('spin');
-                }
-            });
-        }, 500);
-    }
-}
-function fftrackerInit() {
-    let select = document.getElementById('ff_track_type');
-    if (select) {
-        select.addEventListener('change', function (event) {
-            ffTrackTypeChange(event.target);
-        });
-    }
-    submitIntercept('ff_track_register');
-}
-function ffTrackAdd() {
-    let idInput = document.getElementById('ff_track_id');
-    let select = document.getElementById('ff_track_type');
-    let selectedOption = select.selectedOptions[0];
-    let selectText;
-    if (selectedOption) {
-        selectText = selectedOption.text;
-    }
-    else {
-        selectText = 'Character';
-    }
-    if (idInput && select) {
-        let spinner = document.getElementById('ff_track_spinner');
-        spinner.classList.remove('hidden');
-        ajax(location.protocol + '//' + location.host + '/api/fftracker/' + select.value + '/' + idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
-            if (data.data === true) {
-                new Snackbar(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
-            }
-            else if (data === '404') {
-                new Snackbar(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
-            }
-            else {
-                new Snackbar(data.reason, 'failure', 10000);
-            }
-            spinner.classList.add('hidden');
-        });
-    }
-}
-function ffTrackTypeChange(target) {
-    let idInput = document.getElementById('ff_track_id');
-    let pattern = '^\\d+$';
-    switch (target.value) {
-        case 'character':
-        case 'freecompany':
-        case 'linkshell':
-            pattern = '^\\d{1,20}$';
-            break;
-        case 'pvpteam':
-        case 'crossworld_linkshell':
-            pattern = '^[0-9a-z]{40}$';
-            break;
-    }
-    idInput.setAttribute('pattern', pattern);
-}
-const submitFunctions = {
-    'signinup': 'singInUpSubmit',
-    'addMailForm': 'addMail',
-    'ff_track_register': 'ffTrackAdd',
-    'password_change': 'passwordChange',
-};
-function submitIntercept(formId) {
-    let form = document.getElementById(formId);
-    if (form && submitFunctions[formId]) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            window[submitFunctions[formId]]();
-            return false;
-        });
-        form.onkeydown = function (event) {
-            if (event.code === 'Enter') {
-                event.preventDefault();
-                event.stopPropagation();
-                window[submitFunctions[formId]]();
-                return false;
-            }
-            return true;
-        };
-    }
-}
-function ucInit() {
-    document.querySelectorAll('.showpassword').forEach(item => {
-        item.addEventListener('click', showPassToggle);
-    });
-    document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
-        item.addEventListener('change', loginRadioCheck);
-    });
-    loginRadioCheck();
-    submitIntercept('signinup');
-    submitIntercept('addMailForm');
-    submitIntercept('password_change');
-    document.querySelectorAll('.mail_activation').forEach(item => {
-        item.addEventListener('click', activationMail);
-    });
-    document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
-        item.addEventListener('click', subscribeMail);
-    });
-    document.querySelectorAll('.mail_deletion').forEach(item => {
-        item.addEventListener('click', deleteMail);
-    });
-    let new_password = document.getElementById('new_password');
-    if (new_password) {
-        ['focus', 'change', 'input',].forEach(function (e) {
-            new_password.addEventListener(e, passwordStrengthOnEvent);
-        });
-    }
-}
-function addMail() {
-    let form = document.getElementById('addMailForm');
-    let formData = new FormData(form);
-    if (!formData.get('email')) {
-        new Snackbar('Please, enter a valid email address', 'failure');
-        return false;
-    }
-    let email = String(formData.get('email'));
-    let spinner = document.getElementById('addMail_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
-        if (data.data === true) {
-            let row = document.getElementById('emailsList').insertRow();
-            row.classList.add('middle');
-            let cell = row.insertCell();
-            cell.innerHTML = email;
-            cell = row.insertCell();
-            cell.innerHTML = '<input type="button" value="Confirm" class="mail_activation" data-email="' + email + '" aria-invalid="false" placeholder="Confirm"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating ' + email + '..." data-tooltip="Activating ' + email + '...">';
-            cell = row.insertCell();
-            cell.innerHTML = 'Confirm address to change setting';
-            cell.classList.add('warning');
-            cell = row.insertCell();
-            cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
-            let input = cell.getElementsByTagName('input')[0];
-            new Input().init(input);
-            blockDeleteMail();
-            form.reset();
-            new Snackbar('Mail added', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function deleteMail(event) {
-    let button = event.target;
-    let table = button.parentElement.parentElement.parentElement;
-    let tr = button.parentElement.parentElement.rowIndex - 1;
-    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
-    let formData = new FormData();
-    formData.set('email', button.getAttribute('data-email') ?? '');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
-        if (data.data === true) {
-            table.deleteRow(tr);
-            blockDeleteMail();
-            new Snackbar('Mail removed', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function blockDeleteMail() {
-    let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
-    document.querySelectorAll('.mail_deletion').forEach(item => {
-        if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
-            item.disabled = confirmedMail < 2;
-        }
-        else {
-            item.disabled = false;
-        }
-    });
-}
-function subscribeMail(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    let checkbox = event.target;
-    let verb;
-    if (checkbox.checked) {
-        verb = 'subscribe';
-    }
-    else {
-        verb = 'unsubscribe';
-    }
-    let label = checkbox.parentElement.getElementsByTagName('label')[0];
-    let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
-    let formData = new FormData();
-    formData.set('verb', verb);
-    formData.set('email', checkbox.getAttribute('data-email') ?? '');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/' + verb + '/', formData, 'json', 'PATCH', 60000, true).then(data => {
-        if (data.data === true) {
-            if (checkbox.checked) {
-                checkbox.checked = false;
-                label.innerText = 'Subscribe';
-                new Snackbar('Email unsubscribed', 'success');
-            }
-            else {
-                checkbox.checked = true;
-                label.innerText = 'Unsubscribe';
-                new Snackbar('Email subscribed', 'success');
-            }
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function activationMail(event) {
-    let button = event.target;
-    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
-    let formData = new FormData();
-    formData.set('verb', 'activate');
-    formData.set('email', button.getAttribute('data-email') ?? '');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
-        if (data.data === true) {
-            new Snackbar('Activation email sent', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function singInUpSubmit() {
-    let formData = new FormData(document.getElementById('signinup'));
-    if (!formData.get('signinup[type]')) {
-        formData.set('signinup[type]', 'logout');
-    }
-    let spinner = document.getElementById('singinup_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
-        if (data.data === true) {
-            if (formData.get('signinup[type]') === 'remind') {
-                new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
-            }
-            else {
-                location.reload();
-            }
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function passwordChange() {
-    let formData = new FormData(document.getElementById('password_change'));
-    let spinner = document.getElementById('pw_change_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
-        if (data.data === true) {
-            new Snackbar('Password changed', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
-const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}';
-function showPassToggle(event) {
-    event.preventDefault();
-    let eyeIcon = event.target;
-    let passField = eyeIcon.parentElement.getElementsByTagName('input').item(0);
-    if (passField.type === 'password') {
-        passField.type = 'text';
-        eyeIcon.title = 'Hide password';
-    }
-    else {
-        passField.type = 'password';
-        eyeIcon.title = 'Show password';
-    }
-}
-function passwordStrengthOnEvent(event) {
-    let strengthField = document.querySelectorAll('.password_strength').item(0);
-    let strength = passwordStrength(event.target.value);
-    strengthField.innerHTML = strength;
-    strengthField.classList.remove('password_weak', 'password_medium', 'password_strong', 'password_very_strong');
-    if (strength === 'very strong') {
-        strengthField.classList.add('password_very_strong');
-    }
-    else {
-        strengthField.classList.add('password_' + strength);
-    }
-}
-function passwordStrength(password) {
-    let points = 0;
-    if (/.{8,}/u.test(password)) {
-        points++;
-    }
-    if (/.{16,}/u.test(password)) {
-        points++;
-    }
-    if (/.{32,}/u.test(password)) {
-        points++;
-    }
-    if (/.{64,}/u.test(password)) {
-        points++;
-    }
-    if (/\p{Ll}/u.test(password)) {
-        points++;
-    }
-    if (/\p{Lu}/u.test(password)) {
-        points++;
-    }
-    if (/\p{Lo}/u.test(password)) {
-        points++;
-    }
-    if (/\p{N}/u.test(password)) {
-        points++;
-    }
-    if (/[\p{P}\p{S}]/u.test(password)) {
-        points++;
-    }
-    if (/(.)\1{2,}/u.test(password)) {
-        points--;
-    }
-    if (points <= 2) {
-        return 'weak';
-    }
-    else if (2 < points && points < 5) {
-        return 'medium';
-    }
-    else if (points === 5) {
-        return 'strong';
-    }
-    else {
-        return 'very strong';
-    }
-}
-function loginRadioCheck() {
-    let existUser = document.getElementById('radio_existuser');
-    let newUser = document.getElementById('radio_newuser');
-    let forget = document.getElementById('radio_forget');
-    let login = document.getElementById('signinup_email');
-    let loginLabel;
-    if (login && login.labels) {
-        loginLabel = login.labels[0];
-    }
-    let password = document.getElementById('signinup_password');
-    let button = document.getElementById('signinup_submit');
-    let rememberme = document.getElementById('rememberme');
-    let username = document.getElementById('signinup_username');
-    if (existUser && existUser.checked) {
-        password.required = true;
-        password.setAttribute('autocomplete', 'current-password');
-        login.setAttribute('type', 'email');
-        login.setAttribute('autocomplete', 'email');
-        login.setAttribute('pattern', '^' + emailRegex + '$');
-        password.setAttribute('minlength', '8');
-        button.value = 'Sign in';
-        ['focus', 'change', 'input',].forEach(function (e) {
-            password.removeEventListener(e, passwordStrengthOnEvent);
-        });
-        password.parentElement.classList.remove('hidden');
-        rememberme.parentElement.classList.remove('hidden');
-        document.getElementById('password_req').classList.add('hidden');
-        document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
-        username.parentElement.classList.add('hidden');
-        username.required = false;
-    }
-    if (newUser && newUser.checked) {
-        password.required = true;
-        password.setAttribute('autocomplete', 'new-password');
-        login.setAttribute('type', 'email');
-        login.setAttribute('autocomplete', 'email');
-        login.setAttribute('pattern', '^' + emailRegex + '$');
-        password.setAttribute('minlength', '8');
-        button.value = 'Join';
-        ['focus', 'change', 'input',].forEach(function (e) {
-            password.addEventListener(e, passwordStrengthOnEvent);
-        });
-        password.parentElement.classList.remove('hidden');
-        rememberme.parentElement.classList.remove('hidden');
-        document.getElementById('password_req').classList.remove('hidden');
-        document.querySelectorAll('.pass_str_div').item(0).classList.remove('hidden');
-        login.placeholder = 'Email';
-        if (loginLabel) {
-            loginLabel.innerHTML = 'Email';
-        }
-        username.parentElement.classList.remove('hidden');
-        username.required = true;
-    }
-    if (forget && forget.checked) {
-        password.required = false;
-        password.removeAttribute('autocomplete');
-        login.setAttribute('type', 'text');
-        login.setAttribute('autocomplete', 'username');
-        login.setAttribute('pattern', '^(' + userRegex + ')|(' + emailRegex + ')$');
-        password.removeAttribute('minlength');
-        button.value = 'Remind';
-        ['focus', 'change', 'input',].forEach(function (e) {
-            password.removeEventListener(e, passwordStrengthOnEvent);
-        });
-        password.parentElement.classList.add('hidden');
-        rememberme.parentElement.classList.add('hidden');
-        document.getElementById('password_req').classList.add('hidden');
-        document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
-        rememberme.checked = false;
-        login.placeholder = 'Email or name';
-        if (loginLabel) {
-            loginLabel.innerHTML = 'Email or name';
-        }
-        username.parentElement.classList.add('hidden');
-        username.required = false;
-    }
-    if (password) {
-        new Input().ariaNation(password);
     }
 }
 //# sourceMappingURL=main.js.map

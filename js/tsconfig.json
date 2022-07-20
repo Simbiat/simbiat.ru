@@ -36,9 +36,8 @@
     "include": [
         "Common/Init.ts",
         "Common/Helpers.ts",
-        "Common/CustomElements/Autonomous/*.ts",
-        "Common/CustomElements/BuiltIn/*.ts",
-        "modules/*.ts"
+        "Common/CustomElements/*/*.ts",
+        "Modules/*.ts"
     ],
     "exclude": [
         "node_modules"
