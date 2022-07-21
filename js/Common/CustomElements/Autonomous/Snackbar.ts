@@ -17,6 +17,9 @@ class Snackbar
             snack.classList.add('snackbar');
             //Add text
             snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            snack.querySelectorAll('a[target="_blank"]').forEach(anchor => {
+                new A().newTabStyle(anchor as HTMLAnchorElement);
+            });
             //Add class for color
             if (color) {
                 snack.classList.add(color);
@@ -54,6 +57,10 @@ class SnackbarClose extends HTMLElement
         this.snack.classList.remove('fadeIn');
         this.snack.classList.add('fadeOut');
         //Actual removal
-        this.snack.addEventListener('animationend', () => {this.snackbar.removeChild(this.snack);});
+        this.snack.addEventListener('animationend', () => {
+            if (this.snack) {
+                this.snackbar.removeChild(this.snack);
+            }
+        });
     }
 }

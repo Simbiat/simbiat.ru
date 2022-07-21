@@ -20,7 +20,7 @@ class Tooltip extends HTMLElement
         //Handle tooltip positioning for mouse hover
         document.addEventListener('mousemove', this.onMouseMove.bind(this));
         //Handle tooltip positioning for focus
-        document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
+        document.querySelectorAll('[data-tooltip]:not([data-tooltip=""])').forEach(item => {
             item.addEventListener('focus', this.onFocus.bind(this));
         });
         //Remove tooltip if an element without data-tooltip is selected. Needed to prevent focused tooltips from persisting
@@ -64,8 +64,9 @@ class Tooltip extends HTMLElement
     private update(element: HTMLElement): void
     {
         let parent = element.parentElement as HTMLElement;
-        if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
-            this.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
+        let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
+        if (tooltip) {
+            this.setAttribute('data-tooltip', tooltip);
         } else {
             this.removeAttribute('data-tooltip');
         }

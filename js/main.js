@@ -1,30 +1,4 @@
 "use strict";
-const pageTitle = ' on Simbiat Software';
-document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('hashchange', function () { hashCheck(); });
-function init() {
-    new Input();
-    new Textarea();
-    new Form();
-    ucInit();
-    bicInit();
-    new Details();
-    new Quotes();
-    fftrackerInit();
-    new Aside();
-    new Nav();
-    new Headings();
-    customElements.define('back-to-top', BackToTop);
-    customElements.define('time-r', Timer);
-    customElements.define('web-share', WebShare);
-    customElements.define('tool-tip', Tooltip);
-    customElements.define('snack-close', SnackbarClose);
-    customElements.define('gallery-overlay', Gallery);
-    customElements.define('image-carousel', CarouselList);
-    new A();
-    cleanGET();
-    hashCheck();
-}
 async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
     let result;
     let controller = new AbortController();
@@ -93,6 +67,54 @@ function updateHistory(newUrl, title) {
     document.title = title;
     window.history.pushState(title, title, newUrl);
 }
+function submitIntercept(form, callable) {
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        callable();
+        return false;
+    });
+    form.addEventListener('keydown', function (event) {
+        if (event.code === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            callable();
+            return false;
+        }
+        else {
+            return true;
+        }
+    });
+}
+const pageTitle = ' on Simbiat Software';
+const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
+const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}';
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('hashchange', function () { hashCheck(); });
+function init() {
+    new Input();
+    new Textarea();
+    new Form();
+    new Details();
+    new Quotes();
+    new Aside();
+    new Nav();
+    new Headings();
+    customElements.define('back-to-top', BackToTop);
+    customElements.define('time-r', Timer);
+    customElements.define('web-share', WebShare);
+    customElements.define('tool-tip', Tooltip);
+    customElements.define('snack-close', SnackbarClose);
+    customElements.define('gallery-overlay', Gallery);
+    customElements.define('image-carousel', CarouselList);
+    customElements.define('password-show', PasswordShow);
+    customElements.define('password-requirements', PasswordRequirements);
+    customElements.define('password-strength', PasswordStrength);
+    new A();
+    cleanGET();
+    hashCheck();
+    router();
+}
 function cleanGET() {
     let url = new URL(document.location.href);
     let params = new URLSearchParams(url.search);
@@ -125,516 +147,35 @@ function hashCheck() {
         Gallery.close();
     }
 }
-function bicInit() {
-    let bicKey = document.getElementById('bic_key');
-    let accKey = document.getElementById('account_key');
-    if (bicKey && accKey) {
-        bicKey.addEventListener('input', bicCalc);
-        accKey.addEventListener('input', bicCalc);
-    }
-    let refresh = document.getElementById('bicRefresh');
-    if (refresh) {
-        refresh.addEventListener('click', bicRefresh);
-    }
-}
-function bicCalc() {
-    let form = document.getElementById('bic_keying');
-    let formData = new FormData(form);
-    let result = document.getElementById('accCheckResult');
-    let bicKey = String(formData.get('bic_key'));
-    let accKey = String(formData.get('account_key'));
-    let bicKeySample = document.getElementById('bic_key_sample');
-    let accKeySample = document.getElementById('account_key_sample');
-    result.classList.remove(...result.classList);
-    if (/^\d{9}$/u.exec(bicKey) === null) {
-        result.classList.add('failure');
-        result.innerHTML = 'Неверный формат БИКа';
-        bicStyle(bicKeySample, 'warning', 'БИК');
-        return;
-    }
-    else {
-        bicStyle(bicKeySample, 'success', bicKey);
-    }
-    if (/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u.exec(accKey) === null) {
-        result.classList.add('failure');
-        result.innerHTML = 'Неверный формат счёта';
-        bicStyle(accKeySample, 'warning', 'СЧЁТ');
-        return;
-    }
-    else {
-        bicStyle(accKeySample, 'success', accKey);
-    }
-    updateHistory(location.protocol + '//' + location.host + '/bictracker/keying/' + bicKey + '/' + accKey + '/', 'Ключевание счёта ' + accKey + pageTitle);
-    result.classList.add('warning');
-    result.innerHTML = 'Проверяем...';
-    let spinner = document.getElementById('bic_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/bictracker/keying/', formData, 'json', 'POST', 60000, true).then(data => {
-        result.classList.remove(...result.classList);
-        if (data.data === true) {
-            result.classList.add('success');
-            result.innerHTML = 'Правильное ключевание';
-        }
-        else {
-            result.classList.add('failure');
-            if (data.data === false) {
-                result.innerHTML = 'Непредвиденная ошибка';
-            }
-            else {
-                result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data.data + ' (' + accKey.replace(/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u, '$1<span class="success">' + data.data + '</span>$3') + ')';
-            }
-        }
-        spinner.classList.add('hidden');
-    });
-    return;
-}
-function bicStyle(element, newClass, text = '') {
-    element.classList.remove(...element.classList);
-    element.classList.add(newClass);
-    element.innerHTML = text;
-}
-function bicRefresh(event) {
-    let refresh = event.target;
-    if (refresh.classList.contains('spin')) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
-    else {
-        refresh.classList.add('spin');
-        setTimeout(async function () {
-            await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
-                if (data.data === true) {
-                    new Snackbar('Библиотека БИК обновлена', 'success');
-                    refresh.classList.remove('spin');
+function router() {
+    let url = new URL(document.location.href);
+    let path = url.pathname.replace(/(\/)(.*)(\/)/ui, '$2').toLowerCase().split('/');
+    if (path[0]) {
+        if (path[0] === 'bictracker') {
+            if (path[1]) {
+                if (path[1] === 'keying') {
+                    new bicKeying();
                 }
-                else if (typeof data.data === 'number') {
-                    let timestamp = new Date(data.data * 1000);
-                    let dateTime = document.getElementsByClassName('bic_date')[0];
-                    dateTime.setAttribute('datetime', timestamp.toISOString());
-                    dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
-                    new Snackbar('Применено обновление за ' + dateTime.innerHTML, 'success');
-                    refresh.classList.remove('spin');
-                    bicRefresh(event);
+                else if (path[1] === 'search') {
+                    new bicRefresh();
                 }
-                else {
-                    new Snackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
-                    refresh.classList.remove('spin');
+            }
+        }
+        else if (path[0] === 'fftracker') {
+            if (path[1] && path[1] === 'track') {
+                new ffTrack();
+            }
+        }
+        else if (path[0] === 'uc') {
+            if (path[1]) {
+                if (path[1] === 'emails') {
+                    new Emails();
                 }
-            });
-        }, 500);
-    }
-}
-function fftrackerInit() {
-    let select = document.getElementById('ff_track_type');
-    if (select) {
-        select.addEventListener('change', function (event) {
-            ffTrackTypeChange(event.target);
-        });
-    }
-    submitIntercept('ff_track_register');
-}
-function ffTrackAdd() {
-    let idInput = document.getElementById('ff_track_id');
-    let select = document.getElementById('ff_track_type');
-    let selectedOption = select.selectedOptions[0];
-    let selectText;
-    if (selectedOption) {
-        selectText = selectedOption.text;
-    }
-    else {
-        selectText = 'Character';
-    }
-    if (idInput && select) {
-        let spinner = document.getElementById('ff_track_spinner');
-        spinner.classList.remove('hidden');
-        ajax(location.protocol + '//' + location.host + '/api/fftracker/' + select.value + '/' + idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
-            if (data.data === true) {
-                new Snackbar(selectText + ' with ID ' + idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + select.value + '/' + idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
-            }
-            else if (data === '404') {
-                new Snackbar(selectText + ' with ID ' + idInput.value + ' was not found on Lodestone.', 'failure', 10000);
-            }
-            else {
-                new Snackbar(data.reason, 'failure', 10000);
-            }
-            spinner.classList.add('hidden');
-        });
-    }
-}
-function ffTrackTypeChange(target) {
-    let idInput = document.getElementById('ff_track_id');
-    let pattern = '^\\d+$';
-    switch (target.value) {
-        case 'character':
-        case 'freecompany':
-        case 'linkshell':
-            pattern = '^\\d{1,20}$';
-            break;
-        case 'pvpteam':
-        case 'crossworld_linkshell':
-            pattern = '^[0-9a-z]{40}$';
-            break;
-    }
-    idInput.setAttribute('pattern', pattern);
-}
-const submitFunctions = {
-    'signinup': 'singInUpSubmit',
-    'addMailForm': 'addMail',
-    'ff_track_register': 'ffTrackAdd',
-    'password_change': 'passwordChange',
-};
-function submitIntercept(formId) {
-    let form = document.getElementById(formId);
-    if (form && submitFunctions[formId]) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            window[submitFunctions[formId]]();
-            return false;
-        });
-        form.onkeydown = function (event) {
-            if (event.code === 'Enter') {
-                event.preventDefault();
-                event.stopPropagation();
-                window[submitFunctions[formId]]();
-                return false;
-            }
-            return true;
-        };
-    }
-}
-function ucInit() {
-    document.querySelectorAll('.showpassword').forEach(item => {
-        item.addEventListener('click', showPassToggle);
-    });
-    document.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
-        item.addEventListener('change', loginRadioCheck);
-    });
-    loginRadioCheck();
-    submitIntercept('signinup');
-    submitIntercept('addMailForm');
-    submitIntercept('password_change');
-    document.querySelectorAll('.mail_activation').forEach(item => {
-        item.addEventListener('click', activationMail);
-    });
-    document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
-        item.addEventListener('click', subscribeMail);
-    });
-    document.querySelectorAll('.mail_deletion').forEach(item => {
-        item.addEventListener('click', deleteMail);
-    });
-    let new_password = document.getElementById('new_password');
-    if (new_password) {
-        ['focus', 'change', 'input',].forEach(function (e) {
-            new_password.addEventListener(e, passwordStrengthOnEvent);
-        });
-    }
-}
-function addMail() {
-    let form = document.getElementById('addMailForm');
-    let formData = new FormData(form);
-    if (!formData.get('email')) {
-        new Snackbar('Please, enter a valid email address', 'failure');
-        return false;
-    }
-    let email = String(formData.get('email'));
-    let spinner = document.getElementById('addMail_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
-        if (data.data === true) {
-            let row = document.getElementById('emailsList').insertRow();
-            row.classList.add('middle');
-            let cell = row.insertCell();
-            cell.innerHTML = email;
-            cell = row.insertCell();
-            cell.innerHTML = '<input type="button" value="Confirm" class="mail_activation" data-email="' + email + '" aria-invalid="false" placeholder="Confirm"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating ' + email + '..." data-tooltip="Activating ' + email + '...">';
-            cell = row.insertCell();
-            cell.innerHTML = 'Confirm address to change setting';
-            cell.classList.add('warning');
-            cell = row.insertCell();
-            cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
-            let input = cell.getElementsByTagName('input')[0];
-            new Input().init(input);
-            blockDeleteMail();
-            form.reset();
-            new Snackbar('Mail added', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function deleteMail(event) {
-    let button = event.target;
-    let table = button.parentElement.parentElement.parentElement;
-    let tr = button.parentElement.parentElement.rowIndex - 1;
-    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
-    let formData = new FormData();
-    formData.set('email', button.getAttribute('data-email') ?? '');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
-        if (data.data === true) {
-            table.deleteRow(tr);
-            blockDeleteMail();
-            new Snackbar('Mail removed', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function blockDeleteMail() {
-    let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
-    document.querySelectorAll('.mail_deletion').forEach(item => {
-        if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
-            item.disabled = confirmedMail < 2;
-        }
-        else {
-            item.disabled = false;
-        }
-    });
-}
-function subscribeMail(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    let checkbox = event.target;
-    let verb;
-    if (checkbox.checked) {
-        verb = 'subscribe';
-    }
-    else {
-        verb = 'unsubscribe';
-    }
-    let label = checkbox.parentElement.getElementsByTagName('label')[0];
-    let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
-    let formData = new FormData();
-    formData.set('verb', verb);
-    formData.set('email', checkbox.getAttribute('data-email') ?? '');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/' + verb + '/', formData, 'json', 'PATCH', 60000, true).then(data => {
-        if (data.data === true) {
-            if (checkbox.checked) {
-                checkbox.checked = false;
-                label.innerText = 'Subscribe';
-                new Snackbar('Email unsubscribed', 'success');
-            }
-            else {
-                checkbox.checked = true;
-                label.innerText = 'Unsubscribe';
-                new Snackbar('Email subscribed', 'success');
+                else if (path[1] === 'password') {
+                    new PasswordChange();
+                }
             }
         }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function activationMail(event) {
-    let button = event.target;
-    let spinner = button.parentElement.getElementsByClassName('spinner')[0];
-    let formData = new FormData();
-    formData.set('verb', 'activate');
-    formData.set('email', button.getAttribute('data-email') ?? '');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
-        if (data.data === true) {
-            new Snackbar('Activation email sent', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function singInUpSubmit() {
-    let formData = new FormData(document.getElementById('signinup'));
-    if (!formData.get('signinup[type]')) {
-        formData.set('signinup[type]', 'logout');
-    }
-    let spinner = document.getElementById('singinup_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
-        if (data.data === true) {
-            if (formData.get('signinup[type]') === 'remind') {
-                new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
-            }
-            else {
-                location.reload();
-            }
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-function passwordChange() {
-    let formData = new FormData(document.getElementById('password_change'));
-    let spinner = document.getElementById('pw_change_spinner');
-    spinner.classList.remove('hidden');
-    ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
-        if (data.data === true) {
-            new Snackbar('Password changed', 'success');
-        }
-        else {
-            new Snackbar(data.reason, 'failure', 10000);
-        }
-        spinner.classList.add('hidden');
-    });
-}
-const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
-const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}';
-function showPassToggle(event) {
-    event.preventDefault();
-    let eyeIcon = event.target;
-    let passField = eyeIcon.parentElement.getElementsByTagName('input').item(0);
-    if (passField.type === 'password') {
-        passField.type = 'text';
-        eyeIcon.title = 'Hide password';
-    }
-    else {
-        passField.type = 'password';
-        eyeIcon.title = 'Show password';
-    }
-}
-function passwordStrengthOnEvent(event) {
-    let strengthField = document.querySelectorAll('.password_strength').item(0);
-    let strength = passwordStrength(event.target.value);
-    strengthField.innerHTML = strength;
-    strengthField.classList.remove('password_weak', 'password_medium', 'password_strong', 'password_very_strong');
-    if (strength === 'very strong') {
-        strengthField.classList.add('password_very_strong');
-    }
-    else {
-        strengthField.classList.add('password_' + strength);
-    }
-}
-function passwordStrength(password) {
-    let points = 0;
-    if (/.{8,}/u.test(password)) {
-        points++;
-    }
-    if (/.{16,}/u.test(password)) {
-        points++;
-    }
-    if (/.{32,}/u.test(password)) {
-        points++;
-    }
-    if (/.{64,}/u.test(password)) {
-        points++;
-    }
-    if (/\p{Ll}/u.test(password)) {
-        points++;
-    }
-    if (/\p{Lu}/u.test(password)) {
-        points++;
-    }
-    if (/\p{Lo}/u.test(password)) {
-        points++;
-    }
-    if (/\p{N}/u.test(password)) {
-        points++;
-    }
-    if (/[\p{P}\p{S}]/u.test(password)) {
-        points++;
-    }
-    if (/(.)\1{2,}/u.test(password)) {
-        points--;
-    }
-    if (points <= 2) {
-        return 'weak';
-    }
-    else if (2 < points && points < 5) {
-        return 'medium';
-    }
-    else if (points === 5) {
-        return 'strong';
-    }
-    else {
-        return 'very strong';
-    }
-}
-function loginRadioCheck() {
-    let existUser = document.getElementById('radio_existuser');
-    let newUser = document.getElementById('radio_newuser');
-    let forget = document.getElementById('radio_forget');
-    let login = document.getElementById('signinup_email');
-    let loginLabel;
-    if (login && login.labels) {
-        loginLabel = login.labels[0];
-    }
-    let password = document.getElementById('signinup_password');
-    let button = document.getElementById('signinup_submit');
-    let rememberme = document.getElementById('rememberme');
-    let username = document.getElementById('signinup_username');
-    if (existUser && existUser.checked) {
-        password.required = true;
-        password.setAttribute('autocomplete', 'current-password');
-        login.setAttribute('type', 'email');
-        login.setAttribute('autocomplete', 'email');
-        login.setAttribute('pattern', '^' + emailRegex + '$');
-        password.setAttribute('minlength', '8');
-        button.value = 'Sign in';
-        ['focus', 'change', 'input',].forEach(function (e) {
-            password.removeEventListener(e, passwordStrengthOnEvent);
-        });
-        password.parentElement.classList.remove('hidden');
-        rememberme.parentElement.classList.remove('hidden');
-        document.getElementById('password_req').classList.add('hidden');
-        document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
-        username.parentElement.classList.add('hidden');
-        username.required = false;
-    }
-    if (newUser && newUser.checked) {
-        password.required = true;
-        password.setAttribute('autocomplete', 'new-password');
-        login.setAttribute('type', 'email');
-        login.setAttribute('autocomplete', 'email');
-        login.setAttribute('pattern', '^' + emailRegex + '$');
-        password.setAttribute('minlength', '8');
-        button.value = 'Join';
-        ['focus', 'change', 'input',].forEach(function (e) {
-            password.addEventListener(e, passwordStrengthOnEvent);
-        });
-        password.parentElement.classList.remove('hidden');
-        rememberme.parentElement.classList.remove('hidden');
-        document.getElementById('password_req').classList.remove('hidden');
-        document.querySelectorAll('.pass_str_div').item(0).classList.remove('hidden');
-        login.placeholder = 'Email';
-        if (loginLabel) {
-            loginLabel.innerHTML = 'Email';
-        }
-        username.parentElement.classList.remove('hidden');
-        username.required = true;
-    }
-    if (forget && forget.checked) {
-        password.required = false;
-        password.removeAttribute('autocomplete');
-        login.setAttribute('type', 'text');
-        login.setAttribute('autocomplete', 'username');
-        login.setAttribute('pattern', '^(' + userRegex + ')|(' + emailRegex + ')$');
-        password.removeAttribute('minlength');
-        button.value = 'Remind';
-        ['focus', 'change', 'input',].forEach(function (e) {
-            password.removeEventListener(e, passwordStrengthOnEvent);
-        });
-        password.parentElement.classList.add('hidden');
-        rememberme.parentElement.classList.add('hidden');
-        document.getElementById('password_req').classList.add('hidden');
-        document.querySelectorAll('.pass_str_div').item(0).classList.add('hidden');
-        rememberme.checked = false;
-        login.placeholder = 'Email or name';
-        if (loginLabel) {
-            loginLabel.innerHTML = 'Email or name';
-        }
-        username.parentElement.classList.add('hidden');
-        username.required = false;
-    }
-    if (password) {
-        new Input().ariaNation(password);
     }
 }
 class BackToTop extends HTMLElement {
@@ -900,6 +441,9 @@ class Snackbar {
             snack.setAttribute('role', 'alert');
             snack.classList.add('snackbar');
             snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            snack.querySelectorAll('a[target="_blank"]').forEach(anchor => {
+                new A().newTabStyle(anchor);
+            });
             if (color) {
                 snack.classList.add(color);
             }
@@ -926,7 +470,11 @@ class SnackbarClose extends HTMLElement {
     close() {
         this.snack.classList.remove('fadeIn');
         this.snack.classList.add('fadeOut');
-        this.snack.addEventListener('animationend', () => { this.snackbar.removeChild(this.snack); });
+        this.snack.addEventListener('animationend', () => {
+            if (this.snack) {
+                this.snackbar.removeChild(this.snack);
+            }
+        });
     }
 }
 class Timer extends HTMLElement {
@@ -965,7 +513,7 @@ class Tooltip extends HTMLElement {
             item.setAttribute('tabindex', '0');
         });
         document.addEventListener('mousemove', this.onMouseMove.bind(this));
-        document.querySelectorAll('[data-tooltip]:not([Data-Attribute=""])').forEach(item => {
+        document.querySelectorAll('[data-tooltip]:not([data-tooltip=""])').forEach(item => {
             item.addEventListener('focus', this.onFocus.bind(this));
         });
         document.querySelectorAll(':not([data-tooltip])').forEach(item => {
@@ -997,8 +545,9 @@ class Tooltip extends HTMLElement {
     }
     update(element) {
         let parent = element.parentElement;
-        if (element.hasAttribute('data-tooltip') || parent.hasAttribute('data-tooltip')) {
-            this.setAttribute('data-tooltip', element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? '');
+        let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
+        if (tooltip) {
+            this.setAttribute('data-tooltip', tooltip);
         }
         else {
             this.removeAttribute('data-tooltip');
@@ -1008,14 +557,12 @@ class Tooltip extends HTMLElement {
 class WebShare extends HTMLElement {
     constructor() {
         super();
-        if (this) {
-            if (navigator.share !== undefined) {
-                this.classList.remove('hidden');
-                this.addEventListener('click', this.share);
-            }
-            else {
-                this.classList.add('hidden');
-            }
+        if (navigator.share !== undefined) {
+            this.classList.remove('hidden');
+            this.addEventListener('click', this.share);
+        }
+        else {
+            this.classList.add('hidden');
         }
     }
     share() {
@@ -1033,16 +580,20 @@ class A {
             return A._instance;
         }
         document.querySelectorAll('a[target="_blank"]').forEach(anchor => {
-            if (!anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('galleryZoom') && !anchor.classList.contains('footerLink')) {
-                anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
-            }
+            this.newTabStyle(anchor);
         });
         A._instance = this;
+    }
+    newTabStyle(anchor) {
+        if (!anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('galleryZoom') && !anchor.classList.contains('footerLink')) {
+            anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+        }
     }
 }
 class Aside {
     static _instance = null;
     sidebarDiv = null;
+    loginForm = null;
     constructor() {
         if (Aside._instance) {
             return Aside._instance;
@@ -1050,7 +601,104 @@ class Aside {
         this.sidebarDiv = document.getElementById('sidebar');
         document.getElementById('showSidebar').addEventListener('click', () => { this.sidebarDiv.classList.add('shown'); });
         document.getElementById('hideSidebar').addEventListener('click', () => { this.sidebarDiv.classList.remove('shown'); });
+        this.loginForm = document.getElementById('signinup');
+        if (this.loginForm) {
+            this.loginForm.querySelectorAll('#radio_signinup input[type=radio]').forEach(item => {
+                item.addEventListener('change', this.loginRadioCheck);
+            });
+            this.loginRadioCheck();
+            submitIntercept(this.loginForm, this.singInUpSubmit.bind(this));
+        }
         Aside._instance = this;
+    }
+    singInUpSubmit() {
+        if (this.loginForm) {
+            let formData = new FormData(this.loginForm);
+            if (!formData.get('signinup[type]')) {
+                formData.set('signinup[type]', 'logout');
+            }
+            let spinner = document.getElementById('signinup_spinner');
+            spinner.classList.remove('hidden');
+            ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
+                if (data.data === true) {
+                    if (formData.get('signinup[type]') === 'remind') {
+                        new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+                    }
+                    else {
+                        location.reload();
+                    }
+                }
+                else {
+                    new Snackbar(data.reason, 'failure', 10000);
+                }
+                spinner.classList.add('hidden');
+            });
+        }
+    }
+    loginRadioCheck() {
+        let existUser = document.getElementById('radio_existuser');
+        let newUser = document.getElementById('radio_newuser');
+        let forget = document.getElementById('radio_forget');
+        let login = document.getElementById('signinup_email');
+        let loginLabel;
+        if (login && login.labels) {
+            loginLabel = login.labels[0];
+        }
+        let password = document.getElementById('signinup_password');
+        let button = document.getElementById('signinup_submit');
+        let rememberme = document.getElementById('rememberme');
+        let username = document.getElementById('signinup_username');
+        if (existUser && existUser.checked) {
+            password.required = true;
+            password.setAttribute('autocomplete', 'current-password');
+            login.setAttribute('type', 'email');
+            login.setAttribute('autocomplete', 'email');
+            login.setAttribute('pattern', '^' + emailRegex + '$');
+            password.setAttribute('minlength', '8');
+            button.value = 'Sign in';
+            password.parentElement.classList.remove('hidden');
+            rememberme.parentElement.classList.remove('hidden');
+            username.parentElement.classList.add('hidden');
+            username.required = false;
+        }
+        if (newUser && newUser.checked) {
+            password.required = true;
+            password.setAttribute('autocomplete', 'new-password');
+            login.setAttribute('type', 'email');
+            login.setAttribute('autocomplete', 'email');
+            login.setAttribute('pattern', '^' + emailRegex + '$');
+            password.setAttribute('minlength', '8');
+            button.value = 'Join';
+            password.parentElement.classList.remove('hidden');
+            rememberme.parentElement.classList.remove('hidden');
+            login.placeholder = 'Email';
+            if (loginLabel) {
+                loginLabel.innerHTML = 'Email';
+            }
+            username.parentElement.classList.remove('hidden');
+            username.required = true;
+        }
+        if (forget && forget.checked) {
+            password.required = false;
+            password.removeAttribute('autocomplete');
+            login.setAttribute('type', 'text');
+            login.setAttribute('autocomplete', 'username');
+            login.setAttribute('pattern', '^(' + userRegex + ')|(' + emailRegex + ')$');
+            password.removeAttribute('minlength');
+            button.value = 'Remind';
+            password.parentElement.classList.add('hidden');
+            rememberme.parentElement.classList.add('hidden');
+            rememberme.checked = false;
+            login.placeholder = 'Email or name';
+            if (loginLabel) {
+                loginLabel.innerHTML = 'Email or name';
+            }
+            username.parentElement.classList.add('hidden');
+            username.required = false;
+        }
+        if (password) {
+            new Input().ariaNation(password);
+        }
     }
 }
 class Details {
@@ -1368,6 +1016,460 @@ class Textarea {
             }
         });
         Textarea._instance = this;
+    }
+}
+class bicKeying {
+    constructor() {
+        document.getElementById('bic_key').addEventListener('input', () => { this.calc(); });
+        document.getElementById('account_key').addEventListener('input', () => { this.calc(); });
+    }
+    calc() {
+        let form = document.getElementById('bic_keying');
+        let formData = new FormData(form);
+        let result = document.getElementById('accCheckResult');
+        let bicKey = String(formData.get('bic_key'));
+        let accKey = String(formData.get('account_key'));
+        let bicKeySample = document.getElementById('bic_key_sample');
+        let accKeySample = document.getElementById('account_key_sample');
+        result.classList.remove(...result.classList);
+        if (/^\d{9}$/u.exec(bicKey) === null) {
+            result.classList.add('failure');
+            result.innerHTML = 'Неверный формат БИКа';
+            this.styleBic(bicKeySample, 'warning', 'БИК');
+            return;
+        }
+        else {
+            this.styleBic(bicKeySample, 'success', bicKey);
+        }
+        if (/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u.exec(accKey) === null) {
+            result.classList.add('failure');
+            result.innerHTML = 'Неверный формат счёта';
+            this.styleBic(accKeySample, 'warning', 'СЧЁТ');
+            return;
+        }
+        else {
+            this.styleBic(accKeySample, 'success', accKey);
+        }
+        updateHistory(location.protocol + '//' + location.host + '/bictracker/keying/' + bicKey + '/' + accKey + '/', 'Ключевание счёта ' + accKey + pageTitle);
+        result.classList.add('warning');
+        result.innerHTML = 'Проверяем...';
+        let spinner = document.getElementById('bic_spinner');
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/bictracker/keying/', formData, 'json', 'POST', 60000, true).then(data => {
+            result.classList.remove(...result.classList);
+            if (data.data === true) {
+                result.classList.add('success');
+                result.innerHTML = 'Правильное ключевание';
+            }
+            else {
+                result.classList.add('failure');
+                if (data.data === false) {
+                    result.innerHTML = 'Непредвиденная ошибка';
+                }
+                else {
+                    result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data.data + ' (' + accKey.replace(/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u, '$1<span class="success">' + data.data + '</span>$3') + ')';
+                }
+            }
+            spinner.classList.add('hidden');
+        });
+        return;
+    }
+    styleBic(element, newClass, text = '') {
+        element.classList.remove(...element.classList);
+        element.classList.add(newClass);
+        element.innerHTML = text;
+    }
+}
+class bicRefresh {
+    refreshButton;
+    constructor() {
+        this.refreshButton = document.getElementById('bicRefresh');
+        this.refreshButton.addEventListener('click', (event) => { this.refresh(event); });
+    }
+    refresh(event) {
+        if (this.refreshButton.classList.contains('spin')) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        else {
+            this.refreshButton.classList.add('spin');
+            setTimeout(async () => {
+                await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
+                    if (data.data === true) {
+                        new Snackbar('Библиотека БИК обновлена', 'success');
+                        this.refreshButton.classList.remove('spin');
+                    }
+                    else if (typeof data.data === 'number') {
+                        let timestamp = new Date(data.data * 1000);
+                        let dateTime = document.getElementsByClassName('bic_date')[0];
+                        dateTime.setAttribute('datetime', timestamp.toISOString());
+                        dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
+                        new Snackbar('Применено обновление за ' + dateTime.innerHTML, 'success');
+                        this.refreshButton.classList.remove('spin');
+                        this.refresh(event);
+                    }
+                    else {
+                        new Snackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                        this.refreshButton.classList.remove('spin');
+                    }
+                });
+            }, 500);
+        }
+    }
+}
+class ffTrack {
+    select;
+    idInput;
+    constructor() {
+        this.idInput = document.getElementById('ff_track_id');
+        this.select = document.getElementById('ff_track_type');
+        this.select.addEventListener('change', () => {
+            this.typeChange();
+        });
+        submitIntercept(document.getElementById('ff_track_register'), this.add.bind(this));
+    }
+    add() {
+        let selectedOption = this.select.selectedOptions[0];
+        let selectText;
+        if (selectedOption) {
+            selectText = selectedOption.text;
+        }
+        else {
+            selectText = 'Character';
+        }
+        if (this.idInput && this.select) {
+            let spinner = document.getElementById('ff_track_spinner');
+            spinner.classList.remove('hidden');
+            ajax(location.protocol + '//' + location.host + '/api/fftracker/' + this.select.value + '/' + this.idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
+                if (data.data === true) {
+                    new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + this.select.value + '/' + this.idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
+                }
+                else if (data === '404') {
+                    new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was not found on Lodestone.', 'failure', 10000);
+                }
+                else {
+                    if (data.reason.match(/^ID `.*` is already registered$/ui)) {
+                        new Snackbar(data.reason + '. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + this.select.value + '/' + this.idInput.value + '/' + '" target="_blank">here</a>.', 'warning', 0);
+                    }
+                    else {
+                        new Snackbar(data.reason, 'failure', 10000);
+                    }
+                }
+                spinner.classList.add('hidden');
+            });
+        }
+    }
+    typeChange() {
+        let pattern = '^\\d{1,20}$';
+        if (this.select.value === 'pvpteam' || this.select.value === 'crossworld_linkshell') {
+            pattern = '^[0-9a-z]{40}$';
+        }
+        this.idInput.setAttribute('pattern', pattern);
+    }
+}
+class PasswordShow extends HTMLElement {
+    passwordInput;
+    constructor() {
+        super();
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.addEventListener('click', this.toggle);
+    }
+    toggle(event) {
+        event.preventDefault();
+        if (this.passwordInput.type === 'password') {
+            this.passwordInput.type = 'text';
+            this.title = 'Hide password';
+        }
+        else {
+            this.passwordInput.type = 'password';
+            this.title = 'Show password';
+        }
+    }
+}
+class Emails {
+    addMailForm = null;
+    constructor() {
+        this.addMailForm = document.getElementById('addMailForm');
+        if (this.addMailForm) {
+            submitIntercept(this.addMailForm, this.add.bind(this));
+            document.querySelectorAll('.mail_activation').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    this.activate(event.target);
+                });
+            });
+            document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    this.subscribe(event);
+                });
+            });
+            document.querySelectorAll('.mail_deletion').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    this.delete(event.target);
+                });
+            });
+        }
+    }
+    add() {
+        let formData = new FormData(this.addMailForm);
+        if (!formData.get('email')) {
+            new Snackbar('Please, enter a valid email address', 'failure');
+            return false;
+        }
+        let email = String(formData.get('email'));
+        let spinner = document.getElementById('addMail_spinner');
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
+            if (data.data === true) {
+                let row = document.getElementById('emailsList').insertRow();
+                row.classList.add('middle');
+                let cell = row.insertCell();
+                cell.innerHTML = email;
+                cell = row.insertCell();
+                cell.innerHTML = '<input type="button" value="Confirm" class="mail_activation" data-email="' + email + '" aria-invalid="false" placeholder="Confirm"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating ' + email + '..." data-tooltip="Activating ' + email + '...">';
+                cell = row.insertCell();
+                cell.innerHTML = 'Confirm address to change setting';
+                cell.classList.add('warning');
+                cell = row.insertCell();
+                cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
+                let input = cell.getElementsByTagName('input')[0];
+                new Input().init(input);
+                this.blockDelete();
+                this.addMailForm.reset();
+                new Snackbar(email + ' added', 'success');
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+    delete(button) {
+        let table = button.parentElement.parentElement.parentElement;
+        let tr = button.parentElement.parentElement.rowIndex - 1;
+        let spinner = button.parentElement.getElementsByClassName('spinner')[0];
+        let formData = new FormData();
+        let email = button.getAttribute('data-email') ?? '';
+        formData.set('email', email);
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
+            if (data.data === true) {
+                table.deleteRow(tr);
+                this.blockDelete();
+                new Snackbar(email + ' removed', 'success');
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+    blockDelete() {
+        let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
+        document.querySelectorAll('.mail_deletion').forEach(item => {
+            if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
+                item.disabled = confirmedMail < 2;
+            }
+            else {
+                item.disabled = false;
+            }
+        });
+    }
+    subscribe(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        let checkbox = event.target;
+        let verb;
+        if (checkbox.checked) {
+            verb = 'subscribe';
+        }
+        else {
+            verb = 'unsubscribe';
+        }
+        let label = checkbox.parentElement.getElementsByTagName('label')[0];
+        let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
+        let email = checkbox.getAttribute('data-email') ?? '';
+        let formData = new FormData();
+        formData.set('verb', verb);
+        formData.set('email', email);
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/uc/emails/' + verb + '/', formData, 'json', 'PATCH', 60000, true).then(data => {
+            if (data.data === true) {
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    label.innerText = 'Subscribe';
+                    new Snackbar(email + ' unsubscribed', 'success');
+                }
+                else {
+                    checkbox.checked = true;
+                    label.innerText = 'Unsubscribe';
+                    new Snackbar(email + ' subscribed', 'success');
+                }
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+    activate(button) {
+        let spinner = button.parentElement.getElementsByClassName('spinner')[0];
+        let email = button.getAttribute('data-email') ?? '';
+        let formData = new FormData();
+        formData.set('verb', 'activate');
+        formData.set('email', email);
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
+            if (data.data === true) {
+                new Snackbar('Activation email sent to ' + email, 'success');
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+}
+class PasswordChange {
+    form = null;
+    constructor() {
+        this.form = document.getElementById('password_change');
+        if (this.form) {
+            submitIntercept(this.form, this.change.bind(this));
+        }
+    }
+    change() {
+        let formData = new FormData(this.form);
+        let spinner = document.getElementById('pw_change_spinner');
+        spinner.classList.remove('hidden');
+        ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
+            if (data.data === true) {
+                new Snackbar('Password changed', 'success');
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+}
+class PasswordStrength extends HTMLElement {
+    passwordInput;
+    strengthSpan;
+    constructor() {
+        super();
+        this.classList.add('hidden');
+        this.innerHTML = 'New password strength: <span class="password_strength">weak</span>';
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.strengthSpan = this.getElementsByTagName('span')[0];
+        this.passwordInput.addEventListener('focus', this.show.bind(this));
+        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
+        ['focus', 'change', 'input',].forEach((eventType) => {
+            this.passwordInput.addEventListener(eventType, this.calculate.bind(this));
+        });
+    }
+    calculate() {
+        let password = this.passwordInput.value;
+        let points = 0;
+        if (/.{8,}/u.test(password)) {
+            points++;
+        }
+        if (/.{16,}/u.test(password)) {
+            points++;
+        }
+        if (/.{32,}/u.test(password)) {
+            points++;
+        }
+        if (/.{64,}/u.test(password)) {
+            points++;
+        }
+        if (/\p{Ll}/u.test(password)) {
+            points++;
+        }
+        if (/\p{Lu}/u.test(password)) {
+            points++;
+        }
+        if (/\p{Lo}/u.test(password)) {
+            points++;
+        }
+        if (/\p{N}/u.test(password)) {
+            points++;
+        }
+        if (/[\p{P}\p{S}]/u.test(password)) {
+            points++;
+        }
+        if (/(.)\1{2,}/u.test(password)) {
+            points--;
+        }
+        let strength = 'weak';
+        if (points <= 2) {
+            strength = 'weak';
+        }
+        else if (2 < points && points < 5) {
+            strength = 'medium';
+        }
+        else if (points === 5) {
+            strength = 'strong';
+        }
+        else {
+            strength = 'very strong';
+        }
+        this.strengthSpan.innerHTML = strength;
+        this.strengthSpan.classList.remove('password_weak', 'password_medium', 'password_strong', 'password_very_strong');
+        if (strength === 'very strong') {
+            this.strengthSpan.classList.add('password_very_strong');
+        }
+        else {
+            this.strengthSpan.classList.add('password_' + strength);
+        }
+        return strength;
+    }
+    show() {
+        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
+        if (autocomplete === 'new-password') {
+            this.classList.remove('hidden');
+        }
+        else {
+            this.classList.add('hidden');
+        }
+    }
+    hide() {
+        this.classList.add('hidden');
+    }
+}
+class PasswordRequirements extends HTMLElement {
+    passwordInput;
+    constructor() {
+        super();
+        this.classList.add('hidden');
+        this.innerHTML = 'Only password requirement: at least 8 symbols';
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.passwordInput.addEventListener('focus', this.show.bind(this));
+        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
+        ['focus', 'change', 'input',].forEach((eventType) => {
+            this.passwordInput.addEventListener(eventType, this.validate.bind(this));
+        });
+    }
+    validate() {
+        if (this.passwordInput.validity.valid) {
+            this.classList.remove('error');
+            this.classList.add('success');
+        }
+        else {
+            this.classList.add('error');
+            this.classList.remove('success');
+        }
+    }
+    show() {
+        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
+        if (autocomplete === 'new-password') {
+            this.classList.remove('hidden');
+        }
+        else {
+            this.classList.add('hidden');
+        }
+    }
+    hide() {
+        this.classList.add('hidden');
     }
 }
 //# sourceMappingURL=main.js.map

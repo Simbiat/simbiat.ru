@@ -1,35 +1,14 @@
-declare const pageTitle = " on Simbiat Software";
-declare function init(): void;
 declare function ajax(url: string, formData?: FormData | null, type?: string, method?: string, timeout?: number, skipError?: boolean): Promise<any>;
 declare function getMeta(metaName: string): string | null;
 declare function updateHistory(newUrl: string, title: string): void;
-declare function cleanGET(): void;
-declare function hashCheck(): void;
-declare function bicInit(): void;
-declare function bicCalc(): void | boolean;
-declare function bicStyle(element: HTMLSpanElement, newClass: string, text?: string): void;
-declare function bicRefresh(event: Event): void;
-declare function fftrackerInit(): void;
-declare function ffTrackAdd(): void;
-declare function ffTrackTypeChange(target: HTMLSelectElement): void;
-declare const submitFunctions: {
-    [key: string]: string;
-};
-declare function submitIntercept(formId: string): void;
-declare function ucInit(): void;
-declare function addMail(): boolean | void;
-declare function deleteMail(event: Event): void;
-declare function blockDeleteMail(): void;
-declare function subscribeMail(event: Event): void;
-declare function activationMail(event: Event): void;
-declare function singInUpSubmit(): void;
-declare function passwordChange(): void;
+declare function submitIntercept(form: HTMLFormElement, callable: Function): void;
+declare const pageTitle = " on Simbiat Software";
 declare const emailRegex = "[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*";
 declare const userRegex = "[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}";
-declare function showPassToggle(event: Event): void;
-declare function passwordStrengthOnEvent(event: Event): void;
-declare function passwordStrength(password: string): string;
-declare function loginRadioCheck(): void;
+declare function init(): void;
+declare function cleanGET(): void;
+declare function hashCheck(): void;
+declare function router(): void;
 declare class BackToTop extends HTMLElement {
     private static content;
     private static BTTs;
@@ -106,11 +85,15 @@ declare class WebShare extends HTMLElement {
 declare class A {
     private static _instance;
     constructor();
+    newTabStyle(anchor: HTMLAnchorElement): void;
 }
 declare class Aside {
     private static _instance;
     private sidebarDiv;
+    private readonly loginForm;
     constructor();
+    singInUpSubmit(): void;
+    loginRadioCheck(): void;
 }
 declare class Details {
     static list: HTMLDetailsElement[];
@@ -153,4 +136,55 @@ declare class Quotes {
 declare class Textarea {
     private static _instance;
     constructor();
+}
+declare class bicKeying {
+    constructor();
+    calc(): void | boolean;
+    styleBic(element: HTMLSpanElement, newClass: string, text?: string): void;
+}
+declare class bicRefresh {
+    private refreshButton;
+    constructor();
+    refresh(event: Event): void;
+}
+declare class ffTrack {
+    private readonly select;
+    private readonly idInput;
+    constructor();
+    add(): void;
+    typeChange(): void;
+}
+declare class PasswordShow extends HTMLElement {
+    private passwordInput;
+    constructor();
+    private toggle;
+}
+declare class Emails {
+    private readonly addMailForm;
+    constructor();
+    add(): boolean | void;
+    delete(button: HTMLInputElement): void;
+    blockDelete(): void;
+    subscribe(event: Event): void;
+    activate(button: HTMLInputElement): void;
+}
+declare class PasswordChange {
+    private readonly form;
+    constructor();
+    change(): void;
+}
+declare class PasswordStrength extends HTMLElement {
+    private passwordInput;
+    private strengthSpan;
+    constructor();
+    private calculate;
+    private show;
+    private hide;
+}
+declare class PasswordRequirements extends HTMLElement {
+    private passwordInput;
+    constructor();
+    private validate;
+    private show;
+    private hide;
 }

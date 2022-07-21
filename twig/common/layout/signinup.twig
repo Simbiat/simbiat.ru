@@ -2,7 +2,7 @@
     <div>Hi, {{ session_data.username }}</div>
     <form role="form" id="signinup" name="signinup" autocomplete="on">
         <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout">
-        <img id="singinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Logging out...">
+        <img id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Logging out...">
     </form>
 {% else %}
     <form role="form" id="signinup" name="signinup" autocomplete="on">
@@ -37,17 +37,15 @@
         <div class="float_label_div">
             <input form="signinup" type="password" required aria-required="true" name="signinup[password]" id="signinup_password" placeholder="Password" autocomplete="current-password" inputmode="text" minlength="8" pattern=".{8,}">
             <label for="signinup_password">Password</label>
-            <div class="showpassword"></div>
-            <div id="password_req">Only password requirement: at least 8 symbols</div>
-            <div class="pass_str_div">Password strength:
-                <span class="password_strength">weak</span>
-            </div>
+            <password-show></password-show>
+            <password-requirements></password-requirements>
+            <password-strength></password-strength>
         </div>
         <div class="radio_and_label" id="rememberme_div">
             <input role="checkbox" aria-checked="false" form="signinup" type="checkbox" name="signinup[rememberme]" id="rememberme">
             <label for="rememberme">Remember me</label>
         </div>
         <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Sign in/Join">
-        <img id="singinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Submitting form...">
+        <img id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Submitting form...">
     </form>
 {% endif %}

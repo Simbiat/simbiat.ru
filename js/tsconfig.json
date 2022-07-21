@@ -34,10 +34,11 @@
     },
     //Include only .ts files in the same dir
     "include": [
-        "Common/Init.ts",
-        "Common/Helpers.ts",
+        "Common/*.ts",
         "Common/CustomElements/*/*.ts",
-        "Modules/*.ts"
+        "Pages/bictracker/*.ts",
+        "Pages/fftracker/*.ts",
+        "Pages/usercontrol/*.ts"
     ],
     "exclude": [
         "node_modules"

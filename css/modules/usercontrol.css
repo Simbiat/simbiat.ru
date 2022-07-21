@@ -1,6 +1,6 @@
 /*Style password strength*/
-.pass_str_div {
-    display: none;
+password-strength {
+    display: block;
     color: var(--color-text);
     text-align: left;
 }
@@ -35,9 +35,6 @@
 }
 #password_change>.float_label_div {
     display: block;
-}
-#password_requirement {
-    margin-top: 1rem;
 }
 #password_submit {
     margin-bottom: 1rem;

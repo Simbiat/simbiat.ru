@@ -22,7 +22,8 @@
 #signinup .float_label_div,
 #signinup_email,
 #signinup_username,
-#signinup_password {
+#signinup_password,
+password-requirements {
     /*Width corresponds to characters.
     10 looks the lowest number that makes placeholders more or less readable.
     Longer than 65 characters is unnecessary, since we limit username at 64. 65 is used since with 64 there is a higher chance of truncation*/
@@ -64,7 +65,7 @@
 }
 
 /*Style eye icon*/
-.showpassword {
+password-show {
     color: var(--color-interactive);
     position: absolute;
     top: -0.3rem;
@@ -78,17 +79,13 @@
 }
 
 /*Add eye icon to class for ease of use*/
-#current_password~.showpassword:before,
-#new_password~.showpassword:before,
-#signinup_password~.showpassword:before {
+input~password-show:before {
     content: '\1F441';
     font-size: smaller;
 }
 
 /*Add diagonal line to the eye icon if it's text field*/
-#current_password[type^=text]~.showpassword:after,
-#new_password[type^=text]~.showpassword:after,
-#signinup_password[type^=text]~.showpassword:after {
+input[type^=text]~password-show:after {
     content: '\2571';
     position: absolute;
     left: 0.25rem;
@@ -97,32 +94,13 @@
 }
 
 /*Show eye icon only when field is focused or there is text there*/
-#current_password:focus~.showpassword,
-#current_password:not(:placeholder-shown)~.showpassword,
-#new_password:focus~.showpassword,
-#new_password:not(:placeholder-shown)~.showpassword,
-#signinup_password:focus~.showpassword,
-#signinup_password:not(:placeholder-shown)~.showpassword {
+input:focus~password-show,
+input:not(:placeholder-shown)~password-show {
     display: block;
 }
 
 /*Style text of password requirement*/
-#password_req {
-    display: none;
+password-requirements {
+    margin-top: 1rem;
     text-align: left;
-}
-
-#signinup_password:focus~#password_req,
-#signinup_password:not(:placeholder-shown)~#password_req,
-#signinup_password:focus~.pass_str_div,
-#signinup_password:not(:placeholder-shown)~.pass_str_div {
-    display: block;
-}
-
-#signinup_password:valid~#password_req {
-    color: var(--color-success);
-}
-
-#signinup_password:invalid~#password_req {
-    color: var(--color-failure);
 }
