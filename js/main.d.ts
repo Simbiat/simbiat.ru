@@ -154,11 +154,6 @@ declare class ffTrack {
     add(): void;
     typeChange(): void;
 }
-declare class PasswordShow extends HTMLElement {
-    private passwordInput;
-    constructor();
-    private toggle;
-}
 declare class Emails {
     private readonly addMailForm;
     constructor();
@@ -173,18 +168,23 @@ declare class PasswordChange {
     constructor();
     change(): void;
 }
-declare class PasswordStrength extends HTMLElement {
+declare class PasswordShow extends HTMLElement {
     private passwordInput;
-    private strengthSpan;
     constructor();
-    private calculate;
-    private show;
-    private hide;
+    private toggle;
 }
 declare class PasswordRequirements extends HTMLElement {
     private passwordInput;
     constructor();
     private validate;
+    private show;
+    private hide;
+}
+declare class PasswordStrength extends HTMLElement {
+    private passwordInput;
+    private strengthSpan;
+    constructor();
+    private calculate;
     private show;
     private hide;
 }

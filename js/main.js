@@ -1167,25 +1167,6 @@ class ffTrack {
         this.idInput.setAttribute('pattern', pattern);
     }
 }
-class PasswordShow extends HTMLElement {
-    passwordInput;
-    constructor() {
-        super();
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
-        this.addEventListener('click', this.toggle);
-    }
-    toggle(event) {
-        event.preventDefault();
-        if (this.passwordInput.type === 'password') {
-            this.passwordInput.type = 'text';
-            this.title = 'Hide password';
-        }
-        else {
-            this.passwordInput.type = 'password';
-            this.title = 'Show password';
-        }
-    }
-}
 class Emails {
     addMailForm = null;
     constructor() {
@@ -1352,6 +1333,61 @@ class PasswordChange {
         });
     }
 }
+class PasswordShow extends HTMLElement {
+    passwordInput;
+    constructor() {
+        super();
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.addEventListener('click', this.toggle);
+    }
+    toggle(event) {
+        event.preventDefault();
+        if (this.passwordInput.type === 'password') {
+            this.passwordInput.type = 'text';
+            this.title = 'Hide password';
+        }
+        else {
+            this.passwordInput.type = 'password';
+            this.title = 'Show password';
+        }
+    }
+}
+class PasswordRequirements extends HTMLElement {
+    passwordInput;
+    constructor() {
+        super();
+        this.classList.add('hidden');
+        this.innerHTML = 'Only password requirement: at least 8 symbols';
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.passwordInput.addEventListener('focus', this.show.bind(this));
+        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
+        ['focus', 'change', 'input',].forEach((eventType) => {
+            this.passwordInput.addEventListener(eventType, this.validate.bind(this));
+        });
+    }
+    validate() {
+        if (this.passwordInput.validity.valid) {
+            this.classList.remove('error');
+            this.classList.add('success');
+        }
+        else {
+            this.classList.add('error');
+            this.classList.remove('success');
+        }
+    }
+    show() {
+        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
+        if (autocomplete === 'new-password') {
+            this.classList.remove('hidden');
+        }
+        else {
+            this.classList.add('hidden');
+        }
+    }
+    hide() {
+        this.classList.add('hidden');
+    }
+}
 class PasswordStrength extends HTMLElement {
     passwordInput;
     strengthSpan;
@@ -1422,42 +1458,6 @@ class PasswordStrength extends HTMLElement {
             this.strengthSpan.classList.add('password_' + strength);
         }
         return strength;
-    }
-    show() {
-        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
-        if (autocomplete === 'new-password') {
-            this.classList.remove('hidden');
-        }
-        else {
-            this.classList.add('hidden');
-        }
-    }
-    hide() {
-        this.classList.add('hidden');
-    }
-}
-class PasswordRequirements extends HTMLElement {
-    passwordInput;
-    constructor() {
-        super();
-        this.classList.add('hidden');
-        this.innerHTML = 'Only password requirement: at least 8 symbols';
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
-        this.passwordInput.addEventListener('focus', this.show.bind(this));
-        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
-        ['focus', 'change', 'input',].forEach((eventType) => {
-            this.passwordInput.addEventListener(eventType, this.validate.bind(this));
-        });
-    }
-    validate() {
-        if (this.passwordInput.validity.valid) {
-            this.classList.remove('error');
-            this.classList.add('success');
-        }
-        else {
-            this.classList.add('error');
-            this.classList.remove('success');
-        }
     }
     show() {
         let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
