@@ -18,7 +18,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function __construct(int $sessionLife = 2700)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
-        session_name('__Host-sess_'.preg_replace('/[^a-zA-Z0-9\-_]/', '', $_SERVER['HTTP_HOST'] ?? 'simbiat'));
+        session_name('__Host-sess_'.preg_replace('/[^a-zA-Z\d\-_]/', '', $_SERVER['HTTP_HOST'] ?? 'simbiat'));
         if ($sessionLife < 0) {
             $sessionLife = 2700;
         }
@@ -95,6 +95,13 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $username = $data['UA']['bot'] ?? NULL;
         } else {
             $username = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
+            #Get user's groups
+            $data['groups'] = self::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
+            if (in_array(2, $data['groups'])) {
+                $data['activated'] = false;
+            } else {
+                $data['activated'] = true;
+            }
         }
         #Prepare empty array
         $queries = [];

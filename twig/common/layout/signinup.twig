@@ -1,5 +1,8 @@
 {% if session_data.username %}
-    <div>Hi, {{ session_data.username }}</div>
+    <div>Hi, {{ session_data.username }}!</div>
+    {% if session_data.activated == false %}
+        <div class="warning">Pending <a href="/uc/emails/">activation</a>.</div>
+    {% endif %}
     <form role="form" id="signinup" name="signinup" autocomplete="on">
         <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout">
         <img id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Logging out...">
