@@ -55,6 +55,25 @@ class Emails
                 cell.innerHTML ='<td><input class="mail_deletion" data-email="'+email+'" type="image" src="/img/close.svg" alt="Delete '+email+'" aria-invalid="false" placeholder="image" data-tooltip="Delete '+email+'" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing '+email+'..." data-tooltip="Removing '+email+'...">';
                 let input = cell.getElementsByTagName('input')[0] as HTMLInputElement;
                 new Input().init(input);
+                //Attach listeners
+                row.querySelectorAll('.mail_activation').forEach(item => {
+                    item.addEventListener('click', (event: Event) => {
+                        this.activate(event.target as HTMLInputElement);
+                    });
+                });
+                //Listener for mail subscription checkbox
+                row.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+                    item.addEventListener('click', (event: Event) => {
+                        this.subscribe(event);
+                    });
+                });
+                //Listener for mail activation buttons
+                row.querySelectorAll('.mail_deletion').forEach(item => {
+                    item.addEventListener('click', (event: Event) => {
+                        this.delete(event.target as HTMLInputElement);
+                    });
+                });
+                //Refresh delete buttons' status
                 this.blockDelete();
                 (this.addMailForm as HTMLFormElement).reset();
                 new Snackbar(email+' added', 'success');
@@ -98,6 +117,14 @@ class Emails
                 (item as HTMLInputElement).disabled = confirmedMail < 2;
             } else {
                 (item as HTMLInputElement).disabled = false;
+                //Update tooltips
+                if (item.getAttribute('data-tooltip') && item.getAttribute('data-tooltip') === 'Can\'t delete') {
+                    let email = (((item.parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).getElementsByTagName('td')[0] as HTMLTableCellElement).innerHTML;
+                    item.setAttribute('data-tooltip', 'Delete '+email);
+                    let spinner = (item.parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
+                    spinner.setAttribute('data-tooltip', 'Removing '+email+'...');
+                    spinner.setAttribute('alt', 'Removing '+email+'...');
+                }
             }
         });
     }

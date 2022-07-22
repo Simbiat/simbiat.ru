@@ -33,7 +33,25 @@ class Details
         Details.list.forEach((details: HTMLDetailsElement)=>{
             if(details.open && details !== target && !details.contains(target as HTMLDetailsElement)) {
                 details.open=false;
+            } else {
+                //If target is a "popup" details, we need to be able to close it when clicking outside it
+                //Unfortunately, the only viable way seems to be to start listening for clicks on whole document
+                if (details.classList.contains('popup')) {
+                    document.addEventListener('click', (event: MouseEvent) =>{
+                        this.clickOutsideDetails(event, details);
+                    });
+                }
             }
         });
+    }
+
+    public clickOutsideDetails(event: MouseEvent, details: HTMLDetailsElement)
+    {
+        if (details !== event.target && !details.contains(event.target as HTMLElement)) {
+            details.open = false;
+            document.removeEventListener('click', (event: MouseEvent) =>{
+                this.clickOutsideDetails(event, details);
+            });
+        }
     }
 }

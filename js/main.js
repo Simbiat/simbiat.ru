@@ -310,7 +310,7 @@ class Gallery extends HTMLElement {
             newTitle = document.title.replace(regexTitle, '$1, Image ' + newIndex);
             newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
         }
-        if (document.location.href !== newUrl) {
+        if (url !== new URL(newUrl)) {
             updateHistory(newUrl, newTitle);
         }
     }
@@ -546,7 +546,7 @@ class Tooltip extends HTMLElement {
     update(element) {
         let parent = element.parentElement;
         let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
-        if (tooltip) {
+        if (tooltip && matchMedia('(pointer:fine)').matches) {
             this.setAttribute('data-tooltip', tooltip);
         }
         else {
@@ -730,7 +730,22 @@ class Details {
             if (details.open && details !== target && !details.contains(target)) {
                 details.open = false;
             }
+            else {
+                if (details.classList.contains('popup')) {
+                    document.addEventListener('click', (event) => {
+                        this.clickOutsideDetails(event, details);
+                    });
+                }
+            }
         });
+    }
+    clickOutsideDetails(event, details) {
+        if (details !== event.target && !details.contains(event.target)) {
+            details.open = false;
+            document.removeEventListener('click', (event) => {
+                this.clickOutsideDetails(event, details);
+            });
+        }
     }
 }
 class Form {
@@ -1214,6 +1229,21 @@ class Emails {
                 cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
                 let input = cell.getElementsByTagName('input')[0];
                 new Input().init(input);
+                row.querySelectorAll('.mail_activation').forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        this.activate(event.target);
+                    });
+                });
+                row.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        this.subscribe(event);
+                    });
+                });
+                row.querySelectorAll('.mail_deletion').forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        this.delete(event.target);
+                    });
+                });
                 this.blockDelete();
                 this.addMailForm.reset();
                 new Snackbar(email + ' added', 'success');
@@ -1252,6 +1282,13 @@ class Emails {
             }
             else {
                 item.disabled = false;
+                if (item.getAttribute('data-tooltip') && item.getAttribute('data-tooltip') === 'Can\'t delete') {
+                    let email = item.parentElement.parentElement.getElementsByTagName('td')[0].innerHTML;
+                    item.setAttribute('data-tooltip', 'Delete ' + email);
+                    let spinner = item.parentElement.getElementsByClassName('spinner')[0];
+                    spinner.setAttribute('data-tooltip', 'Removing ' + email + '...');
+                    spinner.setAttribute('alt', 'Removing ' + email + '...');
+                }
             }
         });
     }

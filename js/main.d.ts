@@ -100,6 +100,7 @@ declare class Details {
     private static _instance;
     constructor();
     reset(target: HTMLDetailsElement): void;
+    clickOutsideDetails(event: MouseEvent, details: HTMLDetailsElement): void;
 }
 declare class Form {
     private static _instance;

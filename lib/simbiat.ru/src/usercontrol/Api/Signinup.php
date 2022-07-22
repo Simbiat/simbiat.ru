@@ -18,7 +18,7 @@ class Signinup extends Api
                                 'logout' => 'Logout from the system',
     ];
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = false;
+    protected bool $CSRF = true;
 
     use Common;
 

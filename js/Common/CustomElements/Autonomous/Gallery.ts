@@ -134,7 +134,8 @@ class Gallery extends HTMLElement
             newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
         }
         //Update only if there is URL change
-        if (document.location.href !== newUrl) {
+        //if (document.location.href !== newUrl) {
+        if (url !== new URL(newUrl)) {
             updateHistory(newUrl, newTitle);
         }
     }

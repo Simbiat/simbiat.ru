@@ -1,7 +1,7 @@
 <div id="hideNav"><input id="hideNavIcon" class="navIcon" alt="Close navigation" type="image" src="/img/close.svg"></div>
 <div class="navElement">
     <div class="navLine" id="showSidebar">
-        <a class="navItem" href="#" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Login" data-tooltip="Login" src="/img/navigation/login.svg"><span itemprop="name">Login</span></a>
+        <a class="navItem" href="#" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="{% if session_data.username %}Logout{% else %}Login{% endif %}" data-tooltip="{% if session_data.username %}Logout{% else %}Login{% endif %}" src="/img/navigation/{% if session_data.username %}logout{% else %}login{% endif %}.svg"><span itemprop="name">{% if session_data.username %}Logout{% else %}Login{% endif %}</span></a>
     </div>
 </div>
 <ul id="navList">
