@@ -79,7 +79,7 @@ class Signinup
                 ],
             ];
             self::$dbController->query($queries);
-            (new Emails)->activationMail($_POST['signinup']['username'], $_POST['signinup']['email'], $activation);
+            (new Emails)->activationMail($_POST['signinup']['email'], $_POST['signinup']['username'], $activation);
             return $this->login(true);
         } catch (\Throwable) {
             return ['http_error' => 503, 'reason' => 'Registration failed'];

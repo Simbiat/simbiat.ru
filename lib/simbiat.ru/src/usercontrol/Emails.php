@@ -60,7 +60,7 @@ class Emails
             #Use UTF8
             $mail->CharSet = PHPMailer::CHARSET_UTF8;
             $mail->Subject = $GLOBALS['siteconfig']['site_name'].': '.$subject;
-            if (preg_match('/^\[Alert\]: .*$/iu', $subject) === 1) {
+            if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
                 $mail->Priority = 1;
             }
             $mail->Body = HomePage::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)]));

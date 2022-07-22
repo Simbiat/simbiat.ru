@@ -18,19 +18,19 @@ class Signinup extends Api
                                 'logout' => 'Logout from the system',
     ];
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $CSRF = false;
 
     use Common;
 
     protected function genData(array $path): array
     {
+        if (!empty($path[0])) {
+            $_POST['signinup']['type'] = $path[0];
+        }
         if (!empty($_POST['signinup'])) {
             #Processing is based on type, so if it's empty - something is wrong
             if (empty($_POST['signinup']['type'])) {
                 return ['http_error' => 400, 'reason' => 'No action type provided'];
-            }
-            if ($path[0] !== $_POST['signinup']['type']) {
-                return ['http_error' => 400, 'reason' => 'Action type does not match the verb'];
             }
             return match ($_POST['signinup']['type']) {
                 'login' => (new \Simbiat\usercontrol\Signinup)->login(),
