@@ -54,6 +54,26 @@ declare class CarouselList extends HTMLElement {
     toScroll(event: Event): void;
     disableScroll(): void;
 }
+declare class PasswordShow extends HTMLElement {
+    private passwordInput;
+    constructor();
+    private toggle;
+}
+declare class PasswordRequirements extends HTMLElement {
+    private passwordInput;
+    constructor();
+    private validate;
+    private show;
+    private hide;
+}
+declare class PasswordStrength extends HTMLElement {
+    private passwordInput;
+    private strengthSpan;
+    constructor();
+    private calculate;
+    private show;
+    private hide;
+}
 declare class Snackbar {
     private readonly snacks;
     private static notificationIndex;
@@ -168,24 +188,4 @@ declare class PasswordChange {
     private readonly form;
     constructor();
     change(): void;
-}
-declare class PasswordShow extends HTMLElement {
-    private passwordInput;
-    constructor();
-    private toggle;
-}
-declare class PasswordRequirements extends HTMLElement {
-    private passwordInput;
-    constructor();
-    private validate;
-    private show;
-    private hide;
-}
-declare class PasswordStrength extends HTMLElement {
-    private passwordInput;
-    private strengthSpan;
-    constructor();
-    private calculate;
-    private show;
-    private hide;
 }

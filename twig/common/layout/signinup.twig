@@ -1,5 +1,6 @@
 {% if session_data.username %}
-    <div>Hi, {{ session_data.username }}!</div>
+    <a id="uc_settings" href="/uc/profile/"><img class="linkIcon" alt="Settings" src="/img/cog.svg"></a>
+    <div class="middle">Hi, {{ session_data.username }}!</div>
     {% if session_data.activated == false %}
         <div class="warning">Pending <a href="/uc/emails/">activation</a>.</div>
     {% endif %}

@@ -38,6 +38,12 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
                         $datetime->setTimestamp(intval($string));
                     }
                 }
+                #Set timezone
+                $timezone = $_SESSION['timezone'] ?? 'UTC';
+                if (!in_array($timezone, timezone_identifiers_list())) {
+                    $timezone = 'UTC';
+                }
+                $datetime->setTimezone(new \DateTimeZone($timezone));
                 return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
             }, ['is_safe' => ['html']]),
             new TwigFilter('tooltip', function(string $string) {

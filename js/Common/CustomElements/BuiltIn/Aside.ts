@@ -35,6 +35,7 @@ class Aside
             if (!formData.get('signinup[type]')) {
                 formData.set('signinup[type]', 'logout');
             }
+            formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             let spinner = document.getElementById('signinup_spinner') as HTMLImageElement;
             spinner.classList.remove('hidden');
             ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {

@@ -429,6 +429,145 @@ class CarouselList extends HTMLElement {
         }
     }
 }
+class PasswordShow extends HTMLElement {
+    passwordInput;
+    constructor() {
+        super();
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.addEventListener('click', this.toggle);
+    }
+    toggle(event) {
+        event.preventDefault();
+        if (this.passwordInput.type === 'password') {
+            this.passwordInput.type = 'text';
+            this.title = 'Hide password';
+        }
+        else {
+            this.passwordInput.type = 'password';
+            this.title = 'Show password';
+        }
+    }
+}
+class PasswordRequirements extends HTMLElement {
+    passwordInput;
+    constructor() {
+        super();
+        this.classList.add('hidden');
+        this.innerHTML = 'Only password requirement: at least 8 symbols';
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.passwordInput.addEventListener('focus', this.show.bind(this));
+        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
+        ['focus', 'change', 'input',].forEach((eventType) => {
+            this.passwordInput.addEventListener(eventType, this.validate.bind(this));
+        });
+    }
+    validate() {
+        if (this.passwordInput.validity.valid) {
+            this.classList.remove('error');
+            this.classList.add('success');
+        }
+        else {
+            this.classList.add('error');
+            this.classList.remove('success');
+        }
+    }
+    show() {
+        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
+        if (autocomplete === 'new-password') {
+            this.classList.remove('hidden');
+        }
+        else {
+            this.classList.add('hidden');
+        }
+    }
+    hide() {
+        this.classList.add('hidden');
+    }
+}
+class PasswordStrength extends HTMLElement {
+    passwordInput;
+    strengthSpan;
+    constructor() {
+        super();
+        this.classList.add('hidden');
+        this.innerHTML = 'New password strength: <span class="password_strength">weak</span>';
+        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.strengthSpan = this.getElementsByTagName('span')[0];
+        this.passwordInput.addEventListener('focus', this.show.bind(this));
+        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
+        ['focus', 'change', 'input',].forEach((eventType) => {
+            this.passwordInput.addEventListener(eventType, this.calculate.bind(this));
+        });
+    }
+    calculate() {
+        let password = this.passwordInput.value;
+        let points = 0;
+        if (/.{8,}/u.test(password)) {
+            points++;
+        }
+        if (/.{16,}/u.test(password)) {
+            points++;
+        }
+        if (/.{32,}/u.test(password)) {
+            points++;
+        }
+        if (/.{64,}/u.test(password)) {
+            points++;
+        }
+        if (/\p{Ll}/u.test(password)) {
+            points++;
+        }
+        if (/\p{Lu}/u.test(password)) {
+            points++;
+        }
+        if (/\p{Lo}/u.test(password)) {
+            points++;
+        }
+        if (/\p{N}/u.test(password)) {
+            points++;
+        }
+        if (/[\p{P}\p{S}]/u.test(password)) {
+            points++;
+        }
+        if (/(.)\1{2,}/u.test(password)) {
+            points--;
+        }
+        let strength = 'weak';
+        if (points <= 2) {
+            strength = 'weak';
+        }
+        else if (2 < points && points < 5) {
+            strength = 'medium';
+        }
+        else if (points === 5) {
+            strength = 'strong';
+        }
+        else {
+            strength = 'very strong';
+        }
+        this.strengthSpan.innerHTML = strength;
+        this.strengthSpan.classList.remove('password_weak', 'password_medium', 'password_strong', 'password_very_strong');
+        if (strength === 'very strong') {
+            this.strengthSpan.classList.add('password_very_strong');
+        }
+        else {
+            this.strengthSpan.classList.add('password_' + strength);
+        }
+        return strength;
+    }
+    show() {
+        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
+        if (autocomplete === 'new-password') {
+            this.classList.remove('hidden');
+        }
+        else {
+            this.classList.add('hidden');
+        }
+    }
+    hide() {
+        this.classList.add('hidden');
+    }
+}
 class Snackbar {
     snacks;
     static notificationIndex = 0;
@@ -617,6 +756,7 @@ class Aside {
             if (!formData.get('signinup[type]')) {
                 formData.set('signinup[type]', 'logout');
             }
+            formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             let spinner = document.getElementById('signinup_spinner');
             spinner.classList.remove('hidden');
             ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
@@ -1368,145 +1508,6 @@ class PasswordChange {
             }
             spinner.classList.add('hidden');
         });
-    }
-}
-class PasswordShow extends HTMLElement {
-    passwordInput;
-    constructor() {
-        super();
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
-        this.addEventListener('click', this.toggle);
-    }
-    toggle(event) {
-        event.preventDefault();
-        if (this.passwordInput.type === 'password') {
-            this.passwordInput.type = 'text';
-            this.title = 'Hide password';
-        }
-        else {
-            this.passwordInput.type = 'password';
-            this.title = 'Show password';
-        }
-    }
-}
-class PasswordRequirements extends HTMLElement {
-    passwordInput;
-    constructor() {
-        super();
-        this.classList.add('hidden');
-        this.innerHTML = 'Only password requirement: at least 8 symbols';
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
-        this.passwordInput.addEventListener('focus', this.show.bind(this));
-        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
-        ['focus', 'change', 'input',].forEach((eventType) => {
-            this.passwordInput.addEventListener(eventType, this.validate.bind(this));
-        });
-    }
-    validate() {
-        if (this.passwordInput.validity.valid) {
-            this.classList.remove('error');
-            this.classList.add('success');
-        }
-        else {
-            this.classList.add('error');
-            this.classList.remove('success');
-        }
-    }
-    show() {
-        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
-        if (autocomplete === 'new-password') {
-            this.classList.remove('hidden');
-        }
-        else {
-            this.classList.add('hidden');
-        }
-    }
-    hide() {
-        this.classList.add('hidden');
-    }
-}
-class PasswordStrength extends HTMLElement {
-    passwordInput;
-    strengthSpan;
-    constructor() {
-        super();
-        this.classList.add('hidden');
-        this.innerHTML = 'New password strength: <span class="password_strength">weak</span>';
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
-        this.strengthSpan = this.getElementsByTagName('span')[0];
-        this.passwordInput.addEventListener('focus', this.show.bind(this));
-        this.passwordInput.addEventListener('focusout', this.hide.bind(this));
-        ['focus', 'change', 'input',].forEach((eventType) => {
-            this.passwordInput.addEventListener(eventType, this.calculate.bind(this));
-        });
-    }
-    calculate() {
-        let password = this.passwordInput.value;
-        let points = 0;
-        if (/.{8,}/u.test(password)) {
-            points++;
-        }
-        if (/.{16,}/u.test(password)) {
-            points++;
-        }
-        if (/.{32,}/u.test(password)) {
-            points++;
-        }
-        if (/.{64,}/u.test(password)) {
-            points++;
-        }
-        if (/\p{Ll}/u.test(password)) {
-            points++;
-        }
-        if (/\p{Lu}/u.test(password)) {
-            points++;
-        }
-        if (/\p{Lo}/u.test(password)) {
-            points++;
-        }
-        if (/\p{N}/u.test(password)) {
-            points++;
-        }
-        if (/[\p{P}\p{S}]/u.test(password)) {
-            points++;
-        }
-        if (/(.)\1{2,}/u.test(password)) {
-            points--;
-        }
-        let strength = 'weak';
-        if (points <= 2) {
-            strength = 'weak';
-        }
-        else if (2 < points && points < 5) {
-            strength = 'medium';
-        }
-        else if (points === 5) {
-            strength = 'strong';
-        }
-        else {
-            strength = 'very strong';
-        }
-        this.strengthSpan.innerHTML = strength;
-        this.strengthSpan.classList.remove('password_weak', 'password_medium', 'password_strong', 'password_very_strong');
-        if (strength === 'very strong') {
-            this.strengthSpan.classList.add('password_very_strong');
-        }
-        else {
-            this.strengthSpan.classList.add('password_' + strength);
-        }
-        return strength;
-    }
-    show() {
-        let autocomplete = this.passwordInput.getAttribute('autocomplete') ?? null;
-        if (autocomplete === 'new-password') {
-            this.classList.remove('hidden');
-        }
-        else {
-            this.classList.add('hidden');
-        }
-    }
-    hide() {
-        this.classList.add('hidden');
     }
 }
 //# sourceMappingURL=main.js.map

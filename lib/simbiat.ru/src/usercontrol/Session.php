@@ -82,19 +82,25 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $this->IPUA($data);
         #Check if userid is set and exists and reset if it does not
         try {
-            if (!empty($data['userid']) && self::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']])) {
-                $userid = $data['userid'];
+            if (!empty($data['userid'])) {
+                #Get data
+                $dbData =  self::$dbController->selectRow('SELECT `userid`, `username`, `timezone` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
+                if (empty($dbData)) {
+                    $data['userid'] = null;
+                } else {
+                    $data = array_merge($data, $dbData);
+                }
             } else {
-                $userid = NULL;
+                $data['userid'] = null;
             }
         } catch (\Throwable) {
-            $userid = NULL;
+            $data['userid'] = null;
         }
         #Cache username (to prevent reading from Session)
-        if (empty($userid)) {
-            $username = $data['UA']['bot'] ?? NULL;
+        if (empty($data['userid'])) {
+            $data['username'] = $data['UA']['bot'] ?? NULL;
         } else {
-            $username = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
+            $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
             #Get user's groups
             $data['groups'] = self::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
             if (in_array(2, $data['groups'])) {
@@ -169,12 +175,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     ],
                 #Either username (if logged in) or bot name, if it's a bot
                 ':username' => [
-                    (empty($username) ? NULL : $username),
-                    (empty($username) ? 'null' : 'string'),
+                    (empty($data['username']) ? NULL : $data['username']),
+                    (empty($data['username']) ? 'null' : 'string'),
                 ],
                 ':userid' => [
-                    (empty($userid) ? NULL : $userid),
-                    (empty($userid) ? 'null' : 'int'),
+                    (empty($data['userid']) ? NULL : $data['userid']),
+                    (empty($data['userid']) ? 'null' : 'int'),
                 ],
                 #What page is being viewed
                 ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),

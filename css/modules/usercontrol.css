@@ -95,3 +95,8 @@ password-strength {
 .vertical_tabs>.nav_tab.danger:hover {
     filter: none;
 }
+
+#uc_settings {
+    display: block;
+    text-align: center;
+}

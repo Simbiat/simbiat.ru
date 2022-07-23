@@ -24,6 +24,11 @@ class Signinup
         if (mb_strlen($_POST['signinup']['password'], 'UTF-8') < 8) {
             return ['http_error' => 400, 'reason' => 'Password is shorter than 8 symbols'];
         }
+        #Get timezone
+        $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
+        if (!in_array($timezone, timezone_identifiers_list())) {
+            $timezone = 'UTC';
+        }
         #Check if banned or in use
         $checkers = new Checkers;
         if ($checkers->bannedIP() ||
@@ -55,10 +60,11 @@ class Signinup
             $queries = [
                 #Insert to main database
                 [
-                    'INSERT INTO `uc__users`(`username`, `password`) VALUES (:username, :password)',
+                    'INSERT INTO `uc__users`(`username`, `password`, `timezone`) VALUES (:username, :password, :timezone)',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':password' => $password,
+                        ':timezone' => $timezone,
                     ],
                 ],
                 #Insert into mails database
