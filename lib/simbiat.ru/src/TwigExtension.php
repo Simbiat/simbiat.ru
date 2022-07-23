@@ -82,6 +82,8 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             'ogdesc' => $GLOBALS['siteconfig']['ogdesc'],
             'ogextra' => $GLOBALS['siteconfig']['ogextra'],
             'ogimage' => $GLOBALS['siteconfig']['ogimage'],
+            #Flag whether GET is present
+            'hasGet' => !empty($_GET),
         ]);
     }
 }
