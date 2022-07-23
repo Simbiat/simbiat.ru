@@ -143,6 +143,7 @@ class Emails
         if (empty($_SESSION['userid'])) {
             return false;
         } else {
+            @session_regenerate_id(true);
             return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
         }
     }
@@ -152,6 +153,7 @@ class Emails
         if (empty($_SESSION['userid'])) {
             return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email', [':email' => $email]);
         } else {
+            @session_regenerate_id(true);
             return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
         }
     }
@@ -161,6 +163,7 @@ class Emails
         if (empty($_SESSION['userid'])) {
             return false;
         } else {
+            @session_regenerate_id(true);
             return HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email]);
         }
     }
@@ -180,6 +183,7 @@ class Emails
         if (!HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $email])) {
             return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
         }
+        @session_regenerate_id(true);
         return ['status' => 201, 'response' => $this->activationMail($email)];
     }
 }

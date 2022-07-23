@@ -81,6 +81,7 @@ class Password extends Api
                 return ['http_error' => 403, 'reason' => 'Bad password reset token'];
             }
         }
+        @session_regenerate_id(true);
         #Change password
         if ($security->passChange($id, $_POST['new_password'])) {
             return ['response' => true];

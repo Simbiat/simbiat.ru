@@ -216,7 +216,9 @@ class Signinup
         } catch (\Throwable) {
             #Do nothing
         }
-        #Destroy session
+        #Clean session (affects $_SESSION only)
+        session_unset();
+        #Destroy session (destroys it storage)
         return ['response' => session_destroy()];
     }
 
