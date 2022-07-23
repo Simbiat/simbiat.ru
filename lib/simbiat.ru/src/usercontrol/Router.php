@@ -24,6 +24,7 @@ class Router extends \Simbiat\Abstracts\Router
             'emails' => (new Pages\Emails)->get(array_slice($path, 1)),
             'unsubscribe' => (new Pages\Unsubscribe)->get(array_slice($path, 1)),
             'password' => (new Pages\Password)->get(array_slice($path, 1)),
+            'profile' => (new Pages\Profile)->get(array_slice($path, 1)),
             'register' => ['subServiceName' => 'registration'],
         };
     }

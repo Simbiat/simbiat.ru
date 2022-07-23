@@ -89,6 +89,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['userid'] = null;
                 } else {
                     $data = array_merge($data, $dbData);
+                    $data['avatar'] = self::$dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$data['userid'], 'int']]);
                 }
             } else {
                 $data['userid'] = null;

@@ -219,6 +219,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\usercontrol\\Pages\\Activation' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Pages/Activation.php',
         'Simbiat\\usercontrol\\Pages\\Emails' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Pages/Emails.php',
         'Simbiat\\usercontrol\\Pages\\Password' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Pages/Password.php',
+        'Simbiat\\usercontrol\\Pages\\Profile' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Pages/Profile.php',
         'Simbiat\\usercontrol\\Pages\\Unsubscribe' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Pages/Unsubscribe.php',
         'Simbiat\\usercontrol\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Router.php',
         'Simbiat\\usercontrol\\Security' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Security.php',

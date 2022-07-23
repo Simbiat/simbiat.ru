@@ -164,6 +164,7 @@ return array(
     'Simbiat\\usercontrol\\Pages\\Activation' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Activation.php',
     'Simbiat\\usercontrol\\Pages\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Emails.php',
     'Simbiat\\usercontrol\\Pages\\Password' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Password.php',
+    'Simbiat\\usercontrol\\Pages\\Profile' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Profile.php',
     'Simbiat\\usercontrol\\Pages\\Unsubscribe' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Unsubscribe.php',
     'Simbiat\\usercontrol\\Router' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Router.php',
     'Simbiat\\usercontrol\\Security' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Security.php',
