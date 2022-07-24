@@ -1,1 +1,36 @@
-This is profile stub page
+<form class="middle" id="profile_username">
+    <div class="float_label_div">
+        <input form="profile_username" data-original="{{ userData.username }}" value="{{ userData.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <label for="username_value">Username</label>
+    </div>
+    <input role="button" form="profile_username" type="submit" name="submit" id="username_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Change">
+    <img id="username_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Changing username...">
+</form>
+<hr/>
+<form class="middle" id="profile_avatar">
+
+</form>
+<hr/>
+<form class="middle" id="profile_details">
+    <p>Form below auto-saves every 10 seconds, if there were edits.</p>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.firstname }}" value="{{ userData.firstname }}" type="text" aria-required="false" name="details[firstname]" id="firstname_value" placeholder="First name" autocomplete="given-name" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <label for="firstname_value">First name</label>
+    </div>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.lastname }}" value="{{ userData.lastname }}" type="text" aria-required="false" name="details[lastname]" id="lastname_value" placeholder="Last name" autocomplete="family-name" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <label for="lastname_value">Last name</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.middlename }}" value="{{ userData.middlename }}" type="text" aria-required="false" name="details[middlename]" id="middlename_value" placeholder="Middle name" autocomplete="additional-name" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <label for="middlename_value">Middle name</label>
+    </div>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.fathername }}" value="{{ userData.fathername }}" type="text" aria-required="false" name="details[fathername]" id="fathername_value" placeholder="Father's name" autocomplete="on" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <label for="fathername_value">Father's name</label>
+    </div>
+    <br/>
+    <input role="button" form="profile_details" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">
+    <img id="details_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Updating details...">
+</form>

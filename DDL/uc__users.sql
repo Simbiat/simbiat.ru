@@ -16,9 +16,11 @@ create table uc__users
     middlename varchar(100)                                    null comment 'User''s middle name(s)',
     fathername varchar(100)                                    null comment 'User''s patronymic or matronymic name (also known as father''s name or mother''s name)',
     sex        tinyint(1) unsigned                             null comment 'User''s sex',
-    avatar     varchar(1000)                                   null comment 'URI to current avatar',
     about      varchar(250)                                    null comment 'Introductory words from the user',
     timezone   varchar(30)         default 'UTC'               not null comment 'User''s timezone',
+    country    varchar(60)                                     null comment 'User''s country',
+    city       varchar(200)                                    null comment 'User''s city',
+    werbsite   varchar(255)                                    null comment 'User''s personal website',
     constraint parent_to_user
         foreign key (parentid) references uc__users (userid)
             on update set null on delete set null

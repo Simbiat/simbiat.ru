@@ -496,3 +496,9 @@ table caption {
 li {
     min-height: 2rem;
 }
+
+hr {
+    border-color: var(--border-light);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+}

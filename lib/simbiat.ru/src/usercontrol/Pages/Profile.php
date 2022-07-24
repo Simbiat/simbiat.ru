@@ -28,7 +28,7 @@ class Profile extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        $outputArray['userData'] = HomePage::$dbController->selectAll('SELECT *, null as `password`, null as `pw_reset` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$_SESSION['userid'], 'int']]);;
+        $outputArray['userData'] = HomePage::$dbController->selectRow('SELECT *, null as `password`, null as `pw_reset` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$_SESSION['userid'], 'int']]);
         return $outputArray;
     }
 }

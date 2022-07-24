@@ -5,6 +5,8 @@ namespace Simbiat\usercontrol;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
+use ipinfo\ipinfo\IPinfo;
+use ipinfo\ipinfo\IPinfoException;
 use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 
@@ -14,8 +16,6 @@ trait Common
     public static bool $SEOTracking = true;
     #Cached DB controller
     public static ?Controller $dbController = NULL;
-    #Whether SMS OTP is supported
-    public static bool $sms = false;
 
     #Function to log actions
     private function log(string $type, string $action, mixed $extras = NULL): bool
@@ -66,6 +66,7 @@ trait Common
     #Function to return IP
     public function getIP(): ?string
     {
+        $ip = null;
         #Check if behind proxy
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             #Get list of IPs, that do validate as proper IP
@@ -75,24 +76,45 @@ trait Common
             #Check if any are left
             if (!empty($ips)) {
                 #Get the right-most IP
-                return array_pop($ips);
+                $ip = array_pop($ips);
             }
         }
-        #Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
-        if(!empty($_SERVER['REMOTE_ADDR'])) {
-            $ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
-            if ($ip !== false) {
-                return $ip;
+        if (empty($ip)) {
+            #Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                $ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
             }
         }
-        #Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
-        if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP);
-            if ($ip !== false) {
-                return $ip;
+        if (empty($ip)) {
+            #Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP);
             }
         }
-        return NULL;
+        if (!empty($ip)) {
+            #Attempt to get country and city, if they are not already present in DB. And only do it if DB is already up.
+            if (HomePage::$dbController !== null) {
+                try {
+                    if (!HomePage::$dbController->check('SELECT `ip` FROM `seo__ips` WHERE `ip`=:ip;', [':ip' => $ip])) {
+                        #Get data from ipinfo.io
+                        $ipinfo = (new IPinfo(settings: ['guzzle_opts' => ['verify' => false]]))->getDetails($ip);
+                        #Write it to DB
+                        if (empty($ipinfo->bogon) && !empty($ipinfo->country_name) && !empty($ipinfo->city)) {
+                            HomePage::$dbController->query('INSERT IGNORE INTO `seo__ips` (`ip`, `country`, `city`) VALUES (:ip, :country, :city);', [
+                                ':ip' => $ip,
+                                ':country' => $ipinfo->country_name,
+                                ':city' => $ipinfo->city,
+                            ]);
+                        }
+                    }
+                } catch (\Throwable) {
+                    #Do nothing, this is not critical
+                }
+            }
+            return $ip;
+        } else {
+            return null;
+        }
     }
 
     #Get Bot name, OS and Browser for user agent

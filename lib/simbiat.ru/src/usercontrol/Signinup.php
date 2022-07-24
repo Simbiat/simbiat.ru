@@ -60,11 +60,12 @@ class Signinup
             $queries = [
                 #Insert to main database
                 [
-                    'INSERT INTO `uc__users`(`username`, `password`, `timezone`) VALUES (:username, :password, :timezone)',
+                    'INSERT INTO `uc__users`(`username`, `password`, `timezone`, `country`, `city`) VALUES (:username, :password, :timezone, (SELECT `country` FROM `seo__ips` WHERE `ip`=:ip), (SELECT `city` FROM `seo__ips` WHERE `ip`=:ip))',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':password' => $password,
                         ':timezone' => $timezone,
+                        ':ip' => $_SESSION['IP'] ?? '',
                     ],
                 ],
                 #Insert into mails database
