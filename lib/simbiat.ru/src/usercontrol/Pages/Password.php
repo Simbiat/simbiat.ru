@@ -23,6 +23,8 @@ class Password extends Page
     protected string $cacheStrat = 'private';
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
+    #Link to JS module for preload
+    protected string $jsModule = '/js/Pages/usercontrol/password.js';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

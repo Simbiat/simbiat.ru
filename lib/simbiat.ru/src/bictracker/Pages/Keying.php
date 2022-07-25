@@ -24,6 +24,8 @@ class Keying extends Page
     #Flag to indicate this is a static page
     protected bool $static = true;
     protected int $cacheAge = 14400;
+    #Link to JS module for preload
+    protected string $jsModule = '/js/Pages/bictracker/keying.js';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

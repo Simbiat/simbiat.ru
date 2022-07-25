@@ -121,6 +121,12 @@ class HomePage
                         } elseif ((new Checkers)->bannedIP() === true) {
                             self::$http_error = ['http_error' => 403];
                         }
+                        if ($uri[0] !== 'api') {
+                            $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
+                                ['rel' => 'stylesheet preload', 'href' => '/css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css', 'as' => 'style'],
+                                ['rel' => 'preload', 'href' => '/js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js', 'as' => 'script'],
+                            ]);
+                        }
                         self::$headers->links($GLOBALS['siteconfig']['links']);
                         if ($uri[0] !== 'api') {
                             @header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
@@ -173,8 +179,6 @@ class HomePage
         #Update list with dynamic values
         $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
             ['rel' => 'canonical', 'href' => self::$canonical],
-            ['rel' => 'stylesheet preload', 'href' => '/css/'.filemtime($GLOBALS['siteconfig']['cssdir'].'min.css').'.css', 'as' => 'style'],
-            ['rel' => 'preload', 'href' => '/js/'.filemtime($GLOBALS['siteconfig']['jsdir'].'min.js').'.js', 'as' => 'script'],
         ]);
     }
 

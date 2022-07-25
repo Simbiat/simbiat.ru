@@ -34,6 +34,8 @@ abstract class Page
     protected string $cacheStrat = 'day';
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
+    #Link to JS module for preload
+    protected string $jsModule = '';
 
     public final function __construct()
     {
@@ -87,7 +89,10 @@ abstract class Page
         $page['ogdesc'] = $this->ogdesc;
         $page['cacheAge'] = $this->cacheAge;
         $page['cacheStrat'] = $this->cacheStrat;
-        if (!empty($this->altLinks)) {
+        if (!empty($this->altLinks) || !empty($this->jsModule)) {
+            if (!empty($this->jsModule)) {
+                $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => $this->jsModule, 'as' => 'script']]);
+            }
             #Send HTTP header
             if (!HomePage::$staleReturn) {
                 HomePage::$headers->links($this->altLinks);

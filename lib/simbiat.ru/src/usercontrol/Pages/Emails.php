@@ -23,6 +23,8 @@ class Emails extends Page
     protected string $cacheStrat = 'private';
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
+    #Link to JS module for preload
+    protected string $jsModule = '/js/Pages/usercontrol/emails.js';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
