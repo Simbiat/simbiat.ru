@@ -1,4 +1,4 @@
-class bicRefresh
+export class bicRefresh
 {
     private refreshButton: HTMLInputElement;
 

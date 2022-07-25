@@ -158,34 +158,3 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
-declare class bicKeying {
-    constructor();
-    calc(): void | boolean;
-    styleBic(element: HTMLSpanElement, newClass: string, text?: string): void;
-}
-declare class bicRefresh {
-    private refreshButton;
-    constructor();
-    refresh(event: Event): void;
-}
-declare class ffTrack {
-    private readonly select;
-    private readonly idInput;
-    constructor();
-    add(): void;
-    typeChange(): void;
-}
-declare class Emails {
-    private readonly addMailForm;
-    constructor();
-    add(): boolean | void;
-    delete(button: HTMLInputElement): void;
-    blockDelete(): void;
-    subscribe(event: Event): void;
-    activate(button: HTMLInputElement): void;
-}
-declare class PasswordChange {
-    private readonly form;
-    constructor();
-    change(): void;
-}

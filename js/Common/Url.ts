@@ -42,21 +42,21 @@ function router(): void
         if (path[0] === 'bictracker') {
             if (path[1]) {
                 if (path[1] === 'keying') {
-                    new bicKeying();
+                    import('/js/Pages/bictracker/keying.js').then((module) => {new module.bicKeying();});
                 } else if (path[1] === 'search') {
-                    new bicRefresh();
+                    import('/js/Pages/bictracker/search.js').then((module) => {new module.bicRefresh();});
                 }
             }
         } else if (path[0] === 'fftracker') {
             if (path[1] && path[1] === 'track') {
-                new ffTrack();
+                import('/js/Pages/fftracker/track.js').then((module) => {new module.ffTrack();});
             }
         } else if (path[0] === 'uc') {
             if (path[1]) {
                 if (path[1] === 'emails') {
-                    new Emails();
+                    import('/js/Pages/usercontrol/emails.js').then((module) => {new module.Emails();});
                 } else if (path[1] === 'password') {
-                    new PasswordChange();
+                    import('/js/Pages/usercontrol/password.js').then((module) => {new module.PasswordChange();});
                 }
             }
         }

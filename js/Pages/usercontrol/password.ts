@@ -1,4 +1,4 @@
-class PasswordChange
+export class PasswordChange
 {
     private readonly form: HTMLFormElement | null = null;
 

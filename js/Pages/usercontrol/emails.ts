@@ -1,4 +1,4 @@
-class Emails
+export class Emails
 {
     private readonly addMailForm: HTMLFormElement | null = null;
 

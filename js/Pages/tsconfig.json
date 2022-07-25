@@ -16,35 +16,31 @@
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": false,
         //Compiler options
-        "module": "None",
+        "module": "ESNext",
         "target": "ESNext",
         "moduleResolution": "nodenext",
-        "baseUrl": ".",
-        "paths": {
-            "*": ["*", "../*"],
-        },
         "sourceMap": true,
-        "sourceRoot": "/js/",
+        "sourceRoot": "/js/Pages/",
         "removeComments": true,
         "outDir": "./",
-        "outFile": "./main.js",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
         "allowJs": false,
         "checkJs": true,
         "composite": true,
-        "noErrorTruncation": true
+        "noErrorTruncation": true,
     },
     //Include only .ts files in the same dir
     "include": [
-        "Common/*.ts",
-        "Common/CustomElements/*/*.ts"
+        "./bictracker/*.ts",
+        "./fftracker/*.ts",
+        "./usercontrol/*.ts"
     ],
     "exclude": [
         "node_modules"
     ],
     "references": [
-        {"path":  "Pages/tsconfig.json"}
+        {"path": "../tsconfig.json"}
     ]
 }
