@@ -149,7 +149,7 @@ function hashCheck() {
 }
 function router() {
     let url = new URL(document.location.href);
-    let path = url.pathname.replace(/(\/)(.*)(\/)/ui, '$2').toLowerCase().split('/');
+    let path = url.pathname.replace(/(\/)(.*)(\/)?/ui, '$2').toLowerCase().split('/');
     if (path[0]) {
         if (path[0] === 'bictracker') {
             if (path[1]) {
