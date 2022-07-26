@@ -72,6 +72,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $this->IPUA($data);
         #Login through cookie if present
         $data = array_merge($data, (new Signinup)->cookieLogin());
+        if (!empty($data['userid'])) {
+            $this->dataRefresh($data);
+        }
         return serialize($data);
     }
 
@@ -80,35 +83,11 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Deserialize to check if UserAgent data is present
         $data = unserialize($data);
         $this->IPUA($data);
-        #Check if userid is set and exists and reset if it does not
-        try {
-            if (!empty($data['userid'])) {
-                #Get data
-                $dbData =  self::$dbController->selectRow('SELECT `userid`, `username`, `timezone` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
-                if (empty($dbData)) {
-                    $data['userid'] = null;
-                } else {
-                    $data = array_merge($data, $dbData);
-                    $data['avatar'] = self::$dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$data['userid'], 'int']]);
-                }
-            } else {
-                $data['userid'] = null;
-            }
-        } catch (\Throwable) {
-            $data['userid'] = null;
-        }
         #Cache username (to prevent reading from Session)
         if (empty($data['userid'])) {
             $data['username'] = $data['UA']['bot'] ?? NULL;
         } else {
-            $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
-            #Get user's groups
-            $data['groups'] = self::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
-            if (in_array(2, $data['groups'])) {
-                $data['activated'] = false;
-            } else {
-                $data['activated'] = true;
-            }
+            $this->dataRefresh($data);
         }
         #Prepare empty array
         $queries = [];
@@ -197,6 +176,29 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         } catch (\Throwable) {
             return false;
         }
+    }
+
+    private function dataRefresh(array &$data)
+    {
+        #Check if userid is set and exists and reset if it does not
+        try {
+            if (!empty($data['userid']) && !self::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']])) {
+                $data['userid'] = NULL;
+            }
+        } catch (\Throwable) {
+            $data['userid'] = null;
+        }
+        $dbData =  self::$dbController->selectRow('SELECT `userid`, `username`, `timezone` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
+        $data = array_merge($data, $dbData);
+        $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
+        #Get user's groups
+        $data['groups'] = self::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
+        if (in_array(2, $data['groups'], true)) {
+            $data['activated'] = false;
+        } else {
+            $data['activated'] = true;
+        }
+        $data['avatar'] = self::$dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$data['userid'], 'int']]);
     }
 
     public function destroy(string $id): bool
