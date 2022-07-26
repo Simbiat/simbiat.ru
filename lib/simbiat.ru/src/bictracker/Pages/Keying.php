@@ -25,7 +25,7 @@ class Keying extends Page
     protected bool $static = true;
     protected int $cacheAge = 14400;
     #Link to JS module for preload
-    protected string $jsModule = '/js/Pages/bictracker/keying.js';
+    protected string $jsModule = 'bictracker/keying';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -40,7 +40,7 @@ class Keying extends Page
                 $this->altLinks = [['href' => '/api/bictracker/keying/' . $path[0] . '/' . $path[1], 'rel' => 'alternate', 'title' => 'Ссылка на API', 'type' => 'application/json; charset=utf-8'],];
             }
             if (is_numeric($outputArray['checkResult'])) {
-                $outputArray['properKey'] = preg_replace('/(^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{2})([0-9])([0-9]{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $path[1]);
+                $outputArray['properKey'] = preg_replace('/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $path[1]);
             }
         }
         return $outputArray;

@@ -33,14 +33,12 @@
     },
     //Include only .ts files in the same dir
     "include": [
-        "./bictracker/*.ts",
-        "./fftracker/*.ts",
-        "./usercontrol/*.ts"
+        "./*/*.ts"
     ],
     "exclude": [
         "node_modules"
     ],
     "references": [
-        {"path": "../tsconfig.json"}
+        {"path": "../Common/tsconfig.json"}
     ]
 }

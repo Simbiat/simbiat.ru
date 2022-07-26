@@ -124,12 +124,12 @@ class HomePage
                         if ($uri[0] !== 'api') {
                             $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
                                 ['rel' => 'stylesheet preload', 'href' => '/css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css', 'as' => 'style'],
-                                ['rel' => 'preload', 'href' => '/js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js', 'as' => 'script'],
+                                ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'main.min.js') . '.js', 'as' => 'script'],
                             ]);
                         }
                         self::$headers->links($GLOBALS['siteconfig']['links']);
                         if ($uri[0] !== 'api') {
-                            @header('SourceMap: /js/' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'min.js') . '.js.map', false);
+                            @header('SourceMap: /js/main.min.' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'main.min.js') . '.js.map', false);
                             @header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
                         }
                         #Check if we have cached the results already

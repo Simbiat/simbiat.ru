@@ -19,7 +19,7 @@ class Track extends StaticPage
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Register entity for tracking on FFXIV Tracker';
     #Link to JS module for preload
-    protected string $jsModule = '/js/Pages/fftracker/track.js';
+    protected string $jsModule = 'fftracker/track';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

@@ -21,13 +21,13 @@
         "moduleResolution": "nodenext",
         "baseUrl": ".",
         "paths": {
-            "*": ["*", "../*"],
+            "*": ["/js/Pages/*", "../../*"],
         },
         "sourceMap": true,
-        "sourceRoot": "/js/",
+        "sourceRoot": "/js/Common/",
         "removeComments": true,
-        "outDir": "./",
-        "outFile": "./main.js",
+        "outDir": "../",
+        "outFile": "../main.js",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
@@ -38,13 +38,13 @@
     },
     //Include only .ts files in the same dir
     "include": [
-        "Common/*.ts",
-        "Common/CustomElements/*/*.ts"
+        "./*.ts",
+        "./CustomElements/*/*.ts"
     ],
     "exclude": [
         "node_modules"
     ],
     "references": [
-        {"path":  "Pages/tsconfig.json"}
+        {"path":  "../Pages/tsconfig.json"}
     ]
 }

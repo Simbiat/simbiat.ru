@@ -81,7 +81,7 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             #List of LINK tags
             'link_tags' => $GLOBALS['siteconfig']['links'],
             #Time used as version of the JS file for cache busting
-            'js_version' => filemtime($GLOBALS['siteconfig']['jsdir'].'min.js'),
+            'js_version' => filemtime($GLOBALS['siteconfig']['jsdir'].'main.min.js'),
             #Save data flag
             'save_data' => $save_data,
             'unsupported' => false,

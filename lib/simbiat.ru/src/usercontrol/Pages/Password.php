@@ -24,7 +24,7 @@ class Password extends Page
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
     #Link to JS module for preload
-    protected string $jsModule = '/js/Pages/usercontrol/password.js';
+    protected string $jsModule = 'uc/password';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

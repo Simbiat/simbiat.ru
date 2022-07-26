@@ -32,7 +32,7 @@ class Search extends \Simbiat\Abstracts\Pages\Search
     #Language override, to be sent in header (if present)
     protected string $language = 'ru-RU';
     #Link to JS module for preload
-    protected string $jsModule = '/js/Pages/bictracker/search.js';
+    protected string $jsModule = 'bictracker/search';
 
     #Add any extra fields, if required by overriding this function
     protected function extras(): array

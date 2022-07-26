@@ -54,9 +54,9 @@ function router(): void
         } else if (path[0] === 'uc') {
             if (path[1]) {
                 if (path[1] === 'emails') {
-                    import('/js/Pages/usercontrol/emails.js').then((module) => {new module.Emails();});
+                    import('/js/Pages/uc/emails.js').then((module) => {new module.Emails();});
                 } else if (path[1] === 'password') {
-                    import('/js/Pages/usercontrol/password.js').then((module) => {new module.PasswordChange();});
+                    import('/js/Pages/uc/password.js').then((module) => {new module.PasswordChange();});
                 }
             }
         }
