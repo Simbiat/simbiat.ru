@@ -1,34 +1,80 @@
 <form class="middle" id="profile_username">
     <div class="float_label_div">
-        <input form="profile_username" data-original="{{ userData.username }}" value="{{ userData.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <input form="profile_username" data-original="{{ userData.username|escape('html_attr') }}" value="{{ userData.username|escape('html') }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~- ]+$">
         <label for="username_value">Username</label>
     </div>
     <input role="button" form="profile_username" type="submit" name="submit" id="username_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Change">
     <img id="username_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Changing username...">
 </form>
 <hr/>
-<form class="middle" id="profile_avatar">
-
-</form>
-<hr/>
 <form class="middle" id="profile_details">
-    <p>Form below auto-saves every 10 seconds, if there were edits.</p>
+    <p>Form below auto-saves every 10 seconds, if there were any changes.</p>
     <div class="float_label_div">
-        <input form="profile_details" data-original="{{ userData.firstname }}" value="{{ userData.firstname }}" type="text" aria-required="false" name="details[firstname]" id="firstname_value" placeholder="First name" autocomplete="given-name" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <input form="profile_details" data-original="{{ userData.firstname|escape('html_attr') }}" value="{{ userData.firstname|escape('html') }}" type="text" aria-required="false" name="details[firstname]" id="firstname_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="1" maxlength="100" pattern="[^<>/\=\x22\x27]">
         <label for="firstname_value">First name</label>
     </div>
     <div class="float_label_div">
-        <input form="profile_details" data-original="{{ userData.lastname }}" value="{{ userData.lastname }}" type="text" aria-required="false" name="details[lastname]" id="lastname_value" placeholder="Last name" autocomplete="family-name" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <input form="profile_details" data-original="{{ userData.lastname|escape('html_attr') }}" value="{{ userData.lastname|escape('html') }}" type="text" aria-required="false" name="details[lastname]" id="lastname_value" placeholder="Last name" autocomplete="family-name" spellcheck="true" inputmode="text" minlength="1" maxlength="100" pattern="[^<>/\=\x22\x27]">
         <label for="lastname_value">Last name</label>
     </div>
     <br/>
     <div class="float_label_div">
-        <input form="profile_details" data-original="{{ userData.middlename }}" value="{{ userData.middlename }}" type="text" aria-required="false" name="details[middlename]" id="middlename_value" placeholder="Middle name" autocomplete="additional-name" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <input form="profile_details" data-original="{{ userData.middlename|escape('html_attr') }}" value="{{ userData.middlename|escape('html') }}" type="text" aria-required="false" name="details[middlename]" id="middlename_value" placeholder="Middle name" autocomplete="additional-name" spellcheck="true" inputmode="text" minlength="1" maxlength="100" pattern="[^<>/\=\x22\x27]">
         <label for="middlename_value">Middle name</label>
     </div>
     <div class="float_label_div">
-        <input form="profile_details" data-original="{{ userData.fathername }}" value="{{ userData.fathername }}" type="text" aria-required="false" name="details[fathername]" id="fathername_value" placeholder="Father's name" autocomplete="on" inputmode="text" minlength="1" maxlength="100" pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+$">
+        <input form="profile_details" data-original="{{ userData.fathername|escape('html_attr') }}" value="{{ userData.fathername|escape('html') }}" type="text" aria-required="false" name="details[fathername]" id="fathername_value" placeholder="Father's name" autocomplete="on" spellcheck="true" inputmode="text" minlength="1" maxlength="100" pattern="[^<>/\=\x22\x27]">
         <label for="fathername_value">Father's name</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.prefix|escape('html_attr') }}" value="{{ userData.prefix|escape('html') }}" type="text" aria-required="false" name="details[prefix]" id="prefix_value" placeholder="Prefix" autocomplete="honorific-prefix" spellcheck="true" inputmode="text" minlength="1" maxlength="25" pattern="[^<>/\=\x22\x27]">
+        <label for="prefix_value">Prefix</label>
+    </div>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.suffix|escape('html_attr') }}" value="{{ userData.suffix|escape('html') }}" type="text" aria-required="false" name="details[suffix]" id="suffix_value" placeholder="Suffix" autocomplete="honorific-suffix" spellcheck="true" inputmode="text" minlength="1" maxlength="25" pattern="[^<>/\=\x22\x27]">
+        <label for="suffix_value">Suffix</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <select form="profile_details" id="sex_value" autocomplete="sex" name="details[sex]" data-original="{{ userData.sex|escape('html_attr') }}">
+            <option value="null"{% if userData.sex is null %} selected{% endif %}>None or other</option>
+            <option value="0"{% if userData.sex is same as(0) %} selected{% endif %}>Female</option>
+            <option value="1"{% if userData.sex == 1 %} selected{% endif %}>Male</option>
+        </select>
+        <label for="sex_value">Sex</label>
+    </div>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.birthday|escape('html_attr') }}" value="{{ userData.birthday|escape('html') }}" type="date" aria-required="false" name="details[birthday]" id="birthday_value" placeholder="Birthday" autocomplete="bday" inputmode="numeric">
+        <label for="birthday_value">Birthday</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.country|escape('html_attr') }}" value="{{ userData.country|escape('html') }}" type="text" aria-required="false" name="details[country]" id="country_value" placeholder="Country" autocomplete="country-name" inputmode="text" minlength="1" maxlength="60" pattern="[^<>/\=\x22\x27]">
+        <label for="country_value">Country</label>
+    </div>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.city|escape('html_attr') }}" value="{{ userData.city|escape('html') }}" type="text" aria-required="false" name="details[city]" id="city_value" placeholder="City" autocomplete="address-level2" inputmode="text" minlength="1" maxlength="200" pattern="[^<>/\=\x22\x27]">
+        <label for="city_value">City</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <select form="profile_details" id="timezone_value" name="details[timezone]" data-original="{{ userData.timezone|escape('html_attr') }}">
+            {% for timezone, details in timezones %}
+                <option value="{{ timezone|escape('html_attr') }}"{% if details.current %} selected{% endif %}>{{ timezone|escape('html') }} (GMT{{ details.offset|escape('html_attr') }})</option>
+            {% endfor %}
+        </select>
+        <label for="timezone_value">Timezone</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <input form="profile_details" data-original="{{ userData.website|escape('html_attr') }}" value="{{ userData.website|escape('html') }}" type="url" aria-required="false" name="details[website]" id="website_value" placeholder="Website" autocomplete="url" inputmode="text" minlength="1" maxlength="255" pattern="https://[^<>]]*">
+        <label for="website_value">Website</label>
+    </div>
+    <br/>
+    <div class="float_label_div">
+        <textarea form="profile_details" id="about_value" name="details[about]" data-original="{{ userData.about|escape('html_attr') }}" placeholder="About" spellcheck="true" wrap="soft">{{ userData.about|escape('html') }}</textarea>
+        <label for="about_value">About</label>
     </div>
     <br/>
     <input role="button" form="profile_details" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">

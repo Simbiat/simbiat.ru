@@ -91,7 +91,7 @@ abstract class Page
         $page['cacheStrat'] = $this->cacheStrat;
         if (!empty($this->altLinks) || !empty($this->jsModule)) {
             if (!empty($this->jsModule)) {
-                $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => '/js/Pages/'.$this->jsModule.'.min.'.filemtime($GLOBALS['siteconfig']['jsdir'].'Pages/'.$this->jsModule.'.min.js').'.js', 'as' => 'script']]);
+                $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => '/js/Pages/'.$this->jsModule.'.'.filemtime($GLOBALS['siteconfig']['jsdir'].'Pages/'.$this->jsModule.'.js').'.js', 'as' => 'script']]);
             }
             #Send HTTP header
             if (!HomePage::$staleReturn) {

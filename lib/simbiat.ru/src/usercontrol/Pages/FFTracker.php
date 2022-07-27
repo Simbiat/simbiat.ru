@@ -5,38 +5,31 @@ namespace Simbiat\usercontrol\Pages;
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
 
-class Profile extends Page
+class FFTracker extends Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/uc/profile', 'name' => 'Profile']
+        ['href' => '/uc/fftracker', 'name' => 'FFXIV']
     ];
     #Sub service name
-    protected string $subServiceName = 'profile';
+    protected string $subServiceName = 'fftracker';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = 'Profile';
+    protected string $title = 'FFXIV';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $h1 = 'Your profile';
+    protected string $h1 = 'FFXIV Linkage';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Page to edit your profile';
+    protected string $ogdesc = 'Page to link FFXIV characters';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Link to JS module for preload
-    protected string $jsModule = 'uc/profile';
+    protected string $jsModule = 'uc/fftracker';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         $outputArray = [];
-        $outputArray['userData'] = HomePage::$dbController->selectRow('SELECT *, null as `password`, null as `pw_reset`, null as `api_key` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$_SESSION['userid'], 'int']]);
-        $now = new \DateTime();
-        $outputArray['timezones'] = [];
-        foreach (timezone_identifiers_list() as $timezone) {
-            $now->setTimezone(new \DateTimeZone($timezone));
-            $outputArray['timezones'][$timezone] = ['offset' => sprintf('%+03d:%02d', intval($now->getOffset()/3600), abs(intval($now->getOffset()%3600/60))), 'current' => ($timezone === $outputArray['userData']['timezone'])];
-        }
         return $outputArray;
     }
 }

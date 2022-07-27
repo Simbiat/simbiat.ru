@@ -56,14 +56,16 @@ class Signinup
         $security = (new Security);
         $password = $security->passHash($_POST['signinup']['password']);
         $activation = $security->genCSRF();
+        $ff_token = $security->genCSRF();
         try {
             $queries = [
                 #Insert to main database
                 [
-                    'INSERT INTO `uc__users`(`username`, `password`, `timezone`, `country`, `city`) VALUES (:username, :password, :timezone, (SELECT `country` FROM `seo__ips` WHERE `ip`=:ip), (SELECT `city` FROM `seo__ips` WHERE `ip`=:ip))',
+                    'INSERT INTO `uc__users`(`username`, `password`, `ff_token`, `timezone`, `country`, `city`) VALUES (:username, :password, :ff_token, :timezone, (SELECT `country` FROM `seo__ips` WHERE `ip`=:ip), (SELECT `city` FROM `seo__ips` WHERE `ip`=:ip))',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':password' => $password,
+                        ':ff_token' => $ff_token,
                         ':timezone' => $timezone,
                         ':ip' => $_SESSION['IP'] ?? '',
                     ],

@@ -14,7 +14,7 @@ class PvPTeam extends Entity
 
     #Custom properties
     protected const entityType = 'pvpteam';
-    protected string $idFormat = '/^[a-z0-9]{40}$/m';
+    protected string $idFormat = '/^[a-z\d]{40}$/m';
     public array $dates = [];
     public ?string $community = null;
     public ?string $crest = null;

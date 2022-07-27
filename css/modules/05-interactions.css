@@ -228,6 +228,7 @@ select:focus+label {
 select:not(:placeholder-shown)+label,
 select:focus+label {
     left: 1rem;
+    top: -0.25rem;
 }
 /*Some input types make more sense with pointer cursor*/
 input[type=radio],

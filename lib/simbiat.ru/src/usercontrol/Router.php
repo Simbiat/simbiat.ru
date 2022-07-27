@@ -5,7 +5,7 @@ namespace Simbiat\usercontrol;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password'];
+    protected array $subRoutes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/uc/', 'name'=>'User Cabinet']
@@ -25,6 +25,10 @@ class Router extends \Simbiat\Abstracts\Router
             'unsubscribe' => (new Pages\Unsubscribe)->get(array_slice($path, 1)),
             'password' => (new Pages\Password)->get(array_slice($path, 1)),
             'profile' => (new Pages\Profile)->get(array_slice($path, 1)),
+            'removal' => (new Pages\Removal)->get(array_slice($path, 1)),
+            'sessions' => (new Pages\Sessions)->get(array_slice($path, 1)),
+            'fftracker' => (new Pages\FFTracker)->get(array_slice($path, 1)),
+            'avatars' => (new Pages\Avatars)->get(array_slice($path, 1)),
             'register' => ['subServiceName' => 'registration'],
         };
     }

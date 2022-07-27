@@ -57,6 +57,16 @@ function router(): void
                     import('/js/Pages/uc/emails.js').then((module) => {new module.Emails();});
                 } else if (path[1] === 'password') {
                     import('/js/Pages/uc/password.js').then((module) => {new module.PasswordChange();});
+                } else if (path[1] === 'profile') {
+                    import('/js/Pages/uc/profile.js').then((module) => {new module.EditProfile();});
+                } else if (path[1] === 'avatars') {
+                    import('/js/Pages/uc/avatars.js').then((module) => {new module.EditAvatars();});
+                } else if (path[1] === 'sessions') {
+                    import('/js/Pages/uc/sessions.js').then((module) => {new module.EditSessions();});
+                } else if (path[1] === 'fftracker') {
+                    import('/js/Pages/uc/fftracker.js').then((module) => {new module.EditFFLinks();});
+                } else if (path[1] === 'removal') {
+                    import('/js/Pages/uc/removal.js').then((module) => {new module.RemoveProfile();});
                 }
             }
         }

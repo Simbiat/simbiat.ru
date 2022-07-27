@@ -15,7 +15,7 @@ class Search extends Page
     #Items to display per page for search results per type
     protected int $searchItems = 15;
     #Regex to sanitize search value (remove disallowed characters)
-    protected string $regexSearch = '/[^a-zA-Z0-9 _\'\-,!%]/i';
+    protected string $regexSearch = '/[^a-zA-Z\d _\'\-,!%]/i';
     #Short title to be used for <title> and <h1> when having a search value
     protected string $shortTitle = 'Search for `%s`';
     #Full title to be used for description metatags when having a search value

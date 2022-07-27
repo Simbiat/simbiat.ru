@@ -37,6 +37,10 @@ class Checkers
     #Function to check whether name is banned
     public function bannedName(string $name): bool
     {
+        #Check format
+        if (preg_match('/^[\p{L}\d.!#$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
+            return false;
+        }
         #Check against DB table
         try {
             return self::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);

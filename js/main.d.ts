@@ -3,7 +3,7 @@ declare function getMeta(metaName: string): string | null;
 declare function updateHistory(newUrl: string, title: string): void;
 declare function submitIntercept(form: HTMLFormElement, callable: Function): void;
 declare const pageTitle = " on Simbiat Software";
-declare const emailRegex = "[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*";
+declare const emailRegex = "[p{L}d.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Zd](?:[a-zA-Zd-]{0,61}[a-zA-Zd])?(?:\\.[a-zA-Zd](?:[a-zA-Zd-]{0,61}[a-zA-Zd])?)*";
 declare const userRegex = "[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}";
 declare function init(): void;
 declare function cleanGET(): void;

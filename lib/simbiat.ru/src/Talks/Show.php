@@ -29,7 +29,7 @@ class Show
         $currentPage = 1;
         #Sanitize pages
         if (!empty($uri[1])) {
-            $currentPage = preg_replace('/[^0-9]/', '', $uri[1]);
+            $currentPage = preg_replace('/[^\d]/', '', $uri[1]);
         }
         if (empty($currentPage)) {
             $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1', true, true, false);
@@ -67,7 +67,7 @@ class Show
     public function thread(array $uri): array
     {
         if (!empty($uri[1])) {
-            $threadid = preg_replace('/[^0-9]/', '', $uri[1]);
+            $threadid = preg_replace('/[^\d]/', '', $uri[1]);
         }
         if (empty($threadid)) {
             $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1', true, true, false);

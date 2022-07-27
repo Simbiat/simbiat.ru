@@ -332,7 +332,7 @@ class Bic extends Entity
             $dobs = '';
         } else {
             #Remove all letters from additional number
-            $dobs = preg_replace('/[^0-9,]/', '', $dob[1]);
+            $dobs = preg_replace('/[^\d,]/', '', $dob[1]);
             #Replace ','. To be honest not sure why it's done through explode/implode, but I think this helped with removing empty values
             $dobs = explode(',', $dobs);
             $dobs = implode(' или ', $dobs);
@@ -355,7 +355,7 @@ class Bic extends Entity
                     $phone = preg_replace('/\)/', ') ', $phone);
                 }
             }
-            $phones[$key] = ['phone'=>$phone,'url'=>preg_replace('/[^0-9+]/', '', $phone)];
+            $phones[$key] = ['phone'=>$phone,'url'=>preg_replace('/[^\d+]/', '', $phone)];
         }
         return ['phones'=>$phones,'dob'=>$dobs];
     }

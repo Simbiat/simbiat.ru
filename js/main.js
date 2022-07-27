@@ -87,7 +87,7 @@ function submitIntercept(form, callable) {
     });
 }
 const pageTitle = ' on Simbiat Software';
-const emailRegex = '[a-zA-Z0-9.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*';
+const emailRegex = '[\p{L}\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*';
 const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}';
 document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('hashchange', function () { hashCheck(); });
@@ -173,6 +173,21 @@ function router() {
                 }
                 else if (path[1] === 'password') {
                     import('/js/Pages/uc/password.js').then((module) => { new module.PasswordChange(); });
+                }
+                else if (path[1] === 'profile') {
+                    import('/js/Pages/uc/profile.js').then((module) => { new module.EditProfile(); });
+                }
+                else if (path[1] === 'avatars') {
+                    import('/js/Pages/uc/avatars.js').then((module) => { new module.EditAvatars(); });
+                }
+                else if (path[1] === 'sessions') {
+                    import('/js/Pages/uc/sessions.js').then((module) => { new module.EditSessions(); });
+                }
+                else if (path[1] === 'fftracker') {
+                    import('/js/Pages/uc/fftracker.js').then((module) => { new module.EditFFLinks(); });
+                }
+                else if (path[1] === 'removal') {
+                    import('/js/Pages/uc/removal.js').then((module) => { new module.RemoveProfile(); });
                 }
             }
         }

@@ -42,15 +42,9 @@ password-strength {
 
 /*Tabs styling for user control pages*/
 .vertical_tabs {
-    border-style: solid;
-    border-width: var(--border-width);
-    border-color: var(--border-color-inset);
-    margin-left: calc(var(--border-radius) / 1.5);
-    margin-right: calc(var(--border-radius) / 1.5);
-    border-bottom: none;
-    border-top-right-radius: var(--border-radius);
-    border-top-left-radius: var(--border-radius);
-    height: 2rem;
+    margin-left: calc(var(--border-radius) * 1.5);
+    margin-right: calc(var(--border-radius) * 1.5);
+    min-height: 2rem;
     width: fit-content;
 }
 .vertical_tabs>.nav_tab {
@@ -58,14 +52,12 @@ password-strength {
     border-style: solid;
     border-width: var(--border-width);
     border-color: var(--border-color-outset);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
     height: 1.8rem;
     line-height: 1.8rem;
-    border-top: none;
-    border-bottom: none;
-    border-left: none;
-    border-radius: 0;
     padding: .1rem .5rem;
-    margin-left: -0.3rem;
+    margin-left: -0.275rem;
+    margin-bottom: 0.025rem;
     display: inline-block;
     color: var(--color-interactive);
     font-weight: 700;
@@ -79,14 +71,6 @@ password-strength {
     border-color: var(--border-color-inset);
     background-color: var(--color-article);
 }
-.vertical_tabs>.nav_tab:first-child {
-    border-top-left-radius: var(--border-radius);
-    margin-left: 0;
-}
-.vertical_tabs>.nav_tab:last-child {
-    border-top-right-radius: var(--border-radius);
-    border-right: none;
-}
 .vertical_tabs>.nav_tab.danger {
     color: var(--color-failure);
     font-weight: 100;
@@ -99,4 +83,18 @@ password-strength {
 #uc_settings {
     display: block;
     text-align: center;
+}
+
+/*Set the width to be roughly the same as other inputs on UC Profile page*/
+#sex_value,
+#birthday_value {
+    width: 11.75rem;
+}
+#about_value {
+    width: 23.5rem;
+    height: 5rem;
+}
+/*Set width to match file upload field*/
+#new_avatar_url {
+    width: 18.75rem;
 }

@@ -1,7 +1,10 @@
 <section class="vertical_tabs">
     {% if subServiceName == 'profile' %}<span class="nav_tab active">Profile</span>{% else %}<a class="nav_tab" href="/uc/profile/">Profile</a>{% endif %}
+    {% if subServiceName == 'avatars' %}<span class="nav_tab active">Avatars</span>{% else %}<a class="nav_tab" href="/uc/avatars/">Avatars</a>{% endif %}
+    {% if subServiceName == 'fftracker' %}<span class="nav_tab active">FFXIV</span>{% else %}<a class="nav_tab" href="/uc/fftracker/">FFXIV</a>{% endif %}
     {% if subServiceName == 'emails' %}<span class="nav_tab active">Emails</span>{% else %}<a class="nav_tab" href="/uc/emails/">Emails</a>{% endif %}
     {% if subServiceName == 'password' %}<span class="nav_tab active">Password</span>{% else %}<a class="nav_tab" href="/uc/password/">Password</a>{% endif %}
+    {% if subServiceName == 'sessions' %}<span class="nav_tab active">Sessions</span>{% else %}<a class="nav_tab" href="/uc/sessions/">Sessions</a>{% endif %}
     {% if subServiceName == 'removal' %}<span class="nav_tab active danger">Removal</span>{% else %}<a class="nav_tab danger" href="/uc/removal/">Removal</a>{% endif %}
 </section>
 <section>
@@ -21,6 +24,12 @@
                 {{ include('usercontrol/password.twig')}}
             {% elseif subServiceName == 'removal' %}
                 {{ include('usercontrol/removal.twig')}}
+            {% elseif subServiceName == 'avatars' %}
+                {{ include('usercontrol/avatars.twig')}}
+            {% elseif subServiceName == 'fftracker' %}
+                {{ include('usercontrol/fftracker.twig')}}
+            {% elseif subServiceName == 'sessions' %}
+                {{ include('usercontrol/sessions.twig')}}
             {% endif %}
         </article>
     {% endif %}
