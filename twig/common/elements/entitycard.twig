@@ -26,36 +26,36 @@
                 <span class="emojiGreen">&#10004;</span>
             {% endif %}
         {% elseif type == 'achievement' %}
-            <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/icons/{{icon}}">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ icon }}">
         {% elseif type == 'character' %}
-            <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/avatars/96x96/{{icon}}.jpg">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/avatars/96x96/{{ icon }}.jpg">
         {% elseif type == 'freecompany' %}
             {% if icon == '1' %}
-                <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/2c/0d/2c0d4fda793b510e521e5f85a7ee622d2489c4e05d4b4cd1543e10dbcb1e460d.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/2c/0d/2c0d4fda793b510e521e5f85a7ee622d2489c4e05d4b4cd1543e10dbcb1e460d.png">
             {% elseif icon == '2' %}
-                <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/ba/e0/bae0ddccf1454af830b12a8b508197a6557863742df96ef0916c52725d714ab2.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/ba/e0/bae0ddccf1454af830b12a8b508197a6557863742df96ef0916c52725d714ab2.png">
             {% elseif icon == '3' %}
-                <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/b0/5d/b05d4cbd6375a90bf0f30c973d2e2c3beb8ebf72cece9b8dc5543ccb85d526d9.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/b0/5d/b05d4cbd6375a90bf0f30c973d2e2c3beb8ebf72cece9b8dc5543ccb85d526d9.png">
             {% else %}
-                <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/merged-crests/{{icon|slice(0,2)}}/{{icon|slice(2,2)}}/{{icon}}.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.png">
             {% endif %}
         {% elseif type == 'pvpteam' %}
-            <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/merged-crests/{{icon|slice(0,2)}}/{{icon|slice(2,2)}}/{{icon}}.png">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.png">
         {% elseif type == 'linkshell' %}
-            <img loading="lazy" decoding="async" alt="{{name|raw}}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.png">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.png">
         {% endif %}
     </span>
     <span class="entityName">
         {% if lsrankid and lsrankid != 3 %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{rank}}" data-tooltip="{{rank}}" src="/img/fftracker/lsranks/{{lsrankid}}.png">
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/lsranks/{{ lsrankid }}.png">
         {% endif %}
         {% if pvprankid and pvprankid != 3 %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{rank}}" data-tooltip="{{rank}}" src="/img/fftracker/pvpranks/{{pvprankid}}.png">
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/pvpranks/{{ pvprankid }}.png">
         {% endif %}
         {% if rankid matches '/^\\d+$/' %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{rank}}" data-tooltip="{{rank}}" src="/img/fftracker/fcranks/{{rankid}}.png">
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/fcranks/{{ rankid }}.png">
         {% endif %}
-        {{name|raw}}
+        {{ name }}
     </span>
     <span class="entityArrow">&#10151;</span>
 </a>

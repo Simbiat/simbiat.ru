@@ -1,7 +1,7 @@
 <section>
     <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ freecompany.name }}"
         {% if freecompany.crest %}
-            src="/img/fftracker/merged-crests/{{freecompany.crest|slice(0,2)}}/{{freecompany.crest|slice(2,2)}}/{{freecompany.crest}}.png"
+            src="/img/fftracker/merged-crests/{{ freecompany.crest|slice(0,2) }}/{{ freecompany.crest|slice(2,2) }}/{{ freecompany.crest }}.png"
         {% else %}
             {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
                 src="/img/fftracker/merged-crests/ba/e0/bae0ddccf1454af830b12a8b508197a6557863742df96ef0916c52725d714ab2.png"
@@ -12,7 +12,7 @@
             {% endif %}
         {% endif %}
     >
-    <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{freecompany.dates.formed|timeTag("d/m/Y")}} and registered on {{freecompany.dates.registered|timeTag("d/m/Y")}} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {{freecompany.dates.updated|timeTag("d/m/Y")}}.{% if freecompany.dates.deleted %} Was disbanded on {{freecompany.dates.deleted|timeTag("d/m/Y")}}.{% endif %}</p>
+    <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{ freecompany.dates.formed|timeTag("d/m/Y") }} and registered on {{ freecompany.dates.registered|timeTag("d/m/Y") }} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {{ freecompany.dates.updated|timeTag("d/m/Y") }}.{% if freecompany.dates.deleted %} Was disbanded on {{ freecompany.dates.deleted|timeTag("d/m/Y") }}.{% endif %}</p>
     <p>
         Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>, leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ freecompany.grandCompany }}"
         {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
@@ -23,7 +23,7 @@
             src="/img/fftracker/cities/4.png"
         {% endif %}
         >{% endif %}<i>{{ freecompany.grandCompany }}</i>.
-        {%if freecompany.location.estate.ward %}
+        {% if freecompany.location.estate.ward %}
             {% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} a
             {% if freecompany.location.estate.size == 1 %}
                 small
@@ -32,34 +32,34 @@
             {% elseif freecompany.location.estate.size == 3 %}
                 large
             {% endif %}
-            {%if freecompany.location.estate.name %}
+            {% if freecompany.location.estate.name %}
                 base named <i>"{{ freecompany.location.estate.name }}"</i>
             {% else %}
                 land
             {% endif %}
-            on plot <i>{{freecompany.location.estate.plot}}</i> in ward <i>{{freecompany.location.estate.ward}}</i> of <i>{{freecompany.location.estate.area}}</i>, {{freecompany.location.estate.city}}, {{freecompany.location.estate.region}} <a class="galleryZoom" href="/img/fftracker/maps/{{freecompany.location.estate.area}}/{{freecompany.location.estate.plot}}.jpg" target="_blank" data-tooltip="{{freecompany.location.estate.area}}, plot {{freecompany.location.estate.plot}}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.png"></a>.
+            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom" href="/img/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.jpg" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.png"></a>.
         {% endif %}
     </p>
-    {%if freecompany.location.estate.message %}
+    {% if freecompany.location.estate.message %}
         <p>{% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} this message on its plot placard:</p>
-        <blockquote>{{freecompany.location.estate.message|raw}}</blockquote>
+        <blockquote>{{ freecompany.location.estate.message|raw }}</blockquote>
     {% endif %}
-    {%if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
+    {% if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
         <ul>
             {% for focus, value in freecompany.focus %}
-                {%if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/img/fftracker/focus/{{ focus }}.png">{{ focus }}</li>{% endif %}
+                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/img/fftracker/focus/{{ focus }}.png">{{ focus }}</li>{% endif %}
             {% endfor %}
         </ul>
     {% endif %}
     {% if not freecompany.dates.deleted %}
-        {% if freecompany.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{freecompany.community}}" target="_blank">community</a>.{% endif %}
-        {%if freecompany.recruiting == 1 %}
-            <p>Is recruiting{%if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
-            {%if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}
+        {% if freecompany.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ freecompany.community }}" target="_blank">community</a>.{% endif %}
+        {% if freecompany.recruiting == 1 %}
+            <p>Is recruiting{% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
+            {% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}
                 <ul>
                     {% for seeking, value in freecompany.seeking %}
-                        {%if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/img/fftracker/roles/{{ seeking }}.png">{{ seeking }}</li>{% endif %}
+                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/img/fftracker/roles/{{ seeking }}.png">{{ seeking }}</li>{% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}

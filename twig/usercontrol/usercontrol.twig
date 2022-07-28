@@ -11,25 +11,25 @@
     {% if subServiceName %}
         <article>
             {% if subServiceName == 'registration' %}
-                {{ include('usercontrol/registration.twig')}}
+                {{ include('usercontrol/registration.twig') }}
             {% elseif subServiceName == 'activation' %}
-                {{ include('usercontrol/activation.twig')}}
+                {{ include('usercontrol/activation.twig') }}
             {% elseif subServiceName == 'emails' %}
-                {{ include('usercontrol/emails.twig')}}
+                {{ include('usercontrol/emails.twig') }}
             {% elseif subServiceName == 'unsubscribe' %}
-                {{ include('usercontrol/unsubscribe.twig')}}
+                {{ include('usercontrol/unsubscribe.twig') }}
             {% elseif subServiceName == 'profile' %}
-                {{ include('usercontrol/profile.twig')}}
+                {{ include('usercontrol/profile.twig') }}
             {% elseif subServiceName == 'password' %}
-                {{ include('usercontrol/password.twig')}}
+                {{ include('usercontrol/password.twig') }}
             {% elseif subServiceName == 'removal' %}
-                {{ include('usercontrol/removal.twig')}}
+                {{ include('usercontrol/removal.twig') }}
             {% elseif subServiceName == 'avatars' %}
-                {{ include('usercontrol/avatars.twig')}}
+                {{ include('usercontrol/avatars.twig') }}
             {% elseif subServiceName == 'fftracker' %}
-                {{ include('usercontrol/fftracker.twig')}}
+                {{ include('usercontrol/fftracker.twig') }}
             {% elseif subServiceName == 'sessions' %}
-                {{ include('usercontrol/sessions.twig')}}
+                {{ include('usercontrol/sessions.twig') }}
             {% endif %}
         </article>
     {% endif %}

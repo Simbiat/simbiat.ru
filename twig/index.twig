@@ -12,7 +12,7 @@
         <title>{% if title %}{{ title|raw }} on {{ site_name }}{% else %}{{ site_name }}{% endif %}</title>
 
         {{ include('common/layout/scripts.twig') }}
-        {% if http_error%}
+        {% if http_error %}
             {% if http_error not in [400, 403, 404, 405,'twig'] and static_page == false and cached_page == false and construction == false %}
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
@@ -41,19 +41,19 @@
                         {% endif %}
                     </article>
                 {% else %}
-                    {% if serviceName == 'about'%}
-                        {{ include('about/about.twig')}}
-                    {% elseif serviceName == 'fftracker'%}
-                        {{ include('fftracker/fftracker.twig')}}
-                    {% elseif serviceName == 'bictracker'%}
-                        {{ include('bictracker/bictracker.twig')}}
-                    {% elseif serviceName == 'landing'%}
+                    {% if serviceName == 'about' %}
+                        {{ include('about/about.twig') }}
+                    {% elseif serviceName == 'fftracker' %}
+                        {{ include('fftracker/fftracker.twig') }}
+                    {% elseif serviceName == 'bictracker' %}
+                        {{ include('bictracker/bictracker.twig') }}
+                    {% elseif serviceName == 'landing' %}
                         {{ include('landing.twig') }}
-                    {% elseif serviceName == 'sitemap'%}
+                    {% elseif serviceName == 'sitemap' %}
                         {{ include('common/pages/sitemap.twig') }}
-                    {% elseif serviceName == 'uc'%}
+                    {% elseif serviceName == 'uc' %}
                         {{ include('usercontrol/usercontrol.twig') }}
-                    {% elseif serviceName == 'stylingTest'%}
+                    {% elseif serviceName == 'stylingTest' %}
                         {{ include('stylingTest.twig') }}
                     {% else %}
                         <article id="http_error">
@@ -90,5 +90,5 @@
             <snack-bar role="dialog"></snack-bar>
         </over-lays>
         </body>
-    {%endif%}
+    {% endif %}
 </html>

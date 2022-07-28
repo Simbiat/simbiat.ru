@@ -10,8 +10,8 @@
             {% endif %}
         </details>
     </article>
-    {% if subServiceName == 'search'%}
-        {{ include('common/elements/search.twig')}}
+    {% if subServiceName == 'search' %}
+        {{ include('common/elements/search.twig') }}
     {% endif %}
     {% if subServiceName %}
         {% if pagination %}
@@ -19,15 +19,15 @@
         {% endif %}
         <article>
             {% if subServiceName == 'keying' %}
-                {{ include('bictracker/keying.twig')}}
+                {{ include('bictracker/keying.twig') }}
             {% elseif subServiceName == 'search' %}
-                {{ include('common/pages/search.twig')}}
+                {{ include('common/pages/search.twig') }}
             {% elseif subServiceName == 'bic' %}
-                {{ include('bictracker/bic.twig')}}
+                {{ include('bictracker/bic.twig') }}
             {% elseif subServiceName == 'openbics' %}
-                {{ include('common/pages/list.twig')}}
+                {{ include('common/pages/list.twig') }}
             {% elseif subServiceName == 'closedbics' %}
-                {{ include('common/pages/list.twig')}}
+                {{ include('common/pages/list.twig') }}
             {% endif %}
         </article>
         {% if pagination %}

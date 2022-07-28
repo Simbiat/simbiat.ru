@@ -34,43 +34,43 @@
 <section class="ff_char_page">
     <section class="ff_char_block">
         {% if not character.avatarID %}
-            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1%}male{% else %}female{% endif %}{{character.biology.race}}.png">
+            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{ character.name }}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.png">
         {% else %}
-            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{character.name}}" src="/img/fftracker/avatars/640x873/{{character.id}}.jpg">
+            <img loading="lazy" decoding="async" id="ff_portrait_img" alt="{{ character.name }}" src="/img/fftracker/avatars/640x873/{{ character.id }}.jpg">
         {% endif %}
     </section>
     <section class="ff_char_block">
         <h2>General</h2>
-        <p><b>{{character.name}}</b>{% if character.title.title %}, a.k.a <i>"{{ character.title.title }}"</i>,{% endif %} is a {{ adjective }} {% if character.biology.gender == 1%}male{% else %}female{% endif %} <i>{{character.biology.race}}</i> of <i>{{character.biology.clan}}</i> clan, registered in the database on {{character.dates.registered|timeTag("d/m/Y")}} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}.{% endif %}</p>
+        <p><b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"{{ character.title.title }}"</i>,{% endif %} is a {{ adjective }} {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ character.dates.registered|timeTag("d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}.{% endif %}</p>
         <p>
-            Born on <i>{{character.biology.nameday}}</i> under protection of <img loading="lazy" decoding="async" alt="{{character.biology.guardian}}" class="linkIcon" src="/img/fftracker/guardians/{{character.biology.guardianid}}.png"><i>{{character.biology.guardian}}</i>.{% if character.dates.deleted %} {% if character.biology.killedby %}&#9760; Killed{% else %}&#129702; Died{% endif %} on {{character.dates.deleted|timeTag("d/m/Y")}} {% if character.biology.killedby %}by {{ character.biology.killedby }} &#9760;{% else %}from old age &#129702;{% endif %}. {% endif %}
+            Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="linkIcon" src="/img/fftracker/guardians/{{ character.biology.guardianid }}.png"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} {% if character.biology.killedby %}&#9760; Killed{% else %}&#129702; Died{% endif %} on {{ character.dates.deleted|timeTag("d/m/Y") }} {% if character.biology.killedby %}by {{ character.biology.killedby }} &#9760;{% else %}from old age &#129702;{% endif %}. {% endif %}
         </p>
         <p>
             {% if character.biology.incarnations %}
                 Other known incarnations:
                 {% for incarnation in character.biology.incarnations %}
-                    {%if loop.last%}and {%endif%}{% if character.biology.gender == 1%}male{% else %}female{% endif %} {{incarnation.race}} of {{ incarnation.clan }}{%if not loop.last%}, {% else %}.{%endif%}
+                    {% if loop.last %}and {% endif %}{% if character.biology.gender == 1 %}male{% else %}female{% endif %} {{ incarnation.race }} of {{ incarnation.clan }}{% if not loop.last %}, {% else %}.{% endif %}
                 {% endfor %}
                 .
             {% endif %}
         </p>
         <p>
-            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{character.location.city}}" class="linkIcon" src="/img/fftracker/cities/{{character.location.cityid}}.png"><i>{{character.location.city}}</i>, <i>{{character.location.region}}</i>{% if character.location.server%} on {{character.location.server}} of {{character.location.datacenter}}{% endif %}.
+            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="linkIcon" src="/img/fftracker/cities/{{ character.location.cityid }}.png"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.datacenter }}{% endif %}.
             {% if character.location.previousServers %}
                 Has also been seen on
                 {% for server in character.location.previousServers %}
-                    {%if loop.last%}and {%endif%}{{server.server}} of {{server.datacenter}}{%if not loop.last%}, {% else %}.{%endif%}
+                    {% if loop.last %}and {% endif %}{{ server.server }} of {{ server.datacenter }}{% if not loop.last %}, {% else %}.{% endif %}
                 {% endfor %}
             {% endif %}
         </p>
         {% if character.pvp %}
-            <p>Participated in <i class="failure">{{character.pvp}}</i> &#9876; battles.</p>
+            <p>Participated in <i class="failure">{{ character.pvp }}</i> &#9876; battles.</p>
         {% endif %}
         {% if character.grandCompany.name %}
-            <p>Reached rank of <img loading="lazy" decoding="async" alt="{{character.grandCompany.rank}}" class="linkIcon" src="/img/fftracker/grandcompany/{{character.grandCompany.gcrankid}}.png"><i>{{character.grandCompany.rank}}</i> in <i>{{character.grandCompany.name}}</i> Grand company.</p>
+            <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grandCompany.rank }}" class="linkIcon" src="/img/fftracker/grandcompany/{{ character.grandCompany.gcrankid }}.png"><i>{{ character.grandCompany.rank }}</i> in <i>{{ character.grandCompany.name }}</i> Grand company.</p>
         {% endif %}
         <p>
-            Last interview was conducted on {{character.dates.updated|timeTag("d/m/Y")}}.
+            Last interview was conducted on {{ character.dates.updated|timeTag("d/m/Y") }}.
             {% if character.biography %}
                 This is what adventurer had to say during it:
             {% endif %}
@@ -79,10 +79,10 @@
             <blockquote>{{ character.biography|raw }}</blockquote>
         {% endif %}
     </section>
-    {% if character.groups%}
+    {% if character.groups %}
         <section class="ff_char_block">
             <h2>Affiliations</h2>
-            {% if character.groups%}
+            {% if character.groups %}
                 <div class="ff_groups">
                     {% for entity in character.groups %}
                         <div>
@@ -94,7 +94,7 @@
             {% endif %}
         </section>
     {% endif %}
-    {%if character.achievements|length > 0 %}
+    {% if character.achievements|length > 0 %}
         <section class="ff_char_block">
             <h2>Last achievements</h2>
             <div class="searchResults">

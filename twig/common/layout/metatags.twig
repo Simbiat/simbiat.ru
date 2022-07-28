@@ -19,16 +19,16 @@
 <meta itemprop="description" content="{{ ogdesc }}" />
 <meta itemprop="image" content="{{ ogimage }}">
 
-<meta name="X-CSRF-Token" content="{{XCSRFToken}}" />
+<meta name="X-CSRF-Token" content="{{ XCSRFToken }}" />
 <!-- Custom meta tag to indicate whether Save-Data header was received -->
-<meta name="save_data" content="{{save_data}}" />
+<meta name="save_data" content="{{ save_data }}" />
 
 <!-- FaceBook IDs -->
 <meta property="fb:app_id" content="288606374482851"/>
 <meta property="fb:admins" content="100002283569233"/>
 
 <!-- Open Graph Protocol -->
-<meta property="og:site_name" content="{{site_name}}" />
+<meta property="og:site_name" content="{{ site_name }}" />
 <meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
 <meta property="og:description" content="{{ ogdesc }}" />
 <meta property="og:url" content="{{ url }}" />
@@ -36,11 +36,11 @@
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-{%if not ogtype%}
+{% if not ogtype %}
     <meta property="og:type" content="website" />
 {% else %}
     <meta property="og:type" content="{{ ogtype }}" />
-{%endif%}
+{% endif %}
 {{ ogextra|raw }}
 
 <!-- Twitter Card -->
@@ -56,7 +56,7 @@
 {% else %}
     <meta name="twitter:image" content="{{ domain }}/img/favicons/simbiat.png" />
 {% endif %}
-<meta name="twitter:image:alt" content="{{site_name}} logo" />
+<meta name="twitter:image:alt" content="{{ site_name }} logo" />
 
 <!-- MS Tiles -->
 <meta name="application-name" content="{{ site_name }}" />
@@ -79,7 +79,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="{{site_name}}" />
+<meta name="apple-mobile-web-app-title" content="{{ site_name }}" />
 
 <!-- Preloads -->
 <link href="/img/logo.svg" rel="preload" type="image/svg+xml" as="image">

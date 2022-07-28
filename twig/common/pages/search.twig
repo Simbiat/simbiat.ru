@@ -14,7 +14,7 @@
         <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
     <form role="search" class="searchForm" data-baseURL="{{ actionURL }}" action="">
-        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100"{% if searchvalue is defined %} value="{{searchvalue}}"{% else %} autofocus{% endif %}><label for="searchField">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" autocomplete="on" maxlength="100"{% if searchvalue is defined %} value="{{ searchvalue }}"{% else %} autofocus{% endif %}><label for="searchField">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
         <input role="button" type="submit" id="search" value="{% if serviceName == 'bictracker' %}Поиск{% else %}Search{% endif %}">
     </form>
 </section>
