@@ -55,7 +55,7 @@ abstract class Api
             $result['template_override'] = 'common/pages/api.twig';
             #Prepare JSON output
             $result['json_ready'] = ['status' => 200];
-            if (!empty($data['cacheAge'])) {
+            if (!empty($data['cacheAge']) && $this->static === false) {
                 $result['cacheAge'] = $data['cacheAge'];
             }
             if (!empty($data['http_error'])) {
@@ -164,7 +164,7 @@ abstract class Api
         #Add extra data if final node
         if ($this->finalNode) {
             #Add cache age if set
-            if (empty($result['cacheAge'])) {
+            if (empty($result['cacheAge']) && $this->static === false) {
                 $result['cacheAge'] = $this->cacheAge;
             }
         }

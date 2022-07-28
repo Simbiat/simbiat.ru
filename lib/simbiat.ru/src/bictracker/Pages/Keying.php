@@ -23,7 +23,6 @@ class Keying extends Page
     protected string $language = 'ru-RU';
     #Flag to indicate this is a static page
     protected bool $static = true;
-    protected int $cacheAge = 14400;
     #Link to JS module for preload
     protected string $jsModule = 'bictracker/keying';
 
