@@ -3,69 +3,52 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 #Class that deals with mails.
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Crypto\DkimSigner;
 
 class Emails
 {
     use Common;
 
     #Helper function to send mails
-    public static function sendMail(string $to, string $subject, array $body = [], string $username = '', bool $debug = false): bool
+    public static function sendMail(string $to, string $subject, array $body = [], string $username = ''): bool
     {
-        $mail = new PHPMailer(true);
         try {
-            #Server settings
-            #Enable verbose debug output
-            if ($debug) {
-                $mail->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
-                $mail->Debugoutput = 'html';
+            #Create transport
+            $transport = Transport::fromDsn('smtp://'.urlencode($GLOBALS['siteconfig']['smtp']['user']).':'.urlencode($GLOBALS['siteconfig']['smtp']['password']).'@'.$GLOBALS['siteconfig']['smtp']['host'].':587');
+            #Create email
+            $email = new TemplatedEmail();
+            #Add addresses
+            $email->addFrom(new Address($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name']));
+            $email->sender(new Address($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name']));
+            $email->addReplyTo(new Address($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']));
+            if (HomePage::$PROD) {
+                $email->addTo($to);
             } else {
-                $mail->SMTPDebug = SMTP::DEBUG_OFF;
-                $mail->Debugoutput = 'error_log';
+                #On test always use admin mail
+                $email->addTo($GLOBALS['siteconfig']['adminmail']);
             }
-            #Send using SMTP
-            $mail->isSMTP();
-            #Set the SMTP server to send through
-            $mail->Host = $GLOBALS['siteconfig']['smtp']['host'];
-            #Enable SMTP authentication
-            $mail->SMTPAuth = true;
-            $mail->SMTPAutoTLS = true;
-            $mail->AuthType = 'LOGIN';
-            #SMTP username
-            $mail->Username = $GLOBALS['siteconfig']['smtp']['user'];
-            #SMTP password
-            $mail->Password = $GLOBALS['siteconfig']['smtp']['password'];
-            #Enable implicit TLS encryption
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
-
-            #Recipients
-            $mail->setFrom($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name'], false);
-            $mail->addAddress($to);
-            $mail->addReplyTo($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']);
-
-            #DKIM
-            $mail->DKIM_domain = $mail->Host;
-            $mail->DKIM_private = $GLOBALS['siteconfig']['DKIM']['key'];
-            $mail->DKIM_selector = 'DKIM';
-            $mail->DKIM_passphrase = '';
-            $mail->DKIM_identity = $mail->From;
-
-            #Content
-            #Set email format to HTML
-            $mail->isHTML();
-            #Use UTF8
-            $mail->CharSet = PHPMailer::CHARSET_UTF8;
-            $mail->Subject = $GLOBALS['siteconfig']['site_name'].': '.$subject;
+            #Set priority for alerts
             if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
-                $mail->Priority = 1;
+                $email->priority(1);
             }
-            $mail->Body = HomePage::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)]));
-            $mail->send();
+            #Add content
+            $email->subject($GLOBALS['siteconfig']['site_name'].': '.$subject);
+            $email->html(HomePage::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)])));
+            #Sign email
+            $signer = new DkimSigner('file://'.$GLOBALS['siteconfig']['DKIM']['key'], $GLOBALS['siteconfig']['smtp']['host'], 'DKIM');
+            $email = $signer->sign($email);
+            (new Mailer($transport))->send($email);
             return true;
+        } catch (TransportExceptionInterface $e) {
+            Errors::error_log($e, $e->getDebug());
+            return false;
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
