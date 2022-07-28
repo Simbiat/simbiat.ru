@@ -7,6 +7,7 @@ use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
+use Simbiat\usercontrol\Security;
 
 class Character extends Entity
 {
@@ -190,7 +191,7 @@ class Character extends Entity
                 ];
             }
             #Reduce number of <br>s in biography
-            $this->lodestone['bio'] = $this->removeBrs($this->lodestone['bio'] ?? '');
+            $this->lodestone['bio'] = (new Security())->sanitizeHTML($this->removeBrs($this->lodestone['bio'] ?? ''));
             #Try to download avatar
             $this->avatarDownload($this->lodestone['avatar']);
             #Main query to insert or update a character

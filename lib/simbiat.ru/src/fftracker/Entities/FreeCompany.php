@@ -7,6 +7,7 @@ use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
+use Simbiat\usercontrol\Security;
 
 class FreeCompany extends Entity
 {
@@ -173,7 +174,7 @@ class FreeCompany extends Entity
                     ],
                     ':rank'=>$this->lodestone['rank'],
                     ':slogan'=>[
-                        (empty($this->lodestone['slogan']) ? NULL : $this->removeBrs($this->lodestone['slogan'])),
+                        (empty($this->lodestone['slogan']) ? NULL : (new Security())->sanitizeHTML($this->removeBrs($this->lodestone['slogan']))),
                         (empty($this->lodestone['slogan']) ? 'null' : 'string'),
                     ],
                     ':active'=>[
@@ -190,7 +191,7 @@ class FreeCompany extends Entity
                         (empty($this->lodestone['estate']['address']) ? 'null' : 'string'),
                     ],
                     ':estate_message'=>[
-                        (empty($this->lodestone['estate']['greeting']) ? NULL : $this->removeBrs($this->lodestone['estate']['greeting'])),
+                        (empty($this->lodestone['estate']['greeting']) ? NULL : (new Security())->sanitizeHTML($this->removeBrs($this->lodestone['estate']['greeting']))),
                         (empty($this->lodestone['estate']['greeting']) ? 'null' : 'string'),
                     ],
                     ':rolePlaying'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Role-playing', array_column($this->lodestone['focus'], 'name'))]['enabled']),
