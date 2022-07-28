@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\HTTP20\HTML;
+use Simbiat\usercontrol\Security;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -26,6 +27,9 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('basename', function(string $string) {
                 return basename($string);
             }),
+            new TwigFilter('sanitize', function(string $string, bool $head = false) {
+                return (new Security())->sanitizeHTML($string, $head);
+            }, ['is_safe' => ['html']]),
             new TwigFilter('timeTag', function(string $string, string $format = 'd/m/Y H:i', string $classes = '') {
                 if (preg_match('/\d{10}/', $string) === 1) {
                     $datetime = new \DateTime();

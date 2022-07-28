@@ -19,7 +19,7 @@
         {% elseif checkResult is same as(true) %}
             <span id="accCheckResult" class="success">Правильное ключевание</span>
         {% else %}
-            <span id="accCheckResult" class="failure">Неверное ключевание. Ожидаемый ключ: {{ checkResult }} ({{ properKey|raw }})</span>
+            <span id="accCheckResult" class="failure">Неверное ключевание. Ожидаемый ключ: {{ checkResult }} ({{ firstHalf }}<span class="success">{{ checkResult }}</span>{{ secondHalf }})</span>
         {% endif %}
     </p>
 </section>

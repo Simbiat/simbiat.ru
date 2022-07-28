@@ -60,7 +60,7 @@ class HomePage
         }
         if (is_null(self::$twig)) {
             #Initiate Twig
-            self::$twig = new Environment(new FilesystemLoader($GLOBALS['siteconfig']['templatesdir']), ['cache' => $GLOBALS['siteconfig']['templatesdir'] . '/cache', 'auto_reload' => true,]);
+            self::$twig = new Environment(new FilesystemLoader($GLOBALS['siteconfig']['templatesDir']), ['cache' => $GLOBALS['siteconfig']['templatesDir'] . '/cache', 'auto_reload' => true, 'autoescape' => 'html',]);
             self::$twig->addExtension(new TwigExtension);
         }
         #Get all POST and GET keys to lower case

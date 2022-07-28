@@ -40,7 +40,8 @@ class Keying extends Page
                 $this->altLinks = [['href' => '/api/bictracker/keying/' . $path[0] . '/' . $path[1], 'rel' => 'alternate', 'title' => 'Ссылка на API', 'type' => 'application/json; charset=utf-8'],];
             }
             if (is_numeric($outputArray['checkResult'])) {
-                $outputArray['properKey'] = preg_replace('/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u', '$1<span class="success">'.$outputArray['checkResult'].'</span>$3', $path[1]);
+                $outputArray['firstHalf'] = preg_replace('/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u', '$1', $path[1]);
+                $outputArray['secondHalf'] = preg_replace('/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u', '$3', $path[1]);
             }
         }
         return $outputArray;

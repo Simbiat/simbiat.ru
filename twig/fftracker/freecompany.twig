@@ -42,7 +42,7 @@
     </p>
     {% if freecompany.location.estate.message %}
         <p>{% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} this message on its plot placard:</p>
-        <blockquote>{{ freecompany.location.estate.message|raw }}</blockquote>
+        <blockquote>{{ freecompany.location.estate.message|sanitize }}</blockquote>
     {% endif %}
     {% if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>

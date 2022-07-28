@@ -41,7 +41,7 @@
 {% else %}
     <meta property="og:type" content="{{ ogtype }}" />
 {% endif %}
-{{ ogextra|raw }}
+{{ ogextra|sanitize(true) }}
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary" />

@@ -9,7 +9,7 @@ class Caching
     public function __construct(string $cacheDir = '')
     {
         if (empty($cacheDir)) {
-            $this->cacheDir = $GLOBALS['siteconfig']['cachedir'] . 'html/';
+            $this->cacheDir = $GLOBALS['siteconfig']['cacheDir'] . 'html/';
         } else {
             if (!is_dir($cacheDir)) {
                 @mkdir($cacheDir, recursive: true);

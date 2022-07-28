@@ -17,6 +17,7 @@
     "matomo/device-detector": "^4",
     "phpmailer/phpmailer": "^6",
     "twig/twig": "^3",
+    "symfony/html-sanitizer": "^6",
     "ipinfo/ipinfo": "^2",
     "ext-zip": "*",
     "ext-iconv": "*",

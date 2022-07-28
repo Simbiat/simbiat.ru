@@ -9,7 +9,7 @@
                             <img loading="lazy" decoding="async" src="{% if image.thumb %}{{ image.thumb }}{% else %}{{ image.href }}{% endif %}" alt="{% if image.alt %}{{ image.alt }}{% else %}{{ image.href|basename }}{% endif %}">
                             <div>{{ loop.index }}/{{ images|length }}</div>
                         </a>
-                        <figcaption>{% if image.caption %}{{ image.caption|raw }}{% else %}{% if image.alt %}{{ image.alt }}{% else %}{{ image.href|basename }}{% endif %}{% endif %}</figcaption>
+                        <figcaption>{% if image.caption %}{{ image.caption|sanitize }}{% else %}{% if image.alt %}{{ image.alt }}{% else %}{{ image.href|basename }}{% endif %}{% endif %}</figcaption>
                     </figure>
                 </li>
             {% endif %}

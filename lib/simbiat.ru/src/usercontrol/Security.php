@@ -4,6 +4,8 @@ namespace Simbiat\usercontrol;
 
 use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 class Security
 {
@@ -224,5 +226,27 @@ class Security
         }
         @header('X-CSRF-Token: '.$token, true);
         return $token;
+    }
+
+    public function sanitizeHTML(string $string, bool $head = false): string
+    {
+        $config = (new HtmlSanitizerConfig())->allowSafeElements()->allowRelativeLinks()->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+        #Block some extra elements
+        foreach (['aside', 'basefont', 'body', 'font', 'footer', 'form', 'header', 'hgroup', 'html', 'input', 'main', 'nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
+            #Need to update the original, because clone is returned, instead of the same instance.
+            $config = $config->blockElement($element);
+        }
+        #Allow class attribute
+        $config = $config->allowAttribute('class', '*');
+        #Allow some property attributes for meta tags
+        if ($head) {
+            $config = $config->allowAttribute('property', 'meta');
+        }
+        $sanitizer = new HtmlSanitizer($config);
+        if ($head) {
+            return $sanitizer->sanitizeFor('head', $string);
+        } else {
+            return $sanitizer->sanitize($string);
+        }
     }
 }

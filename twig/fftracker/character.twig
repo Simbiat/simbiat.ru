@@ -76,7 +76,7 @@
             {% endif %}
         </p>
         {% if character.biography %}
-            <blockquote>{{ character.biography|raw }}</blockquote>
+            <blockquote>{{ character.biography|sanitize }}</blockquote>
         {% endif %}
     </section>
     {% if character.groups %}

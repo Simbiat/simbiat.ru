@@ -13,7 +13,7 @@ class Maintenance
     public function filesClean(): bool
     {
         #Clean HTML cache
-        $this->recursiveClean($GLOBALS['siteconfig']['cachedir'] . 'html/', 1440, 2048);
+        $this->recursiveClean($GLOBALS['siteconfig']['cacheDir'] . 'html/', 1440, 2048);
         #Clean temp directory
         $this->recursiveClean(sys_get_temp_dir(), 4320, 0);
         return true;
