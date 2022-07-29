@@ -22,6 +22,9 @@ class Security
     #AES settings
     private array $aesSettings;
 
+    #Static sanitizer config for a little bit performance
+    public static ?HtmlSanitizerConfig $sanitizerConfig = null;
+
     public function __construct()
     {
         #Load Argon settings if argon.json exists
@@ -230,14 +233,21 @@ class Security
 
     public function sanitizeHTML(string $string, bool $head = false): string
     {
-        $config = (new HtmlSanitizerConfig())->allowSafeElements()->allowRelativeLinks()->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
-        #Block some extra elements
-        foreach (['aside', 'basefont', 'body', 'font', 'footer', 'form', 'header', 'hgroup', 'html', 'input', 'main', 'nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
-            #Need to update the original, because clone is returned, instead of the same instance.
-            $config = $config->blockElement($element);
+        #Check if config has been created already
+        if (self::$sanitizerConfig) {
+            $config = self::$sanitizerConfig;
+        } else {
+            $config = (new HtmlSanitizerConfig())->allowSafeElements()->allowRelativeLinks()->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+            #Block some extra elements
+            foreach (['aside', 'basefont', 'body', 'font', 'footer', 'form', 'header', 'hgroup', 'html', 'input', 'main', 'nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
+                #Need to update the original, because clone is returned, instead of the same instance.
+                $config = $config->blockElement($element);
+            }
+            #Allow class attribute
+            $config = $config->allowAttribute('class', '*');
+            #Save config to static for future reuse
+            self::$sanitizerConfig = $config;
         }
-        #Allow class attribute
-        $config = $config->allowAttribute('class', '*');
         #Allow some property attributes for meta tags
         if ($head) {
             $config = $config->allowAttribute('property', 'meta');
