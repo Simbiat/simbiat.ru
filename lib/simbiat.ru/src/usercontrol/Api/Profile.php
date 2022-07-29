@@ -6,7 +6,7 @@ use Simbiat\Abstracts\Api;
 use Simbiat\usercontrol\Common;
 use Simbiat\usercontrol\User;
 
-class Username extends Api
+class Profile extends Api
 {
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
@@ -15,14 +15,14 @@ class Username extends Api
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = [];
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = true;
+    protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $CSRF = false;
 
     use Common;
 
     protected function genData(array $path): array
     {
-        return (new User)->setId($_SESSION['userid'])->changeUsername($_POST['username'] ?? '');
+        return (new User)->setId($_SESSION['userid'])->updateProfile();
     }
 }

@@ -3,6 +3,9 @@ export class EditProfile
     private readonly usernameForm: HTMLFormElement | null = null;
     private readonly usernameSubmit: HTMLInputElement | null = null;
     private readonly usernameField: HTMLInputElement | null = null;
+    private readonly profileForm: HTMLFormElement | null = null;
+    private readonly profileSubmit: HTMLInputElement | null = null;
+    private profileFormData: string = '';
 
     constructor()
     {
@@ -16,6 +19,47 @@ export class EditProfile
             this.usernameOnChange();
             submitIntercept(this.usernameForm, this.username.bind(this));
         }
+        this.profileForm = document.getElementById('profile_details') as HTMLFormElement;
+        if (this.profileForm) {
+            this.profileSubmit = document.getElementById('details_submit') as HTMLInputElement;
+            //Save initial values
+            this.profileFormData = JSON.stringify([...new FormData(this.profileForm).entries()]);
+            this.profileOnChange();
+            //Monitor changes in all fields of the form
+            ['select', 'textarea', 'input',].forEach((elementType: string) => {
+                Array.from((this.profileForm as HTMLFormElement).getElementsByTagName(elementType)).forEach((element: Element) => {
+                    ['focus', 'change', 'input',].forEach((eventType: string) => {
+                        (element as HTMLElement).addEventListener(eventType, this.profileOnChange.bind(this));
+                    });
+                });
+            });
+            submitIntercept(this.profileForm, this.profile.bind(this));
+        }
+    }
+
+    public profile(): void
+    {
+        //Get form data
+        let formData = new FormData(this.profileForm as HTMLFormElement);
+        let spinner = document.getElementById('details_spinner') as HTMLImageElement;
+        spinner.classList.remove('hidden');
+        ajax(location.protocol+'//'+location.host+'/api/uc/profile/', formData, 'json', 'PATCH', 60000, true).then(data => {
+            if (data.data === true) {
+                this.profileFormData = JSON.stringify([...formData.entries()]);
+                this.profileOnChange();
+                new Snackbar('Profile updated', 'success');
+            } else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            spinner.classList.add('hidden');
+        });
+    }
+
+    public profileOnChange(): void
+    {
+        let formData = new FormData(this.profileForm as HTMLFormElement);
+        //Comparing stringify versions of data, because FormData === FormData always returns false
+        (this.profileSubmit as HTMLInputElement).disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
     }
 
     public usernameOnChange(): void

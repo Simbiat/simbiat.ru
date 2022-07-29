@@ -6,7 +6,7 @@ class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'signinup', 'emails', 'password', 'username'
+        'signinup', 'emails', 'password', 'username', 'profile'
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
@@ -14,6 +14,7 @@ class Api extends \Simbiat\Abstracts\Api
         'Emails management',
         'Password change',
         'Username change',
+        'Update profile details'
     ];
     #Flag to indicate, that this is a top level node (false by default)
     protected bool $topLevel = false;
@@ -25,6 +26,7 @@ class Api extends \Simbiat\Abstracts\Api
             'emails' => (new Emails)->route(array_slice($path, 1)),
             'password' => (new Password)->route(array_slice($path, 1)),
             'username' => (new Username)->route(array_slice($path, 1)),
+            'profile' => (new Profile)->route(array_slice($path, 1)),
         };
     }
 }

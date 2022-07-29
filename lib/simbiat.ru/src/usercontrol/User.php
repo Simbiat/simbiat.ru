@@ -156,4 +156,118 @@ class User extends Entity
             return ['http_error' => 503, 'reason' => 'Failed to change the username'];
         }
     }
+
+    public function updateProfile(): array
+    {
+        if (empty($_POST['details'])) {
+            return ['http_error' => 400, 'reason' => 'No data provided'];
+        }
+        #Ensure we get current values (to not generate queries for fields with same data
+        $this->get();
+        #Generate queries
+        $queries = [];
+        #Queries for names
+        foreach (['firstname', 'lastname', 'middlename', 'fathername', 'prefix', 'suffix'] as $field) {
+            if (isset($_POST['details']['name'][$field]) && $this->name[$field] !== $_POST['details']['name'][$field]) {
+                $queries[] = [
+                    'UPDATE `'.self::dbPrefix.'users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
+                    [
+                        ':userid' => [$this->id, 'int'],
+                        ':'.$field => [
+                            (empty($_POST['details']['name'][$field]) ? NULL : $_POST['details']['name'][$field]),
+                            (empty($_POST['details']['name'][$field]) ? 'null' : 'string'),
+                        ],
+                    ]
+                ];
+            }
+        }
+        #Query for birthday
+        if (isset($_POST['details']['dates']['birthday']) && $this->dates['birthday'] !== $_POST['details']['dates']['birthday']) {
+            $queries[] = [
+                'UPDATE `'.self::dbPrefix.'users` SET `birthday`=:birthday WHERE `userid`=:userid;',
+                [
+                    ':userid' => [$this->id, 'int'],
+                    ':birthday' => [
+                        (empty($_POST['details']['dates']['birthday']) ? NULL : $_POST['details']['dates']['birthday']),
+                        (empty($_POST['details']['dates']['birthday']) ? 'null' : 'date'),
+                    ],
+                ]
+            ];
+        }
+        #Query for timezone
+        if (isset($_POST['details']['timezone']) && $this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list())) {
+            $queries[] = [
+                'UPDATE `'.self::dbPrefix.'users` SET `timezone`=:timezone WHERE `userid`=:userid;',
+                [
+                    ':userid' => [$this->id, 'int'],
+                    ':timezone' => [
+                        (empty($_POST['details']['timezone']) ? NULL : $_POST['details']['timezone']),
+                        (empty($_POST['details']['timezone']) ? 'null' : 'string'),
+                    ],
+                ]
+            ];
+        }
+        #Query for sex
+        if (isset($_POST['details']['sex'])) {
+            if ($_POST['details']['sex'] === 'null') {
+                $_POST['details']['sex'] = null;
+            } else {
+                if ($_POST['details']['sex'] > 1) {
+                    $_POST['details']['sex'] = 1;
+                } elseif ($_POST['details']['sex'] < 0) {
+                    $_POST['details']['sex'] = 0;
+                }
+            }
+            if ($this->sex !== $_POST['details']['sex']) {
+                $queries[] = [
+                    'UPDATE `' . self::dbPrefix . 'users` SET `sex`=:sex WHERE `userid`=:userid;',
+                    [
+                        ':userid' => [$this->id, 'int'],
+                        ':sex' => [
+                            ($_POST['details']['sex'] === NULL ? NULL : $_POST['details']['sex']),
+                            ($_POST['details']['sex'] === NULL ? 'null' : 'int'),
+                        ],
+                    ]
+                ];
+            }
+        }
+        #Query for website
+        if (isset($_POST['details']['website'])) {
+            if (preg_match('/https?:\/\/(www\.)?[-a-zA-Z\d@:%._+~#=]{1,256}\.[a-zA-Z\d()]{1,6}\b([-a-zA-Z\d()@:%_+.~#?&/=]*)/ui', $_POST['details']['website']) !== 1 || mb_strlen($_POST['details']['website']) > 255) {
+                $_POST['details']['website'] = $this->website ?? null;
+            }
+            if ($this->website !== $_POST['details']['website']) {
+                $queries[] = [
+                    'UPDATE `' . self::dbPrefix . 'users` SET `timezone`=:timezone WHERE `userid`=:userid;',
+                    [
+                        ':userid' => [$this->id, 'int'],
+                        ':timezone' => [
+                            (empty($_POST['details']['timezone']) ? NULL : $_POST['details']['timezone']),
+                            (empty($_POST['details']['timezone']) ? 'null' : 'string'),
+                        ],
+                    ]
+                ];
+            }
+        }
+        #Queries for other fields
+        foreach (['country', 'city', 'about'] as $field) {
+            if (isset($_POST['details'][$field]) && $this->$field !== $_POST['details'][$field]) {
+                $queries[] = [
+                    'UPDATE `'.self::dbPrefix.'users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
+                    [
+                        ':userid' => [$this->id, 'int'],
+                        ':'.$field => [
+                            (empty($_POST['details'][$field]) ? NULL : $_POST['details'][$field]),
+                            (empty($_POST['details'][$field]) ? 'null' : 'string'),
+                        ],
+                    ]
+                ];
+            }
+        }
+        if (empty($queries)) {
+            return ['http_error' => 400, 'reason' => 'No changes detected'];
+        } else {
+            return ['response' => $this->dbController->query($queries)];
+        }
+    }
 }
