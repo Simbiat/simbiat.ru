@@ -438,6 +438,7 @@ return array(
     'Simbiat\\usercontrol\\Api\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Emails.php',
     'Simbiat\\usercontrol\\Api\\Password' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Password.php',
     'Simbiat\\usercontrol\\Api\\Signinup' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Signinup.php',
+    'Simbiat\\usercontrol\\Api\\Username' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Username.php',
     'Simbiat\\usercontrol\\Checkers' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Checkers.php',
     'Simbiat\\usercontrol\\Common' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Common.php',
     'Simbiat\\usercontrol\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Emails.php',

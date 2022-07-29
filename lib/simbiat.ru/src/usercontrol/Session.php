@@ -189,10 +189,16 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $data['timezone'] = $user->timezone;
                 $data['groups'] = $user->groups;
                 $data['activated'] = $user->activated;
+                $data['deleted'] = $user->deleted;
+                $data['banned'] = $user->banned;
                 $data['avatar'] = $user->currentAvatar;
+            } else {
+                $data['userid'] = null;
+                $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
             }
         } catch (\Throwable) {
-            #Do nothing
+            $data['userid'] = null;
+            $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
         }
     }
 

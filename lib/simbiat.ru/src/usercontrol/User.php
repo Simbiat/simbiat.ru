@@ -50,6 +50,10 @@ class User extends Entity
     public array $groups = [];
     #Whether account is activated
     public bool $activated = false;
+    #Whether account is marked as deleted
+    public bool $deleted = false;
+    #Whether account is banned
+    public bool $banned = false;
     #Emails
     public array $emails = [];
     #Avatars
@@ -69,6 +73,16 @@ class User extends Entity
             $dbData['activated'] = false;
         } else {
             $dbData['activated'] = true;
+        }
+        if (in_array(4, $dbData['groups'], true)) {
+            $dbData['deleted'] = false;
+        } else {
+            $dbData['deleted'] = true;
+        }
+        if (in_array(5, $dbData['groups'], true)) {
+            $dbData['banned'] = false;
+        } else {
+            $dbData['banned'] = true;
         }
         $dbData['currentAvatar'] = $this->dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
         return $dbData;
@@ -112,6 +126,34 @@ class User extends Entity
             return $this->dbController->selectAll('SELECT `url`, `current` FROM `'.self::dbPrefix.'user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
+        }
+    }
+
+    public function changeUsername(string $newName): array
+    {
+        #Check if new name is valid
+        $checkers = new Checkers;
+        if (empty($newName) && $checkers->bannedName($newName) || $checkers->usedName($newName)) {
+            return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
+        }
+        #Check if we have current username and get it if we do not
+        if (empty($this->username)) {
+            $this->get();
+        }
+        if ($this->username === $newName) {
+            return ['response' => true];
+        }
+        try {
+            $result = $this->dbController->query('UPDATE `'.self::dbPrefix.'users` SET `username`=:username WHERE `userid`=:userid;', [
+                ':userid' => [$this->id, 'int'],
+                ':username' => $newName,
+            ]);
+            if ($result) {
+                $_SESSION['username'] = $newName;
+            }
+            return ['response' => $result];
+        } catch (\Throwable) {
+            return ['http_error' => 503, 'reason' => 'Failed to change the username'];
         }
     }
 }

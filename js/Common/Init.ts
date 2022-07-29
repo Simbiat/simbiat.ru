@@ -1,8 +1,8 @@
 const pageTitle = ' on Simbiat Software';
 //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
-const emailRegex = '[\p{L}\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*';
+const emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
 //Regex for username. This is NOT JS Regex, thus it has doubled slashes.
-const userRegex = '[^\\/\\\\\\[\\]:;|=$%#@&\\(\\)\\{\\}!,+*?<>\\0\\t\\r\\n\\x00-\\x1F\\x7F\\x0b\\f\\x85\\v\\cY\\b]{1,64}';
+const userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`{|}~\\- ]{1,64}$';
 
 //Stuff to do on load
 document.addEventListener('DOMContentLoaded', init);
