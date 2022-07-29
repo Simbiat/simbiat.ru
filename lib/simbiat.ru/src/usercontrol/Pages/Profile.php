@@ -4,6 +4,7 @@ namespace Simbiat\usercontrol\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
+use Simbiat\usercontrol\User;
 
 class Profile extends Page
 {
@@ -30,7 +31,7 @@ class Profile extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        $outputArray['userData'] = HomePage::$dbController->selectRow('SELECT *, null as `password`, null as `pw_reset`, null as `api_key` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$_SESSION['userid'], 'int']]);
+        $outputArray['userData'] = (new User)->setId($_SESSION['userid'])->getArray();
         $now = new \DateTime();
         $outputArray['timezones'] = [];
         foreach (timezone_identifiers_list() as $timezone) {

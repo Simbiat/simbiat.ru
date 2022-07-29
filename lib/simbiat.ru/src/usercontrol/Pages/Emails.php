@@ -4,6 +4,7 @@ namespace Simbiat\usercontrol\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
+use Simbiat\usercontrol\User;
 
 class Emails extends Page
 {
@@ -30,8 +31,9 @@ class Emails extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        #Show list of mails pending activation to request code resending
-        $outputArray['emails'] = HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$_SESSION['userid'], 'int']]);
+        #Get email list
+        $outputArray['emails'] = (new User)->setId($_SESSION['userid'])->getEmails();
+        #Count how many emails are activated (to restrict removal of emails)
         $outputArray['countActivated'] = count(array_filter(array_column($outputArray['emails'], 'activation'), function($x) { return empty($x); }));
         return $outputArray;
     }

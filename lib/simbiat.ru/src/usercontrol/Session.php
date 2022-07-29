@@ -178,27 +178,22 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
     }
 
-    private function dataRefresh(array &$data)
+    private function dataRefresh(array &$data): void
     {
-        #Check if userid is set and exists and reset if it does not
+        #Try to get the data
         try {
-            if (!empty($data['userid']) && !self::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']])) {
-                $data['userid'] = NULL;
+            $user = (new User)->setId($data['userid'])->get();
+            #Assign some data to the session
+            if ($user->id) {
+                $data['username'] = $user->username;
+                $data['timezone'] = $user->timezone;
+                $data['groups'] = $user->groups;
+                $data['activated'] = $user->activated;
+                $data['avatar'] = $user->currentAvatar;
             }
         } catch (\Throwable) {
-            $data['userid'] = null;
+            #Do nothing
         }
-        $dbData =  self::$dbController->selectRow('SELECT `userid`, `username`, `timezone` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
-        $data = array_merge($data, $dbData);
-        $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : ($data['username'] ?? NULL));
-        #Get user's groups
-        $data['groups'] = self::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$data['userid'], 'int']]);
-        if (in_array(2, $data['groups'], true)) {
-            $data['activated'] = false;
-        } else {
-            $data['activated'] = true;
-        }
-        $data['avatar'] = self::$dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$data['userid'], 'int']]);
     }
 
     public function destroy(string $id): bool

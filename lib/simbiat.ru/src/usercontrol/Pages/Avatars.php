@@ -4,6 +4,7 @@ namespace Simbiat\usercontrol\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
+use Simbiat\usercontrol\User;
 
 class Avatars extends Page
 {
@@ -30,7 +31,8 @@ class Avatars extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        $outputArray['avatars'] = HomePage::$dbController->selectRow('SELECT `url`, `current` FROM `uc__user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$_SESSION['userid'], 'int']]);
+        #Get avatars list
+        $outputArray['avatars'] = (new User)->setId($_SESSION['userid'])->getAvatars();
         return $outputArray;
     }
 }

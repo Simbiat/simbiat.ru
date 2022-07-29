@@ -700,6 +700,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\usercontrol\\Security' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Security.php',
         'Simbiat\\usercontrol\\Session' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Session.php',
         'Simbiat\\usercontrol\\Signinup' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Signinup.php',
+        'Simbiat\\usercontrol\\User' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/User.php',
         'Symfony\\Bridge\\Twig\\AppVariable' => __DIR__ . '/..' . '/symfony/twig-bridge/AppVariable.php',
         'Symfony\\Bridge\\Twig\\Command\\DebugCommand' => __DIR__ . '/..' . '/symfony/twig-bridge/Command/DebugCommand.php',
         'Symfony\\Bridge\\Twig\\Command\\LintCommand' => __DIR__ . '/..' . '/symfony/twig-bridge/Command/LintCommand.php',

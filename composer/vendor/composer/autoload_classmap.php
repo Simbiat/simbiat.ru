@@ -455,6 +455,7 @@ return array(
     'Simbiat\\usercontrol\\Security' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Security.php',
     'Simbiat\\usercontrol\\Session' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Session.php',
     'Simbiat\\usercontrol\\Signinup' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Signinup.php',
+    'Simbiat\\usercontrol\\User' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/User.php',
     'Symfony\\Bridge\\Twig\\AppVariable' => $vendorDir . '/symfony/twig-bridge/AppVariable.php',
     'Symfony\\Bridge\\Twig\\Command\\DebugCommand' => $vendorDir . '/symfony/twig-bridge/Command/DebugCommand.php',
     'Symfony\\Bridge\\Twig\\Command\\LintCommand' => $vendorDir . '/symfony/twig-bridge/Command/LintCommand.php',

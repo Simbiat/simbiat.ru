@@ -34,8 +34,10 @@ abstract class Entity
     }
 
     #Set ID
-    public function setId(string $id): self
+    public function setId(string|int $id): self
     {
+        #Convert to string for consistency
+        $id = strval($id);
         if (preg_match($this->idFormat, $id) !== 1) {
             throw new \UnexpectedValueException('ID `'.$id.'` has incorrect format.');
         } else {
@@ -45,7 +47,7 @@ abstract class Entity
     }
 
     #Update entity properties
-    protected final function get(): self
+    public final function get(): self
     {
         try {
             #Set ID
@@ -67,7 +69,6 @@ abstract class Entity
             Errors::error_log($e);
             #Rethrow exception, if using debug mode
             if ($this->debug) {
-                echo 'here';
                 die('<pre>'.$error.'</pre>');
             }
         } finally {

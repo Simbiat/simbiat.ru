@@ -24,7 +24,7 @@ create table uc__users
     timezone   varchar(30)         default 'UTC'               not null comment 'User''s timezone',
     country    varchar(60)                                     null comment 'User''s country',
     city       varchar(200)                                    null comment 'User''s city',
-    werbsite   varchar(255)                                    null comment 'User''s personal website',
+    website    varchar(255)                                    null comment 'User''s personal website',
     constraint parent_to_user
         foreign key (parentid) references uc__users (userid)
             on update set null on delete set null
