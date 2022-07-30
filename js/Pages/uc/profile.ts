@@ -6,6 +6,7 @@ export class EditProfile
     private readonly profileForm: HTMLFormElement | null = null;
     private readonly profileSubmit: HTMLInputElement | null = null;
     private profileFormData: string = '';
+    private timeOut: number | null = null;
 
     constructor()
     {
@@ -37,7 +38,7 @@ export class EditProfile
         }
     }
 
-    public profile(): void
+    public profile(auto: boolean = false): void
     {
         //Get form data
         let formData = new FormData(this.profileForm as HTMLFormElement);
@@ -48,6 +49,15 @@ export class EditProfile
                 this.profileFormData = JSON.stringify([...formData.entries()]);
                 this.profileOnChange();
                 new Snackbar('Profile updated', 'success');
+                //If auto-save, update the time
+                if (auto) {
+                    let autoTime = document.getElementById('lastAutoSave') as HTMLParagraphElement;
+                    autoTime.classList.remove('hidden');
+                    let timeTag = autoTime.getElementsByTagName('time')[0] as HTMLTimeElement;
+                    let time = new Date();
+                    timeTag.setAttribute('datetime', time.toISOString());
+                    timeTag.innerHTML = time.toLocaleTimeString();
+                }
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
@@ -57,9 +67,16 @@ export class EditProfile
 
     public profileOnChange(): void
     {
+        if (this.timeOut) {
+            clearTimeout(this.timeOut);
+        }
         let formData = new FormData(this.profileForm as HTMLFormElement);
         //Comparing stringify versions of data, because FormData === FormData always returns false
         (this.profileSubmit as HTMLInputElement).disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
+        if (!(this.profileSubmit as HTMLInputElement).disabled) {
+            //Schedule auto save
+            this.timeOut = setTimeout(() => {this.profile(true)}, 10000);
+        }
     }
 
     public usernameOnChange(): void

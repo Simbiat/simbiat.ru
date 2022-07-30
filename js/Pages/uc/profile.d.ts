@@ -5,8 +5,9 @@ export declare class EditProfile {
     private readonly profileForm;
     private readonly profileSubmit;
     private profileFormData;
+    private timeOut;
     constructor();
-    profile(): void;
+    profile(auto?: boolean): void;
     profileOnChange(): void;
     usernameOnChange(): void;
     username(): void;

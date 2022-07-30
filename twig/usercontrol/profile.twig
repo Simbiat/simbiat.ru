@@ -8,7 +8,7 @@
 </form>
 <hr/>
 <form class="middle" id="profile_details">
-    <p>Form below auto-saves every 10 seconds, if there were any changes.</p>
+    <p>Form below auto-saves 10 seconds after any changes.</p>
     <div class="float_label_div">
         <input form="profile_details" value="{{ userData.name.firstname }}" type="text" aria-required="false" name="details[name][firstname]" id="firstname_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
         <label for="firstname_value">First name</label>
@@ -78,5 +78,6 @@
     </div>
     <br/>
     <input role="button" form="profile_details" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">
+    <p id="lastAutoSave" class="hidden">Last auto save: {{ "now"|timeTag("H:i") }}</p>
     <img id="details_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Updating details...">
 </form>

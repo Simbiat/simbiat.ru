@@ -5,6 +5,7 @@ export class EditProfile {
     profileForm = null;
     profileSubmit = null;
     profileFormData = '';
+    timeOut = null;
     constructor() {
         this.usernameForm = document.getElementById('profile_username');
         if (this.usernameForm) {
@@ -31,7 +32,7 @@ export class EditProfile {
             submitIntercept(this.profileForm, this.profile.bind(this));
         }
     }
-    profile() {
+    profile(auto = false) {
         let formData = new FormData(this.profileForm);
         let spinner = document.getElementById('details_spinner');
         spinner.classList.remove('hidden');
@@ -40,6 +41,14 @@ export class EditProfile {
                 this.profileFormData = JSON.stringify([...formData.entries()]);
                 this.profileOnChange();
                 new Snackbar('Profile updated', 'success');
+                if (auto) {
+                    let autoTime = document.getElementById('lastAutoSave');
+                    autoTime.classList.remove('hidden');
+                    let timeTag = autoTime.getElementsByTagName('time')[0];
+                    let time = new Date();
+                    timeTag.setAttribute('datetime', time.toISOString());
+                    timeTag.innerHTML = time.toLocaleTimeString();
+                }
             }
             else {
                 new Snackbar(data.reason, 'failure', 10000);
@@ -48,8 +57,14 @@ export class EditProfile {
         });
     }
     profileOnChange() {
+        if (this.timeOut) {
+            clearTimeout(this.timeOut);
+        }
         let formData = new FormData(this.profileForm);
         this.profileSubmit.disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
+        if (!this.profileSubmit.disabled) {
+            this.timeOut = setTimeout(() => { this.profile(true); }, 10000);
+        }
     }
     usernameOnChange() {
         this.usernameSubmit.disabled = this.usernameField.getAttribute('data-original') === this.usernameField.value;
