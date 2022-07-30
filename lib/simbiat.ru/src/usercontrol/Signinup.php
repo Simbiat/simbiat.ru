@@ -91,7 +91,7 @@ class Signinup
             (new Emails)->activationMail($_POST['signinup']['email'], $_POST['signinup']['username'], $activation);
             return $this->login(true);
         } catch (\Throwable) {
-            return ['http_error' => 503, 'reason' => 'Registration failed'];
+            return ['http_error' => 500, 'reason' => 'Registration failed'];
         }
     }
 
@@ -303,7 +303,7 @@ class Signinup
                 self::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => $security->passHash($token)]);
                 (new Emails)->sendMail($credentials['email'], 'Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
             } catch (\Throwable) {
-                return ['http_error' => 503, 'reason' => 'Registration failed'];
+                return ['http_error' => 500, 'reason' => 'Registration failed'];
             }
         }
         return ['response' => true];

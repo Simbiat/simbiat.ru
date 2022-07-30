@@ -44,15 +44,15 @@ abstract class General extends Api
         } catch (\UnexpectedValueException) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } catch (\Throwable) {
-            return ['http_error' => 503, 'reason' => 'Unknown error during request processing'];
+            return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         #Check if 404
         if ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
             return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Lodestone'];
         } elseif ($data === 400) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
-        } elseif ($data === 503 || $data === false) {
-            return ['http_error' => 503, 'reason' => 'Unknown error during request processing'];
+        } elseif ($data === 500 || $data === false) {
+            return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         } elseif ($data === 403) {
             return ['http_error' => 403, 'reason' => 'ID `'.$path[0].'` is already registered'];
         } elseif ($data !== true && empty($data['id'])) {

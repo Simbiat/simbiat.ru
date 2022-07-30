@@ -153,7 +153,7 @@ class User extends Entity
             }
             return ['response' => $result];
         } catch (\Throwable) {
-            return ['http_error' => 503, 'reason' => 'Failed to change the username'];
+            return ['http_error' => 500, 'reason' => 'Failed to change the username'];
         }
     }
 

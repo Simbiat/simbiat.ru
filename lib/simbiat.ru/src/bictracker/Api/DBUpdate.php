@@ -25,10 +25,10 @@ class DBUpdate extends Api
         try {
             $data = (new Library)->update(true);
         } catch (\Throwable) {
-            return ['http_error' => 503, 'reason' => 'Unknown error during request processing'];
+            return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         if (is_string($data)) {
-            return ['http_error' => 503, 'reason' => $data];
+            return ['http_error' => 500, 'reason' => $data];
         }
         return ['response' => $data];
     }

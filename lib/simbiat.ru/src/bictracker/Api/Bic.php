@@ -22,7 +22,7 @@ class Bic extends Api
         } catch (\UnexpectedValueException) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } catch (\Throwable) {
-            return ['http_error' => 503, 'reason' => 'Unknown error during request processing'];
+            return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         #Check if 404
         if (empty($data['id'])) {

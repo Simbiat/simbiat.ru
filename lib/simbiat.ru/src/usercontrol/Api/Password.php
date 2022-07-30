@@ -55,10 +55,10 @@ class Password extends Api
                     [':userid' => $id]
                 );
             } catch (\Throwable) {
-                return ['http_error' => 503, 'reason' => 'Failed to get credentials from database'];
+                return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             if (empty($password)) {
-                return ['http_error' => 503, 'reason' => 'Failed to get credentials from database'];
+                return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate current password
             if ($security->passValid($id, $_POST['current_password'], $password) === false) {
@@ -71,10 +71,10 @@ class Password extends Api
                     [':userid' => $id]
                 );
             } catch (\Throwable) {
-                return ['http_error' => 503, 'reason' => 'Failed to get credentials from database'];
+                return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             if (empty($pwReset)) {
-                return ['http_error' => 503, 'reason' => 'Failed to get credentials from database'];
+                return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate token
             if (!password_verify($_POST['pass_reset'], $pwReset)) {
@@ -86,7 +86,7 @@ class Password extends Api
         if ($security->passChange($id, $_POST['new_password'])) {
             return ['response' => true];
         } else {
-            return ['http_error' => 503, 'reason' => 'Failed to update password'];
+            return ['http_error' => 500, 'reason' => 'Failed to update password'];
         }
     }
 }
