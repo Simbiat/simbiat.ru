@@ -53,8 +53,10 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             #Return entity type
             return true;
         }
-        #Try to get data from Lodestone
-        $this->lodestone = $this->getFromLodestone();
+        #Try to get data from Lodestone, if not already taken
+        if (!is_array($this->lodestone)) {
+            $this->lodestone = $this->getFromLodestone();
+        }
         if (!is_array($this->lodestone)) {
             return $this->lodestone;
         }

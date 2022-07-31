@@ -3,8 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
+use Simbiat\Curl;
 
 class Character extends Page
 {
@@ -42,8 +41,8 @@ class Character extends Page
         }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['character']['dates']['updated']);
-        #Reset avatar
-        if (!is_file($GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$id.'.jpg')) {
+        #Reset profile picture, if remote does not exist
+        if (!(new Curl)->ifExists('https://img2.finalfantasyxiv.com/f/'.$outputArray['character']['avatarID'].'l0_640x873.jpg')) {
             $outputArray['character']['avatarID'] = null;
         }
         #Continue breadcrumbs

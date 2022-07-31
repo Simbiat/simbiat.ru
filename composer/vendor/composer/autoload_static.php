@@ -594,6 +594,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\ArrayHelpers' => __DIR__ . '/../..' . '/../lib/ArrayHelpers/src/ArrayHelpers.php',
         'Simbiat\\Caching' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Caching.php',
         'Simbiat\\Cron' => __DIR__ . '/../..' . '/../lib/Cron/src/Cron.php',
+        'Simbiat\\Curl' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Curl.php',
         'Simbiat\\CuteBytes' => __DIR__ . '/../..' . '/../lib/cute-bytes/src/CuteBytes.php',
         'Simbiat\\Database\\Config' => __DIR__ . '/../..' . '/../lib/database/src/Database/Config.php',
         'Simbiat\\Database\\Controller' => __DIR__ . '/../..' . '/../lib/database/src/Database/Controller.php',

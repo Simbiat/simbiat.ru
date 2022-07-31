@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Cron;
+use Simbiat\Curl;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
@@ -128,7 +129,7 @@ class Achievement extends Entity
             $bindings[':name'] = $this->lodestone['name'];
             $bindings[':icon'] = str_replace('https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', '', $this->lodestone['icon']);
             #Download icon
-            $this->imageDownload($this->lodestone['icon'], $GLOBALS['siteconfig']['ffxiv_icons'].$bindings[':icon']);
+            (new Curl())->imageDownload($this->lodestone['icon'], $GLOBALS['siteconfig']['ffxiv_icons'].$bindings[':icon']);
             $bindings[':points'] = $this->lodestone['points'];
             $bindings[':category'] = $this->lodestone['category'];
             $bindings[':subcategory'] = $this->lodestone['subcategory'];
@@ -152,7 +153,7 @@ class Achievement extends Entity
             } else {
                 $bindings[':itemicon'] = str_replace('https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', '', $this->lodestone['item']['icon']);
                 #Download icon
-                $this->imageDownload($this->lodestone['item']['icon'], $GLOBALS['siteconfig']['ffxiv_icons'].$bindings[':itemicon']);
+                (new Curl())->imageDownload($this->lodestone['item']['icon'], $GLOBALS['siteconfig']['ffxiv_icons'].$bindings[':itemicon']);
             }
             if (empty($this->lodestone['item']['id'])) {
                 $bindings[':itemid'] = [NULL, 'null'];

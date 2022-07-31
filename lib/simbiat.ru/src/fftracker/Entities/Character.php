@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Cron;
+use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\fftracker\Traits;
@@ -25,6 +26,7 @@ class Character extends Entity
     public array $groups = [];
     public array $jobs = [];
     public array $achievements = [];
+    public array $owned = [];
 
     #Function to get initial data from DB
     /**
@@ -33,10 +35,14 @@ class Character extends Entity
     protected function getFromDB(): array
     {
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
-        $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`registered`, `'.self::dbPrefix.'character`.`updated`, `'.self::dbPrefix.'enemy`.`name` AS `killedby` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` LEFT JOIN `'.self::dbPrefix.'enemy` ON `'.self::dbPrefix.'character`.`enemyid` = `'.self::dbPrefix.'enemy`.`enemyid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT *, `'.self::dbPrefix.'achievement`.`icon` AS `titleIcon`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`registered`, `'.self::dbPrefix.'character`.`updated`, `'.self::dbPrefix.'enemy`.`name` AS `killedby` FROM `'.self::dbPrefix.'character` LEFT JOIN `'.self::dbPrefix.'clan` ON `'.self::dbPrefix.'character`.`clanid` = `'.self::dbPrefix.'clan`.`clanid` LEFT JOIN `'.self::dbPrefix.'guardian` ON `'.self::dbPrefix.'character`.`guardianid` = `'.self::dbPrefix.'guardian`.`guardianid` LEFT JOIN `'.self::dbPrefix.'nameday` ON `'.self::dbPrefix.'character`.`namedayid` = `'.self::dbPrefix.'nameday`.`namedayid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'character`.`cityid` = `'.self::dbPrefix.'city`.`cityid` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'character`.`serverid` = `'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany_rank` ON `'.self::dbPrefix.'character`.`gcrankid` = `'.self::dbPrefix.'grandcompany_rank`.`gcrankid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'grandcompany_rank`.`gcId` = `'.self::dbPrefix.'grandcompany`.`gcId` LEFT JOIN `'.self::dbPrefix.'achievement` ON `'.self::dbPrefix.'character`.`titleid` = `'.self::dbPrefix.'achievement`.`achievementid` LEFT JOIN `'.self::dbPrefix.'enemy` ON `'.self::dbPrefix.'character`.`enemyid` = `'.self::dbPrefix.'enemy`.`enemyid` WHERE `'.self::dbPrefix.'character`.`characterid` = :id;', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
+        }
+        #Get username, if character is linked to a user
+        if (!empty($data['userid'])) {
+            $data['username'] = $this->dbController->selectValue('SELECT `username` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => $data['userid']]);
         }
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
         $data['oldNames'] = $this->dbController->Count('SELECT COUNT(*) FROM `'.self::dbPrefix.'character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
@@ -120,6 +126,7 @@ class Character extends Entity
         $this->biography = $fromDB['biography'];
         $this->title = [
             'title' => $fromDB['title'],
+            'icon' => $fromDB['titleIcon'],
             'id' => $fromDB['titleid'],
         ];
         $this->grandCompany = [
@@ -130,6 +137,10 @@ class Character extends Entity
         ];
         $this->pvp = intval($fromDB['pvp_matches']);
         $this->groups = $fromDB['groups'];
+        $this->owned = [
+            'id' => $fromDB['userid'],
+            'name' => $fromDB['username']
+        ];
         foreach ($this->groups as $key=>$group) {
             $this->groups[$key]['current'] = boolval($group['current']);
         }
@@ -139,8 +150,8 @@ class Character extends Entity
         }
         #Remove all already processed elements to converts the rest to jobs array
         unset(
-            $fromDB['characterid'], $fromDB['name'], $fromDB['avatar'], $fromDB['biography'], $fromDB['genderid'], $fromDB['datacenter'],
-            $fromDB['registered'], $fromDB['updated'],$fromDB['deleted'], $fromDB['clan'], $fromDB['race'], $fromDB['server'],
+            $fromDB['characterid'], $fromDB['userid'], $fromDB['username'], $fromDB['name'], $fromDB['avatar'], $fromDB['biography'], $fromDB['genderid'], $fromDB['datacenter'],
+            $fromDB['registered'], $fromDB['updated'],$fromDB['deleted'], $fromDB['clan'], $fromDB['race'], $fromDB['server'], $fromDB['titleIcon'],
             $fromDB['region'], $fromDB['city'], $fromDB['cityid'], $fromDB['nameday'], $fromDB['guardian'], $fromDB['guardianid'],
             $fromDB['servers'], $fromDB['incarnations'], $fromDB['title'], $fromDB['titleid'], $fromDB['dbid'], $fromDB['gcId'],
             $fromDB['gcrankid'], $fromDB['gc_rank'], $fromDB['gcName'], $fromDB['oldNames'], $fromDB['killedby'],
@@ -192,8 +203,6 @@ class Character extends Entity
             }
             #Reduce number of <br>s in biography
             $this->lodestone['bio'] = (new Security())->sanitizeHTML($this->removeBrs($this->lodestone['bio'] ?? ''));
-            #Try to download avatar
-            $this->avatarDownload($this->lodestone['avatar']);
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `'.self::dbPrefix.'character`(
@@ -372,13 +381,48 @@ class Character extends Entity
         }
     }
 
-    #Helper function to download avatars
-    private function avatarDownload(string $avatar): void
+    #Link user to character
+    public function linkUser(): array
     {
-        #Get link for portrait
-        $portrait = str_replace('c0_96x96', 'l0_640x873', $avatar);
-        #Get destination
-        $this->imageDownload($avatar, $GLOBALS['siteconfig']['ffxiv_avatars'].'96x96'.'/'.$this->id.'.jpg');
-        $this->imageDownload($portrait, $GLOBALS['siteconfig']['ffxiv_avatars'].'640x873'.'/'.$this->id.'.jpg');
+        try {
+            #Check if character exists and is linked already
+            $character = $this->dbController->selectRow('SELECT `characterid`, `userid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:id;', [':id' => $this->id]);
+            if ($character['userid']) {
+                return ['http_error' => 409, 'reason' => 'Character already linked'];
+            }
+            #Register or update the character
+            $this->update();
+            if (!empty($this->lodestone['id'])) {
+                #Something went wrong with getting data
+                if (!empty($this->lodestone['404'])) {
+                    return ['http_error' => 400, 'reason' => 'No character found with id `'.$this->id.'`'];
+                } else {
+                    return ['http_error' => 500, 'reason' => 'Failed to get fresh data for character with id `'.$this->id.'`'];
+                }
+            }
+            #Check if biography is set
+            if (empty($this->lodestone['bio'])) {
+                return ['http_error' => 424, 'reason' => 'No biography found for character with id `'.$this->id.'`'];
+            }
+            $this->lodestone['bio'] = 'fftracker:d3c57d9ff13f525c170968ea731358bd012362980619ed789dd22cf1b3ca1f40';
+            #Check if biography contains the respected text
+            $token = preg_replace('/(.*)(fftracker:([a-z\d]{64}))(.*)/uis', '$3', $this->lodestone['bio']);
+            if (empty($token)) {
+                return ['http_error' => 424, 'reason' => 'No tracker token found for character with id `'.$this->id.'`'];
+            }
+            #Check if ID of the current user is the same as the user who has this token
+            if (!$this->dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid AND `ff_token`=:token;', [':userid'=>$_SESSION['userid'], ':token'=>$token])) {
+                return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
+            }
+            #Download avatar
+            (new Curl())->imageDownload('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', $GLOBALS['siteconfig']['ffxiv_avatars'].$this->id.'.jpg');
+            #Link character to user
+            return ['response' => $this->dbController->query([
+                'UPDATE `'.self::dbPrefix.'character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
+                'INSERT IGNORE INTO `uc__user_to_avatar` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
+            ])];
+        } catch (\Throwable $exception) {
+            return ['http_error' => 500, 'reason' => $exception->getMessage()];
+        }
     }
 }

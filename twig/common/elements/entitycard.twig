@@ -17,7 +17,7 @@
     {% endif %}
 {% endif %}
 {# Actual card #}
-<a class="entityCard" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
+<a class="entityCard{% if session_data.userid and userid and session_data.userid == userid %} ff_owned{% endif %}" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
     <span class="entityIcon">
         {% if type == 'bic' %}
             {% if DateOut %}
@@ -28,7 +28,7 @@
         {% elseif type == 'achievement' %}
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ icon }}">
         {% elseif type == 'character' %}
-            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/avatars/96x96/{{ icon }}.jpg">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="https://img2.finalfantasyxiv.com/f/{{ icon }}c0_96x96.jpg">
         {% elseif type == 'freecompany' %}
             {% if icon == '1' %}
                 <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/Maelstrom.png">
@@ -55,7 +55,7 @@
         {% if rankid matches '/^\\d+$/' %}
             <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/fcranks/{{ rankid }}.png">
         {% endif %}
-        {{ name }}
+        {{ name }}{% if userid %}<sup>🔗</sup>{% endif %}
     </span>
     <span class="entityArrow">&#10151;</span>
 </a>

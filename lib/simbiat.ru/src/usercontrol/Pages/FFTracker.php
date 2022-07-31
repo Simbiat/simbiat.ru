@@ -30,6 +30,10 @@ class FFTracker extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
+        #Get linked characters
+        $outputArray['characters'] = HomePage::$dbController->selectAll('SELECT `characterid`, `name` FROM `ffxiv__character` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
+        #Get linked groups
+
         return $outputArray;
     }
 }

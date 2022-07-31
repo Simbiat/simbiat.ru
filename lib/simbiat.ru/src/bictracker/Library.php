@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\bictracker;
 
 use Simbiat\ArrayHelpers;
+use Simbiat\Curl;
 use Simbiat\Database\Controller;
 use Simbiat\Errors;
 use Simbiat\HomePage;
@@ -16,28 +17,6 @@ class Library
     const bicDownBase = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
     #Base link for href attribute
     const bicBaseHref = 'https://www.cbr.ru';
-
-    #cURL options
-    protected array $CURL_OPTIONS = [
-        CURLOPT_POST => false,
-        CURLOPT_HEADER => true,
-        CURLOPT_RETURNTRANSFER => true,
-        #Allow caching and reuse of already open connections
-        CURLOPT_FRESH_CONNECT => false,
-        CURLOPT_FORBID_REUSE => false,
-        #Let cURL determine appropriate HTTP version
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_NONE,
-        CURLOPT_CONNECTTIMEOUT => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS => 3,
-        CURLOPT_HTTPHEADER => ['Content-type: text/html; charset=utf-8', 'Accept-Language: en'],
-        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84',
-        CURLOPT_ENCODING => '',
-        CURLOPT_SSL_VERIFYPEER => false,
-    ];
-    #cURL Handle is static to allow reuse of single instance, if possible and needed
-    public static \CurlHandle|null|false $curlHandle = null;
 
     public function __construct()
     {
@@ -667,6 +646,7 @@ class Library
         } catch (\Throwable $e) {
             #Just log to file. Generally we do not lose much if this fails
             Errors::error_log($e);
+            Errors::error_log($e);
         }
     }
 
@@ -680,26 +660,9 @@ class Library
         $fileName = sys_get_temp_dir().'/'.date('Ymd', $date).'_ED807_full.xml';
         #Generate link
         $link = self::bicDownBase.date('d.m.Y', $date);
-        #Check if cURL handle already created and create it if not
-        if (empty(self::$curlHandle)) {
-            self::$curlHandle = curl_init();
-            if (self::$curlHandle === false) {
-                throw new \Exception('Failed to initiate cURL handle');
-            } else {
-                if(!curl_setopt_array(self::$curlHandle, $this->CURL_OPTIONS)) {
-                    throw new \Exception('Failed to set cURL handle options');
-                }
-            }
-        }
-        #Get page contents
-        curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
-        #Get response
-        $response = curl_exec(self::$curlHandle);
-        $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
-        if ($response === false || $httpCode !== 200) {
+        $data = (new Curl())->getPage($link);
+        if ($data === false) {
             return false;
-        } else {
-            $data = substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE));
         }
         #Load page as DOM Document
         libxml_use_internal_errors(true);

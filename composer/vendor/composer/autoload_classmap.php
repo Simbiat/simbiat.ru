@@ -349,6 +349,7 @@ return array(
     'Simbiat\\ArrayHelpers' => $baseDir . '/../lib/ArrayHelpers/src/ArrayHelpers.php',
     'Simbiat\\Caching' => $baseDir . '/../lib/simbiat.ru/src/Caching.php',
     'Simbiat\\Cron' => $baseDir . '/../lib/Cron/src/Cron.php',
+    'Simbiat\\Curl' => $baseDir . '/../lib/simbiat.ru/src/Curl.php',
     'Simbiat\\CuteBytes' => $baseDir . '/../lib/cute-bytes/src/CuteBytes.php',
     'Simbiat\\Database\\Config' => $baseDir . '/../lib/database/src/Database/Config.php',
     'Simbiat\\Database\\Controller' => $baseDir . '/../lib/database/src/Database/Controller.php',

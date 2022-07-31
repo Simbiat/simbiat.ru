@@ -2,6 +2,7 @@ create table ffxiv__character
 (
     characterid   int unsigned                                     not null comment 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)'
         primary key,
+    userid        int unsigned                                     null comment 'ID of the user, that is linked to the character',
     serverid      tinyint(2) unsigned                              null comment 'ID of the server character resides on',
     name          varchar(50)                                      not null comment 'Character''s name',
     manual        tinyint(1) unsigned  default 0                   not null comment 'Flag indicating whether entity was added manually',
@@ -73,6 +74,9 @@ create table ffxiv__character
             on update cascade on delete set null,
     constraint titleid
         foreign key (titleid) references ffxiv__achievement (achievementid)
+            on update cascade on delete set null,
+    constraint userid
+        foreign key (userid) references uc__users (userid)
             on update cascade on delete set null
 )
     comment 'Characters found on Lodestone';
