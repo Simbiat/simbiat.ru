@@ -43,6 +43,8 @@ class Character extends Entity
         #Get username, if character is linked to a user
         if (!empty($data['userid'])) {
             $data['username'] = $this->dbController->selectValue('SELECT `username` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => $data['userid']]);
+        } else {
+            $data['username'] = null;
         }
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
         $data['oldNames'] = $this->dbController->Count('SELECT COUNT(*) FROM `'.self::dbPrefix.'character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
