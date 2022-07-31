@@ -41,10 +41,6 @@ class Character extends Page
         }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['character']['dates']['updated']);
-        #Reset profile picture, if remote does not exist
-        if (!(new Curl)->ifExists('https://img2.finalfantasyxiv.com/f/'.$outputArray['character']['avatarID'].'l0_640x873.jpg')) {
-            $outputArray['character']['avatarID'] = null;
-        }
         #Continue breadcrumbs
         $this->breadCrumb[] = ['href' => '/fftracker/character/' . $id, 'name' => $outputArray['character']['name']];
         #Update meta
