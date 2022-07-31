@@ -1,8 +1,8 @@
 create table ffxiv__character_achievement
 (
-    characterid   int unsigned      not null comment 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
-    achievementid smallint unsigned not null comment 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
-    time          date              not null comment 'Date when achievement was received according to Lodestone',
+    characterid   int unsigned                          not null comment 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
+    achievementid smallint unsigned                     not null comment 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
+    time          timestamp default current_timestamp() not null on update current_timestamp() comment 'Time when achievement was received according to Lodestone',
     primary key (characterid, achievementid),
     constraint char_ach_ach
         foreign key (achievementid) references ffxiv__achievement (achievementid)

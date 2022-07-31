@@ -321,7 +321,7 @@ class Character extends Entity
                         [
                             ':characterid'=>$this->id,
                             ':achievementid'=>$achievementid,
-                            ':time'=>[$item['time'], 'date'],
+                            ':time'=>[$item['time'], 'time'],
                         ],
                     ];
                 }

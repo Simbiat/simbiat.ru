@@ -8,7 +8,7 @@ create table uc__users
     strikes    tinyint(2) unsigned default 0                   not null comment 'Number of unsuccessful logins',
     pw_reset   text                                            null comment 'Password reset code',
     api_key    text                                            null comment 'API key',
-    ff_token   text                                            not null comment 'Token for linking FFXIV characters',
+    ff_token   varchar(64)                                     not null comment 'Token for linking FFXIV characters',
     registered timestamp           default current_timestamp() not null comment 'When user was registered',
     updated    timestamp           default current_timestamp() not null on update current_timestamp() comment 'When user was updated',
     parentid   int unsigned                                    null comment 'User ID, that added this one (if added manually)',
@@ -25,6 +25,10 @@ create table uc__users
     country    varchar(60)                                     null comment 'User''s country',
     city       varchar(200)                                    null comment 'User''s city',
     website    varchar(255)                                    null comment 'User''s personal website',
+    constraint api_key
+        unique (api_key) using hash,
+    constraint ff_token
+        unique (ff_token),
     constraint parent_to_user
         foreign key (parentid) references uc__users (userid)
             on update set null on delete set null
