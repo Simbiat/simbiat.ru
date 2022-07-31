@@ -4,7 +4,6 @@ namespace Simbiat\fftracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Caching;
-use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\LodestoneModules\Converters;
 
@@ -44,7 +43,7 @@ class Statistics
                 if (!$nocache && !empty($json['characters']['clans'])) {
                     $data['characters']['clans'] = $json['characters']['clans'];
                 } else {
-                    $data['characters']['clans'] = $ArrayHelpers->splitByKey($dbCon->countUnique(''.self::dbPrefix.'character', 'clanid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', ''.self::dbPrefix.'clan', 'INNER', 'clanid', '`'.self::dbPrefix.'character`.`genderid`, CONCAT(`'.self::dbPrefix.'clan`.`race`, \' of \', `'.self::dbPrefix.'clan`.`clan`, \' clan\')', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
+                    $data['characters']['clans'] = $ArrayHelpers->splitByKey($dbCon->countUnique(self::dbPrefix.'character', 'clanid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', self::dbPrefix.'clan', 'INNER', 'clanid', '`'.self::dbPrefix.'character`.`genderid`, CONCAT(`'.self::dbPrefix.'clan`.`race`, \' of \', `'.self::dbPrefix.'clan`.`clan`, \' clan\')', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
                 }
                 #Clan distribution by city
                 if (!$nocache && !empty($json['cities']['clans'])) {
@@ -64,7 +63,7 @@ class Statistics
                 if (!$nocache && !empty($json['characters']['guardians'])) {
                     $data['characters']['guardians'] = $json['characters']['guardians'];
                 } else {
-                    $data['characters']['guardians'] = $dbCon->countUnique(''.self::dbPrefix.'character', 'guardianid', '`'.self::dbPrefix.'character`.`deleted` IS NULL',''.self::dbPrefix.'guardian', 'INNER', 'guardianid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'guardian`.`guardian`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
+                    $data['characters']['guardians'] = $dbCon->countUnique(self::dbPrefix.'character', 'guardianid', '`'.self::dbPrefix.'character`.`deleted` IS NULL',self::dbPrefix.'guardian', 'INNER', 'guardianid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'guardian`.`guardian`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
                     #Add colors to guardians
                     foreach ($data['characters']['guardians'] as $key=>$guardian) {
                         $data['characters']['guardians'][$key]['color'] = $Lodestone->colorGuardians($guardian['value']);
@@ -112,49 +111,49 @@ class Statistics
                 if (!$nocache && !empty($json['characters']['changes']['name'])) {
                     $data['characters']['changes']['name'] = $json['characters']['changes']['name'];
                 } else {
-                    $data['characters']['changes']['name'] = $dbCon->countUnique(''.self::dbPrefix.'character_names', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['changes']['name'] = $dbCon->countUnique(self::dbPrefix.'character_names', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['changes']['name'], 'value', 'name');
                 }
                 #Most reincarnation
                 if (!$nocache && !empty($json['characters']['changes']['clan'])) {
                     $data['characters']['changes']['clan'] = $json['characters']['changes']['clan'];
                 } else {
-                    $data['characters']['changes']['clan'] = $dbCon->countUnique(''.self::dbPrefix.'character_clans', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['changes']['clan'] = $dbCon->countUnique(self::dbPrefix.'character_clans', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['changes']['clan'], 'value', 'name');
                 }
                 #Most servers
                 if (!$nocache && !empty($json['characters']['changes']['server'])) {
                     $data['characters']['changes']['server'] = $json['characters']['changes']['server'];
                 } else {
-                    $data['characters']['changes']['server'] = $dbCon->countUnique(''.self::dbPrefix.'character_servers', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['changes']['server'] = $dbCon->countUnique(self::dbPrefix.'character_servers', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['changes']['server'], 'value', 'name');
                 }
                 #Most companies
                 if (!$nocache && !empty($json['characters']['groups']['Free Companies'])) {
                     $data['characters']['groups']['Free Companies'] = $json['characters']['groups']['Free Companies'];
                 } else {
-                    $data['characters']['groups']['Free Companies'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['Free Companies'] = $dbCon->countUnique(self::dbPrefix.'freecompany_character', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
                 }
                 #Most PvP teams
                 if (!$nocache && !empty($json['characters']['groups']['PvP Teams'])) {
                     $data['characters']['groups']['PvP Teams'] = $json['characters']['groups']['PvP Teams'];
                 } else {
-                    $data['characters']['groups']['PvP Teams'] = $dbCon->countUnique(''.self::dbPrefix.'pvpteam_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['PvP Teams'] = $dbCon->countUnique(self::dbPrefix.'pvpteam_character', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
                 }
                 #Most x-linkshells
                 if (!$nocache && !empty($json['characters']['groups']['Linkshells'])) {
                     $data['characters']['groups']['Linkshells'] = $json['characters']['groups']['Linkshells'];
                 } else {
-                    $data['characters']['groups']['Linkshells'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['Linkshells'] = $dbCon->countUnique(self::dbPrefix.'linkshell_character', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
                 }
                 #Most linkshells
                 if (!$nocache && !empty($json['characters']['groups']['linkshell'])) {
                     $data['characters']['groups']['linkshell'] = $json['characters']['groups']['linkshell'];
                 } else {
-                    $data['characters']['groups']['linkshell'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell_character', 'characterid', '', ''.self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
+                    $data['characters']['groups']['linkshell'] = $dbCon->countUnique(self::dbPrefix.'linkshell_character', 'characterid', '', self::dbPrefix.'character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, \'character\' AS `type`, `'.self::dbPrefix.'character`.`name`', 'DESC', 20, [], true);
                     $ArrayHelpers->renameColumn($data['characters']['groups']['linkshell'], 'value', 'name');
                 }
                 #Groups affiliation
@@ -202,13 +201,13 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['estate'])) {
                     $data['freecompany']['estate'] = $json['freecompany']['estate'];
                 } else {
-                    $data['freecompany']['estate'] = $ArrayHelpers->topAndBottom($dbCon->countUnique(''.self::dbPrefix.'freecompany', 'estateid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL AND `'.self::dbPrefix.'freecompany`.`estateid` IS NOT NULL', ''.self::dbPrefix.'estate', 'INNER', 'estateid', '`'.self::dbPrefix.'estate`.`area`, `'.self::dbPrefix.'estate`.`plot`, CONCAT(`'.self::dbPrefix.'estate`.`area`, \', plot \', `'.self::dbPrefix.'estate`.`plot`)'), 20);
+                    $data['freecompany']['estate'] = $ArrayHelpers->topAndBottom($dbCon->countUnique(self::dbPrefix.'freecompany', 'estateid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL AND `'.self::dbPrefix.'freecompany`.`estateid` IS NOT NULL', self::dbPrefix.'estate', 'INNER', 'estateid', '`'.self::dbPrefix.'estate`.`area`, `'.self::dbPrefix.'estate`.`plot`, CONCAT(`'.self::dbPrefix.'estate`.`area`, \', plot \', `'.self::dbPrefix.'estate`.`plot`)'), 20);
                 }
                 #Get statistics by activity time
                 if (!$nocache && !empty($json['freecompany']['active'])) {
                     $data['freecompany']['active'] = $json['freecompany']['active'];
                 } else {
-                    $data['freecompany']['active'] = $dbCon->sumUnique(''.self::dbPrefix.'freecompany', 'activeid', [1, 2, 3], ['Always', 'Weekdays', 'Weekends'], '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', ''.self::dbPrefix.'timeactive', 'INNER', 'activeid', 'IF(`'.self::dbPrefix.'freecompany`.`recruitment`=1, \'Recruiting\', \'Not recruiting\') AS `recruiting`');
+                    $data['freecompany']['active'] = $dbCon->sumUnique(self::dbPrefix.'freecompany', 'activeid', [1, 2, 3], ['Always', 'Weekdays', 'Weekends'], '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', self::dbPrefix.'timeactive', 'INNER', 'activeid', 'IF(`'.self::dbPrefix.'freecompany`.`recruitment`=1, \'Recruiting\', \'Not recruiting\') AS `recruiting`');
                 }
                 #Get statistics by activities
                 if (!$nocache && !empty($json['freecompany']['activities'])) {
@@ -242,7 +241,7 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['crests'])) {
                     $data['freecompany']['crests'] = $json['freecompany']['crests'];
                 } else {
-                    $data['freecompany']['crests'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany', 'crest', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL AND `'.self::dbPrefix.'freecompany`.`crest` IS NOT NULL', '', 'INNER', '', '', 'DESC', 20);
+                    $data['freecompany']['crests'] = $dbCon->countUnique(self::dbPrefix.'freecompany', 'crest', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL AND `'.self::dbPrefix.'freecompany`.`crest` IS NOT NULL', '', 'INNER', '', '', 'DESC', 20);
                 }
                 break;
             case 'cities':
@@ -250,7 +249,7 @@ class Statistics
                 if (!$nocache && !empty($json['cities']['gender'])) {
                     $data['cities']['gender'] = $json['cities']['gender'];
                 } else {
-                    $data['cities']['gender'] = $dbCon->countUnique(''.self::dbPrefix.'character', 'cityid', '`'.self::dbPrefix.'character`.`deleted` IS NULL',''.self::dbPrefix.'city', 'INNER', 'cityid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'city`.`city`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
+                    $data['cities']['gender'] = $dbCon->countUnique(self::dbPrefix.'character', 'cityid', '`'.self::dbPrefix.'character`.`deleted` IS NULL',self::dbPrefix.'city', 'INNER', 'cityid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'city`.`city`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
                     #Add colors to cities
                     foreach ($data['cities']['gender'] as $key=>$city) {
                         $data['cities']['gender'][$key]['color'] = $Lodestone->colorCities($city['value']);
@@ -262,7 +261,7 @@ class Statistics
                 if (!$nocache && !empty($json['cities']['free_company'])) {
                     $data['cities']['free_company'] = $json['cities']['free_company'];
                 } else {
-                    $data['cities']['free_company'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany', 'estateid', '`'.self::dbPrefix.'freecompany`.`estateid` IS NOT NULL AND `'.self::dbPrefix.'freecompany`.`deleted` IS NULL', ''.self::dbPrefix.'estate', 'INNER', 'estateid', '`'.self::dbPrefix.'estate`.`area`');
+                    $data['cities']['free_company'] = $dbCon->countUnique(self::dbPrefix.'freecompany', 'estateid', '`'.self::dbPrefix.'freecompany`.`estateid` IS NOT NULL AND `'.self::dbPrefix.'freecompany`.`deleted` IS NULL', self::dbPrefix.'estate', 'INNER', 'estateid', '`'.self::dbPrefix.'estate`.`area`');
                     #Add colors to cities
                     foreach ($data['cities']['free_company'] as $key=>$city) {
                         $data['cities']['free_company'][$key]['color'] = $Lodestone->colorCities($city['value']);
@@ -296,14 +295,14 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['population'])) {
                     $data['grand_companies']['population'] = $json['grand_companies']['population'];
                 } else {
-                    $data['grand_companies']['population'] = $dbCon->countUnique(''.self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'character`.`gcrankid` IS NOT NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gcId`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
+                    $data['grand_companies']['population'] = $dbCon->countUnique(self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL AND `'.self::dbPrefix.'character`.`gcrankid` IS NOT NULL', self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gcId`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']);
                     #Add colors to companies
                     foreach ($data['grand_companies']['population'] as $key=>$company) {
                         $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC($company['value']);
                     }
                     #Split companies by gender
                     $data['grand_companies']['population'] = $ArrayHelpers->splitByKey($data['grand_companies']['population'], 'genderid', ['female', 'male'], [0, 1]);
-                    $data['grand_companies']['population']['free_company'] = $dbCon->countUnique(''.self::dbPrefix.'freecompany', 'grandcompanyid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'grandcompany_rank`.`gcId`');
+                    $data['grand_companies']['population']['free_company'] = $dbCon->countUnique(self::dbPrefix.'freecompany', 'grandcompanyid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'grandcompany_rank`.`gcId`');
                     #Add colors to cities
                     foreach ($data['grand_companies']['population']['free_company'] as $key=>$company) {
                         $data['grand_companies']['population']['free_company'][$key]['color'] = $Lodestone->colorGC($company['value']);
@@ -313,7 +312,7 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['ranks'])) {
                     $data['grand_companies']['ranks'] = $json['grand_companies']['ranks'];
                 } else {
-                    $data['grand_companies']['ranks'] = $ArrayHelpers->splitByKey($dbCon->countUnique(''.self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', ''.self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gcId`, `'.self::dbPrefix.'grandcompany_rank`.`gc_rank`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`', '`'.self::dbPrefix.'grandcompany_rank`.`gcId`']), 'gcId', [], []);
+                    $data['grand_companies']['ranks'] = $ArrayHelpers->splitByKey($dbCon->countUnique(self::dbPrefix.'character', 'gcrankid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', self::dbPrefix.'grandcompany_rank', 'INNER', 'gcrankid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'grandcompany_rank`.`gcId`, `'.self::dbPrefix.'grandcompany_rank`.`gc_rank`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`', '`'.self::dbPrefix.'grandcompany_rank`.`gcId`']), 'gcId', [], []);
                     #Split by gender
                     foreach ($data['grand_companies']['ranks'] as $key=>$company) {
                         $data['grand_companies']['ranks'][$key] = $ArrayHelpers->splitByKey($company, 'genderid', ['female', 'male'], [0, 1]);
@@ -326,7 +325,7 @@ class Statistics
                     $data['servers']['female population'] = $json['servers']['female population'];
                     $data['servers']['male population'] = $json['servers']['male population'];
                 } else {
-                    $data['servers']['characters'] = $ArrayHelpers->splitByKey($dbCon->countUnique(''.self::dbPrefix.'character', 'serverid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', ''.self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'server`.`server`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
+                    $data['servers']['characters'] = $ArrayHelpers->splitByKey($dbCon->countUnique(self::dbPrefix.'character', 'serverid', '`'.self::dbPrefix.'character`.`deleted` IS NULL', self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'character`.`genderid`, `'.self::dbPrefix.'server`.`server`', 'DESC', 0, ['`'.self::dbPrefix.'character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
                     $data['servers']['female population'] = $ArrayHelpers->topAndBottom($data['servers']['characters']['female'], 20);
                     $data['servers']['male population'] = $ArrayHelpers->topAndBottom($data['servers']['characters']['male'], 20);
                     unset($data['servers']['characters']);
@@ -335,25 +334,25 @@ class Statistics
                 if (!$nocache && !empty($json['servers']['Free Companies'])) {
                     $data['servers']['Free Companies'] = $json['servers']['Free Companies'];
                 } else {
-                    $data['servers']['Free Companies'] = $ArrayHelpers->topAndBottom($dbCon->countUnique(''.self::dbPrefix.'freecompany', 'serverid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', ''.self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`server`'), 20);
+                    $data['servers']['Free Companies'] = $ArrayHelpers->topAndBottom($dbCon->countUnique(self::dbPrefix.'freecompany', 'serverid', '`'.self::dbPrefix.'freecompany`.`deleted` IS NULL', self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`server`'), 20);
                 }
                 #Linkshells
                 if (!$nocache && !empty($json['servers']['Linkshells'])) {
                     $data['servers']['Linkshells'] = $json['servers']['Linkshells'];
                 } else {
-                    $data['servers']['Linkshells'] = $ArrayHelpers->topAndBottom($dbCon->countUnique(''.self::dbPrefix.'linkshell', 'serverid', '`'.self::dbPrefix.'linkshell`.`crossworld` = 0 AND `'.self::dbPrefix.'linkshell`.`deleted` IS NULL', ''.self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`server`'), 20);
+                    $data['servers']['Linkshells'] = $ArrayHelpers->topAndBottom($dbCon->countUnique(self::dbPrefix.'linkshell', 'serverid', '`'.self::dbPrefix.'linkshell`.`crossworld` = 0 AND `'.self::dbPrefix.'linkshell`.`deleted` IS NULL', self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`server`'), 20);
                 }
                 #Crossworld linkshells
                 if (!$nocache && !empty($json['servers']['crossworldlinkshell'])) {
                     $data['servers']['crossworldlinkshell'] = $json['servers']['crossworldlinkshell'];
                 } else {
-                    $data['servers']['crossworldlinkshell'] = $dbCon->countUnique(''.self::dbPrefix.'linkshell', 'serverid', '`'.self::dbPrefix.'linkshell`.`crossworld` = 1 AND `'.self::dbPrefix.'linkshell`.`deleted` IS NULL', ''.self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`datacenter`');
+                    $data['servers']['crossworldlinkshell'] = $dbCon->countUnique(self::dbPrefix.'linkshell', 'serverid', '`'.self::dbPrefix.'linkshell`.`crossworld` = 1 AND `'.self::dbPrefix.'linkshell`.`deleted` IS NULL', self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`datacenter`');
                 }
                 #PvP teams
                 if (!$nocache && !empty($json['servers']['pvpteam'])) {
                     $data['servers']['pvpteam'] = $json['servers']['pvpteam'];
                 } else {
-                    $data['servers']['pvpteam'] = $dbCon->countUnique(''.self::dbPrefix.'pvpteam', 'datacenterid', '`'.self::dbPrefix.'pvpteam`.`deleted` IS NULL', ''.self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`datacenter`');
+                    $data['servers']['pvpteam'] = $dbCon->countUnique(self::dbPrefix.'pvpteam', 'datacenterid', '`'.self::dbPrefix.'pvpteam`.`deleted` IS NULL', self::dbPrefix.'server', 'INNER', 'serverid', '`'.self::dbPrefix.'server`.`datacenter`');
                 }
                 break;
             case 'achievements':
@@ -385,7 +384,7 @@ class Statistics
                 } else {
                     $data['timelines']['formed'] = $dbCon->SelectAll(
                         'SELECT `formed` AS `value`, SUM(`freecompanies`) AS `freecompanies`, SUM(`linkshells`) AS `linkshells`, SUM(`pvpteams`) AS `pvpteams` FROM (
-                            SELECT `formed`, COUNT(`formed`) AS `freecompanies`, 0 AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'freecompany` WHERE `formed` IS NOT NULL GROUP BY `formed`
+                            SELECT `formed`, COUNT(`formed`) AS `freecompanies`, 0 AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'freecompany` GROUP BY `formed`
                             UNION ALL
                             SELECT `formed`, 0 AS `freecompanies`, COUNT(`formed`) AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'linkshell` WHERE `formed` IS NOT NULL GROUP BY `formed`
                             UNION ALL
@@ -400,13 +399,13 @@ class Statistics
                 } else {
                     $data['timelines']['registered'] = $dbCon->SelectAll(
                         'SELECT `registered` AS `value`, SUM(`characters`) AS `characters`, SUM(`freecompanies`) AS `freecompanies`, SUM(`linkshells`) AS `linkshells`, SUM(`pvpteams`) AS `pvpteams` FROM (
-                            SELECT `registered`, COUNT(`registered`) AS `characters`, 0 AS `freecompanies`, 0 AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'character` WHERE `registered` IS NOT NULL GROUP BY `registered`
+                            SELECT `registered`, COUNT(`registered`) AS `characters`, 0 AS `freecompanies`, 0 AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'character` GROUP BY `registered`
                             UNION ALL
-                            SELECT `registered`, 0 AS `characters`, COUNT(`registered`) AS `freecompanies`, 0 AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'freecompany` WHERE `registered` IS NOT NULL GROUP BY `registered`
+                            SELECT `registered`, 0 AS `characters`, COUNT(`registered`) AS `freecompanies`, 0 AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'freecompany` GROUP BY `registered`
                             UNION ALL
-                            SELECT `registered`, 0 AS `characters`, 0 AS `freecompanies`, COUNT(`registered`) AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'linkshell` WHERE `registered` IS NOT NULL GROUP BY `registered`
+                            SELECT `registered`, 0 AS `characters`, 0 AS `freecompanies`, COUNT(`registered`) AS `linkshells`, 0 AS `pvpteams` FROM `'.self::dbPrefix.'linkshell` GROUP BY `registered`
                             UNION ALL
-                            SELECT `registered`, 0 AS `characters`, 0 AS `freecompanies`, 0 AS `linkshells`, COUNT(`registered`) AS `pvpteams` FROM `'.self::dbPrefix.'pvpteam` WHERE `registered` IS NOT NULL GROUP BY `registered`
+                            SELECT `registered`, 0 AS `characters`, 0 AS `freecompanies`, 0 AS `linkshells`, COUNT(`registered`) AS `pvpteams` FROM `'.self::dbPrefix.'pvpteam` GROUP BY `registered`
                         ) `tempResults`
                         GROUP BY `registered` ORDER BY `registered` '
                     );
@@ -441,11 +440,11 @@ class Statistics
                     $data['bugs']['noMembers'] = $json['bugs']['noMembers'];
                 } else {
                     $data['bugs']['noMembers'] = $dbCon->SelectAll(
-                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, COALESCE(`crest`, `grandcompanyid`) AS `icon` FROM `'.self::dbPrefix.'freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `'.self::dbPrefix.'character` WHERE `freecompanyid` IS NOT NULL)
+                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, COALESCE(`crest`, `grandcompanyid`) AS `icon` FROM `'.self::dbPrefix.'freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `'.self::dbPrefix.'freecompany_character`)
                         UNION
                         SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, NULL AS `icon` FROM `'.self::dbPrefix.'linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `'.self::dbPrefix.'linkshell_character`)
                         UNION
-                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest` AS `icon` FROM `'.self::dbPrefix.'pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `'.self::dbPrefix.'character` WHERE `pvpteamid` IS NOT NULL)
+                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest` AS `icon` FROM `'.self::dbPrefix.'pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `'.self::dbPrefix.'pvpteam_character`)
                         ORDER BY `name`;'
                     );
                 }
@@ -502,7 +501,7 @@ class Statistics
                 if (!$nocache && !empty($json['pvpteam']['crests'])) {
                     $data['pvpteam']['crests'] = $json['pvpteam']['crests'];
                 } else {
-                    $data['pvpteam']['crests'] = $dbCon->countUnique(''.self::dbPrefix.'pvpteam', 'crest', '`'.self::dbPrefix.'pvpteam`.`deleted` IS NULL AND `'.self::dbPrefix.'pvpteam`.`crest` IS NOT NULL', '', 'INNER', '', '', 'DESC', 20);
+                    $data['pvpteam']['crests'] = $dbCon->countUnique(self::dbPrefix.'pvpteam', 'crest', '`'.self::dbPrefix.'pvpteam`.`deleted` IS NULL AND `'.self::dbPrefix.'pvpteam`.`crest` IS NOT NULL', '', 'INNER', '', '', 'DESC', 20);
                 }
                 break;
         }
