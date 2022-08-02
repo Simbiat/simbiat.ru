@@ -1,1 +1,44 @@
-This is a stub page
+<section>
+    <p>Linking a character will allow you to force-update it and its respective groups on their pages. There are some other features planned for the future, as well (for example, commenting on other characters).</p>
+    <p>To link a character follow below instructions.</p>
+    <details{% if characters is empty %} open{% endif %}>
+        <summary>Instructions</summary>
+        <ol>
+            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank"><img loading="lazy" decoding="async" alt="Lodestone" class="linkIcon" src="/img/icons/lodestone.png">Lodestone</a></li>
+            <li>Go to the profile of the character you want to link.</li>
+            <li>Scroll the page to "Character profile" section and click the edit button.</li>
+            <li>Paste this token <code>fftracker:{{ token }}</code> anywhere in the text field and save the changes.</li>
+            <li>Get the character id from URL of the character profile. URL normally looks like <samp>https://eu.finalfantasyxiv.com/lodestone/character/%characterid%/</samp>, where <samp>%characterid%</samp> is the value you need to copy.</li>
+            <li>Input the copied value into the form below and link the character.</li>
+            <li>If link was successful, you can revert the profile changes you've just made.</li>
+        </ol>
+    </details>
+    <form id="ff_link_user">
+        <div class="float_label_div" data-tooltip="Character ID as seen on Lodestone (in URL)">
+            <input autofocus form="ff_link_user" type="text" required aria-required="true" name="characterid" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
+            <label for="ff_link_id">Character ID</label>
+        </div>
+        <input type="submit" value="Link" form="ff_link_user" id="ff_link_submit">
+        <img id="ff_link_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Linking character...">
+    </form>
+</section>
+{% if characters %}
+    <section id="linked_characters">
+        <p>Linked characters:</p>
+        {% for character in characters %}
+            <article class="ff_owned_block">
+                <div class="ff_owned_char"><img loading="lazy" decoding="async" class="avatar" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatar }}c0_96x96.jpg"><a href="/fftracker/character/{{ character.characterid|url_encode }}/{{ character.name|url_encode }}">{{ character.name }}</a></div>
+                <div class="ff_owned_groups">
+                    {% if groups[character.characterid] %}
+                        <p>Owned groups:</p>
+                        {% for group in groups[character.characterid] %}
+                            {{ include('common/elements/entitycard.twig', group) }}
+                        {% endfor %}
+                    {% else %}
+                        <p>No owned groups</p>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+{% endif %}

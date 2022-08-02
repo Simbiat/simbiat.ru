@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\HomePage;
+use Simbiat\usercontrol\User;
 
 class FFTracker extends Page
 {
@@ -29,11 +29,6 @@ class FFTracker extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $outputArray = [];
-        #Get linked characters
-        $outputArray['characters'] = HomePage::$dbController->selectAll('SELECT `characterid`, `name` FROM `ffxiv__character` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
-        #Get linked groups
-
-        return $outputArray;
+        return (new User)->setId($_SESSION['userid'])->getFF();
     }
 }

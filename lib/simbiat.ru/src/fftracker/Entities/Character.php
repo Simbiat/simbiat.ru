@@ -406,7 +406,6 @@ class Character extends Entity
             if (empty($this->lodestone['bio'])) {
                 return ['http_error' => 424, 'reason' => 'No biography found for character with id `'.$this->id.'`'];
             }
-            $this->lodestone['bio'] = 'fftracker:d3c57d9ff13f525c170968ea731358bd012362980619ed789dd22cf1b3ca1f40';
             #Check if biography contains the respected text
             $token = preg_replace('/(.*)(fftracker:([a-z\d]{64}))(.*)/uis', '$3', $this->lodestone['bio']);
             if (empty($token)) {
@@ -417,12 +416,13 @@ class Character extends Entity
                 return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
             }
             #Download avatar
-            (new Curl())->imageDownload('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', $GLOBALS['siteconfig']['ffxiv_avatars'].$this->id.'.jpg');
+            $avatar = (new Curl())->imageDownload('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', $GLOBALS['siteconfig']['ffxiv_avatars'].$this->id.'.jpg');
+            $queries[] = ['UPDATE `'.self::dbPrefix.'character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
+            if ($avatar) {
+                $queries[] = ['INSERT IGNORE INTO `uc__user_to_avatar` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
+            }
             #Link character to user
-            return ['response' => $this->dbController->query([
-                'UPDATE `'.self::dbPrefix.'character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
-                'INSERT IGNORE INTO `uc__user_to_avatar` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
-            ])];
+            return ['response' => $this->dbController->query($queries)];
         } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => $exception->getMessage()];
         }

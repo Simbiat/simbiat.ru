@@ -146,7 +146,7 @@ blockquote>.copyQuote {
     margin-bottom: 0.5rem;
 }
 .entityCard {
-    width: 25%;
+    width: clamp(30%,50%,13rem);
     height: 2rem;
     background-color: var(--color-block);
     margin: 0.2rem;

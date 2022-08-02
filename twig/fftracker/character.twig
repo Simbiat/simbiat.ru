@@ -86,7 +86,7 @@
                 <div class="ff_groups">
                     {% for entity in character.groups %}
                         <div>
-                            {% if entity.current %}<span class="emojiGreen">&#10004;</span>{% else %}<span class="emojiRed">&#10060;</span>{% endif %}
+                            {% if entity.current %}<span class="emojiGreen" data-tooltip="Current affiliation">&#10004;</span>{% else %}<span class="emojiRed" data-tooltip="Past affiliation">&#10060;</span>{% endif %}
                             {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
                         </div>
                     {% endfor %}

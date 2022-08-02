@@ -129,6 +129,30 @@ class User extends Entity
         }
     }
 
+    public function getFF(): array
+    {
+        $outputArray = [];
+        #Get token
+        $outputArray['token'] = $this->dbController->selectValue('SELECT `ff_token` FROM `'.self::dbPrefix.'users` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
+        #Get linked characters
+        $outputArray['characters'] = $this->dbController->selectAll('SELECT `characterid`, `name`, `avatar` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => $_SESSION['userid']]);
+        #Get linked groups
+        if (!empty($outputArray['characters'])) {
+            foreach ($outputArray['characters'] as $character) {
+                $outputArray['groups'][$character['characterid']] = $this->dbController->selectAll(
+                    '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
+                UNION ALL
+                (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, NULL AS `icon` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rankid`=1)
+                UNION ALL
+                (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvpteamid` AS `id`, `ffxiv__pvpteam`.`name` as `name`, `ffxiv__pvpteam`.`crest` AS `icon` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rankid`=`ffxiv__pvpteam_rank`.`pvprankid` WHERE `characterid`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rankid`=1)
+                ORDER BY `name` ASC;',
+                    [':id' => $character['characterid']]
+                );
+            }
+        }
+        return $outputArray;
+    }
+
     public function changeUsername(string $newName): array
     {
         #Check if new name is valid

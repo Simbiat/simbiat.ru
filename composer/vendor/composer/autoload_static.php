@@ -682,6 +682,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\optimizeTables' => __DIR__ . '/../..' . '/../lib/optimize-tables/src/optimizeTables.php',
         'Simbiat\\usercontrol\\Api\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Api.php',
         'Simbiat\\usercontrol\\Api\\Emails' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Emails.php',
+        'Simbiat\\usercontrol\\Api\\FFLink' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/FFLink.php',
         'Simbiat\\usercontrol\\Api\\Password' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Password.php',
         'Simbiat\\usercontrol\\Api\\Profile' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Profile.php',
         'Simbiat\\usercontrol\\Api\\Signinup' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Signinup.php',
