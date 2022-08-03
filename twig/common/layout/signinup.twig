@@ -1,5 +1,5 @@
 {% if session_data.username %}
-    <a id="uc_settings" href="/uc/profile/"><img class="linkIcon" alt="Settings" src="/img/cog.svg"></a>
+    <a id="uc_settings" href="/uc/profile/"><img loading="lazy" decoding="async" class="linkIcon" alt="Settings" src="/img/cog.svg"></a>
     <div class="middle">Hi, {{ session_data.username }}!</div>
     <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" src="{{ session_data.avatar|default('/img/avatar.svg') }}"></div>
     {% if session_data.activated == false %}
@@ -7,7 +7,7 @@
     {% endif %}
     <form role="form" id="signinup" name="signinup" autocomplete="on">
         <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout">
-        <img id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Logging out...">
+        <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Logging out...">
     </form>
 {% else %}
     <form role="form" id="signinup" name="signinup" autocomplete="on">
@@ -51,6 +51,6 @@
             <label for="rememberme">Remember me</label>
         </div>
         <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Sign in/Join">
-        <img id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Submitting form...">
+        <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Submitting form...">
     </form>
 {% endif %}

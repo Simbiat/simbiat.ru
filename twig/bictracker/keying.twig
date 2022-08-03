@@ -9,7 +9,7 @@
     <form role="form" action="" id="bic_keying" name="bic_keying">
         <span class="float_label_div"><input id="bic_key" name="bic_key" form="bic_keying" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^\d{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}><label for="bic_key">БИК</label></span>
         <span class="float_label_div"><input id="account_key" name="account_key" form="bic_keying" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^\d{5}[\dАВСЕНКМРТХавсенкмртх]{1}\d{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}><label for="account_key">Номер счёта</label></span>
-        <img id="bic_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Проверяем ключевание...">
+        <img loading="lazy" decoding="async" id="bic_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Проверяем ключевание...">
     </form>
     <p class="noLetter">
         {% if checkResult is same as(null) %}
