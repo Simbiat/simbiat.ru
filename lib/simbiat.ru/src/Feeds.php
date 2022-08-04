@@ -45,7 +45,7 @@ class Feeds
                 if ($format === 'atom') {
                     $settings = [
                         'authors' => [[
-                            'name' => $GLOBALS['siteconfig']['admiNname'],
+                            'name' => $GLOBALS['siteconfig']['adminName'],
                             'email' => $GLOBALS['siteconfig']['adminmail'],
                             'uri' => 'https://'.$_SERVER['HTTP_HOST'].'/',
                         ]],
