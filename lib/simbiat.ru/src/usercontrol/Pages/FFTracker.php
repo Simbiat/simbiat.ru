@@ -14,7 +14,7 @@ class FFTracker extends Page
     #Sub service name
     protected string $subServiceName = 'fftracker';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = 'FFXIV';
+    protected string $title = 'FFXIV Linkage';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'FFXIV Linkage';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
