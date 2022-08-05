@@ -2,8 +2,8 @@
     <article>
         <div class="articleHeader">
             <h2 class="articleName" id="post_{{ post.postid }}">{{ post.name }}</h2>
-            {{ post.created|timeTag("d/m/Y H:i", "articleTime") }}
+            {{ timeTag(post.created, "d/m/Y H:i", "articleTime") }}
         </div>
-        <section class="articleText">{{ post.text|sanitize|nl2br }}</section>
+        <section class="articleText">{{ sanitize(post.text)|nl2br }}</section>
     </article>
 {% endfor %}

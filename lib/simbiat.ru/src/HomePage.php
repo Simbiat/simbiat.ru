@@ -8,6 +8,7 @@ use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
+use Simbiat\Twig\Extension;
 use Simbiat\usercontrol\Checkers;
 use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
@@ -61,11 +62,11 @@ class HomePage
         if (is_null(self::$twig)) {
             #Initiate Twig
             self::$twig = new Environment(new FilesystemLoader($GLOBALS['siteconfig']['templatesDir']), ['cache' => $GLOBALS['siteconfig']['templatesDir'] . '/cache', 'auto_reload' => true, 'autoescape' => 'html',]);
-            self::$twig->addExtension(new TwigExtension);
+            self::$twig->addExtension(new Extension);
         }
         #Get all POST and GET keys to lower case
-        $_POST = array_change_key_case($_POST, CASE_LOWER);
-        $_GET = array_change_key_case($_GET, CASE_LOWER);
+        $_POST = array_change_key_case($_POST);
+        $_GET = array_change_key_case($_GET);
         $this->init();
     }
 

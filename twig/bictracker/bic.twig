@@ -1,6 +1,6 @@
 <section>
     {% if bicdetails.DateOut %}
-        <p class="noLetter failure"><span class="emojiRed">&#10060;</span>Организация закрыта {{ bicdetails.DateOut|timeTag("d/m/Y") }}<span class="emojiRed">&#10060;</span></p>
+        <p class="noLetter failure"><span class="emojiRed">&#10060;</span>Организация закрыта {{ timeTag(bicdetails.DateOut, "d/m/Y") }}<span class="emojiRed">&#10060;</span></p>
     {% endif %}
     <table>
         <caption><h2 class="zeroMargin">Информация для расчётов</h2></caption>
@@ -22,10 +22,10 @@
                     <td><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr>:</td>
                     <td>{{ bicdetails.SWIFTs.0.SWBIC }}
                         {% if bicdetails.SWIFTs.0.DateIn %}
-                            с {{ bicdetails.SWIFTs.0.DateIn|timeTag("d/m/Y") }}
+                            с {{ timeTag(bicdetails.SWIFTs.0.DateIn, "d/m/Y") }}
                         {% endif %}
                         {% if bicdetails.SWIFTs.0.DateOut %}
-                            до {{ bicdetails.SWIFTs.0.DateOut|timeTag("d/m/Y") }}
+                            до {{ timeTag(bicdetails.SWIFTs.0.DateOut, "d/m/Y") }}
                         {% endif %}
                     </td>
                 </tr>
@@ -42,14 +42,14 @@
                 {% for code in bicdetails.SWIFTs %}
                     {% if not code.DateOut %}
                         <tr>
-                            <td class="success">{{ code.SWBIC }}</td><td>{% if code.DefaultSWBIC == 1 %}<span class="success bold">Да</span>{% else %}Нет{% endif %}</td><td>{% if code.DateIn %}{{ code.DateIn|timeTag("d/m/Y") }}{% else %}-{% endif %}</td><td>-</td>
+                            <td class="success">{{ code.SWBIC }}</td><td>{% if code.DefaultSWBIC == 1 %}<span class="success bold">Да</span>{% else %}Нет{% endif %}</td><td>{% if code.DateIn %}{{ timeTag(code.DateIn, "d/m/Y") }}{% else %}-{% endif %}</td><td>-</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
                 {% for code in bicdetails.SWIFTs %}
                     {% if code.DateOut %}
                         <tr>
-                            <td>{{ code.SWBIC }}</td><td>{% if code.DefaultSWBIC == 1 %}<span class="success bold">Да</span>{% else %}Нет{% endif %}</td><td>{% if code.DateIn %}{{ code.DateIn|timeTag("d/m/Y") }}{% else %}-{% endif %}</td><td>{{ code.DateOut|timeTag("d/m/Y", "failure") }}</td>
+                            <td>{{ code.SWBIC }}</td><td>{% if code.DefaultSWBIC == 1 %}<span class="success bold">Да</span>{% else %}Нет{% endif %}</td><td>{% if code.DateIn %}{{ timeTag(code.DateIn, "d/m/Y") }}{% else %}-{% endif %}</td><td>{{ timeTag(code.DateOut, "d/m/Y", "failure") }}</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
@@ -66,14 +66,14 @@
                 {% for account in bicdetails.accounts %}
                     {% if not account.DateOut %}
                         <tr>
-                            <td class="success">{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bic/{{ account.AccountCBRBIC }}/">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ account.DateIn|timeTag("d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ "Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК"|tooltip }}{% endif %}{% else %}-{% endif %}</td><td>-</td>
+                            <td class="success">{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bic/{{ account.AccountCBRBIC }}/">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td><td>-</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
                 {% for account in bicdetails.accounts %}
                     {% if account.DateOut %}
                         <tr>
-                            <td>{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bic/{{ account.AccountCBRBIC }}/">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ account.DateIn|timeTag("d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ "Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК"|tooltip }}{% endif %}{% else %}-{% endif %}</td><td>{{ account.DateOut|timeTag("d/m/Y", "failure") }}</td>
+                            <td>{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bic/{{ account.AccountCBRBIC }}/">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td><td>{{ timeTag(account.DateOut, "d/m/Y", "failure") }}</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
@@ -116,13 +116,13 @@
                 <td>Обслуживает организаций:</td><td>{{ bicdetails.serviceFor }}</td>
             </tr>
             <tr>
-                <td>Дата включения в справочник:</td><td>{% if bicdetails.DateIn %}{{ bicdetails.DateIn|timeTag("d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ "Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК"|tooltip }}{% endif %}{% else %}-{% endif %}</td>
+                <td>Дата включения в справочник:</td><td>{% if bicdetails.DateIn %}{{ timeTag(bicdetails.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td>
             </tr>
             <tr>
-                <td>Дата последнего изменения:</td><td>{% if bicdetails.Updated %}{{ bicdetails.Updated|timeTag("d/m/Y") }}{% else %}-{% endif %}</td>
+                <td>Дата последнего изменения:</td><td>{% if bicdetails.Updated %}{{ timeTag(bicdetails.Updated, "d/m/Y") }}{% else %}-{% endif %}</td>
             </tr>
             <tr>
-                <td>Дата последнего изменения:</td><td>{% if bicdetails.Updated %}{{ bicdetails.Updated|timeTag("d/m/Y") }}{% else %}-{% endif %}</td>
+                <td>Дата последнего изменения:</td><td>{% if bicdetails.Updated %}{{ timeTag(bicdetails.Updated, "d/m/Y") }}{% else %}-{% endif %}</td>
             </tr>
         </tbody>
     </table>
@@ -218,7 +218,7 @@
             <caption><h2 class="zeroMargin">Потенциально неактуальная информация из DBF</h2></caption>
             <tbody>
             <tr>
-                <td>Дата контроля:</td><td>{% if bicdetails.DBF.misc.DATE_CH %}{{ bicdetails.DBF.misc.DATE_CH|timeTag("d/m/Y") }}{% else %}-{% endif %}</td>
+                <td>Дата контроля:</td><td>{% if bicdetails.DBF.misc.DATE_CH %}{{ timeTag(bicdetails.DBF.misc.DATE_CH, "d/m/Y") }}{% else %}-{% endif %}</td>
             </tr>
             <tr>
                 <td>Внутренний код участника расчетов по <abbr data-tooltip="электронной базе данных">ЭБД</abbr> Книги <abbr data-tooltip="государственной регистрации кредитных организаций">ГРКО</abbr>:</td><td>{{ bicdetails.DBF.misc.BVKEY|default('-') }}</td>

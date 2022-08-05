@@ -78,6 +78,6 @@
     </div>
     <br/>
     <input role="button" form="profile_details" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">
-    <p id="lastAutoSave" class="hidden">Last auto save: {{ "now"|timeTag("H:i") }}</p>
+    <p id="lastAutoSave" class="hidden">Last auto save: {{ timeTag("now", "H:i") }}</p>
     <img loading="lazy" decoding="async" id="details_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Updating details...">
 </form>

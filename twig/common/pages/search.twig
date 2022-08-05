@@ -20,7 +20,7 @@
 </section>
 <section>
     {% if serviceName == 'bictracker' %}
-        <p class="relative">Библиотека обновлена {{ bicDate|timeTag('d.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/img/refresh.svg"></p>
+        <p class="relative">Библиотека обновлена {{ timeTag(bicDate, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/img/refresh.svg"></p>
     {% endif %}
     {% for type, subResult in searchresult %}
         <p>

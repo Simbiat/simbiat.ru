@@ -1,6 +1,6 @@
 <section>
     <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ achievement.name }}" src="/img/fftracker/icons/{{ achievement.icon }}">
-    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ achievement.registered|timeTag("d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {{ achievement.updated|timeTag("d/m/Y") }}{% endif %}.</p>
+    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, "d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {{ timeTag(achievement.updated, "d/m/Y") }}{% endif %}.</p>
     <p>By achieving it, one can receive:</p>
     <ul>
         {% if achievement.rewards.points %}
