@@ -76,7 +76,7 @@ class MainRouter extends Abstracts\Router
     {
         $outputArray = [];
         #Forbid if on PROD
-        if (HomePage::$PROD === true || empty($uri)) {
+        if ($GLOBALS['siteconfig']['PROD'] === true || empty($uri)) {
             $outputArray['http_error'] = 403;
             return $outputArray;
         }

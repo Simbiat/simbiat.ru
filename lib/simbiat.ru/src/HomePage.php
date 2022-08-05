@@ -17,8 +17,6 @@ use Twig\Loader\FilesystemLoader;
 
 class HomePage
 {
-    #Static value indicating whether this is a live version of the site. It's static in case a function wil be called after initial object was destroyed
-    public static bool $PROD = false;
     #Allow access to canonical value of the host
     public static string $canonical = '';
     #Track if DB connection is up
@@ -44,10 +42,6 @@ class HomePage
 
     public function __construct()
     {
-        #Determine if test server. Currently, effects only HTML caching.
-        if (!is_file($GLOBALS['siteconfig']['maindir'].'uat.flag')) {
-            self::$PROD = true;
-        }
         #Cache headers object
         self::$headers = new Headers;
         #Check if we are in CLI
@@ -273,7 +267,7 @@ class HomePage
                 session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if (self::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
+            if ($GLOBALS['siteconfig']['PROD'] && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
                 self::$dataCache->write($twigVars, age: intval($twigVars['cacheAge']));
             }
             if (self::$staleReturn === true) {

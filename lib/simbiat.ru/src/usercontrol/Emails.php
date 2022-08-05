@@ -28,7 +28,7 @@ class Emails
             $email->addFrom(new Address($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name']));
             $email->sender(new Address($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name']));
             $email->addReplyTo(new Address($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']));
-            if (HomePage::$PROD) {
+            if ($GLOBALS['siteconfig']['PROD']) {
                 $email->addTo($to);
             } else {
                 #On test always use admin mail

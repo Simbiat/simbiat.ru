@@ -49,7 +49,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
         }
         return array_merge($defaults, [
             #PROD flag
-            'isPROD' => HomePage::$PROD,
+            'isPROD' => $GLOBALS['siteconfig']['PROD'],
             #List of LINK tags
             'link_tags' => $GLOBALS['siteconfig']['links'],
             #Time used as version of the JS file for cache busting
