@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
-use Simbiat\usercontrol\Common;
 use Simbiat\usercontrol\User;
 
 class Profile extends Api
@@ -18,8 +17,6 @@ class Profile extends Api
     protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = false;
-
-    use Common;
 
     protected function genData(array $path): array
     {

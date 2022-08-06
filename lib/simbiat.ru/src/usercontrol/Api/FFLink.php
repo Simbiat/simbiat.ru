@@ -4,7 +4,6 @@ namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
 use Simbiat\fftracker\Entities\Character;
-use Simbiat\usercontrol\Common;
 
 class FFLink extends Api
 {
@@ -18,8 +17,6 @@ class FFLink extends Api
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = true;
-
-    use Common;
 
     protected function genData(array $path): array
     {

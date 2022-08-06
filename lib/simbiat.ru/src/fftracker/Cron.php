@@ -281,7 +281,7 @@ class Cron
             }
         }
         $data = $Lodestone->getResult();
-        (new \Simbiat\Tests)->testDump($data);
+        (new \Simbiat\Tests\Tests)->testDump($data);
         return true;
     }
 }

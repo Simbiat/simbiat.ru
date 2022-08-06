@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\HomePage;
-use Simbiat\usercontrol\Security;
+use Simbiat\Security;
 
 abstract class Api
 {
@@ -45,7 +45,7 @@ abstract class Api
         #Check that user is authenticated
         } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
-        } elseif ($this->CSRF && !(new Security())->antiCSRF(exit: false)) {
+        } elseif ($this->CSRF && !Security::antiCSRF(exit: false)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             $data = $this->getData($path);
@@ -75,7 +75,7 @@ abstract class Api
                     $result['json_ready']['reason'] = 'Unsupported method used';
                 }
             } else {
-                $result['json_ready']['data'] = $data['response'] ?? NULL;
+                $result['json_ready']['data'] = $data['response'] ?? null;
                 #Filter out results if data is an array
                 if (is_array($result['json_ready']['data'])) {
                     $this->fieldFilter($result['json_ready']['data']);
@@ -109,11 +109,14 @@ abstract class Api
     #Method to filter output fields
     protected final function fieldFilter(array &$array): void
     {
-        $filter = explode(',', $_GET['fields'] ?? $_POST['fields'] ?? '');
-        if (!empty($filter)) {
-            foreach ($array as $field => $value) {
-                if (!in_array($field, $filter)) {
-                    unset($array[$field]);
+        $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
+        if (!empty($fields)) {
+            $filter = explode(',', $fields);
+            if (!empty($filter)) {
+                foreach ($array as $field => $value) {
+                    if (!in_array($field, $filter)) {
+                        unset($array[$field]);
+                    }
                 }
             }
         }

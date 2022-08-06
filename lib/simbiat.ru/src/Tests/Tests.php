@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat;
+namespace Simbiat\Tests;
 
+use Simbiat\Config;
+use Simbiat\Curl;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Sharing;
 
@@ -19,18 +21,14 @@ class Tests
     #Function to test file upload using PUT
     public function uploadPut(string $filepath): void
     {
-        $curl = curl_init();
+        $curl = (new Curl)::$curlHandle;
         curl_setopt($curl, CURLOPT_URL, Config\Common::$baseUrl);
         curl_setopt($curl, CURLOPT_UPLOAD, true);
-        curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_PUT, 1);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 50);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-type: '.mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.basename($filepath).'"']);
         curl_setopt($curl, CURLOPT_INFILE, fopen($filepath, 'rb'));
         curl_setopt($curl, CURLOPT_INFILESIZE, filesize($filepath));
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         $this->testDump(curl_exec($curl));
         exit;
     }

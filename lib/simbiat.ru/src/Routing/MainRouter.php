@@ -1,9 +1,16 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat;
+namespace Simbiat\Routing;
 
-use Simbiat\Config\Twig;
-use Simbiat\HTTP20\Common;
+use Simbiat\About;
+use Simbiat\Abstracts;
+use Simbiat\bictracker;
+use Simbiat\Tests\Router;
+use Simbiat\Feeds;
+use Simbiat\fftracker;
+use Simbiat\HomePage;
+use Simbiat\Sitemap;
+use Simbiat\usercontrol;
 
 class MainRouter extends Abstracts\Router
 {
@@ -42,7 +49,7 @@ class MainRouter extends Abstracts\Router
             'bictracker' => (new bictracker\Router)->route(array_slice($path, 1)),
             'fftracker' => (new fftracker\Router)->route(array_slice($path, 1)),
             'uc' => (new usercontrol\Router)->route(array_slice($path, 1)),
-            'tests' => $this->tests(array_slice($path, 1)),
+            'tests' => (new Router)->route(array_slice($path, 1)),
             #Feeds
             'sitemap' => (new Sitemap\Router)->route(array_slice($path, 1)),
             'rss', 'atom' => (new Feeds)->uriParse($path),
@@ -70,38 +77,5 @@ class MainRouter extends Abstracts\Router
         }
         $outputArray['error_page'] = true;
         return $outputArray;
-    }
-
-    #Function to route tests
-    private function tests(array $uri): array
-    {
-        $outputArray = [];
-        #Forbid if on PROD
-        if (Config\Common::$PROD === true || empty($uri)) {
-            $outputArray['http_error'] = 403;
-            return $outputArray;
-        }
-        switch ($uri[0]) {
-            case 'optimize':
-                (new Tests)->testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
-                exit;
-            case 'mail':
-                if (!empty($uri[1]) && $uri[1] === 'send') {
-                    usercontrol\Emails::sendMail('simbiat@outlook.com', 'Test Mail', ['username' => 'Simbiat'], 'Simbiat');
-                } else {
-                    try {
-                        $output = Twig::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
-                    } catch (\Throwable $exception) {
-                        (new Errors)->error_log($exception);
-                        $output = 'Twig failure';
-                    }
-                    (new Common)->zEcho($output, 'live');
-                }
-                exit;
-            case 'styling':
-                return ['serviceName' => 'stylingTest'];
-            default:
-                return ['http_error' => 400];
-        }
     }
 }

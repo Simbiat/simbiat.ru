@@ -5,13 +5,10 @@ namespace Simbiat\fftracker\Entities;
 use Simbiat\Cron;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
-use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
 
 class Linkshell extends Entity
 {
-    use Traits;
-
     #Custom properties
     protected const entityType = 'linkshell';
     protected const crossworld = false;

@@ -4,8 +4,7 @@ namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
-use Simbiat\usercontrol\Common;
-use Simbiat\usercontrol\Security;
+use Simbiat\Security;
 
 class Password extends Api
 {
@@ -19,8 +18,6 @@ class Password extends Api
     protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = true;
-
-    use Common;
 
     protected function genData(array $path): array
     {
@@ -42,16 +39,12 @@ class Password extends Api
         if (HomePage::$dbup === false) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
-        #Cache DB controller, if not done already
-        if (self::$dbController === NULL) {
-            self::$dbController = HomePage::$dbController;
-        }
         #Cache Security object
         $security = new Security();
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {
-                $password = self::$dbController->selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
+                $password = HomePage::$dbController->selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
                     [':userid' => $id]
                 );
             } catch (\Throwable) {
@@ -61,13 +54,13 @@ class Password extends Api
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate current password
-            if ($security->passValid($id, $_POST['current_password'], $password) === false) {
+            if (Security::passValid($id, $_POST['current_password'], $password) === false) {
                 return ['http_error' => 403, 'reason' => 'Bad password'];
             }
         } else {
             #Get activation code
             try {
-                $pwReset = self::$dbController->selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
+                $pwReset = HomePage::$dbController->selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
                     [':userid' => $id]
                 );
             } catch (\Throwable) {
@@ -83,7 +76,7 @@ class Password extends Api
         }
         @session_regenerate_id(true);
         #Change password
-        if ($security->passChange($id, $_POST['new_password'])) {
+        if (Security::passChange($id, $_POST['new_password'])) {
             return ['response' => true];
         } else {
             return ['http_error' => 500, 'reason' => 'Failed to update password'];

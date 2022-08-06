@@ -7,14 +7,11 @@ use Simbiat\Cron;
 use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
-use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
-use Simbiat\usercontrol\Security;
+use Simbiat\Security;
 
 class Character extends Entity
 {
-    use Traits;
-
     #Custom properties
     public ?string $avatarID = '';
     public array $dates = [];
@@ -205,7 +202,7 @@ class Character extends Entity
                 ];
             }
             #Reduce number of <br>s in biography
-            $this->lodestone['bio'] = (new Security())->sanitizeHTML($this->removeBrs($this->lodestone['bio'] ?? ''));
+            $this->lodestone['bio'] = Security::sanitizeHTML($this->lodestone['bio'] ?? '');
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `ffxiv__character`(

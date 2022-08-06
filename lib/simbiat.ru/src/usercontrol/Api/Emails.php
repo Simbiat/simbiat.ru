@@ -4,7 +4,6 @@ namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
-use Simbiat\usercontrol\Common;
 
 class Emails extends Api
 {
@@ -23,8 +22,6 @@ class Emails extends Api
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = true;
-
-    use Common;
 
     protected function genData(array $path): array
     {

@@ -4,8 +4,7 @@ namespace Simbiat\usercontrol\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\array2table;
-use Simbiat\HomePage;
-use Simbiat\usercontrol\Security;
+use Simbiat\Security;
 
 class Unsubscribe extends Page
 {
@@ -30,7 +29,7 @@ class Unsubscribe extends Page
         if (empty($_GET['token'])) {
             return ['http_error' => 400, 'reason' => 'No email token provided'];
         }
-        $email = (new Security)->decrypt($_GET['token']);
+        $email = Security::decrypt($_GET['token']);
         if (preg_match(array2table::$eMailRegex, $email) !== 1) {
             return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
         }

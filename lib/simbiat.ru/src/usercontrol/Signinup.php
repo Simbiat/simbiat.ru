@@ -5,11 +5,10 @@ namespace Simbiat\usercontrol;
 #Class that deals with user registration, login, logout, etc.
 use Simbiat\Config\Common;
 use Simbiat\HomePage;
+use Simbiat\Security;
 
 class Signinup
 {
-    use \Simbiat\usercontrol\Common;
-
     public function register(): array
     {
         #Validating data
@@ -41,23 +40,18 @@ class Signinup
             #Do not provide details on why exactly it failed to avoid email spoofing
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
-        #Establish DB
-        if (self::$dbController === NULL) {
-            if (empty(HomePage::$dbController)) {
-                return ['http_error' => 503, 'reason' => 'Database unavailable'];
-            } else {
-                self::$dbController = HomePage::$dbController;
-            }
+        #Check DB
+        if (empty(HomePage::$dbController)) {
+            return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Check if registration is enabled
-        if (boolval(self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'')) === false) {
+        if (boolval(HomePage::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'')) === false) {
             return ['http_error' => 503, 'reason' => 'Registration is currently disabled'];
         }
         #Generate password and activation strings
-        $security = (new Security);
-        $password = $security->passHash($_POST['signinup']['password']);
-        $activation = $security->genCSRF();
-        $ff_token = $security->genCSRF();
+        $password = Security::passHash($_POST['signinup']['password']);
+        $activation = Security::genCSRF();
+        $ff_token = Security::genCSRF();
         try {
             $queries = [
                 #Insert to main database
@@ -77,7 +71,7 @@ class Signinup
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':mail' => $_POST['signinup']['email'],
-                        ':activation' => $security->passHash($activation),
+                        ':activation' => Security::passHash($activation),
                     ]
                 ],
                 #Insert into groups table
@@ -88,7 +82,7 @@ class Signinup
                     ]
                 ],
             ];
-            self::$dbController->query($queries);
+            HomePage::$dbController->query($queries);
             (new Emails)->activationMail($_POST['signinup']['email'], $_POST['signinup']['username'], $activation);
             return $this->login(true);
         } catch (\Throwable) {
@@ -113,17 +107,13 @@ class Signinup
         ) {
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
-        #Establish DB
-        if (self::$dbController === NULL) {
-            if (empty(HomePage::$dbController)) {
-                return ['http_error' => 503, 'reason' => 'Database unavailable'];
-            } else {
-                self::$dbController = HomePage::$dbController;
-            }
+        #Check DB
+        if (empty(HomePage::$dbController)) {
+            return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get password of the user, while also checking if it exists
         try {
-            $credentials = self::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE `uc__user_to_email`.`email`=:mail',
+            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE `uc__user_to_email`.`email`=:mail',
                 [':mail' => $_POST['signinup']['email']]
             );
         } catch (\Throwable) {
@@ -138,7 +128,7 @@ class Signinup
             return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
         }
         #Check the password
-        if ((new Security)->passValid($credentials['userid'], $_POST['signinup']['password'], $credentials['password']) === false) {
+        if (Security::passValid($credentials['userid'], $_POST['signinup']['password'], $credentials['password']) === false) {
             return ['http_error' => 403, 'reason' => 'Bad password'];
         }
         #Add username and userid to session
@@ -172,17 +162,11 @@ class Signinup
                 return [];
             }
             #Cache Security object
-            $security = new Security();
-            $data['id'] = $security->decrypt($data['id']);
-            #Establish DB
-            if (self::$dbController === NULL) {
-                if (!empty(HomePage::$dbController)) {
-                    self::$dbController = HomePage::$dbController;
-                }
-            }
-            if (self::$dbController !== NULL) {
+            $data['id'] = Security::decrypt($data['id']);
+            #Check DB
+            if (HomePage::$dbController !== null) {
                 #Get user data
-                $savedData = self::$dbController->selectRow('SELECT `uc__cookies`.`userid`, `validator`, `username` FROM `uc__cookies` LEFT JOIN `uc__users` ON `uc__cookies`.`userid`=`uc__users`.`userid` WHERE `cookieid`=:id',
+                $savedData = HomePage::$dbController->selectRow('SELECT `uc__cookies`.`userid`, `validator`, `username` FROM `uc__cookies` LEFT JOIN `uc__users` ON `uc__cookies`.`userid`=`uc__users`.`userid` WHERE `cookieid`=:id',
                     [':id' => $data['id']]
                 );
                 if (empty($savedData) || empty($savedData['validator'])) {
@@ -194,8 +178,8 @@ class Signinup
                     #Wrong password
                     return [];
                 }
-                #Reste strikes if any
-                $security->resetStrikes($savedData['userid']);
+                #Reset strikes if any
+                Security::resetStrikes($savedData['userid']);
                 #Update cookie
                 $this->rememberMe($data['id'], $savedData['userid']);
                 return ['userid' => $savedData['userid'], 'username' => $savedData['username']];
@@ -214,14 +198,8 @@ class Signinup
         setcookie('rememberme_'.Common::$http_host, '', ['expires' => 1, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
         #From DB
         try {
-            #Establish DB
-            if (self::$dbController === NULL) {
-                if (!empty(HomePage::$dbController)) {
-                    self::$dbController = HomePage::$dbController;
-                }
-            }
-            if (self::$dbController !== NULL && !empty($_SESSION['userid'])) {
-                self::$dbController->query('DELETE FROM `uc__cookies` WHERE `userid`=:id', [':id' => [$_SESSION['userid'], 'int']]);
+            if (HomePage::$dbController !== null && !empty($_SESSION['userid'])) {
+                HomePage::$dbController->query('DELETE FROM `uc__cookies` WHERE `userid`=:id', [':id' => [$_SESSION['userid'], 'int']]);
             }
         } catch (\Throwable) {
             #Do nothing
@@ -236,8 +214,6 @@ class Signinup
     private function rememberMe(string $id = '', null|string|int $userid = null): void
     {
         try {
-            #Cache Security object
-            $security = new Security();
             #Generate cookie ID
             if (empty($id)) {
                 $id = bin2hex(random_bytes(64));
@@ -245,16 +221,12 @@ class Signinup
             #Generate cookie password
             $pass = bin2hex(random_bytes(128));
             #Write cookie data to DB
-            if (self::$dbController === NULL) {
-                if (!empty(HomePage::$dbController)) {
-                    self::$dbController = HomePage::$dbController;
-                } else {
-                    #If we can't write to DB for some reason - do not share any data with client
-                    return;
-                }
+            if (HomePage::$dbController === null) {
+                #If we can't write to DB for some reason - do not share any data with client
+                return;
             }
-            if (self::$dbController !== NULL && (!empty($_SESSION['userid']) || !empty($userid))) {
-                self::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `time`=CURRENT_TIMESTAMP();',
+            if (HomePage::$dbController !== null && (!empty($_SESSION['userid']) || !empty($userid))) {
+                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $id,
                         ':pass' => hash('sha3-512', $pass),
@@ -267,7 +239,7 @@ class Signinup
             #Set options
             $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
             #Set cookie value
-            $value = json_encode(['id' => $security->encrypt($id) , 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
+            $value = json_encode(['id' => Security::encrypt($id), 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
             setcookie('rememberme_'.Common::$http_host, $value, $options);
         } catch (\Throwable) {
             #Do nothing, since not critical
@@ -279,17 +251,13 @@ class Signinup
         if (empty($_POST['signinup']['email'])) {
             return ['http_error' => 400, 'reason' => 'No email/name provided'];
         }
-        #Establish DB
-        if (self::$dbController === NULL) {
-            if (empty(HomePage::$dbController)) {
-                return ['http_error' => 503, 'reason' => 'Database unavailable'];
-            } else {
-                self::$dbController = HomePage::$dbController;
-            }
+        #Check DB
+        if (empty(HomePage::$dbController)) {
+            return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get password of the user, while also checking if it exists
         try {
-            $credentials = self::$dbController->selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__user_to_email`.`email` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__user_to_email`.`email`=:mail) AND `uc__user_to_email`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
+            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__user_to_email`.`email` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__user_to_email`.`email`=:mail) AND `uc__user_to_email`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
                 [':mail' => $_POST['signinup']['email']]
             );
         } catch (\Throwable) {
@@ -298,10 +266,9 @@ class Signinup
         #Process only if user was found
         if (!empty($credentials)) {
             try {
-                $security = new Security();
-                $token = $security->genCSRF();
+                $token = Security::genCSRF();
                 #Write the reset token to DB
-                self::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => $security->passHash($token)]);
+                HomePage::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
                 (new Emails)->sendMail($credentials['email'], 'Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Registration failed'];

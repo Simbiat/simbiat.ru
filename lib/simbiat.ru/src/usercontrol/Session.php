@@ -3,18 +3,14 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Config\Common;
+use Simbiat\Helpers;
 use Simbiat\HomePage;
+use Simbiat\Security;
 
 class Session implements \SessionHandlerInterface, \SessionIdInterface, \SessionUpdateTimestampHandlerInterface
 {
-    #Attach common settings
-    use \Simbiat\usercontrol\Common;
-
     #Default lifetime for session in seconds (15 minutes)
     private int $sessionLife;
-
-    #Cache of security object
-    private ?Security $security = NULL;
 
     public function __construct(int $sessionLife = 2700)
     {
@@ -24,15 +20,6 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $sessionLife = 2700;
         }
         $this->sessionLife = $sessionLife;
-        #Cache DB controller, if not done already
-        if (self::$dbController === NULL) {
-            try {
-                self::$dbController = HomePage::$dbController;
-                $this->security = new Security;
-            } catch (\Throwable) {
-                #Do nothing, session will fail to be opened on `open` call
-            }
-        }
     }
 
     ##########################
@@ -41,7 +28,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function open(string $path, string $name): bool
     {
         #If controller was initialized - session is ready
-        if (self::$dbController === NULL) {
+        if (HomePage::$dbController === null) {
             return false;
         } else {
             return true;
@@ -58,24 +45,21 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = self::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = HomePage::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
         } catch (\Throwable) {
             $data = '';
         }
         if (!empty($data)) {
             #Decrypt data
-            $data = $this->security->decrypt($data);
+            $data = Security::decrypt($data);
             #Deserialize to check if UserAgent data is present
             $data = unserialize($data);
         } else {
             $data = [];
         }
-        $this->IPUA($data);
         #Login through cookie if present
         $data = array_merge($data, (new Signinup)->cookieLogin());
-        if (!empty($data['userid'])) {
-            $this->dataRefresh($data);
-        }
+        $this->dataRefresh($data);
         return serialize($data);
     }
 
@@ -83,17 +67,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Deserialize to check if UserAgent data is present
         $data = unserialize($data);
-        $this->IPUA($data);
         #Cache username (to prevent reading from Session)
-        if (empty($data['userid'])) {
-            $data['username'] = $data['UA']['bot'] ?? NULL;
-        } else {
-            $this->dataRefresh($data);
-        }
+        $this->dataRefresh($data);
         #Prepare empty array
         $queries = [];
         #Update SEO related tables
-        if (self::$SEOTracking === true && empty($data['UA']['bot']) && $data['IP'] !== NULL) {
+        if (empty($data['UA']['bot']) && $data['IP'] !== null) {
             #Update unique visitors
             $queries[] = [
                 'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
@@ -167,35 +146,56 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),
                 #Actual session data
                 ':data' => [
-                    (empty($data) ? '' : $this->security->encrypt(serialize($data))),
+                    (empty($data) ? '' : Security::encrypt(serialize($data))),
                     'string',
                 ],
             ],
         ];
         try {
-            return self::$dbController->query($queries);
+            return HomePage::$dbController->query($queries);
         } catch (\Throwable) {
             return false;
         }
     }
 
+    #Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.)
     private function dataRefresh(array &$data): void
     {
         #Try to get the data
         try {
-            $user = (new User)->setId($data['userid'])->get();
-            #Assign some data to the session
-            if ($user->id) {
-                $data['username'] = $user->username;
-                $data['timezone'] = $user->timezone;
-                $data['groups'] = $user->groups;
-                $data['activated'] = $user->activated;
-                $data['deleted'] = $user->deleted;
-                $data['banned'] = $user->banned;
-                $data['avatar'] = $user->currentAvatar;
+            if (empty($data['UA'])) {
+                #Add UserAgent data
+                #This is done to make the data readily available as soon as session is created and somewhat improve performance
+                $data['UA'] = Helpers::getUA();
+            }
+            if (empty($data['IP'])) {
+                #Add IP data
+                #This is done to make the data readily available as soon as session is created and somewhat improve performance
+                $data['IP'] = Helpers::getIP(true);
+            }
+            #Add CSRF token, if missing
+            if (empty($data['CSRF'])) {
+                $data['CSRF'] = Security::genCSRF();
             } else {
-                $data['userid'] = null;
-                $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
+                @header('X-CSRF-Token: '.$data['CSRF']);
+            }
+            if (empty($data['userid'])) {
+                $data['username'] = $data['UA']['bot'] ?? null;
+            } else {
+                $user = (new User)->setId($data['userid'])->get();
+                #Assign some data to the session
+                if ($user->id) {
+                    $data['username'] = $user->username;
+                    $data['timezone'] = $user->timezone;
+                    $data['groups'] = $user->groups;
+                    $data['activated'] = $user->activated;
+                    $data['deleted'] = $user->deleted;
+                    $data['banned'] = $user->banned;
+                    $data['avatar'] = $user->currentAvatar;
+                } else {
+                    $data['userid'] = null;
+                    $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
+                }
             }
         } catch (\Throwable) {
             $data['userid'] = null;
@@ -206,7 +206,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function destroy(string $id): bool
     {
         try {
-            return self::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
+            return HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
         } catch (\Throwable) {
             return false;
         }
@@ -215,8 +215,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime): false|int
     {
         try {
-            if (self::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']])) {
-                return self::$dbController->getResult();
+            if (HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']])) {
+                return HomePage::$dbController->getResult();
             } else {
                 return false;
             }
@@ -240,7 +240,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get ID
         try {
-            $sessionId = self::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
+            $sessionId = HomePage::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
         } catch (\Throwable) {
             return false;
         }
@@ -256,29 +256,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return self::$dbController->query('UPDATE `uc__sessions` SET `time`= UTC_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+            return HomePage::$dbController->query('UPDATE `uc__sessions` SET `time`= UTC_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
         } catch (\Throwable) {
             return false;
-        }
-    }
-
-    private function IPUA(array &$data): void
-    {
-        if (empty($data['UA'])) {
-            #Add UserAgent data
-            #This is done to make the data readily available as soon as session is created and somewhat improve performance
-            $data['UA'] = $this->getUA();
-        }
-        if (empty($data['IP'])) {
-            #Add IP data
-            #This is done to make the data readily available as soon as session is created and somewhat improve performance
-            $data['IP'] = $this->getIP();
-        }
-        #Add CSRF token, if missing
-        if (empty($data['CSRF'])) {
-            $data['CSRF'] = $this->security->genCSRF();
-        } else {
-            @header('X-CSRF-Token: '.$data['CSRF']);
         }
     }
 }

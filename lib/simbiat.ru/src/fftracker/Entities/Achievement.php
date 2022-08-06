@@ -6,13 +6,10 @@ use Simbiat\Config\FFTracker;
 use Simbiat\Cron;
 use Simbiat\Curl;
 use Simbiat\fftracker\Entity;
-use Simbiat\fftracker\Traits;
 use Simbiat\Lodestone;
 
 class Achievement extends Entity
 {
-    use Traits;
-
     #Custom properties
     protected const entityType = 'achievement';
     public int $updated;

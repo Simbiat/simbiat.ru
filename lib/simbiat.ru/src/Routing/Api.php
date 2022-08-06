@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat;
+namespace Simbiat\Routing;
+
+use Simbiat\Abstracts;
+use Simbiat\bictracker;
+use Simbiat\fftracker;
+use Simbiat\usercontrol;
 
 class Api extends Abstracts\Api
 {

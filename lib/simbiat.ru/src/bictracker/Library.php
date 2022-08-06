@@ -5,8 +5,8 @@ namespace Simbiat\bictracker;
 use Simbiat\ArrayHelpers;
 use Simbiat\Curl;
 use Simbiat\Database\Controller;
-use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\Security;
 
 class Library
 {
@@ -613,40 +613,8 @@ class Library
     #Function to log updates
     private function log($bicdate, $message, bool $manual = false): void
     {
-        try {
-            if ($manual) {
-                #Get IP
-                $ip = @$_SESSION['IP'] ?? null;
-                #Get username
-                $userid = @$_SESSION['userid'] ?? null;
-                #Get User Agent
-                $ua = @$_SESSION['UA']['full'] ?? null;
-            }
-            #Log the entry
-            $this->dbController->query(
-                'INSERT INTO `sys__logs`(`type`, `action`, `extra`, `userid`, `ip`, `useragent`) VALUES (5, :action, :message, :userid, :ip, :ua);',
-                [
-                    ':action' => [($manual ? 'Manual' : 'Cron').' update', 'string'],
-                    ':message' => [$message.' ('.date('d.m.Y', $bicdate).')', 'string'],
-                    ':userid' => [
-                        (empty($userid) ? NULL : $userid),
-                        (empty($userid) ? 'null' : 'string'),
-                    ],
-                    ':ip' => [
-                        (empty($ip) ? NULL : $ip),
-                        (empty($ip) ? 'null' : 'string'),
-                    ],
-                    ':ua' => [
-                        (empty($ua) ? NULL : $ua),
-                        (empty($ua) ? 'null' : 'string'),
-                    ],
-                ]
-            );
-        } catch (\Throwable $e) {
-            #Just log to file. Generally we do not lose much if this fails
-            Errors::error_log($e);
-            Errors::error_log($e);
-        }
+        Security::log('BIC Tracker', ($manual ? 'Manual' : 'Cron').' update', $message.' ('.date('d.m.Y', $bicdate).')');
+
     }
 
     #Function to download BIC

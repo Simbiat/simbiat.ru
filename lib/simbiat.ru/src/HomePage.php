@@ -9,8 +9,8 @@ use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
+use Simbiat\Routing\MainRouter;
 use Simbiat\usercontrol\Checkers;
-use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
 
 class HomePage
@@ -276,10 +276,10 @@ class HomePage
     {
         if ($template === 'index.twig') {
             #Update CSRF only if HTML pages are used
-            $XCSRFToken = (new Security)->genCSRF();
+            $XCSRFToken = Security::genCSRF();
             $_SESSION['CSRF'] = $XCSRFToken;
         } else {
-            $XCSRFToken = $_SESSION['CSRF'] ?? (new Security)->genCSRF();
+            $XCSRFToken = $_SESSION['CSRF'] ?? Security::genCSRF();
         }
         return $XCSRFToken;
     }

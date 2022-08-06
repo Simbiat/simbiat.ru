@@ -23,6 +23,12 @@ class Curl
         CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36 Edg/103.0.1264.71',
         CURLOPT_ENCODING => '',
         CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2|CURL_SSLVERSION_MAX_TLSv1_3,
+        CURLOPT_DEFAULT_PROTOCOL => 'https',
+        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
+        #These options are supposed to improve speed, but do nto seem to work for websites that I parse at the moment
+        #CURLOPT_SSL_FALSESTART => true,
+        #CURLOPT_TCP_FASTOPEN => true,
     ];
     #cURL Handle is static to allow reuse of single instance, if possible and needed
     public static \CurlHandle|null|false $curlHandle = null;

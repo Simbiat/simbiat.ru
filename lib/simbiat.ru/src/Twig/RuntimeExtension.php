@@ -4,18 +4,16 @@ namespace Simbiat\Twig;
 
 use Simbiat\HomePage;
 use Simbiat\HTTP20\HTML;
-use Simbiat\usercontrol\Security;
+use Simbiat\Security;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class RuntimeExtension implements RuntimeExtensionInterface
 {
     private HTML $HTML;
-    private Security $Security;
 
     public function __construct()
     {
         $this->HTML = new HTML;
-        $this->Security = new Security();
     }
 
     public function genBread(array $items): string
@@ -40,7 +38,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
 
     public function sanitize(string $string, bool $head = false): string
     {
-        return $this->Security->sanitizeHTML($string, $head);
+        return Security::sanitizeHTML($string, $head);
     }
 
     public function timeTag(string $string, string $format = 'd/m/Y H:i', string $classes = ''): string

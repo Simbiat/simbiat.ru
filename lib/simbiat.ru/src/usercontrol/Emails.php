@@ -3,18 +3,18 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 #Class that deals with mails.
+use Simbiat\Config\Common;
 use Simbiat\Config\SMTP;
 use Simbiat\Config\Twig;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\Security;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
 class Emails
 {
-    use Common;
-
     #Helper function to send mails
     public static function sendMail(string $to, string $subject, array $body = [], string $username = ''): bool
     {
@@ -24,19 +24,19 @@ class Emails
             #Create basic email
             $email = SMTP::getEmail();
             #Add receiver
-            if (\Simbiat\Config\Common::$PROD) {
+            if (Common::$PROD) {
                 $email->addTo($to);
             } else {
                 #On test always use admin mail
-                $email->addTo(\Simbiat\Config\Common::adminMail);
+                $email->addTo(Common::adminMail);
             }
             #Set priority for alerts
             if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
                 $email->priority(1);
             }
             #Add content
-            $email->subject(\Simbiat\Config\Common::siteName.': '.$subject);
-            $email->html(Twig::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)])));
+            $email->subject(Common::siteName.': '.$subject);
+            $email->html(Twig::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($to)])));
             #Sign email
             $signer = SMTP::getSigner();
             $email = $signer->sign($email);
@@ -54,15 +54,11 @@ class Emails
     public function activationMail(string $email, string $username = '', string $activation = ''): bool
     {
         #Establish DB
-        if (self::$dbController === NULL) {
-            if (empty(HomePage::$dbController)) {
+        if (empty(HomePage::$dbController)) {
                 return false;
-            } else {
-                self::$dbController = HomePage::$dbController;
-            }
         }
         if (empty($username)) {
-            $data = self::$dbController->selectRow('SELECT `uc__user_to_email`.`userid`, `username` FROM `uc__user_to_email` LEFT JOIN `uc__users` ON `uc__user_to_email`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $email]);
+            $data = HomePage::$dbController->selectRow('SELECT `uc__user_to_email`.`userid`, `username` FROM `uc__user_to_email` LEFT JOIN `uc__users` ON `uc__user_to_email`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $email]);
             if (empty($data)) {
                 #Avoid potential abuse to get list of registered mails
                 return true;
@@ -72,7 +68,7 @@ class Emails
             }
         } else {
             #Get user ID for link generation
-            $userid = self::$dbController->selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username]);
+            $userid = HomePage::$dbController->selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username]);
         }
         if (empty($userid)) {
             #Avoid potential abuse to get list of registered mails
@@ -80,15 +76,14 @@ class Emails
         }
         #Generate activation code if none was provided (requested new activation mail)
         if (empty($activation)) {
-            $security = (new Security);
-            $activation = $security->genCSRF();
+            $activation = Security::genCSRF();
             #Insert into mails database
-            self::$dbController->query(
+            HomePage::$dbController->query(
                 'UPDATE `uc__user_to_email` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',
                 [
                     ':userid' => [$userid, 'int'],
                     ':mail' => $email,
-                    ':activation' => $security->passHash($activation),
+                    ':activation' => Security::passHash($activation),
                 ]
             );
         }
@@ -99,12 +94,8 @@ class Emails
     public function activate(int $userid, string $email): bool
     {
         #Establish DB
-        if (self::$dbController === NULL) {
-            if (empty(HomePage::$dbController)) {
-                return false;
-            } else {
-                self::$dbController = HomePage::$dbController;
-            }
+        if (empty(HomePage::$dbController)) {
+            return false;
         }
         $queries = [
             #Remove the code from DB
