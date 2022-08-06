@@ -38,18 +38,18 @@ class FreeCompany extends Entity
     protected function getFromDB(): array
     {
         #Get general information
-        $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'freecompany` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'freecompany`.`serverid`=`'.self::dbPrefix.'server`.`serverid` LEFT JOIN `'.self::dbPrefix.'grandcompany` ON `'.self::dbPrefix.'freecompany`.`grandcompanyid`=`'.self::dbPrefix.'grandcompany`.`gcId` LEFT JOIN `'.self::dbPrefix.'timeactive` ON `'.self::dbPrefix.'freecompany`.`activeid`=`'.self::dbPrefix.'timeactive`.`activeid` LEFT JOIN `'.self::dbPrefix.'estate` ON `'.self::dbPrefix.'freecompany`.`estateid`=`'.self::dbPrefix.'estate`.`estateid` LEFT JOIN `'.self::dbPrefix.'city` ON `'.self::dbPrefix.'estate`.`cityid`=`'.self::dbPrefix.'city`.`cityid` WHERE `freecompanyid`=:id', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT * FROM `ffxiv__freecompany` LEFT JOIN `ffxiv__server` ON `ffxiv__freecompany`.`serverid`=`ffxiv__server`.`serverid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany`.`gcId` LEFT JOIN `ffxiv__timeactive` ON `ffxiv__freecompany`.`activeid`=`ffxiv__timeactive`.`activeid` LEFT JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estateid`=`ffxiv__estate`.`estateid` LEFT JOIN `ffxiv__city` ON `ffxiv__estate`.`cityid`=`ffxiv__city`.`cityid` WHERE `freecompanyid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
         }
 
         #Get old names
-        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'freecompany_names` WHERE `freecompanyid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `ffxiv__freecompany_names` WHERE `freecompanyid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'freecompany_character`.`characterid` AS `id`, `'.self::dbPrefix.'freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `'.self::dbPrefix.'character`.`avatar` AS `icon` FROM `'.self::dbPrefix.'freecompany_character` LEFT JOIN `'.self::dbPrefix.'freecompany_rank` ON `'.self::dbPrefix.'freecompany_rank`.`rankid`=`'.self::dbPrefix.'freecompany_character`.`rankid` AND `'.self::dbPrefix.'freecompany_rank`.`freecompanyid`=`'.self::dbPrefix.'freecompany_character`.`freecompanyid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'character`.`characterid`=`'.self::dbPrefix.'freecompany_character`.`characterid` LEFT JOIN (SELECT `rankid`, COUNT(*) AS `total` FROM `'.self::dbPrefix.'freecompany_character` WHERE `'.self::dbPrefix.'freecompany_character`.`freecompanyid`=:id GROUP BY `rankid`) `ranklist` ON `ranklist`.`rankid` = `'.self::dbPrefix.'freecompany_character`.`rankid` WHERE `'.self::dbPrefix.'freecompany_character`.`freecompanyid`=:id AND `current`=1 ORDER BY `ranklist`.`total`, `ranklist`.`rankid` , `'.self::dbPrefix.'character`.`name`;', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__freecompany_character`.`characterid` AS `id`, `ffxiv__freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `ffxiv__character`.`avatar` AS `icon` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`rankid`=`ffxiv__freecompany_character`.`rankid` AND `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany_character`.`freecompanyid` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`characterid`=`ffxiv__freecompany_character`.`characterid` LEFT JOIN (SELECT `rankid`, COUNT(*) AS `total` FROM `ffxiv__freecompany_character` WHERE `ffxiv__freecompany_character`.`freecompanyid`=:id GROUP BY `rankid`) `ranklist` ON `ranklist`.`rankid` = `ffxiv__freecompany_character`.`rankid` WHERE `ffxiv__freecompany_character`.`freecompanyid`=:id AND `current`=1 ORDER BY `ranklist`.`total`, `ranklist`.`rankid` , `ffxiv__character`.`name`;', [':id'=>$this->id]);
         #History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
-        $data['ranks_history'] = $this->dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
+        $data['ranks_history'] = $this->dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['gcId'], $data['estateid'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
@@ -152,14 +152,14 @@ class FreeCompany extends Entity
             $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
             #Main query to insert or update a Free Company
             $queries[] = [
-                'INSERT INTO `'.self::dbPrefix.'freecompany` (
+                'INSERT INTO `ffxiv__freecompany` (
                     `freecompanyid`, `name`, `manual`, `serverid`, `formed`, `registered`, `updated`, `deleted`, `grandcompanyid`, `tag`, `crest`, `rank`, `slogan`, `activeid`, `recruitment`, `communityid`, `estate_zone`, `estateid`, `estate_message`, `Role-playing`, `Leveling`, `Casual`, `Hardcore`, `Dungeons`, `Guildhests`, `Trials`, `Raids`, `PvP`, `Tank`, `Healer`, `DPS`, `Crafter`, `Gatherer`
                 )
                 VALUES (
-                    :freecompanyid, :name, :manual, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `gcId` FROM `'.self::dbPrefix.'grandcompany` WHERE `gcName`=:grandCompany), :tag, :crest, :rank, :slogan, (SELECT `activeid` FROM `'.self::dbPrefix.'timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), :recruitment, :communityid, :estate_zone, (SELECT `estateid` FROM `'.self::dbPrefix.'estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), :estate_message, :rolePlaying, :leveling, :casual, :hardcore, :dungeons, :guildhests, :trials, :raids, :pvp, :tank, :healer, :dps, :crafter, :gatherer
+                    :freecompanyid, :name, :manual, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `gcId` FROM `ffxiv__grandcompany` WHERE `gcName`=:grandCompany), :tag, :crest, :rank, :slogan, (SELECT `activeid` FROM `ffxiv__timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), :recruitment, :communityid, :estate_zone, (SELECT `estateid` FROM `ffxiv__estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), :estate_message, :rolePlaying, :leveling, :casual, :hardcore, :dungeons, :guildhests, :trials, :raids, :pvp, :tank, :healer, :dps, :crafter, :gatherer
                 )
                 ON DUPLICATE KEY UPDATE
-                    `name`=:name, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `grandcompanyid`=(SELECT `gcId` FROM `'.self::dbPrefix.'grandcompany` WHERE `gcName`=:grandCompany), `tag`=:tag, `crest`=COALESCE(:crest, `crest`), `rank`=:rank, `slogan`=:slogan, `activeid`=(SELECT `activeid` FROM `'.self::dbPrefix.'timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), `recruitment`=:recruitment, `communityid`=:communityid, `estate_zone`=:estate_zone, `estateid`=(SELECT `estateid` FROM `'.self::dbPrefix.'estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), `estate_message`=:estate_message, `Role-playing`=:rolePlaying, `Leveling`=:leveling, `Casual`=:casual, `Hardcore`=:hardcore, `Dungeons`=:dungeons, `Guildhests`=:guildhests, `Trials`=:trials, `Raids`=:raids, `PvP`=:pvp, `Tank`=:tank, `Healer`=:healer, `DPS`=:dps, `Crafter`=:crafter, `Gatherer`=:gatherer;',
+                    `name`=:name, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `grandcompanyid`=(SELECT `gcId` FROM `ffxiv__grandcompany` WHERE `gcName`=:grandCompany), `tag`=:tag, `crest`=COALESCE(:crest, `crest`), `rank`=:rank, `slogan`=:slogan, `activeid`=(SELECT `activeid` FROM `ffxiv__timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), `recruitment`=:recruitment, `communityid`=:communityid, `estate_zone`=:estate_zone, `estateid`=(SELECT `estateid` FROM `ffxiv__estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), `estate_message`=:estate_message, `Role-playing`=:rolePlaying, `Leveling`=:leveling, `Casual`=:casual, `Hardcore`=:hardcore, `Dungeons`=:dungeons, `Guildhests`=:guildhests, `Trials`=:trials, `Raids`=:raids, `PvP`=:pvp, `Tank`=:tank, `Healer`=:healer, `DPS`=:dps, `Crafter`=:crafter, `Gatherer`=:gatherer;',
                 [
                     ':freecompanyid'=>$this->id,
                     ':name'=>$this->lodestone['name'],
@@ -216,7 +216,7 @@ class FreeCompany extends Entity
             ];
             #Register Free Company name if it's not registered already
             $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_names`(`freecompanyid`, `name`) VALUES (:freecompanyid, :name);',
+                'INSERT IGNORE INTO `ffxiv__freecompany_names`(`freecompanyid`, `name`) VALUES (:freecompanyid, :name);',
                 [
                     ':freecompanyid'=>$this->id,
                     ':name'=>$this->lodestone['name'],
@@ -226,7 +226,7 @@ class FreeCompany extends Entity
                 #Adding ranking
                 if (!empty($this->lodestone['weekly_rank']) && !empty($this->lodestone['monthly_rank'])) {
                     $queries[] = [
-                        'INSERT IGNORE INTO `'.self::dbPrefix.'freecompany_ranking` (`freecompanyid`, `date`, `weekly`, `monthly`, `members`) SELECT * FROM (SELECT :freecompanyid AS `freecompanyid`, UTC_DATE() AS `date`, :weekly AS `weekly`, :monthly AS `monthly`, :members AS `members` FROM DUAL WHERE :freecompanyid NOT IN (SELECT `freecompanyid` FROM (SELECT * FROM `'.self::dbPrefix.'freecompany_ranking` WHERE `freecompanyid`=:freecompanyid ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=:weekly AND `monthly`=:monthly) LIMIT 1) `actualinsert`;',
+                        'INSERT IGNORE INTO `ffxiv__freecompany_ranking` (`freecompanyid`, `date`, `weekly`, `monthly`, `members`) SELECT * FROM (SELECT :freecompanyid AS `freecompanyid`, UTC_DATE() AS `date`, :weekly AS `weekly`, :monthly AS `monthly`, :members AS `members` FROM DUAL WHERE :freecompanyid NOT IN (SELECT `freecompanyid` FROM (SELECT * FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:freecompanyid ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=:weekly AND `monthly`=:monthly) LIMIT 1) `actualinsert`;',
                         [
                             ':freecompanyid' => $this->id,
                             ':weekly' => $this->lodestone['weekly_rank'],
@@ -237,14 +237,14 @@ class FreeCompany extends Entity
                 }
             }
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'freecompany_character` WHERE `freecompanyid`=:fcId AND `current`=1;', [':fcId'=>$this->id]);
+            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `freecompanyid`=:fcId AND `current`=1;', [':fcId'=>$this->id]);
             #Process members, that left the company
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
                 if (!isset($this->lodestone['members'][$member])) {
                     #Update status for the character
                     $queries[] = [
-                        'UPDATE `'.self::dbPrefix.'freecompany_character` SET `current`=0 WHERE `freecompanyid`=:fcId AND `characterid`=:characterid;',
+                        'UPDATE `ffxiv__freecompany_character` SET `current`=0 WHERE `freecompanyid`=:fcId AND `characterid`=:characterid;',
                         [
                             ':characterid'=>$member,
                             ':fcId'=>$this->id,
@@ -257,7 +257,7 @@ class FreeCompany extends Entity
                 foreach ($this->lodestone['members'] as $member=>$details) {
                     #Register or update rank name
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'freecompany_rank` (`freecompanyid`, `rankid`, `rankname`) VALUE (:freecompanyid, :rankid, :rankName) ON DUPLICATE KEY UPDATE `rankname`=:rankName',
+                        'INSERT INTO `ffxiv__freecompany_rank` (`freecompanyid`, `rankid`, `rankname`) VALUE (:freecompanyid, :rankid, :rankName) ON DUPLICATE KEY UPDATE `rankname`=:rankName',
                         [
                             ':freecompanyid'=>$this->id,
                             ':rankid'=>$details['rankid'],
@@ -265,15 +265,15 @@ class FreeCompany extends Entity
                         ],
                     ];
                     #Check if member is registered on tracker, while saving the status for future use
-                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
+                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
                     if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
-                            'INSERT IGNORE INTO `' . self::dbPrefix . 'character`(
+                            'INSERT IGNORE INTO `ffxiv__character`(
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `' . self::dbPrefix . 'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `' . self::dbPrefix . 'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
+                                :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
                             );',
                             [
                                 ':characterid' => $member,
@@ -286,7 +286,7 @@ class FreeCompany extends Entity
                     }
                     #Link the character to company
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'freecompany_character` (`freecompanyid`, `characterid`, `rankid`, `current`) VALUES (:fcId, :characterid, :rankid, 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=:rankid;',
+                        'INSERT INTO `ffxiv__freecompany_character` (`freecompanyid`, `characterid`, `rankid`, `current`) VALUES (:fcId, :characterid, :rankid, 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=:rankid;',
                         [
                             ':characterid'=>$member,
                             ':fcId'=>$this->id,
@@ -314,12 +314,12 @@ class FreeCompany extends Entity
             $queries = [];
             #Remove characters from group
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'freecompany_character` SET `current`=0 WHERE `freecompanyid`=:groupId;',
+                'UPDATE `ffxiv__freecompany_character` SET `current`=0 WHERE `freecompanyid`=:groupId;',
                 [':groupId' => $this->id,]
             ];
             #Update Free Company
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'freecompany` SET `deleted` = UTC_DATE() WHERE `freecompanyid` = :id',
+                'UPDATE `ffxiv__freecompany` SET `deleted` = UTC_DATE() WHERE `freecompanyid` = :id',
                 [':id' => $this->id],
             ];
             return $this->dbController->query($queries);

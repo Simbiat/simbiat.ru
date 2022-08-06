@@ -29,15 +29,15 @@ class PvPTeam extends Entity
     protected function getFromDB(): array
     {
         #Get general information
-        $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'pvpteam` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'pvpteam`.`datacenterid`=`'.self::dbPrefix.'server`.`serverid` WHERE `pvpteamid`=:id', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT * FROM `ffxiv__pvpteam` LEFT JOIN `ffxiv__server` ON `ffxiv__pvpteam`.`datacenterid`=`ffxiv__server`.`serverid` WHERE `pvpteamid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
         }
         #Get old names
-        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'pvpteam_names` WHERE `pvpteamid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `ffxiv__pvpteam_names` WHERE `pvpteamid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'pvpteam_character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`pvp_matches` AS `matches`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, `'.self::dbPrefix.'pvpteam_rank`.`rank`, `'.self::dbPrefix.'pvpteam_rank`.`pvprankid` FROM `'.self::dbPrefix.'pvpteam_character` LEFT JOIN `'.self::dbPrefix.'pvpteam_rank` ON `'.self::dbPrefix.'pvpteam_rank`.`pvprankid`=`'.self::dbPrefix.'pvpteam_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'pvpteam_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'pvpteam_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`characterid` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvprankid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvprankid`=`ffxiv__pvpteam_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `ffxiv__pvpteam_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
@@ -99,7 +99,7 @@ class PvPTeam extends Entity
             $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
             #Main query to insert or update a PvP Team
             $queries[] = [
-                'INSERT INTO `'.self::dbPrefix.'pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`);',
+                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`);',
                 [
                     ':pvpteamid'=>$this->id,
                     ':datacenter'=>$this->lodestone['dataCenter'],
@@ -118,21 +118,21 @@ class PvPTeam extends Entity
             ];
             #Register PvP Team name if it's not registered already
             $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'pvpteam_names`(`pvpteamid`, `name`) VALUES (:pvpteamid, :name);',
+                'INSERT IGNORE INTO `ffxiv__pvpteam_names`(`pvpteamid`, `name`) VALUES (:pvpteamid, :name);',
                 [
                     ':pvpteamid'=>$this->id,
                     ':name'=>$this->lodestone['name'],
                 ],
             ];
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'pvpteam_character` WHERE `pvpteamid`=:pvpteamid AND `current`=1;', [':pvpteamid'=>$this->id]);
+            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `pvpteamid`=:pvpteamid AND `current`=1;', [':pvpteamid'=>$this->id]);
             #Process members, that left the team
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
                 if (!isset($this->lodestone['members'][$member])) {
                     #Update status for the character
                     $queries[] = [
-                        'UPDATE `'.self::dbPrefix.'pvpteam_character` SET `current`=0 WHERE `pvpteamid`=:pvpId AND `characterid`=:characterid;',
+                        'UPDATE `ffxiv__pvpteam_character` SET `current`=0 WHERE `pvpteamid`=:pvpId AND `characterid`=:characterid;',
                         [
                             ':characterid'=>$member,
                             ':pvpId'=>$this->id,
@@ -144,15 +144,15 @@ class PvPTeam extends Entity
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member=>$details) {
                     #Check if member is registered on tracker, while saving the status for future use
-                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
+                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
                     if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
-                            'INSERT IGNORE INTO `'.self::dbPrefix.'character`(
+                            'INSERT IGNORE INTO `ffxiv__character`(
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`, `pvp_matches`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
+                                :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
                             )',
                             [
                                 ':characterid'=>$member,
@@ -166,7 +166,7 @@ class PvPTeam extends Entity
                     }
                     #Link the character to team
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'pvpteam_character` (`pvpteamid`, `characterid`, `rankid`, `current`) VALUES (:pvpteamId, :characterid, (SELECT `pvprankid` FROM `'.self::dbPrefix.'pvpteam_rank` WHERE `rank`=:rank LIMIT 1), 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=(SELECT `pvprankid` FROM `'.self::dbPrefix.'pvpteam_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1);',
+                        'INSERT INTO `ffxiv__pvpteam_character` (`pvpteamid`, `characterid`, `rankid`, `current`) VALUES (:pvpteamId, :characterid, (SELECT `pvprankid` FROM `ffxiv__pvpteam_rank` WHERE `rank`=:rank LIMIT 1), 1) ON DUPLICATE KEY UPDATE `current`=1, `rankid`=(SELECT `pvprankid` FROM `ffxiv__pvpteam_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1);',
                         [
                             ':characterid'=>$member,
                             ':pvpteamId'=>$this->id,
@@ -194,12 +194,12 @@ class PvPTeam extends Entity
             $queries = [];
             #Remove characters from group
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'pvpteam_character` SET `current`=0 WHERE `pvpteamid`=:groupId;',
+                'UPDATE `ffxiv__pvpteam_character` SET `current`=0 WHERE `pvpteamid`=:groupId;',
                 [':groupId' => $this->id,]
             ];
             #Update PvP Team
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'pvpteam` SET `deleted` = UTC_DATE() WHERE `pvpteamid` = :id', [':id'=>$this->id],
+                'UPDATE `ffxiv__pvpteam` SET `deleted` = UTC_DATE() WHERE `pvpteamid` = :id', [':id'=>$this->id],
             ];
             return $this->dbController->query($queries);
         } catch (\Throwable $e) {

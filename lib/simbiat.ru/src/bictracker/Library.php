@@ -10,7 +10,6 @@ use Simbiat\HomePage;
 
 class Library
 {
-    const dbPrefix = 'bic__';
     private ?Controller $dbController;
     private string $fileDate;
     #Base link where we download BIC files
@@ -127,7 +126,7 @@ class Library
                         if (empty($currentDetails)) {
                             #We need to INSERT
                             $queries[] = [
-                                'INSERT INTO `'.self::dbPrefix.'list` (`BIC`, `DateIn`, `DateOut`, `Updated`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr`) VALUES (:BIC, :DateIn, :DateOut, :fileDate, :NameP, :EnglName, :XchType, :PtType, :Srvcs, :UID, :PrntBIC, :CntrCd, :RegN, :Ind, :Rgn, :Tnp, :Nnp, :Adr);',
+                                'INSERT INTO `bic__list` (`BIC`, `DateIn`, `DateOut`, `Updated`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr`) VALUES (:BIC, :DateIn, :DateOut, :fileDate, :NameP, :EnglName, :XchType, :PtType, :Srvcs, :UID, :PrntBIC, :CntrCd, :RegN, :Ind, :Rgn, :Tnp, :Nnp, :Adr);',
                                 array_merge($bindings, [':fileDate' => $this->fileDate]),
                             ];
                         } else {
@@ -135,7 +134,7 @@ class Library
                             if ($details !== $currentDetails) {
                                 #We need to update
                                 $queries[] = [
-                                    'UPDATE `'.self::dbPrefix.'list` SET `DateIn`=:DateIn, `DateOut`=:DateOut, `Updated`=:fileDate, `NameP`=:NameP, `EnglName`=:EnglName, `XchType`=:XchType, `PtType`=:PtType, `Srvcs`=:Srvcs, `UID`=:UID, `PrntBIC`=:PrntBIC, `CntrCd`=:CntrCd, `RegN`=:RegN, `Ind`=:Ind, `Rgn`=:Rgn, `Tnp`=:Tnp, `Nnp`=:Nnp, `Adr`=:Adr WHERE `BIC`=:BIC;',
+                                    'UPDATE `bic__list` SET `DateIn`=:DateIn, `DateOut`=:DateOut, `Updated`=:fileDate, `NameP`=:NameP, `EnglName`=:EnglName, `XchType`=:XchType, `PtType`=:PtType, `Srvcs`=:Srvcs, `UID`=:UID, `PrntBIC`=:PrntBIC, `CntrCd`=:CntrCd, `RegN`=:RegN, `Ind`=:Ind, `Rgn`=:Rgn, `Tnp`=:Tnp, `Nnp`=:Nnp, `Adr`=:Adr WHERE `BIC`=:BIC;',
                                     array_merge($bindings, [':fileDate' => $this->fileDate]),
                                 ];
                             }
@@ -162,7 +161,7 @@ class Library
                                 if (!in_array($restriction, $currentRest, true)) {
                                     #Insert restriction
                                     $queries[] = [
-                                        'INSERT IGNORE INTO `'.self::dbPrefix.'bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
+                                        'INSERT IGNORE INTO `bic__bic_rstr` (`BIC`, `Rstr`, `RstrDate`) VALUES (:BIC, :Rstr, :RstrDate);',
                                         [
                                             ':BIC' => $bic,
                                             ':Rstr' => $restriction['Rstr'],
@@ -190,7 +189,7 @@ class Library
                                 if (!in_array($swift, $currentSwift, true)) {
                                     #Insert restriction
                                     $queries[] = [
-                                        'INSERT INTO `'.self::dbPrefix.'swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :fileDate) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
+                                        'INSERT INTO `bic__swift` (`BIC`, `SWBIC`, `DefaultSWBIC`, `DateIn`) VALUES (:BIC, :SWBIC, :DefaultSWBIC, :fileDate) ON DUPLICATE KEY UPDATE `DefaultSWBIC`=:DefaultSWBIC;',
                                         [
                                             ':BIC' => $bic,
                                             ':SWBIC' => $swift['SWBIC'],
@@ -246,7 +245,7 @@ class Library
                                 }
                                 #Update account
                                 $queries[] = [
-                                    'INSERT INTO `'.self::dbPrefix.'accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :DateIn) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK, `DateIn`=:DateIn, `DateOut`=NULL;',
+                                    'INSERT INTO `bic__accounts` (`BIC`, `Account`, `AccountCBRBIC`, `RegulationAccountType`, `CK`, `DateIn`) VALUES (:BIC, :Account, :AccountCBRBIC, :RegulationAccountType, :CK, :DateIn) ON DUPLICATE KEY UPDATE `AccountCBRBIC`=:AccountCBRBIC, `RegulationAccountType`=:RegulationAccountType, `CK`=:CK, `DateIn`=:DateIn, `DateOut`=NULL;',
                                     [
                                         ':BIC' => $bic,
                                         ':Account' => $account['Account'],
@@ -271,7 +270,7 @@ class Library
                                             }
                                             #Insert restriction
                                             $queries[] = [
-                                                'INSERT INTO `'.self::dbPrefix.'acc_rstr` (`Account`, `AccRstr`, `AccRstrDate`, `SuccessorBIC`) VALUES (:Account, :AccRstr, :AccRstrDate, :SuccessorBIC) ON DUPLICATE KEY UPDATE `SuccessorBIC`=:SuccessorBIC;',
+                                                'INSERT INTO `bic__acc_rstr` (`Account`, `AccRstr`, `AccRstrDate`, `SuccessorBIC`) VALUES (:Account, :AccRstr, :AccRstrDate, :SuccessorBIC) ON DUPLICATE KEY UPDATE `SuccessorBIC`=:SuccessorBIC;',
                                                 [
                                                     ':Account' => $account['Account'],
                                                     ':AccRstr' => $restriction['AccRstr'],
@@ -320,12 +319,12 @@ class Library
                         }
                     }
                     #Reset Default flag for SWIFTs with DateOut (the way data is presented by CB, it's possible for them to have incorrect flag).
-                    $queries[] = ['UPDATE `'.self::dbPrefix.'swift` SET `DefaultSWBIC`=0 WHERE `DateOut` IS NOT NULL;'];
+                    $queries[] = ['UPDATE `bic__swift` SET `DefaultSWBIC`=0 WHERE `DateOut` IS NOT NULL;'];
                     #Set `DateIn` for "bad" entries. We are assuming, that affected entries were added at least at the time of BIC library creation. Another case of "bad" data.
-                    $queries[] = ['UPDATE `'.self::dbPrefix.'list` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
-                    $queries[] = ['UPDATE `'.self::dbPrefix.'accounts` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
+                    $queries[] = ['UPDATE `bic__list` SET `DateIn`=\'1996-07-10\' WHERE `DateIn` IS NULL OR `DateIn`=\'1970-01-01\';'];
+                    $queries[] = ['UPDATE `bic__accounts` SET `DateIn`=\'1996-07-10\' WHERE `DateIn`=\'1970-01-01\';'];
                     $queries[] = [
-                        'UPDATE `'.self::dbPrefix.'settings` SET `value`=:date WHERE `setting`=\'date\';',
+                        'UPDATE `bic__settings` SET `value`=:date WHERE `setting`=\'date\';',
                         [':date' => $libDate],
                     ];
                     #Run queries for BICs removals and library update
@@ -360,7 +359,7 @@ class Library
     private function getBIC(string $bic): array
     {
         $result = $this->dbController->selectRow(
-            'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `'.self::dbPrefix.'list` WHERE `BIC`=:BIC;',
+            'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `bic__list` WHERE `BIC`=:BIC;',
             [':BIC' => $bic,]
         );
         if (!empty($result)) {
@@ -381,7 +380,7 @@ class Library
     private function getRestrictions(string $bic): array
     {
         return $this->dbController->selectAll(
-            'SELECT `Rstr`, `RstrDate` FROM `'.self::dbPrefix.'bic_rstr` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            'SELECT `Rstr`, `RstrDate` FROM `bic__bic_rstr` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
     }
@@ -393,7 +392,7 @@ class Library
     private function getSWIFTs(string $bic): array
     {
         return $this->dbController->selectAll(
-            'SELECT `DefaultSWBIC`, `SWBIC` FROM `'.self::dbPrefix.'swift` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            'SELECT `DefaultSWBIC`, `SWBIC` FROM `bic__swift` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
     }
@@ -405,7 +404,7 @@ class Library
     private function getAccounts(string $bic): array
     {
         $result = $this->dbController->selectAll(
-            'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `'.self::dbPrefix.'accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
         #Pad BICs with zeros
@@ -424,7 +423,7 @@ class Library
     private function getAccountRestrictions(string $account): array
     {
         $result = $this->dbController->selectAll(
-            'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `'.self::dbPrefix.'acc_rstr` WHERE `Account`=:Account;',
+            'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `bic__acc_rstr` WHERE `Account`=:Account;',
             [':Account' => $account,]
         );
         foreach ($result as $key=>$restriction) {
@@ -441,7 +440,7 @@ class Library
      */
     private function getBICs(): array
     {
-        return $this->dbController->selectColumn('SELECT `BIC` FROM `'.self::dbPrefix.'list` WHERE `DateOut` IS NULL;');
+        return $this->dbController->selectColumn('SELECT `BIC` FROM `bic__list` WHERE `DateOut` IS NULL;');
     }
 
     ###################################
@@ -463,7 +462,7 @@ class Library
         $queries = array_merge($queries, $this->closeAccount($bic));
         #Close BIC itself
         $queries[] = [
-            'UPDATE `'.self::dbPrefix.'list` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+            'UPDATE `bic__list` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [
                 ':BIC' => $bic,
                 ':fileDate' => $this->fileDate,
@@ -481,7 +480,7 @@ class Library
         #If no details - assume we are ending all restrictions
         if (empty($restriction)) {
             return [
-                'UPDATE `'.self::dbPrefix.'bic_rstr` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+                'UPDATE `bic__bic_rstr` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
                 [
                     ':BIC' => $bic,
                     ':fileDate' => $this->fileDate,
@@ -493,7 +492,7 @@ class Library
                 return [];
             }
             return [
-                'UPDATE `'.self::dbPrefix.'bic_rstr` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `Rstr`=:Rstr AND `RstrDate`=:RstrDate;',
+                'UPDATE `bic__bic_rstr` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `Rstr`=:Rstr AND `RstrDate`=:RstrDate;',
                 [
                     ':BIC' => $bic,
                     ':Rstr' => $restriction['Rstr'],
@@ -513,7 +512,7 @@ class Library
         #If swift is empty, assume, that we are removing all accounts
         if (empty($swift)) {
             return [
-                'UPDATE `'.self::dbPrefix.'swift` SET `DateOut`=:fileDate, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+                'UPDATE `bic__swift` SET `DateOut`=:fileDate, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
                 [
                     ':BIC' => $bic,
                     ':fileDate' => $this->fileDate,
@@ -521,7 +520,7 @@ class Library
             ];
         } else {
             return [
-                'UPDATE `'.self::dbPrefix.'swift` SET `DateOut`=:fileDate, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `SWBIC`=:SWBIC AND `DefaultSWBIC`=:DefaultSWBIC;',
+                'UPDATE `bic__swift` SET `DateOut`=:fileDate, `DefaultSWBIC`=0 WHERE `BIC`=:BIC AND `SWBIC`=:SWBIC AND `DefaultSWBIC`=:DefaultSWBIC;',
                 [
                     ':BIC' => $bic,
                     ':SWBIC' => $swift,
@@ -545,7 +544,7 @@ class Library
             $queries[] = $this->endAccountRestriction($bic);
             #Close all open accounts
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'accounts` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
+                'UPDATE `bic__accounts` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
                 [
                     ':BIC' => $bic,
                     ':fileDate' => $this->fileDate,
@@ -556,7 +555,7 @@ class Library
             $queries[] = $this->endAccountRestriction($account, true);
             #Close account
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'accounts` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `Account`=:Account AND `DateOut` IS NULL;',
+                'UPDATE `bic__accounts` SET `DateOut`=:fileDate WHERE `BIC`=:BIC AND `Account`=:Account AND `DateOut` IS NULL;',
                 [
                     ':BIC' => $bic,
                     ':Account' => $account,
@@ -578,7 +577,7 @@ class Library
             #If no details - end all restrictions
             if (empty($restriction)) {
                 return [
-                    'UPDATE `'.self::dbPrefix.'acc_rstr` SET `DateOut`=:fileDate WHERE `Account`=:Account AND `DateOut` IS NULL;',
+                    'UPDATE `bic__acc_rstr` SET `DateOut`=:fileDate WHERE `Account`=:Account AND `DateOut` IS NULL;',
                     [
                         ':Account' => $bic,
                         ':fileDate' => $this->fileDate,
@@ -590,7 +589,7 @@ class Library
                     return [];
                 }
                 return [
-                    'UPDATE `'.self::dbPrefix.'acc_rstr` SET `DateOut`=:fileDate WHERE `Account`=:Account AND `AccRstr`=:AccRstr AND `AccRstrDate`=:AccRstrDate;',
+                    'UPDATE `bic__acc_rstr` SET `DateOut`=:fileDate WHERE `Account`=:Account AND `AccRstr`=:AccRstr AND `AccRstrDate`=:AccRstrDate;',
                     [
                         ':Account' => $bic,
                         ':AccRstr' => $restriction['AccRstr'],
@@ -602,7 +601,7 @@ class Library
         } else {
             #Otherwise, we are removing everything for whole BIC
             return [
-                'UPDATE `'.self::dbPrefix.'acc_rstr` SET `DateOut`=:fileDate WHERE `DateOut` IS NULL AND `Account` IN (SELECT `Account` FROM `'.self::dbPrefix.'accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL);',
+                'UPDATE `bic__acc_rstr` SET `DateOut`=:fileDate WHERE `DateOut` IS NULL AND `Account` IN (SELECT `Account` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL);',
                 [
                     ':BIC' => $bic,
                     ':fileDate' => $this->fileDate,
@@ -710,7 +709,7 @@ class Library
     public function bicDate(): string
     {
         try {
-            return $this->dbController->selectValue('SELECT `value` FROM `' . self::dbPrefix . 'settings` WHERE `setting`=\'date\';');
+            return $this->dbController->selectValue('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';');
         } catch (\Throwable) {
             return strval(time());
         }

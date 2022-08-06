@@ -6,8 +6,6 @@ use Simbiat\Abstracts\Entity;
 
 class User extends Entity
 {
-    protected const dbPrefix = 'uc__';
-
     #Entity's properties
     public string $username;
     #Real name
@@ -63,12 +61,12 @@ class User extends Entity
 
     protected function getFromDB(): array
     {
-        $dbData =  $this->dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `'.self::dbPrefix.'users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `'.self::dbPrefix.'users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
+        $dbData =  $this->dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
         }
         #Get user's groups
-        $dbData['groups'] = $this->dbController->selectColumn('SELECT `groupid` FROM `'.self::dbPrefix.'user_to_group` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
+        $dbData['groups'] = $this->dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         if (in_array(2, $dbData['groups'], true)) {
             $dbData['activated'] = false;
         } else {
@@ -114,7 +112,7 @@ class User extends Entity
     public function getEmails(): array
     {
         try {
-            return $this->dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `'.self::dbPrefix.'user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
+            return $this->dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
@@ -123,7 +121,7 @@ class User extends Entity
     public function getAvatars(): array
     {
         try {
-            return $this->dbController->selectAll('SELECT `url`, `current` FROM `'.self::dbPrefix.'user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
+            return $this->dbController->selectAll('SELECT `url`, `current` FROM `uc__user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
@@ -133,7 +131,7 @@ class User extends Entity
     {
         $outputArray = [];
         #Get token
-        $outputArray['token'] = $this->dbController->selectValue('SELECT `ff_token` FROM `'.self::dbPrefix.'users` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
+        $outputArray['token'] = $this->dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
         #Get linked characters
         $outputArray['characters'] = $this->dbController->selectAll('SELECT `characterid`, `name`, `avatar` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => $_SESSION['userid']]);
         #Get linked groups
@@ -168,7 +166,7 @@ class User extends Entity
             return ['response' => true];
         }
         try {
-            $result = $this->dbController->query('UPDATE `'.self::dbPrefix.'users` SET `username`=:username WHERE `userid`=:userid;', [
+            $result = $this->dbController->query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
                 ':userid' => [$this->id, 'int'],
                 ':username' => $newName,
             ]);
@@ -193,8 +191,9 @@ class User extends Entity
         #Queries for names
         foreach (['firstname', 'lastname', 'middlename', 'fathername', 'prefix', 'suffix'] as $field) {
             if (isset($_POST['details']['name'][$field]) && $this->name[$field] !== $_POST['details']['name'][$field]) {
+                /** @noinspection SqlResolve */
                 $queries[] = [
-                    'UPDATE `'.self::dbPrefix.'users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
+                    'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
                     [
                         ':userid' => [$this->id, 'int'],
                         ':'.$field => [
@@ -208,7 +207,7 @@ class User extends Entity
         #Query for birthday
         if (isset($_POST['details']['dates']['birthday']) && $this->dates['birthday'] !== $_POST['details']['dates']['birthday']) {
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'users` SET `birthday`=:birthday WHERE `userid`=:userid;',
+                'UPDATE `uc__users` SET `birthday`=:birthday WHERE `userid`=:userid;',
                 [
                     ':userid' => [$this->id, 'int'],
                     ':birthday' => [
@@ -221,7 +220,7 @@ class User extends Entity
         #Query for timezone
         if (isset($_POST['details']['timezone']) && $this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list())) {
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'users` SET `timezone`=:timezone WHERE `userid`=:userid;',
+                'UPDATE `uc__users` SET `timezone`=:timezone WHERE `userid`=:userid;',
                 [
                     ':userid' => [$this->id, 'int'],
                     ':timezone' => [
@@ -244,7 +243,7 @@ class User extends Entity
             }
             if ($this->sex !== $_POST['details']['sex']) {
                 $queries[] = [
-                    'UPDATE `' . self::dbPrefix . 'users` SET `sex`=:sex WHERE `userid`=:userid;',
+                    'UPDATE `uc__users` SET `sex`=:sex WHERE `userid`=:userid;',
                     [
                         ':userid' => [$this->id, 'int'],
                         ':sex' => [
@@ -262,7 +261,7 @@ class User extends Entity
             }
             if ($this->website !== $_POST['details']['website']) {
                 $queries[] = [
-                    'UPDATE `' . self::dbPrefix . 'users` SET `timezone`=:timezone WHERE `userid`=:userid;',
+                    'UPDATE `uc__users` SET `timezone`=:timezone WHERE `userid`=:userid;',
                     [
                         ':userid' => [$this->id, 'int'],
                         ':timezone' => [
@@ -276,8 +275,9 @@ class User extends Entity
         #Queries for other fields
         foreach (['country', 'city', 'about'] as $field) {
             if (isset($_POST['details'][$field]) && $this->$field !== $_POST['details'][$field]) {
+                /** @noinspection SqlResolve */
                 $queries[] = [
-                    'UPDATE `'.self::dbPrefix.'users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
+                    'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
                     [
                         ':userid' => [$this->id, 'int'],
                         ':'.$field => [

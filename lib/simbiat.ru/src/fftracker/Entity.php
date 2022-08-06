@@ -6,7 +6,6 @@ use Simbiat\Errors;
 
 abstract class Entity extends \Simbiat\Abstracts\Entity
 {
-    protected const dbPrefix = 'ffxiv__';
     protected const entityType = 'character';
     public string $name = '';
 

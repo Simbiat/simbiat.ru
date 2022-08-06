@@ -29,15 +29,15 @@ class Linkshell extends Entity
     protected function getFromDB(): array
     {
         #Get general information
-        $data = $this->dbController->selectRow('SELECT * FROM `'.self::dbPrefix.'linkshell` LEFT JOIN `'.self::dbPrefix.'server` ON `'.self::dbPrefix.'linkshell`.`serverid`=`'.self::dbPrefix.'server`.`serverid` WHERE `linkshellid`=:id', [':id'=>$this->id]);
+        $data = $this->dbController->selectRow('SELECT * FROM `ffxiv__linkshell` LEFT JOIN `ffxiv__server` ON `ffxiv__linkshell`.`serverid`=`ffxiv__server`.`serverid` WHERE `linkshellid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
         }
         #Get old names
-        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `'.self::dbPrefix.'linkshell_names` WHERE `linkshellid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `ffxiv__linkshell_names` WHERE `linkshellid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `'.self::dbPrefix.'linkshell_character`.`characterid` AS `id`, `'.self::dbPrefix.'character`.`name`, `'.self::dbPrefix.'character`.`avatar` AS `icon`, `'.self::dbPrefix.'linkshell_rank`.`rank`, `'.self::dbPrefix.'linkshell_rank`.`lsrankid` FROM `'.self::dbPrefix.'linkshell_character` LEFT JOIN `'.self::dbPrefix.'linkshell_rank` ON `'.self::dbPrefix.'linkshell_rank`.`lsrankid`=`'.self::dbPrefix.'linkshell_character`.`rankid` LEFT JOIN `'.self::dbPrefix.'character` ON `'.self::dbPrefix.'linkshell_character`.`characterid`=`'.self::dbPrefix.'character`.`characterid` WHERE `'.self::dbPrefix.'linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `'.self::dbPrefix.'linkshell_character`.`rankid` , `'.self::dbPrefix.'character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__linkshell_character`.`characterid` AS `id`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__linkshell_rank`.`rank`, `ffxiv__linkshell_rank`.`lsrankid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_rank`.`lsrankid`=`ffxiv__linkshell_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `ffxiv__linkshell_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['serverid']);
         if ($data['crossworld']) {
@@ -104,7 +104,7 @@ class Linkshell extends Entity
         try {
             #Main query to insert or update a Linkshell
             $queries[] = [
-                'INSERT INTO `'.self::dbPrefix.'linkshell`(`linkshellid`, `name`, `manual`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :manual, :crossworld, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=NULL, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
+                'INSERT INTO `ffxiv__linkshell`(`linkshellid`, `name`, `manual`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :manual, :crossworld, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=NULL, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
                 [
                     ':linkshellid'=>$this->id,
                     ':server'=>$this->lodestone['server'] ?? $this->lodestone['dataCenter'],
@@ -123,21 +123,21 @@ class Linkshell extends Entity
             ];
             #Register Linkshell name if it's not registered already
             $queries[] = [
-                'INSERT IGNORE INTO `'.self::dbPrefix.'linkshell_names`(`linkshellid`, `name`) VALUES (:linkshellid, :name);',
+                'INSERT IGNORE INTO `ffxiv__linkshell_names`(`linkshellid`, `name`) VALUES (:linkshellid, :name);',
                 [
                     ':linkshellid'=>$this->id,
                     ':name'=>$this->lodestone['name'],
                 ],
             ];
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `'.self::dbPrefix.'linkshell_character` WHERE `linkshellid`=:linkshellid AND `current`=1;', [':linkshellid'=>$this->id]);
+            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `ffxiv__linkshell_character` WHERE `linkshellid`=:linkshellid AND `current`=1;', [':linkshellid'=>$this->id]);
             #Process members, that left the linkshell
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
                 if (!isset($this->lodestone['members'][$member])) {
                     #Update status for the character
                     $queries[] = [
-                        'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `linkshellid`=:linkshellId AND `characterid`=:characterid;',
+                        'UPDATE `ffxiv__linkshell_character` SET `current`=0 WHERE `linkshellid`=:linkshellId AND `characterid`=:characterid;',
                         [
                             ':characterid'=>$member,
                             ':linkshellId'=>$this->id,
@@ -149,15 +149,15 @@ class Linkshell extends Entity
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member=>$details) {
                     #Check if member is registered on tracker, while saving the status for future use
-                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `'.self::dbPrefix.'character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
+                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
                     if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
-                            'INSERT IGNORE INTO `'.self::dbPrefix.'character`(
+                            'INSERT IGNORE INTO `ffxiv__character`(
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `'.self::dbPrefix.'server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `'.self::dbPrefix.'grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
+                                :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
                             )',
                             [
                                 ':characterid'=>$member,
@@ -170,7 +170,7 @@ class Linkshell extends Entity
                     }
                     #Insert/update character relationship with linkshell
                     $queries[] = [
-                        'INSERT INTO `'.self::dbPrefix.'linkshell_character` (`linkshellid`, `characterid`, `rankid`, `current`) VALUES (:linkshellid, :memberid, (SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank LIMIT 1), 1) ON DUPLICATE KEY UPDATE `rankid`=(SELECT `lsrankid` FROM `'.self::dbPrefix.'linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), `current`=1;',
+                        'INSERT INTO `ffxiv__linkshell_character` (`linkshellid`, `characterid`, `rankid`, `current`) VALUES (:linkshellid, :memberid, (SELECT `lsrankid` FROM `ffxiv__linkshell_rank` WHERE `rank`=:rank LIMIT 1), 1) ON DUPLICATE KEY UPDATE `rankid`=(SELECT `lsrankid` FROM `ffxiv__linkshell_rank` WHERE `rank`=:rank AND `rank` IS NOT NULL LIMIT 1), `current`=1;',
                         [
                             ':linkshellid'=>$this->id,
                             ':memberid'=>$member,
@@ -198,12 +198,12 @@ class Linkshell extends Entity
             $queries = [];
             #Remove characters from group
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'linkshell_character` SET `current`=0 WHERE `linkshellid`=:groupId;',
+                'UPDATE `ffxiv__linkshell_character` SET `current`=0 WHERE `linkshellid`=:groupId;',
                 [':groupId' => $this->id,]
             ];
             #Update linkshell
             $queries[] = [
-                'UPDATE `'.self::dbPrefix.'linkshell` SET `deleted` = UTC_DATE() WHERE `linkshellid` = :id',
+                'UPDATE `ffxiv__linkshell` SET `deleted` = UTC_DATE() WHERE `linkshellid` = :id',
                 [':id'=>$this->id],
             ];
             return $this->dbController->query($queries);

@@ -8,8 +8,6 @@ use Simbiat\HomePage;
 
 abstract class Entity
 {
-    #DB prefix for all subclasses
-    protected const dbPrefix = '';
     #Implicitely depend on DB Controller and attempt to initiate it in constructor
     protected ?Controller $dbController;
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
@@ -23,10 +21,6 @@ abstract class Entity
 
     public final function __construct(bool $debug = false)
     {
-        #All entities are expected to have a dbPrefix
-        if(empty($this::dbPrefix)) {
-            throw new \LogicException(get_class($this) . ' must have a non-empty `dbPrefix` constant.');
-        }
         #ALl entities are expected to use database somehow, thus using
         $this->dbController = HomePage::$dbController;
         #Set debug flag

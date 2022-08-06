@@ -4,7 +4,6 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker;
 
-use Simbiat\Database\Controller;
 use Simbiat\fftracker\Entities\Achievement;
 use Simbiat\fftracker\Entities\Character;
 use Simbiat\fftracker\Entities\CrossworldLinkshell;
@@ -16,7 +15,6 @@ use Simbiat\Lodestone;
 
 class Cron
 {
-    private const dbPrefix = 'ffxiv__';
     #Update statistics
     public function UpdateStatistics(): bool|string
     {
@@ -54,15 +52,15 @@ class Cron
             $dbCon = HomePage::$dbController;
             $entities = $dbCon->selectAll('
                     SELECT `type`, `id` FROM (
-                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'character`
+                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted` FROM `ffxiv__character`
                         UNION ALL
-                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'freecompany`
+                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted` FROM `ffxiv__freecompany`
                         UNION ALL
-                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'pvpteam`
+                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted` FROM `ffxiv__pvpteam`
                         UNION ALL
-                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `'.self::dbPrefix.'linkshell`
+                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `ffxiv__linkshell`
                         UNION ALL
-                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `'.self::dbPrefix.'achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `'.self::dbPrefix.'character_achievement`)
+                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
                     ) `allEntities` WHERE `deleted` IS NULL
                     ORDER BY `updated` LIMIT :maxLines',
                 [
@@ -88,7 +86,7 @@ class Cron
             #Cache controller
             $dbController = HomePage::$dbController;
             #Get the freshest character ID
-            $characterId = $dbController->selectValue('SELECT `characterid` FROM `' . self::dbPrefix . 'character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
+            $characterId = $dbController->selectValue('SELECT `characterid` FROM `ffxiv__character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
             #Grab its data from Lodestone
             $character = (new Character)->setId(strval($characterId))->getFromLodestone();
             if (empty($character['jobs'])) {
@@ -104,7 +102,7 @@ class Cron
                 #Remove spaces from the job name
                 $jobNoSpace = preg_replace('/\s*/', '', $job);
                 #Check if job is present as respective column
-                if (!$dbController->checkColumn(self::dbPrefix.'character', $jobNoSpace)) {
+                if (!$dbController->checkColumn('ffxiv__character', $jobNoSpace)) {
                     #Add respective column definition
                     $alter[] = 'ADD COLUMN `'.$jobNoSpace.'` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT \'Level of '.$job.' job\' AFTER `'.(empty($previous) ? 'pvp_matches' : $previous).'`';
                 }
@@ -116,7 +114,7 @@ class Cron
                 return true;
             }
             #Generate and run the query
-            return $dbController->query('ALTER TABLE `'.self::dbPrefix.'character` '.implode(', ', $alter).';');
+            return $dbController->query('ALTER TABLE `ffxiv__character` '.implode(', ', $alter).';');
         } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
@@ -134,7 +132,7 @@ class Cron
             foreach ($worlds as $dataCenter=>$servers) {
                 foreach ($servers as $server=>$status) {
                     $queries[] = [
-                        'INSERT IGNORE INTO `'.self::dbPrefix.'server` (`server`, `dataCenter`) VALUES (:server, :dataCenter)',
+                        'INSERT IGNORE INTO `ffxiv__server` (`server`, `dataCenter`) VALUES (:server, :dataCenter)',
                         [':server' => $server, ':dataCenter' => $dataCenter],
                     ];
                 }
@@ -154,9 +152,9 @@ class Cron
         try {
             $worlds = $dbCon->selectAll('
                 (
-                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'linkshell\' AS `entity` FROM `'.self::dbPrefix.'server`
-                    CROSS JOIN `'.self::dbPrefix.'orderby`
-                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'linkshell\' AS `entity` FROM `ffxiv__server`
+                    CROSS JOIN `ffxiv__orderby`
+                    CROSS JOIN `ffxiv__count_filter`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
                     ) `pages`
@@ -164,10 +162,10 @@ class Cron
                 )
                 UNION ALL
                 (
-                    SELECT `datacenter` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'crossworldlinkshell\' AS `entity` FROM `'.self::dbPrefix.'orderby`
-                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    SELECT `datacenter` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__orderby`
+                    CROSS JOIN `ffxiv__count_filter`
                     CROSS JOIN (
-                        SELECT UNIQUE(`datacenter`) FROM `'.self::dbPrefix.'server`
+                        SELECT UNIQUE(`datacenter`) FROM `ffxiv__server`
                     ) `dataCenters`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
@@ -176,9 +174,9 @@ class Cron
                 )
                 UNION ALL
                 (
-                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `'.self::dbPrefix.'server`
-                    CROSS JOIN `'.self::dbPrefix.'orderby`
-                    CROSS JOIN `'.self::dbPrefix.'count_filter`
+                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `ffxiv__server`
+                    CROSS JOIN `ffxiv__orderby`
+                    CROSS JOIN `ffxiv__count_filter`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 20 AS `page`
                     ) `pages`
@@ -186,19 +184,19 @@ class Cron
                 )
                 UNION ALL
                 (
-                    SELECT `server` AS `world`, 5 AS `order`, \'\' AS `count`, `page`, `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `'.self::dbPrefix.'server`
+                    SELECT `server` AS `world`, 5 AS `order`, \'\' AS `count`, `page`, `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `ffxiv__server`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
                     ) `pages`
-                    CROSS JOIN `'.self::dbPrefix.'grandcompany`
+                    CROSS JOIN `ffxiv__grandcompany`
                     WHERE `gcId` <> 0
                 )
                 UNION ALL
                 (
-                    SELECT `server` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, `gcId`, `clanid`, \'character\' AS `entity` FROM `'.self::dbPrefix.'server`
-                    CROSS JOIN `'.self::dbPrefix.'orderby`
-                    CROSS JOIN `'.self::dbPrefix.'grandcompany`
-                    CROSS JOIN `'.self::dbPrefix.'clan`
+                    SELECT `server` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, `gcId`, `clanid`, \'character\' AS `entity` FROM `ffxiv__server`
+                    CROSS JOIN `ffxiv__orderby`
+                    CROSS JOIN `ffxiv__grandcompany`
+                    CROSS JOIN `ffxiv__clan`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 20 AS `page`
                     ) `pages`
@@ -206,9 +204,9 @@ class Cron
                 )
                 UNION ALL
                 (
-                    SELECT `datacenter` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'pvpteam\' AS `entity` FROM `'.self::dbPrefix.'orderby`
+                    SELECT `datacenter` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'pvpteam\' AS `entity` FROM `ffxiv__orderby`
                     CROSS JOIN (
-                        SELECT UNIQUE(`datacenter`) FROM `'.self::dbPrefix.'server`
+                        SELECT UNIQUE(`datacenter`) FROM `ffxiv__server`
                     ) `dataCenters`
                     CROSS JOIN (
                         SELECT 1 AS `page` UNION SELECT 20 AS `page`
@@ -263,7 +261,7 @@ class Cron
         }
         #Get list of data centers
         try {
-            $worlds = $dbCon->selectUnique('SELECT `datacenter` FROM `' . self::dbPrefix . 'server`');
+            $worlds = $dbCon->selectUnique('SELECT `datacenter` FROM `ffxiv__server`');
         } catch (\Throwable) {
             $worlds = [];
         }
