@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\Curl;
+use Simbiat\Config\FFTracker;
 
 class Character extends Page
 {
@@ -64,7 +64,7 @@ class Character extends Page
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/character/' . $id];
         }
         #Get full path
-        if (is_file($GLOBALS['siteconfig']['ffxiv_avatars'].'96x96'.'/'.$id.'.jpg')) {
+        if (is_file(FFTracker::$avatars.'96x96'.'/'.$id.'.jpg')) {
             $outputArray['favicon'] = '/img/fftracker/avatars/96x96'.'/'.$id.'.jpg';
         }
         return $outputArray;

@@ -4,6 +4,7 @@ namespace Simbiat\fftracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Caching;
+use Simbiat\Config\FFTracker;
 use Simbiat\HomePage;
 use Simbiat\LodestoneModules\Converters;
 
@@ -24,10 +25,10 @@ class Statistics
         #Sanitize cachePath
         if (empty($cachePath)) {
             #Create path if missing
-            if (!is_dir($GLOBALS['siteconfig']['ffstatitics_cache'])) {
-                mkdir($GLOBALS['siteconfig']['ffstatitics_cache']);
+            if (!is_dir(FFTracker::$statistics)) {
+                mkdir(FFTracker::$statistics);
             }
-            $cachePath = $GLOBALS['siteconfig']['ffstatitics_cache'].$type.'.json';
+            $cachePath = FFTracker::$statistics.$type.'.json';
         }
         #Get cache
         $json = (new Caching())->getArrayFromFile($cachePath);

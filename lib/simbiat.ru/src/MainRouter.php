@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Config\Twig;
 use Simbiat\HTTP20\Common;
 
 class MainRouter extends Abstracts\Router
@@ -76,7 +77,7 @@ class MainRouter extends Abstracts\Router
     {
         $outputArray = [];
         #Forbid if on PROD
-        if ($GLOBALS['siteconfig']['PROD'] === true || empty($uri)) {
+        if (Config\Common::$PROD === true || empty($uri)) {
             $outputArray['http_error'] = 403;
             return $outputArray;
         }
@@ -89,7 +90,7 @@ class MainRouter extends Abstracts\Router
                     usercontrol\Emails::sendMail('simbiat@outlook.com', 'Test Mail', ['username' => 'Simbiat'], 'Simbiat');
                 } else {
                     try {
-                        $output = HomePage::$twig->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
+                        $output = Twig::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
                     } catch (\Throwable $exception) {
                         (new Errors)->error_log($exception);
                         $output = 'Twig failure';

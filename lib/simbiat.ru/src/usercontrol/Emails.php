@@ -3,14 +3,13 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 #Class that deals with mails.
+use Simbiat\Config\SMTP;
+use Simbiat\Config\Twig;
 use Simbiat\Errors;
 use Simbiat\HomePage;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Crypto\DkimSigner;
 
 class Emails
 {
@@ -21,28 +20,25 @@ class Emails
     {
         try {
             #Create transport
-            $transport = Transport::fromDsn('smtp://'.urlencode($GLOBALS['siteconfig']['smtp']['user']).':'.urlencode($GLOBALS['siteconfig']['smtp']['password']).'@'.$GLOBALS['siteconfig']['smtp']['host'].':587');
-            #Create email
-            $email = new TemplatedEmail();
-            #Add addresses
-            $email->addFrom(new Address($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name']));
-            $email->sender(new Address($GLOBALS['siteconfig']['smtp']['from'], $GLOBALS['siteconfig']['site_name']));
-            $email->addReplyTo(new Address($GLOBALS['siteconfig']['adminmail'], $GLOBALS['siteconfig']['site_name']));
-            if ($GLOBALS['siteconfig']['PROD']) {
+            $transport = Transport::fromDsn(SMTP::getDSN());
+            #Create basic email
+            $email = SMTP::getEmail();
+            #Add receiver
+            if (\Simbiat\Config\Common::$PROD) {
                 $email->addTo($to);
             } else {
                 #On test always use admin mail
-                $email->addTo($GLOBALS['siteconfig']['adminmail']);
+                $email->addTo(\Simbiat\Config\Common::adminMail);
             }
             #Set priority for alerts
             if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
                 $email->priority(1);
             }
             #Add content
-            $email->subject($GLOBALS['siteconfig']['site_name'].': '.$subject);
-            $email->html(HomePage::$twig->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)])));
+            $email->subject(\Simbiat\Config\Common::siteName.': '.$subject);
+            $email->html(Twig::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => (new Security)->encrypt($to)])));
             #Sign email
-            $signer = new DkimSigner('file://'.$GLOBALS['siteconfig']['DKIM']['key'], $GLOBALS['siteconfig']['smtp']['host'], 'DKIM');
+            $signer = SMTP::getSigner();
             $email = $signer->sign($email);
             (new Mailer($transport))->send($email);
             return true;

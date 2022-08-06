@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
+use Simbiat\Config\FFTracker;
 use Simbiat\Cron;
 use Simbiat\Curl;
 use Simbiat\Errors;
@@ -416,7 +417,7 @@ class Character extends Entity
                 return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
             }
             #Download avatar
-            $avatar = (new Curl())->imageDownload('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', $GLOBALS['siteconfig']['ffxiv_avatars'].$this->id.'.jpg');
+            $avatar = (new Curl())->imageDownload('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', FFTracker::$avatars.$this->id.'.jpg');
             $queries[] = ['UPDATE `'.self::dbPrefix.'character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
             if ($avatar) {
                 $queries[] = ['INSERT IGNORE INTO `uc__user_to_avatar` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];

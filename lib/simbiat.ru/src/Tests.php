@@ -20,7 +20,7 @@ class Tests
     public function uploadPut(string $filepath): void
     {
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://'.$_SERVER['HTTP_HOST']);
+        curl_setopt($curl, CURLOPT_URL, Config\Common::$baseUrl);
         curl_setopt($curl, CURLOPT_UPLOAD, true);
         curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -40,7 +40,7 @@ class Tests
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $output = '
-            <form enctype="multipart/form-data" action="https://'.$_SERVER['HTTP_HOST'].'" method="POST">
+            <form enctype="multipart/form-data" action="'.Config\Common::$baseUrl.'" method="POST">
                 <!-- MAX_FILE_SIZE must precede the file input field -->
                 <input type="hidden" name="MAX_FILE_SIZE" value="'.$MAX_FILE_SIZE.'" />
                 <!-- Name of input element determines name in $_FILES array -->
@@ -51,7 +51,11 @@ class Tests
             ';
             (new Common)->zEcho($output);
         } else {
-           $this->testDump((new Sharing)->upload($uploadPath, false, false, [], false));
+            try {
+                $this->testDump((new Sharing)->upload($uploadPath, false, false, [], false));
+            } catch (\Throwable $exception) {
+                echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
+            }
         }
         exit;
     }

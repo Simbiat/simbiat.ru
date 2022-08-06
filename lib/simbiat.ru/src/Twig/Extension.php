@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\Twig;
 
+use Simbiat\Config\Common;
 use Simbiat\HomePage;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
@@ -27,9 +28,9 @@ class Extension extends AbstractExtension implements GlobalsInterface
     public function getGlobals(): array
     {
         $defaults = [
-            'site_name' => $GLOBALS['siteconfig']['site_name'],
-            'domain' => $GLOBALS['siteconfig']['domain'],
-            'url' => $GLOBALS['siteconfig']['domain'].'/'.($_SERVER['REQUEST_URI'] ?? 'no_request_uri'),
+            'site_name' => Common::siteName,
+            'domain' => Common::$baseUrl,
+            'url' => Common::$baseUrl.'/'.($_SERVER['REQUEST_URI'] ?? 'no_request_uri'),
             'maintenance' => 1,
             'registration' => 0,
         ];
@@ -49,17 +50,14 @@ class Extension extends AbstractExtension implements GlobalsInterface
         }
         return array_merge($defaults, [
             #PROD flag
-            'isPROD' => $GLOBALS['siteconfig']['PROD'],
+            'isPROD' => Common::$PROD,
             #List of LINK tags
-            'link_tags' => $GLOBALS['siteconfig']['links'],
+            'link_tags' => Common::$links,
             #Time used as version of the JS file for cache busting
-            'js_version' => filemtime($GLOBALS['siteconfig']['jsdir'].'main.min.js'),
+            'js_version' => filemtime(Common::$jsDir.'main.min.js'),
             #Save data flag
             'save_data' => $save_data,
             'unsupported' => false,
-            'ogdesc' => $GLOBALS['siteconfig']['ogdesc'],
-            'ogextra' => $GLOBALS['siteconfig']['ogextra'],
-            'ogimage' => $GLOBALS['siteconfig']['ogimage'],
             #Flag whether GET is present
             'hasGet' => !empty($_GET),
         ]);

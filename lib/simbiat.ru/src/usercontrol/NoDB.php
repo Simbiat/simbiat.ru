@@ -14,8 +14,8 @@ class NoDB
     public function argonCalc(float $targetTime = 1.0): array
     {
         #Create directory if missing
-        if (!is_dir($GLOBALS['siteconfig']['security_cache'])) {
-            mkdir($GLOBALS['siteconfig']['security_cache']);
+        if (!is_dir(\Simbiat\Config\Common::$securityCache)) {
+            mkdir(\Simbiat\Config\Common::$securityCache);
         }
         #Calculate number of available threads
         $threads = $this->countCores()*2;
@@ -38,7 +38,7 @@ class NoDB
         } while (($end - $start) < $targetTime);
         $argonSettings = ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory];
         #Write config file
-        file_put_contents($GLOBALS['siteconfig']['security_cache']. 'argon.json', json_encode($argonSettings, JSON_PRETTY_PRINT));
+        file_put_contents(\Simbiat\Config\Common::$securityCache.'argon.json', json_encode($argonSettings, JSON_PRETTY_PRINT));
         return $argonSettings;
     }
 
@@ -60,14 +60,14 @@ class NoDB
     public function genCrypto(): array
     {
         #Create directory if missing
-        if (!is_dir($GLOBALS['siteconfig']['security_cache'])) {
-            mkdir($GLOBALS['siteconfig']['security_cache']);
+        if (!is_dir(\Simbiat\Config\Common::$securityCache)) {
+            mkdir(\Simbiat\Config\Common::$securityCache);
         }
         $passphrase = bin2hex(openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-GCM')));
         #Using array, in case some other settings will be required in the future
         $cryptoSettings = ['passphrase' => $passphrase];
         #Write config file
-        file_put_contents($GLOBALS['siteconfig']['security_cache']. 'aes.json', json_encode($cryptoSettings, JSON_PRETTY_PRINT));
+        file_put_contents(\Simbiat\Config\Common::$securityCache. 'aes.json', json_encode($cryptoSettings, JSON_PRETTY_PRINT));
         return $cryptoSettings;
     }
 }

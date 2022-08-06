@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\FFTracker;
 
 class PvPTeam extends Page
 {
@@ -56,7 +57,7 @@ class PvPTeam extends Page
         if (!empty($outputArray['pvpteam']['crest'])) {
             #Get full path
             $fullPath = substr($outputArray['pvpteam']['crest'], 0, 2).'/'.substr($outputArray['pvpteam']['crest'], 2, 2).'/'.$outputArray['pvpteam']['crest'].'.png';
-            if (is_file($GLOBALS['siteconfig']['merged_crests'].$fullPath)) {
+            if (is_file(FFTracker::$crests.$fullPath)) {
                 $outputArray['favicon'] = '/img/fftracker/merged-crests/'.$fullPath;
             }
         }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
+use Simbiat\Config\Common;
 use Simbiat\HomePage;
 
 abstract class Router
@@ -38,7 +39,7 @@ abstract class Router
         #Main page of the segment is called
         if (empty($path)) {
             if (!empty($this->redirectMain) && preg_match('/^\/.+\/$/iu', $this->redirectMain) === 1) {
-                HomePage::$headers->redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
+                HomePage::$headers->redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Common::$http_host) === 1 ? 'www.' : '').Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
             }
             $pageData['breadcrumbs'] = $this->breadCrumb;
         } else {

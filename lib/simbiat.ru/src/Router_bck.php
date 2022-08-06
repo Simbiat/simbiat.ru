@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Config\Common;
 use Simbiat\HTTP20\Headers;
 use Simbiat\HTTP20\HTML;
 
@@ -19,7 +20,7 @@ class Router_bck
         $headers = (new Headers);
         #Check if URI is empty
         if (empty($uri)) {
-            $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/search', true, true, false);
+            $headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/search', true, true, false);
         }
         #Prepare array
         $outputArray = [
@@ -38,7 +39,7 @@ class Router_bck
             case 'statistics':
                 #Check if type is set
                 if (empty($uri[1])) {
-                    $headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/statistics/genetics', true, true, false);
+                    $headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/statistics/genetics', true, true, false);
                 } else {
                     $uri[1] = strtolower($uri[1]);
                     if (in_array($uri[1], ['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'])) {

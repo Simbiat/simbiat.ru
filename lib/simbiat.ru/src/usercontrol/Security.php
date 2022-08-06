@@ -28,9 +28,9 @@ class Security
     public function __construct()
     {
         #Load Argon settings if argon.json exists
-        if (is_file($GLOBALS['siteconfig']['security_cache']. 'argon.json')) {
+        if (is_file(\Simbiat\Config\Common::$securityCache. 'argon.json')) {
             #Read the file
-            $argon = json_decode(file_get_contents($GLOBALS['siteconfig']['security_cache']. 'argon.json'), true);
+            $argon = json_decode(file_get_contents(\Simbiat\Config\Common::$securityCache. 'argon.json'), true);
             #Update settings, if they are present and comply with minimum requirements
             if (isset($argon['memory_cost']) && $argon['memory_cost'] >= 1024) {
                 $this->argonSettings['memory_cost'] = $argon['memory_cost'];
@@ -46,9 +46,9 @@ class Security
             $this->argonSettings = (new NoDB)->argonCalc();
         }
         #Load AES settings
-        if (is_file($GLOBALS['siteconfig']['security_cache']. 'aes.json')) {
+        if (is_file(\Simbiat\Config\Common::$securityCache. 'aes.json')) {
             #Read the file
-            $aes = json_decode(file_get_contents($GLOBALS['siteconfig']['security_cache']. 'aes.json'), true);
+            $aes = json_decode(file_get_contents(\Simbiat\Config\Common::$securityCache. 'aes.json'), true);
             if (isset($aes['passphrase'])) {
                 $this->aesSettings = $aes;
             } else {
@@ -227,7 +227,7 @@ class Security
         } catch (\Throwable) {
             $token = '';
         }
-        @header('X-CSRF-Token: '.$token, true);
+        @header('X-CSRF-Token: '.$token);
         return $token;
     }
 

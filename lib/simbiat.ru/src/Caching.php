@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Config\Common;
+
 class Caching
 {
     private string $cacheDir = '';
@@ -9,7 +11,7 @@ class Caching
     public function __construct(string $cacheDir = '')
     {
         if (empty($cacheDir)) {
-            $this->cacheDir = $GLOBALS['siteconfig']['cacheDir'] . 'html/';
+            $this->cacheDir = Common::$htmlCache;
         } else {
             if (!is_dir($cacheDir)) {
                 @mkdir($cacheDir, recursive: true);

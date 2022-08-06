@@ -3,17 +3,15 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use DateTimeInterface;
-use Simbiat\Database\Config;
+use Simbiat\Config\Database;
+use Simbiat\Config\Twig;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
-use Simbiat\Twig\Extension;
 use Simbiat\usercontrol\Checkers;
 use Simbiat\usercontrol\Security;
 use Simbiat\usercontrol\Session;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class HomePage
 {
@@ -27,8 +25,6 @@ class HomePage
     public static ?Controller $dbController = NULL;
     #Cache object
     public static ?Caching $dataCache = null;
-    #Twig
-    public static ?Environment $twig = null;
     #HTTP headers object
     public static ?Headers $headers = NULL;
     #Flag indicating that cached view has been served already
@@ -52,11 +48,6 @@ class HomePage
         }
         if (is_null(self::$dataCache)) {
             self::$dataCache = new Caching();
-        }
-        if (is_null(self::$twig)) {
-            #Initiate Twig
-            self::$twig = new Environment(new FilesystemLoader($GLOBALS['siteconfig']['templatesDir']), ['cache' => $GLOBALS['siteconfig']['templatesDir'] . '/cache', 'auto_reload' => true, 'autoescape' => 'html',]);
-            self::$twig->addExtension(new Extension);
         }
         #Get all POST and GET keys to lower case
         $_POST = array_change_key_case($_POST);
@@ -117,15 +108,15 @@ class HomePage
                             self::$http_error = ['http_error' => 403];
                         }
                         if ($uri[0] !== 'api') {
-                            $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
-                                ['rel' => 'stylesheet preload', 'href' => '/css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css', 'as' => 'style'],
-                                ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'main.min.js') . '.js', 'as' => 'script'],
+                            Config\Common::$links = array_merge(Config\Common::$links, [
+                                ['rel' => 'stylesheet preload', 'href' => '/css/' . filemtime(Config\Common::$cssDir.'min.css') . '.css', 'as' => 'style'],
+                                ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js') . '.js', 'as' => 'script'],
                             ]);
                         }
-                        self::$headers->links($GLOBALS['siteconfig']['links']);
+                        self::$headers->links(Config\Common::$links);
                         if ($uri[0] !== 'api') {
-                            @header('SourceMap: /js/main.min.' . filemtime($GLOBALS['siteconfig']['jsdir'] . 'main.min.js') . '.js.map', false);
-                            @header('SourceMap: /css/' . filemtime($GLOBALS['siteconfig']['cssdir'] . 'min.css') . '.css.map', false);
+                            @header('SourceMap: /js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js').'.js.map', false);
+                            @header('SourceMap: /css/' . filemtime(Config\Common::$cssDir.'min.css').'.css.map', false);
                         }
                         #Check if we have cached the results already
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
@@ -170,9 +161,9 @@ class HomePage
             self::$canonical .= '?page='.$_GET['page'];
         }
         #Set canonical link, that may be used in the future
-        self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', $_SERVER['HTTP_HOST']) === 1 ? 'www.' : '').$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
+        self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config\Common::$http_host) === 1 ? 'www.' : '').Config\Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
         #Update list with dynamic values
-        $GLOBALS['siteconfig']['links'] = array_merge($GLOBALS['siteconfig']['links'], [
+        Config\Common::$links = array_merge(Config\Common::$links, [
             ['rel' => 'canonical', 'href' => self::$canonical],
         ]);
     }
@@ -201,7 +192,7 @@ class HomePage
         #Check in case we accidentally call this for 2nd time
         if (self::$dbup === false) {
             try {
-                (new Pool)->openConnection((new Config)->setHost($GLOBALS['siteconfig']['database']['host'], $GLOBALS['siteconfig']['database']['port'])->setUser($GLOBALS['siteconfig']['database']['user'])->setPassword($GLOBALS['siteconfig']['database']['password'])->setDB($GLOBALS['siteconfig']['database']['dbname'])->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, $GLOBALS['siteconfig']['database']['settings'])->setOption(\PDO::ATTR_TIMEOUT, 1)->setOption(\PDO::MYSQL_ATTR_SSL_CA, $GLOBALS['siteconfig']['database']['ssl']['ca'])->setOption(\PDO::MYSQL_ATTR_SSL_CERT, $GLOBALS['siteconfig']['database']['ssl']['cert'])->setOption(\PDO::MYSQL_ATTR_SSL_KEY, $GLOBALS['siteconfig']['database']['ssl']['key'])->setOption(\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT , true), maxTries: 5);
+                (new Pool)->openConnection(Database::getConfig(), maxTries: 5);
                 self::$dbup = true;
                 #Cache controller
                 self::$dbController = (new Controller);
@@ -234,7 +225,7 @@ class HomePage
                     ignore_user_abort(true);
                     ob_start();
                     @header('Connection: close');
-                    $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
+                    $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
                     #Output data
                     (new Common)->zEcho($output, $twigVars['cacheStrat'] ?? 'day', false);
                     @ob_end_flush();
@@ -252,12 +243,12 @@ class HomePage
         } else {
             ob_start();
             try {
-                $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
+                $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
             } catch (\Throwable $exception) {
                 (new Errors)->error_log($exception);
                 self::$headers->clientReturn('503', false);
                 try {
-                    $output = self::$twig->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? NULL]));
+                    $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? NULL]));
                 } catch (\Throwable) {
                     $output = 'Twig failure';
                 }
@@ -267,7 +258,7 @@ class HomePage
                 session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if ($GLOBALS['siteconfig']['PROD'] && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
+            if (Config\Common::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
                 self::$dataCache->write($twigVars, age: intval($twigVars['cacheAge']));
             }
             if (self::$staleReturn === true) {

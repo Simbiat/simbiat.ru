@@ -4,6 +4,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Config\Common;
 use Simbiat\Database\Pool;
 use Simbiat\usercontrol\Session;
 
@@ -13,7 +14,7 @@ class Maintenance
     public function filesClean(): bool
     {
         #Clean HTML cache
-        $this->recursiveClean($GLOBALS['siteconfig']['cacheDir'] . 'html/', 1440, 2048);
+        $this->recursiveClean(Common::$htmlCache, 1440, 2048);
         #Clean temp directory
         $this->recursiveClean(sys_get_temp_dir(), 4320, 0);
         return true;
@@ -117,7 +118,7 @@ class Maintenance
         }
         #Get free space in percentage
         $percentage = disk_free_space($dir)*100/disk_total_space($dir);
-        if ($GLOBALS['siteconfig']['PROD'] && $percentage < 5) {
+        if (Common::$PROD && $percentage < 5) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noSpace.flag')) {
                 #Clean files
@@ -126,7 +127,7 @@ class Maintenance
                 $percentage = disk_free_space($dir)*100/disk_total_space($dir);
                 if ($percentage < 5) {
                     #Send mail
-                    usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
+                    usercontrol\Emails::sendMail(Common::adminMail, '[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
                     #Generate flag
                     file_put_contents($dir . '/noSpace.flag', $percentage . '% of space left');
                 }
@@ -135,7 +136,7 @@ class Maintenance
             if (is_file($dir.'/noSpace.flag')) {
                 @unlink($dir . '/noSpace.flag');
                 #Send mail
-                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
+                usercontrol\Emails::sendMail(Common::adminMail, '[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
             }
         }
     }
@@ -145,11 +146,11 @@ class Maintenance
     {
         #Get directory
         $dir = sys_get_temp_dir();
-        if ($GLOBALS['siteconfig']['PROD'] && !HomePage::$dbup) {
+        if (Common::$PROD && !HomePage::$dbup) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
-                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
+                usercontrol\Emails::sendMail(Common::adminMail, '[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
                 #Generate flag
                 file_put_contents($dir . '/noDB.flag', 'Database is down');
             }
@@ -157,7 +158,7 @@ class Maintenance
             if (is_file($dir.'/noDB.flag')) {
                 @unlink($dir . '/noDB.flag');
                 #Send mail
-                usercontrol\Emails::sendMail($GLOBALS['siteconfig']['adminmail'], '[Resolved]: Database is down', username: 'Simbiat');
+                usercontrol\Emails::sendMail(Common::adminMail, '[Resolved]: Database is down', username: 'Simbiat');
             }
         }
     }

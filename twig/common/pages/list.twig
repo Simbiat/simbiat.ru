@@ -1,10 +1,10 @@
 {% if serviceName == 'bictracker' %}
-    <p>Показано {{ searchresult.entities|length }} записей из {{ searchresult.count }}.</p>
+    <p>Показано {{ searchResult.entities|length }} записей из {{ searchresult.count }}.</p>
 {% else %}
-    <p>Showing {{ searchresult.entities|length }} from total of {{ searchresult.count }}.</p>
+    <p>Showing {{ searchResult.entities|length }} from total of {{ searchresult.count }}.</p>
 {% endif %}
 <div class="searchResults">
-    {% for entity in searchresult.entities %}
+    {% for entity in searchResult.entities %}
         {{ include('common/elements/entitycard.twig', entity) }}
     {% endfor %}
 </div>

@@ -3,8 +3,8 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\Common;
 use Simbiat\HomePage;
-use Simbiat\HTTP20\HTML;
 
 class Search extends Page
 {
@@ -51,28 +51,28 @@ class Search extends Page
         #Get search results
         $outputArray = [];
         if ($this->list) {
-            $outputArray['searchresult'] = (new $this->types[$this->subServiceName]['class'])->listEntities($page, $this->searchFor);
+            $outputArray['searchResult'] = (new $this->types[$this->subServiceName]['class'])->listEntities($page, $this->searchFor);
             #If int is returned, we have a bad page
-            if (is_int($outputArray['searchresult'])) {
+            if (is_int($outputArray['searchResult'])) {
                 #Redirect
                 if (!HomePage::$staleReturn) {
-                    HomePage::$headers->redirect('https://' . $_SERVER['HTTP_HOST'] . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false, true, false);
+                    HomePage::$headers->redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false);
                 }
             }
         } else {
             foreach ($this->types as $type => $class) {
-                $outputArray['searchresult'][$type] = (new $class['class'])->Search($this->searchFor, $this->searchItems);
+                $outputArray['searchResult'][$type] = (new $class['class'])->Search($this->searchFor, $this->searchItems);
             }
         }
         #Get the freshest date
-        $date = $this->getDate($outputArray['searchresult']);
+        $date = $this->getDate($outputArray['searchResult']);
         #Attempt to exit a bit earlier with Last Modified header
         if (!empty($date)) {
             $this->lastModified($date);
         }
         if ($this->list) {
             #Generate pagination data
-            $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchresult']['pages'], 'prefix' => '?page='];
+            $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchResult']['pages'], 'prefix' => '?page='];
         }
         if (!empty($this->searchFor)) {
             if ($this->list) {
@@ -90,7 +90,7 @@ class Search extends Page
 
             }
             #Set search value, if available
-            $outputArray['searchvalue'] = $this->searchFor;
+            $outputArray['searchValue'] = $this->searchFor;
             #Set titles
             $this->h1 = $this->title = sprintf($this->shortTitle, $this->searchFor).($this->list ? ', '.$this->pageWord.' '.$page : '');
             $this->ogdesc = sprintf($this->fullTitle, $this->searchFor).($this->list ? ', '.$this->pageWord.' '.$page : '');
@@ -159,7 +159,7 @@ class Search extends Page
         }
         $decodedSearch = preg_replace($this->regexSearch, '', $term);
         #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future
-        $decodedSearch = preg_replace('/:/i', '', $decodedSearch);
+        $decodedSearch = preg_replace('/:/', '', $decodedSearch);
         #Check if the new value is just the set of operators and if it is - consider bad request
         if (preg_match('/^[+\-<>~()"*]+$/i', $decodedSearch)) {
             return false;

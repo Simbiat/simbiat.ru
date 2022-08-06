@@ -2,12 +2,13 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
+use Simbiat\Config\Common;
 use Simbiat\HomePage;
 
 class Session implements \SessionHandlerInterface, \SessionIdInterface, \SessionUpdateTimestampHandlerInterface
 {
     #Attach common settings
-    use Common;
+    use \Simbiat\usercontrol\Common;
 
     #Default lifetime for session in seconds (15 minutes)
     private int $sessionLife;
@@ -18,7 +19,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function __construct(int $sessionLife = 2700)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
-        session_name('__Host-sess_'.preg_replace('/[^a-zA-Z\d\-_]/', '', $_SERVER['HTTP_HOST'] ?? 'simbiat'));
+        session_name('__Host-sess_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Common::$http_host ?? 'simbiat'));
         if ($sessionLife < 0) {
             $sessionLife = 2700;
         }
@@ -277,7 +278,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         if (empty($data['CSRF'])) {
             $data['CSRF'] = $this->security->genCSRF();
         } else {
-            @header('X-CSRF-Token: '.$data['CSRF'], true);
+            @header('X-CSRF-Token: '.$data['CSRF']);
         }
     }
 }

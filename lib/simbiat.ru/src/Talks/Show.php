@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\Talks;
 
+use Simbiat\Config\Common;
 use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\HTMLCut;
@@ -29,19 +30,19 @@ class Show
         $currentPage = 1;
         #Sanitize pages
         if (!empty($uri[1])) {
-            $currentPage = preg_replace('/[^\d]/', '', $uri[1]);
+            $currentPage = preg_replace('/\D/', '', $uri[1]);
         }
         if (empty($currentPage)) {
-            $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1', true, true, false);
+            $this->headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1');
         }
         #Get count
         $totalPages = intval(ceil($this->dbController->count('SELECT COUNT(*) FROM `talks__posts`')/20));
         if ($currentPage > $totalPages) {
-            $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/'.$totalPages, true, true, false);
+            $this->headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/'.$totalPages);
         }
         $currentPage = intval($currentPage);
         #Get articles
-        $forum = $this->dbController->selectAll('SELECT *, `title` AS `name` FROM `talks__posts` ORDER BY `date` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
+        $forum = $this->dbController->selectAll('SELECT * FROM `talks__posts` ORDER BY `created` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
         #Cache PrettyURL
         $pretty = (new PrettyURL());
         $cutter = (new HTMLCut());
@@ -67,12 +68,12 @@ class Show
     public function thread(array $uri): array
     {
         if (!empty($uri[1])) {
-            $threadid = preg_replace('/[^\d]/', '', $uri[1]);
+            $threadid = preg_replace('/\D/', '', $uri[1]);
         }
         if (empty($threadid)) {
-            $this->headers->redirect('https://'.$_SERVER['HTTP_HOST'].($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1', true, true, false);
+            $this->headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1');
         } else {
-            $outputArray['article'] = $this->dbController->selectRow('SELECT *, `title` AS `name` FROM `talks__posts` WHERE `threadid` = :threadid', ['threadid'=>$threadid]);
+            $outputArray['article'] = $this->dbController->selectRow('SELECT * FROM `talks__posts` WHERE `threadid` = :threadid', ['threadid'=>$threadid]);
             if (empty($outputArray['article'])) {
                 $outputArray['http_error'] = 404;
             } else {

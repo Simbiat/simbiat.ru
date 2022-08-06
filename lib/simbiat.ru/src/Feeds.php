@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use Simbiat\Config\Common;
 use Simbiat\HTTP20\Atom;
 use Simbiat\HTTP20\RSS;
 
@@ -45,21 +46,21 @@ class Feeds
                 if ($format === 'atom') {
                     $settings = [
                         'authors' => [[
-                            'name' => $GLOBALS['siteconfig']['adminName'],
-                            'email' => $GLOBALS['siteconfig']['adminmail'],
-                            'uri' => 'https://'.$_SERVER['HTTP_HOST'].'/',
+                            'name' => Common::adminName,
+                            'email' => Common::adminMail,
+                            'uri' => Common::$baseUrl.'/',
                         ]],
-                        'icon' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/simbiat.png',
-                        'logo' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/ogimage.png',
+                        'icon' => Common::$baseUrl.'/img/favicons/simbiat.png',
+                        'logo' => Common::$baseUrl.'/img/favicons/ogimage.png',
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [
-                        'webMaster' => $GLOBALS['siteconfig']['adminmail'],
-                        'managingEditor' => $GLOBALS['siteconfig']['adminmail'],
+                        'webMaster' => Common::adminMail,
+                        'managingEditor' => Common::adminMail,
                         'language' => 'en-us',
                         'ttl' => 3600,
                         'image' => [
-                            'url' => 'https://'.$_SERVER['HTTP_HOST'].'/img/favicons/android/144x144.png',
+                            'url' => Common::$baseUrl.'/img/favicons/android/144x144.png',
                             'width' => 144,
                             'height' => 144,
                         ],
@@ -86,21 +87,22 @@ class Feeds
                 #Set query for the feed
                 if ($format === 'atom') {
                     $query = match($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
+                        'bicchanged' => 'SELECT CONCAT(\''.Common::$baseUrl.'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
+                        'bicdeleted' => 'SELECT CONCAT(\''.Common::$baseUrl.'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
                 } elseif ($format === 'rss') {
                     $query = match($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(\'https://'.$_SERVER['HTTP_HOST'].'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
+                        'bicchanged' => 'SELECT CONCAT(\''.Common::$baseUrl.'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
+                        'bicdeleted' => 'SELECT CONCAT(\''.Common::$baseUrl.'/bictracker/bic/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
-
                 }
                 #Generate the feed
-                if ($format === 'atom') {
-                    (new Atom)->Atom($GLOBALS['siteconfig']['site_name'].': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
-                } elseif ($format === 'rss') {
-                    (new RSS)->RSS($GLOBALS['siteconfig']['site_name'].': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
+                if (!empty($query)) {
+                    if ($format === 'atom') {
+                        (new Atom)->Atom(Common::siteName.': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
+                    } elseif ($format === 'rss') {
+                        (new RSS)->RSS(Common::siteName.': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
+                    }
                 }
             }
         }

@@ -3,11 +3,12 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 #Class that deals with user registration, login, logout, etc.
+use Simbiat\Config\Common;
 use Simbiat\HomePage;
 
 class Signinup
 {
-    use Common;
+    use \Simbiat\usercontrol\Common;
 
     public function register(): array
     {
@@ -157,7 +158,7 @@ class Signinup
 
     public function cookieLogin(): array
     {
-        $cookieName = str_replace(['.', ' '], '_', 'rememberme_'.$GLOBALS['siteconfig']['http_host']);
+        $cookieName = str_replace(['.', ' '], '_', 'rememberme_'.Common::$http_host);
         #Check if cookie exists
         if (empty($_COOKIE[$cookieName])) {
             return [];
@@ -210,7 +211,7 @@ class Signinup
     {
         #Remove rememberme cookie
         #From browser
-        setcookie('rememberme_'.$GLOBALS['siteconfig']['http_host'], '', ['expires' => 1, 'path' => '/', 'domain' => $GLOBALS['siteconfig']['http_host'], 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
+        setcookie('rememberme_'.Common::$http_host, '', ['expires' => 1, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
         #From DB
         try {
             #Establish DB
@@ -264,10 +265,10 @@ class Signinup
                 return;
             }
             #Set options
-            $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => $GLOBALS['siteconfig']['http_host'], 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
+            $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
             #Set cookie value
             $value = json_encode(['id' => $security->encrypt($id) , 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
-            setcookie('rememberme_'.$GLOBALS['siteconfig']['http_host'], $value, $options);
+            setcookie('rememberme_'.Common::$http_host, $value, $options);
         } catch (\Throwable) {
             #Do nothing, since not critical
         }

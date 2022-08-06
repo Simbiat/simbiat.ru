@@ -3,6 +3,7 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker;
 
+use Simbiat\Config\FFTracker;
 use Simbiat\Cron;
 use Simbiat\Errors;
 
@@ -34,7 +35,7 @@ trait Traits
     private function CrestMerge(string $groupId, array $images, bool $debug = false): ?string
     {
         try {
-            $imgFolder = $GLOBALS['siteconfig']['merged_crests'];
+            $imgFolder = FFTracker::$crests;
             #Checking if directory exists
             if (!is_dir($imgFolder)) {
                 #Creating directory
