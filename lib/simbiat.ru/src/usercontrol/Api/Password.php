@@ -39,8 +39,6 @@ class Password extends Api
         if (HomePage::$dbup === false) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
-        #Cache Security object
-        $security = new Security();
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {

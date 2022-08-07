@@ -44,7 +44,7 @@ class Activation extends Page
         $emails = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
         #Check if provided activation code fits any of those mails
         foreach ($emails as $email=>$code) {
-            if (password_verify($activation, $code) && (new \Simbiat\usercontrol\Emails)->activate($userid, $email)) {
+            if (password_verify($activation, $code) && \Simbiat\usercontrol\Emails::activate($userid, $email)) {
                 $outputArray = ['activated' => true, 'email' => $email];
                 break;
             }

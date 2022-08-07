@@ -45,16 +45,16 @@ class Emails extends Api
         }
         switch ($path[0]) {
             case 'activate':
-                (new \Simbiat\usercontrol\Emails)->activationMail($_POST['email']);
+                \Simbiat\usercontrol\Emails::activationMail($_POST['email']);
                 return ['response' => true];
             case 'add':
-                return (new \Simbiat\usercontrol\Emails)->add($_POST['email']);
+                return \Simbiat\usercontrol\Emails::add($_POST['email']);
             case 'delete':
-                return ['response' => (new \Simbiat\usercontrol\Emails)->delete($_POST['email'])];
+                return ['response' => \Simbiat\usercontrol\Emails::delete($_POST['email'])];
             case 'subscribe':
-                return ['response' => (new \Simbiat\usercontrol\Emails)->subscribe($_POST['email'])];
+                return ['response' => \Simbiat\usercontrol\Emails::subscribe($_POST['email'])];
             case 'unsubscribe':
-                return ['response' => (new \Simbiat\usercontrol\Emails)->unsubscribe($_POST['email'])];
+                return ['response' => \Simbiat\usercontrol\Emails::unsubscribe($_POST['email'])];
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported verb'];
         }

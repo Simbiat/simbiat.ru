@@ -51,7 +51,7 @@ class Emails
         }
     }
 
-    public function activationMail(string $email, string $username = '', string $activation = ''): bool
+    public static function activationMail(string $email, string $username = '', string $activation = ''): bool
     {
         #Establish DB
         if (empty(HomePage::$dbController)) {
@@ -91,7 +91,7 @@ class Emails
         return true;
     }
 
-    public function activate(int $userid, string $email): bool
+    public static function activate(int $userid, string $email): bool
     {
         #Establish DB
         if (empty(HomePage::$dbController)) {
@@ -108,7 +108,7 @@ class Emails
         return HomePage::$dbController->query($queries);
     }
 
-    public function subscribe(string $email): bool
+    public static function subscribe(string $email): bool
     {
         if (empty($_SESSION['userid'])) {
             return false;
@@ -118,7 +118,7 @@ class Emails
         }
     }
 
-    public function unsubscribe(string $email): bool
+    public static function unsubscribe(string $email): bool
     {
         if (empty($_SESSION['userid'])) {
             return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email', [':email' => $email]);
@@ -128,7 +128,7 @@ class Emails
         }
     }
 
-    public function delete(string $email): bool
+    public static function delete(string $email): bool
     {
         if (empty($_SESSION['userid'])) {
             return false;
@@ -138,7 +138,7 @@ class Emails
         }
     }
 
-    public function add(string $email): array
+    public static function add(string $email): array
     {
         #Check if mail is banned or in use
         if (
@@ -153,6 +153,6 @@ class Emails
             return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
         }
         @session_regenerate_id(true);
-        return ['status' => 201, 'response' => $this->activationMail($email)];
+        return ['status' => 201, 'response' => Emails::activationMail($email)];
     }
 }

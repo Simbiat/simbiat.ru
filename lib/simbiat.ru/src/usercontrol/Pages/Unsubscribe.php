@@ -35,7 +35,7 @@ class Unsubscribe extends Page
         }
         $outputArray = [];
         $outputArray['email'] = $email;
-        if (!(new \Simbiat\usercontrol\Emails)->unsubscribe($email)) {
+        if (!\Simbiat\usercontrol\Emails::unsubscribe($email)) {
             $outputArray['http_error'] = 500;
             $outputArray['reason'] = 'Failed to unsubscribe '.$email.'. You can try again, but if issue persists, contact us for assistance.';
         }
