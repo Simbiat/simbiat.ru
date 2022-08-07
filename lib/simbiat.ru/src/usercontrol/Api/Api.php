@@ -6,11 +6,15 @@ class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'signinup', 'emails', 'password', 'username', 'profile', 'fflink'
+        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink',
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
         'User login and creation/deletion handling',
+        'Register on the website',
+        'Login to the website',
+        'Password reset',
+        'Logout the current session',
         'Emails management',
         'Password change',
         'Username change',
@@ -23,7 +27,10 @@ class Api extends \Simbiat\Abstracts\Api
     protected function genData(array $path): array
     {
         return match($path[0]) {
-            'signinup' => (new Signinup)->route(array_slice($path, 1)),
+            'remind' => (new Remind)->route(array_slice($path, 1)),
+            'login' => (new Login)->route(array_slice($path, 1)),
+            'logout' => (new Logout)->route(array_slice($path, 1)),
+            'register' => (new Register)->route(array_slice($path, 1)),
             'emails' => (new Emails)->route(array_slice($path, 1)),
             'password' => (new Password)->route(array_slice($path, 1)),
             'username' => (new Username)->route(array_slice($path, 1)),

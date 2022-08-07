@@ -774,7 +774,7 @@ class Aside {
             formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             let spinner = document.getElementById('signinup_spinner');
             spinner.classList.remove('hidden');
-            ajax(location.protocol + '//' + location.host + '/api/uc/signinup/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
+            ajax(location.protocol + '//' + location.host + '/api/uc/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     if (formData.get('signinup[type]') === 'remind') {
                         new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');

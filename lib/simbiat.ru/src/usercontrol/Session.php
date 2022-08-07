@@ -58,7 +58,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $data = [];
         }
         #Login through cookie if present
-        $data = array_merge($data, (new Signinup)->cookieLogin());
+        $data = array_merge($data, $this->cookieLogin());
         $this->dataRefresh($data);
         return serialize($data);
     }
@@ -200,6 +200,51 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         } catch (\Throwable) {
             $data['userid'] = null;
             $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
+        }
+    }
+
+    private function cookieLogin(): array
+    {
+        $cookieName = str_replace(['.', ' '], '_', 'rememberme_'.Common::$http_host);
+        #Check if cookie exists
+        if (empty($_COOKIE[$cookieName])) {
+            return [];
+        }
+        #Validate cookie
+        try {
+            #Decode data
+            $data = json_decode($_COOKIE[$cookieName], true);
+            if (empty($data['id']) || empty($data['pass'])) {
+                #No expected data found
+                return [];
+            }
+            #Cache Security object
+            $data['id'] = Security::decrypt($data['id']);
+            #Check DB
+            if (HomePage::$dbController !== null) {
+                #Get user data
+                $savedData = HomePage::$dbController->selectRow('SELECT `uc__cookies`.`userid`, `validator`, `username` FROM `uc__cookies` LEFT JOIN `uc__users` ON `uc__cookies`.`userid`=`uc__users`.`userid` WHERE `cookieid`=:id',
+                    [':id' => $data['id']]
+                );
+                if (empty($savedData) || empty($savedData['validator'])) {
+                    #No cookie found or no password present
+                    return [];
+                }
+                #Validate cookie password
+                if (hash('sha3-512', $data['pass']) !== $savedData['validator']) {
+                    #Wrong password
+                    return [];
+                }
+                #Reset strikes if any
+                Security::resetStrikes($savedData['userid']);
+                #Update cookie
+                Security::rememberMe($data['id'], $savedData['userid']);
+                return ['userid' => $savedData['userid'], 'username' => $savedData['username']];
+            } else {
+                return [];
+            }
+        } catch (\Throwable) {
+            return [];
         }
     }
 

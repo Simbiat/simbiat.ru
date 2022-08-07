@@ -320,4 +320,40 @@ class Security
             return false;
         }
     }
+
+    #Setting cookie for remembering user
+    public static function rememberMe(string $id = '', null|string|int $userid = null): void
+    {
+        try {
+            #Generate cookie ID
+            if (empty($id)) {
+                $id = bin2hex(random_bytes(64));
+            }
+            #Generate cookie password
+            $pass = bin2hex(random_bytes(128));
+            #Write cookie data to DB
+            if (HomePage::$dbController === null) {
+                #If we can't write to DB for some reason - do not share any data with client
+                return;
+            }
+            if (HomePage::$dbController !== null && (!empty($_SESSION['userid']) || !empty($userid))) {
+                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `time`=CURRENT_TIMESTAMP();',
+                    [
+                        ':cookie' => $id,
+                        ':pass' => hash('sha3-512', $pass),
+                        ':id' => $userid ?? [$_SESSION['userid'], 'int'],
+                    ]
+                );
+            } else {
+                return;
+            }
+            #Set options
+            $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
+            #Set cookie value
+            $value = json_encode(['id' => Security::encrypt($id), 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
+            setcookie('rememberme_'.Common::$http_host, $value, $options);
+        } catch (\Throwable) {
+            #Do nothing, since not critical
+        }
+    }
 }

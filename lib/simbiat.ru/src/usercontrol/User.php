@@ -3,6 +3,8 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Abstracts\Entity;
+use Simbiat\HomePage;
+use Simbiat\Security;
 
 class User extends Entity
 {
@@ -291,6 +293,61 @@ class User extends Entity
             return ['http_error' => 400, 'reason' => 'No changes detected'];
         } else {
             return ['response' => $this->dbController->query($queries)];
+        }
+    }
+
+    public function login(bool $afterRegister = false): array
+    {
+        #Validating data
+        if (empty($_POST['signinup']['email'])) {
+            return ['http_error' => 400, 'reason' => 'No email provided'];
+        }
+        if (empty($_POST['signinup']['password'])) {
+            return ['http_error' => 400, 'reason' => 'No password provided'];
+        }
+        #Check if banned
+        if (Checkers::bannedIP() ||
+            Checkers::bannedMail($_POST['signinup']['email']) ||
+            Checkers::bannedName($_POST['signinup']['email'])
+        ) {
+            return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
+        }
+        #Check DB
+        if (empty(HomePage::$dbController)) {
+            return ['http_error' => 503, 'reason' => 'Database unavailable'];
+        }
+        #Get password of the user, while also checking if it exists
+        try {
+            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE `uc__user_to_email`.`email`=:mail',
+                [':mail' => $_POST['signinup']['email']]
+            );
+        } catch (\Throwable) {
+            $credentials = null;
+        }
+        #Check if password is set (means that user does exist)
+        if (empty($credentials['password'])) {
+            return ['http_error' => 403, 'reason' => 'No user found'];
+        }
+        #Check for strikes
+        if ($credentials['strikes'] >= 5) {
+            return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
+        }
+        #Check the password
+        if (Security::passValid($credentials['userid'], $_POST['signinup']['password'], $credentials['password']) === false) {
+            return ['http_error' => 403, 'reason' => 'Bad password'];
+        }
+        #Add username and userid to session
+        $_SESSION['username'] = $credentials['username'];
+        $_SESSION['userid'] = $credentials['userid'];
+        #Set cookie if we have "rememberme" checked
+        if (!empty($_POST['signinup']['rememberme'])) {
+            Security::rememberMe();
+        }
+        session_regenerate_id(true);
+        if ($afterRegister) {
+            return ['status' => 201, 'response' => true];
+        } else {
+            return ['response' => true];
         }
     }
 }
