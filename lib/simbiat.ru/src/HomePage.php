@@ -104,7 +104,7 @@ class HomePage
                         } elseif (self::$dbUpdate) {
                             self::$http_error = ['http_error' => 'maintenance'];
                         #Check if banned by IP
-                        } elseif ((new Checkers)->bannedIP() === true) {
+                        } elseif (Checkers::bannedIP() === true) {
                             self::$http_error = ['http_error' => 403];
                         }
                         if ($uri[0] !== 'api') {

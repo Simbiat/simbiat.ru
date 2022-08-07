@@ -30,12 +30,11 @@ class Signinup
             $timezone = 'UTC';
         }
         #Check if banned or in use
-        $checkers = new Checkers;
-        if ($checkers->bannedIP() ||
-            $checkers->bannedMail($_POST['signinup']['email']) ||
-            $checkers->bannedName($_POST['signinup']['username']) ||
-            $checkers->usedMail($_POST['signinup']['email']) ||
-            $checkers->usedName($_POST['signinup']['username'])
+        if (Checkers::bannedIP() ||
+            Checkers::bannedMail($_POST['signinup']['email']) ||
+            Checkers::bannedName($_POST['signinup']['username']) ||
+            Checkers::usedMail($_POST['signinup']['email']) ||
+            Checkers::usedName($_POST['signinup']['username'])
         ) {
             #Do not provide details on why exactly it failed to avoid email spoofing
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
@@ -100,10 +99,9 @@ class Signinup
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
-        $checkers = new Checkers;
-        if ($checkers->bannedIP() ||
-            $checkers->bannedMail($_POST['signinup']['email']) ||
-            $checkers->bannedName($_POST['signinup']['email'])
+        if (Checkers::bannedIP() ||
+            Checkers::bannedMail($_POST['signinup']['email']) ||
+            Checkers::bannedName($_POST['signinup']['email'])
         ) {
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }

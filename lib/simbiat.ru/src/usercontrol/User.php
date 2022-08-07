@@ -154,8 +154,7 @@ class User extends Entity
     public function changeUsername(string $newName): array
     {
         #Check if new name is valid
-        $checkers = new Checkers;
-        if (empty($newName) && $checkers->bannedName($newName) || $checkers->usedName($newName)) {
+        if (empty($newName) && Checkers::bannedName($newName) || Checkers::usedName($newName)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
         }
         #Check if we have current username and get it if we do not

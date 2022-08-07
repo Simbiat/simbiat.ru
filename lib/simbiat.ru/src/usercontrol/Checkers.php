@@ -8,7 +8,7 @@ use Simbiat\HomePage;
 class Checkers
 {
     #Function to check whether IP is banned
-    public function bannedIP(): bool
+    public static function bannedIP(): bool
     {
         #Get IP
         $ip = Helpers::getIP();
@@ -25,7 +25,7 @@ class Checkers
     }
 
     #Function to check whether name is banned
-    public function bannedName(string $name): bool
+    public static function bannedName(string $name): bool
     {
         #Check format
         if (preg_match('/^[\p{L}\d.!#$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
@@ -40,7 +40,7 @@ class Checkers
     }
 
     #Function to check whether email is banned
-    public function bannedMail(string $mail): bool
+    public static function bannedMail(string $mail): bool
     {
         #Validate that string is a mail
         if (filter_var($mail, FILTER_VALIDATE_EMAIL) === false) {
@@ -56,7 +56,7 @@ class Checkers
     }
 
     #Function to check if mail is already used
-    public function usedMail(string $mail): bool
+    public static function usedMail(string $mail): bool
     {
         #Check against DB table
         try {
@@ -67,7 +67,7 @@ class Checkers
     }
 
     #Function to check if username is already used
-    public function usedName(string $name): bool
+    public static function usedName(string $name): bool
     {
         #Check against DB table
         try {
