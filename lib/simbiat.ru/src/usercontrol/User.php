@@ -157,7 +157,7 @@ class User extends Entity
     public function changeUsername(string $newName): array
     {
         #Check if new name is valid
-        if (empty($newName) && Checkers::bannedName($newName) || Checkers::usedName($newName)) {
+        if (empty($newName) && $this->bannedName($newName) || $this->usedName($newName)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
         }
         #Check if we have current username and get it if we do not
@@ -297,6 +297,32 @@ class User extends Entity
         }
     }
 
+    #Function to check if username is already used
+    public function usedName(string $name): bool
+    {
+        #Check against DB table
+        try {
+            return HomePage::$dbController->check('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name]);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    #Function to check whether name is banned
+    public function bannedName(string $name): bool
+    {
+        #Check format
+        if (preg_match('/^[\p{L}\d.!#$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
+            return false;
+        }
+        #Check against DB table
+        try {
+            return HomePage::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
     public function login(bool $afterRegister = false): array
     {
         #Validating data
@@ -307,9 +333,9 @@ class User extends Entity
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
-        if (Checkers::bannedIP() ||
+        if (
             (new Email)->setId($_POST['signinup']['email'])->isBanned() ||
-            Checkers::bannedName($_POST['signinup']['email'])
+            $this->bannedName($_POST['signinup']['email'])
         ) {
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }

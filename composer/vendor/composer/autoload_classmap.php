@@ -448,7 +448,6 @@ return array(
     'Simbiat\\usercontrol\\Api\\Register' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Register.php',
     'Simbiat\\usercontrol\\Api\\Remind' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Remind.php',
     'Simbiat\\usercontrol\\Api\\Username' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Username.php',
-    'Simbiat\\usercontrol\\Checkers' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Checkers.php',
     'Simbiat\\usercontrol\\Email' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Email.php',
     'Simbiat\\usercontrol\\Pages\\Activation' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Activation.php',
     'Simbiat\\usercontrol\\Pages\\Avatars' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Pages/Avatars.php',

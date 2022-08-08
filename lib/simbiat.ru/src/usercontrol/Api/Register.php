@@ -5,7 +5,6 @@ namespace Simbiat\usercontrol\Api;
 use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
 use Simbiat\Security;
-use Simbiat\usercontrol\Checkers;
 use Simbiat\usercontrol\Email;
 use Simbiat\usercontrol\User;
 
@@ -27,6 +26,8 @@ class Register extends Api
         #Validating data
         if (empty($_POST['signinup']['username'])) {
             return ['http_error' => 400, 'reason' => 'No username provided'];
+        } else {
+            $user = new User();
         }
         if (empty($_POST['signinup']['email'])) {
             return ['http_error' => 400, 'reason' => 'No email provided'];
@@ -45,10 +46,10 @@ class Register extends Api
             $timezone = 'UTC';
         }
         #Check if banned or in use
-        if (Checkers::bannedIP() ||
+        if (
             $email->isBad() ||
-            Checkers::bannedName($_POST['signinup']['username']) ||
-            Checkers::usedName($_POST['signinup']['username'])
+            $user->bannedName($_POST['signinup']['username']) ||
+            $user->usedName($_POST['signinup']['username'])
         ) {
             #Do not provide details on why exactly it failed to avoid email spoofing
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
@@ -97,7 +98,7 @@ class Register extends Api
             ];
             HomePage::$dbController->query($queries);
             $email->confirm($_POST['signinup']['username'], $activation);
-            return (new User)->login(true);
+            return $user->login(true);
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Registration failed'];
         }

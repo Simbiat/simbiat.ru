@@ -10,7 +10,6 @@ use Simbiat\Database\Pool;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Headers;
 use Simbiat\Routing\MainRouter;
-use Simbiat\usercontrol\Checkers;
 use Simbiat\usercontrol\Session;
 
 class HomePage
@@ -104,8 +103,8 @@ class HomePage
                         } elseif (self::$dbUpdate) {
                             self::$http_error = ['http_error' => 'maintenance'];
                         #Check if banned by IP
-                        } elseif (Checkers::bannedIP() === true) {
-                            self::$http_error = ['http_error' => 403];
+                        } elseif ($this->bannedIP() === true) {
+                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                         }
                         if ($uri[0] !== 'api') {
                             Config\Common::$links = array_merge(Config\Common::$links, [
@@ -282,5 +281,22 @@ class HomePage
             $XCSRFToken = $_SESSION['CSRF'] ?? Security::genToken();
         }
         return $XCSRFToken;
+    }
+
+    #Function to check whether IP is banned
+    public function bannedIP(): bool
+    {
+        #Get IP
+        $ip = Helpers::getIP();
+        if ($ip === null) {
+            #We failed to get any proper IP, something is definitely wrong, protect ourselves
+            return true;
+        }
+        #Check against DB table
+        try {
+            return HomePage::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $ip]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }
