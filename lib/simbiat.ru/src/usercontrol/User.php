@@ -308,7 +308,7 @@ class User extends Entity
         }
         #Check if banned
         if (Checkers::bannedIP() ||
-            Checkers::bannedMail($_POST['signinup']['email']) ||
+            (new Email)->setId($_POST['signinup']['email'])->isBanned() ||
             Checkers::bannedName($_POST['signinup']['email'])
         ) {
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];

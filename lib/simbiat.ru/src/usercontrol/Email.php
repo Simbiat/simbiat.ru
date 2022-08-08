@@ -60,7 +60,7 @@ class Email extends Entity
     }
 
     #Function to check whether email is banned
-    private function isBanned(): bool
+    public function isBanned(): bool
     {
         #Check against DB table
         try {
