@@ -63,10 +63,8 @@ class Character extends Page
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/character/' . $id. '/lodestone'];
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/character/' . $id];
         }
-        #Get full path
-        if (is_file(FFTracker::$avatars.'96x96'.'/'.$id.'.jpg')) {
-            $outputArray['favicon'] = '/img/fftracker/avatars/96x96'.'/'.$id.'.jpg';
-        }
+        #Set favicon to avatar
+        $outputArray['favicon'] = 'https://img2.finalfantasyxiv.com/f/'.$outputArray['character']['avatarID'].'c0_96x96.jpg';
         return $outputArray;
     }
 }
