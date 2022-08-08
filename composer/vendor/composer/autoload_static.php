@@ -610,7 +610,6 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\HTTP20\\RSS' => __DIR__ . '/../..' . '/../lib/HTTP20/src/HTTP20/RSS.php',
         'Simbiat\\HTTP20\\Sharing' => __DIR__ . '/../..' . '/../lib/HTTP20/src/HTTP20/Sharing.php',
         'Simbiat\\HTTP20\\Sitemap' => __DIR__ . '/../..' . '/../lib/HTTP20/src/HTTP20/Sitemap.php',
-        'Simbiat\\Helpers' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Helpers.php',
         'Simbiat\\HomePage' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/HomePage.php',
         'Simbiat\\Lodestone' => __DIR__ . '/../..' . '/../lib/lodestone-parser/src/Lodestone.php',
         'Simbiat\\LodestoneModules\\Converters' => __DIR__ . '/../..' . '/../lib/lodestone-parser/src/LodestoneModules/Converters.php',

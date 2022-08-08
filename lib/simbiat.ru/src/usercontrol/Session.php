@@ -2,8 +2,11 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\AbstractParser;
+use DeviceDetector\Parser\Device\AbstractDeviceParser;
+use ipinfo\ipinfo\IPinfo;
 use Simbiat\Config\Common;
-use Simbiat\Helpers;
 use Simbiat\HomePage;
 use Simbiat\Security;
 
@@ -166,12 +169,20 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             if (empty($data['UA'])) {
                 #Add UserAgent data
                 #This is done to make the data readily available as soon as session is created and somewhat improve performance
-                $data['UA'] = Helpers::getUA();
+                $data['UA'] = $this->getUA();
             }
             if (empty($data['IP'])) {
                 #Add IP data
                 #This is done to make the data readily available as soon as session is created and somewhat improve performance
-                $data['IP'] = Helpers::getIP(true);
+                $data['IP'] = $this->getIP();
+            }
+            #Check if IP is banned
+            if (!empty($data['IP'])) {
+                try {
+                    $data['bannedIP'] = HomePage::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
+                } catch (\Throwable) {
+                    $data['bannedIP'] = false;
+                }
             }
             #Add CSRF token, if missing
             if (empty($data['CSRF'])) {
@@ -201,6 +212,97 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $data['userid'] = null;
             $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
         }
+    }
+
+    #Function to return IP
+    private function getIP(): ?string
+    {
+        $ip = null;
+        #Check if behind proxy
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            #Get list of IPs, that do validate as proper IP
+            $ips = array_filter(array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])), function($value) {
+                return filter_var($value, FILTER_VALIDATE_IP);
+            });
+            #Check if any are left
+            if (!empty($ips)) {
+                #Get the right-most IP
+                $ip = array_pop($ips);
+            }
+        }
+        if (empty($ip)) {
+            #Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                $ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
+            }
+        }
+        if (empty($ip)) {
+            #Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP);
+            }
+        }
+        if (!empty($ip)) {
+            #Attempt to get country and city, if they are not already present in DB. And only do it if DB is already up.
+            if (HomePage::$dbController !== null) {
+                try {
+                    if (!HomePage::$dbController->check('SELECT `ip` FROM `seo__ips` WHERE `ip`=:ip;', [':ip' => $ip])) {
+                        #Get data from ipinfo.io
+                        $ipinfo = (new IPinfo(settings: ['guzzle_opts' => ['verify' => false]]))->getDetails($ip);
+                        #Write it to DB
+                        if (empty($ipinfo->bogon) && !empty($ipinfo->country_name) && !empty($ipinfo->city)) {
+                            HomePage::$dbController->query('INSERT IGNORE INTO `seo__ips` (`ip`, `country`, `city`) VALUES (:ip, :country, :city);', [
+                                ':ip' => $ip,
+                                ':country' => $ipinfo->country_name,
+                                ':city' => $ipinfo->city,
+                            ]);
+                        }
+                    }
+                } catch (\Throwable) {
+                    #Do nothing, this is not critical
+                }
+            }
+            return $ip;
+        } else {
+            return null;
+        }
+    }
+
+    #Get Bot name, OS and Browser for user agent
+    private function getUA(): ?array
+    {
+        #Check if User Agent is present
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+            return NULL;
+        }
+        #Force full versions
+        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
+        #Initialize device detector
+        $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT']));
+        $dd->parse();
+        #Get bot name
+        $bot = $dd->getBot();
+        if ($bot !== NULL) {
+            #Do not waste resources on bots
+            return ['bot' => substr($bot['name'], 0, 64), 'os' => NULL, 'client' => NULL];
+        }
+        #Get OS
+        $os = $dd->getOs();
+        #Concat OS and version
+        $os = trim(($os['name'] ?? '').' '.($os['version'] ?? ''));
+        #Force OS to be NULL, if it's empty
+        if (empty($os)) {
+            $os = NULL;
+        }
+        #Get client
+        $client = $dd->getClient();
+        #Concat client and version
+        $client = trim(($client['name'] ?? '').' '.($client['version'] ?? ''));
+        #Force client to be NULL, if it's empty
+        if (empty($client)) {
+            $client = NULL;
+        }
+        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT']];
     }
 
     private function cookieLogin(): array

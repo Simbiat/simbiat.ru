@@ -99,9 +99,6 @@ class HomePage
                         #Show error page if maintenance is running
                         } elseif (self::$dbUpdate) {
                             self::$http_error = ['http_error' => 'maintenance'];
-                        #Check if banned by IP
-                        } elseif ($this->bannedIP() === true) {
-                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                         }
                         if ($uri[0] !== 'api') {
                             Config\Common::$links = array_merge(Config\Common::$links, [
@@ -121,10 +118,15 @@ class HomePage
                             #Show that client is unsupported
                             if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
                                 self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
+                            #Check if banned user
                             } elseif (!empty($_SESSION['banned'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
+                            #Check if deleted user
                             } elseif (!empty($_SESSION['deleted'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Deleted user'];
+                            #Check if banned IP
+                            } elseif (!empty($_SESSION['bannedIP'])) {
+                                self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                             }
                         }
                         #Check if we have cached the results already
@@ -291,22 +293,5 @@ class HomePage
             $XCSRFToken = $_SESSION['CSRF'] ?? Security::genToken();
         }
         return $XCSRFToken;
-    }
-
-    #Function to check whether IP is banned
-    public function bannedIP(): bool
-    {
-        #Get IP
-        $ip = Helpers::getIP();
-        if ($ip === null) {
-            #We failed to get any proper IP, something is definitely wrong, protect ourselves
-            return true;
-        }
-        #Check against DB table
-        try {
-            return HomePage::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $ip]);
-        } catch (\Throwable) {
-            return false;
-        }
     }
 }

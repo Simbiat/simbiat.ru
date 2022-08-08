@@ -122,7 +122,7 @@ class Security
             mkdir(Common::$securityCache);
         }
         #Calculate number of available threads
-        $threads = Helpers::countCores()*2;
+        $threads = self::countCores()*2;
         #Calculate iterations
         $iterations = 0;
         do {
@@ -144,6 +144,20 @@ class Security
         #Write config file
         file_put_contents(Common::$securityCache.'argon.json', json_encode($argonSettings, JSON_PRETTY_PRINT));
         return $argonSettings;
+    }
+
+    #Helper function to get count of available cores
+    private static function countCores(): int
+    {
+        if (function_exists('shell_exec') === true) {
+            $cores = intval(shell_exec((PHP_OS_FAMILY === 'Windows' ? 'echo %NUMBER_OF_PROCESSORS%' : 'nproc')));
+        } else {
+            $cores = 1;
+        }
+        if ($cores < 1) {
+            $cores = 1;
+        }
+        return $cores;
     }
 
     #Function to generate passphrase for encrypt and decrypt functions
