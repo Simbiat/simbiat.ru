@@ -28,7 +28,7 @@ class Email extends Entity
         #Validate that string is a mail
         if (filter_var($id, FILTER_VALIDATE_EMAIL) === false) {
             #Not an email, something is wrong, protect ourselves
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.self::class.'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
         } else {
             $this->id = $id;
         }

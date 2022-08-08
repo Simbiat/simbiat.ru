@@ -33,7 +33,7 @@ abstract class Entity
         #Convert to string for consistency
         $id = strval($id);
         if (preg_match($this->idFormat, $id) !== 1) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.self::class.'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
         } else {
             $this->id = $id;
         }
