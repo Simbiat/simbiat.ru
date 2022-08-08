@@ -327,13 +327,13 @@ class Character extends Entity
             $this->dbController->query($queries);
             #Register Free Company update if change was detected
             if (!empty($this->lodestone['freeCompany']['id']) && $this->dbController->check('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid'=>$this->id, ':fcID'=>$this->lodestone['freeCompany']['id']]) === false) {
-                if ((new FreeCompany)->setId($this->lodestone['freeCompany']['id'])->update() !== true) {
+                if ((new FreeCompany($this->lodestone['freeCompany']['id']))->update() !== true) {
                     (new Cron)->add('ffUpdateEntity', [$this->lodestone['freeCompany']['id'], 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->lodestone['freeCompany']['id']);
                 }
             }
             #Register PvP Team update if change was detected
             if (!empty($this->lodestone['pvp']['id']) && $this->dbController->check('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `characterid`=:characterid AND `pvpteamid`=:pvpID;', [':characterid'=>$this->id, ':pvpID'=>$this->lodestone['pvp']['id']]) === false) {
-                if ((new PvPTeam)->setId($this->lodestone['pvp']['id'])->update() !== true) {
+                if ((new PvPTeam($this->lodestone['pvp']['id']))->update() !== true) {
                     (new Cron)->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->lodestone['pvp']['id']);
                 }
             }

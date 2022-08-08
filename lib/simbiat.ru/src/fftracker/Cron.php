@@ -31,12 +31,12 @@ class Cron
     public function UpdateEntity(string $id, string $type): bool|string
     {
         return match ($type) {
-            'character' => (new Character)->setId($id)->update(),
-            'freecompany' => (new FreeCompany)->setId($id)->update(),
-            'pvpteam' => (new PvPTeam)->setId($id)->update(),
-            'linkshell' => (new Linkshell)->setId($id)->update(),
-            'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell)->setId($id)->update(),
-            'achievement' => (new Achievement)->setId($id)->update(),
+            'character' => (new Character($id))->update(),
+            'freecompany' => (new FreeCompany($id))->update(),
+            'pvpteam' => (new PvPTeam($id))->update(),
+            'linkshell' => (new Linkshell($id))->update(),
+            'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell($id))->update(),
+            'achievement' => (new Achievement($id))->update(),
             default => false,
         };
     }
@@ -88,7 +88,7 @@ class Cron
             #Get the freshest character ID
             $characterId = $dbController->selectValue('SELECT `characterid` FROM `ffxiv__character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
             #Grab its data from Lodestone
-            $character = (new Character)->setId(strval($characterId))->getFromLodestone();
+            $character = (new Character(strval($characterId)))->getFromLodestone();
             if (empty($character['jobs'])) {
                 return 'No jobs retrieved for character '.$characterId;
             }

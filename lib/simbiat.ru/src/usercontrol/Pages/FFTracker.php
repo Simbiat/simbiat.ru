@@ -29,6 +29,6 @@ class FFTracker extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        return (new User)->setId($_SESSION['userid'])->getFF();
+        return (new User($_SESSION['userid']))->getFF();
     }
 }

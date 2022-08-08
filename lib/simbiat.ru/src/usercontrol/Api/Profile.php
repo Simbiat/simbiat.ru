@@ -20,6 +20,6 @@ class Profile extends Api
 
     protected function genData(array $path): array
     {
-        return (new User)->setId($_SESSION['userid'])->updateProfile();
+        return (new User($_SESSION['userid']))->updateProfile();
     }
 }

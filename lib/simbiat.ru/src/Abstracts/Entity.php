@@ -19,12 +19,16 @@ abstract class Entity
     #Debug flag
     protected bool $debug = false;
 
-    public final function __construct(bool $debug = false)
+    public final function __construct(string|int|null $id = null, bool $debug = false)
     {
         #ALl entities are expected to use database somehow, thus using
         $this->dbController = HomePage::$dbController;
         #Set debug flag
         $this->debug = $debug;
+        #If ID was provided - set it as well
+        if (!empty($id)) {
+            $this->setId($id);
+        }
     }
 
     #Set ID

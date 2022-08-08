@@ -39,7 +39,7 @@ class Password extends Api
         if (HomePage::$dbup === false) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
-        $user = (new User)->setId($id);
+        $user = (new User($id));
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {

@@ -43,7 +43,7 @@ class Remind extends Api
                 $token = Security::genToken();
                 #Write the reset token to DB
                 HomePage::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
-                (new Email)->setId($credentials['email'])->send('Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
+                (new Email($credentials['email']))->send('Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Registration failed'];
             }

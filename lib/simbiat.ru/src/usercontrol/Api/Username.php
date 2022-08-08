@@ -20,6 +20,6 @@ class Username extends Api
 
     protected function genData(array $path): array
     {
-        return (new User)->setId($_SESSION['userid'])->changeUsername($_POST['username'] ?? '');
+        return (new User($_SESSION['userid']))->changeUsername($_POST['username'] ?? '');
     }
 }

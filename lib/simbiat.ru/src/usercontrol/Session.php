@@ -182,7 +182,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             if (empty($data['userid'])) {
                 $data['username'] = $data['UA']['bot'] ?? null;
             } else {
-                $user = (new User)->setId($data['userid'])->get();
+                $user = (new User($data['userid']))->get();
                 #Assign some data to the session
                 if ($user->id) {
                     $data['username'] = $user->username;
@@ -235,9 +235,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     #Wrong password
                     return [];
                 }
-                $user = (new User);
+                $user = (new User($savedData['userid']));
                 #Reset strikes if any
-                $user->setId($savedData['userid'])->resetStrikes($savedData['userid']);
+                $user->resetStrikes($savedData['userid']);
                 #Update cookie
                 $user->rememberMe($data['id']);
                 return ['userid' => $savedData['userid'], 'username' => $savedData['username']];

@@ -32,7 +32,7 @@ class Emails extends Page
     {
         $outputArray = [];
         #Get email list
-        $outputArray['emails'] = (new User)->setId($_SESSION['userid'])->getEmails();
+        $outputArray['emails'] = (new User($_SESSION['userid']))->getEmails();
         #Count how many emails are activated (to restrict removal of emails)
         $outputArray['countActivated'] = count(array_filter(array_column($outputArray['emails'], 'activation'), function($x) { return empty($x); }));
         return $outputArray;

@@ -36,7 +36,7 @@ class Unsubscribe extends Page
         }
         $outputArray = [];
         $outputArray['email'] = $email;
-        if (!(new Email)->setId($email)->unsubscribe()) {
+        if (!(new Email($email))->unsubscribe()) {
             $outputArray['http_error'] = 500;
             $outputArray['reason'] = 'Failed to unsubscribe '.$email.'. You can try again, but if issue persists, contact us for assistance.';
         }

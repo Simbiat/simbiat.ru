@@ -31,7 +31,7 @@ class Profile extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        $outputArray['userData'] = (new User)->setId($_SESSION['userid'])->getArray();
+        $outputArray['userData'] = (new User($_SESSION['userid']))->getArray();
         $now = new \DateTime();
         $outputArray['timezones'] = [];
         foreach (timezone_identifiers_list() as $timezone) {

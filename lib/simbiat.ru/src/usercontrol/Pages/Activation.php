@@ -45,7 +45,7 @@ class Activation extends Page
         $emails = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
         #Check if provided activation code fits any of those mails
         foreach ($emails as $email=>$code) {
-            if (password_verify($activation, $code) && (new Email)->setId($email)->activate($userid)) {
+            if (password_verify($activation, $code) && (new Email($email))->activate($userid)) {
                 $outputArray = ['activated' => true, 'email' => $email];
                 break;
             }

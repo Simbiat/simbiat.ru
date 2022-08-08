@@ -46,16 +46,16 @@ class Emails extends Api
         }
         switch ($path[0]) {
             case 'activate':
-                (new Email)->setId($_POST['email'])->confirm();
+                (new Email($_POST['email']))->confirm();
                 return ['response' => true];
             case 'add':
-                return (new Email)->setId($_POST['email'])->add();
+                return (new Email($_POST['email']))->add();
             case 'delete':
-                return ['response' => (new Email)->setId($_POST['email'])->delete()];
+                return ['response' => (new Email($_POST['email']))->delete()];
             case 'subscribe':
-                return ['response' => (new Email)->setId($_POST['email'])->subscribe()];
+                return ['response' => (new Email($_POST['email']))->subscribe()];
             case 'unsubscribe':
-                return ['response' => (new Email)->setId($_POST['email'])->unsubscribe()];
+                return ['response' => (new Email($_POST['email']))->unsubscribe()];
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported verb'];
         }

@@ -32,7 +32,7 @@ class Avatars extends Page
     {
         $outputArray = [];
         #Get avatars list
-        $outputArray['avatars'] = (new User)->setId($_SESSION['userid'])->getAvatars();
+        $outputArray['avatars'] = (new User($_SESSION['userid']))->getAvatars();
         return $outputArray;
     }
 }

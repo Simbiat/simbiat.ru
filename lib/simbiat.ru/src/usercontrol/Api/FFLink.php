@@ -20,6 +20,6 @@ class FFLink extends Api
 
     protected function genData(array $path): array
     {
-        return (new Character)->setId($_POST['characterid'] ?? '')->linkUser();
+        return (new Character($_POST['characterid'] ?? ''))->linkUser();
     }
 }

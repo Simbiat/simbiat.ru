@@ -32,7 +32,7 @@ class Register extends Api
         if (empty($_POST['signinup']['email'])) {
             return ['http_error' => 400, 'reason' => 'No email provided'];
         } else {
-            $email = (new Email)->setId($_POST['signinup']['email']);
+            $email = (new Email($_POST['signinup']['email']));
         }
         if (empty($_POST['signinup']['password'])) {
             return ['http_error' => 400, 'reason' => 'No password provided'];

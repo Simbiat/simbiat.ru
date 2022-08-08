@@ -322,7 +322,7 @@ class User extends Entity
         }
         #Check if banned
         if (
-            (new Email)->setId($_POST['signinup']['email'])->isBanned() ||
+            (new Email($_POST['signinup']['email']))->isBanned() ||
             $this->bannedName($_POST['signinup']['email'])
         ) {
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
