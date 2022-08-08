@@ -26,11 +26,7 @@ class FreeCompany extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        try {
-            $outputArray['freecompany'] = (new \Simbiat\fftracker\Entities\FreeCompany())->setId($id)->getArray();
-        } catch (\UnexpectedValueException) {
-            return ['http_error' => 404];
-        }
+        $outputArray['freecompany'] = (new \Simbiat\fftracker\Entities\FreeCompany())->setId($id)->getArray();
         #Check if ID was found
         if (empty($outputArray['freecompany']['id'])) {
             return ['http_error' => 404];

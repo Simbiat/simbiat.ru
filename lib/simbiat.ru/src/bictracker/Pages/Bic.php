@@ -27,11 +27,7 @@ class Bic extends Page
         #Sanitize BIC
         $BIC = $path[0] ?? '';
         #Try to get details
-        try {
-            $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->setId($BIC)->getArray();
-        } catch (\UnexpectedValueException) {
-            return ['http_error' => 404];
-        }
+        $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic)->setId($BIC)->getArray();
         #Check if ID was found
         if ($outputArray['bicdetails']['id'] === null) {
             return ['http_error' => 404];

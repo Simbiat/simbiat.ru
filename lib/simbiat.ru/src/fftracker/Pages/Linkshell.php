@@ -26,14 +26,10 @@ class Linkshell extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        try {
-            if ($this::crossworld) {
-                $outputArray['linkshell'] = (new \Simbiat\fftracker\Entities\CrossworldLinkshell())->setId($id)->getArray();
-            } else {
-                $outputArray['linkshell'] = (new \Simbiat\fftracker\Entities\Linkshell())->setId($id)->getArray();
-            }
-        } catch (\UnexpectedValueException) {
-            return ['http_error' => 404];
+        if ($this::crossworld) {
+            $outputArray['linkshell'] = (new \Simbiat\fftracker\Entities\CrossworldLinkshell())->setId($id)->getArray();
+        } else {
+            $outputArray['linkshell'] = (new \Simbiat\fftracker\Entities\Linkshell())->setId($id)->getArray();
         }
         #Check if ID was found
         if (empty($outputArray['linkshell']['id'])) {

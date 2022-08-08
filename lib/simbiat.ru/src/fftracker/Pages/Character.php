@@ -26,11 +26,7 @@ class Character extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        try {
-            $outputArray['character'] = (new \Simbiat\fftracker\Entities\Character)->setId($id)->getArray();
-        } catch (\UnexpectedValueException) {
-            return ['http_error' => 404];
-        }
+        $outputArray['character'] = (new \Simbiat\fftracker\Entities\Character)->setId($id)->getArray();
         #Check if ID was found
         if (empty($outputArray['character']['id'])) {
             return ['http_error' => 404];

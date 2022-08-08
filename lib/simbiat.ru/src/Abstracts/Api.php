@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
+use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 use Simbiat\Security;
@@ -49,7 +50,16 @@ abstract class Api
         } elseif ($this->CSRF && !$this->antiCSRF(exit: false)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
-            $data = $this->getData($path);
+            try {
+                $data = $this->getData($path);
+            } catch (\Throwable $exception) {
+                if (preg_match('/ID `.*` for entity `.*` has incorrect format\./ui', $exception->getMessage()) === 1) {
+                    $data = ['http_error' => 400, 'reason' => $exception->getMessage()];
+                } else {
+                    Errors::error_log($exception);
+                    $data = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
+                }
+            }
         }
         if ($this->topLevel) {
             #Override template

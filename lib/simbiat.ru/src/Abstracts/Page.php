@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Config\Common;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 
 abstract class Page
@@ -71,7 +72,16 @@ abstract class Page
                 $page = ['http_error' => 403];
             } else {
                 #Generate the page
-                $page = $this->generate($path);
+                try {
+                    $page = $this->generate($path);
+                } catch (\Throwable $exception) {
+                    if (preg_match('/ID `.*` for entity `.*` has incorrect format\./ui', $exception->getMessage()) === 1) {
+                        $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
+                    } else {
+                        Errors::error_log($exception);
+                        $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
+                    }
+                }
                 #Send Last Modified header to potentially allow earlier exit
                 if (!$this->headerSent) {
                     $this->lastModified($this->lastModified);

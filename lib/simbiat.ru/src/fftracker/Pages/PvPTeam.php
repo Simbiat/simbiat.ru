@@ -26,11 +26,7 @@ class PvPTeam extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        try {
-            $outputArray['pvpteam'] = (new \Simbiat\fftracker\Entities\PvPTeam())->setId($id)->getArray();
-        } catch (\UnexpectedValueException) {
-            return ['http_error' => 404];
-        }
+        $outputArray['pvpteam'] = (new \Simbiat\fftracker\Entities\PvPTeam())->setId($id)->getArray();
         #Check if ID was found
         if (empty($outputArray['pvpteam']['id'])) {
             return ['http_error' => 404];

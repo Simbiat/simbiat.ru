@@ -25,11 +25,7 @@ class Achievement extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        try {
-            $outputArray['achievement'] = (new \Simbiat\fftracker\Entities\Achievement())->setId($id)->getArray();
-        } catch (\UnexpectedValueException) {
-            return ['http_error' => 404];
-        }
+        $outputArray['achievement'] = (new \Simbiat\fftracker\Entities\Achievement())->setId($id)->getArray();
         #Check if ID was found
         if (empty($outputArray['achievement']['id'])) {
             return ['http_error' => 404];
