@@ -1,9 +1,9 @@
 create table ban__names
 (
-    name   varchar(64)                      not null comment 'Banned (prohibited) name'
+    name   varchar(64)                           not null comment 'Banned (prohibited) name'
         primary key,
-    added  date default current_timestamp() not null comment 'When name was banned',
-    reason text                             null comment 'Reason for the ban'
+    added  timestamp default current_timestamp() not null comment 'When name was banned',
+    reason text                                  null comment 'Reason for the ban'
 )
     comment 'Banned user names';
 
