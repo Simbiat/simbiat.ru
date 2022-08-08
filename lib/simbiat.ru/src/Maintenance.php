@@ -6,6 +6,7 @@ namespace Simbiat;
 
 use Simbiat\Config\Common;
 use Simbiat\Database\Pool;
+use Simbiat\usercontrol\Email;
 use Simbiat\usercontrol\Session;
 
 class Maintenance
@@ -127,7 +128,7 @@ class Maintenance
                 $percentage = disk_free_space($dir)*100/disk_total_space($dir);
                 if ($percentage < 5) {
                     #Send mail
-                    usercontrol\Emails::sendMail(Common::adminMail, '[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
+                    (new Email)->setId(Common::adminMail)->send('[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
                     #Generate flag
                     file_put_contents($dir . '/noSpace.flag', $percentage . '% of space left');
                 }
@@ -136,7 +137,7 @@ class Maintenance
             if (is_file($dir.'/noSpace.flag')) {
                 @unlink($dir . '/noSpace.flag');
                 #Send mail
-                usercontrol\Emails::sendMail(Common::adminMail, '[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
+                (new Email)->setId(Common::adminMail)->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
             }
         }
     }
@@ -150,7 +151,7 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
-                usercontrol\Emails::sendMail(Common::adminMail, '[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
+                (new Email)->setId(Common::adminMail)->send('[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
                 #Generate flag
                 file_put_contents($dir . '/noDB.flag', 'Database is down');
             }
@@ -158,7 +159,7 @@ class Maintenance
             if (is_file($dir.'/noDB.flag')) {
                 @unlink($dir . '/noDB.flag');
                 #Send mail
-                usercontrol\Emails::sendMail(Common::adminMail, '[Resolved]: Database is down', username: 'Simbiat');
+                (new Email)->setId(Common::adminMail)->send('[Resolved]: Database is down', username: 'Simbiat');
             }
         }
     }

@@ -5,7 +5,7 @@ namespace Simbiat\usercontrol\Api;
 use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
 use Simbiat\Security;
-use Simbiat\usercontrol\Emails;
+use Simbiat\usercontrol\Email;
 
 class Remind extends Api
 {
@@ -43,7 +43,7 @@ class Remind extends Api
                 $token = Security::genToken();
                 #Write the reset token to DB
                 HomePage::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
-                (new Emails)->sendMail($credentials['email'], 'Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
+                (new Email)->setId($credentials['email'])->send('Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Registration failed'];
             }

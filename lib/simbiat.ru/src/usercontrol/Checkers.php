@@ -39,33 +39,6 @@ class Checkers
         }
     }
 
-    #Function to check whether email is banned
-    public static function bannedMail(string $mail): bool
-    {
-        #Validate that string is a mail
-        if (filter_var($mail, FILTER_VALIDATE_EMAIL) === false) {
-            #Not an email, something is wrong, protect ourselves
-            return true;
-        }
-        #Check against DB table
-        try {
-            return HomePage::$dbController->check('SELECT `mail` FROM `ban__mails` WHERE `mail`=:mail', [':mail' => $mail]);
-        } catch (\Throwable) {
-            return false;
-        }
-    }
-
-    #Function to check if mail is already used
-    public static function usedMail(string $mail): bool
-    {
-        #Check against DB table
-        try {
-            return HomePage::$dbController->check('SELECT `email` FROM `uc__user_to_email` WHERE `email`=:mail', [':mail' => $mail]);
-        } catch (\Throwable) {
-            return false;
-        }
-    }
-
     #Function to check if username is already used
     public static function usedName(string $name): bool
     {

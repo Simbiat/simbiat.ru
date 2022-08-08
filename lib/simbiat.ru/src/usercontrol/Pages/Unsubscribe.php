@@ -5,6 +5,7 @@ namespace Simbiat\usercontrol\Pages;
 use Simbiat\Abstracts\Page;
 use Simbiat\array2table;
 use Simbiat\Security;
+use Simbiat\usercontrol\Email;
 
 class Unsubscribe extends Page
 {
@@ -35,7 +36,7 @@ class Unsubscribe extends Page
         }
         $outputArray = [];
         $outputArray['email'] = $email;
-        if (!\Simbiat\usercontrol\Emails::unsubscribe($email)) {
+        if (!(new Email)->setId($email)->unsubscribe()) {
             $outputArray['http_error'] = 500;
             $outputArray['reason'] = 'Failed to unsubscribe '.$email.'. You can try again, but if issue persists, contact us for assistance.';
         }

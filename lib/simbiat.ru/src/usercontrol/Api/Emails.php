@@ -4,6 +4,7 @@ namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
+use Simbiat\usercontrol\Email;
 
 class Emails extends Api
 {
@@ -45,16 +46,16 @@ class Emails extends Api
         }
         switch ($path[0]) {
             case 'activate':
-                \Simbiat\usercontrol\Emails::activationMail($_POST['email']);
+                (new Email)->setId($_POST['email'])->confirm();
                 return ['response' => true];
             case 'add':
-                return \Simbiat\usercontrol\Emails::add($_POST['email']);
+                return (new Email)->setId($_POST['email'])->add();
             case 'delete':
-                return ['response' => \Simbiat\usercontrol\Emails::delete($_POST['email'])];
+                return ['response' => (new Email)->setId($_POST['email'])->delete()];
             case 'subscribe':
-                return ['response' => \Simbiat\usercontrol\Emails::subscribe($_POST['email'])];
+                return ['response' => (new Email)->setId($_POST['email'])->subscribe()];
             case 'unsubscribe':
-                return ['response' => \Simbiat\usercontrol\Emails::unsubscribe($_POST['email'])];
+                return ['response' => (new Email)->setId($_POST['email'])->unsubscribe()];
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported verb'];
         }

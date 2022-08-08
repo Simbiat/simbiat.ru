@@ -6,7 +6,7 @@ use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
 use Simbiat\Security;
 use Simbiat\usercontrol\Checkers;
-use Simbiat\usercontrol\Emails;
+use Simbiat\usercontrol\Email;
 use Simbiat\usercontrol\User;
 
 class Register extends Api
@@ -20,7 +20,7 @@ class Register extends Api
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $CSRF = false;
 
     protected function genData(array $path): array
     {
@@ -30,6 +30,8 @@ class Register extends Api
         }
         if (empty($_POST['signinup']['email'])) {
             return ['http_error' => 400, 'reason' => 'No email provided'];
+        } else {
+            $email = (new Email)->setId($_POST['signinup']['email']);
         }
         if (empty($_POST['signinup']['password'])) {
             return ['http_error' => 400, 'reason' => 'No password provided'];
@@ -44,9 +46,8 @@ class Register extends Api
         }
         #Check if banned or in use
         if (Checkers::bannedIP() ||
-            Checkers::bannedMail($_POST['signinup']['email']) ||
+            $email->isBad() ||
             Checkers::bannedName($_POST['signinup']['username']) ||
-            Checkers::usedMail($_POST['signinup']['email']) ||
             Checkers::usedName($_POST['signinup']['username'])
         ) {
             #Do not provide details on why exactly it failed to avoid email spoofing
@@ -95,7 +96,7 @@ class Register extends Api
                 ],
             ];
             HomePage::$dbController->query($queries);
-            Emails::activationMail($_POST['signinup']['email'], $_POST['signinup']['username'], $activation);
+            $email->confirm($_POST['signinup']['username'], $activation);
             return (new User)->login(true);
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Registration failed'];
