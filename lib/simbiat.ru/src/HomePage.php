@@ -121,9 +121,9 @@ class HomePage
                             #Show that client is unsupported
                             if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
                                 self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
-                            } elseif ($_SESSION['banned']) {
+                            } elseif (!empty($_SESSION['banned'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
-                            } elseif ($_SESSION['deleted']) {
+                            } elseif (!empty($_SESSION['deleted'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Deleted user'];
                             }
                         }
