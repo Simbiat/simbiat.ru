@@ -70,21 +70,9 @@ class User extends Entity
         }
         #Get user's groups
         $dbData['groups'] = $this->dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
-        if (in_array(2, $dbData['groups'], true)) {
-            $dbData['activated'] = false;
-        } else {
-            $dbData['activated'] = true;
-        }
-        if (in_array(4, $dbData['groups'], true)) {
-            $dbData['deleted'] = false;
-        } else {
-            $dbData['deleted'] = true;
-        }
-        if (in_array(5, $dbData['groups'], true)) {
-            $dbData['banned'] = false;
-        } else {
-            $dbData['banned'] = true;
-        }
+        $dbData['activated'] = !in_array(2, $dbData['groups'], true);
+        $dbData['deleted'] = in_array(4, $dbData['groups'], true);
+        $dbData['banned'] = in_array(5, $dbData['groups'], true);
         $dbData['currentAvatar'] = $this->dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
         return $dbData;
     }

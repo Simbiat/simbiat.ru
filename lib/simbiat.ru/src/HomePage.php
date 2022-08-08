@@ -93,11 +93,8 @@ class HomePage
                     try {
                         #Connect to DB
                         $this->dbConnect();
-                        #Show that client is unsupported
-                        if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
-                            self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
                         #Show error page if DB is down
-                        } elseif (!self::$dbup) {
+                        if (!self::$dbup) {
                             self::$http_error = ['http_error' => 'database'];
                         #Show error page if maintenance is running
                         } elseif (self::$dbUpdate) {
@@ -117,9 +114,27 @@ class HomePage
                             @header('SourceMap: /js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js').'.js.map', false);
                             @header('SourceMap: /css/' . filemtime(Config\Common::$cssDir.'min.css').'.css.map', false);
                         }
+                        #Try to start session if it's not started yet and DB is up
+                        if (self::$dbup && session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
+                            session_set_save_handler(new Session, true);
+                            session_start();
+                            #Show that client is unsupported
+                            if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
+                                self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
+                            } elseif ($_SESSION['banned']) {
+                                self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
+                            } elseif ($_SESSION['deleted']) {
+                                self::$http_error = ['http_error' => 403, 'reason' => 'Deleted user'];
+                            }
+                        }
                         #Check if we have cached the results already
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
-                        $vars = (new MainRouter)->route($uri);
+                        #Do not do processing if we already encountered a problem
+                        if (empty(self::$http_error)) {
+                            $vars = (new MainRouter)->route($uri);
+                        } else {
+                            $vars = self::$http_error;
+                        }
                     } catch (\Throwable $e) {
                         Errors::error_log($e);
                         $vars = ['http_error' => 500];
@@ -198,11 +213,6 @@ class HomePage
                 #Check for maintenance
                 self::$dbUpdate = boolval(self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\''));
                 self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
-                #Try to start session if it's not started yet, and we are not serving stale content
-                if (!self::$CLI && session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
-                    session_set_save_handler(new Session, true);
-                    session_start();
-                }
             } catch (\Throwable) {
                 self::$dbup = false;
                 return false;
