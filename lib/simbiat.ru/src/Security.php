@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\Config\Common;
-use Simbiat\HTTP20\Headers;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
@@ -13,59 +12,10 @@ class Security
     #Static sanitizer config for a little bit performance
     public static ?HtmlSanitizerConfig $sanitizerConfig = null;
 
-    #Function to validate password
-    public static function passValid(int|string $id, string $password, string $hash): bool
-    {
-        #Validate password
-        try {
-            if (password_verify($password, $hash)) {
-                #Check if it needs rehashing
-                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, Config\Security::$argonSettings)) {
-                    #Rehash password and reset strikes (if any)
-                    self::passChange($id, $password);
-                } else {
-                    #Reset strikes (if any)
-                    self::resetStrikes($id);
-                }
-                return true;
-            } else {
-                #Increase strike count
-                HomePage::$dbController->query(
-                    'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
-                    [':userid' => [strval($id), 'string']]);
-                return false;
-            }
-        } catch (\Throwable) {
-            return false;
-        }
-    }
-
-    public static function resetStrikes(int|string $id): bool
-    {
-        return HomePage::$dbController->query(
-            'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
-            [
-                ':userid' => [strval($id), 'string']
-            ]
-        );
-    }
-
     #Function to hash password. Used mostly as a wrapper in case of future changes
     public static function passHash(string $password): string
     {
         return password_hash($password, PASSWORD_ARGON2ID, Config\Security::$argonSettings);
-    }
-
-    #Function to change the password
-    public static function passChange(int|string $id, string $password): bool
-    {
-        return HomePage::$dbController->query(
-            'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
-            [
-                ':userid' => [strval($id), 'string'],
-                ':password' => [Security::passHash($password), 'string'],
-            ]
-        );
     }
 
     #Function to encrypt stuff
@@ -101,66 +51,8 @@ class Security
         return openssl_decrypt($data, 'AES-256-GCM', hex2bin(Config\Security::$aesSettings['passphrase']), OPENSSL_RAW_DATA, $iv, $tag);
     }
 
-    #Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to $_SESSION
-    public static function antiCSRF(array $allowOrigins = [], bool $originRequired = false, bool $exit = true): bool
-    {
-        #Get CSRF token
-        $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
-        #Get origin
-        #In some cases Origin can be empty. In case of forms we can try checking Referer instead.
-        #In case of proxy is being used we should try taking the data from X-Forwarded-Host.
-        $origin = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? NULL;
-        #Check if token is provided
-        if (!empty($token)) {
-            #Check if CSRF token is present in session data
-            if (!empty($_SESSION['CSRF'])) {
-                #Check if they match. hash_equals helps mitigate timing attacks
-                if (hash_equals($_SESSION['CSRF'], $token) === true) {
-                    #Check if HTTP Origin is among allowed ones, if we want to restrict them.
-                    #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\HTTP20\headers->security()
-                    if (empty($allowOrigins) ||
-                        #If origins are limited
-                        (
-                            #Check if origin is not present and is enforced
-                            (empty($origin) && $originRequired === false) ||
-                            #Check if origin is present
-                            (!empty($origin) &&
-                                #Check if it's a valid origin and is allowed
-                                (preg_match('/'. Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins))
-                            )
-                        )
-                    ) {
-                        #All checks passed
-                        return true;
-                    } else {
-                        $reason = 'Bad origin';
-                    }
-                } else {
-                    $reason = 'Different hashes';
-                }
-            } else {
-                $reason = 'No token in session';
-            }
-        } else {
-            $reason = 'No token from client';
-        }
-        #Log attack details. Suppressing errors, so that values will be turned into NULLs if they are not set
-        self::log('CSRF', 'CSRF attack detected', [
-            'reason' => $reason,
-            'page' => @$_SERVER['REQUEST_URI'],
-            'forwarded' => @$_SERVER['HTTP_X_FORWARDED_HOST'],
-            'origin' => @$_SERVER['HTTP_ORIGIN'],
-            'referer' => @$_SERVER['HTTP_REFERER'],
-        ]);
-        #Send 403 error code in header, with option to force close connection
-        if (!HomePage::$staleReturn) {
-            HomePage::$headers->clientReturn('403', $exit);
-        }
-        return false;
-    }
-
-    #Function to generate CSRF token
-    public static function genCSRF(): string
+    #Function to generate tokens (for example CSRF)
+    public static function genToken(): string
     {
         try {
             $token = bin2hex(random_bytes(32));
@@ -318,42 +210,6 @@ class Security
             #Just log to file. Generally we do not lose much if this fails
             Errors::error_log($exception);
             return false;
-        }
-    }
-
-    #Setting cookie for remembering user
-    public static function rememberMe(string $id = '', null|string|int $userid = null): void
-    {
-        try {
-            #Generate cookie ID
-            if (empty($id)) {
-                $id = bin2hex(random_bytes(64));
-            }
-            #Generate cookie password
-            $pass = bin2hex(random_bytes(128));
-            #Write cookie data to DB
-            if (HomePage::$dbController === null) {
-                #If we can't write to DB for some reason - do not share any data with client
-                return;
-            }
-            if (HomePage::$dbController !== null && (!empty($_SESSION['userid']) || !empty($userid))) {
-                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `time`=CURRENT_TIMESTAMP();',
-                    [
-                        ':cookie' => $id,
-                        ':pass' => hash('sha3-512', $pass),
-                        ':id' => $userid ?? [$_SESSION['userid'], 'int'],
-                    ]
-                );
-            } else {
-                return;
-            }
-            #Set options
-            $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
-            #Set cookie value
-            $value = json_encode(['id' => Security::encrypt($id), 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
-            setcookie('rememberme_'.Common::$http_host, $value, $options);
-        } catch (\Throwable) {
-            #Do nothing, since not critical
         }
     }
 }

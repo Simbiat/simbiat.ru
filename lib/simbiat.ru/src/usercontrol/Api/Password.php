@@ -4,7 +4,7 @@ namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
 use Simbiat\HomePage;
-use Simbiat\Security;
+use Simbiat\usercontrol\User;
 
 class Password extends Api
 {
@@ -39,6 +39,7 @@ class Password extends Api
         if (HomePage::$dbup === false) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
+        $user = (new User)->setId($id);
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {
@@ -52,7 +53,7 @@ class Password extends Api
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate current password
-            if (Security::passValid($id, $_POST['current_password'], $password) === false) {
+            if ($user->passValid($_POST['current_password'], $password) === false) {
                 return ['http_error' => 403, 'reason' => 'Bad password'];
             }
         } else {
@@ -74,7 +75,7 @@ class Password extends Api
         }
         @session_regenerate_id(true);
         #Change password
-        if (Security::passChange($id, $_POST['new_password'])) {
+        if ($user->passChange($_POST['new_password'])) {
             return ['response' => true];
         } else {
             return ['http_error' => 500, 'reason' => 'Failed to update password'];

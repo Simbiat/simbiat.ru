@@ -40,7 +40,7 @@ class Remind extends Api
         #Process only if user was found
         if (!empty($credentials)) {
             try {
-                $token = Security::genCSRF();
+                $token = Security::genToken();
                 #Write the reset token to DB
                 HomePage::$dbController->query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
                 (new Emails)->sendMail($credentials['email'], 'Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);

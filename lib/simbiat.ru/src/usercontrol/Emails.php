@@ -76,7 +76,7 @@ class Emails
         }
         #Generate activation code if none was provided (requested new activation mail)
         if (empty($activation)) {
-            $activation = Security::genCSRF();
+            $activation = Security::genToken();
             #Insert into mails database
             HomePage::$dbController->query(
                 'UPDATE `uc__user_to_email` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',

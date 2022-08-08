@@ -62,8 +62,8 @@ class Register extends Api
         }
         #Generate password and activation strings
         $password = Security::passHash($_POST['signinup']['password']);
-        $activation = Security::genCSRF();
-        $ff_token = Security::genCSRF();
+        $activation = Security::genToken();
+        $ff_token = Security::genToken();
         try {
             $queries = [
                 #Insert to main database

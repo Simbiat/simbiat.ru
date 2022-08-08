@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Abstracts\Entity;
+use Simbiat\Config\Common;
 use Simbiat\HomePage;
 use Simbiat\Security;
 
@@ -333,7 +334,7 @@ class User extends Entity
             return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
         }
         #Check the password
-        if (Security::passValid($credentials['userid'], $_POST['signinup']['password'], $credentials['password']) === false) {
+        if ($this->setId($credentials['userid'])->passValid($_POST['signinup']['password'], $credentials['password']) === false) {
             return ['http_error' => 403, 'reason' => 'Bad password'];
         }
         #Add username and userid to session
@@ -341,7 +342,7 @@ class User extends Entity
         $_SESSION['userid'] = $credentials['userid'];
         #Set cookie if we have "rememberme" checked
         if (!empty($_POST['signinup']['rememberme'])) {
-            Security::rememberMe();
+            $this->rememberMe();
         }
         session_regenerate_id(true);
         if ($afterRegister) {
@@ -349,5 +350,93 @@ class User extends Entity
         } else {
             return ['response' => true];
         }
+    }
+
+    #Setting cookie for remembering user
+    public function rememberMe(string $cookieId = ''): void
+    {
+        try {
+            #Generate cookie ID
+            if (empty($cookieId)) {
+                $cookieId = bin2hex(random_bytes(64));
+            }
+            #Generate cookie password
+            $pass = bin2hex(random_bytes(128));
+            #Write cookie data to DB
+            if (HomePage::$dbController === null) {
+                #If we can't write to DB for some reason - do not share any data with client
+                return;
+            }
+            if (HomePage::$dbController !== null && (!empty($_SESSION['userid']) || !empty($this->id))) {
+                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `time`=CURRENT_TIMESTAMP();',
+                    [
+                        ':cookie' => $cookieId,
+                        ':pass' => hash('sha3-512', $pass),
+                        ':id' => $this->id ?? [$_SESSION['userid'], 'int'],
+                    ]
+                );
+            } else {
+                return;
+            }
+            #Set options
+            $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
+            #Set cookie value
+            $value = json_encode(['id' => Security::encrypt($cookieId), 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
+            setcookie('rememberme_'.Common::$http_host, $value, $options);
+        } catch (\Throwable) {
+            #Do nothing, since not critical
+        }
+    }
+
+    #Function to validate password
+    public function passValid(string $password, string $hash): bool
+    {
+        #Validate password
+        try {
+            if (password_verify($password, $hash)) {
+                #Check if it needs rehashing
+                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, \Simbiat\Config\Security::$argonSettings)) {
+                    #Rehash password and reset strikes (if any)
+                    $this->passChange($password);
+                } else {
+                    #Reset strikes (if any)
+                    $this->resetStrikes($password);
+                }
+                return true;
+            } else {
+                #Increase strike count
+                HomePage::$dbController->query(
+                    'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
+                    [':userid' => [$this->id, 'string']]);
+                return false;
+            }
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    #Function to change the password
+    public function passChange(string $password): bool
+    {
+        if (empty($this->id)) {
+            return false;
+        }
+        return HomePage::$dbController->query(
+            'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
+            [
+                ':userid' => [$this->id, 'string'],
+                ':password' => [Security::passHash($password), 'string'],
+            ]
+        );
+    }
+
+    public function resetStrikes(int|string $id): bool
+    {
+        return HomePage::$dbController->query(
+            'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
+            [
+                ':userid' => [strval($id), 'string']
+            ]
+        );
     }
 }

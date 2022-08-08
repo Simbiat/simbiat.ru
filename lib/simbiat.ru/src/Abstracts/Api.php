@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 use Simbiat\Security;
 
 abstract class Api
@@ -45,7 +46,7 @@ abstract class Api
         #Check that user is authenticated
         } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
-        } elseif ($this->CSRF && !Security::antiCSRF(exit: false)) {
+        } elseif ($this->CSRF && !$this->antiCSRF(exit: false)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             $data = $this->getData($path);
@@ -78,6 +79,8 @@ abstract class Api
                 $result['json_ready']['data'] = $data['response'] ?? null;
                 #Filter out results if data is an array
                 if (is_array($result['json_ready']['data'])) {
+                    #Suppressed due to https://youtrack.jetbrains.com/issue/WI-65237/Wrong-array-element-type-is-inferred-on-assignment
+                    /** @noinspection PhpParamsInspection */
                     $this->fieldFilter($result['json_ready']['data']);
                 }
                 if (!empty($data['alt_links'])) {
@@ -136,6 +139,64 @@ abstract class Api
         } else {
             return false;
         }
+    }
+
+    #Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to $_SESSION
+    protected final function antiCSRF(array $allowOrigins = [], bool $originRequired = false, bool $exit = true): bool
+    {
+        #Get CSRF token
+        $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
+        #Get origin
+        #In some cases Origin can be empty. In case of forms we can try checking Referer instead.
+        #In case of proxy is being used we should try taking the data from X-Forwarded-Host.
+        $origin = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? $_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? NULL;
+        #Check if token is provided
+        if (!empty($token)) {
+            #Check if CSRF token is present in session data
+            if (!empty($_SESSION['CSRF'])) {
+                #Check if they match. hash_equals helps mitigate timing attacks
+                if (hash_equals($_SESSION['CSRF'], $token) === true) {
+                    #Check if HTTP Origin is among allowed ones, if we want to restrict them.
+                    #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\HTTP20\headers->security()
+                    if (empty($allowOrigins) ||
+                        #If origins are limited
+                        (
+                            #Check if origin is not present and is enforced
+                            (empty($origin) && $originRequired === false) ||
+                            #Check if origin is present
+                            (!empty($origin) &&
+                                #Check if it's a valid origin and is allowed
+                                (preg_match('/'. Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins))
+                            )
+                        )
+                    ) {
+                        #All checks passed
+                        return true;
+                    } else {
+                        $reason = 'Bad origin';
+                    }
+                } else {
+                    $reason = 'Different hashes';
+                }
+            } else {
+                $reason = 'No token in session';
+            }
+        } else {
+            $reason = 'No token from client';
+        }
+        #Log attack details. Suppressing errors, so that values will be turned into NULLs if they are not set
+        Security::log('CSRF', 'CSRF attack detected', [
+            'reason' => $reason,
+            'page' => @$_SERVER['REQUEST_URI'],
+            'forwarded' => @$_SERVER['HTTP_X_FORWARDED_HOST'],
+            'origin' => @$_SERVER['HTTP_ORIGIN'],
+            'referer' => @$_SERVER['HTTP_REFERER'],
+        ]);
+        #Send 403 error code in header, with option to force close connection
+        if (!HomePage::$staleReturn) {
+            HomePage::$headers->clientReturn('403', $exit);
+        }
+        return false;
     }
 
     #This is a wrapper to allow some common checks

@@ -276,10 +276,10 @@ class HomePage
     {
         if ($template === 'index.twig') {
             #Update CSRF only if HTML pages are used
-            $XCSRFToken = Security::genCSRF();
+            $XCSRFToken = Security::genToken();
             $_SESSION['CSRF'] = $XCSRFToken;
         } else {
-            $XCSRFToken = $_SESSION['CSRF'] ?? Security::genCSRF();
+            $XCSRFToken = $_SESSION['CSRF'] ?? Security::genToken();
         }
         return $XCSRFToken;
     }

@@ -175,7 +175,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             }
             #Add CSRF token, if missing
             if (empty($data['CSRF'])) {
-                $data['CSRF'] = Security::genCSRF();
+                $data['CSRF'] = Security::genToken();
             } else {
                 @header('X-CSRF-Token: '.$data['CSRF']);
             }
@@ -235,10 +235,11 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     #Wrong password
                     return [];
                 }
+                $user = (new User);
                 #Reset strikes if any
-                Security::resetStrikes($savedData['userid']);
+                $user->setId($savedData['userid'])->resetStrikes($savedData['userid']);
                 #Update cookie
-                Security::rememberMe($data['id'], $savedData['userid']);
+                $user->rememberMe($data['id']);
                 return ['userid' => $savedData['userid'], 'username' => $savedData['username']];
             } else {
                 return [];
