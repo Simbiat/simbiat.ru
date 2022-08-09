@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\bictracker\Api;
 
 use Simbiat\Abstracts\Api;
-use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 
 class Bic extends Api
 {
@@ -29,7 +29,7 @@ class Bic extends Api
             return ['http_error' => 404, 'reason' => 'BIC with ID `'.$path[0].'` is not found on Tracker'];
         }
         if (!empty($data['updated'])) {
-            HomePage::$headers->lastModified($data['dates']['updated'], true);
+            Headers::lastModified($data['dates']['updated'], true);
         }
         $result = ['response' => $data];
         #Link header/tag for API

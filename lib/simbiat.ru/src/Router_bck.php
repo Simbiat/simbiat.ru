@@ -16,11 +16,9 @@ class Router_bck
     public function fftracker(array $uri): array
     {
         $fftracker = (new FFTracker);
-        $html = (new HTML);
-        $headers = (new Headers);
         #Check if URI is empty
         if (empty($uri)) {
-            $headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/search', true, true, false);
+            Headers::redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/search');
         }
         #Prepare array
         $outputArray = [
@@ -39,7 +37,7 @@ class Router_bck
             case 'statistics':
                 #Check if type is set
                 if (empty($uri[1])) {
-                    $headers->redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/statistics/genetics', true, true, false);
+                    Headers::redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/fftracker/statistics/genetics');
                 } else {
                     $uri[1] = strtolower($uri[1]);
                     if (in_array($uri[1], ['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'])) {
@@ -72,7 +70,7 @@ class Router_bck
             $outputArray['cacheAge'] = 86400;
         }
         #Add breadcrumbs
-        $outputArray['breadcrumbs'] = $html->breadcrumbs($breadArray);
+        $outputArray['breadcrumbs'] = HTML::breadcrumbs($breadArray);
         return $outputArray;
     }
 

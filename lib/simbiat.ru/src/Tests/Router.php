@@ -43,7 +43,7 @@ class Router extends \Simbiat\Abstracts\Router
                         (new Errors)->error_log($exception);
                         $output = 'Twig failure';
                     }
-                    (new Common)->zEcho($output, 'live');
+                    Common::zEcho($output, 'live');
                 }
                 exit;
             case 'styling':

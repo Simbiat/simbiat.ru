@@ -75,14 +75,14 @@ class HomePage
                 #Set method
                 self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
                 #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
-                $this::$headers->multiPartFormParse();
+                Headers::multiPartFormParse();
                 if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
                     $_POST = $this::$headers::$_PUT ?: $this::$headers::$_DELETE ?: $this::$headers::$_PATCH ?: [];
                 }
                 #Set canonical URL
                 $this->canonical();
                 #Send common headers
-                $this::$headers->secFetch();
+                Headers::secFetch();
                 #Process requests to file or cache
                 $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
                 if ($fileResult === 200) {
@@ -106,7 +106,7 @@ class HomePage
                                 ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js') . '.js', 'as' => 'script'],
                             ]);
                         }
-                        self::$headers->links(Config\Common::$links);
+                        Headers::links(Config\Common::$links);
                         if ($uri[0] !== 'api') {
                             @header('SourceMap: /js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js').'.js.map', false);
                             @header('SourceMap: /css/' . filemtime(Config\Common::$cssDir.'min.css').'.css.map', false);
@@ -155,7 +155,7 @@ class HomePage
         if (empty($_SERVER['HTTP_HOST'])) {
             #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
             if (!HomePage::$staleReturn) {
-                self::$headers->clientReturn('403');
+                Headers::clientReturn('403');
             }
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
@@ -238,7 +238,7 @@ class HomePage
                     @header('Connection: close');
                     $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
                     #Output data
-                    (new Common)->zEcho($output, $twigVars['cacheStrat'] ?? 'day', false);
+                    Common::zEcho($output, $twigVars['cacheStrat'] ?? 'day', false);
                     @ob_end_flush();
                     @ob_flush();
                     flush();
@@ -257,7 +257,7 @@ class HomePage
                 $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
             } catch (\Throwable $exception) {
                 (new Errors)->error_log($exception);
-                self::$headers->clientReturn('503', false);
+                Headers::clientReturn('503', false);
                 try {
                     $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? NULL]));
                 } catch (\Throwable) {
@@ -276,7 +276,7 @@ class HomePage
                 @ob_end_clean();
             } else {
                 #Output data
-                (new Common)->zEcho($output, $twigVars['cacheStrat'] ?? 'day');
+                Common::zEcho($output, $twigVars['cacheStrat'] ?? 'day');
             }
             exit;
         }

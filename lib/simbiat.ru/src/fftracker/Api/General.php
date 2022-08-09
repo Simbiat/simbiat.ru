@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Api;
 
 use Simbiat\Abstracts\Api;
-use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 
 abstract class General extends Api
 {
@@ -59,7 +59,7 @@ abstract class General extends Api
             return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Tracker'];
         }
         if (!empty($data['dates']['updated'])) {
-            HomePage::$headers->lastModified($data['dates']['updated'], true);
+            Headers::lastModified($data['dates']['updated'], true);
         }
         $result = ['response' => $data];
         #Return 201 if we were registering an entity

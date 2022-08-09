@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\Sitemap;
 
-use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 
 class Router extends \Simbiat\Abstracts\Router
 {
@@ -31,9 +31,9 @@ class Router extends \Simbiat\Abstracts\Router
         }
         #Send 406 if format is not acceptable
         match ($format) {
-            'html' => HomePage::$headers->notAccept(['text/html']),
-            'txt' => HomePage::$headers->notAccept(['text/plain']),
-            'xml' => HomePage::$headers->notAccept(['application/xml']),
+            'html' =>Headers::notAccept(['text/html']),
+            'txt' => Headers::notAccept(['text/plain']),
+            'xml' => Headers::notAccept(['application/xml']),
         };
         #Send content type header if we have XML or text
         if ($format === 'txt') {

@@ -47,10 +47,10 @@ class Tests
                 <input type="submit" value="Send File" />
             </form>
             ';
-            (new Common)->zEcho($output);
+            Common::zEcho($output);
         } else {
             try {
-                $this->testDump((new Sharing)->upload($uploadPath, false, false, [], false));
+                $this->testDump(Sharing::upload($uploadPath, false, false, [], false));
             } catch (\Throwable $exception) {
                 echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
             }
@@ -64,7 +64,7 @@ class Tests
         if (!empty($bytes)) {
             $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;
         }
-        (new Sharing)->download($filepath, '', '', true);
+        Sharing::download($filepath, '', '', true);
         exit;
     }
 

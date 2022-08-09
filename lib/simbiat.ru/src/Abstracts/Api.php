@@ -107,7 +107,7 @@ abstract class Api
                 }
             }
             if ($result['json_ready']['status'] !== 200) {
-                HomePage::$headers->clientReturn(strval($result['json_ready']['status']), false);
+                Headers::clientReturn(strval($result['json_ready']['status']), false);
             }
             if (!empty($data['about'])) {
                 $result['json_ready']['about'] = $data['about'];
@@ -204,7 +204,7 @@ abstract class Api
         ]);
         #Send 403 error code in header, with option to force close connection
         if (!HomePage::$staleReturn) {
-            HomePage::$headers->clientReturn('403', $exit);
+            Headers::clientReturn('403', $exit);
         }
         return false;
     }

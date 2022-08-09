@@ -9,26 +9,19 @@ use Twig\Extension\RuntimeExtensionInterface;
 
 class RuntimeExtension implements RuntimeExtensionInterface
 {
-    private HTML $HTML;
-
-    public function __construct()
-    {
-        $this->HTML = new HTML;
-    }
-
     public function genBread(array $items): string
     {
-        return $this->HTML->breadcrumbs($items);
+        return HTML::breadcrumbs($items);
     }
 
     public function timeline(array $items, int $brLimit = 0): string
     {
-        return $this->HTML->timeline($items, brLimit: $brLimit);
+        return HTML::timeline($items, brLimit: $brLimit);
     }
 
     public function pagination(int $current, int $total, string $prefix): string
     {
-        return $this->HTML->pagination($current, $total, prefix: $prefix);
+        return HTML::pagination($current, $total, prefix: $prefix);
     }
 
     public function basename(string $string): string
@@ -41,7 +34,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
         return Security::sanitizeHTML($string, $head);
     }
 
-    public function timeTag(string $string, string $format = 'd/m/Y H:i', string $classes = ''): string
+    public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string
     {
         if (preg_match('/\d{10}/', $string) === 1) {
             $datetime = new \DateTime();

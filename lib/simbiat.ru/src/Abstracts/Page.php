@@ -5,6 +5,7 @@ namespace Simbiat\Abstracts;
 use Simbiat\Config\Common;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 
 abstract class Page
 {
@@ -106,7 +107,7 @@ abstract class Page
             }
             #Send HTTP header
             if (!HomePage::$staleReturn) {
-                HomePage::$headers->links($this->altLinks);
+                Headers::links($this->altLinks);
             }
             #Add link to HTML
             $page['link_extra'] = $this->altLinks;
@@ -117,9 +118,9 @@ abstract class Page
         if (!empty($page['http_error'])) {
             //$page['h1'] .= ' ('.(HomePage::$dbup === false ? 'Database unavailable' : (HomePage::$dbUpdate === true ? 'Site maintenance' : 'Error '.$page['http_error'])).')';
             if (in_array($page['http_error'], ['database', 'maintenance'])) {
-                HomePage::$headers->clientReturn('503', false);
+                Headers::clientReturn('503', false);
             } else {
-                HomePage::$headers->clientReturn(strval($page['http_error']), false);
+                Headers::clientReturn(strval($page['http_error']), false);
             }
         }
         #Limit Ogdesc to 120 characters
@@ -146,7 +147,7 @@ abstract class Page
         $this->lastModified = $time;
         #Send the header
         if (!HomePage::$staleReturn) {
-            HomePage::$headers->lastModified($this->lastModified, true);
+            Headers::lastModified($this->lastModified, true);
         }
         #Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
         $this->headerSent = true;

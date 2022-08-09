@@ -5,6 +5,7 @@ namespace Simbiat\Abstracts\Pages;
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
 use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 
 class Search extends Page
 {
@@ -56,7 +57,7 @@ class Search extends Page
             if (is_int($outputArray['searchResult'])) {
                 #Redirect
                 if (!HomePage::$staleReturn) {
-                    HomePage::$headers->redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false);
+                    Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false);
                 }
             }
         } else {

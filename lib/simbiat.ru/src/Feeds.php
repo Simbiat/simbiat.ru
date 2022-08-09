@@ -99,9 +99,9 @@ class Feeds
                 #Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
-                        (new Atom)->Atom(Common::siteName.': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
+                        Atom::Atom(Common::siteName.': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
                     } elseif ($format === 'rss') {
-                        (new RSS)->RSS(Common::siteName.': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
+                        RSS::RSS(Common::siteName.': '.$title, HomePage::$dbController->selectAll($query), feed_settings: $settings);
                     }
                 }
             }
