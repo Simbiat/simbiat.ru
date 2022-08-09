@@ -80,7 +80,6 @@ class Bic extends Entity
      */
     protected function process(array $fromDB): void
     {
-        $arrayHelpers = (new ArrayHelpers());
         #Pad stuff
         $fromDB['BIC'] = $this->padBic(strval($fromDB['BIC']));
         if (!empty($fromDB['PrntBIC'])) {
@@ -98,7 +97,7 @@ class Bic extends Entity
         }
         #Get all branches of the bank (if any)
         $fromDB['branches'] = $this->getBranches($fromDB['BIC']);
-        $fromDB['branches'] = $arrayHelpers->MultiArrSort($fromDB['branches'], 'name');
+        $fromDB['branches'] = ArrayHelpers::MultiArrSort($fromDB['branches'], 'name');
         #Get SWIFT codes
         $fromDB['SWIFTs'] = $this->dbController->selectAll('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id]);
         #Get restrictions for BIC
@@ -145,21 +144,21 @@ class Bic extends Entity
         }
         #Get the chain of predecessors (if any) based on DBF data
         $fromDB['DBF']['predecessors'] = (empty($fromDB['VKEY']) ? [] : $this->predecessors($fromDB['VKEY']));
-        $fromDB['DBF']['predecessors'] = $arrayHelpers->MultiArrSort($fromDB['DBF']['predecessors'], 'name');
+        $fromDB['DBF']['predecessors'] = ArrayHelpers::MultiArrSort($fromDB['DBF']['predecessors'], 'name');
         #Get the chain of successors (if any) based on DBF data
         $fromDB['DBF']['successors'] = (empty($fromDB['VKEYDEL']) ? [] : $this->successors($fromDB['VKEYDEL']));
         #Moving DBF related values around
         foreach (['NAMEMAXB', 'NAMEN', 'SWIFT_NAME'] as $key) {
-            $arrayHelpers->moveToSubarray($fromDB, $key, ['DBF', 'names', $key]);
+            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'names', $key]);
         }
         foreach (['AT1', 'AT2', 'TELEF', 'CKS'] as $key) {
-            $arrayHelpers->moveToSubarray($fromDB, $key, ['DBF', 'contacts', $key]);
+            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'contacts', $key]);
         }
         foreach (['R_CLOSE', 'PRIM1', 'PRIM2', 'PRIM3'] as $key) {
-            $arrayHelpers->moveToSubarray($fromDB, $key, ['DBF', 'removal', $key]);
+            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'removal', $key]);
         }
         foreach (['DATE_CH', 'VKEY', 'VKEYDEL', 'BVKEY', 'FVKEY', 'RKC', 'SROK', 'NEWKS', 'OKPO', 'PERMFO'] as $key) {
-            $arrayHelpers->moveToSubarray($fromDB, $key, ['DBF', 'misc', $key]);
+            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'misc', $key]);
         }
         #If RKC equals headquarters - remove it. For newer entries, they were essentially replaced
         if ($fromDB['DBF']['misc']['RKC'] === $fromDB['PrntBIC']) {

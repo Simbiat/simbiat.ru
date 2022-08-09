@@ -33,8 +33,6 @@ class Library
         if (empty($this->dbController)) {
             return false;
         }
-        #Cache ArrayHelpers
-        $arrayHelpers = (new ArrayHelpers());
         $currentDate = strtotime(date('d.m.Y', time()));
         #Get date of current library
         $libDate = $this->bicDate();
@@ -103,7 +101,7 @@ class Library
                         #Get accounts
                         $accounts = $element->getElementsByTagName('Accounts');
                         #Generate array, which can be compared to what we can get from DB
-                        $details = $arrayHelpers->attributesToArray($details, true, ['BIC', 'DateIn', 'DateOut', 'NameP', 'EnglName', 'XchType', 'PtType', 'Srvcs', 'UID', 'PrntBIC', 'CntrCd', 'RegN', 'Ind', 'Rgn', 'Tnp', 'Nnp', 'Adr']);
+                        $details = ArrayHelpers::attributesToArray($details, true, ['BIC', 'DateIn', 'DateOut', 'NameP', 'EnglName', 'XchType', 'PtType', 'Srvcs', 'UID', 'PrntBIC', 'CntrCd', 'RegN', 'Ind', 'Rgn', 'Tnp', 'Nnp', 'Adr']);
                         $details['BIC'] = $bic;
                         #Ensure some old or unused fields are removed
                         unset($details['NPSParticipant'], $details['ParticipantStatus']);
@@ -144,7 +142,7 @@ class Library
                             #Convert to array
                             $libraryRest = [];
                             foreach ($restrictions as $restriction) {
-                                $libraryRest[] = $arrayHelpers->attributesToArray($restriction);
+                                $libraryRest[] = ArrayHelpers::attributesToArray($restriction);
                                 ksort($libraryRest[array_key_last($libraryRest)]);
                             }
                             #Get current restrictions
@@ -179,7 +177,7 @@ class Library
                             #Convert to array
                             $librarySwift = [];
                             foreach ($swifts as $swift) {
-                                $librarySwift[] = $arrayHelpers->attributesToArray($swift);
+                                $librarySwift[] = ArrayHelpers::attributesToArray($swift);
                                 ksort($librarySwift[array_key_last($librarySwift)]);
                             }
                             #Get current SWIFTs
@@ -217,7 +215,7 @@ class Library
                             $libraryAccountsRest = [];
                             foreach ($accounts as $account) {
                                 #Convert account
-                                $libraryAccounts[] = $arrayHelpers->attributesToArray($account, true, ['CK']);
+                                $libraryAccounts[] = ArrayHelpers::attributesToArray($account, true, ['CK']);
                                 #Set last key
                                 $lastKey = array_key_last($libraryAccounts);
                                 unset($libraryAccounts[$lastKey]['AccountStatus']);
@@ -225,7 +223,7 @@ class Library
                                 #Convert restrictions
                                 if (count($account->getElementsByTagName('AccRstrList')) > 0) {
                                     foreach ($account->getElementsByTagName('AccRstrList') as $restriction) {
-                                        $libraryAccountsRest[$libraryAccounts[$lastKey]['Account']][] = $arrayHelpers->attributesToArray($restriction, true, ['SuccessorBIC']);
+                                        $libraryAccountsRest[$libraryAccounts[$lastKey]['Account']][] = ArrayHelpers::attributesToArray($restriction, true, ['SuccessorBIC']);
                                         ksort($libraryAccountsRest[$libraryAccounts[$lastKey]['Account']]);
                                     }
                                 }

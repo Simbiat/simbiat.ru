@@ -43,19 +43,19 @@ class Statistics
                 if (!$nocache && !empty($json['characters']['clans'])) {
                     $data['characters']['clans'] = $json['characters']['clans'];
                 } else {
-                    $data['characters']['clans'] = $ArrayHelpers->splitByKey($dbCon->countUnique('ffxiv__character', 'clanid', '`ffxiv__character`.`deleted` IS NULL', 'ffxiv__clan', 'INNER', 'clanid', '`ffxiv__character`.`genderid`, CONCAT(`ffxiv__clan`.`race`, \' of \', `ffxiv__clan`.`clan`, \' clan\')', 'DESC', 0, ['`ffxiv__character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
+                    $data['characters']['clans'] = ArrayHelpers::splitByKey($dbCon->countUnique('ffxiv__character', 'clanid', '`ffxiv__character`.`deleted` IS NULL', 'ffxiv__clan', 'INNER', 'clanid', '`ffxiv__character`.`genderid`, CONCAT(`ffxiv__clan`.`race`, \' of \', `ffxiv__clan`.`clan`, \' clan\')', 'DESC', 0, ['`ffxiv__character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
                 }
                 #Clan distribution by city
                 if (!$nocache && !empty($json['cities']['clans'])) {
                     $data['cities']['clans'] = $json['cities']['clans'];
                 } else {
-                    $data['cities']['clans'] = $ArrayHelpers->splitByKey($dbCon->SelectAll('SELECT `ffxiv__city`.`city`, CONCAT(`ffxiv__clan`.`race`, \' of \', `ffxiv__clan`.`clan`, \' clan\') AS `value`, COUNT(`ffxiv__character`.`characterid`) AS `count` FROM `ffxiv__character` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid`=`ffxiv__clan`.`clanid` GROUP BY `city`, `value` ORDER BY `count` DESC'), 'city', [$Lodestone->getCityName(2, 'na'), $Lodestone->getCityName(4, 'na'), $Lodestone->getCityName(5, 'na')], []);
+                    $data['cities']['clans'] = ArrayHelpers::splitByKey($dbCon->SelectAll('SELECT `ffxiv__city`.`city`, CONCAT(`ffxiv__clan`.`race`, \' of \', `ffxiv__clan`.`clan`, \' clan\') AS `value`, COUNT(`ffxiv__character`.`characterid`) AS `count` FROM `ffxiv__character` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid`=`ffxiv__clan`.`clanid` GROUP BY `city`, `value` ORDER BY `count` DESC'), 'city', [$Lodestone->getCityName(2, 'na'), $Lodestone->getCityName(4, 'na'), $Lodestone->getCityName(5, 'na')], []);
                 }
                 #Clan distribution by grand company
                 if (!$nocache && !empty($json['grand_companies']['clans'])) {
                     $data['grand_companies']['clans'] = $json['grand_companies']['clans'];
                 } else {
-                    $data['grand_companies']['clans'] = $ArrayHelpers->splitByKey($dbCon->SelectAll('SELECT `ffxiv__grandcompany`.`gcName`, CONCAT(`ffxiv__clan`.`race`, \' of \', `ffxiv__clan`.`clan`, \' clan\') AS `value`, COUNT(`ffxiv__character`.`characterid`) AS `count` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid`=`ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid`=`ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` WHERE `ffxiv__character`.`deleted` IS NULL AND `ffxiv__grandcompany`.`gcName` IS NOT NULL GROUP BY `gcName`, `value` ORDER BY `count` DESC'), 'gcName', [], []);
+                    $data['grand_companies']['clans'] = ArrayHelpers::splitByKey($dbCon->SelectAll('SELECT `ffxiv__grandcompany`.`gcName`, CONCAT(`ffxiv__clan`.`race`, \' of \', `ffxiv__clan`.`clan`, \' clan\') AS `value`, COUNT(`ffxiv__character`.`characterid`) AS `count` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid`=`ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid`=`ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` WHERE `ffxiv__character`.`deleted` IS NULL AND `ffxiv__grandcompany`.`gcName` IS NOT NULL GROUP BY `gcName`, `value` ORDER BY `count` DESC'), 'gcName', [], []);
                 }
                 break;
             case 'astrology':
@@ -69,7 +69,7 @@ class Statistics
                         $data['characters']['guardians'][$key]['color'] = $Lodestone->colorGuardians($guardian['value']);
                     }
                     #Split guardians by gender
-                    $data['characters']['guardians'] = $ArrayHelpers->splitByKey($data['characters']['guardians'], 'genderid', ['female', 'male'], [0, 1]);
+                    $data['characters']['guardians'] = ArrayHelpers::splitByKey($data['characters']['guardians'], 'genderid', ['female', 'male'], [0, 1]);
                 }
                 #Guardian distribution by city
                 if (!$nocache && !empty($json['cities']['guardians'])) {
@@ -80,7 +80,7 @@ class Statistics
                     foreach ($data['cities']['guardians'] as $key=>$guardian) {
                         $data['cities']['guardians'][$key]['color'] = $Lodestone->colorGuardians($guardian['value']);
                     }
-                    $data['cities']['guardians'] = $ArrayHelpers->splitByKey($data['cities']['guardians'], 'city', [], []);
+                    $data['cities']['guardians'] = ArrayHelpers::splitByKey($data['cities']['guardians'], 'city', [], []);
                 }
                 #Guardians distribution by grand company
                 if (!$nocache && !empty($json['grand_companies']['guardians'])) {
@@ -91,7 +91,7 @@ class Statistics
                     foreach ($data['grand_companies']['guardians'] as $key=>$guardian) {
                         $data['grand_companies']['guardians'][$key]['color'] = $Lodestone->colorGuardians($guardian['value']);
                     }
-                    $data['grand_companies']['guardians'] = $ArrayHelpers->splitByKey($data['grand_companies']['guardians'], 'gcName', [], []);
+                    $data['grand_companies']['guardians'] = ArrayHelpers::splitByKey($data['grand_companies']['guardians'], 'gcName', [], []);
                 }
                 break;
             case 'characters':
@@ -112,49 +112,49 @@ class Statistics
                     $data['characters']['changes']['name'] = $json['characters']['changes']['name'];
                 } else {
                     $data['characters']['changes']['name'] = $dbCon->countUnique('ffxiv__character_names', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['changes']['name'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['changes']['name'], 'value', 'name');
                 }
                 #Most reincarnation
                 if (!$nocache && !empty($json['characters']['changes']['clan'])) {
                     $data['characters']['changes']['clan'] = $json['characters']['changes']['clan'];
                 } else {
                     $data['characters']['changes']['clan'] = $dbCon->countUnique('ffxiv__character_clans', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['changes']['clan'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['changes']['clan'], 'value', 'name');
                 }
                 #Most servers
                 if (!$nocache && !empty($json['characters']['changes']['server'])) {
                     $data['characters']['changes']['server'] = $json['characters']['changes']['server'];
                 } else {
                     $data['characters']['changes']['server'] = $dbCon->countUnique('ffxiv__character_servers', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['changes']['server'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['changes']['server'], 'value', 'name');
                 }
                 #Most companies
                 if (!$nocache && !empty($json['characters']['groups']['Free Companies'])) {
                     $data['characters']['groups']['Free Companies'] = $json['characters']['groups']['Free Companies'];
                 } else {
                     $data['characters']['groups']['Free Companies'] = $dbCon->countUnique('ffxiv__freecompany_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
                 }
                 #Most PvP teams
                 if (!$nocache && !empty($json['characters']['groups']['PvP Teams'])) {
                     $data['characters']['groups']['PvP Teams'] = $json['characters']['groups']['PvP Teams'];
                 } else {
                     $data['characters']['groups']['PvP Teams'] = $dbCon->countUnique('ffxiv__pvpteam_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
                 }
                 #Most x-linkshells
                 if (!$nocache && !empty($json['characters']['groups']['Linkshells'])) {
                     $data['characters']['groups']['Linkshells'] = $json['characters']['groups']['Linkshells'];
                 } else {
                     $data['characters']['groups']['Linkshells'] = $dbCon->countUnique('ffxiv__linkshell_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
                 }
                 #Most linkshells
                 if (!$nocache && !empty($json['characters']['groups']['linkshell'])) {
                     $data['characters']['groups']['linkshell'] = $json['characters']['groups']['linkshell'];
                 } else {
                     $data['characters']['groups']['linkshell'] = $dbCon->countUnique('ffxiv__linkshell_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-                    $ArrayHelpers->renameColumn($data['characters']['groups']['linkshell'], 'value', 'name');
+                    ArrayHelpers::renameColumn($data['characters']['groups']['linkshell'], 'value', 'name');
                 }
                 #Groups affiliation
                 if (!$nocache && !empty($json['characters']['groups']['participation'])) {
@@ -201,7 +201,7 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['estate'])) {
                     $data['freecompany']['estate'] = $json['freecompany']['estate'];
                 } else {
-                    $data['freecompany']['estate'] = $ArrayHelpers->topAndBottom($dbCon->countUnique('ffxiv__freecompany', 'estateid', '`ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL', 'ffxiv__estate', 'INNER', 'estateid', '`ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, \', plot \', `ffxiv__estate`.`plot`)'), 20);
+                    $data['freecompany']['estate'] = ArrayHelpers::topAndBottom($dbCon->countUnique('ffxiv__freecompany', 'estateid', '`ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL', 'ffxiv__estate', 'INNER', 'estateid', '`ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, \', plot \', `ffxiv__estate`.`plot`)'), 20);
                 }
                 #Get statistics by activity time
                 if (!$nocache && !empty($json['freecompany']['active'])) {
@@ -221,7 +221,7 @@ class Statistics
                 } else {
                     $data['freecompany']['ranking']['monthly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `ffxiv__freecompany`.`name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`monthly`)*100 AS `ratio` FROM `ffxiv__freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `ffxiv__freecompany_ranking` `sub`)) `tempresult` INNER JOIN `ffxiv__freecompany` ON `ffxiv__freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
                     if (count($data['freecompany']['ranking']['monthly']) > 1) {
-                        $data['freecompany']['ranking']['monthly'] = $ArrayHelpers->topAndBottom($data['freecompany']['ranking']['monthly'], 20);
+                        $data['freecompany']['ranking']['monthly'] = ArrayHelpers::topAndBottom($data['freecompany']['ranking']['monthly'], 20);
                     } else {
                         $data['freecompany']['ranking']['monthly'] = [];
                     }
@@ -232,7 +232,7 @@ class Statistics
                 } else {
                     $data['freecompany']['ranking']['weekly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `ffxiv__freecompany`.`name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`weekly`)*100 AS `ratio` FROM `ffxiv__freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `ffxiv__freecompany_ranking` `sub`)) `tempresult` INNER JOIN `ffxiv__freecompany` ON `ffxiv__freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
                     if (count($data['freecompany']['ranking']['weekly']) > 1) {
-                        $data['freecompany']['ranking']['weekly'] = $ArrayHelpers->topAndBottom($data['freecompany']['ranking']['weekly'], 20);
+                        $data['freecompany']['ranking']['weekly'] = ArrayHelpers::topAndBottom($data['freecompany']['ranking']['weekly'], 20);
                     } else {
                         $data['freecompany']['ranking']['weekly'] = [];
                     }
@@ -255,7 +255,7 @@ class Statistics
                         $data['cities']['gender'][$key]['color'] = $Lodestone->colorCities($city['value']);
                     }
                     #Split cities by gender
-                    $data['cities']['gender'] = $ArrayHelpers->splitByKey($data['cities']['gender'], 'genderid', ['female', 'male'], [0, 1]);
+                    $data['cities']['gender'] = ArrayHelpers::splitByKey($data['cities']['gender'], 'genderid', ['female', 'male'], [0, 1]);
                 }
                 #City by free company
                 if (!$nocache && !empty($json['cities']['free_company'])) {
@@ -276,7 +276,7 @@ class Statistics
                     foreach ($data['cities']['gc_characters'] as $key=>$company) {
                         $data['cities']['gc_characters'][$key]['color'] = $Lodestone->colorGC($company['value']);
                     }
-                    $data['cities']['gc_characters'] = $ArrayHelpers->splitByKey($data['cities']['gc_characters'], 'city', [], []);
+                    $data['cities']['gc_characters'] = ArrayHelpers::splitByKey($data['cities']['gc_characters'], 'city', [], []);
                 }
                 #Grand companies distribution (free companies)
                 if (!$nocache && !empty($json['cities']['gc_fc'])) {
@@ -287,7 +287,7 @@ class Statistics
                     foreach ($data['cities']['gc_fc'] as $key=>$company) {
                         $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC($company['value']);
                     }
-                    $data['cities']['gc_fc'] = $ArrayHelpers->splitByKey($data['cities']['gc_fc'], 'city', [], []);
+                    $data['cities']['gc_fc'] = ArrayHelpers::splitByKey($data['cities']['gc_fc'], 'city', [], []);
                 }
                 break;
             case 'grandcompanies':
@@ -301,7 +301,7 @@ class Statistics
                         $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC($company['value']);
                     }
                     #Split companies by gender
-                    $data['grand_companies']['population'] = $ArrayHelpers->splitByKey($data['grand_companies']['population'], 'genderid', ['female', 'male'], [0, 1]);
+                    $data['grand_companies']['population'] = ArrayHelpers::splitByKey($data['grand_companies']['population'], 'genderid', ['female', 'male'], [0, 1]);
                     $data['grand_companies']['population']['free_company'] = $dbCon->countUnique('ffxiv__freecompany', 'grandcompanyid', '`ffxiv__freecompany`.`deleted` IS NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__grandcompany_rank`.`gcId`');
                     #Add colors to cities
                     foreach ($data['grand_companies']['population']['free_company'] as $key=>$company) {
@@ -312,10 +312,10 @@ class Statistics
                 if (!$nocache && !empty($json['grand_companies']['ranks'])) {
                     $data['grand_companies']['ranks'] = $json['grand_companies']['ranks'];
                 } else {
-                    $data['grand_companies']['ranks'] = $ArrayHelpers->splitByKey($dbCon->countUnique('ffxiv__character', 'gcrankid', '`ffxiv__character`.`deleted` IS NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__character`.`genderid`, `ffxiv__grandcompany_rank`.`gcId`, `ffxiv__grandcompany_rank`.`gc_rank`', 'DESC', 0, ['`ffxiv__character`.`genderid`', '`ffxiv__grandcompany_rank`.`gcId`']), 'gcId', [], []);
+                    $data['grand_companies']['ranks'] = ArrayHelpers::splitByKey($dbCon->countUnique('ffxiv__character', 'gcrankid', '`ffxiv__character`.`deleted` IS NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__character`.`genderid`, `ffxiv__grandcompany_rank`.`gcId`, `ffxiv__grandcompany_rank`.`gc_rank`', 'DESC', 0, ['`ffxiv__character`.`genderid`', '`ffxiv__grandcompany_rank`.`gcId`']), 'gcId', [], []);
                     #Split by gender
                     foreach ($data['grand_companies']['ranks'] as $key=>$company) {
-                        $data['grand_companies']['ranks'][$key] = $ArrayHelpers->splitByKey($company, 'genderid', ['female', 'male'], [0, 1]);
+                        $data['grand_companies']['ranks'][$key] = ArrayHelpers::splitByKey($company, 'genderid', ['female', 'male'], [0, 1]);
                     }
                 }
                 break;
@@ -325,22 +325,22 @@ class Statistics
                     $data['servers']['female population'] = $json['servers']['female population'];
                     $data['servers']['male population'] = $json['servers']['male population'];
                 } else {
-                    $data['servers']['characters'] = $ArrayHelpers->splitByKey($dbCon->countUnique('ffxiv__character', 'serverid', '`ffxiv__character`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__character`.`genderid`, `ffxiv__server`.`server`', 'DESC', 0, ['`ffxiv__character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
-                    $data['servers']['female population'] = $ArrayHelpers->topAndBottom($data['servers']['characters']['female'], 20);
-                    $data['servers']['male population'] = $ArrayHelpers->topAndBottom($data['servers']['characters']['male'], 20);
+                    $data['servers']['characters'] = ArrayHelpers::splitByKey($dbCon->countUnique('ffxiv__character', 'serverid', '`ffxiv__character`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__character`.`genderid`, `ffxiv__server`.`server`', 'DESC', 0, ['`ffxiv__character`.`genderid`']), 'genderid', ['female', 'male'], [0, 1]);
+                    $data['servers']['female population'] = ArrayHelpers::topAndBottom($data['servers']['characters']['female'], 20);
+                    $data['servers']['male population'] = ArrayHelpers::topAndBottom($data['servers']['characters']['male'], 20);
                     unset($data['servers']['characters']);
                 }
                 #Free companies
                 if (!$nocache && !empty($json['servers']['Free Companies'])) {
                     $data['servers']['Free Companies'] = $json['servers']['Free Companies'];
                 } else {
-                    $data['servers']['Free Companies'] = $ArrayHelpers->topAndBottom($dbCon->countUnique('ffxiv__freecompany', 'serverid', '`ffxiv__freecompany`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__server`.`server`'), 20);
+                    $data['servers']['Free Companies'] = ArrayHelpers::topAndBottom($dbCon->countUnique('ffxiv__freecompany', 'serverid', '`ffxiv__freecompany`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__server`.`server`'), 20);
                 }
                 #Linkshells
                 if (!$nocache && !empty($json['servers']['Linkshells'])) {
                     $data['servers']['Linkshells'] = $json['servers']['Linkshells'];
                 } else {
-                    $data['servers']['Linkshells'] = $ArrayHelpers->topAndBottom($dbCon->countUnique('ffxiv__linkshell', 'serverid', '`ffxiv__linkshell`.`crossworld` = 0 AND `ffxiv__linkshell`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__server`.`server`'), 20);
+                    $data['servers']['Linkshells'] = ArrayHelpers::topAndBottom($dbCon->countUnique('ffxiv__linkshell', 'serverid', '`ffxiv__linkshell`.`crossworld` = 0 AND `ffxiv__linkshell`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__server`.`server`'), 20);
                 }
                 #Crossworld linkshells
                 if (!$nocache && !empty($json['servers']['crossworldlinkshell'])) {
@@ -362,7 +362,7 @@ class Statistics
                 } else {
                     $data['other']['achievements'] = $dbCon->SelectAll('SELECT \'achievement\' as `type`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`icon`, `ffxiv__achievement`.`name` AS `name`, `count` FROM (SELECT `ffxiv__character_achievement`.`achievementid`, count(`ffxiv__character_achievement`.`achievementid`) AS `count` from `ffxiv__character_achievement` GROUP BY `ffxiv__character_achievement`.`achievementid` ORDER BY `count`) `tempresult` INNER JOIN `ffxiv__achievement` ON `tempresult`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__achievement`.`category` IS NOT NULL ORDER BY `count`');
                     #Split achievements by categories
-                    $data['other']['achievements'] = $ArrayHelpers->splitByKey($data['other']['achievements'], 'category', [], []);
+                    $data['other']['achievements'] = ArrayHelpers::splitByKey($data['other']['achievements'], 'category', [], []);
                     #Get only top 20 for each category
                     foreach ($data['other']['achievements'] as $key=>$category) {
                         $data['other']['achievements'][$key] = array_slice($category, 0, 20);
@@ -454,7 +454,7 @@ class Statistics
                 if (!$nocache && !empty($json['other']['communities'])) {
                     $data['other']['communities'] = $json['other']['communities'];
                 } else {
-                    $data['other']['communities'] = $ArrayHelpers->splitByKey($dbCon->SelectAll('
+                    $data['other']['communities'] = ArrayHelpers::splitByKey($dbCon->SelectAll('
                         SELECT `type`, IF(`has_community`=0, \'No community\', \'Community\') AS `value`, count(`has_community`) AS `count` FROM (
                             SELECT \'Free Company\' AS `type`, IF(`communityid` IS NULL, 0, 1) AS `has_community` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL
                             UNION ALL
