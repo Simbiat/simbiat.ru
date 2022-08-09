@@ -36,7 +36,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
 
     public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string
     {
-        if (preg_match('/\d{10}/', $string) === 1) {
+        if (preg_match('/\d{10}/', strval($string)) === 1) {
             $datetime = new \DateTime();
             $datetime->setTimestamp(intval($string));
         } else {
