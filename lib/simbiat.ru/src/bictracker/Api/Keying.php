@@ -35,7 +35,7 @@ class Keying extends Api
         if (empty($acc)) {
             return ['http_error' => 400, 'reason' => 'No Account provided'];
         }
-        $data = (new AccountKeying)->accCheck($bic, $acc);
+        $data = AccountKeying::accCheck($bic, $acc);
         if ($data === false) {
             return ['http_error' => 400, 'reason' => 'Wrong format of either BIC or Account'];
         }

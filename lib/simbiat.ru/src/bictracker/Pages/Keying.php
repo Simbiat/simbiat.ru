@@ -31,7 +31,7 @@ class Keying extends Page
     {
         $outputArray['checkResult'] = null;
         if (!empty($path[0]) && !empty($path[1])) {
-            $outputArray['checkResult'] = (new AccountKeying)->accCheck($path[0], $path[1]);
+            $outputArray['checkResult'] = AccountKeying::accCheck($path[0], $path[1]);
             if ($outputArray['checkResult'] !== false) {
                 $outputArray['bic_value'] = $path[0];
                 $outputArray['acc_value'] = $path[1];
