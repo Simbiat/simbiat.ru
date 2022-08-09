@@ -682,7 +682,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\fftracker\\Search\\PVP' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Search/PVP.php',
         'Simbiat\\fftracker\\Statistics' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
         'Simbiat\\optimizeTables' => __DIR__ . '/../..' . '/../lib/optimize-tables/src/optimizeTables.php',
-        'Simbiat\\usercontrol\\Api\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Api.php',
+        'Simbiat\\usercontrol\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api.php',
         'Simbiat\\usercontrol\\Api\\Emails' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Emails.php',
         'Simbiat\\usercontrol\\Api\\FFLink' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/FFLink.php',
         'Simbiat\\usercontrol\\Api\\Login' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Login.php',

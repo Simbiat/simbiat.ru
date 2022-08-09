@@ -2,13 +2,11 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
-use Simbiat\Database\Controller;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 
 abstract class Search
 {
-    protected ?Controller $dbController;
     #Items to display per page for lists
     protected int $listItems = 100;
     #Settings required for subclasses
@@ -43,8 +41,6 @@ abstract class Search
                 throw new \LogicException(get_class($this) . ' must have a non-empty `'.$property.'` property.');
             }
         }
-        #Cache DB controller
-        $this->dbController = HomePage::$dbController;
     }
 
     public final function search(string $what = '', int $limit = 15): array
@@ -98,7 +94,7 @@ abstract class Search
         try {
             if ($what !== '') {
                 #Check if search term has %
-                if (preg_match('/%/i', $what) === 1) {
+                if (preg_match('/%/', $what) === 1) {
                     $like = true;
                 } else {
                     $like = false;
@@ -107,7 +103,7 @@ abstract class Search
                 $results = 0;
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->exact() . ')', [':what' => [$what, 'string']]);
+                    $results = HomePage::$dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->exact() . ')', [':what' => [$what, 'string']]);
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -118,16 +114,16 @@ abstract class Search
                         return 0;
                     }
                     #Get fulltext results
-                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0)', [':what' => [$what, 'match']]);
+                    return HomePage::$dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0)', [':what' => [$what, 'match']]);
                 } else {
                     if (empty($this->like)) {
                         return 0;
                     }
                     #Search using LIKE
-                    return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().')', [':what' => [$what, 'string']]);
+                    return HomePage::$dbController->count('SELECT COUNT(*) FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().')', [':what' => [$what, 'string']]);
                 }
             } else {
-                return $this->dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
+                return HomePage::$dbController->count('SELECT COUNT(*) FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where));
             }
         } catch (\Throwable $e) {
             Errors::error_log($e);
@@ -141,7 +137,7 @@ abstract class Search
         try {
             if ($what !== '') {
                 #Check if search term has %
-                if (preg_match('/%/i', $what) === 1) {
+                if (preg_match('/%/', $what) === 1) {
                     $like = true;
                 } else {
                     $like = false;
@@ -150,7 +146,7 @@ abstract class Search
                 $results = [];
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->exact() . ') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'string']]);
+                    $results = HomePage::$dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->exact() . ') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'string']]);
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -161,16 +157,16 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'match']]);
+                    return HomePage::$dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ', ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'match']]);
                 } else {
                     if (empty($this->like)) {
                         return [];
                     }
                     #Search using LIKE
-                    return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'string']]);
+                    return HomePage::$dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '` WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, [':what' => [$what, 'string']]);
                 }
             } else {
-                return $this->dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
+                return HomePage::$dbController->selectAll('SELECT \'' . $this->entityType . '\' as `type`, ' . $this->fields . ' FROM `' . $this->table . '`' . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset);
             }
         } catch (\Throwable $e) {
             Errors::error_log($e);

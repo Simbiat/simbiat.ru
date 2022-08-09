@@ -2,14 +2,10 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
-use Simbiat\Database\Controller;
 use Simbiat\Errors;
-use Simbiat\HomePage;
 
 abstract class Entity
 {
-    #Implicitely depend on DB Controller and attempt to initiate it in constructor
-    protected ?Controller $dbController;
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
     protected bool $attempted = false;
     #If ID was retrieved, this needs to not be null
@@ -21,8 +17,6 @@ abstract class Entity
 
     public final function __construct(string|int|null $id = null, bool $debug = false)
     {
-        #ALl entities are expected to use database somehow, thus using
-        $this->dbController = HomePage::$dbController;
         #Set debug flag
         $this->debug = $debug;
         #If ID was provided - set it as well

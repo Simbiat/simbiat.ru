@@ -4,6 +4,7 @@ namespace Simbiat\bictracker;
 
 use Simbiat\Abstracts\Entity;
 use Simbiat\ArrayHelpers;
+use Simbiat\HomePage;
 
 class Bic extends Entity
 {
@@ -67,7 +68,7 @@ class Bic extends Entity
 
     protected function getFromDB(): array
     {
-        return $this->dbController->selectRow('SELECT `biclist`.`VKEY`, `VKEYDEL`, `BVKEY`, `FVKEY`, `OLD_NEWNUM`, `EnglName`, `XchType`, `UID`, `CntrCd`, `Adr`, `AT1`, `AT2`, `CKS`, `DATE_CH`, `DateIn`, `DateOut`, `Updated`, `Ind`, `bic__srvcs`.`Description` AS `Srvcs`, `NameP`, `NAMEMAXB`, `NEWKS`, biclist.`BIC`, `PrntBIC`, `SWIFT_NAME`, `Nnp`, `OKPO`, `PERMFO`, `bic__pzn`.`NAME` AS `PtType`, `bic__rclose`.`NAMECLOSE` AS `R_CLOSE`, `RegN`, `bic__reg`.`NAME` AS `Rgn`, `bic__reg`.`CENTER`, `RKC`, `SROK`, `TELEF`, `Tnp`, `PRIM1`, `PRIM2`, `PRIM3` FROM `bic__list` biclist
+        return HomePage::$dbController->selectRow('SELECT `biclist`.`VKEY`, `VKEYDEL`, `BVKEY`, `FVKEY`, `OLD_NEWNUM`, `EnglName`, `XchType`, `UID`, `CntrCd`, `Adr`, `AT1`, `AT2`, `CKS`, `DATE_CH`, `DateIn`, `DateOut`, `Updated`, `Ind`, `bic__srvcs`.`Description` AS `Srvcs`, `NameP`, `NAMEMAXB`, `NEWKS`, biclist.`BIC`, `PrntBIC`, `SWIFT_NAME`, `Nnp`, `OKPO`, `PERMFO`, `bic__pzn`.`NAME` AS `PtType`, `bic__rclose`.`NAMECLOSE` AS `R_CLOSE`, `RegN`, `bic__reg`.`NAME` AS `Rgn`, `bic__reg`.`CENTER`, `RKC`, `SROK`, `TELEF`, `Tnp`, `PRIM1`, `PRIM2`, `PRIM3` FROM `bic__list` biclist
             LEFT JOIN `bic__reg` ON `bic__reg`.`RGN` = `biclist`.`Rgn`
             LEFT JOIN `bic__pzn` ON `bic__pzn`.`PtType` = `biclist`.`PtType`
             LEFT JOIN `bic__rclose` ON `bic__rclose`.`R_CLOSE` = `biclist`.`R_CLOSE`
@@ -99,32 +100,32 @@ class Bic extends Entity
         $fromDB['branches'] = $this->getBranches($fromDB['BIC']);
         $fromDB['branches'] = ArrayHelpers::MultiArrSort($fromDB['branches'], 'name');
         #Get SWIFT codes
-        $fromDB['SWIFTs'] = $this->dbController->selectAll('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id]);
+        $fromDB['SWIFTs'] = HomePage::$dbController->selectAll('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id]);
         #Get restrictions for BIC
-        $fromDB['restrictions'] = $this->dbController->selectAll('SELECT `bic__bic_rstr`.`Rstr` as `name`, `Description` as `description`, `RstrDate` as `startTime`, `DateOut` as `endTime` FROM `bic__bic_rstr` LEFT JOIN `bic__rstr` ON `bic__bic_rstr`.`Rstr`=`bic__rstr`.`Rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id]);
+        $fromDB['restrictions'] = HomePage::$dbController->selectAll('SELECT `bic__bic_rstr`.`Rstr` as `name`, `Description` as `description`, `RstrDate` as `startTime`, `DateOut` as `endTime` FROM `bic__bic_rstr` LEFT JOIN `bic__rstr` ON `bic__bic_rstr`.`Rstr`=`bic__rstr`.`Rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id]);
         #Get accounts
-        $fromDB['accounts'] = $this->dbController->selectAll(
+        $fromDB['accounts'] = HomePage::$dbController->selectAll(
             'SELECT `Account`, `bic__acc_type`.`Description` as `AccountType`, `CK`, `DateIn`, `DateOut`, `AccountCBRBIC` FROM `bic__accounts`
                 LEFT JOIN `bic__acc_type` ON `bic__accounts`.`RegulationAccountType`=`bic__acc_type`.`RegulationAccountType` WHERE `bic__accounts`.`BIC`=:BIC',
             [':BIC' => $this->id]
         );
         foreach ($fromDB['accounts'] as $key => $account) {
             #Get restrictions
-            $fromDB['accounts'][$key]['restrictions'] = $this->dbController->selectAll('SELECT `Description` as `Restriction`, `AccRstrDate` as `DateIn`, `DateOut`, `SuccessorBIC` FROM `bic__acc_rstr` LEFT JOIN `bic__rstr` ON `bic__acc_rstr`.`AccRstr`=`bic__rstr`.`Rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']]);
+            $fromDB['accounts'][$key]['restrictions'] = HomePage::$dbController->selectAll('SELECT `Description` as `Restriction`, `AccRstrDate` as `DateIn`, `DateOut`, `SuccessorBIC` FROM `bic__acc_rstr` LEFT JOIN `bic__rstr` ON `bic__acc_rstr`.`AccRstr`=`bic__rstr`.`Rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']]);
             #Get successor details for restrictions
             foreach ($fromDB['accounts'][$key]['restrictions'] as $keyRstr => $restriction) {
                 if (!empty($restriction['SuccessorBIC'])) {
-                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic(strval($restriction['SuccessorBIC']))]);
+                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = HomePage::$dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic(strval($restriction['SuccessorBIC']))]);
                     $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->padBic(strval($fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC']));
                 }
             }
         }
         #Count banks, that are serviced by this one
-        $fromDB['serviceFor'] = $this->dbController->Count('SELECT COUNT(*) FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
+        $fromDB['serviceFor'] = HomePage::$dbController->Count('SELECT COUNT(*) FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
         #Get list of banks, that used same BIC
-        $fromDB['sameBIC'] = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $fromDB['BIC'], ':BIC' => $fromDB['BIC']]);
+        $fromDB['sameBIC'] = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $fromDB['BIC'], ':BIC' => $fromDB['BIC']]);
         #Get list of banks on same address
-        $fromDB['sameAddress'] = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;', [':Adr' => $fromDB['Adr'], ':BIC' => $this->id]);
+        $fromDB['sameAddress'] = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;', [':Adr' => $fromDB['Adr'], ':BIC' => $this->id]);
 
 
         #Old DBF data processing
@@ -175,7 +176,7 @@ class Bic extends Entity
      */
     private function predecessors(string $vkey): array
     {
-        $banks = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `VKEY` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
+        $banks = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `VKEY` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
         if (empty($banks)) {
             $banks = [];
         } else {
@@ -197,7 +198,7 @@ class Bic extends Entity
     private function successors(string $vkey): array
     {
         #Get initial list
-        $bank = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `VKEY`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
+        $bank = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `VKEY`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
         if (empty($bank)) {
             $bank = [];
         } else {
@@ -220,7 +221,7 @@ class Bic extends Entity
     {
         $banks = [];
         #Get initial list
-        $bank = $this->dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC'=>$bic]);
+        $bank = HomePage::$dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC'=>$bic]);
         if (empty($bank)) {
             return $banks;
         } else {
@@ -248,7 +249,7 @@ class Bic extends Entity
     {
         $banks = [];
         #Get initial list
-        $bank = $this->dbController->selectRow('SELECT \'bic\' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC'=>$bic]);
+        $bank = HomePage::$dbController->selectRow('SELECT \'bic\' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC'=>$bic]);
         if (empty($bank)) {
             return $banks;
         } else {
@@ -274,7 +275,7 @@ class Bic extends Entity
      */
     private function getBranches(string $bic): array
     {
-        $banks = $this->dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `BIC`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `PrntBIC` = :BIC ORDER BY `NameP`;', [':BIC'=>$bic]);
+        $banks = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `BIC`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `PrntBIC` = :BIC ORDER BY `NameP`;', [':BIC'=>$bic]);
         if (empty($banks)) {
             $banks = [];
         } else {

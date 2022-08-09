@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\Talks;
 
 use Simbiat\Config\Common;
-use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\HTMLCut;
 use Simbiat\HTTP20\Headers;
@@ -12,15 +11,6 @@ use Simbiat\HTTP20\PrettyURL;
 
 class Show
 {
-    private ?Controller $dbController;
-
-    public function __construct()
-    {
-        #Cache objects
-        $this->dbController = HomePage::$dbController;
-    }
-
-
     public function forum(array $uri): array
     {
         $currentPage = 1;
@@ -32,13 +22,13 @@ class Show
             Headers::redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1');
         }
         #Get count
-        $totalPages = intval(ceil($this->dbController->count('SELECT COUNT(*) FROM `talks__posts`')/20));
+        $totalPages = intval(ceil(HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts`')/20));
         if ($currentPage > $totalPages) {
             Headers::redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/'.$totalPages);
         }
         $currentPage = intval($currentPage);
         #Get articles
-        $forum = $this->dbController->selectAll('SELECT * FROM `talks__posts` ORDER BY `created` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
+        $forum = HomePage::$dbController->selectAll('SELECT * FROM `talks__posts` ORDER BY `created` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
         #Slightly update content
         foreach ($forum as $key=>$article) {
             $forum[$key]['url'] = PrettyURL::pretty($article['threadid'].'/'.$article['title']);
@@ -66,7 +56,7 @@ class Show
         if (empty($threadid)) {
             Headers::redirect(Common::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/forum/1');
         } else {
-            $outputArray['article'] = $this->dbController->selectRow('SELECT * FROM `talks__posts` WHERE `threadid` = :threadid', ['threadid'=>$threadid]);
+            $outputArray['article'] = HomePage::$dbController->selectRow('SELECT * FROM `talks__posts` WHERE `threadid` = :threadid', ['threadid'=>$threadid]);
             if (empty($outputArray['article'])) {
                 $outputArray['http_error'] = 404;
             } else {

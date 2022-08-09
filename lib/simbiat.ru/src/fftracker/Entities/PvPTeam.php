@@ -5,6 +5,7 @@ namespace Simbiat\fftracker\Entities;
 use Simbiat\Cron;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
+use Simbiat\HomePage;
 use Simbiat\Lodestone;
 
 class PvPTeam extends Entity
@@ -26,15 +27,15 @@ class PvPTeam extends Entity
     protected function getFromDB(): array
     {
         #Get general information
-        $data = $this->dbController->selectRow('SELECT * FROM `ffxiv__pvpteam` LEFT JOIN `ffxiv__server` ON `ffxiv__pvpteam`.`datacenterid`=`ffxiv__server`.`serverid` WHERE `pvpteamid`=:id', [':id'=>$this->id]);
+        $data = HomePage::$dbController->selectRow('SELECT * FROM `ffxiv__pvpteam` LEFT JOIN `ffxiv__server` ON `ffxiv__pvpteam`.`datacenterid`=`ffxiv__server`.`serverid` WHERE `pvpteamid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
         }
         #Get old names
-        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `ffxiv__pvpteam_names` WHERE `pvpteamid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldnames'] = HomePage::$dbController->selectColumn('SELECT `name` FROM `ffxiv__pvpteam_names` WHERE `pvpteamid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`characterid` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvprankid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvprankid`=`ffxiv__pvpteam_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `ffxiv__pvpteam_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = HomePage::$dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`characterid` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvprankid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvprankid`=`ffxiv__pvpteam_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `ffxiv__pvpteam_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
@@ -122,7 +123,7 @@ class PvPTeam extends Entity
                 ],
             ];
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `pvpteamid`=:pvpteamid AND `current`=1;', [':pvpteamid'=>$this->id]);
+            $trackMembers = HomePage::$dbController->selectColumn('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `pvpteamid`=:pvpteamid AND `current`=1;', [':pvpteamid'=>$this->id]);
             #Process members, that left the team
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
@@ -141,7 +142,7 @@ class PvPTeam extends Entity
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member=>$details) {
                     #Check if member is registered on tracker, while saving the status for future use
-                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
+                    $this->lodestone['members'][$member]['registered'] = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
                     if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
@@ -173,7 +174,7 @@ class PvPTeam extends Entity
                 }
             }
             #Running the queries we've accumulated
-            $this->dbController->query($queries);
+            HomePage::$dbController->query($queries);
             #Schedule proper update of any newly added characters
             if (!empty($this->lodestone['members'])) {
                 $this->charMassCron($this->lodestone['members']);
@@ -198,7 +199,7 @@ class PvPTeam extends Entity
             $queries[] = [
                 'UPDATE `ffxiv__pvpteam` SET `deleted` = UTC_DATE() WHERE `pvpteamid` = :id', [':id'=>$this->id],
             ];
-            return $this->dbController->query($queries);
+            return HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

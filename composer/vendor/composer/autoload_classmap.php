@@ -437,7 +437,7 @@ return array(
     'Simbiat\\fftracker\\Search\\PVP' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Search/PVP.php',
     'Simbiat\\fftracker\\Statistics' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
     'Simbiat\\optimizeTables' => $baseDir . '/../lib/optimize-tables/src/optimizeTables.php',
-    'Simbiat\\usercontrol\\Api\\Api' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Api.php',
+    'Simbiat\\usercontrol\\Api' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api.php',
     'Simbiat\\usercontrol\\Api\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Emails.php',
     'Simbiat\\usercontrol\\Api\\FFLink' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/FFLink.php',
     'Simbiat\\usercontrol\\Api\\Login' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Login.php',

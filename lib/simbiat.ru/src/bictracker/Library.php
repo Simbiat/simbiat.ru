@@ -4,25 +4,16 @@ namespace Simbiat\bictracker;
 
 use Simbiat\ArrayHelpers;
 use Simbiat\Curl;
-use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\Security;
 
 class Library
 {
-    private ?Controller $dbController;
     private string $fileDate;
     #Base link where we download BIC files
     const bicDownBase = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
     #Base link for href attribute
     const bicBaseHref = 'https://www.cbr.ru';
-
-    public function __construct()
-    {
-        #Cache DB controller
-        $this->dbController = HomePage::$dbController;
-    }
-
 
     #Function to update library in database
     /**
@@ -30,7 +21,7 @@ class Library
      */
     public function update(bool $manual = false): string|bool|int
     {
-        if (empty($this->dbController)) {
+        if (empty(HomePage::$dbController)) {
             return false;
         }
         $currentDate = strtotime(date('d.m.Y', time()));
@@ -299,7 +290,7 @@ class Library
                             $delayed = array_merge($delayed, $queries);
                         } else {
                             #Appply queries for this BIC
-                            if ($this->dbController->query($queries) !== true) {
+                            if (HomePage::$dbController->query($queries) !== true) {
                                 throw new \RuntimeException('Failed to update `'.$bic.'` from `'.$download.'`');
                             }
                         }
@@ -326,7 +317,7 @@ class Library
                         [':date' => $libDate],
                     ];
                     #Run queries for BICs removals and library update
-                    $this->dbController->query($queries);
+                    HomePage::$dbController->query($queries);
                     $this->log($libDate, 'Успешное обновление', $manual);
                     if ($manual && $libDate !== $libDateInitial) {
                         return $libDate;
@@ -356,7 +347,7 @@ class Library
      */
     private function getBIC(string $bic): array
     {
-        $result = $this->dbController->selectRow(
+        $result = HomePage::$dbController->selectRow(
             'SELECT `BIC`, `DateIn`, `DateOut`, `NameP`, `EnglName`, `XchType`, `PtType`, `Srvcs`, `UID`, `PrntBIC`, `CntrCd`, `RegN`, `Ind`, `Rgn`, `Tnp`, `Nnp`, `Adr` FROM `bic__list` WHERE `BIC`=:BIC;',
             [':BIC' => $bic,]
         );
@@ -377,7 +368,7 @@ class Library
      */
     private function getRestrictions(string $bic): array
     {
-        return $this->dbController->selectAll(
+        return HomePage::$dbController->selectAll(
             'SELECT `Rstr`, `RstrDate` FROM `bic__bic_rstr` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
@@ -389,7 +380,7 @@ class Library
      */
     private function getSWIFTs(string $bic): array
     {
-        return $this->dbController->selectAll(
+        return HomePage::$dbController->selectAll(
             'SELECT `DefaultSWBIC`, `SWBIC` FROM `bic__swift` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
@@ -401,7 +392,7 @@ class Library
      */
     private function getAccounts(string $bic): array
     {
-        $result = $this->dbController->selectAll(
+        $result = HomePage::$dbController->selectAll(
             'SELECT `Account`, `AccountCBRBIC`, `CK`, `DateIn`, `RegulationAccountType` FROM `bic__accounts` WHERE `BIC`=:BIC AND `DateOut` IS NULL;',
             [':BIC' => $bic,]
         );
@@ -420,7 +411,7 @@ class Library
      */
     private function getAccountRestrictions(string $account): array
     {
-        $result = $this->dbController->selectAll(
+        $result = HomePage::$dbController->selectAll(
             'SELECT `AccRstr`, `AccRstrDate`, `SuccessorBIC` FROM `bic__acc_rstr` WHERE `Account`=:Account;',
             [':Account' => $account,]
         );
@@ -438,7 +429,7 @@ class Library
      */
     private function getBICs(): array
     {
-        return $this->dbController->selectColumn('SELECT `BIC` FROM `bic__list` WHERE `DateOut` IS NULL;');
+        return HomePage::$dbController->selectColumn('SELECT `BIC` FROM `bic__list` WHERE `DateOut` IS NULL;');
     }
 
     ###################################
@@ -675,7 +666,7 @@ class Library
     public function bicDate(): string
     {
         try {
-            return $this->dbController->selectValue('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';');
+            return HomePage::$dbController->selectValue('SELECT `value` FROM `bic__settings` WHERE `setting`=\'date\';');
         } catch (\Throwable) {
             return strval(time());
         }

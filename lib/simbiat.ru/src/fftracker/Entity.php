@@ -5,6 +5,7 @@ namespace Simbiat\fftracker;
 use Simbiat\Config\FFTracker;
 use Simbiat\Cron;
 use Simbiat\Errors;
+use Simbiat\HomePage;
 
 abstract class Entity extends \Simbiat\Abstracts\Entity
 {
@@ -40,10 +41,10 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
             if ($this::entityType === 'achievement') {
                 /** @noinspection SqlResolve */
-                $updated = $this->dbController->selectRow('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
+                $updated = HomePage::$dbController->selectRow('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
             } else {
                 /** @noinspection SqlResolve */
-                $updated = $this->dbController->selectRow('SELECT `updated`, `deleted` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
+                $updated = HomePage::$dbController->selectRow('SELECT `updated`, `deleted` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
             }
         } catch (\Throwable $e) {
             Errors::error_log($e);
@@ -79,7 +80,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         try {
             #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
             /** @noinspection SqlResolve */
-            $check = $this->dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
+            $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return 503;

@@ -1,6 +1,16 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\usercontrol\Api;
+namespace Simbiat\usercontrol;
+
+use Simbiat\usercontrol\Api\Emails;
+use Simbiat\usercontrol\Api\FFLink;
+use Simbiat\usercontrol\Api\Login;
+use Simbiat\usercontrol\Api\Logout;
+use Simbiat\usercontrol\Api\Password;
+use Simbiat\usercontrol\Api\Profile;
+use Simbiat\usercontrol\Api\Register;
+use Simbiat\usercontrol\Api\Remind;
+use Simbiat\usercontrol\Api\Username;
 
 class Api extends \Simbiat\Abstracts\Api
 {

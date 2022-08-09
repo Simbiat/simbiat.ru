@@ -5,6 +5,7 @@ namespace Simbiat\fftracker\Entities;
 use Simbiat\Cron;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
+use Simbiat\HomePage;
 use Simbiat\Lodestone;
 
 class Linkshell extends Entity
@@ -26,15 +27,15 @@ class Linkshell extends Entity
     protected function getFromDB(): array
     {
         #Get general information
-        $data = $this->dbController->selectRow('SELECT * FROM `ffxiv__linkshell` LEFT JOIN `ffxiv__server` ON `ffxiv__linkshell`.`serverid`=`ffxiv__server`.`serverid` WHERE `linkshellid`=:id', [':id'=>$this->id]);
+        $data = HomePage::$dbController->selectRow('SELECT * FROM `ffxiv__linkshell` LEFT JOIN `ffxiv__server` ON `ffxiv__linkshell`.`serverid`=`ffxiv__server`.`serverid` WHERE `linkshellid`=:id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
         }
         #Get old names
-        $data['oldnames'] = $this->dbController->selectColumn('SELECT `name` FROM `ffxiv__linkshell_names` WHERE `linkshellid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldnames'] = HomePage::$dbController->selectColumn('SELECT `name` FROM `ffxiv__linkshell_names` WHERE `linkshellid`=:id AND `name`<>:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get members
-        $data['members'] = $this->dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__linkshell_character`.`characterid` AS `id`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__linkshell_rank`.`rank`, `ffxiv__linkshell_rank`.`lsrankid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_rank`.`lsrankid`=`ffxiv__linkshell_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `ffxiv__linkshell_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
+        $data['members'] = HomePage::$dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__linkshell_character`.`characterid` AS `id`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__linkshell_rank`.`rank`, `ffxiv__linkshell_rank`.`lsrankid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_rank`.`lsrankid`=`ffxiv__linkshell_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `ffxiv__linkshell_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['serverid']);
         if ($data['crossworld']) {
@@ -127,7 +128,7 @@ class Linkshell extends Entity
                 ],
             ];
             #Get members as registered on tracker
-            $trackMembers = $this->dbController->selectColumn('SELECT `characterid` FROM `ffxiv__linkshell_character` WHERE `linkshellid`=:linkshellid AND `current`=1;', [':linkshellid'=>$this->id]);
+            $trackMembers = HomePage::$dbController->selectColumn('SELECT `characterid` FROM `ffxiv__linkshell_character` WHERE `linkshellid`=:linkshellid AND `current`=1;', [':linkshellid'=>$this->id]);
             #Process members, that left the linkshell
             foreach ($trackMembers as $member) {
                 #Check if member from tracker is present in Lodestone list
@@ -146,7 +147,7 @@ class Linkshell extends Entity
             if (!empty($this->lodestone['members'])) {
                 foreach ($this->lodestone['members'] as $member=>$details) {
                     #Check if member is registered on tracker, while saving the status for future use
-                    $this->lodestone['members'][$member]['registered'] = $this->dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
+                    $this->lodestone['members'][$member]['registered'] = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid'=>$member]);
                     if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
@@ -177,7 +178,7 @@ class Linkshell extends Entity
                 }
             }
             #Running the queries we've accumulated
-            $this->dbController->query($queries);
+            HomePage::$dbController->query($queries);
             #Schedule proper update of any newly added characters
             if (!empty($this->lodestone['members'])) {
                 $this->charMassCron($this->lodestone['members']);
@@ -203,7 +204,7 @@ class Linkshell extends Entity
                 'UPDATE `ffxiv__linkshell` SET `deleted` = UTC_DATE() WHERE `linkshellid` = :id',
                 [':id'=>$this->id],
             ];
-            return $this->dbController->query($queries);
+            return HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

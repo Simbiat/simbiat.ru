@@ -64,16 +64,16 @@ class User extends Entity
 
     protected function getFromDB(): array
     {
-        $dbData =  $this->dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
+        $dbData =  HomePage::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
         }
         #Get user's groups
-        $dbData['groups'] = $this->dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
+        $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         $dbData['activated'] = !in_array(2, $dbData['groups'], true);
         $dbData['deleted'] = in_array(4, $dbData['groups'], true);
         $dbData['banned'] = in_array(5, $dbData['groups'], true);
-        $dbData['currentAvatar'] = $this->dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
+        $dbData['currentAvatar'] = HomePage::$dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
         return $dbData;
     }
 
@@ -103,7 +103,7 @@ class User extends Entity
     public function getEmails(): array
     {
         try {
-            return $this->dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
+            return HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
@@ -112,7 +112,7 @@ class User extends Entity
     public function getAvatars(): array
     {
         try {
-            return $this->dbController->selectAll('SELECT `url`, `current` FROM `uc__user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
+            return HomePage::$dbController->selectAll('SELECT `url`, `current` FROM `uc__user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
@@ -122,13 +122,13 @@ class User extends Entity
     {
         $outputArray = [];
         #Get token
-        $outputArray['token'] = $this->dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
+        $outputArray['token'] = HomePage::$dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
         #Get linked characters
-        $outputArray['characters'] = $this->dbController->selectAll('SELECT `characterid`, `name`, `avatar` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => $_SESSION['userid']]);
+        $outputArray['characters'] = HomePage::$dbController->selectAll('SELECT `characterid`, `name`, `avatar` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => $_SESSION['userid']]);
         #Get linked groups
         if (!empty($outputArray['characters'])) {
             foreach ($outputArray['characters'] as $character) {
-                $outputArray['groups'][$character['characterid']] = $this->dbController->selectAll(
+                $outputArray['groups'][$character['characterid']] = HomePage::$dbController->selectAll(
                     '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, NULL AS `icon` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rankid`=1)
@@ -156,7 +156,7 @@ class User extends Entity
             return ['response' => true];
         }
         try {
-            $result = $this->dbController->query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
+            $result = HomePage::$dbController->query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
                 ':userid' => [$this->id, 'int'],
                 ':username' => $newName,
             ]);
@@ -281,7 +281,7 @@ class User extends Entity
         if (empty($queries)) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
         } else {
-            return ['response' => $this->dbController->query($queries)];
+            return ['response' => HomePage::$dbController->query($queries)];
         }
     }
 
