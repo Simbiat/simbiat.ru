@@ -45,11 +45,10 @@ class Show
         $forum = $this->dbController->selectAll('SELECT * FROM `talks__posts` ORDER BY `created` DESC LIMIT 20 OFFSET '.(($currentPage-1)*20));
         #Cache PrettyURL
         $pretty = (new PrettyURL());
-        $cutter = (new HTMLCut());
         #Slightly update content
         foreach ($forum as $key=>$article) {
             $forum[$key]['url'] = $pretty->pretty($article['threadid'].'/'.$article['title']);
-            $forum[$key]['content'] = $cutter->Cut($article['text'], 1000, 5, '<br><a href="/thread/'.$forum[$key]['url'].'/">⋯✀⋯Read⋯more⋯✀⋯</a>');
+            $forum[$key]['content'] = HTMLCut::Cut($article['text'], 1000, 5, '<br><a href="/thread/'.$forum[$key]['url'].'/">⋯✀⋯Read⋯more⋯✀⋯</a>');
         }
         $outputArray['articles'] = $forum;
         #Old code
