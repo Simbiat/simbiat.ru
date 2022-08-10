@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\Config\FFTracker;
 
 class Character extends Page
 {

@@ -22,6 +22,10 @@ abstract class Entity
         #If ID was provided - set it as well
         if (!empty($id)) {
             $this->setId($id);
+        } else {
+            if (!is_null($id)) {
+                throw new \UnexpectedValueException('ID can\'t be empty.');
+            }
         }
     }
 
@@ -69,9 +73,6 @@ abstract class Entity
     }
 
     #Function to get initial data from DB
-    /**
-     * @throws \Exception
-     */
     abstract protected function getFromDB(): array;
 
     #Function to do processing

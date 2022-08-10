@@ -163,6 +163,8 @@ class User extends Entity
             if ($result) {
                 $_SESSION['username'] = $newName;
             }
+            #Log the change
+            Security::log('CSRF', 'User details change', ['name'=> ['from' => $this->username, 'to' => $newName]]);
             return ['response' => $result];
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];

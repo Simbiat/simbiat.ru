@@ -76,7 +76,7 @@ abstract class Page
                 try {
                     $page = $this->generate($path);
                 } catch (\Throwable $exception) {
-                    if (preg_match('/ID `.*` for entity `.*` has incorrect format\./ui', $exception->getMessage()) === 1) {
+                    if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                         $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
                     } else {
                         Errors::error_log($exception);
