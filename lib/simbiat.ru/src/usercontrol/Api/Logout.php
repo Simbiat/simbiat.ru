@@ -5,6 +5,7 @@ namespace Simbiat\usercontrol\Api;
 use Simbiat\Abstracts\Api;
 use Simbiat\Config\Common;
 use Simbiat\HomePage;
+use Simbiat\Security;
 
 class Logout extends Api
 {
@@ -21,6 +22,7 @@ class Logout extends Api
 
     protected function genData(array $path): array
     {
+        Security::log('Logout', 'Logout');
         #Remove rememberme cookie
         #From browser
         setcookie('rememberme_'.Common::$http_host, '', ['expires' => 1, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
