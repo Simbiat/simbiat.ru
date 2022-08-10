@@ -163,8 +163,9 @@ class User extends Entity
             if ($result) {
                 $_SESSION['username'] = $newName;
             }
+            @session_regenerate_id(true);
             #Log the change
-            Security::log('CSRF', 'User details change', ['name'=> ['from' => $this->username, 'to' => $newName]]);
+            Security::log('User details change', 'Changed named', ['name'=> ['old' => $this->username, 'new' => $newName]]);
             return ['response' => $result];
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];
@@ -178,11 +179,13 @@ class User extends Entity
         }
         #Ensure we get current values (to not generate queries for fields with same data
         $this->get();
-        #Generate queries
+        #Generate queries and data for log
         $queries = [];
+        $log = [];
         #Queries for names
         foreach (['firstname', 'lastname', 'middlename', 'fathername', 'prefix', 'suffix'] as $field) {
             if (isset($_POST['details']['name'][$field]) && $this->name[$field] !== $_POST['details']['name'][$field]) {
+                $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
                 /** @noinspection SqlResolve */
                 $queries[] = [
                     'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
@@ -198,6 +201,7 @@ class User extends Entity
         }
         #Query for birthday
         if (isset($_POST['details']['dates']['birthday']) && $this->dates['birthday'] !== $_POST['details']['dates']['birthday']) {
+            $log['birthday'] = ['old' => $this->name['birthday'], 'new' => $_POST['details']['dates']['birthday']];
             $queries[] = [
                 'UPDATE `uc__users` SET `birthday`=:birthday WHERE `userid`=:userid;',
                 [
@@ -211,6 +215,7 @@ class User extends Entity
         }
         #Query for timezone
         if (isset($_POST['details']['timezone']) && $this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list())) {
+            $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
             $queries[] = [
                 'UPDATE `uc__users` SET `timezone`=:timezone WHERE `userid`=:userid;',
                 [
@@ -234,6 +239,7 @@ class User extends Entity
                 }
             }
             if ($this->sex !== $_POST['details']['sex']) {
+                $log['sex'] = ['old' => $this->sex, 'new' => $_POST['details']['sex']];
                 $queries[] = [
                     'UPDATE `uc__users` SET `sex`=:sex WHERE `userid`=:userid;',
                     [
@@ -252,6 +258,7 @@ class User extends Entity
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {
+                $log['website'] = ['old' => $this->website, 'new' => $_POST['details']['website']];
                 $queries[] = [
                     'UPDATE `uc__users` SET `timezone`=:timezone WHERE `userid`=:userid;',
                     [
@@ -267,6 +274,7 @@ class User extends Entity
         #Queries for other fields
         foreach (['country', 'city', 'about'] as $field) {
             if (isset($_POST['details'][$field]) && $this->$field !== $_POST['details'][$field]) {
+                $log[$field] = ['old' => $this->$field, 'new' => $_POST['details'][$field]];
                 /** @noinspection SqlResolve */
                 $queries[] = [
                     'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
@@ -283,7 +291,10 @@ class User extends Entity
         if (empty($queries)) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
         } else {
-            return ['response' => HomePage::$dbController->query($queries)];
+            $result = HomePage::$dbController->query($queries);
+            #Log the change
+            Security::log('User details change', 'Changed details', $log);
+            return ['response' => $result];
         }
     }
 
@@ -317,9 +328,11 @@ class User extends Entity
     {
         #Validating data
         if (empty($_POST['signinup']['email'])) {
+            Security::log('Failed login', 'No email provided');
             return ['http_error' => 400, 'reason' => 'No email provided'];
         }
         if (empty($_POST['signinup']['password'])) {
+            Security::log('Failed login', 'No password provided');
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
@@ -327,6 +340,7 @@ class User extends Entity
             (new Email($_POST['signinup']['email']))->isBanned() ||
             $this->bannedName($_POST['signinup']['email'])
         ) {
+            Security::log('Failed login', 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
@@ -343,14 +357,17 @@ class User extends Entity
         }
         #Check if password is set (means that user does exist)
         if (empty($credentials['password'])) {
+            Security::log('Failed login', 'No user found');
             return ['http_error' => 403, 'reason' => 'No user found'];
         }
         #Check for strikes
         if ($credentials['strikes'] >= 5) {
+            Security::log('Failed login', 'Too many failed login attempts');
             return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
         }
         #Check the password
         if ($this->setId($credentials['userid'])->passValid($_POST['signinup']['password'], $credentials['password']) === false) {
+            Security::log('Failed login', 'Bad password');
             return ['http_error' => 403, 'reason' => 'Bad password'];
         }
         #Add username and userid to session
@@ -359,6 +376,9 @@ class User extends Entity
         #Set cookie if we have "rememberme" checked
         if (!empty($_POST['signinup']['rememberme'])) {
             $this->rememberMe();
+            Security::log('Login', 'Successful login with cookie setup');
+        } else {
+            Security::log('Login', 'Successful login');
         }
         session_regenerate_id(true);
         if ($afterRegister) {
@@ -424,6 +444,7 @@ class User extends Entity
                 HomePage::$dbController->query(
                     'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
                     [':userid' => [$this->id, 'string']]);
+                Security::log('Failed login', 'Strike added');
                 return false;
             }
         } catch (\Throwable) {
@@ -437,13 +458,16 @@ class User extends Entity
         if (empty($this->id)) {
             return false;
         }
-        return HomePage::$dbController->query(
+        $result = HomePage::$dbController->query(
             'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
                 ':userid' => [$this->id, 'string'],
                 ':password' => [Security::passHash($password), 'string'],
             ]
         );
+        @session_regenerate_id(true);
+        Security::log('Password change', 'Attempted to change password', $result);
+        return $result;
     }
 
     public function resetStrikes(int|string $id): bool

@@ -421,7 +421,9 @@ class Character extends Entity
                 $queries[] = ['INSERT IGNORE INTO `uc__user_to_avatar` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
             }
             #Link character to user
-            return ['response' => HomePage::$dbController->query($queries)];
+            $result = HomePage::$dbController->query($queries);
+            Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
+            return ['response' => $result];
         } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => $exception->getMessage()];
         }

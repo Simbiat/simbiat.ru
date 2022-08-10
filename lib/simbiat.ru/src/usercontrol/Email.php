@@ -88,23 +88,29 @@ class Email extends Entity
     public function subscribe(): bool
     {
         @session_regenerate_id(true);
-        return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        Security::log('User details change', 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
+        return $result;
     }
 
     public function unsubscribe(): bool
     {
         if (empty($_SESSION['userid'])) {
-            return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
+            $result = HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
         } else {
             @session_regenerate_id(true);
-            return HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+            $result = HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         }
+        Security::log('User details change', 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
+        return $result;
     }
 
     public function delete(): bool
     {
         @session_regenerate_id(true);
-        return HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        Security::log('User details change', 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
+        return $result;
     }
 
     public function add(): array
@@ -115,11 +121,14 @@ class Email extends Entity
             return ['http_error' => 403, 'reason' => 'Bad email provided'];
         }
         #Add email
-        if (!HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id])) {
+        $result = HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        Security::log('User details change', 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
+        if ($result) {
+            @session_regenerate_id(true);
+            return ['status' => 201, 'response' => $this->confirm()];
+        } else {
             return ['http_error' => 500, 'reason' => 'Failed to write email to database'];
         }
-        @session_regenerate_id(true);
-        return ['status' => 201, 'response' => $this->confirm()];
     }
 
     public function activate(int $userid): bool
@@ -136,7 +145,9 @@ class Email extends Entity
             #Remove user from unverified users
             ['DELETE FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]],
         ];
-        return HomePage::$dbController->query($queries);
+        $result = HomePage::$dbController->query($queries);
+        Security::log('User details change', 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);
+        return $result;
     }
 
     public function confirm(string $username = '', string $activation = ''): bool
@@ -186,6 +197,8 @@ class Email extends Entity
             return false;
         }
         try {
+            #Log email (no sensitive data is supposed to be sent in any emails)
+            Security::log('Email', 'Attempted to send email', ['subject' => $subject, 'to' => $this->id, 'body' => $body]);
             #Create transport
             $transport = Transport::fromDsn(SMTP::getDSN());
             #Create basic email
