@@ -415,7 +415,7 @@ class User extends Entity
                 return;
             }
             #Set options
-            $options = ['expires' => time()+60*60*24*30, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
+            $options = ['expires' => gmdate('D, d-M-Y H:i:s', time()+60*60*24*30).' GMT', 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
             #Set cookie value
             $value = json_encode(['id' => Security::encrypt($cookieId), 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
             setcookie('rememberme_'.Common::$http_host, $value, $options);

@@ -25,7 +25,7 @@ class Logout extends Api
         Security::log('Logout', 'Logout');
         #Remove rememberme cookie
         #From browser
-        setcookie('rememberme_'.Common::$http_host, '', ['expires' => 1, 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
+        setcookie('rememberme_'.Common::$http_host, '', ['expires' => gmdate('D, d-M-Y H:i:s', time()).' GMT', 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
         #From DB
         try {
             if (HomePage::$dbController !== null && !empty($_SESSION['userid'])) {
