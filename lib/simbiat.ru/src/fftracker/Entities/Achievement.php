@@ -173,6 +173,12 @@ class Achievement extends Entity
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
+    
+    #To be called from API to allow update only for owned character
+    public function updateFromApi(): bool|string
+    {
+        return $this::update();
+    }
 
     #Function to update the entity
     protected function delete(): bool

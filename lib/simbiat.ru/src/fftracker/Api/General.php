@@ -29,13 +29,13 @@ abstract class General extends Api
         try {
             if ($this->nameForLinks === 'achievement') {
                 $data = match ($path[1]) {
-                    'update' => (new \Simbiat\fftracker\Entities\Achievement($path[0]))->update(),
+                    'update' => (new \Simbiat\fftracker\Entities\Achievement($path[0]))->updateFromApi(),
                     'lodestone' => (new \Simbiat\fftracker\Entities\Achievement($path[0]))->getFromLodestone(),
                     default => (new \Simbiat\fftracker\Entities\Achievement($path[0]))->getArray(),
                 };
             } else {
                 $data = match ($path[1]) {
-                    'update' => (new $this->entityClass)->setId($path[0])->update(),
+                    'update' => (new $this->entityClass)->setId($path[0])->updateFromApi(),
                     'register' => (new $this->entityClass)->setId($path[0])->register(),
                     'lodestone' => (new $this->entityClass)->setId($path[0])->getFromLodestone(),
                     default => (new $this->entityClass)->setId($path[0])->getArray(),
@@ -46,8 +46,10 @@ abstract class General extends Api
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
-        #Check if 404
-        if ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
+        #Check for errors
+        if (!empty($data['http_error'])) {
+            return $data;
+        } elseif ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
             return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Lodestone'];
         } elseif ($data === 400) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];

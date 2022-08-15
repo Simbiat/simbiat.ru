@@ -162,8 +162,13 @@ function router() {
             }
         }
         else if (path[0] === 'fftracker') {
-            if (path[1] && path[1] === 'track') {
-                import('/js/Pages/fftracker/track.js').then((module) => { new module.ffTrack(); });
+            if (path[1]) {
+                if (path[1] === 'track') {
+                    import('/js/Pages/fftracker/track.js').then((module) => { new module.ffTrack(); });
+                }
+                else if (['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam',].includes(path[1])) {
+                    import('/js/Pages/fftracker/entity.js').then((module) => { new module.ffEntity(); });
+                }
             }
         }
         else if (path[0] === 'uc') {
@@ -547,7 +552,7 @@ class PasswordStrength extends HTMLElement {
         if (/(.)\1{2,}/u.test(password)) {
             points--;
         }
-        let strength = 'weak';
+        let strength;
         if (points <= 2) {
             strength = 'weak';
         }
@@ -979,7 +984,7 @@ class Form {
         let form = initial.form;
         if (form) {
             let previous;
-            for (let moveTo of form.querySelectorAll('input')) {
+            for (let moveTo of form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')) {
                 if (reverse) {
                     if (moveTo === initial) {
                         if (previous) {

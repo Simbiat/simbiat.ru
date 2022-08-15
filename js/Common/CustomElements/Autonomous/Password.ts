@@ -130,7 +130,7 @@ class PasswordStrength extends HTMLElement
             points--;
         }
         //Set strength
-        let strength = 'weak';
+        let strength;
         //Return value based on points. Note, that order is important.
         if (points <= 2) {
             strength = 'weak';

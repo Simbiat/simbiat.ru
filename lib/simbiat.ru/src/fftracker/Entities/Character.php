@@ -428,4 +428,26 @@ class Character extends Entity
             return ['http_error' => 500, 'reason' => $exception->getMessage()];
         }
     }
+    
+    #To be called from API to allow update only for owned character
+    public function updateFromApi(): bool|array|string
+    {
+        if (empty($_SESSION['userid'])) {
+            return ['http_error' => 403, 'reason' => 'Authentication required'];
+        }
+        #Check if any character currently registered in a group is linked to the user
+        try {
+            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
+            /** @noinspection SqlResolve */
+            $check = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+            if(!$check) {
+                return ['http_error' => 403, 'reason' => 'Character not linked to user'];
+            } else {
+                return $this->update();
+            }
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+            return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
+        }
+    }
 }

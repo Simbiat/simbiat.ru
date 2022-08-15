@@ -19,6 +19,8 @@ class PvPTeam extends Page
     protected string $h1 = 'PvP Team';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'PvP Team';
+    #Link to JS module for preload
+    protected string $jsModule = 'fftracker/entity';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -56,6 +58,10 @@ class PvPTeam extends Page
             if (is_file(FFTracker::$crests.$fullPath)) {
                 $outputArray['favicon'] = '/img/fftracker/merged-crests/'.$fullPath;
             }
+        }
+        #Check if linked to current user
+        if (!empty($_SESSION['userid']) && in_array($_SESSION['userid'], array_column($outputArray['pvpteam']['members'], 'userid'))) {
+            $outputArray['pvpteam']['linked'] = true;
         }
         return $outputArray;
     }

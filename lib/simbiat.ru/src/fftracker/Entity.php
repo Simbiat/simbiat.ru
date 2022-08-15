@@ -50,8 +50,8 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             Errors::error_log($e);
             return false;
         }
-        #Check if it has not been updated recently (10 minutes, to protect potential abuse) or if it is marked as deleted
-        if (isset($updated['deleted']) || (isset($updated['updated']) && (time() - strtotime($updated['updated'])) < 600)) {
+        #Check if it has not been updated recently (10 minutes, to protect from potential abuse)
+        if (isset($updated['updated']) && (time() - strtotime($updated['updated'])) < 600) {
             #Return entity type
             return true;
         }
@@ -62,12 +62,37 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if (!is_array($this->lodestone)) {
             return $this->lodestone;
         }
+        #If we got 404, mark as deleted, unless already marked
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
-            return $this->delete();
+            if (!isset($updated['deleted'])) {
+                return $this->delete();
+            }
         } else {
             unset($this->lodestone['404']);
         }
         return $this->updateDB();
+    }
+    
+    #To be called from API to allow update only for owned character
+    public function updateFromApi(): bool|array|string
+    {
+        if (empty($_SESSION['userid'])) {
+            return ['http_error' => 403, 'reason' => 'Authentication required'];
+        }
+        #Check if any character currently registered in a group is linked to the user
+        try {
+            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
+            /** @noinspection SqlResolve */
+            $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '_character` LEFT JOIN `ffxiv__character` ON `ffxiv__' . $this::entityType . '_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `' . $this::entityType . 'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+            if(!$check) {
+                return ['http_error' => 403, 'reason' => 'Group not linked to user'];
+            } else {
+                return $this->update();
+            }
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
+            return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
+        }
     }
 
     #Register the entity, if it has not been registered already

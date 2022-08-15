@@ -106,16 +106,16 @@ class Form
     {
         //Get form
         let form = initial.form;
-        //Iterate inputs inside the form. Not using previousElementSibling, because next/previous input may not be a sibling on the same level
+        //Iterate textual inputs inside the form. Not using previousElementSibling, because next/previous input may not be a sibling on the same level
         if (form) {
             let previous;
-            for (let moveTo of form.querySelectorAll('input')) {
+            for (let moveTo of form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')) {
                 if (reverse) {
                     //Check if current element in loop is the initial one, meaning
                     if (moveTo === initial) {
                         //If previous is not empty - share it. Otherwise - false, since initial input is first in the form
                         if (previous) {
-                            return previous;
+                            return previous as HTMLInputElement;
                         } else {
                             return false;
                         }
@@ -123,7 +123,7 @@ class Form
                 } else {
                     //If we are moving forward and initial node is the previous one
                     if (previous && previous === initial) {
-                        return moveTo;
+                        return moveTo as HTMLInputElement;
                     }
                 }
                 //Update previous input

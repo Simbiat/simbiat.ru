@@ -19,6 +19,8 @@ class Linkshell extends Page
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Linkshell';
     protected const crossworld = false;
+    #Link to JS module for preload
+    protected string $jsModule = 'fftracker/entity';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -55,6 +57,10 @@ class Linkshell extends Page
             if (!empty($outputArray['linkshell']['community'])) {
                 $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['linkshell']['community']];
             }
+        }
+        #Check if linked to current user
+        if (!empty($_SESSION['userid']) && in_array($_SESSION['userid'], array_column($outputArray['linkshell']['members'], 'userid'))) {
+            $outputArray['linkshell']['linked'] = true;
         }
         return $outputArray;
     }

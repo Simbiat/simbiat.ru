@@ -58,3 +58,7 @@
 .ff_groups [data-tooltip] {
     text-decoration: none;
 }
+#ff_refresh {
+    margin: 0.25rem auto;
+    display: block;
+}

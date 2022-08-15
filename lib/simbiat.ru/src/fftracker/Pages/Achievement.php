@@ -18,6 +18,8 @@ class Achievement extends Page
     protected string $h1 = 'Achievement';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Achievement';
+    #Link to JS module for preload
+    protected string $jsModule = 'fftracker/entity';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

@@ -48,8 +48,12 @@ function router(): void
                 }
             }
         } else if (path[0] === 'fftracker') {
-            if (path[1] && path[1] === 'track') {
-                import('/js/Pages/fftracker/track.js').then((module) => {new module.ffTrack();});
+            if (path[1]) {
+                if (path[1] === 'track') {
+                    import('/js/Pages/fftracker/track.js').then((module) => {new module.ffTrack();});
+                } else if (['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam',].includes(path[1])) {
+                    import('/js/Pages/fftracker/entity.js').then((module) => {new module.ffEntity();});
+                }
             }
         } else if (path[0] === 'uc') {
             if (path[1]) {
