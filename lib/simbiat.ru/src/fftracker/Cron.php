@@ -51,18 +51,18 @@ class Cron
         try {
             $dbCon = HomePage::$dbController;
             $entities = $dbCon->selectAll('
-                    SELECT `type`, `id` FROM (
-                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted` FROM `ffxiv__character`
+                    SELECT `type`, `id`, IF(`userid` IS NOT NULL, IF(`updated`<=DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY), 1, 0), 0) as `priority` FROM (
+                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted`, `userid` FROM `ffxiv__character`
                         UNION ALL
-                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted` FROM `ffxiv__freecompany`
+                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted`, (SELECT `userid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__character` ON `ffxiv__freecompany_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__freecompany`
                         UNION ALL
-                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted` FROM `ffxiv__pvpteam`
+                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted`, (SELECT `userid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__pvpteam`
                         UNION ALL
-                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted` FROM `ffxiv__linkshell`
+                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted`, (SELECT `userid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__linkshell`
                         UNION ALL
-                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
+                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted`, NULL as `userid` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
                     ) `allEntities` WHERE `deleted` IS NULL
-                    ORDER BY `updated` LIMIT :maxLines',
+                    ORDER BY `priority` DESC, `updated` LIMIT :maxLines',
                 [
                     ':maxLines'=>[$limit, 'int'],
                 ]
