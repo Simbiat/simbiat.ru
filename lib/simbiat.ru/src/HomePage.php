@@ -102,14 +102,14 @@ class HomePage
                         }
                         if ($uri[0] !== 'api') {
                             Config\Common::$links = array_merge(Config\Common::$links, [
-                                ['rel' => 'stylesheet preload', 'href' => '/css/' . filemtime(Config\Common::$cssDir.'min.css') . '.css', 'as' => 'style'],
-                                ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js') . '.js', 'as' => 'script'],
+                                ['rel' => 'stylesheet preload', 'href' => '/css/' . filemtime(Config\Common::$cssDir.'/min.css') . '.css', 'as' => 'style'],
+                                ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime(Config\Common::$jsDir.'/main.min.js') . '.js', 'as' => 'script'],
                             ]);
                         }
                         Headers::links(Config\Common::$links);
                         if ($uri[0] !== 'api') {
-                            @header('SourceMap: /js/main.min.' . filemtime(Config\Common::$jsDir.'main.min.js').'.js.map', false);
-                            @header('SourceMap: /css/' . filemtime(Config\Common::$cssDir.'min.css').'.css.map', false);
+                            @header('SourceMap: /js/main.min.' . filemtime(Config\Common::$jsDir.'/main.min.js').'.js.map', false);
+                            @header('SourceMap: /css/' . filemtime(Config\Common::$cssDir.'/min.css').'.css.map', false);
                         }
                         #Try to start session if it's not started yet and DB is up
                         if (self::$dbup && session_status() === PHP_SESSION_NONE && !self::$staleReturn) {

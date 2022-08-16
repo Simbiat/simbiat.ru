@@ -100,9 +100,9 @@ class Security
     public static function argonCalc(bool $forceRefresh = false): array
     {
         #Load Argon settings if argon.json exists
-        if (is_file(Config\Common::$securityCache. 'argon.json') && !$forceRefresh) {
+        if (is_file(Config\Common::$securityCache. '/argon.json') && !$forceRefresh) {
             #Read the file
-            $argon = json_decode(file_get_contents(Config\Common::$securityCache. 'argon.json'), true);
+            $argon = json_decode(file_get_contents(Config\Common::$securityCache. '/argon.json'), true);
             if (is_array($argon)) {
                 #Update settings, if they are present and comply with minimum requirements
                 if (!isset($argon['memory_cost']) || $argon['memory_cost'] < 1024) {
@@ -142,7 +142,7 @@ class Security
         } while (($end - $start) < 1.0);
         $argonSettings = ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory];
         #Write config file
-        file_put_contents(Common::$securityCache.'argon.json', json_encode($argonSettings, JSON_PRETTY_PRINT));
+        file_put_contents(Common::$securityCache.'/argon.json', json_encode($argonSettings, JSON_PRETTY_PRINT));
         return $argonSettings;
     }
 
@@ -163,8 +163,8 @@ class Security
     #Function to generate passphrase for encrypt and decrypt functions
     public static function genCrypto(bool $forceRefresh = false): array
     {
-        if (is_file(Config\Common::$securityCache. 'aes.json') && !$forceRefresh) {
-            $aes = json_decode(file_get_contents(Config\Common::$securityCache.'aes.json'), true);
+        if (is_file(Config\Common::$securityCache. '/aes.json') && !$forceRefresh) {
+            $aes = json_decode(file_get_contents(Config\Common::$securityCache.'/aes.json'), true);
             if (is_array($aes)) {
                 if (isset($aes['passphrase'])) {
                     return $aes;
@@ -179,7 +179,7 @@ class Security
         #Using array, in case some other settings will be required in the future
         $cryptoSettings = ['passphrase' => $passphrase];
         #Write config file
-        file_put_contents(Common::$securityCache. 'aes.json', json_encode($cryptoSettings, JSON_PRETTY_PRINT));
+        file_put_contents(Common::$securityCache. '/aes.json', json_encode($cryptoSettings, JSON_PRETTY_PRINT));
         return $cryptoSettings;
     }
 

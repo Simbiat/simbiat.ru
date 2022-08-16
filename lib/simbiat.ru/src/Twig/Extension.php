@@ -54,7 +54,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             #List of LINK tags
             'link_tags' => Common::$links,
             #Time used as version of the JS file for cache busting
-            'js_version' => filemtime(Common::$jsDir.'main.min.js'),
+            'js_version' => filemtime(Common::$jsDir.'/main.min.js'),
             #Save data flag
             'save_data' => $save_data,
             'unsupported' => false,
