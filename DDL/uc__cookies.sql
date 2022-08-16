@@ -6,8 +6,7 @@ create table uc__cookies
     validator text                                  not null comment 'Encrypted validator string, to compare against cookie',
     time      timestamp default current_timestamp() not null on update current_timestamp() comment 'Time of last update/use of the cookie',
     ip        varchar(45)                           null comment 'Last IP, that used the cookie',
-    os        varchar(100)                          null comment 'Last OS, from which the cookie was used',
-    client    varchar(100)                          null comment 'Last browser, from which the cookie was used',
+    useragent text                                  null comment 'Last UserAgent of the client, from which the cookie was used',
     constraint cookie_to_user
         foreign key (userid) references uc__users (userid)
             on update cascade on delete cascade

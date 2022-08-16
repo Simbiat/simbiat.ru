@@ -118,7 +118,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         #Write session data
         $queries[] = [
-            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data;',
+            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data;',
             [
                 ':id' => $id,
                 #Whether cookie is associated with this session
@@ -133,14 +133,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     (empty($data['IP']) ? 'null' : 'string'),
                 ],
                 #Useragent details only for logged-in users for ability of review of active sessions
-                ':os' => [
-                        (empty($data['UA']['os']) ? NULL : $data['UA']['os']),
-                        (empty($data['UA']['os']) ? 'null' : 'string'),
+                ':useragent' => [
+                        (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
+                        (empty($data['UA']['full']) ? 'null' : 'string'),
                     ],
-                ':client' => [
-                    (empty($data['UA']['client']) ? NULL : $data['UA']['client']),
-                    (empty($data['UA']['client']) ? 'null' : 'string'),
-                ],
                 #Either username (if logged in) or bot name, if it's a bot
                 ':username' => [
                     (empty($data['username']) ? NULL : $data['username']),
@@ -356,20 +352,16 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $this->getClientData($savedData);
                 #Try to update client information for cookie
                 try {
-                    HomePage::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `os`=:os, `client`=:client WHERE `cookieid`=:cookie;',
+                    HomePage::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
                         [
                             ':cookie' => $data['id'],
                             ':ip' => [
                                 (empty($savedData['IP']) ? NULL : $savedData['IP']),
                                 (empty($savedData['IP']) ? 'null' : 'string'),
                             ],
-                            ':os' => [
-                                (empty($savedData['UA']['os']) ? NULL : $savedData['UA']['os']),
-                                (empty($savedData['UA']['os']) ? 'null' : 'string'),
-                            ],
-                            ':client' => [
-                                (empty($savedData['UA']['client']) ? NULL : $savedData['UA']['client']),
-                                (empty($savedData['UA']['client']) ? 'null' : 'string'),
+                            ':useragent' => [
+                                (empty($savedData['UA']['full']) ? NULL : $savedData['UA']['full']),
+                                (empty($savedData['UA']['full']) ? 'null' : 'string'),
                             ],
                         ]
                     );
