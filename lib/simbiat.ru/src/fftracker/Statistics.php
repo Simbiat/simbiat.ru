@@ -274,7 +274,7 @@ class Statistics
                     $data['cities']['gc_characters'] = $dbCon->SelectAll('SELECT `ffxiv__city`.`city`, `ffxiv__grandcompany`.`gcName` AS `value`, COUNT(`ffxiv__character`.`characterid`) AS `count` FROM `ffxiv__character` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid`=`ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` WHERE `ffxiv__character`.`deleted` IS NULL AND `ffxiv__grandcompany`.`gcName` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_characters'] as $key=>$company) {
-                        $data['cities']['gc_characters'][$key]['color'] = $Lodestone->colorGC($company['value']);
+                        $data['cities']['gc_characters'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
                     }
                     $data['cities']['gc_characters'] = ArrayHelpers::splitByKey($data['cities']['gc_characters'], 'city', [], []);
                 }
@@ -285,7 +285,7 @@ class Statistics
                     $data['cities']['gc_fc'] = $dbCon->SelectAll('SELECT `ffxiv__city`.`city`, `ffxiv__grandcompany`.`gcName` AS `value`, COUNT(`ffxiv__freecompany`.`freecompanyid`) AS `count` FROM `ffxiv__freecompany` LEFT JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estateid`=`ffxiv__estate`.`estateid` LEFT JOIN `ffxiv__city` ON `ffxiv__estate`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany`.`gcId` WHERE `ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL AND `ffxiv__grandcompany`.`gcName` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_fc'] as $key=>$company) {
-                        $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC($company['value']);
+                        $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
                     }
                     $data['cities']['gc_fc'] = ArrayHelpers::splitByKey($data['cities']['gc_fc'], 'city', [], []);
                 }
@@ -298,14 +298,14 @@ class Statistics
                     $data['grand_companies']['population'] = $dbCon->countUnique('ffxiv__character', 'gcrankid', '`ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`gcrankid` IS NOT NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__character`.`genderid`, `ffxiv__grandcompany_rank`.`gcId`', 'DESC', 0, ['`ffxiv__character`.`genderid`']);
                     #Add colors to companies
                     foreach ($data['grand_companies']['population'] as $key=>$company) {
-                        $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC($company['value']);
+                        $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
                     }
                     #Split companies by gender
                     $data['grand_companies']['population'] = ArrayHelpers::splitByKey($data['grand_companies']['population'], 'genderid', ['female', 'male'], [0, 1]);
                     $data['grand_companies']['population']['free_company'] = $dbCon->countUnique('ffxiv__freecompany', 'grandcompanyid', '`ffxiv__freecompany`.`deleted` IS NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__grandcompany_rank`.`gcId`');
                     #Add colors to cities
                     foreach ($data['grand_companies']['population']['free_company'] as $key=>$company) {
-                        $data['grand_companies']['population']['free_company'][$key]['color'] = $Lodestone->colorGC($company['value']);
+                        $data['grand_companies']['population']['free_company'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
                     }
                 }
                 #Grand companies ranks
