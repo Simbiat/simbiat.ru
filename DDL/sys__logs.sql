@@ -20,5 +20,4 @@ create index audit_userid
     on sys__logs (userid);
 
 create index time
-    on sys__logs (time);
-
+    on sys__logs (time desc);

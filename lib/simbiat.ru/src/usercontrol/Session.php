@@ -118,9 +118,14 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         #Write session data
         $queries[] = [
-            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data;',
+            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `os`=:os, `client`=:client, `username`=:username, `page`=:page, `data`=:data;',
             [
                 ':id' => $id,
+                #Whether cookie is associated with this session
+                ':cookieid' => [
+                    (empty($data['cookieid']) ? NULL : $data['cookieid']),
+                    (empty($data['cookieid']) ? 'null' : 'string'),
+                ],
                 #Whether this is a bot
                 ':bot' => [(empty($data['UA']['bot']) ? 0 : 1), 'int'],
                 ':ip' => [
@@ -325,7 +330,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Check DB
             if (HomePage::$dbController !== null) {
                 #Get user data
-                $savedData = HomePage::$dbController->selectRow('SELECT `uc__cookies`.`userid`, `validator`, `username` FROM `uc__cookies` LEFT JOIN `uc__users` ON `uc__cookies`.`userid`=`uc__users`.`userid` WHERE `cookieid`=:id',
+                $savedData = HomePage::$dbController->selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
                     [':id' => $data['id']]
                 );
                 if (empty($savedData) || empty($savedData['validator'])) {
@@ -342,7 +347,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $user->resetStrikes($savedData['userid']);
                 #Update cookie
                 $user->rememberMe($data['id']);
-                return ['userid' => $savedData['userid'], 'username' => $savedData['username']];
+                return ['userid' => $savedData['userid'], 'cookieid' => $data['id']];
             } else {
                 return [];
             }

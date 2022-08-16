@@ -28,8 +28,8 @@ class Logout extends Api
         setcookie('rememberme_'.Common::$http_host, '', ['expires' => gmdate('D, d-M-Y H:i:s', time()).' GMT', 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
         #From DB
         try {
-            if (HomePage::$dbController !== null && !empty($_SESSION['userid'])) {
-                HomePage::$dbController->query('DELETE FROM `uc__cookies` WHERE `userid`=:id', [':id' => [$_SESSION['userid'], 'int']]);
+            if (HomePage::$dbController !== null && !empty($_SESSION['cookieid'])) {
+                HomePage::$dbController->query('DELETE FROM `uc__cookies` WHERE `cookieid`=:id', [':id' => $_SESSION['cookieid']]);
             }
         } catch (\Throwable) {
             #Do nothing

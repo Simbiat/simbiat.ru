@@ -404,13 +404,17 @@ class User extends Entity
                 return;
             }
             if (HomePage::$dbController !== null && (!empty($_SESSION['userid']) || !empty($this->id))) {
-                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `time`=CURRENT_TIMESTAMP();',
+                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,
                         ':pass' => hash('sha3-512', $pass),
                         ':id' => $this->id ?? [$_SESSION['userid'], 'int'],
                     ]
                 );
+                #Set cookie ID to session if it's not already linked or if it was linked to other cookie (not sure if that would even be possible)
+                if (empty($_SESSION['cookieid']) || $_SESSION['cookieid'] !== $cookieId) {
+                    $_SESSION['cookieid'] = $cookieId;
+                }
             } else {
                 return;
             }
