@@ -137,10 +137,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                         (empty($data['UA']['os']) ? NULL : $data['UA']['os']),
                         (empty($data['UA']['os']) ? 'null' : 'string'),
                     ],
-                    ':client' => [
-                        (empty($data['UA']['client']) ? NULL : $data['UA']['client']),
-                        (empty($data['UA']['client']) ? 'null' : 'string'),
-                    ],
+                ':client' => [
+                    (empty($data['UA']['client']) ? NULL : $data['UA']['client']),
+                    (empty($data['UA']['client']) ? 'null' : 'string'),
+                ],
                 #Either username (if logged in) or bot name, if it's a bot
                 ':username' => [
                     (empty($data['username']) ? NULL : $data['username']),
@@ -165,22 +165,27 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             return false;
         }
     }
-
+    
+    private function getClientData(array &$data): void
+    {
+        if (empty($data['UA'])) {
+            #Add UserAgent data
+            #This is done to make the data readily available as soon as session is created and somewhat improve performance
+            $data['UA'] = $this->getUA();
+        }
+        if (empty($data['IP'])) {
+            #Add IP data
+            #This is done to make the data readily available as soon as session is created and somewhat improve performance
+            $data['IP'] = $this->getIP();
+        }
+    }
+    
     #Custom function to refresh data, which needs refreshing on every session (IP for tracking, groups for access control, names for rendering, etc.)
     private function dataRefresh(array &$data): void
     {
         #Try to get the data
         try {
-            if (empty($data['UA'])) {
-                #Add UserAgent data
-                #This is done to make the data readily available as soon as session is created and somewhat improve performance
-                $data['UA'] = $this->getUA();
-            }
-            if (empty($data['IP'])) {
-                #Add IP data
-                #This is done to make the data readily available as soon as session is created and somewhat improve performance
-                $data['IP'] = $this->getIP();
-            }
+            $this->getClientData($data);
             #Check if IP is banned
             if (!empty($data['IP'])) {
                 try {
@@ -347,7 +352,33 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $user->resetStrikes($savedData['userid']);
                 #Update cookie
                 $user->rememberMe($data['id']);
-                return ['userid' => $savedData['userid'], 'cookieid' => $data['id']];
+                #Get client data
+                $this->getClientData($savedData);
+                #Try to update client information for cookie
+                try {
+                    HomePage::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `os`=:os, `client`=:client WHERE `cookieid`=:cookie;',
+                        [
+                            ':cookie' => $data['id'],
+                            ':ip' => [
+                                (empty($savedData['IP']) ? NULL : $savedData['IP']),
+                                (empty($savedData['IP']) ? 'null' : 'string'),
+                            ],
+                            ':os' => [
+                                (empty($savedData['UA']['os']) ? NULL : $savedData['UA']['os']),
+                                (empty($savedData['UA']['os']) ? 'null' : 'string'),
+                            ],
+                            ':client' => [
+                                (empty($savedData['UA']['client']) ? NULL : $savedData['UA']['client']),
+                                (empty($savedData['UA']['client']) ? 'null' : 'string'),
+                            ],
+                        ]
+                    );
+                } catch (\Throwable) {
+                    #Do nothing. Not critical
+                }
+                $savedData['cookieid'] = $data['id'];
+                unset($savedData['validator']);
+                return $savedData;
             } else {
                 return [];
             }
