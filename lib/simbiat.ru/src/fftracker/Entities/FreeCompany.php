@@ -147,7 +147,9 @@ class FreeCompany extends Entity
     {
         try {
             #Attempt to get crest
-            $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
+            if (!empty($this->lodestone['crest'])) {
+                $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
+            }
             #Main query to insert or update a Free Company
             $queries[] = [
                 'INSERT INTO `ffxiv__freecompany` (
