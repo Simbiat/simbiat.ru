@@ -117,3 +117,16 @@ password-strength {
 #ff_link_user {
     text-align: center;
 }
+
+#uc_cookies_table,
+#uc_sessions_table,
+#uc_logs_table {
+    margin-bottom: 1rem;
+}
+#uc_cookies_table tfoot,
+#uc_sessions_table tfoot,
+#uc_logs_table tfoot {
+    font-weight: normal;
+    font-size: smaller;
+    font-style: italic;
+}

@@ -73,7 +73,7 @@ class User extends Entity
         $dbData['activated'] = !in_array(2, $dbData['groups'], true);
         $dbData['deleted'] = in_array(4, $dbData['groups'], true);
         $dbData['banned'] = in_array(5, $dbData['groups'], true);
-        $dbData['currentAvatar'] = HomePage::$dbController->selectValue('SELECT `url` FROM `uc__user_to_avatar` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
+        $dbData['currentAvatar'] = HomePage::$dbController->selectValue('SELECT `url` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
         return $dbData;
     }
 
@@ -103,7 +103,7 @@ class User extends Entity
     public function getEmails(): array
     {
         try {
-            return HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__user_to_email` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
+            return HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
@@ -112,7 +112,7 @@ class User extends Entity
     public function getAvatars(): array
     {
         try {
-            return HomePage::$dbController->selectAll('SELECT `url`, `current` FROM `uc__user_to_avatar` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
+            return HomePage::$dbController->selectAll('SELECT `url`, `current` FROM `uc__avatars` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
@@ -349,7 +349,7 @@ class User extends Entity
         }
         #Get password of the user, while also checking if it exists
         try {
-            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE `uc__user_to_email`.`email`=:mail',
+            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__emails`.`email`=:mail',
                 [':mail' => $_POST['signinup']['email']]
             );
         } catch (\Throwable) {

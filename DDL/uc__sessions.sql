@@ -23,7 +23,7 @@ create index bot
     on uc__sessions (bot);
 
 create index time
-    on uc__sessions (time);
+    on uc__sessions (time desc);
 
 create index username
     on uc__sessions (username);

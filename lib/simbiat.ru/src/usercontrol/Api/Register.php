@@ -81,7 +81,7 @@ class Register extends Api
                 ],
                 #Insert into mails database
                 [
-                    'INSERT INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :mail, 1, :activation)',
+                    'INSERT INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :mail, 1, :activation)',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':mail' => $_POST['signinup']['email'],

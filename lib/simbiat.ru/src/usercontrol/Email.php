@@ -53,7 +53,7 @@ class Email extends Entity
     {
         #Check against DB table
         try {
-            return HomePage::$dbController->check('SELECT `email` FROM `uc__user_to_email` WHERE `email`=:mail', [':mail' => $this->id]);
+            return HomePage::$dbController->check('SELECT `email` FROM `uc__emails` WHERE `email`=:mail', [':mail' => $this->id]);
         } catch (\Throwable) {
             return false;
         }
@@ -88,7 +88,7 @@ class Email extends Entity
     public function subscribe(): bool
     {
         @session_regenerate_id(true);
-        $result = HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = HomePage::$dbController->query('UPDATE `uc__emails` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -96,10 +96,10 @@ class Email extends Entity
     public function unsubscribe(): bool
     {
         if (empty($_SESSION['userid'])) {
-            $result = HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
+            $result = HomePage::$dbController->query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
         } else {
             @session_regenerate_id(true);
-            $result = HomePage::$dbController->query('UPDATE `uc__user_to_email` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+            $result = HomePage::$dbController->query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         }
         Security::log('User details change', 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
@@ -108,7 +108,7 @@ class Email extends Entity
     public function delete(): bool
     {
         @session_regenerate_id(true);
-        $result = HomePage::$dbController->query('DELETE FROM `uc__user_to_email` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = HomePage::$dbController->query('DELETE FROM `uc__emails` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -121,7 +121,7 @@ class Email extends Entity
             return ['http_error' => 403, 'reason' => 'Bad email provided'];
         }
         #Add email
-        $result = HomePage::$dbController->query('INSERT IGNORE INTO `uc__user_to_email` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = HomePage::$dbController->query('INSERT IGNORE INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
         if ($result) {
             @session_regenerate_id(true);
@@ -139,7 +139,7 @@ class Email extends Entity
         }
         $queries = [
             #Remove the code from DB
-            ['UPDATE `uc__user_to_email` SET `activation`=NULL WHERE `userid`=:userid AND `email`=:email', [':userid' => [$userid, 'int'], ':email' => $this->id]],
+            ['UPDATE `uc__emails` SET `activation`=NULL WHERE `userid`=:userid AND `email`=:email', [':userid' => [$userid, 'int'], ':email' => $this->id]],
             #Add user to register users
             ['INSERT IGNORE INTO `uc__user_to_group`(`userid`, `groupid`) VALUES (:userid, 3)', [':userid' => [$userid, 'int']]],
             #Remove user from unverified users
@@ -157,7 +157,7 @@ class Email extends Entity
             return false;
         }
         if (empty($username)) {
-            $data = HomePage::$dbController->selectRow('SELECT `uc__user_to_email`.`userid`, `username` FROM `uc__user_to_email` LEFT JOIN `uc__users` ON `uc__user_to_email`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id]);
+            $data = HomePage::$dbController->selectRow('SELECT `uc__emails`.`userid`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id]);
             if (empty($data)) {
                 #Avoid potential abuse to get list of registered mails
                 return true;
@@ -178,7 +178,7 @@ class Email extends Entity
             $activation = Security::genToken();
             #Insert into mails database
             HomePage::$dbController->query(
-                'UPDATE `uc__user_to_email` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',
+                'UPDATE `uc__emails` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',
                 [
                     ':userid' => [$userid, 'int'],
                     ':mail' => $this->id,

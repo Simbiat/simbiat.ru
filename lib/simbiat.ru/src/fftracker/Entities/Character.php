@@ -418,7 +418,7 @@ class Character extends Entity
             $avatar = (new Curl())->imageDownload('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', FFTracker::$avatars.$this->id.'.jpg');
             $queries[] = ['UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
             if ($avatar) {
-                $queries[] = ['INSERT IGNORE INTO `uc__user_to_avatar` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
+                $queries[] = ['INSERT IGNORE INTO `uc__avatars` (`userid`, `characterid`, `current`, `url`) VALUES (:userid, :characterid, 0, \'/img/fftracker/avatars/'.$this->id.'.jpg\');', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
             }
             #Link character to user
             $result = HomePage::$dbController->query($queries);

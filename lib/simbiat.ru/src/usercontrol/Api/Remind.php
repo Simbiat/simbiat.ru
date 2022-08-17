@@ -31,7 +31,7 @@ class Remind extends Api
         }
         #Get password of the user, while also checking if it exists
         try {
-            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__user_to_email`.`email` FROM `uc__user_to_email` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__user_to_email`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__user_to_email`.`email`=:mail) AND `uc__user_to_email`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
+            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
                 [':mail' => $_POST['signinup']['email']]
             );
         } catch (\Throwable) {

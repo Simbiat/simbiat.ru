@@ -13,4 +13,4 @@ create table uc__cookies
 );
 
 create index time
-    on uc__cookies (time);
+    on uc__cookies (time desc);
