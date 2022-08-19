@@ -62,6 +62,9 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if (!is_array($this->lodestone)) {
             return $this->lodestone;
         }
+        if (empty($this->lodestone['name'])) {
+            return 'No name found found for ID `'.$this->id.'`';
+        }
         #If we got 404, mark as deleted, unless already marked
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             if (!isset($updated['deleted'])) {
