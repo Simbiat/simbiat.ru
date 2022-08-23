@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
+use DeviceDetector\ClientHints;
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
@@ -284,7 +285,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Force full versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
         #Initialize device detector
-        $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT']));
+        $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT'], ClientHints::factory($_SERVER)));
         $dd->parse();
         #Get bot name
         $bot = $dd->getBot();
