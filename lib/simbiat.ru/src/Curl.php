@@ -100,4 +100,46 @@ class Curl
         }
         return is_file($to);
     }
+    
+    #Not exactly Curl, but plan is that it will be used for avatars, at least, that may need to be downloaded first
+    #Possibly will be moved to some other more suitable class in the future
+    public function toWebm(string $image): string|false
+    {
+        #Check if file exists
+        if (!is_file($image)) {
+            return false;
+        }
+        #Get MIME type
+        $mime = mime_content_type($image);
+        if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+            return false;
+        }
+        #Set new name
+        $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
+        #Create GD object from file
+        $gd = match($mime) {
+            'image/avif' => imagecreatefromavif($image),
+            'image/bmp' => imagecreatefrombmp($image),
+            'image/gif' => imagecreatefromgif($image),
+            'image/jpeg' => imagecreatefromjpeg($image),
+            'image/png' => imagecreatefrompng($image),
+            'image/webp' => imagecreatefromwebp($image),
+        };
+        #Ensure that True Color is used
+        imagepalettetotruecolor($gd);
+        #Enable alpha blending
+        imagealphablending($gd, true);
+        #Save the alpha data
+        imagesavealpha($gd, true);
+        #Save the file
+        if (imagewebp($gd, $newName, IMG_WEBP_LOSSLESS)) {
+            #Remove source image, if we did not just overwrite it
+            if ($image !== $newName) {
+                @unlink($image);
+            }
+            return $newName;
+        } else {
+            return false;
+        }
+    }
 }

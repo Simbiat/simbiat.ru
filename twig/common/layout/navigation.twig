@@ -64,6 +64,16 @@
     </li>
     <li class="navElement">
         <div class="navLine">
+            <details class="navCat" {% if serviceName == 'staticpages' %}open{% endif %}>
+                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="Static Pages" src="/img/navigation/staticpages.svg"><span itemprop="name">Static Pages</span></summary>
+                <ul>
+                    <li{% if subServiceName == 'devicedetector' %} class="current"{% endif %}><a class="navItem" href="/staticpages/devicedetector/" target="_self" itemprop="url"><span itemprop="name">Device Detector</span></a></li>
+                </ul>
+            </details>
+        </div>
+    </li>
+    <li class="navElement">
+        <div class="navLine">
             <details class="navCat" {% if serviceName == 'about' %}open{% endif %}>
                 <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="About" src="/img/navigation/about.svg"><span itemprop="name">About</span></summary>
                 <ul>

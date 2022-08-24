@@ -24,6 +24,8 @@ class MainRouter extends Abstracts\Router
         #'forum', 'blog', 'thread',
         #Pages routing
         'about', 'fftracker', 'bictracker', 'uc', 'tests',
+        #Static pages
+        'staticpages',
         #Feeds
         'sitemap', 'rss', 'atom',
         #Errors
@@ -50,6 +52,8 @@ class MainRouter extends Abstracts\Router
             'fftracker' => (new fftracker\Router)->route(array_slice($path, 1)),
             'uc' => (new usercontrol\Router)->route(array_slice($path, 1)),
             'tests' => (new Router)->route(array_slice($path, 1)),
+            #Static pages
+            'staticpages' => (new \Simbiat\StaticPages\Router)->route(array_slice($path, 1)),
             #Feeds
             'sitemap' => (new Sitemap\Router)->route(array_slice($path, 1)),
             'rss', 'atom' => (new Feeds)->uriParse($path),

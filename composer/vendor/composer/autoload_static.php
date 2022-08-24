@@ -632,6 +632,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\Sitemap\\Pages\\General' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Pages/General.php',
         'Simbiat\\Sitemap\\Pages\\Index' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Pages/Index.php',
         'Simbiat\\Sitemap\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Router.php',
+        'Simbiat\\StaticPages\\Pages\\DeviceDetector' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/StaticPages/Pages/DeviceDetector.php',
+        'Simbiat\\StaticPages\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/StaticPages/Router.php',
         'Simbiat\\Talks\\Show' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Show.php',
         'Simbiat\\Tests\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Tests/Router.php',
         'Simbiat\\Tests\\Tests' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Tests/Tests.php',

@@ -1,0 +1,108 @@
+<section class="bottomMargin">
+    <p>These are the icons for all Operating Systems and applications detectable by <a href="https://github.com/matomo-org/device-detector/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/tech/Matomo.svg" alt="Matomo">Matomo's Device Detector</a> except for <i>AFNetworking</i> applications.</p>
+</section>
+<section>
+    <h2>Operating Systems</h2>
+    <ul class="dd_iconList">
+        {% for os in icons.os %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ os.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ os.icon }}" alt="{{ os.name }}">
+                    </a>
+                    <figcaption class="middle">{{ os.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Browsers</h2>
+    <ul class="dd_iconList">
+        {% for browser in icons.browser %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ browser.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ browser.icon }}" alt="{{ browser.name }}">
+                    </a>
+                    <figcaption class="middle">{{ browser.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Applications</h2>
+    <ul class="dd_iconList">
+        {% for app in icons.app %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ app.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ app.icon }}" alt="{{ app.name }}">
+                    </a>
+                    <figcaption class="middle">{{ app.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Library</h2>
+    <ul class="dd_iconList">
+        {% for library in icons.library %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ library.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ library.icon }}" alt="{{ library.name }}">
+                    </a>
+                    <figcaption class="middle">{{ library.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Feed readers</h2>
+    <ul class="dd_iconList">
+        {% for reader in icons.reader %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ reader.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ reader.icon }}" alt="{{ reader.name }}">
+                    </a>
+                    <figcaption class="middle">{{ reader.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Personal Information Managers</h2>
+    <ul class="dd_iconList">
+        {% for pim in icons.pim %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ pim.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ pim.icon }}" alt="{{ pim.name }}">
+                    </a>
+                    <figcaption class="middle">{{ pim.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+<section>
+    <h2>Media Players</h2>
+    <ul class="dd_iconList">
+        {% for mediaplayer in icons.mediaplayer %}
+            <li>
+                <figure>
+                    <a class="galleryZoom" href="{{ mediaplayer.icon }}" target="_blank">
+                        <img loading="lazy" decoding="async" src="{{ mediaplayer.icon }}" alt="{{ mediaplayer.name }}">
+                    </a>
+                    <figcaption class="middle">{{ mediaplayer.name }}</figcaption>
+                </figure>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
