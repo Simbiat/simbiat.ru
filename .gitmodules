@@ -49,3 +49,6 @@
 [submodule "img/fftracker/icons"]
 	path = img/fftracker/icons
 	url = https://github.com/Simbiat/FFXIV-Icons
+[submodule "img/devicedetector"]
+	path = img/devicedetector
+	url = https://github.com/Simbiat/DeviceDetectorIcons
