@@ -103,7 +103,7 @@ class Curl
     
     #Not exactly Curl, but plan is that it will be used for avatars, at least, that may need to be downloaded first
     #Possibly will be moved to some other more suitable class in the future
-    public function toWebm(string $image): string|false
+    public function toWebP(string $image): string|false
     {
         #Check if file exists
         if (!is_file($image)) {
