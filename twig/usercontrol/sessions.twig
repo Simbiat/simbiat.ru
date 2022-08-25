@@ -1,1 +1,63 @@
-This is a stub page
+{% if cookies %}
+    <table id="uc_cookies_table">
+        <caption>Registered cookies</caption>
+        <thead>
+            <tr>
+                <th>Current</th><th>Last activity</th><th>IP</th><th>City</th><th>OS</th><th>Browser</th><th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cookie in cookies %}
+                <tr>
+                    <td class="middle">{% if cookie.cookieid and session_data.cookieid and cookie.cookieid == session_data.cookieid %}✅{% endif %}</td><td>{{ timeTag(cookie.time, "d/m/Y H:i") }}</td><td>{{ cookie.ip }}</td><td>{% if cookie.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ cookie.country }}" src="{{ cookie.countryIcon }}">{% endif %}{{ cookie.city }}</td><td>{% if cookie.os.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="linkIcon">{% endif %}{{ cookie.os.name }} {{ cookie.os.version }}</td><td>{% if cookie.client.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="linkIcon">{% endif %}{{ cookie.client.name }} {{ cookie.client.version }}</td><td class="middle"><input class="cookie_deletion" data-cookie="{{ cookie.cookieid }}" type="image" src="/img/close.svg" alt="Delete cookie"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing cookie..."></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr><td colspan="7">Normally removed after 1 month of inactivity</td></tr>
+        </tfoot>
+    </table>
+{% else %}
+    <p>No cookies registered.</p>
+{% endif %}
+{% if sessions %}
+    <table id="uc_sessions_table">
+        <caption>Active sessions</caption>
+        <thead>
+        <tr>
+            <th>Current</th><th>Last activity</th><th>IP</th><th>City</th><th>OS</th><th>Browser</th><th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for session in sessions %}
+            <tr>
+                <td class="middle">{% if session.cookieid and session_data.cookieid and session.cookieid == session_data.cookieid %}✅{% endif %}</td><td>{{ timeTag(session.time, "d/m/Y H:i") }}</td><td>{{ session.ip }}</td><td>{% if session.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ session.country }}" src="{{ session.countryIcon }}">{% endif %}{{ session.city }}</td><td>{% if session.os.icon %}<img loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="linkIcon">{% endif %}{{ session.os.name }} {{ session.os.version }}</td><td>{% if session.client.icon %}<img loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="linkIcon">{% endif %}{{ session.client.name }} {{ session.client.version }}</td><td class="middle"><input class="session_deletion" data-session="{{ session.sessionid }}" type="image" src="/img/close.svg" alt="Delete session"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing session..."></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr><td colspan="7">Normally removed after 5 minutes of inactivity</td></tr>
+        </tfoot>
+    </table>
+{% else %}
+    <p>No active sessions.</p>
+{% endif %}
+{% if logs %}
+    <table id="uc_logs_table">
+        <caption>Recent logs</caption>
+        <thead>
+        <tr>
+            <th>Action</th><th>Last activity</th><th>IP</th><th>City</th><th>OS</th><th>Browser</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.action }}</td><td>{{ timeTag(log.time, "d/m/Y H:i") }}</td><td>{{ log.ip }}</td><td>{% if log.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ log.country }}" src="{{ log.countryIcon }}">{% endif %}{{ log.city }}</td><td>{% if log.os.icon %}<img loading="lazy" decoding="async" alt="{{ log.os.name }}" src="{{ log.os.icon }}" class="linkIcon">{% endif %}{{ log.os.name }} {{ log.os.version }}</td><td>{% if log.client.icon %}<img loading="lazy" decoding="async" alt="{{ log.client.name }}" src="{{ log.client.icon }}" class="linkIcon">{% endif %}{{ log.client.name }} {{ log.client.version }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No active sessions.</p>
+{% endif %}
