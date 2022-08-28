@@ -34,7 +34,7 @@
 <section class="ff_char_page">
     <section class="ff_char_block">
         {% if not character.avatarID %}
-            <img loading="lazy" decoding="async"{% if session_data.userid and character.owned.id and session_data.userid == character.owned.id %} class="ff_owned"{% endif %} id="ff_portrait_img" alt="{{ character.name }}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.png">
+            <img loading="lazy" decoding="async"{% if session_data.userid and character.owned.id and session_data.userid == character.owned.id %} class="ff_owned"{% endif %} id="ff_portrait_img" alt="{{ character.name }}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
         {% else %}
             <img loading="lazy" decoding="async"{% if session_data.userid and character.owned.id and session_data.userid == character.owned.id %} class="ff_owned"{% endif %} id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatarID }}l0_640x873.jpg">
         {% endif %}
@@ -49,7 +49,7 @@
         {% endif %}
         <p><b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievement/{{ character.title.id }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} is a {{ adjective }} {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}.{% endif %}</p>
         <p>
-            Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="linkIcon" src="/img/fftracker/guardians/{{ character.biology.guardianid }}.png"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} {% if character.biology.killedby %}&#9760; Killed{% else %}&#129702; Died{% endif %} on {{ timeTag(character.dates.deleted, "d/m/Y") }} {% if character.biology.killedby %}by {{ character.biology.killedby }} &#9760;{% else %}from old age &#129702;{% endif %}. {% endif %}
+            Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="linkIcon" src="/img/fftracker/guardians/{{ character.biology.guardianid }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} {% if character.biology.killedby %}&#9760; Killed{% else %}&#129702; Died{% endif %} on {{ timeTag(character.dates.deleted, "d/m/Y") }} {% if character.biology.killedby %}by {{ character.biology.killedby }} &#9760;{% else %}from old age &#129702;{% endif %}. {% endif %}
         </p>
         <p>
             {% if character.biology.incarnations %}
@@ -61,7 +61,7 @@
             {% endif %}
         </p>
         <p>
-            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="linkIcon" src="/img/fftracker/cities/{{ character.location.cityid }}.png"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.datacenter }}{% endif %}.
+            {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="linkIcon" src="/img/fftracker/cities/{{ character.location.cityid }}.webp"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.datacenter }}{% endif %}.
             {% if character.location.previousServers %}
                 Has also been seen on
                 {% for server in character.location.previousServers %}
@@ -73,7 +73,7 @@
             <p>Participated in <i class="failure">{{ character.pvp }}</i> &#9876; battles.</p>
         {% endif %}
         {% if character.grandCompany.name %}
-            <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grandCompany.rank }}" class="linkIcon" src="/img/fftracker/grandcompany/{{ character.grandCompany.gcrankid }}.png"><i>{{ character.grandCompany.rank }}</i> in <i>{{ character.grandCompany.name }}</i> Grand company.</p>
+            <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grandCompany.rank }}" class="linkIcon" src="/img/fftracker/grandcompany/{{ character.grandCompany.gcrankid }}.webp"><i>{{ character.grandCompany.rank }}</i> in <i>{{ character.grandCompany.name }}</i> Grand company.</p>
         {% endif %}
         <p>
             Last interview was conducted on {{ timeTag(character.dates.updated, "d/m/Y H:i") }}.
@@ -116,7 +116,7 @@
             <thead><tr><th>Job</th><th>Level</th></tr></thead>
             {% for key, job in character.jobs %}
                 {% set sum = job.level + sum ?? 0 %}
-                <tr><td><img loading="lazy" decoding="async" class="linkIcon" alt="{{ job.name }}" src="/img/fftracker/jobs/{{ key }}.png">{{ job.name }}</td><td>{{ job.level }}</td></tr>
+                <tr><td><img loading="lazy" decoding="async" class="linkIcon" alt="{{ job.name }}" src="/img/fftracker/jobs/{{ key }}.webp">{{ job.name }}</td><td>{{ job.level }}</td></tr>
                 {% if loop.last %}
                     <tfoot><tr><td>Total:</td><td>{{ sum }}</td></tr></tfoot>
                 {% endif %}

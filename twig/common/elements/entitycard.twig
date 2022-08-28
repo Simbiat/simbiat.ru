@@ -31,29 +31,29 @@
             <img loading="lazy" decoding="async" alt="{{ name }}" src="https://img2.finalfantasyxiv.com/f/{{ icon }}c0_96x96.jpg">
         {% elseif type == 'freecompany' %}
             {% if icon == '1' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/Maelstrom.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/Maelstrom.webp">
             {% elseif icon == '2' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/OrderOfTheTwinAdder.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/OrderOfTheTwinAdder.webp">
             {% elseif icon == '3' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/ImmortalFlames.png">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/ImmortalFlames.webp">
             {% else %}
                 <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.png">
             {% endif %}
         {% elseif type == 'pvpteam' %}
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.png">
         {% elseif type == 'linkshell' %}
-            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.png">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.webp">
         {% endif %}
     </span>
     <span class="entityName">
         {% if lsrankid and lsrankid != 3 %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/lsranks/{{ lsrankid }}.png">
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/lsranks/{{ lsrankid }}.webp">
         {% endif %}
         {% if pvprankid and pvprankid != 3 %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/pvpranks/{{ pvprankid }}.png">
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/pvpranks/{{ pvprankid }}.webp">
         {% endif %}
         {% if rankid matches '/^\\d+$/' %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/fcranks/{{ rankid }}.png">
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/fcranks/{{ rankid }}.webp">
         {% endif %}
         {{ name }}{% if userid %}<sup>🔗</sup>{% endif %}
     </span>

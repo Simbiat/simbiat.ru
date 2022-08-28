@@ -43,7 +43,7 @@ class Resume extends Page
                     'startTime' => '1995-09-01',
                     'endTime' => '2006-06-23',
                     'name' => 'School №1208',
-                    'icon' => '/img/icons/1208.png',
+                    'icon' => '/img/icons/1208.webp',
                     'href' => 'https://sch1208uv.mskobr.ru/',
                     'position' => 'Pupil',
                     'responsibilities' => null,
@@ -134,7 +134,7 @@ class Resume extends Page
                     'startTime' => '2009-02-02',
                     'endTime' => '2009-03-27',
                     'name' => 'Windsor',
-                    'icon' => '/img/icons/Windsor.jpg',
+                    'icon' => '/img/icons/Windsor.webp',
                     'href' => 'https://www.windsor.ru/',
                     'position' => 'Engineer',
                     'responsibilities' => [

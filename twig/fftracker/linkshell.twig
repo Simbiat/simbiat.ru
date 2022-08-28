@@ -1,11 +1,5 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ linkshell.name }}" src="
-        {% if linkshell.crossworld %}
-            /img/fftracker/crossworld_linkshell.png
-        {% else %}
-            /img/fftracker/linkshell.png
-        {% endif %}
-    ">
+    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ linkshell.name }}" src="/img/fftracker/{% if linkshell.crossworld %}crossworld_{% endif %}linkshell.webp">
     {% if freecompany.linked %}
         <p>
             You are a linked member of this {% if linkshell.crossworld %}crossworld {% endif %}linkshell. Press this button to force update the data.
