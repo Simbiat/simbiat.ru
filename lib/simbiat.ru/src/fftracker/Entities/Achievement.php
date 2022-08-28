@@ -128,7 +128,10 @@ class Achievement extends Entity
             $bindings[':name'] = $this->lodestone['name'];
             $bindings[':icon'] = str_replace('https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', '', $this->lodestone['icon']);
             #Download icon
-            (new Curl())->imageDownload($this->lodestone['icon'], FFTracker::$icons.$bindings[':icon']);
+            $webp = Curl::imageDownload($this->lodestone['icon'], FFTracker::$icons.$bindings[':icon']);
+            if ($webp) {
+                $bindings[':icon'] = str_replace('.png', '.webp', $bindings[':icon']);
+            }
             $bindings[':points'] = $this->lodestone['points'];
             $bindings[':category'] = $this->lodestone['category'];
             $bindings[':subcategory'] = $this->lodestone['subcategory'];
@@ -152,7 +155,10 @@ class Achievement extends Entity
             } else {
                 $bindings[':itemicon'] = str_replace('https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', '', $this->lodestone['item']['icon']);
                 #Download icon
-                (new Curl())->imageDownload($this->lodestone['item']['icon'], FFTracker::$icons.$bindings[':itemicon']);
+                $webp = Curl::imageDownload($this->lodestone['item']['icon'], FFTracker::$icons.$bindings[':itemicon']);
+                if ($webp) {
+                    $bindings[':itemicon'] = str_replace('.png', '.webp', $bindings[':itemicon']);
+                }
             }
             if (empty($this->lodestone['item']['id'])) {
                 $bindings[':itemid'] = [NULL, 'null'];

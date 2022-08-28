@@ -50,6 +50,10 @@ class Achievement extends Page
         if (!empty($outputArray['achievement']['rewards']['item']['id'])) {
             $this->altLinks[] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/' .$outputArray['achievement']['rewards']['item']['id']];
         }
+        #Set favicon
+        if (is_file(\Simbiat\Config\FFTracker::$icons.$outputArray['achievement']['icon'])) {
+            $outputArray['favicon'] = '/img/fftracker/icons/'.$outputArray['achievement']['icon'];
+        }
         return $outputArray;
     }
 }

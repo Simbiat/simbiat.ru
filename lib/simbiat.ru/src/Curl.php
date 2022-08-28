@@ -83,7 +83,7 @@ class Curl
     }
 
     #Function to download avatar
-    public function imageDownload(string $from, string $to): bool
+    public static function imageDownload(string $from, string $to): string|false
     {
         #Download to temp
         if (@file_put_contents(sys_get_temp_dir().'/'.basename($to), @fopen($from, 'r'))) {
@@ -98,7 +98,12 @@ class Curl
         } else {
             return false;
         }
-        return is_file($to);
+        if (is_file($to)) {
+            #Convert to WebP
+            return self::toWebP($to);
+        } else {
+            return false;
+        }
     }
     
     #Not exactly Curl, but plan is that it will be used for avatars, at least, that may need to be downloaded first
@@ -112,18 +117,19 @@ class Curl
         #Get MIME type
         $mime = mime_content_type($image);
         if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
-            return false;
+            #Presume, that this is not something to convert in the first place, which may be normal
+            return $image;
         }
         #Set new name
         $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
         #Create GD object from file
         $gd = match($mime) {
-            'image/avif' => imagecreatefromavif($image),
-            'image/bmp' => imagecreatefrombmp($image),
-            'image/gif' => imagecreatefromgif($image),
-            'image/jpeg' => imagecreatefromjpeg($image),
-            'image/png' => imagecreatefrompng($image),
-            'image/webp' => imagecreatefromwebp($image),
+            'image/avif' => @imagecreatefromavif($image),
+            'image/bmp' => @imagecreatefrombmp($image),
+            'image/gif' => @imagecreatefromgif($image),
+            'image/jpeg' => @imagecreatefromjpeg($image),
+            'image/png' => @imagecreatefrompng($image),
+            'image/webp' => @imagecreatefromwebp($image),
         };
         #Ensure that True Color is used
         imagepalettetotruecolor($gd);
