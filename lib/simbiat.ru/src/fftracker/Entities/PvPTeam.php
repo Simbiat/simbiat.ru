@@ -37,7 +37,7 @@ class PvPTeam extends Entity
         #Get members
         $data['members'] = HomePage::$dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`characterid` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvprankid`, `userid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvprankid`=`ffxiv__pvpteam_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `ffxiv__pvpteam_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server']);
+        unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server'], $data['crest_part_1'], $data['crest_part_2'], $data['crest_part_3']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot'])) {
             if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
@@ -94,10 +94,10 @@ class PvPTeam extends Entity
     {
         try {
             #Attempt to get crest
-            $this->lodestone['crest'] = $this->CrestMerge($this->id, $this->lodestone['crest']);
+            $crest = $this->CrestMerge($this->id, $this->lodestone['crest']);
             #Main query to insert or update a PvP Team
             $queries[] = [
-                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`);',
+                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`), `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
                 [
                     ':pvpteamid'=>$this->id,
                     ':datacenter'=>$this->lodestone['dataCenter'],
@@ -109,9 +109,21 @@ class PvPTeam extends Entity
                         (empty($this->lodestone['communityid']) ? 'null' : 'string'),
                     ],
                     ':crest'=>[
-                        (empty($this->lodestone['crest']) ? NULL : $this->lodestone['crest']),
-                        (empty($this->lodestone['crest']) ? 'null' : 'string'),
-                    ]
+                        (empty($crest) ? NULL : $crest),
+                        (empty($crest) ? 'null' : 'string'),
+                    ],
+                    ':crest_part_1'=>[
+                        (empty($this->lodestone['crest'][0]) ? NULL : $this->lodestone['crest'][0]),
+                        (empty($this->lodestone['crest'][0]) ? 'null' : 'string'),
+                    ],
+                    ':crest_part_2'=>[
+                        (empty($this->lodestone['crest'][1]) ? NULL : $this->lodestone['crest'][1]),
+                        (empty($this->lodestone['crest'][1]) ? 'null' : 'string'),
+                    ],
+                    ':crest_part_3'=>[
+                        (empty($this->lodestone['crest'][2]) ? NULL : $this->lodestone['crest'][2]),
+                        (empty($this->lodestone['crest'][2]) ? 'null' : 'string'),
+                    ],
                 ],
             ];
             #Register PvP Team name if it's not registered already
