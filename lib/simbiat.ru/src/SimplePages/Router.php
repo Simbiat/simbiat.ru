@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\StaticPages;
+namespace Simbiat\SimplePages;
 
 class Router extends \Simbiat\Abstracts\Router
 {
@@ -8,12 +8,12 @@ class Router extends \Simbiat\Abstracts\Router
     protected array $subRoutes = ['devicedetector'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/staticpages/', 'name'=>'Static Pages']
+        ['href'=>'/simplepages/', 'name'=>'Simple Pages']
     ];
-    protected string $title = 'Static Pages';
-    protected string $h1 = 'Static Pages';
-    protected string $ogdesc = 'Various static pages hosted by Simbiat Software';
-    protected string $serviceName = 'staticpages';
+    protected string $title = 'Simple Pages';
+    protected string $h1 = 'Simple Pages';
+    protected string $ogdesc = 'Various simple pages hosted by Simbiat Software';
+    protected string $serviceName = 'simplepages';
     
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array

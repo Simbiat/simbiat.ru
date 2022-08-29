@@ -1,0 +1,18 @@
+<section>
+    <article>
+        <details {% if not subServiceName %}class="persistent" open{% endif %}>
+            <summary class="rightSummary aboutSection">About</summary>
+            <p>This is the section, where I host some simple pages, that do not fit other categories and usually do not rely on database, thus expected to be always available. For now, it consists of only 1 page:</p>
+            <ul>
+                <li><a href="/simplepages/devicedetector/" target="_self" itemprop="url"><span itemprop="name">Device Detector</span></a></li>
+            </ul>
+        </details>
+    </article>
+    {% if subServiceName %}
+        <article>
+            {% if subServiceName == 'devicedetector' %}
+                {{ include('simplepages/devicedetector.twig') }}
+            {% endif %}
+        </article>
+    {% endif %}
+</section>

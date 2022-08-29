@@ -18,6 +18,4 @@ class ToS extends StaticPage
     protected string $h1 = 'Terms of Service';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Terms of Service';
-    #Flag to indicate this is a static page
-    protected bool $static = true;
 }

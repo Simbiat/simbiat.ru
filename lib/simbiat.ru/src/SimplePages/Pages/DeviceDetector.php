@@ -1,16 +1,15 @@
 <?php
 declare(strict_types=1);
-namespace Simbiat\StaticPages\Pages;
+namespace Simbiat\SimplePages\Pages;
 
-use Simbiat\Abstracts\Page;
+use Simbiat\Abstracts\Pages\StaticPage;
 use Simbiat\Config\Common;
-use Simbiat\Curl;
 
-class DeviceDetector extends Page
+class DeviceDetector extends StaticPage
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/staticpages/devicedetector', 'name' => 'Device Detector']
+        ['href' => '/simplepages/devicedetector', 'name' => 'Device Detector']
     ];
     #Sub service name
     protected string $subServiceName = 'devicedetector';
@@ -20,20 +19,10 @@ class DeviceDetector extends Page
     protected string $h1 = 'Device Detector Icons';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Icons or logos of operating system, browsers and mobile applications based on respective items detectable by matomo-org/device-detector library';
-    #Flag to indicate this is a static page
-    protected bool $static = true;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        #$dir = Common::$imgDir.'/devicedetector/';
-        #$icons = array_diff(scandir($dir), ['..', '.']);
-        #$curl = new Curl();
-        #foreach($icons as $icon) {
-        #    $curl->toWebm($dir.$icon);
-        #}
-        #echo 'mobile app';
-        #exit;
         $outputArray = [];
         #OS icons
         $outputArray['icons']['os'] = $this->genList('os');

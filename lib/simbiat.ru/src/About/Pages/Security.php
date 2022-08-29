@@ -18,6 +18,4 @@ class Security extends StaticPage
     protected string $h1 = 'Security Policy';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Security Policy';
-    #Flag to indicate this is a static page
-    protected bool $static = true;
 }

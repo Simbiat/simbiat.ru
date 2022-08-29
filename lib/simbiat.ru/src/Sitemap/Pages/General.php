@@ -24,7 +24,7 @@ class General extends StaticPage
         return [
             'sitemap_links' => [
                 ['loc'=>'', 'name'=>'Home Page'],
-                ['loc'=>'staticpages/devicedetector/', 'name'=>'Device Detector'],
+                ['loc'=>'simplepages/devicedetector/', 'name'=>'Device Detector'],
                 ['loc'=>'about/me/', 'name'=>'About me'],
                 ['loc'=>'about/website/', 'name'=>'About website'],
                 ['loc'=>'about/tech/', 'name'=>'Technology used'],

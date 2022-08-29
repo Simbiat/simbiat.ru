@@ -16,6 +16,8 @@ class StaticPage extends Page
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = '';
+    #Flag to indicate this is a static page
+    protected bool $static = true;
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'week';
 
