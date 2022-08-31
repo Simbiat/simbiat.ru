@@ -54,7 +54,7 @@ class PvPTeam extends Page
         #Try to change favicon
         if (!empty($outputArray['pvpteam']['crest'])) {
             #Get full path
-            $fullPath = substr($outputArray['pvpteam']['crest'], 0, 2).'/'.substr($outputArray['pvpteam']['crest'], 2, 2).'/'.$outputArray['pvpteam']['crest'].'.png';
+            $fullPath = substr($outputArray['pvpteam']['crest'], 0, 2).'/'.substr($outputArray['pvpteam']['crest'], 2, 2).'/'.$outputArray['pvpteam']['crest'].'.webp';
             if (is_file(FFTracker::$crests.$fullPath)) {
                 $outputArray['favicon'] = '/img/fftracker/merged-crests/'.$fullPath;
             }

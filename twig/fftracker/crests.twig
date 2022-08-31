@@ -1,0 +1,20 @@
+{% if components %}
+    <section>
+        <details>
+            <summary>{{ components.frame|length }} frames</summary>
+            {{ include('common/elements/iconlist.twig', {icons: components.frame}, with_context = false) }}
+        </details>
+    </section>
+    <section>
+        <details>
+            <summary>{{ components.emblem|length }} emblems</summary>
+            {{ include('common/elements/iconlist.twig', {icons: components.emblem}, with_context = false) }}
+        </details>
+    </section>
+    <section>
+        <details>
+            <summary>{{ components.background|length }} backgrounds</summary>
+            {{ include('common/elements/iconlist.twig', {icons: components.background}, with_context = false) }}
+        </details>
+    </section>
+{% endif %}

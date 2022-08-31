@@ -73,6 +73,11 @@ class FreeCompany extends Entity
                     return 'Failed to get all necessary data for Free Company '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
                 }
             }
+        } else {
+            if (empty($data['freecompanies'][$this->id]['crest'][2]) && !empty($data['freecompanies'][$this->id]['crest'][1])) {
+                $data['freecompanies'][$this->id]['crest'][2] = $data['freecompanies'][$this->id]['crest'][1];
+                $data['freecompanies'][$this->id]['crest'][1] = null;
+            }
         }
         $data = $data['freecompanies'][$this->id];
         $data['id'] = $this->id;
@@ -147,7 +152,7 @@ class FreeCompany extends Entity
     {
         try {
             #Attempt to get crest
-            $crest = $this->CrestMerge($this->id, $this->lodestone['crest']);
+            $crest = $this->CrestMerge($this->lodestone['crest']);
             #Main query to insert or update a Free Company
             $queries[] = [
                 'INSERT INTO `ffxiv__freecompany` (

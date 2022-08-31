@@ -671,6 +671,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\fftracker\\Entity' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Entity.php',
         'Simbiat\\fftracker\\Pages\\Achievement' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Pages/Achievement.php',
         'Simbiat\\fftracker\\Pages\\Character' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Pages/Character.php',
+        'Simbiat\\fftracker\\Pages\\Crests' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Pages/Crests.php',
         'Simbiat\\fftracker\\Pages\\CrossworldLinkshell' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Pages/CrossworldLinkshell.php',
         'Simbiat\\fftracker\\Pages\\FreeCompany' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Pages/FreeCompany.php',
         'Simbiat\\fftracker\\Pages\\Linkshell' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Pages/Linkshell.php',

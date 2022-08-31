@@ -54,7 +54,7 @@ class FreeCompany extends Page
         #Try to change favicon
         if (!empty($outputArray['freecompany']['crest'])) {
             #Get full path
-            $fullPath = substr($outputArray['freecompany']['crest'], 0, 2).'/'.substr($outputArray['freecompany']['crest'], 2, 2).'/'.$outputArray['freecompany']['crest'].'.png';
+            $fullPath = substr($outputArray['freecompany']['crest'], 0, 2).'/'.substr($outputArray['freecompany']['crest'], 2, 2).'/'.$outputArray['freecompany']['crest'].'.webp';
             if (is_file(FFTracker::$crests.$fullPath)) {
                 $outputArray['favicon'] = '/img/fftracker/merged-crests/'.$fullPath;
             }

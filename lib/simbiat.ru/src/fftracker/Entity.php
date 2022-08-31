@@ -4,6 +4,7 @@ namespace Simbiat\fftracker;
 
 use Simbiat\Config\FFTracker;
 use Simbiat\Cron;
+use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 
@@ -154,68 +155,70 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     }
 
     #Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
-    protected function CrestMerge(string $groupId, array $images, bool $debug = false): ?string
+    protected function CrestMerge(array $images, bool $debug = false): ?string
     {
         try {
-            $imgFolder = FFTracker::$crests;
-            #Checking if directory exists
-            if (!is_dir($imgFolder)) {
-                #Creating directory
-                @mkdir($imgFolder, recursive: true);
-            }
-            #Preparing set of layers, since Lodestone stores crests as 3 (or less) separate images
-            $layers = array();
-            foreach ($images as $key=>$image) {
-                $layers[$key] = @imagecreatefrompng($image);
-                if ($layers[$key] === false) {
-                    #This means that we failed to get the image thus final crest will either fail or be corrupt, thus exiting early
-                    throw new \RuntimeException('Failed to download '.$image.' used as layer '.$key.' for '.$groupId.' crest');
-                }
-            }
-            #Create image object
-            $image = imagecreatetruecolor(128, 128);
-            #Set transparency
-            imagealphablending($image, true);
-            imagesavealpha($image, true);
-            imagecolortransparent($image, imagecolorallocatealpha($image, 255, 0, 0, 127));
-            imagefill($image, 0, 0, imagecolorallocatealpha($image, 255, 0, 0, 127));
-            #Copy each Lodestone image onto the image object
-            for ($i = 0; $i < count($layers); $i++) {
-                imagecopy($image, $layers[$i], 0, 0, 0, 0, 128, 128);
-                #Destroy layer to free some memory
-                imagedestroy($layers[$i]);
-            }
-            #Saving temporary file
-            imagepng($image, $imgFolder.$groupId.'.png', 9, PNG_ALL_FILTERS);
-            #Explicitely destroy image object
-            imagedestroy($image);
-            #Get hash of the file
-            if (!file_exists($imgFolder.$groupId.'.png')) {
-                #Failed to save the image
-                throw new \RuntimeException('Failed to save crest '.$imgFolder.$groupId.'.png');
-            }
-            $hash = hash_file('sha3-256', $imgFolder.$groupId.'.png');
+            #Get hash for merged crest based on the images' names
+            $hash = hash('sha3-256', ($images[0] ? basename($images[0]) : '').($images[1] ? basename($images[1]) : '').($images[2] ? basename($images[2]) : ''));
             #Get final path based on hash
-            $finalPath = $imgFolder.substr($hash, 0, 2).'/'.substr($hash, 2, 2).'/';
+            $finalPath = FFTracker::$crests.substr($hash, 0, 2).'/'.substr($hash, 2, 2).'/';
             #Check if path exists
             if (!is_dir($finalPath)) {
                 #Create it recursively
                 @mkdir($finalPath, recursive: true);
             }
-            #Check if file with hash name exists
-            if (!file_exists($finalPath.$hash.'.png')) {
-                #Copy the file to new path
-                copy($imgFolder.$groupId.'.png', $finalPath.$hash.'.png');
+            #Check if image already exists - skip and return early, if it does
+            if (is_file($finalPath.$hash.'.webp')) {
+                return $hash;
             }
-            return $hash;
+            #Preparing set of layers, since Lodestone stores crests as 3 (or less) separate images
+            $layers = [];
+            foreach ($images as $key=>$image) {
+                if (!empty($image)) {
+                    #Check if we have already downloaded the component image and use that one to speed up the process
+                    $cachedImage = match($key) {
+                        0 => FFTracker::$crestsComponents.'backgrounds/'.basename($image),
+                        1 => FFTracker::$crestsComponents.'frames/'.basename($image),
+                        2 => FFTracker::$crestsComponents.'emblems/'.basename($image),
+                    };
+                    if (is_file($cachedImage)) {
+                        $layers[$key] = @imagecreatefrompng($cachedImage);
+                    } else {
+                        #Attempt to download the image to "cache" it
+                        if (Curl::imageDownload($image, $cachedImage, false)) {
+                            $layers[$key] = @imagecreatefrompng($cachedImage);
+                        } else {
+                            $layers[$key] = @imagecreatefrompng($image);
+                        }
+                    }
+                    if ($layers[$key] === false) {
+                        #This means that we failed to get the image thus final crest will either fail or be corrupt, thus exiting early
+                        throw new \RuntimeException('Failed to download '.$image.' used as layer '.$key.' for '.$this->id.' crest');
+                    }
+                }
+            }
+            #Create image object
+            $gd = imagecreatetruecolor(128, 128);
+            #Set transparency
+            imagealphablending($gd, true);
+            imagesavealpha($gd, true);
+            imagecolortransparent($gd, imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            imagefill($gd, 0, 0, imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            #Copy each Lodestone image onto the image object
+            for ($i = 0; $i < count($layers); $i++) {
+                imagecopy($gd, $layers[$i], 0, 0, 0, 0, 128, 128);
+            }
+            #Save the file
+            if (imagewebp($gd, $finalPath.$hash.'.webp', IMG_WEBP_LOSSLESS)) {
+                return $hash;
+            } else {
+                return null;
+            }
         } catch (\Throwable $e) {
             if ($debug) {
                 Errors::error_log($e);
             }
             return null;
-        } finally {
-            #Remove temporary file
-            @unlink($imgFolder . $groupId . '.png');
         }
     }
 }

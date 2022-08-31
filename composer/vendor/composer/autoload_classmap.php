@@ -426,6 +426,7 @@ return array(
     'Simbiat\\fftracker\\Entity' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Entity.php',
     'Simbiat\\fftracker\\Pages\\Achievement' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Pages/Achievement.php',
     'Simbiat\\fftracker\\Pages\\Character' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Pages/Character.php',
+    'Simbiat\\fftracker\\Pages\\Crests' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Pages/Crests.php',
     'Simbiat\\fftracker\\Pages\\CrossworldLinkshell' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Pages/CrossworldLinkshell.php',
     'Simbiat\\fftracker\\Pages\\FreeCompany' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Pages/FreeCompany.php',
     'Simbiat\\fftracker\\Pages\\Linkshell' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Pages/Linkshell.php',

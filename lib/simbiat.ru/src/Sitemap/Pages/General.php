@@ -38,6 +38,7 @@ class General extends StaticPage
                 ['loc'=>'bictracker/keying/', 'name'=>'BIC Tracker Keying'],
                 ['loc'=>'fftracker/search/', 'name'=>'FFXIV Tracker Search'],
                 ['loc'=>'fftracker/track/', 'name'=>'FFXIV Tracker Registration'],
+                ['loc'=>'fftracker/crests/', 'name'=>'FFXIV Crests'],
                 ['loc'=>'fftracker/statistics/genetics/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Genetics'],
                 ['loc'=>'fftracker/statistics/astrology/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Astrology'],
                 ['loc'=>'fftracker/statistics/characters/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Characters'],

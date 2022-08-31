@@ -16,6 +16,7 @@
                     <li><a href="/fftracker/achievements/" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
                 </ul>
                 <p>Use <a href="/fftracker/search/" target="_self" itemprop="url"><span itemprop="name">search</span></a> to find something specific or <a href="/fftracker/track/" target="_self" itemprop="url"><span itemprop="name">register</span></a> a new entity, if we do not have it.</p>
+                <p>You can also check all crests used for free companies and PvP teams <a href="/fftracker/crests/">here</a>.</p>
             {% endif %}
         </details>
     </article>
@@ -51,6 +52,8 @@
                 {{ include('fftracker/freecompany.twig') }}
             {% elseif subServiceName == 'track' %}
                 {{ include('fftracker/track.twig') }}
+            {% elseif subServiceName == 'crests' %}
+                {{ include('fftracker/crests.twig') }}
             {% endif %}
         </article>
         {% if pagination %}
