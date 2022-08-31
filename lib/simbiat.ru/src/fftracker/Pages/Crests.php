@@ -37,7 +37,8 @@ class Crests extends StaticPage
         $icons = array_diff(scandir(FFTracker::$crestsComponents.$type.'s/'), ['..', '.']);
         foreach ($icons as $key=>$icon) {
             $array[] = [
-                'name' => ucfirst($type).' #'.$key,
+                #-1 because arrays start from 0, and we removed 2 items (. and ..)
+                'name' => ucfirst($type).' #'.($key - 1),
                 'icon' => '/img/fftracker/crests-components/'.$type.'s/'.$icon,
             ];
         }
