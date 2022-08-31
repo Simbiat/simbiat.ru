@@ -83,7 +83,7 @@ class Curl
     }
 
     #Function to download avatar
-    public static function imageDownload(string $from, string $to): string|false
+    public static function imageDownload(string $from, string $to, bool $convert = true): string|false
     {
         #Download to temp
         if (@file_put_contents(sys_get_temp_dir().'/'.basename($to), @fopen($from, 'r'))) {
@@ -99,8 +99,12 @@ class Curl
             return false;
         }
         if (is_file($to)) {
-            #Convert to WebP
-            return self::toWebP($to);
+            if ($convert) {
+                #Convert to WebP
+                return self::toWebP($to);
+            } else {
+                return $to;
+            }
         } else {
             return false;
         }
