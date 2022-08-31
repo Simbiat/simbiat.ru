@@ -55,3 +55,6 @@
 [submodule "img/devicedetector"]
 	path = img/devicedetector
 	url = https://github.com/Simbiat/DeviceDetectorIcons
+[submodule "img/fftracker/crests-components"]
+	path = img/fftracker/crests-components
+	url = https://github.com/Simbiat/FFXIV-Crests-Components
