@@ -11,9 +11,9 @@ create table ffxiv__pvpteam
     deleted      date                                            null comment 'Date when PvP Team was marked as deleted',
     communityid  varchar(40)                                     null comment 'Community ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/community_finder/communityid/)',
     crest        char(64)                                        null comment 'Name (hash) of image representing merged crest for the team (generated on each company update from 1 to 3 images on Lodestone)',
-    crest_part_1 varchar(100)                                    null comment 'Link to 1st part of the crest',
-    crest_part_2 varchar(100)                                    null comment 'Link to 2nd part of the crest',
-    crest_part_3 varchar(100)                                    null comment 'Link to 3rd part of the crest',
+    crest_part_1 varchar(100)                                    null comment 'Link to 1st part of the crest (background)',
+    crest_part_2 varchar(100)                                    null comment 'Link to 2nd part of the crest (frame)',
+    crest_part_3 varchar(100)                                    null comment 'Link to 3rd part of the crest (emblem)',
     constraint pvp_dcid
         foreign key (datacenterid) references ffxiv__server (serverid)
             on update cascade on delete cascade
