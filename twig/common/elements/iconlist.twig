@@ -1,0 +1,12 @@
+<ul class="iconList">
+    {% for icon in icons %}
+        <li>
+            <figure>
+                <a class="galleryZoom" href="{{ icon.icon }}" target="_blank">
+                    <img loading="lazy" decoding="async" src="{{ icon.icon }}" alt="{{ icon.name|default(basename(icon.icon)) }}">
+                </a>
+                <figcaption class="middle">{{ icon.name|default(basename(icon.icon)) }}</figcaption>
+            </figure>
+        </li>
+    {% endfor %}
+</ul>
