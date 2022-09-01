@@ -205,8 +205,10 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             imagecolortransparent($gd, imagecolorallocatealpha($gd, 255, 0, 0, 127));
             imagefill($gd, 0, 0, imagecolorallocatealpha($gd, 255, 0, 0, 127));
             #Copy each Lodestone image onto the image object
-            for ($i = 0; $i < count($layers); $i++) {
-                imagecopy($gd, $layers[$i], 0, 0, 0, 0, 128, 128);
+            foreach ($layers as $layer) {
+                if (!empty($layer)) {
+                    imagecopy($gd, $layer, 0, 0, 0, 0, 128, 128);
+                }
             }
             #Save the file
             if (imagewebp($gd, $finalPath.$hash.'.webp', IMG_WEBP_LOSSLESS)) {
