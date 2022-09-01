@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 #Load composer libraries
-require __DIR__. '/composer/vendor/autoload.php';
+require_once __DIR__. '/composer/vendor/autoload.php';
 
 use Simbiat\HomePage;
 
