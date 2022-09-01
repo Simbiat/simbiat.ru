@@ -369,6 +369,7 @@ return array(
     'Simbiat\\HTTP20\\Sharing' => $baseDir . '/../lib/HTTP20/src/HTTP20/Sharing.php',
     'Simbiat\\HTTP20\\Sitemap' => $baseDir . '/../lib/HTTP20/src/HTTP20/Sitemap.php',
     'Simbiat\\HomePage' => $baseDir . '/../lib/simbiat.ru/src/HomePage.php',
+    'Simbiat\\Images' => $baseDir . '/../lib/simbiat.ru/src/Images.php',
     'Simbiat\\Lodestone' => $baseDir . '/../lib/lodestone-parser/src/Lodestone.php',
     'Simbiat\\LodestoneModules\\Converters' => $baseDir . '/../lib/lodestone-parser/src/LodestoneModules/Converters.php',
     'Simbiat\\LodestoneModules\\HttpRequest' => $baseDir . '/../lib/lodestone-parser/src/LodestoneModules/HttpRequest.php',

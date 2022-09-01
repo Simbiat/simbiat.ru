@@ -4,9 +4,9 @@ namespace Simbiat\fftracker;
 
 use Simbiat\Config\FFTracker;
 use Simbiat\Cron;
-use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\Images;
 
 abstract class Entity extends \Simbiat\Abstracts\Entity
 {
@@ -171,8 +171,6 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             if (is_file($finalPath.$hash.'.webp')) {
                 return $hash;
             }
-            #Preparing set of layers, since Lodestone stores crests as 3 (or less) separate images
-            $layers = [];
             foreach ($images as $key=>$image) {
                 if (!empty($image)) {
                     #Check if we have already downloaded the component image and use that one to speed up the process
@@ -182,34 +180,18 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                         2 => FFTracker::$crestsComponents.'emblems/'.basename($image),
                     };
                     if (is_file($cachedImage)) {
-                        $layers[$key] = @imagecreatefrompng($cachedImage);
+                        $images[$key] = $cachedImage;
                     } else {
                         #Attempt to download the image to "cache" it
-                        if (Curl::imageDownload($image, $cachedImage, false)) {
-                            $layers[$key] = @imagecreatefrompng($cachedImage);
-                        } else {
-                            $layers[$key] = @imagecreatefrompng($image);
+                        if (Images::download($image, $cachedImage, false)) {
+                            $images[$key] = $cachedImage;
                         }
                     }
-                    if ($layers[$key] === false) {
-                        #This means that we failed to get the image thus final crest will either fail or be corrupt, thus exiting early
-                        throw new \RuntimeException('Failed to download '.$image.' used as layer '.$key.' for '.$this->id.' crest');
-                    }
+                } else {
+                    unset($images[$key]);
                 }
             }
-            #Create image object
-            $gd = imagecreatetruecolor(128, 128);
-            #Set transparency
-            imagealphablending($gd, true);
-            imagesavealpha($gd, true);
-            imagecolortransparent($gd, imagecolorallocatealpha($gd, 255, 0, 0, 127));
-            imagefill($gd, 0, 0, imagecolorallocatealpha($gd, 255, 0, 0, 127));
-            #Copy each Lodestone image onto the image object
-            foreach ($layers as $layer) {
-                if (!empty($layer)) {
-                    imagecopy($gd, $layer, 0, 0, 0, 0, 128, 128);
-                }
-            }
+            $gd = Images::merge($images);
             #Save the file
             if (imagewebp($gd, $finalPath.$hash.'.webp', IMG_WEBP_LOSSLESS)) {
                 return $hash;

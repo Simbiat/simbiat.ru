@@ -1,0 +1,152 @@
+<?php
+declare(strict_types=1);
+namespace Simbiat;
+
+use Simbiat\Config\Common;
+
+class Images
+{
+    #Function to download avatar
+    public static function download(string $from, string $to, bool $convert = true): string|false
+    {
+        #Download to temp
+        if (@file_put_contents(sys_get_temp_dir().'/'.basename($to), @fopen($from, 'r'))) {
+            #Create directory if missing
+            if (!is_dir(dirname($to))) {
+                #Create it recursively
+                @mkdir(dirname($to), recursive: true);
+            }
+            #Copy to actual location
+            @copy(sys_get_temp_dir().'/'.basename($to), $to);
+            @unlink(sys_get_temp_dir().'/'.basename($to));
+        } else {
+            return false;
+        }
+        if (is_file($to)) {
+            if ($convert) {
+                #Convert to WebP
+                return self::toWebP($to);
+            } else {
+                return $to;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    #Function to merge images
+    public static function merge(array $images, int $width = 128, int $height = 128, bool $output = false): ?\GdImage
+    {
+        #Preparing set of layers, since Lodestone stores crests as 3 (or less) separate images
+        $layers = [];
+        foreach ($images as $key=>$image) {
+            $layers[$key] = self::open($image);
+            if ($layers[$key] === false) {
+                if ($output) {
+                    self::errorImage();
+                }
+                #This means that we failed to get the image thus final object will either fail or be corrupt, thus exiting early
+                throw new \RuntimeException('Failed to open `'.$image.'`');
+            }
+        }
+        try {
+            #Create image object
+            $gd = imagecreatetruecolor($width, $height);
+            #Set transparency
+            imagealphablending($gd, true);
+            imagesavealpha($gd, true);
+            imagecolortransparent($gd, imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            imagefill($gd, 0, 0, imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            #Copy each Lodestone image onto the image object
+            foreach ($layers as $layer) {
+                if (!empty($layer)) {
+                    imagecopy($gd, $layer, 0, 0, 0, 0, $width, $height);
+                }
+            }
+        } catch (\Throwable) {
+            if ($output) {
+                self::errorImage();
+            }
+            return null;
+        }
+        if ($output) {
+            self::errorImage();
+            ob_start();
+            imagewebp($gd, null, IMG_WEBP_LOSSLESS);
+            $size = ob_get_length();
+            header('Content-Type: image/webp');
+            header('Content-Length: ' . $size);
+            ob_end_flush();
+            exit;
+        }
+        return $gd;
+    }
+    
+    #Convert image to webp format
+    public static function toWebP(string $image): string|false
+    {
+        #Check if file exists
+        if (!is_file($image)) {
+            return false;
+        }
+        #Get MIME type
+        $mime = mime_content_type($image);
+        if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+            #Presume, that this is not something to convert in the first place, which may be normal
+            return false;
+        }
+        #Set new name
+        $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
+        #Create GD object from file
+        $gd = self::open($image, $mime);
+        if ($gd === false) {
+            return false;
+        }
+        #Ensure that True Color is used
+        imagepalettetotruecolor($gd);
+        #Enable alpha blending
+        imagealphablending($gd, true);
+        #Save the alpha data
+        imagesavealpha($gd, true);
+        #Save the file
+        if (imagewebp($gd, $newName, IMG_WEBP_LOSSLESS)) {
+            #Remove source image, if we did not just overwrite it
+            if ($image !== $newName) {
+                @unlink($image);
+            }
+            return $newName;
+        } else {
+            return false;
+        }
+    }
+    
+    public static function open(string $image, ?string $mime = null): false|\GdImage
+    {
+        #Get MIME type
+        if (empty($mime)) {
+            $mime = mime_content_type($image);
+        }
+        if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
+            #Unsuported format provided
+            return false;
+        }
+        #Create GD object from file
+        return match($mime) {
+            'image/avif' => @imagecreatefromavif($image),
+            'image/bmp' => @imagecreatefrombmp($image),
+            'image/gif' => @imagecreatefromgif($image),
+            'image/jpeg' => @imagecreatefromjpeg($image),
+            'image/png' => @imagecreatefrompng($image),
+            'image/webp' => @imagecreatefromwebp($image),
+        };
+    }
+    
+    private static function errorImage(): void
+    {
+        $file = Common::$imgDir.'/noimage.svg';
+        header('Content-Type: image/svg+xml');
+        header('Content-Length: ' . filesize($file));
+        readfile($file);
+        exit;
+    }
+}

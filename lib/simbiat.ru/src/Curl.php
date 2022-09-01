@@ -26,7 +26,7 @@ class Curl
         CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2|CURL_SSLVERSION_MAX_TLSv1_3,
         CURLOPT_DEFAULT_PROTOCOL => 'https',
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
-        #These options are supposed to improve speed, but do nto seem to work for websites that I parse at the moment
+        #These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
         #CURLOPT_SSL_FALSESTART => true,
         #CURLOPT_TCP_FASTOPEN => true,
     ];
@@ -77,77 +77,6 @@ class Curl
         #Check code
         if ($httpCode === 200) {
             return true;
-        } else {
-            return false;
-        }
-    }
-
-    #Function to download avatar
-    public static function imageDownload(string $from, string $to, bool $convert = true): string|false
-    {
-        #Download to temp
-        if (@file_put_contents(sys_get_temp_dir().'/'.basename($to), @fopen($from, 'r'))) {
-            #Create directory if missing
-            if (!is_dir(dirname($to))) {
-                #Create it recursively
-                @mkdir(dirname($to), recursive: true);
-            }
-            #Copy to actual location
-            @copy(sys_get_temp_dir().'/'.basename($to), $to);
-            @unlink(sys_get_temp_dir().'/'.basename($to));
-        } else {
-            return false;
-        }
-        if (is_file($to)) {
-            if ($convert) {
-                #Convert to WebP
-                return self::toWebP($to);
-            } else {
-                return $to;
-            }
-        } else {
-            return false;
-        }
-    }
-    
-    #Not exactly Curl, but plan is that it will be used for avatars, at least, that may need to be downloaded first
-    #Possibly will be moved to some other more suitable class in the future
-    public static function toWebP(string $image): string|false
-    {
-        #Check if file exists
-        if (!is_file($image)) {
-            return false;
-        }
-        #Get MIME type
-        $mime = mime_content_type($image);
-        if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
-            #Presume, that this is not something to convert in the first place, which may be normal
-            return $image;
-        }
-        #Set new name
-        $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
-        #Create GD object from file
-        $gd = match($mime) {
-            'image/avif' => @imagecreatefromavif($image),
-            'image/bmp' => @imagecreatefrombmp($image),
-            'image/gif' => @imagecreatefromgif($image),
-            'image/jpeg' => @imagecreatefromjpeg($image),
-            'image/png' => @imagecreatefrompng($image),
-            'image/webp' => @imagecreatefromwebp($image),
-        };
-        #Ensure that True Color is used
-        imagepalettetotruecolor($gd);
-        #Enable alpha blending
-        imagealphablending($gd, true);
-        #Save the alpha data
-        imagesavealpha($gd, true);
-        #Save the file
-        if (imagewebp($gd, $newName, IMG_WEBP_LOSSLESS)) {
-            #Remove source image, if we did not just overwrite it
-            if ($image !== $newName) {
-                @unlink($image);
-            }
-            return $newName;
         } else {
             return false;
         }
