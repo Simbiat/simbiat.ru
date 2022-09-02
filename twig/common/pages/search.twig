@@ -57,7 +57,7 @@
                     {% set listURL = '/fftracker/linkshells/' %}
                 {% endif %}
                 {# Show link itself #}
-                <a href="{{ listURL }}?search={{ searchValue|url_encode }}">{{ subResult.count }}</a>
+                <a href="{{ listURL }}{% if searchValue %}?search={{ searchValue|url_encode }}{% endif %}">{{ subResult.count }}</a>
             {% else %}
                 {{ subResult.count }}
             {% endif %}
