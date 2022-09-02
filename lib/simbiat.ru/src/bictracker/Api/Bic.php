@@ -34,7 +34,7 @@ class Bic extends Api
         $result = ['response' => $data];
         #Link header/tag for API
         $result['alt_links'] = [
-            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/bic/' . $path[0]],
+            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/bics/' . $path[0]],
         ];
         return $result;
     }

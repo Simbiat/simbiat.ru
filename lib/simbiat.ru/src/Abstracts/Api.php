@@ -83,7 +83,7 @@ abstract class Api
                     $result['json_ready']['reason'] = 'Unsupported endpoint';
                     $result['json_ready']['endpoints'] = $data['endpoints'];
                 } elseif ($data['http_error'] === 405) {
-                    $result['json_ready']['reason'] = 'Unsupported method used';
+                    $result['json_ready']['reason'] = $data['reason'] ?? 'Unsupported HTTP method used';
                 }
             } else {
                 $result['json_ready']['data'] = $data['response'] ?? null;
@@ -225,10 +225,14 @@ abstract class Api
                 $result['about']['methods'] = $this->methods;
             }
             if (!$this->methodCheck()) {
-                return array_merge($result, ['http_error' => 405]);
+                return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported HTTP method used']);
             }
+            #Convert only if method is not HEAD, OPTIONS or GET and if respective method has a verb set for it
             if (!in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET']) && !empty($this->methods[HomePage::$method])) {
                 $path[1] = $this->methods[HomePage::$method];
+            }
+            if (!empty($path[1]) && !in_array($path[1], array_keys($this->verbs))) {
+                return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);
             }
             if (!empty(HomePage::$http_error) && !$this->static) {
                 return array_merge($result, HomePage::$http_error);

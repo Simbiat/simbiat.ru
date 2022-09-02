@@ -6,7 +6,7 @@ class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'character', 'freecompany', 'pvpteam', 'linkshell', 'crossworld_linkshell', 'achievement'
+        'characters', 'freecompanies', 'pvpteams', 'linkshells', 'crossworld_linkshells', 'achievements'
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
@@ -25,12 +25,12 @@ class Api extends \Simbiat\Abstracts\Api
     protected function genData(array $path): array
     {
         return match($path[0]){
-            'character' => (new Api\Character)->getData(array_slice($path, 1)),
-            'freecompany' => (new Api\FreeCompany)->getData(array_slice($path, 1)),
-            'linkshell' => (new Api\Linkshell)->getData(array_slice($path, 1)),
-            'crossworld_linkshell' => (new Api\CrossworldLinkshell)->getData(array_slice($path, 1)),
-            'pvpteam' => (new Api\PvPTeam)->getData(array_slice($path, 1)),
-            'achievement' => (new Api\Achievement)->getData(array_slice($path, 1)),
+            'characters' => (new Api\Character)->getData(array_slice($path, 1)),
+            'freecompanies' => (new Api\FreeCompany)->getData(array_slice($path, 1)),
+            'linkshells' => (new Api\Linkshell)->getData(array_slice($path, 1)),
+            'crossworld_linkshells' => (new Api\CrossworldLinkshell)->getData(array_slice($path, 1)),
+            'pvpteams' => (new Api\PvPTeam)->getData(array_slice($path, 1)),
+            'achievements' => (new Api\Achievement)->getData(array_slice($path, 1)),
         };
     }
 }

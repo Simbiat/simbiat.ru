@@ -35,14 +35,14 @@ class Achievement extends Page
         #Try to exit early based on modification date
         $this->lastModified($outputArray['achievement']['updated']);
         #Continue breadcrumbs
-        $this->breadCrumb[] = ['href' => '/fftracker/achievement/' . $id, 'name' => $outputArray['achievement']['name']];
+        $this->breadCrumb[] = ['href' => '/fftracker/achievements/' . $id, 'name' => $outputArray['achievement']['name']];
         #Update meta
         $this->h1 = $this->title = $outputArray['achievement']['name'];
         $this->ogdesc = $outputArray['achievement']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
         $this->altLinks = [
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/achievement/' . $id],
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievement/' . $id.'/lodestone/'],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/achievements/' . $id],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/achievements/' . $id.'/lodestone/'],
         ];
         if (!empty($outputArray['achievement']['dbid'])) {
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' . $outputArray['achievement']['dbid']];

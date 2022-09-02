@@ -5,7 +5,7 @@ namespace Simbiat\bictracker;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['keying', 'search', 'bic', 'openbics', 'closedbics'];
+    protected array $subRoutes = ['keying', 'search', 'bics', 'openbics', 'closedbics'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/bictracker/', 'name'=>'БИК Трекер']
@@ -18,11 +18,19 @@ class Router extends \Simbiat\Abstracts\Router
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
-        return match($path[0]) {
-            'search' => (new Pages\Search)->get(array_slice($path, 1)),
-            'keying' => (new Pages\Keying)->get(array_slice($path, 1)),
-            'bic' => (new Pages\Bic)->get(array_slice($path, 1)),
-            'openbics', 'closedbics' => (new Pages\Listing)->get($path),
-        };
+        if (!empty($path[1])) {
+            return match ($path[0]) {
+                'bics' => (new Pages\Bic)->get(array_slice($path, 1)),
+                'keying' => (new Pages\Keying)->get(array_slice($path, 1)),
+                default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
+            };
+        } else {
+            return match($path[0]) {
+                'search' => (new Pages\Search)->get(array_slice($path, 1)),
+                'keying' => (new Pages\Keying)->get(array_slice($path, 1)),
+                'openbics', 'closedbics' => (new Pages\Listing)->get($path),
+                default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
+            };
+        }
     }
 }

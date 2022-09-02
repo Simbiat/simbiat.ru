@@ -39,17 +39,17 @@ class Bic extends Page
         #Continue breadcrumbs
         if (!empty($outputArray['bicdetails']['PrntBIC'])) {
             foreach(array_reverse($outputArray['bicdetails']['PrntBIC']) as $bank) {
-                $this->breadCrumb = [['href' => '/bictracker/bic/' . $bank['id'], 'name' => $bank['name']]];
+                $this->breadCrumb = [['href' => '/bictracker/bics/' . $bank['id'], 'name' => $bank['name']]];
             }
-            $this->breadCrumb[] = ['href' => '/bictracker/bic/' . $BIC, 'name' => $outputArray['bicdetails']['NameP']];
+            $this->breadCrumb[] = ['href' => '/bictracker/bics/' . $BIC, 'name' => $outputArray['bicdetails']['NameP']];
         } else {
-            $this->breadCrumb = [['href' => '/bictracker/bic/' . $BIC, 'name' => $outputArray['bicdetails']['NameP']]];
+            $this->breadCrumb = [['href' => '/bictracker/bics/' . $BIC, 'name' => $outputArray['bicdetails']['NameP']]];
         }
         #Update meta
         $this->h1 = $this->title = $outputArray['bicdetails']['NameP'];
         $this->ogdesc = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') в БИК трекере';
         #Link header/tag for API
-        $this->altLinks = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bic/' . $BIC]];
+        $this->altLinks = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/' . $BIC]];
         return $outputArray;
     }
 }

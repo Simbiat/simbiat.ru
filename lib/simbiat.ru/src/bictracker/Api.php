@@ -6,7 +6,7 @@ class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'bic', 'keying', 'dbupdate'
+        'bics', 'keying', 'dbupdate'
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
@@ -22,7 +22,7 @@ class Api extends \Simbiat\Abstracts\Api
     protected function genData(array $path): array
     {
         return match($path[0]){
-            'bic' => (new Api\Bic)->getData(array_slice($path, 1)),
+            'bics' => (new Api\Bic)->getData(array_slice($path, 1)),
             'keying' => (new Api\Keying)->getData(array_slice($path, 1)),
             'dbupdate' => (new Api\DBUpdate)->getData(array_slice($path, 1)),
         };

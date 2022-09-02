@@ -1,19 +1,19 @@
 {# Set link variable based on type #}
 {% if type == 'bic' %}
-    {% set url = 'bictracker/bic' %}
+    {% set url = 'bictracker/bics' %}
 {% elseif type == 'achievement' %}
-    {% set url = 'fftracker/achievement' %}
+    {% set url = 'fftracker/achievements' %}
 {% elseif type == 'character' %}
-    {% set url = 'fftracker/character' %}
+    {% set url = 'fftracker/characters' %}
 {% elseif type == 'freecompany' %}
-    {% set url = 'fftracker/freecompany' %}
+    {% set url = 'fftracker/freecompanies' %}
 {% elseif type == 'pvpteam' %}
-    {% set url = 'fftracker/pvpteam' %}
+    {% set url = 'fftracker/pvpteams' %}
 {% elseif type == 'linkshell' %}
     {% if crossworld %}
-        {% set url = 'fftracker/crossworld_linkshell' %}
+        {% set url = 'fftracker/crossworld_linkshells' %}
     {% else %}
-        {% set url = 'fftracker/linkshell' %}
+        {% set url = 'fftracker/linkshells' %}
     {% endif %}
 {% endif %}
 {# Actual card #}

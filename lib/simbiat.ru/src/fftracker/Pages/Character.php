@@ -39,7 +39,7 @@ class Character extends Page
         #Try to exit early based on modification date
         $this->lastModified($outputArray['character']['dates']['updated']);
         #Continue breadcrumbs
-        $this->breadCrumb[] = ['href' => '/fftracker/character/' . $id, 'name' => $outputArray['character']['name']];
+        $this->breadCrumb[] = ['href' => '/fftracker/characters/' . $id, 'name' => $outputArray['character']['name']];
         #Update meta
         $this->h1 = $this->title = $outputArray['character']['name'];
         $this->ogdesc = $outputArray['character']['name'] . ' on FFXIV Tracker';
@@ -54,10 +54,10 @@ class Character extends Page
         ';
         #Link header/tag for API
         $this->altLinks = [
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/character/' . $id],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/characters/' . $id],
         ];
         if (empty($outputArray['character']['dates']['deleted'])) {
-            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/character/' . $id. '/lodestone'];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/characters/' . $id. '/lodestone'];
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/character/' . $id];
         }
         #Set favicon to avatar

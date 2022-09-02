@@ -36,16 +36,16 @@ class FreeCompany extends Page
         #Try to exit early based on modification date
         $this->lastModified($outputArray['freecompany']['dates']['updated']);
         #Continue breadcrumbs
-        $this->breadCrumb[] = ['href' => '/fftracker/freecompany/' . $id, 'name' => $outputArray['freecompany']['name']];
+        $this->breadCrumb[] = ['href' => '/fftracker/freecompanies/' . $id, 'name' => $outputArray['freecompany']['name']];
         #Update meta
         $this->h1 = $this->title = $outputArray['freecompany']['name'];
         $this->ogdesc = $outputArray['freecompany']['name'] . ' on FFXIV Tracker';
         #Link header/tag for API
         $this->altLinks = [
-            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/freecompany/' . $id],
+            ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/freecompanies/' . $id],
         ];
         if (empty($outputArray['freecompany']['dates']['deleted'])) {
-            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompany/' . $id. '/lodestone'];
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/freecompanies/' . $id. '/lodestone'];
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/freecompany/' . $id];
             if (!empty($outputArray['freecompany']['community'])) {
                 $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['freecompany']['community']];
