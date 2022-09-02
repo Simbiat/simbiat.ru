@@ -126,7 +126,6 @@ declare class Form {
     private static _instance;
     constructor();
     formEnter(event: KeyboardEvent): void | boolean;
-    searchAction(event: Event): void;
     rawurlencode(str: string): string;
     private inputBackSpace;
     private autoNext;

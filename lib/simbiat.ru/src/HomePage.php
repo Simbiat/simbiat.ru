@@ -172,10 +172,14 @@ class HomePage
         if (preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = preg_replace('/([^\/])$/iu', '$1/', self::$canonical);
         }
-        #And also return page query, if present
-        if (isset($_GET['page'])) {
-            self::$canonical .= '?page='.$_GET['page'];
-        }
+        #And also return page or search query, if present
+        self::$canonical .= '?'.http_build_query([
+            #Do not add 1st page as query (since it is excessive)
+            'page' => (!empty($_GET['page']) ? ($_GET['page'] === '1' ? null : $_GET['page']) : null),
+            'search' => $_GET['search'] ?? null,
+        ], encoding_type: PHP_QUERY_RFC3986);
+        #Trim the excessive question mark, in case no query was attached
+        self::$canonical = rtrim(self::$canonical, '?');
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config\Common::$http_host) === 1 ? 'www.' : '').Config\Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
         #Update list with dynamic values

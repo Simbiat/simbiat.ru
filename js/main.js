@@ -917,11 +917,6 @@ class Form {
         document.querySelectorAll('form').forEach((item) => {
             item.addEventListener('keypress', (event) => { this.formEnter(event); });
         });
-        document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item) => {
-            item.addEventListener('input', this.searchAction.bind(this));
-            item.addEventListener('change', this.searchAction.bind(this));
-            item.addEventListener('focus', this.searchAction.bind(this));
-        });
         document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item) => {
             item.addEventListener('keydown', this.inputBackSpace.bind(this));
             if (item.getAttribute('maxlength')) {
@@ -934,22 +929,11 @@ class Form {
     }
     formEnter(event) {
         let form = event.target.form;
-        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host + form.getAttribute('data-baseURL') !== form.action))) {
+        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && !form.action) {
             event.stopPropagation();
             event.preventDefault();
             return false;
         }
-    }
-    searchAction(event) {
-        let search = event.target;
-        let form = search.form;
-        if (search.value === '') {
-            form.action = String(form.getAttribute('data-baseURL'));
-        }
-        else {
-            form.action = form.getAttribute('data-baseURL') + this.rawurlencode(search.value);
-        }
-        form.method = 'get';
     }
     rawurlencode(str) {
         str = str + '';

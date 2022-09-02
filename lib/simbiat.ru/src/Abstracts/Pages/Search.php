@@ -36,13 +36,9 @@ class Search extends Page
         #Sanitize search value
         if ($this->list) {
             $this->subServiceName = $path[0];
-            if (!$this->sanitize($path[1] ?? '')) {
-                return ['http_error' => 400];
-            }
-        } else {
-            if (!$this->sanitize($path[0] ?? '')) {
-                return ['http_error' => 400];
-            }
+        }
+        if (!$this->sanitize($_GET['search'] ?? '')) {
+            return ['http_error' => 400];
         }
         #Set page number
         $page = intval($_GET['page'] ?? 1);
@@ -166,10 +162,9 @@ class Search extends Page
             return false;
         }
         #If value is empty, ensure it's an empty string
-        if (empty($decodedSearch)) {
-            return false;
+        if (!empty($decodedSearch)) {
+            $this->searchFor = $decodedSearch;
         }
-        $this->searchFor = $decodedSearch;
         return true;
     }
 

@@ -18,12 +18,6 @@ class Form
         document.querySelectorAll('form').forEach((item)=>{
             item.addEventListener('keypress', (event: KeyboardEvent) => {this.formEnter(event)});
         });
-        //Update action links of forms with dynamic actions (expected to be search forms only at the time of writing)
-        document.querySelectorAll('form[data-baseURL] input[type=search]').forEach((item)=>{
-            item.addEventListener('input', this.searchAction.bind(this));
-            item.addEventListener('change', this.searchAction.bind(this));
-            item.addEventListener('focus', this.searchAction.bind(this));
-        });
         //List of input types, that are "textual" by default, thus can be tracked through keypress and paste events. In essence, these are types, that support maxlength attribute
         document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item)=>{
             //Somehow backspace can be tracked only on keydown, not keypress
@@ -40,24 +34,11 @@ class Form
     public formEnter(event: KeyboardEvent): void | boolean
     {
         let form = (event.target as HTMLInputElement).form as HTMLFormElement;
-        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && (!form.action || !(form.getAttribute('data-baseURL') && location.protocol + '//' + location.host+form.getAttribute('data-baseURL') !== form.action))) {
+        if ((event.code === 'Enter' || event.code === 'NumpadEnter') && !form.action) {
             event.stopPropagation();
             event.preventDefault();
             return false;
         }
-    }
-
-    public searchAction(event: Event): void
-    {
-        let search = event.target as HTMLInputElement;
-        let form = search.form as HTMLFormElement;
-        if (search.value === '') {
-            form.action = String(form.getAttribute('data-baseURL'));
-        } else {
-            form.action = form.getAttribute('data-baseURL') + this.rawurlencode(search.value);
-        }
-        //Ensure that form will use GET method. This adds unnecessary question mark to the end of the URL, but it's better than form resubmit prompt
-        form.method = 'get';
     }
 
     //Function replicating PHP's rawurlencode for consistency.
