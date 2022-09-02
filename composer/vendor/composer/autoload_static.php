@@ -588,6 +588,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\Abstracts\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Api.php',
         'Simbiat\\Abstracts\\Entity' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Entity.php',
         'Simbiat\\Abstracts\\Page' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Page.php',
+        'Simbiat\\Abstracts\\Pages\\Listing' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Pages/Listing.php',
         'Simbiat\\Abstracts\\Pages\\Search' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Pages/Search.php',
         'Simbiat\\Abstracts\\Pages\\StaticPage' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Pages/StaticPage.php',
         'Simbiat\\Abstracts\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Abstracts/Router.php',
