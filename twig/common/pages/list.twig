@@ -1,7 +1,7 @@
 {% if serviceName == 'bictracker' %}
-    <p>Показано {{ searchResult.entities|length }} записей из {{ searchresult.count }}.</p>
+    <p>Показано {{ searchResult.entities|length }} записей из {{ searchResult.count }}.</p>
 {% else %}
-    <p>Showing {{ searchResult.entities|length }} from total of {{ searchresult.count }}.</p>
+    <p>Showing {{ searchResult.entities|length }} from total of {{ searchResult.count }}.</p>
 {% endif %}
 <div class="searchResults">
     {% for entity in searchResult.entities %}
