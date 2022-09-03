@@ -72,7 +72,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             unset($this->lodestone['404']);
         }
         if (empty($this->lodestone['name'])) {
-            return 'No name found found for ID `'.$this->id.'`';
+            return 'No name found for ID `'.$this->id.'`';
         }
         return $this->updateDB();
     }
