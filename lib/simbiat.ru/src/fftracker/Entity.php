@@ -67,6 +67,8 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             if (!isset($updated['deleted'])) {
                 return $this->delete();
+            } else {
+                return true;
             }
         } else {
             unset($this->lodestone['404']);
@@ -88,7 +90,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
             /** @noinspection SqlResolve */
             $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '_character` LEFT JOIN `ffxiv__character` ON `ffxiv__' . $this::entityType . '_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `' . $this::entityType . 'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
-            if(!$check) {
+            if($check) {
                 return ['http_error' => 403, 'reason' => 'Group not linked to user'];
             } else {
                 return $this->update();
