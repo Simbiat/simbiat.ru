@@ -16,11 +16,12 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <p>Current members:</p>
+    {% if linkshell.members|length > 0 %}
+        <p>Current members:</p>
         <div class="searchResults">
             {% for entity in linkshell.members %}
                 {{ include('common/elements/entitycard.twig', entity) }}
             {% endfor %}
         </div>
-
+    {% endif %}
 </section>
