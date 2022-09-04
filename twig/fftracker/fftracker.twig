@@ -24,9 +24,6 @@
         {{ include('common/elements/search.twig') }}
     {% endif %}
     {% if subServiceName %}
-        {% if pagination %}
-            {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
-        {% endif %}
         <article>
             {% if subServiceName == 'search' %}
                 {{ include('common/pages/search.twig') }}
@@ -56,8 +53,5 @@
                 {{ include('fftracker/crests.twig') }}
             {% endif %}
         </article>
-        {% if pagination %}
-            {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
-        {% endif %}
     {% endif %}
 </section>

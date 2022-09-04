@@ -41,6 +41,9 @@
                         {% endif %}
                     </article>
                 {% else %}
+                    {% if pagination %}
+                        {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
+                    {% endif %}
                     {% if serviceName == 'about' %}
                         {{ include('about/about.twig') }}
                     {% elseif serviceName == 'fftracker' %}
@@ -61,6 +64,9 @@
                         <article id="http_error">
                             {{ include('errors/404.twig') }}
                         </article>
+                    {% endif %}
+                    {% if pagination %}
+                        {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
                     {% endif %}
                 {% endif %}
             </main>
