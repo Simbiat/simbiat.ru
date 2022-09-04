@@ -343,6 +343,7 @@ return array(
     'Simbiat\\Abstracts\\Api' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Api.php',
     'Simbiat\\Abstracts\\Entity' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Entity.php',
     'Simbiat\\Abstracts\\Page' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Page.php',
+    'Simbiat\\Abstracts\\Pages\\FileListing' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Pages/FileListing.php',
     'Simbiat\\Abstracts\\Pages\\Listing' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Pages/Listing.php',
     'Simbiat\\Abstracts\\Pages\\Search' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Pages/Search.php',
     'Simbiat\\Abstracts\\Pages\\StaticPage' => $baseDir . '/../lib/simbiat.ru/src/Abstracts/Pages/StaticPage.php',

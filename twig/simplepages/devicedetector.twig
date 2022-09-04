@@ -1,32 +1,18 @@
 <section class="bottomMargin">
-    <p>These are the icons for all Operating Systems and applications detectable by <a href="https://github.com/matomo-org/device-detector/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/tech/Matomo.svg" alt="Matomo">Matomo's Device Detector</a> except for <i>AFNetworking</i> applications.</p>
-    <p>Full collection can be downloaded from respective repository on <a href="https://github.com/Simbiat/DeviceDetectorIcons" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/github.svg" alt="GitHub">GitHub</a>.</p>
+    {% if not path %}
+        <ul>
+            <li><a href="/simplepages/devicedetector/os/">{{ files.os.name }}</a>: {{ files.os.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/browser/">{{ files.browser.name }}</a>: {{ files.browser.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/app/">{{ files.app.name }}</a>: {{ files.app.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/library/">{{ files.library.name }}</a>: {{ files.library.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/feedreader/">{{ files.feedreader.name }}</a>: {{ files.feedreader.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/pim/">{{ files.pim.name }}</a>: {{ files.pim.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/mediaplayer/">{{ files.mediaplayer.name }}</a>: {{ files.mediaplayer.count }} icons</li>
+        </ul>
+    {% endif %}
 </section>
-<section>
-    <h2>Operating Systems</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.os}, with_context = false) }}
-</section>
-<section>
-    <h2>Browsers</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.browser}, with_context = false) }}
-</section>
-<section>
-    <h2>Applications</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.app}, with_context = false) }}
-</section>
-<section>
-    <h2>Libraries</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.library}, with_context = false) }}
-</section>
-<section>
-    <h2>Feed readers</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.reader}, with_context = false) }}
-</section>
-<section>
-    <h2>Personal Information Managers</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.pim}, with_context = false) }}
-</section>
-<section>
-    <h2>Media Players</h2>
-    {{ include('common/elements/iconlist.twig', {icons: icons.mediaplayer}, with_context = false) }}
-</section>
+{% if path %}
+    <section>
+        {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
+    </section>
+{% endif %}

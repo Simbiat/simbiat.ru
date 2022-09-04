@@ -6,18 +6,10 @@ use Simbiat\Abstracts\Page;
 
 class StaticPage extends Page
 {
-    #Current breadcrumb for navigation
-    protected array $breadCrumb = [];
-    #Sub service name
-    protected string $subServiceName = '';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = '';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $h1 = '';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = '';
     #Flag to indicate this is a static page
     protected bool $static = true;
+    #Cache age set to 0 by default, because there is normally no need to cache static pages
+    protected int $cacheAge = 0;
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'week';
 

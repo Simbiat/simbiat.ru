@@ -2,10 +2,9 @@
 declare(strict_types=1);
 namespace Simbiat\SimplePages\Pages;
 
-use Simbiat\Abstracts\Pages\StaticPage;
-use Simbiat\Config\Common;
+use Simbiat\Abstracts\Pages\FileListing;
 
-class DeviceDetector extends StaticPage
+class DeviceDetector extends FileListing
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
@@ -18,48 +17,27 @@ class DeviceDetector extends StaticPage
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Device Detector Icons';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Icons or logos of operating system, browsers and mobile applications based on respective items detectable by matomo-org/device-detector library';
-
-    #This is actual page generation based on further details of the $path
-    protected function generate(array $path): array
-    {
-        $outputArray = [];
-        #OS icons
-        $outputArray['icons']['os'] = $this->genList('os');
-        #Browser icons
-        $outputArray['icons']['browser'] = $this->genList('browser');
-        #App icons
-        $outputArray['icons']['app'] = $this->genList('mobile app');
-        #Library icons
-        $outputArray['icons']['library'] = $this->genList('library');
-        #Feed reader icons
-        $outputArray['icons']['reader'] = $this->genList('feed reader');
-        #PIM icons
-        $outputArray['icons']['pim'] = $this->genList('pim');
-        #Media player icons
-        $outputArray['icons']['mediaplayer'] = $this->genList('mediaplayer');
-        return $outputArray;
-    }
+    protected string $ogdesc = 'Icons or logos of operating systems, browsers and other applications based on respective items detectable by matomo-org/device-detector library';
+    #Directories relative to working dir
+    protected array $dirs = [
+        'os' => ['dir' => '/img/devicedetector/os', 'name' => 'Operating Systems'],
+        'browser' => ['dir' => '/img/devicedetector/browser', 'name' => 'Browsers'],
+        'app' => ['dir' => '/img/devicedetector/mobile app', 'name' => 'Applications'],
+        'library' => ['dir' => '/img/devicedetector/library', 'name' => 'Libraries'],
+        'feedreader' => ['dir' => '/img/devicedetector/feed reader', 'name' => 'Feed Readers'],
+        'pim' => ['dir' => '/img/devicedetector/pim', 'name' => 'Personal Information Managers'],
+        'mediaplayer' => ['dir' => '/img/devicedetector/mediaplayer', 'name' => 'Media Players'],
+    ];
     
-    private function genList(string $type): array
+    protected function extra(array &$fileDetails): void
     {
-        $array = [];
-        $icons = array_diff(scandir(Common::$imgDir.'/devicedetector/'.$type), ['..', '.']);
-        foreach ($icons as $icon) {
-            $name = pathinfo($icon, PATHINFO_FILENAME);
-            #Restore names with special symbols
-            $name = match($name) {
-                'OS2' => 'OS/2',
-                'GNULinux' => 'GNU/Linux',
-                'MTK  Nucleus' => 'MTK / Nucleus',
-                'Perl RESTClient' => 'Perl REST::Client',
-                default => $name,
-            };
-            $array[] = [
-                'name' => $name,
-                'icon' => '/img/DeviceDetector/'.$type.'/'.$icon,
-            ];
-        }
-        return $array;
+        $fileDetails['name'] = match($fileDetails['basename']) {
+            'OS2' => 'OS/2',
+            'GNULinux' => 'GNU/Linux',
+            'MTK  Nucleus' => 'MTK / Nucleus',
+            'Perl RESTClient' => 'Perl REST::Client',
+            default => $fileDetails['basename'],
+        };
+        $fileDetails['icon'] = $fileDetails['path'].'/'.$fileDetails['filename'];
     }
 }
