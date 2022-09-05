@@ -19,6 +19,7 @@ abstract class Router
     protected string $ogdesc = '';
     #Service name
     protected string $serviceName = '';
+    #If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
     protected string $redirectMain = '';
 
     public final function __construct()
@@ -38,6 +39,7 @@ abstract class Router
         $pageData = [];
         #Main page of the segment is called
         if (empty($path)) {
+            #If no path is provided, but we want to show specific page, instead of a stub - redirect
             if (!empty($this->redirectMain) && preg_match('/^\/.+\/$/iu', $this->redirectMain) === 1) {
                 Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Common::$http_host) === 1 ? 'www.' : '').Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
             }
