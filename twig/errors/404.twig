@@ -1,3 +1,6 @@
 <p>Page not found.</p>
+{% if suggested_link %}
+    <p>Perhaps, this <a href="{{ suggested_link }}">page</a> can be of use to you?</p>
+{% endif %}
 <code>{{ url }}</code>
 <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/missing.svg">
