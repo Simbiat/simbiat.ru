@@ -29,7 +29,7 @@
                 {{ include('common/layout/navigation.twig') }}
             </nav>
             <main id="content" role="main">
-                {% if http_error and static_page == false and cached_page == false %}
+                {% if http_error and (static_page == false or (static_page and http_error != 'database' and http_error != 'maintenance')) and cached_page == false %}
                     <article id="http_error">
                         {% if construction == false %}
                             {{ include('errors/'~http_error~'.twig') }}
