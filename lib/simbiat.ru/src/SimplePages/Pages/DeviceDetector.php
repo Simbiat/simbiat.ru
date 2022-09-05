@@ -20,13 +20,13 @@ class DeviceDetector extends FileListing
     protected string $ogdesc = 'Icons or logos of operating systems, browsers and other applications based on respective items detectable by matomo-org/device-detector library';
     #Directories relative to working dir
     protected array $dirs = [
-        'os' => ['dir' => '/img/devicedetector/os', 'name' => 'Operating Systems'],
-        'browser' => ['dir' => '/img/devicedetector/browser', 'name' => 'Browsers'],
-        'app' => ['dir' => '/img/devicedetector/mobile app', 'name' => 'Applications'],
-        'library' => ['dir' => '/img/devicedetector/library', 'name' => 'Libraries'],
-        'feedreader' => ['dir' => '/img/devicedetector/feed reader', 'name' => 'Feed Readers'],
-        'pim' => ['dir' => '/img/devicedetector/pim', 'name' => 'Personal Information Managers'],
-        'mediaplayer' => ['dir' => '/img/devicedetector/mediaplayer', 'name' => 'Media Players'],
+        'os' => ['path' => '/img/devicedetector/os', 'name' => 'Operating Systems'],
+        'browser' => ['path' => '/img/devicedetector/browser', 'name' => 'Browsers'],
+        'app' => ['path' => '/img/devicedetector/mobile app', 'name' => 'Applications'],
+        'library' => ['path' => '/img/devicedetector/library', 'name' => 'Libraries'],
+        'feedreader' => ['path' => '/img/devicedetector/feed reader', 'name' => 'Feed Readers'],
+        'pim' => ['path' => '/img/devicedetector/pim', 'name' => 'Personal Information Managers'],
+        'mediaplayer' => ['path' => '/img/devicedetector/mediaplayer', 'name' => 'Media Players'],
     ];
     
     protected function extra(array &$fileDetails): void

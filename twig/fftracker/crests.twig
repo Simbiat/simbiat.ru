@@ -1,20 +1,30 @@
-{% if components %}
-    <section>
-        <details>
-            <summary>{{ components.frame|length }} frames</summary>
-            {{ include('common/elements/iconlist.twig', {icons: components.frame}, with_context = false) }}
+{% if not path %}
+    <section class="bottomMargin">
+        <details class="persistent" open>
+            <summary class="rightSummary aboutSection">About crests' page</summary>
+            <p>This page provides components used by FFXIV for creating crests: backgrounds, frames, emblems, - as well as "merged" crests, where all 3 components were merged into 1 image.</p>
+            <p>These are not necessarily <b>all</b> of components, let alone their combinations. Only those, identified by the tracker service during its normal work, are listed.</p>
+            <ul>
+                <li><a href="/fftracker/crests/frame/">{{ files.frame.name }}</a>: {{ files.frame.count }} icons</li>
+                <li><a href="/fftracker/crests/emblem/">{{ files.emblem.name }}</a>: {{ files.emblem.count }} icons</li>
+                <li><a href="/fftracker/crests/background/">{{ files.background.name }}</a>: {{ files.background.count }} icons</li>
+                <li><a href="/fftracker/crests/merged/">{{ files.merged.name }}</a>: {{ files.merged.count -3 }} folders</li>
+            </ul>
         </details>
     </section>
-    <section>
-        <details>
-            <summary>{{ components.emblem|length }} emblems</summary>
-            {{ include('common/elements/iconlist.twig', {icons: components.emblem}, with_context = false) }}
-        </details>
-    </section>
-    <section>
-        <details>
-            <summary>{{ components.background|length }} backgrounds</summary>
-            {{ include('common/elements/iconlist.twig', {icons: components.background}, with_context = false) }}
-        </details>
-    </section>
+{% endif %}
+{% if path %}
+    {% if files[path].files %}
+        <section>
+            {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
+        </section>
+    {% else %}
+        <section>
+            <ul>
+                {% for dir in files[path].dirs %}
+                    <li><a href="/fftracker/crests/merged/{{ dir.dirname }}">{{ dir.dirname }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
 {% endif %}

@@ -2,10 +2,9 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
-use Simbiat\Abstracts\Pages\StaticPage;
-use Simbiat\Config\FFTracker;
+use Simbiat\Abstracts\Pages\FileListing;
 
-class Crests extends StaticPage
+class Crests extends FileListing
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
@@ -19,29 +18,21 @@ class Crests extends StaticPage
     protected string $h1 = 'Crests';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'List of all Final Fantasy XIV crests\' components and crests themselves, presented as single images.';
-
-    #This is actual page generation based on further details of the $path
-    protected function generate(array $path): array
-    {
-        $outputArray = [];
-        #Get components
-        $outputArray['components']['background'] = $this->genList('background');
-        $outputArray['components']['frame'] = $this->genList('frame');
-        $outputArray['components']['emblem'] = $this->genList('emblem');
-        return $outputArray;
-    }
+    #Flag whether to go recursive or not
+    protected bool $recursive = true;
+    #Directories relative to working dir
+    protected array $dirs = [
+        'background' => ['path' => '/img/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds'],
+        'frame' => ['path' => '/img/fftracker/crests-components/frames', 'name' => 'Frames'],
+        'emblem' => ['path' => '/img/fftracker/crests-components/emblems', 'name' => 'Emblems'],
+        'merged' => ['path' => '/img/fftracker/merged-crests', 'name' => 'Merged crests', 'depth' => 1],
+    ];
+    #List of prohibited extensions, files with which should be excluded
+    protected array $exclude = ['LICENSE', 'README.md', '.git'];
     
-    private function genList(string $type): array
+    protected function extra(array &$fileDetails): void
     {
-        $array = [];
-        $icons = array_diff(scandir(FFTracker::$crestsComponents.$type.'s/'), ['..', '.']);
-        foreach ($icons as $key=>$icon) {
-            $array[] = [
-                #-1 because arrays start from 0, and we removed 2 items (. and ..)
-                'name' => ucfirst($type).' #'.($key - 1),
-                'icon' => '/img/fftracker/crests-components/'.$type.'s/'.$icon,
-            ];
-        }
-        return $array;
+        $fileDetails['icon'] = $fileDetails['path'].'/'.$fileDetails['filename'];
+        $fileDetails['name'] = $fileDetails['key'];
     }
 }
