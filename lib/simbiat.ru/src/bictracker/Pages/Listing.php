@@ -8,10 +8,12 @@ class Listing extends \Simbiat\Abstracts\Pages\Listing
     protected string $pageWord = 'страница';
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/bictracker', 'name' => 'БИК Трекер']
+        ['href' => '/bictracker/search', 'name' => 'Поиск']
     ];
     #Sub service name
     protected string $subServiceName = 'search';
+    #Service name for breadcrumbs
+    protected string $serviceName = 'bictracker';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Поиск по БИК Трекеру';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise

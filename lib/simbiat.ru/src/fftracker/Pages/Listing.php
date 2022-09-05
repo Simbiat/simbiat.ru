@@ -8,6 +8,8 @@ class Listing extends \Simbiat\Abstracts\Pages\Listing
     protected array $breadCrumb = [
         ['href' => '/fftracker/search', 'name' => 'Search']
     ];
+    #Service name for breadcrumbs
+    protected string $serviceName = 'fftracker';
     #Sub service name
     protected string $subServiceName = 'search';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise

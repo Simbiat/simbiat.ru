@@ -10,6 +10,8 @@ class Listing extends Search
 {
     #How pages are called (at the moment required only for bictracker for translation)
     protected string $pageWord = 'page';
+    #Service name for breadcrumbs
+    protected string $serviceName = 'listing';
     
     #Generation of the page data
     protected function generate(array $path): array
@@ -36,7 +38,7 @@ class Listing extends Search
         if (is_int($outputArray['searchResult'])) {
             #Redirect
             if (!HomePage::$staleReturn) {
-                Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false);
+                Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->getLastCrumb() . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false);
             }
         }
         #Get the freshest date
@@ -46,15 +48,15 @@ class Listing extends Search
             $this->lastModified($date);
         }
         #Generate pagination data
-        $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchResult']['pages'], 'prefix' => '?page='];
-        $address = $this->breadCrumb[array_key_last($this->breadCrumb)]['href'];
+        $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchResult']['pages'], 'prefix' => '?search='.rawurlencode($this->searchFor).'&page='];
         if (!empty($this->searchFor)) {
             #Get page address from default breadcrumb
             #Update breadcrumbs
-            $this->breadCrumb = [['href' => $address . '/search/' . rawurlencode($this->searchFor) . '/', 'name' => sprintf($this->shortTitle, $this->searchFor)]];
-            $this->breadCrumb[] = ['href' => $address . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor) . '/', 'name' => $this->types[$this->subServiceName]['name']];
+            #$this->breadCrumb = [['href' => $address . '/search/' . rawurlencode($this->searchFor) . '/', 'name' => sprintf($this->shortTitle, $this->searchFor)]];
+            $this->attachCrumb('?search=' . rawurlencode($this->searchFor), sprintf($this->shortTitle, $this->searchFor));
+            $this->breadCrumb[] = ['href' => '/'.$this->serviceName.'/' . $this->subServiceName . '/?search=' . rawurlencode($this->searchFor), 'name' => $this->types[$this->subServiceName]['name']];
             if ($page > 1) {
-                $this->breadCrumb[] = ['href' => $address . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor) . '/?page=' . $page, 'name' => ucfirst($this->pageWord).' ' . $page];
+                $this->attachCrumb('page=' . $page, ucfirst($this->pageWord).' ' . $page, true);
             }
             #Set search value, if available
             $outputArray['searchValue'] = $this->searchFor;
@@ -64,9 +66,9 @@ class Listing extends Search
         } else {
             #Get page address from default breadcrumb
             #Update breadcrumbs
-            $this->breadCrumb = [['href' => $address . '/' . $this->subServiceName. '/', 'name' => $this->types[$this->subServiceName]['name']]];
+            $this->breadCrumb = [['href' => '/' .$this->serviceName. '/' . $this->subServiceName, 'name' => $this->types[$this->subServiceName]['name']]];
             if ($page > 1) {
-                $this->breadCrumb[] = ['href' => $address . '/' . $this->subServiceName . '/?page=' . $page, 'name' => ucfirst($this->pageWord).' ' . $page];
+                $this->attachCrumb('/?page=' . $page, ucfirst($this->pageWord).' ' . $page);
             }
             #Set titles
             $this->h1 = $this->title = $this->ogdesc = $this->types[$this->subServiceName]['name'].', '.$this->pageWord.' '.$page;

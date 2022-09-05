@@ -152,7 +152,23 @@ abstract class Page
         #Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
         $this->headerSent = true;
     }
-
+    
+    #Function to append a breadcrumb, which is based on last crumb currently set
+    protected final function attachCrumb(string $path, string $name, bool $query = false): void
+    {
+        #Add path to breadcrumbs
+        $this->breadCrumb[] = [
+            'href' => $this->breadCrumb[array_key_last($this->breadCrumb)]['href'].($query ? '&' : '/').$path,
+            'name' => $name,
+        ];
+    }
+    
+    #Function to get last breadcrumb's href
+    protected final function getLastCrumb(): string
+    {
+        return $this->breadCrumb[array_key_last($this->breadCrumb)]['href'];
+    }
+    
     #Generation of the page data
     abstract protected function generate(array $path): array;
 }

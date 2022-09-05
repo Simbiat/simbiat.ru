@@ -43,7 +43,7 @@ class Search extends Page
         }
         if (!empty($this->searchFor)) {
             #Continue breadcrumbs
-            $this->breadCrumb[] = ['href' => $this->breadCrumb[array_key_last($this->breadCrumb)]['href'] . '/' . rawurlencode($this->searchFor), 'name' => $this->searchFor];
+            $this->attachCrumb('?search='.rawurlencode($this->searchFor), sprintf($this->shortTitle, $this->searchFor));
             #Set search value, if available
             $outputArray['searchValue'] = $this->searchFor;
             #Set titles
