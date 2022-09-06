@@ -22,7 +22,7 @@ class Crests extends FileListing
     protected bool $recursive = true;
     #Directories relative to working dir
     protected array $dirs = [
-        'background' => ['path' => '/img/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds'],
+        'background' => ['path' => '/img/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
         'frame' => ['path' => '/img/fftracker/crests-components/frames', 'name' => 'Frames'],
         'emblem' => ['path' => '/img/fftracker/crests-components/emblems', 'name' => 'Emblems'],
         'merged' => ['path' => '/img/fftracker/merged-crests', 'name' => 'Merged crests', 'depth' => 1],
