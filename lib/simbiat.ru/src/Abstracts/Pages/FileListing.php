@@ -63,7 +63,7 @@ class FileListing extends StaticPage
                     #Update breadcrumbs
                     $this->attachCrumb($path[0], $this->dirs[$path[0]]['name'] );
                     if (!is_dir(Common::$workDir.$this->dirs[$path[0]]['path'].$subDir)) {
-                        return ['http_error' => 404, 'reason' => 'Directory `'.$subDir.'` does not exist', 'suggested_link' => $this->getLastCrumb()];
+                        return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
                     }
                 }
                 if (count($path) - 1 > $this->dirs[$path[0]]['depth']) {
@@ -79,8 +79,8 @@ class FileListing extends StaticPage
                     } else {
                         #Get list of directories
                         $outputArray['files'][$path[0]] = $this->getDirs(Common::$workDir.$this->dirs[$path[0]]['path'].$subDir);
-                        #var_dump($outputArray['files'][$path[0]]);exit;
                     }
+                    $outputArray['files'][$path[0]]['name'] = $this->dirs[$path[0]]['name'];
                 }
             }
         }
