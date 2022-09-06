@@ -176,8 +176,17 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             foreach ($images as $key=>$image) {
                 if (!empty($image)) {
                     #Check if we have already downloaded the component image and use that one to speed up the process
+                    if ($key === 0) {
+                        #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
+                        $subDir = mb_substr(basename($image), 0, 3);
+                        if (!is_dir(FFTracker::$crestsComponents.'backgrounds/'.$subDir)) {
+                            @mkdir(FFTracker::$crestsComponents.'backgrounds/'.$subDir);
+                        }
+                    } else {
+                        $subDir = '';
+                    }
                     $cachedImage = match($key) {
-                        0 => FFTracker::$crestsComponents.'backgrounds/'.basename($image),
+                        0 => FFTracker::$crestsComponents.'backgrounds/'.$subDir.'/'.basename($image),
                         1 => FFTracker::$crestsComponents.'frames/'.basename($image),
                         2 => FFTracker::$crestsComponents.'emblems/'.basename($image),
                     };
