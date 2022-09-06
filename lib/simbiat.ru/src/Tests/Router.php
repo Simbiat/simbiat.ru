@@ -31,7 +31,7 @@ class Router extends \Simbiat\Abstracts\Router
         }
         switch ($path[0]) {
             case 'optimize':
-                (new Tests)->testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
+                Tests::testDump((new optimizeTables)->setMaintenance('sys__settings', 'setting', 'maintenance', 'value')->setJsonPath('./data/tables.json')->optimize('simbiatr_simbiat', true));
                 exit;
             case 'mail':
                 if (!empty($path[1]) && $path[1] === 'send') {

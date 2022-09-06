@@ -29,7 +29,7 @@ class Tests
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-type: '.mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.basename($filepath).'"']);
         curl_setopt($curl, CURLOPT_INFILE, fopen($filepath, 'rb'));
         curl_setopt($curl, CURLOPT_INFILESIZE, filesize($filepath));
-        $this->testDump(curl_exec($curl));
+        Tests::testDump(curl_exec($curl));
         exit;
     }
 
@@ -50,7 +50,7 @@ class Tests
             Common::zEcho($output);
         } else {
             try {
-                $this->testDump(Sharing::upload($uploadPath, false, false, [], false));
+                Tests::testDump(Sharing::upload($uploadPath, false, false, [], false));
             } catch (\Throwable $exception) {
                 echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
             }
@@ -69,7 +69,7 @@ class Tests
     }
 
     #A simple wrapper function for var_dump to apply <pre> tag and exit the script by default
-    public function testDump(mixed $variable, bool $exit = true): void
+    public static function testDump(mixed $variable, bool $exit = true): void
     {
         echo '<pre>';
         var_dump($variable);
