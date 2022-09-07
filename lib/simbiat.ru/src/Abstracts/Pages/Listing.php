@@ -24,7 +24,7 @@ class Listing extends Search
         $this->subServiceName = $path[0];
         #Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
-            return ['http_error' => 400];
+            return ['http_error' => 400, 'reason' => 'Bad search term'];
         }
         #Set page number
         $page = intval($_GET['page'] ?? 1);

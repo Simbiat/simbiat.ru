@@ -28,7 +28,7 @@ class Search extends Page
         $this->typesCheck();
         #Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
-            return ['http_error' => 400];
+            return ['http_error' => 400, 'reason' => 'Bad search term'];
         }
         #Get search results
         $outputArray = [];

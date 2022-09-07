@@ -72,7 +72,7 @@ class MainRouter extends Abstracts\Router
         return $outputArray;
     }
 
-    #Function to route help route error pages on frontend
+    #Function to help route error pages on frontend
     private function error(array $uri): array {
         if (empty($uri[0]) || preg_match('/\d{3}/', $uri[0]) !== 1) {
             $outputArray['http_error'] = 404;

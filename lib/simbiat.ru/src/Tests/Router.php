@@ -49,7 +49,7 @@ class Router extends \Simbiat\Abstracts\Router
             case 'styling':
                 return ['serviceName' => 'stylingTest'];
             default:
-                return ['http_error' => 400];
+                return ['http_error' => 400, 'reason' => 'Unsupported endpoint'];
         }
     }
 }

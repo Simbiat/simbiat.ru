@@ -31,7 +31,7 @@ class FreeCompany extends Page
         $outputArray['freecompany'] = (new \Simbiat\fftracker\Entities\FreeCompany($id))->getArray();
         #Check if ID was found
         if (empty($outputArray['freecompany']['id'])) {
-            return ['http_error' => 404];
+            return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['freecompany']['dates']['updated']);

@@ -35,7 +35,7 @@ class Linkshell extends Page
         }
         #Check if ID was found
         if (empty($outputArray['linkshell']['id'])) {
-            return ['http_error' => 404];
+            return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         if ($this::crossworld) {
             $outputArray['linkshell']['crossworld'] = true;

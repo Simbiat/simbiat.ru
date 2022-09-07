@@ -31,7 +31,7 @@ class PvPTeam extends Page
         $outputArray['pvpteam'] = (new \Simbiat\fftracker\Entities\PvPTeam($id))->getArray();
         #Check if ID was found
         if (empty($outputArray['pvpteam']['id'])) {
-            return ['http_error' => 404];
+            return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['pvpteam']['dates']['updated']);

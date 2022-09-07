@@ -30,7 +30,7 @@ class Bic extends Page
         $outputArray['bicdetails'] = (new \Simbiat\bictracker\Bic($BIC))->getArray();
         #Check if ID was found
         if ($outputArray['bicdetails']['id'] === null) {
-            return ['http_error' => 404];
+            return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         #Try to exit early based on modification date
         if (!empty($outputArray['bicdetails']['Updated'])) {

@@ -30,7 +30,7 @@ class Character extends Page
         $outputArray['character'] = (new \Simbiat\fftracker\Entities\Character($id))->getArray();
         #Check if ID was found
         if (empty($outputArray['character']['id'])) {
-            return ['http_error' => 404];
+            return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         #Adjust jobs
         foreach ($outputArray['character']['jobs'] as $job=>$level) {
