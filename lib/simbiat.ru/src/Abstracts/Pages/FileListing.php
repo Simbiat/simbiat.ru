@@ -81,6 +81,7 @@ class FileListing extends StaticPage
                         $outputArray['files'][$path[0]] = $this->getDirs(Common::$workDir.$this->dirs[$path[0]]['path'].$subDir);
                     }
                     $outputArray['files'][$path[0]]['name'] = $this->dirs[$path[0]]['name'];
+                    $outputArray['files'][$path[0]]['parent'] = array_slice($this->breadCrumb, -2, 1)[0];
                 }
             }
         }

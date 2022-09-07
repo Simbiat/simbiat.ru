@@ -14,12 +14,13 @@
     </section>
 {% endif %}
 {% if path %}
-    {% if files[path].files %}
-        <section>
+    <section>
+        {% if files[path].parent %}
+            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/img/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
+        {% endif %}
+        {% if files[path].files %}
             {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
-        </section>
-    {% else %}
-        <section>
+        {% else %}
             <ul>
                 {% if files[path].name == 'Backgrounds' %}
                     {% set subDirName = 'background' %}
@@ -30,6 +31,9 @@
                     <li><a href="/fftracker/crests/{{ subDirName }}/{{ dir.dirname }}">{{ dir.dirname }}</a></li>
                 {% endfor %}
             </ul>
-        </section>
-    {% endif %}
+        {% endif %}
+        {% if files[path].parent %}
+            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/img/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
+        {% endif %}
+    </section>
 {% endif %}

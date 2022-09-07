@@ -252,7 +252,7 @@ blockquote>.copyQuote {
 }
 
 .nodecor {
-    text-decoration: none;
+    text-decoration: none!important;
 }
 
 .inline {
@@ -262,4 +262,8 @@ blockquote>.copyQuote {
 .middle {
     text-align: center;
     vertical-align: middle;
+}
+
+.block {
+    display: block;
 }
