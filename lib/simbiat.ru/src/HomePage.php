@@ -81,6 +81,11 @@ class HomePage
                 }
                 #Set canonical URL
                 $this->canonical();
+                #Redirect if page number is set and is less than 1
+                if (isset($_GET['page']) && intval($_GET['page']) < 1) {
+                    #Remove page (since we ignore page=1 in canonical)
+                    Headers::redirect(preg_replace('/\\?page=-?\d+/ui', '', HomePage::$canonical));
+                }
                 #Send common headers
                 Headers::secFetch();
                 #Process requests to file or cache

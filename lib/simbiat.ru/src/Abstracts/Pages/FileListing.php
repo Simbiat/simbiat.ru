@@ -36,10 +36,6 @@ class FileListing extends StaticPage
         $outputArray = [];
         #Set page number
         $this->page = intval($_GET['page'] ?? 1);
-        if ($this->page < 1) {
-            Headers::redirect(HomePage::$canonical);
-            $this->page = 1;
-        }
         $this->searchFor = SafeFileName::sanitize($_GET['search'] ?? '', true, true);
         if (empty($this->dirs)) {
             return ['http_error' => 503, 'reason' => 'No directories are setup for this endpoint'];

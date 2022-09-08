@@ -28,11 +28,6 @@ class Listing extends Search
         }
         #Set page number
         $page = intval($_GET['page'] ?? 1);
-        if ($page < 1) {
-            #Redirect to 1st page
-            Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/'.$this->serviceName . '/' . $this->subServiceName . '/' . (!empty($this->searchFor) ? '?search='.rawurlencode($this->searchFor) : ''));
-            return [];
-        }
         #Get search results
         $outputArray = [];
         $outputArray['searchResult'] = (new $this->types[$this->subServiceName]['class'])->listEntities($page, $this->searchFor);
