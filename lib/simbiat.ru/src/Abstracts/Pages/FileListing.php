@@ -2,7 +2,10 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
+use Simbiat\HomePage;
 use Simbiat\Config\Common;
+use Simbiat\SafeFileName;
+use Simbiat\HTTP20\Headers;
 
 class FileListing extends StaticPage
 {
@@ -22,16 +25,22 @@ class FileListing extends StaticPage
     protected bool $recursive = false;
     #List of files that should be excluded
     protected array $exclude = [];
+    #String to search for in file names
+    protected string $searchFor = '';
+    #Page number
+    protected int $page = 1;
 
     #Static pages have all the data in Twig templates, thus we just return empty array
     protected function generate(array $path): array
     {
         $outputArray = [];
         #Set page number
-        $page = intval($_GET['page'] ?? 1);
-        if ($page < 1) {
-            $page = 1;
+        $this->page = intval($_GET['page'] ?? 1);
+        if ($this->page < 1) {
+            Headers::redirect(HomePage::$canonical);
+            $this->page = 1;
         }
+        $this->searchFor = SafeFileName::sanitize($_GET['search'] ?? '', true, true);
         if (empty($this->dirs)) {
             return ['http_error' => 503, 'reason' => 'No directories are setup for this endpoint'];
         }
@@ -54,7 +63,7 @@ class FileListing extends StaticPage
                 return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
             }
             if (empty($this->dirs[$path[0]]['depth'])) {
-                $outputArray = $this->listFiles($path[0], $page);
+                $outputArray = $this->listFiles($path[0]);
             } else {
                 $subDir =  '/'.implode('/', array_slice($path, 1));
                 if (!is_dir(Common::$workDir.$this->dirs[$path[0]]['path'])) {
@@ -75,7 +84,7 @@ class FileListing extends StaticPage
                     }
                     if (count($path) - 1 === $this->dirs[$path[0]]['depth']) {
                         #Get files, since we are on the last allow level
-                        $outputArray = $this->listFiles($path[0], $page, $subDir);
+                        $outputArray = $this->listFiles($path[0], $subDir);
                     } else {
                         #Get list of directories
                         $outputArray['files'][$path[0]] = $this->getDirs(Common::$workDir.$this->dirs[$path[0]]['path'].$subDir);
@@ -89,26 +98,45 @@ class FileListing extends StaticPage
         return $outputArray;
     }
     
-    private function listFiles(string $path, int $page = 1, string $subDir = ''): array
+    private function listFiles(string $path, string $subDir = ''): array
     {
-        $outputArray['files'][$path] = $this->getFiles(Common::$workDir.$this->dirs[$path]['path'].$subDir, page: $page);
+        $outputArray['files'][$path] = $this->getFiles(Common::$workDir.$this->dirs[$path]['path'].$subDir);
         #Process pagination
+        $totalPages = intval(ceil($outputArray['files'][$path]['count'] / $this->listItems));
+        if ($totalPages > 0 && $this->page > $totalPages) {
+            #Redirect to last page
+            Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->getLastCrumb() . '/' . (!empty($this->searchFor) ? '?search='.rawurlencode($this->searchFor).'&page='.$totalPages : '?page='.$totalPages), false);
+        }
         if ($outputArray['files'][$path]['count'] > $this->listItems) {
             #Generate pagination data
-            $outputArray['pagination'] = ['current' => $page, 'total' => intval(ceil($outputArray['files'][$path]['count'] / $this->listItems)), 'prefix' => '?page='];
+            $outputArray['pagination'] = ['current' => $this->page, 'total' => $totalPages, 'prefix' => '?page='];
             #Update list of files by slicing
-            $outputArray['files'][$path]['files'] = array_slice($outputArray['files'][$path]['files'], ($page - 1) * $this->listItems, $this->listItems);
+            $outputArray['files'][$path]['files'] = array_slice($outputArray['files'][$path]['files'], ($this->page - 1) * $this->listItems, $this->listItems);
         }
         #Get the freshest date
-        $date = max(array_column($outputArray['files'][$path]['files'], 'time'));
-        #Attempt to exit a bit earlier with Last Modified header
-        if (!empty($date)) {
-            $this->lastModified($date);
+        if (!empty($outputArray['files'][$path]['files'])) {
+            $date = max(array_column($outputArray['files'][$path]['files'], 'time'));
+            #Attempt to exit a bit earlier with Last Modified header
+            if (!empty($date)) {
+                $this->lastModified($date);
+            }
         }
         $outputArray['files'][$path]['name'] = $this->dirs[$path]['name'];
         if (empty($subDir)) {
             #Add path to breadcrumbs
             $this->attachCrumb($path, $this->dirs[$path]['name']);
+        }
+        if (empty($this->searchFor)) {
+            if ($this->page > 1) {
+                #Add path to breadcrumbs
+                $this->attachCrumb('?page='.$this->page, 'Page '.$this->page);
+            }
+        } else {
+            $this->attachCrumb('?search='.rawurlencode($this->searchFor), 'Search for `'.$this->searchFor.'`');
+            if ($this->page > 1) {
+                #Add path to breadcrumbs
+                $this->attachCrumb('page='.$this->page, 'Page '.$this->page, true);
+            }
         }
         #Update title and H1
         $this->title = $this->dirs[$path]['name'].' from '.$this->title;
@@ -141,7 +169,7 @@ class FileListing extends StaticPage
         return $result;
     }
     
-    protected function getFiles(string $path, bool $countOnly = false, int $page = 1): array
+    protected function getFiles(string $path, bool $countOnly = false): array
     {
         if ($this->recursive) {
             $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
@@ -154,8 +182,8 @@ class FileListing extends StaticPage
         if (!$countOnly) {
             $id = 1;
             foreach ($iterator as $key=>$file) {
-                if ($file->isFile() && !in_array($key, $this->exclude)) {
-                    if ($id >= (($page - 1) * $this->listItems + 1) && $id <= ($page  * $this->listItems)) {
+                if ($file->isFile() && !in_array($key, $this->exclude) && (empty($this->searchFor) || mb_stripos($key, $this->searchFor) !== false)) {
+                    if ($id >= (($this->page - 1) * $this->listItems + 1) && $id <= ($this->page  * $this->listItems)) {
                         $fileDetails = [
                             'filename' => $key,
                             'basename' => $file->getBasename('.'.$file->getExtension()),
