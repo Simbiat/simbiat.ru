@@ -51,9 +51,7 @@ class Listing extends Search
         #Generate pagination data
         $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchResult']['pages'], 'prefix' => '?search='.rawurlencode($this->searchFor).'&page='];
         if (!empty($this->searchFor)) {
-            #Get page address from default breadcrumb
             #Update breadcrumbs
-            #$this->breadCrumb = [['href' => $address . '/search/' . rawurlencode($this->searchFor) . '/', 'name' => sprintf($this->shortTitle, $this->searchFor)]];
             $this->attachCrumb('?search=' . rawurlencode($this->searchFor), sprintf($this->shortTitle, $this->searchFor));
             $this->breadCrumb[] = ['href' => '/'.$this->serviceName.'/' . $this->subServiceName . '/?search=' . rawurlencode($this->searchFor), 'name' => $this->types[$this->subServiceName]['name']];
             if ($page > 1) {
@@ -65,7 +63,6 @@ class Listing extends Search
             $this->h1 = $this->title = sprintf($this->shortTitle, $this->searchFor).', '.$this->pageWord.' '.$page;
             $this->ogdesc = sprintf($this->fullTitle, $this->searchFor).', '.$this->pageWord.' '.$page;
         } else {
-            #Get page address from default breadcrumb
             #Update breadcrumbs
             $this->breadCrumb = [['href' => '/' .$this->serviceName. '/' . $this->subServiceName, 'name' => $this->types[$this->subServiceName]['name']]];
             if ($page > 1) {
