@@ -29,7 +29,8 @@ class Listing extends Search
         #Set page number
         $page = intval($_GET['page'] ?? 1);
         if ($page < 1) {
-            $page = 1;
+            #Redirect to 1st page
+            Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/'.$this->serviceName . '/' . $this->subServiceName . '/' . (!empty($this->searchFor) ? '?search='.rawurlencode($this->searchFor) : ''));
         }
         #Get search results
         $outputArray = [];
@@ -38,7 +39,7 @@ class Listing extends Search
         if (is_int($outputArray['searchResult'])) {
             #Redirect
             if (!HomePage::$staleReturn) {
-                Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . $this->getLastCrumb() . '/' . $this->subServiceName . '/' . rawurlencode($this->searchFor), false);
+                Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/'.$this->serviceName . '/' . $this->subServiceName . '/' . (!empty($this->searchFor) ? '?search='.rawurlencode($this->searchFor).'&page='.$outputArray['searchResult'] : '?page='.$outputArray['searchResult']), false);
             }
         }
         #Get the freshest date
