@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectTasksOptions">
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="dump-autoload --no-interaction --ansi --verbose --classmap-authoritative --no-dev" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="php" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="ClassMapRegen" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="$PROJECT_DIR$/composer/composer.bat" />
+      <option name="runOnExternalChanges" value="true" />
+      <option name="scopeName" value="OwnLibs" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$PROJECT_DIR$/composer" />
+      <envs />
+    </TaskOptions>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="$/FilePathRelativeToProjectRoot$ -o $/FileDirRelativeToProjectRoot$/$FileNameWithoutAllExtensions$.min.js -c -m --source-map &quot;url='$FileNameWithoutAllExtensions$.min.js.map',content='$/FilePathRelativeToProjectRoot$.map'&quot; --ecma 2022" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="js" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="JS Minify" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="terser" />
+      <option name="runOnExternalChanges" value="true" />
+      <option name="scopeName" value="JS" />
+      <option name="trackOnlyRoot" value="true" />
+      <option name="workingDir" value="$PROJECT_DIR$/" />
+      <envs />
+    </TaskOptions>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="-o ./css/min.css --source-map --source-map-inline-sources ./css/modules/01-normalize.css ./css/modules/02-boilerplate.css ./css/modules/03-variables.css ./css/modules/04-basicelements.css ./css/modules/05-interactions.css ./css/modules/06-common.css ./css/modules/07-firefox.css ./css/modules/08-footer.css ./css/modules/09-header.css ./css/modules/10-sidebar.css ./css/modules/11-navigation.css ./css/modules/12-about.css ./css/modules/13-timeline.css ./css/modules/14-pagination.css ./css/modules/15-animation.css ./css/modules/bictracker.css ./css/modules/fftracker.css ./css/modules/gallery.css ./css/modules/mediaquery.css ./css/modules/articles.css ./css/modules/usercontrol.css ./css/modules/simplepages.css" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="css" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="CSS Combine" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="cleancss" />
+      <option name="runOnExternalChanges" value="false" />
+      <option name="scopeName" value="CSS" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$PROJECT_DIR$/" />
+      <envs />
+    </TaskOptions>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="-Command &quot;(gc ./css/min.css.map) -replace 'css\\\\modules\\\\', '/css/modules/' | Out-File -encoding ASCII ./css/min.css.map&quot;" />
+      <option name="checkSyntaxErrors" value="false" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="*" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="CSS Map" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="powershell" />
+      <option name="runOnExternalChanges" value="false" />
+      <option name="scopeName" value="CSS Map" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$PROJECT_DIR$" />
+      <envs />
+    </TaskOptions>
+  </component>
+</project>

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Twig" pattern="file[htdocs]:twig//*" />
+</component>

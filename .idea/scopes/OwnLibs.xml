@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="OwnLibs" pattern="file[htdocs]:lib//*.php" />
+</component>

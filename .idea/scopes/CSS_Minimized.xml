@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="CSS Minimized" pattern="file:css/min.css" />
+</component>
