@@ -58,6 +58,7 @@ class Gallery extends HTMLElement
         let link = this.images[this.current] as HTMLAnchorElement;
         //Get image
         let image = link.getElementsByTagName('img')[0] as HTMLImageElement;
+        image.classList.remove('zoomedIn');
         //Get figcaption
         let caption = (link.parentElement as HTMLElement).getElementsByTagName('figcaption')[0];
         //Get name
@@ -134,7 +135,6 @@ class Gallery extends HTMLElement
             newUrl = document.location.href.replace(/([^#]+)((#gallery=\d+)|$)/ui, '$1#gallery=' + newIndex);
         }
         //Update only if there is URL change
-        //if (document.location.href !== newUrl) {
         if (url !== new URL(newUrl)) {
             updateHistory(newUrl, newTitle);
         }
@@ -144,21 +144,24 @@ class Gallery extends HTMLElement
 class GalleryImage extends HTMLElement
 {
     private image: HTMLImageElement;
+    private readonly zoomListener;
 
     constructor() {
         super();
         this.image = document.getElementById('galleryLoadedImage') as HTMLImageElement;
+        this.zoomListener = this.zoom.bind(this);
         this.image.addEventListener('load', this.checkZoom.bind(this));
     }
 
     private checkZoom(): void
     {
+        this.image.classList.remove('zoomedIn');
         if (this.image.naturalHeight <= this.image.height) {
+            this.image.removeEventListener('click', this.zoomListener);
             this.image.classList.add('noZoom');
-            this.image.removeEventListener('click', this.zoom.bind(this));
         } else {
             this.image.classList.remove('noZoom');
-            this.image.addEventListener('click', this.zoom.bind(this));
+            this.image.addEventListener('click', this.zoomListener);
         }
     }
 

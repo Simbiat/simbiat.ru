@@ -268,6 +268,7 @@ class Gallery extends HTMLElement {
         this.tabIndex = 99;
         let link = this.images[this.current];
         let image = link.getElementsByTagName('img')[0];
+        image.classList.remove('zoomedIn');
         let caption = link.parentElement.getElementsByTagName('figcaption')[0];
         let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
         document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
@@ -337,19 +338,22 @@ class Gallery extends HTMLElement {
 }
 class GalleryImage extends HTMLElement {
     image;
+    zoomListener;
     constructor() {
         super();
         this.image = document.getElementById('galleryLoadedImage');
+        this.zoomListener = this.zoom.bind(this);
         this.image.addEventListener('load', this.checkZoom.bind(this));
     }
     checkZoom() {
+        this.image.classList.remove('zoomedIn');
         if (this.image.naturalHeight <= this.image.height) {
+            this.image.removeEventListener('click', this.zoomListener);
             this.image.classList.add('noZoom');
-            this.image.removeEventListener('click', this.zoom.bind(this));
         }
         else {
             this.image.classList.remove('noZoom');
-            this.image.addEventListener('click', this.zoom.bind(this));
+            this.image.addEventListener('click', this.zoomListener);
         }
     }
     zoom() {

@@ -50,6 +50,7 @@ gallery-image {
     height: calc(100vh - 6rem);
     width: calc(100vw - 10rem);
     overflow: auto;
+    position: relative;
 }
 #galleryCounter, #galleryNameBlock {
     background-color: var(--color-body);
@@ -83,10 +84,18 @@ gallery-next.disabled {
     color: var(--color-disabled);
 }
 #galleryLoadedImage {
-    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
+    width: auto;
     cursor: zoom-in;
     margin: auto;
     display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 #galleryLoadedImage.zoomedIn {
     height: unset;
@@ -95,6 +104,9 @@ gallery-next.disabled {
 .galleryZoom {
     text-decoration: none;
     border-color: var(--color-interactive);
+    cursor: zoom-in;
+}
+.galleryZoom img {
     cursor: zoom-in;
 }
 #galleryLoadedImage.noZoom {

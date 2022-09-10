@@ -30,6 +30,7 @@ declare class Gallery extends HTMLElement {
 }
 declare class GalleryImage extends HTMLElement {
     private image;
+    private readonly zoomListener;
     constructor();
     private checkZoom;
     zoom(): void;
