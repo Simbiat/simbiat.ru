@@ -3,6 +3,9 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\Common;
+use Simbiat\HomePage;
+use Simbiat\HTTP20\Headers;
 
 class Search extends Page
 {
@@ -26,6 +29,11 @@ class Search extends Page
     {
         #Check if types are set
         $this->typesCheck();
+        #Check if we got some old link (before GET implementation)
+        if (empty($_GET['search']) && !empty($path[0])) {
+            #Redirect to proper version using GET value
+            Headers::redirect(preg_replace('/(.*)(?>\/([^\/]+)\/?$)/ui', '$1/?search=$2', HomePage::$canonical),);
+        }
         #Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
             return ['http_error' => 400, 'reason' => 'Bad search term'];
