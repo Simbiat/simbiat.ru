@@ -30,7 +30,8 @@
     "ext-dom": "*",
     "ext-libxml": "*",
     "ext-openssl": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "ext-brotli": "*"
   },
   "autoload":  {
       "classmap": [

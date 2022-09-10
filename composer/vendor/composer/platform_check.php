@@ -10,6 +10,7 @@ if (!(PHP_VERSION_ID >= 80100)) {
 
 $missingExtensions = array();
 extension_loaded('apcu') || $missingExtensions[] = 'apcu';
+extension_loaded('brotli') || $missingExtensions[] = 'brotli';
 extension_loaded('curl') || $missingExtensions[] = 'curl';
 extension_loaded('dom') || $missingExtensions[] = 'dom';
 extension_loaded('fileinfo') || $missingExtensions[] = 'fileinfo';
