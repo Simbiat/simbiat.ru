@@ -1,4 +1,6 @@
 <p>Page is unavailable. Possibly a bug or some kind of issue.</p>
 {% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-<code>{{ url }}</code>
+{% if not 'httperror/503' in url %}
+    <code>{{ url }}</code>
+{% endif %}
 <img loading="lazy" decoding="async" alt="Service unavailable" src="/img/errors/bug2.svg">
