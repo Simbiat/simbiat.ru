@@ -276,7 +276,7 @@ class Resume extends Page
                     'startTime' => null,
                     'endTime' => '2021-10-28',
                     'name' => 'Snap Inc.',
-                    'icon' => '/img/social/Snapchat.svg',
+                    'icon' => '/img/social/snapchat.svg',
                     'href' => 'https://www.snapchat.com/',
                     'position' => 'Student',
                     'responsibilities' => null,

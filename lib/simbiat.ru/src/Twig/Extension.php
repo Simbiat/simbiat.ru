@@ -60,6 +60,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
             'unsupported' => false,
             #Flag whether GET is present
             'hasGet' => !empty($_GET),
+            #404 request
+            'req404' => $_GET['404'] ?? null,
         ]);
     }
 }
