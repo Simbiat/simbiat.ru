@@ -21,6 +21,9 @@ class General extends StaticPage
 
     protected function generate(array $path): array
     {
+        if ($path[0] === 'txt' || $path[0] === 'xml') {
+            $this->h2push = [];
+        }
         return [
             'sitemap_links' => [
                 ['loc'=>'', 'name'=>'Home Page'],

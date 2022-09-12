@@ -39,6 +39,17 @@ abstract class Page
     protected bool $authenticationNeeded = false;
     #Link to JS module for preload
     protected string $jsModule = '';
+    #List of images to H2 push
+    protected array $h2push = [
+        '/img/logo.svg',
+	    '/img/share.svg',
+        '/img/navigation/home.svg',
+        '/img/navigation/blog.svg',
+        '/img/navigation/fftracker.svg',
+        '/img/navigation/bictracker.svg',
+        '/img/navigation/about.svg',
+        '/img/navigation/simplepages.svg',
+    ];
 
     public final function __construct()
     {
@@ -101,6 +112,13 @@ abstract class Page
         $page['ogdesc'] = $this->ogdesc;
         $page['cacheAge'] = $this->cacheAge;
         $page['cacheStrat'] = $this->cacheStrat;
+        if (!empty($this->h2push)) {
+            #Prepare set of images to push
+            foreach ($this->h2push as $key=>$image) {
+                $this->h2push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
+            }
+            Headers::links($this->h2push);
+        }
         if (!empty($this->altLinks) || !empty($this->jsModule)) {
             if (!empty($this->jsModule)) {
                 $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => '/js/Pages/'.$this->jsModule.'.'.filemtime(Common::$jsDir.'/Pages/'.$this->jsModule.'.js').'.js', 'as' => 'script']]);

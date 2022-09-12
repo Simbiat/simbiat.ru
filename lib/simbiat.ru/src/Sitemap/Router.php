@@ -24,7 +24,7 @@ class Router extends \Simbiat\Abstracts\Router
         if (in_array($path[0], ['xml', 'txt', 'html'])) {
             $format = $path[0];
             #Slice the path
-            $path = array_slice($path, 1);
+            #$path = array_slice($path, 1);
         }
         if (empty($format)) {
             $format = 'html';
@@ -42,10 +42,10 @@ class Router extends \Simbiat\Abstracts\Router
             @header('Content-Type: application/xml; charset=utf-8');
         }
         #Ensure path is set, even though it's empty
-        if (empty($path[0])) {
-            $path[0] = '';
+        if (empty($path[1])) {
+            $path[1] = '';
         }
-        $result = match($path[0]) {
+        $result = match($path[1]) {
             'general' => (new Pages\General)->get($path),
             'bics', 'characters', 'freecompanies', 'linkshells', 'pvpteams', 'achievements' => (new Pages\Countables)->get($path),
             default => (new Pages\Index)->get($path),

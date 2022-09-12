@@ -24,6 +24,9 @@ class Index extends Page
 
     protected function generate(array $path): array
     {
+        if ($path[0] === 'txt' || $path[0] === 'xml') {
+            $this->h2push = [];
+        }
         #Sitemap for general links (non-countable)
         $links = [
             ['loc'=>'general/', 'name'=>'General links'],
