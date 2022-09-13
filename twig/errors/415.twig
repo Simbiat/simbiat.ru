@@ -1,0 +1,6 @@
+<p>What type of file is that? NAPLPS? BSAVE? Either way, we can't read that.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/415' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="415 Unsupported Media Type" src="/img/errors/badmedia.gif">

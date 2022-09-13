@@ -1,0 +1,6 @@
+<p>Seems like we were too slow to deliver the content. But, as you know, "slow and steady"...</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/504' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="504 Gateway Timeout" src="/img/errors/slowdown.gif">

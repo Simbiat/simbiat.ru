@@ -1,0 +1,6 @@
+<p>Here's the legendary paywall. Grovel before its glory. Or just pay up.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/402' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="402 Payment Required" src="/img/errors/paywall.gif">

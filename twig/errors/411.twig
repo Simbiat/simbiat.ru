@@ -1,0 +1,6 @@
+<p>So, how long the piece of content do you require?</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/411' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="411 Length Required" src="/img/errors/howmuch.gif">

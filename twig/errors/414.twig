@@ -1,0 +1,6 @@
+<p>Your URL is too long. Could you, please, abbreviate or summarize it somehow?</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/414' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="414 URI Too Long" src="/img/errors/toolong.gif">

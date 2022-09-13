@@ -1,0 +1,6 @@
+<p>Looks like several processes are fighting for resources. Try again later.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/409' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="409 Conflict" src="/img/errors/conflict.gif">

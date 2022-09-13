@@ -1,0 +1,6 @@
+<p>We do not know this protocol version. Are you, perhaps, from the past? Or, maybe, from the future?</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/505' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="505 HTTP Version Not Supported" src="/img/errors/outtatime.gif">

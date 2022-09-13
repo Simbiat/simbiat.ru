@@ -1,0 +1,6 @@
+<p>You can't do that. Have you authenticated yourself with your proxy?</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/407' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="407 Proxy Authentication Required" src="/img/errors/cantdo.gif">

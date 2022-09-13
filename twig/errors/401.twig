@@ -1,0 +1,6 @@
+<p>You can't do that. Authenticate yourself.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/401' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="401 Unauthorized" src="/img/errors/cantdo.gif">

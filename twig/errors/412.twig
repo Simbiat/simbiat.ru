@@ -1,0 +1,6 @@
+<p>Bad conditions. Maybe try later?</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/412' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="412 Precondition Failed" src="/img/errors/catsnow.gif">

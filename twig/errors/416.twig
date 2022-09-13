@@ -1,0 +1,6 @@
+<p>You're requesting something, that way out of our arms' range.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/416' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="416 Range Not Satisfiable" src="/img/errors/outofrange.gif">

@@ -60,6 +60,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             'unsupported' => false,
             #Flag whether GET is present
             'hasGet' => !empty($_GET),
+            'http_method' => HomePage::$method,
         ]);
     }
 }

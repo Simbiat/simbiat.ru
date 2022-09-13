@@ -11,9 +11,7 @@
 {% elseif http_error == 404 %}
     {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Not found" src="/img/errors/missing.svg">' %}
 {% elseif http_error == 405 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Bad method" src="/img/errors/wrongTool.webp">' %}
-{% elseif http_error == 418 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Teapot" src="/img/errors/teapot.svg">' %}
+    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Bad method" src="/img/errors/incomprehension.svg">' %}
 {% elseif http_error == 500 %}
     {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Internal server error" src="/img/errors/bug.svg">' %}
 {% elseif http_error == 503 %}

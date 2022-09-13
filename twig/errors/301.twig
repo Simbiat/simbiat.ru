@@ -1,0 +1,6 @@
+<p>You are not supposed to be here. The page, that resided here, decided to move out long ago, so you should find by its new address.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/301' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="301 Moved Permanently" src="/img/errors/movedout.gif">

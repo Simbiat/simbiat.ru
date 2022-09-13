@@ -1,0 +1,6 @@
+<p>So many choices, so little time, and yet you, oh naughty one, choose to stumble to this hidden page...</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/300' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="300 Multiple Choices" src="/img/errors/choices.gif">

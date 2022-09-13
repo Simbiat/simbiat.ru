@@ -1,0 +1,6 @@
+<p>Sorry, but we can't match your expectations at the moment.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/417' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="417 Expectation Failed" src="/img/errors/expectations.gif">

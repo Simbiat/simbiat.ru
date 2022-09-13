@@ -13,7 +13,7 @@
 
         {{ include('common/layout/scripts.twig') }}
         {% if http_error %}
-            {% if http_error not in [400, 403, 404, 405,'twig'] and static_page == false and cached_page == false and construction == false %}
+            {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503, 'maintenance', 'database'] and construction == false %}
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
         {% endif %}
@@ -36,7 +36,7 @@
                         {% else %}
                             {{ include('errors/construction.twig') }}
                         {% endif %}
-                        {% if not(error_page) and http_error not in [400, 403, 404, 405,'twig'] %}
+                        {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503, 'maintenance', 'database'] %}
                             <p>Page will refresh in <time-r id="refresh_timer">60</time-r> seconds.</p>
                         {% endif %}
                     </article>

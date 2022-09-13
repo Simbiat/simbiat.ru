@@ -1,0 +1,6 @@
+<p>You need to use a proxy to access this page. Contact you ISP, IT guy or manager if you do not know what it is.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/305' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="305 Use Proxy" src="/img/errors/manager.gif">

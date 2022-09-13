@@ -1,0 +1,6 @@
+<p>Looks like your client application will not be able to accept the kind of content we serve.</p>
+{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
+{% if not('httperror/406' in url) %}
+    <code>{{ url }}</code>
+{% endif %}
+<img loading="lazy" decoding="async" alt="406 Not Acceptable" src="/img/errors/unacceptable.gif">
