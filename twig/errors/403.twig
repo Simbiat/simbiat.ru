@@ -1,6 +1,6 @@
 <p>Access prohibited. {% if not session_data.username %}Login or contact{% else %}Contact{% endif %} administration, if you think this is a mistake.</p>
 {% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not 'httperror/403' in url %}
+{% if not('httperror/403' in url) %}
     <code>{{ url }}</code>
 {% endif %}
 <img loading="lazy" decoding="async" alt="No access" src="/img/errors/denied.svg">

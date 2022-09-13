@@ -1,6 +1,6 @@
 <p>Something went wrong, possibly a bug.</p>
 {% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not 'httperror/500' in url %}
+{% if not('httperror/500' in url) %}
     <code>{{ url }}</code>
 {% endif %}
 <img loading="lazy" decoding="async" alt="Internal server error" src="/img/errors/bug.svg">

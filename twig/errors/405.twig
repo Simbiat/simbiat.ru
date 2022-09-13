@@ -1,5 +1,5 @@
 <p>HTTP method <i>{{ http_method }}</i> is not supported.</p>
-{% if not 'httperror/405' in url %}
+{% if not('httperror/405' in url) %}
     <code>{{ url }}</code>
 {% endif %}
 <img loading="lazy" decoding="async" alt="Bad method" src="/img/errors/wrongTool.webp">

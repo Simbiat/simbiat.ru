@@ -30,7 +30,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
         $defaults = [
             'site_name' => Common::siteName,
             'domain' => Common::$baseUrl,
-            'url' => Common::$baseUrl.'/'.($_SERVER['REQUEST_URI'] ?? 'no_request_uri'),
+            'url' => Common::$baseUrl.'/'.($_SERVER['REQUEST_URI'] ?? ''),
             'maintenance' => 1,
             'registration' => 0,
         ];
@@ -60,8 +60,6 @@ class Extension extends AbstractExtension implements GlobalsInterface
             'unsupported' => false,
             #Flag whether GET is present
             'hasGet' => !empty($_GET),
-            #404 request
-            'req404' => $_GET['404'] ?? null,
         ]);
     }
 }

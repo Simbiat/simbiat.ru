@@ -138,6 +138,10 @@ class HomePage
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
                         #Do not do processing if we already encountered a problem
                         if (empty(self::$http_error)) {
+                            #Check if there was an internal redirect to custom error page
+                            if (!empty($_SERVER['REDIRECT_URL']) && preg_match('/(^|\/)(http)?error(s)?\/\d{3}(\/|$)/ui', $_SERVER['REDIRECT_URL']) === 1) {
+                                $uri = explode('/', trim($_SERVER['REDIRECT_URL'], '/'));
+                            }
                             $vars = (new MainRouter)->route($uri);
                         } else {
                             $vars = self::$http_error;

@@ -3,7 +3,7 @@
     <p>Perhaps, you meant <a href="{{ suggested_link }}">this</a>?</p>
 {% endif %}
 {% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not 'httperror/400' in url %}
+{% if not('httperror/400' in url) %}
     <code>{{ url }}</code>
 {% endif %}
 <img loading="lazy" decoding="async" alt="Do not understand" src="/img/errors/incomprehension.svg">

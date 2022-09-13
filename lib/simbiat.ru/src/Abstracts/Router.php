@@ -58,9 +58,8 @@ abstract class Router
             } else {
                 #Not existent endpoint
                 $pageData['breadcrumbs'] = $this->breadCrumb;
-                $pageData['http_error'] = 400;
-                $pageData['reason'] = 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.';
-                Headers::clientReturn('400', false);
+                $pageData['http_error'] = 404;
+                Headers::clientReturn('404', false);
             }
         }
         #Inherit title, H1 and description, if page does not have them and router does
