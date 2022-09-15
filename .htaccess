@@ -203,10 +203,10 @@ RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,NC,L]
 
 #Force www
-#RewriteCond %{HTTP_HOST} !^www\. [NC]
-#RewriteCond %{SERVER_ADDR} !=127.0.0.1
-#RewriteCond %{SERVER_ADDR} !=::1
-#RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,NC,L]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteCond %{SERVER_ADDR} !=127.0.0.1
+RewriteCond %{SERVER_ADDR} !=::1
+RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,NC,L]
 
 #Redirect bic links to bictracker
 RewriteCond %{REQUEST_URI} (^|/)bic/.* [NC]
