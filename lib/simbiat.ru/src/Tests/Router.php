@@ -35,7 +35,7 @@ class Router extends \Simbiat\Abstracts\Router
                 exit;
             case 'mail':
                 if (!empty($path[1]) && $path[1] === 'send') {
-                    (new Email(\Simbiat\Config\Common::adminMail))->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
+                    echo (new Email(\Simbiat\Config\Common::adminMail))->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
                 } else {
                     try {
                         $output = Twig::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
