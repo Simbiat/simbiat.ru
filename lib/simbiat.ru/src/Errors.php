@@ -5,19 +5,25 @@ namespace Simbiat;
 class Errors
 {
     #Helper function to log errors with identifying the page
-    public static final function error_log(\Throwable $error, string $extra = ''): void
+    public static final function error_log(\Throwable $error, string $extra = '', bool $debug = false): void
     {
         #Determine page link
         $page = self::getPage();
-        #Write to log
-        error_log(get_class($error).' Exception:'."\r\n\t".
+        #Generate message
+        $message = get_class($error).' Exception:'."\r\n\t".
             'Page: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
             $error->getMessage()."\r\n\t".
             $error->getTraceAsString().
-            (empty($extra) ? '' : "\r\n\t".'Extra: '.$extra)
-        );
+            (empty($extra) ? '' : "\r\n\t".'Extra: '.$extra);
+        #Write to log
+        if ($debug) {
+            echo '<pre>'.$message.'</pre>';
+            exit;
+        } else {
+            error_log($message);
+        }
     }
 
     public static final function error_handler(int $level, string $message, string $file, int $line): bool

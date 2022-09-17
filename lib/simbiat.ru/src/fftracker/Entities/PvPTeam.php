@@ -218,7 +218,7 @@ class PvPTeam extends Entity
             ];
             return HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $this->debug);
             return false;
         }
     }

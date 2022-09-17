@@ -48,7 +48,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 $updated = HomePage::$dbController->selectRow('SELECT `updated`, `deleted` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
             }
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $this->debug);
             return false;
         }
         #Check if it has not been updated recently (10 minutes, to protect from potential abuse)
@@ -96,7 +96,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 return $this->update();
             }
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $this->debug);
             return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
         }
     }
@@ -113,7 +113,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             /** @noinspection SqlResolve */
             $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $this->debug);
             return 503;
         }
         if ($check === true) {
@@ -211,7 +211,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             }
         } catch (\Throwable $e) {
             if ($debug) {
-                Errors::error_log($e);
+                Errors::error_log($e, debug: $this->debug);
             }
             return null;
         }

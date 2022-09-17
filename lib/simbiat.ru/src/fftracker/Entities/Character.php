@@ -377,7 +377,7 @@ class Character extends Entity
             ];
             return HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $this->debug);
             return false;
         }
     }
@@ -446,7 +446,7 @@ class Character extends Entity
                 return $this->update();
             }
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $this->debug);
             return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
         }
     }

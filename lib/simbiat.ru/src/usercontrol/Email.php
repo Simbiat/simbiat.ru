@@ -191,7 +191,7 @@ class Email extends Entity
     }
 
     #Send mail
-    public function send(string $subject, array $body = [], string $username = ''): bool
+    public function send(string $subject, array $body = [], string $username = '', bool $debug = false): bool
     {
         if (empty($this->id)) {
             return false;
@@ -223,10 +223,10 @@ class Email extends Entity
             (new Mailer($transport))->send($email);
             return true;
         } catch (TransportExceptionInterface $e) {
-            Errors::error_log($e, $e->getDebug());
+            Errors::error_log($e, $e->getDebug(), $debug);
             return false;
         } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Errors::error_log($e, debug: $debug);
             return false;
         }
     }
