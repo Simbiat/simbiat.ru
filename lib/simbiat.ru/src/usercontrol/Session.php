@@ -98,7 +98,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 'INSERT INTO `seo__pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                 [
                     #What page is being viewed
-                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),
+                    ':page' => substr(HomePage::$canonical, 0, 256) ?? '/',
                     #Optional referer (if sent from other sources)
                     ':referer' => [
                         (empty($_SERVER['HTTP_REFERER']) ? '' : substr($_SERVER['HTTP_REFERER'], 0, 256)),
