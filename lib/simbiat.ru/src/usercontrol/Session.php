@@ -71,8 +71,6 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Deserialize to check if UserAgent data is present
         $data = unserialize($data);
-        #Cache username (to prevent reading from Session)
-        $this->dataRefresh($data);
         #Prepare empty array
         $queries = [];
         #Update SEO related tables
