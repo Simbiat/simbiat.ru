@@ -94,6 +94,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ],
             ];
             #Update page views
+            $page = substr(preg_replace('/^.*:\/\/[^\/]*\//ui', '', HomePage::$canonical), 0, 256);
+            if (empty($page)) {
+                $page = 'index.php';
+            }
             $queries[] = [
                 'INSERT INTO `seo__pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
                 [
