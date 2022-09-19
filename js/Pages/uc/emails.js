@@ -71,8 +71,6 @@ export class Emails {
         });
     }
     delete(button) {
-        let table = button.parentElement.parentElement.parentElement;
-        let tr = button.parentElement.parentElement.rowIndex - 1;
         let spinner = button.parentElement.getElementsByClassName('spinner')[0];
         let formData = new FormData();
         let email = button.getAttribute('data-email') ?? '';
@@ -80,7 +78,7 @@ export class Emails {
         spinner.classList.remove('hidden');
         ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
             if (data.data === true) {
-                table.deleteRow(tr);
+                deleteRow(button);
                 this.blockDelete();
                 new Snackbar(email + ' removed', 'success');
             }

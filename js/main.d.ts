@@ -2,6 +2,7 @@ declare function ajax(url: string, formData?: FormData | null, type?: string, me
 declare function getMeta(metaName: string): string | null;
 declare function updateHistory(newUrl: string, title: string): void;
 declare function submitIntercept(form: HTMLFormElement, callable: Function): void;
+declare function deleteRow(element: HTMLElement): boolean;
 declare const pageTitle = " on Simbiat Software";
 declare const emailRegex = "[\\p{L}\\d.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*";
 declare const userRegex = "^[\\p{L}\\d.!#$%&'*+\\\\/=?^_`{|}~\\- ]{1,64}$";

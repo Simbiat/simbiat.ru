@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '81fe633d0c07bdccc81654fde1238fd8b9819384',
+        'reference' => '437c06c9aa943e093fd0453772d2ec334dc0e551',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -65,9 +65,9 @@
             'dev_requirement' => false,
         ),
         'league/uri' => array(
-            'pretty_version' => '6.7.1',
-            'version' => '6.7.1.0',
-            'reference' => '2d7c87a0860f3126a39f44a8a9bf2fed402dcfea',
+            'pretty_version' => '6.8.0',
+            'version' => '6.8.0.0',
+            'reference' => 'a700b4656e4c54371b799ac61e300ab25a2d1d39',
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/uri',
             'aliases' => array(),
@@ -92,9 +92,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.0.2',
-            'version' => '6.0.2.0',
-            'reference' => 'c01910dde14c95708019513ea0ee36c5a174fd4c',
+            'pretty_version' => '6.0.3',
+            'version' => '6.0.3.0',
+            'reference' => '6ba69e1afd24b45d66b6de7b04553213f7ef2151',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -112,7 +112,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.0.2',
+                0 => '6.0.3',
             ),
         ),
         'psr/container' => array(
@@ -241,7 +241,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '81fe633d0c07bdccc81654fde1238fd8b9819384',
+            'reference' => '437c06c9aa943e093fd0453772d2ec334dc0e551',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

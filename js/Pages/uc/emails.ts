@@ -19,7 +19,7 @@ export class Emails
                     this.subscribe(event);
                 });
             });
-            //Listener for mail activation buttons
+            //Listener for mail deletion buttons
             document.querySelectorAll('.mail_deletion').forEach(item => {
                 item.addEventListener('click', (event: Event) => {
                     this.delete(event.target as HTMLInputElement);
@@ -86,9 +86,6 @@ export class Emails
 
     public delete(button: HTMLInputElement): void
     {
-        let table = ((button.parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).parentElement as HTMLTableElement;
-        //Get row number
-        let tr = ((button.parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).rowIndex - 1;
         let spinner = (button.parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
         //Generate form data
         let formData = new FormData();
@@ -97,7 +94,7 @@ export class Emails
         spinner.classList.remove('hidden');
         ajax(location.protocol+'//'+location.host+'/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
             if (data.data === true) {
-                table.deleteRow(tr);
+                deleteRow(button);
                 this.blockDelete();
                 new Snackbar(email+' removed', 'success');
             } else {

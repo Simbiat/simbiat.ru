@@ -38,3 +38,17 @@ function submitIntercept(form: HTMLFormElement, callable: Function): void
         }
     });
 }
+
+//Remove table row based containing element
+function deleteRow(element: HTMLElement): boolean
+{
+    let table = element.closest('table') as HTMLTableElement;
+    //Get row number
+    let tr = (element.closest('tr') as HTMLTableRowElement).rowIndex - 1;
+    if (table && tr) {
+        table.deleteRow(tr);
+        return true;
+    } else {
+        return false;
+    }
+}

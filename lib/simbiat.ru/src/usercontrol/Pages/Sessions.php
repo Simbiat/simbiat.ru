@@ -39,7 +39,7 @@ class Sessions extends Page
         #Get cookies
         $outputArray['cookies'] = HomePage::$dbController->selectAll('SELECT `time`, `cookieid`, `uc__cookies`.`ip`, `country`, `city`, `useragent` FROM `uc__cookies` LEFT JOIN `seo__ips` ON `seo__ips`.`ip`=`uc__cookies`.`ip` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
         #Get logs
-        $outputArray['logs'] = HomePage::$dbController->selectAll('SELECT `time`, `action`, `sys__logs`.`ip`, `country`, `city`, `useragent` FROM `sys__logs` LEFT JOIN `seo__ips` ON `seo__ips`.`ip`=`sys__logs`.`ip` WHERE `userid`=:userid AND `type` IN (1, 2, 8) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']]);
+        $outputArray['logs'] = HomePage::$dbController->selectAll('SELECT `time`, `action`, `sys__logs`.`ip`, `country`, `city`, `useragent` FROM `sys__logs` LEFT JOIN `seo__ips` ON `seo__ips`.`ip`=`sys__logs`.`ip` WHERE `userid`=:userid AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']]);
         #Create useragent object
         #Force full versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
@@ -67,6 +67,7 @@ class Sessions extends Page
                 }
             }
         }
+        $outputArray['current_session'] = session_id();
         return $outputArray;
     }
 }

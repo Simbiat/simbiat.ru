@@ -165,7 +165,7 @@ class User extends Entity
             }
             @session_regenerate_id(true);
             #Log the change
-            Security::log('User details change', 'Changed named', ['name'=> ['old' => $this->username, 'new' => $newName]]);
+            Security::log('User details change', 'Changed name', ['name'=> ['old' => $this->username, 'new' => $newName]]);
             return ['response' => $result];
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];
@@ -431,6 +431,9 @@ class User extends Entity
     #Function to validate password
     public function passValid(string $password, string $hash): bool
     {
+        if (empty($this->id)) {
+            return false;
+        }
         #Validate password
         try {
             if (password_verify($password, $hash)) {
@@ -440,7 +443,7 @@ class User extends Entity
                     $this->passChange($password);
                 } else {
                     #Reset strikes (if any)
-                    $this->resetStrikes($password);
+                    $this->resetStrikes();
                 }
                 return true;
             } else {
@@ -474,12 +477,45 @@ class User extends Entity
         return $result;
     }
 
-    public function resetStrikes(int|string $id): bool
+    public function resetStrikes(): bool
     {
+        if (empty($this->id)) {
+            return false;
+        }
         return HomePage::$dbController->query(
             'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
-                ':userid' => [strval($id), 'string']
+                ':userid' => [strval($this->id), 'string']
+            ]
+        );
+    }
+    
+    public function deleteCookie(): bool
+    {
+        if (empty($this->id) || empty($_POST['cookie'])) {
+            return false;
+        }
+        Security::log('Logout', 'Manually deleted a cookie');
+        return HomePage::$dbController->query(
+            'DELETE FROM `uc__cookies` WHERE `userid`=:userid AND `cookieid`=:cookie;',
+            [
+                ':userid' => [strval($this->id), 'string'],
+                ':cookie' => $_POST['cookie'],
+            ]
+        );
+    }
+    
+    public function deleteSession(): bool
+    {
+        if (empty($this->id) || empty($_POST['session'])) {
+            return false;
+        }
+        Security::log('Logout', 'Manually deleted a session');
+        return HomePage::$dbController->query(
+            'DELETE FROM `uc__sessions` WHERE `userid`=:userid AND `sessionid`=:session;',
+            [
+                ':userid' => [strval($this->id), 'string'],
+                ':session' => $_POST['session'],
             ]
         );
     }

@@ -5,14 +5,14 @@ namespace Simbiat\usercontrol\Api;
 use Simbiat\Abstracts\Api;
 use Simbiat\usercontrol\User;
 
-class Profile extends Api
+class Cookies extends Api
 {
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-    protected array $methods = ['PATCH' => ''];
+    protected array $methods = ['DELETE' => 'delete'];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-    protected array $verbs = [];
+    protected array $verbs = ['delete' => 'Delete a cookie'];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
@@ -20,6 +20,6 @@ class Profile extends Api
 
     protected function genData(array $path): array
     {
-        return (new User($_SESSION['userid']))->updateProfile();
+        return ['response' => (new User($_SESSION['userid']))->deleteCookie()];
     }
 }

@@ -348,7 +348,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 }
                 $user = (new User($savedData['userid']));
                 #Reset strikes if any
-                $user->resetStrikes($savedData['userid']);
+                $user->resetStrikes();
                 #Update cookie
                 $user->rememberMe($data['id']);
                 #Get client data

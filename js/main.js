@@ -86,6 +86,17 @@ function submitIntercept(form, callable) {
         }
     });
 }
+function deleteRow(element) {
+    let table = element.closest('table');
+    let tr = element.closest('tr').rowIndex - 1;
+    if (table && tr) {
+        table.deleteRow(tr);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
 const pageTitle = ' on Simbiat Software';
 const emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
 const userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`{|}~\\- ]{1,64}$';

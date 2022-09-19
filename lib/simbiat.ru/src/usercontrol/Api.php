@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
+use Simbiat\usercontrol\Api\Cookies;
 use Simbiat\usercontrol\Api\Emails;
 use Simbiat\usercontrol\Api\FFLink;
 use Simbiat\usercontrol\Api\Login;
@@ -10,17 +11,17 @@ use Simbiat\usercontrol\Api\Password;
 use Simbiat\usercontrol\Api\Profile;
 use Simbiat\usercontrol\Api\Register;
 use Simbiat\usercontrol\Api\Remind;
+use Simbiat\usercontrol\Api\Sessions;
 use Simbiat\usercontrol\Api\Username;
 
 class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink',
+        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'cookies', 'sessions',
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
-        'User login and creation/deletion handling',
         'Register on the website',
         'Login to the website',
         'Password reset',
@@ -29,7 +30,9 @@ class Api extends \Simbiat\Abstracts\Api
         'Password change',
         'Username change',
         'Update profile details',
-        'Link FFXIV characters'
+        'Link FFXIV characters',
+        'Delete cookies',
+        'Delete sessions',
     ];
     #Flag to indicate, that this is a top level node (false by default)
     protected bool $topLevel = false;
@@ -46,6 +49,8 @@ class Api extends \Simbiat\Abstracts\Api
             'username' => (new Username)->route(array_slice($path, 1)),
             'profile' => (new Profile)->route(array_slice($path, 1)),
             'fflink' => (new FFLink)->route(array_slice($path, 1)),
+            'cookies' => (new Cookies)->route(array_slice($path, 1)),
+            'sessions' => (new Sessions)->route(array_slice($path, 1)),
         };
     }
 }
