@@ -14,8 +14,13 @@ function getMeta(metaName: string): string|null {
 //Update document title and push to history. Required, since browsers mostly ignore title argument in pushState
 function updateHistory(newUrl: string, title: string): void
 {
-    document.title = title;
-    window.history.pushState(title, title, newUrl);
+    //Update title and/or URL only if there were changes
+    if (document.title !== title) {
+        document.title = title;
+    }
+    if (document.location.href !== newUrl) {
+        window.history.pushState(title, title, newUrl);
+    }
 }
 
 //Function to intercept both form submission and Enter key pressed in the form (which normally also submits it)

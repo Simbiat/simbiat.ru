@@ -64,8 +64,12 @@ function getMeta(metaName) {
     }
 }
 function updateHistory(newUrl, title) {
-    document.title = title;
-    window.history.pushState(title, title, newUrl);
+    if (document.title !== title) {
+        document.title = title;
+    }
+    if (document.location.href !== newUrl) {
+        window.history.pushState(title, title, newUrl);
+    }
 }
 function submitIntercept(form, callable) {
     form.addEventListener('submit', function (event) {
