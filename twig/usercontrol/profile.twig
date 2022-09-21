@@ -1,6 +1,6 @@
 <form class="middle" id="profile_username">
     <div class="float_label_div">
-        <input form="profile_username" data-original="{{ userData.username }}" value="{{ userData.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
+        <input form="profile_username" spellcheck="false" data-original="{{ userData.username }}" value="{{ userData.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
         <label for="username_value">Username</label>
     </div>
     <input role="button" form="profile_username" type="submit" name="submit" id="username_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Change">
