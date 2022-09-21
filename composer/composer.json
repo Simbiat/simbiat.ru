@@ -1,69 +1,70 @@
 {
-  "name": "simbiat/simbiat.ru",
-  "description": "Package for simbiat.ru",
-  "prefer-stable" : true,
-  "minimum-stability": "dev",
-  "license": "AGPL-3.0-or-later",
-  "authors": [
-    {
-      "name": "Dmitry Kustov",
-      "email": "simbiat@outlook.com",
-      "homepage": "https://www.simbiat.ru",
-      "role": "Developer"
-    }
-  ],
-  "require": {
-    "php": "^8.1",
-    "matomo/device-detector": "^6",
-    "twig/twig": "^3",
-    "symfony/html-sanitizer": "^6",
-    "symfony/mailer": "^6",
-    "symfony/twig-bundle": "^6",
-    "ipinfo/ipinfo": "^2",
-    "ext-zip": "*",
-    "ext-iconv": "*",
-    "ext-pdo": "*",
-    "ext-curl": "*",
-    "ext-fileinfo": "*",
-    "ext-apcu": "*",
-    "ext-zlib": "*",
-    "ext-dom": "*",
-    "ext-libxml": "*",
-    "ext-openssl": "*",
-    "ext-gd": "*",
-    "ext-brotli": "*"
-  },
-  "autoload":  {
-      "classmap": [
-          "../lib/AccountKeying/src",
-          "../lib/array2table/src",
-          "../lib/ArrayHelpers/src",
-          "../lib/Cron/src",
-          "../lib/cute-bytes/src",
-          "../lib/database/src",
-          "../lib/filename-sanitizer/src",
-          "../lib/HTMLCut/src",
-          "../lib/HTTP20/src",
-          "../lib/lodestone-parser/src",
-          "../lib/optimize-tables/src",
-          "../lib/sand-clock/src"
-      ],
-      "psr-4": {
-          "Simbiat\\": "../lib/simbiat.ru/src"
-      }
-  },
-  "config": {
-    "sort-packages": true,
-    "store-auths": true,
-    "platform": {
-      "php": "8.1"
+    "name": "simbiat/simbiat.ru",
+    "description": "Package for simbiat.ru",
+    "prefer-stable" : true,
+    "minimum-stability": "dev",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+          "name": "Dmitry Kustov",
+          "email": "simbiat@outlook.com",
+          "homepage": "https://www.simbiat.ru",
+          "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "matomo/device-detector": "^6",
+        "twig/twig": "^3",
+        "symfony/html-sanitizer": "^6",
+        "symfony/mailer": "^6",
+        "symfony/twig-bundle": "^6",
+        "ipinfo/ipinfo": "^2",
+        "tinymce/tinymce": "^6",
+        "ext-zip": "*",
+        "ext-iconv": "*",
+        "ext-pdo": "*",
+        "ext-curl": "*",
+        "ext-fileinfo": "*",
+        "ext-apcu": "*",
+        "ext-zlib": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "ext-openssl": "*",
+        "ext-gd": "*",
+        "ext-brotli": "*"
     },
-    "data-dir": "../data/composer",
-    "cache-dir": "../data/cache/composer",
-    "preferred-install": "source",
-    "optimize-autoloader": true,
-    "classmap-authoritative": true,
-    "htaccess-protect": true,
-    "platform-check": true
-  }
+    "autoload":  {
+        "classmap": [
+            "../lib/AccountKeying/src",
+            "../lib/array2table/src",
+            "../lib/ArrayHelpers/src",
+            "../lib/Cron/src",
+            "../lib/cute-bytes/src",
+            "../lib/database/src",
+            "../lib/filename-sanitizer/src",
+            "../lib/HTMLCut/src",
+            "../lib/HTTP20/src",
+            "../lib/lodestone-parser/src",
+            "../lib/optimize-tables/src",
+            "../lib/sand-clock/src"
+        ],
+        "psr-4": {
+            "Simbiat\\": "../lib/simbiat.ru/src"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "store-auths": true,
+        "platform": {
+            "php": "8.1"
+        },
+        "data-dir": "../data/composer",
+        "cache-dir": "../data/cache/composer",
+        "preferred-install": "source",
+        "optimize-autoloader": true,
+        "classmap-authoritative": true,
+        "htaccess-protect": true,
+        "platform-check": true
+    }
 }

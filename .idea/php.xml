@@ -49,6 +49,7 @@
       <path value="$PROJECT_DIR$/composer/vendor/symfony/twig-bridge" />
       <path value="$PROJECT_DIR$/composer/vendor/symfony/dependency-injection" />
       <path value="$PROJECT_DIR$/composer/vendor/symfony/twig-bundle" />
+      <path value="$PROJECT_DIR$/composer/vendor/tinymce/tinymce" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />
