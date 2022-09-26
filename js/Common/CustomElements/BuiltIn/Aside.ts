@@ -11,8 +11,18 @@ class Aside
         }
         this.sidebarDiv = (document.getElementById('sidebar') as HTMLElement);
         //Listeners for click event to show or hide sidebar
-        (document.getElementById('showSidebar') as HTMLDivElement).addEventListener('click', () => {(this.sidebarDiv as HTMLElement).classList.add('shown')});
-        (document.getElementById('hideSidebar') as HTMLDivElement).addEventListener('click', () => {(this.sidebarDiv as HTMLElement).classList.remove('shown')});
+        let showSidebar = document.getElementById('showSidebar');
+        let hideSidebar = document.getElementById('hideSidebar');
+        if (showSidebar) {
+            showSidebar.addEventListener('click', () => {
+                (this.sidebarDiv as HTMLElement).classList.add('shown')
+            });
+        }
+        if (hideSidebar) {
+            hideSidebar.addEventListener('click', () => {
+                (this.sidebarDiv as HTMLElement).classList.remove('shown')
+            });
+        }
         //Login form
         this.loginForm = (document.getElementById('signinup') as HTMLFormElement);
         if (this.loginForm) {

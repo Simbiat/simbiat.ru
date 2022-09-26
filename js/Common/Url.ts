@@ -18,18 +18,20 @@ function hashCheck(): void
     let hash = url.hash;
     let Gallery = document.getElementsByTagName('gallery-overlay')[0] as Gallery;
     const galleryLink = new RegExp('#gallery=\\d+', 'ui');
-    if (galleryLink.test(hash)) {
-        let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
-        if (imageID) {
-            if (Gallery.images[imageID - 1]) {
-                Gallery.current = imageID - 1;
-            } else {
-                new Snackbar('Image number '+imageID+' not found on page', 'failure');
-                window.history.replaceState(document.title, document.title, document.location.href.replace(hash, ''));
+    if (Gallery) {
+        if (galleryLink.test(hash)) {
+            let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
+            if (imageID) {
+                if (Gallery.images[imageID - 1]) {
+                    Gallery.current = imageID - 1;
+                } else {
+                    new Snackbar('Image number ' + imageID + ' not found on page', 'failure');
+                    window.history.replaceState(document.title, document.title, document.location.href.replace(hash, ''));
+                }
             }
+        } else {
+            Gallery.close();
         }
-    } else {
-        Gallery.close();
     }
 }
 
