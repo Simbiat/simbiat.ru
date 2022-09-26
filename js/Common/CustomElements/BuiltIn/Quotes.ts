@@ -14,6 +14,12 @@ class Quotes
             //This results in same effect as with appendChild, that the image is inserted at the end, which is not what we want
             item.innerHTML = '<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">' + item.innerHTML;
         });
+        //Add author
+        document.querySelectorAll('blockquote').forEach(item => {
+            if (item.hasAttribute('data-author')) {
+                item.innerHTML = '<span class="quoteAuthor">'+item.getAttribute('data-author')+':</span>' + item.innerHTML;
+            }
+        });
         //q tag is inline and a visual button does not suit it, so we add tooltip to it
         Array.from(document.getElementsByTagName('q')).forEach(item => {
             item.setAttribute('data-tooltip', 'Click to copy quote');
@@ -44,7 +50,14 @@ class Quotes
                 tag = 'Quote';
                 break;
         }
-        navigator.clipboard.writeText(String(node.textContent)).then(function() {
+        //Set text
+        let quoteText = String(node.textContent);
+        //Get author for blockquotes
+        if (node.tagName.toLowerCase() === 'blockquote' && node.hasAttribute('data-author')) {
+            let authorMatch = new RegExp('^('+node.getAttribute('data-author')+':)', 'ui');
+            quoteText = quoteText.replace(authorMatch,'');
+        }
+        navigator.clipboard.writeText(quoteText).then(function() {
             new Snackbar(tag + ' copied to clipboard', 'success');
         }, function() {
             new Snackbar('Failed to copy '+tag.toLowerCase(),'failure');

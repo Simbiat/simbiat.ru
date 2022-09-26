@@ -182,7 +182,6 @@ cite:after {
 blockquote {
     display: block;
     font-size: 1rem;
-    width: 100%;
     word-wrap: break-word;
     overflow-wrap: anywhere;
     box-sizing: border-box;
@@ -195,6 +194,7 @@ blockquote {
     margin: 0.5rem;
     padding: 1rem;
     position: relative;
+    height: fit-content;
 }
 blockquote::before {
     content: '\2760';
@@ -216,21 +216,13 @@ blockquote::after {
     font-size: 2rem;
     font-style: italic;
 }
-figure.quote {
-    max-width: calc(100% - 1rem);
-    margin: 0;
-    position: relative;
-}
-figure.quote > figcaption {
-    color: var(--color-disabled);
-    font-style: italic;
-    font-size: 0.75rem;
-    position: absolute;
-    left: 2.25rem;
-    z-index: 1;
-}
-figure.quote > figcaption::after {
-    content: ':';
+blockquote > .quoteAuthor {
+    color:         var(--color-disabled);
+    position:      absolute;
+    top:           -0.25rem;
+    left:          1.5rem;
+    font-size:     1rem;
+    font-style:    italic;
 }
 q {
     font-style: italic;
