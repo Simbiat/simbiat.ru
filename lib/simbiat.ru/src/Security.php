@@ -196,30 +196,34 @@ class Security
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {
-            HomePage::$dbController->query(
-                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
-                [
-                    ':type' => $type,
-                    ':action' => $action,
-                    ':userid' => [
-                        (empty($userid) ? NULL : $userid),
-                        (empty($userid) ? 'null' : 'string'),
-                    ],
-                    ':ip' => [
-                        (empty($ip) ? NULL : $ip),
-                        (empty($ip) ? 'null' : 'string'),
-                    ],
-                    ':ua' => [
-                        (empty($ua) ? NULL : $ua),
-                        (empty($ua) ? 'null' : 'string'),
-                    ],
-                    ':extras' => [
-                        (empty($extras) ? NULL : $extras),
-                        (empty($extras) ? 'null' : 'string'),
-                    ],
-                ]
-            );
-            return true;
+            if (!is_null(HomePage::$dbController)) {
+                HomePage::$dbController->query(
+                    'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
+                    [
+                        ':type' => $type,
+                        ':action' => $action,
+                        ':userid' => [
+                            (empty($userid) ? NULL : $userid),
+                            (empty($userid) ? 'null' : 'string'),
+                        ],
+                        ':ip' => [
+                            (empty($ip) ? NULL : $ip),
+                            (empty($ip) ? 'null' : 'string'),
+                        ],
+                        ':ua' => [
+                            (empty($ua) ? NULL : $ua),
+                            (empty($ua) ? 'null' : 'string'),
+                        ],
+                        ':extras' => [
+                            (empty($extras) ? NULL : $extras),
+                            (empty($extras) ? 'null' : 'string'),
+                        ],
+                    ]
+                );
+                return true;
+            } else {
+                return false;
+            }
         } catch (\Throwable $exception) {
             #Just log to file. Generally we do not lose much if this fails
             Errors::error_log($exception);
