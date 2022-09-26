@@ -42,7 +42,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="-o ./css/min.css --source-map --source-map-inline-sources ./css/modules/01-normalize.css ./css/modules/02-boilerplate.css ./css/modules/03-variables.css ./css/modules/04-basicelements.css ./css/modules/05-interactions.css ./css/modules/06-common.css ./css/modules/07-firefox.css ./css/modules/08-footer.css ./css/modules/09-header.css ./css/modules/10-sidebar.css ./css/modules/11-navigation.css ./css/modules/12-about.css ./css/modules/13-timeline.css ./css/modules/14-pagination.css ./css/modules/15-animation.css ./css/modules/bictracker.css ./css/modules/fftracker.css ./css/modules/gallery.css ./css/modules/mediaquery.css ./css/modules/articles.css ./css/modules/usercontrol.css ./css/modules/simplepages.css" />
+      <option name="arguments" value="-o ./css/min.css --source-map --source-map-inline-sources ./css/modules/01-normalize.css ./css/modules/02-boilerplate.css ./css/modules/03-variables.css ./css/modules/04-basicelements.css ./css/modules/05-interactions.css ./css/modules/06-common.css ./css/modules/07-firefox.css ./css/modules/08-footer.css ./css/modules/09-header.css ./css/modules/10-sidebar.css ./css/modules/11-navigation.css ./css/modules/12-about.css ./css/modules/13-timeline.css ./css/modules/14-pagination.css ./css/modules/15-animation.css ./css/modules/bictracker.css ./css/modules/fftracker.css ./css/modules/gallery.css ./css/modules/mediaquery.css ./css/modules/articles.css ./css/modules/usercontrol.css ./css/modules/simplepages.css ./css/modules/tinymce/formats.css ./css/modules/tinymce/ui.css" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -69,6 +69,46 @@
       <option name="fileExtension" value="*" />
       <option name="immediateSync" value="true" />
       <option name="name" value="CSS Map" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="powershell" />
+      <option name="runOnExternalChanges" value="false" />
+      <option name="scopeName" value="CSS Map" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$PROJECT_DIR$" />
+      <envs />
+    </TaskOptions>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="-o ./css/tinymce.css --source-map --source-map-inline-sources ./css/modules/01-normalize.css ./css/modules/02-boilerplate.css ./css/modules/03-variables.css ./css/modules/04-basicelements.css  ./css/modules/05-interactions.css  ./css/modules/06-common.css ./css/modules/tinymce/formats.css  ./css/modules/tinymce/ui.css ./css/modules/tinymce/overrides.css" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="css" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="TinyMCE" />
+      <option name="output" value="" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="cleancss" />
+      <option name="runOnExternalChanges" value="false" />
+      <option name="scopeName" value="CSS" />
+      <option name="trackOnlyRoot" value="false" />
+      <option name="workingDir" value="$PROJECT_DIR$/" />
+      <envs />
+    </TaskOptions>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="-Command &quot;(gc ./css/tinymce.css.map) -replace 'css\\\\modules\\\\', '/css/modules/' | Out-File -encoding ASCII ./css/tinymce.css.map&quot;" />
+      <option name="checkSyntaxErrors" value="false" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="*" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="TinyMCE Map" />
       <option name="output" value="" />
       <option name="outputFilters">
         <array />

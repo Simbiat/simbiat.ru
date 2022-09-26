@@ -1,0 +1,158 @@
+/*Override for UI*/
+.tox:not(.tox-tinymce-inline) .tox-editor-header,
+.tox .tox-menubar,
+.tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary {
+    background-color: var(--color-block)!important;
+}
+.tox .tox-tbtn--bespoke,
+.tox .tox-menu {
+    background-color: var(--color-article)!important;
+}
+.tox .tox-collection--list .tox-collection__item--active {
+    background-color: var(--color-block)!important;
+}
+.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
+    color: var(--color-success)!important;
+}
+.tox .tox-collection--list .tox-collection__item--enabled {
+    background-color: var(--color-block)!important;
+    color: var(--color-success)!important;
+}
+.tox-tinymce {
+    border-width: var(--border-width)!important;
+    border-radius: var(--border-radius)!important;
+    border-style: solid!important;
+    border-color: var(--border-color-inset)!important;
+    font-family: var(--font-sans)!important;
+}
+#tox-icon-text-color__color[fill='#000000'] {
+    fill: var(--color-text)!important;
+}
+#tox-icon-highlight-bg-color__color[fill='#000000'] {
+    fill: var(--color-article)!important;
+}
+.tox .tox-mbtn:hover:not(:disabled):not(.tox-mbtn--active),
+.tox .tox-mbtn--active,
+.tox .tox-tbtn:hover,
+.tox .tox-split-button:focus {
+    background: var(--color-block)!important;
+    color: var(--color-interactive)!important;
+}
+.tox .tox-split-button:hover {
+    box-shadow: 0 0 0 1px var(--border-light) inset!important;
+}
+.tox .tox-split-button .tox-tbtn {
+    background-color: transparent!important;
+}
+.tox .tox-tbtn--enabled, .tox .tox-tbtn--enabled:hover {
+    background: var(--color-article)!important;
+    color: var(--color-success)!important;
+}
+.tox .tox-tbtn--enabled svg, .tox .tox-tbtn--enabled:hover svg {
+    fill: var(--color-success)!important;
+}
+.tox .tox-tbtn svg {
+    fill: var(--color-interactive)!important;
+}
+.tox .tox-mbtn {
+    color: var(--color-interactive)!important;
+}
+.tox .tox-tbtn--enabled svg {
+    fill: var(--color-success)!important;
+}
+.tox .tox-dialog {
+    background-color: var(--color-block)!important;
+    color: var(--color-text)!important;
+    border-width: var(--border-width)!important;
+    border-style: solid!important;
+    border-color: var(--border-color-outset)!important;
+}
+.tox .tox-dialog__header,
+.tox-dialog__footer {
+    background-color: var(--color-body)!important;
+    color: var(--color-text)!important;
+}
+.tox .tox-button {
+    background-color: var(--color-article)!important;
+    border-style: solid!important;
+    border-width: var(--border-width)!important;
+    border-radius: var(--border-radius)!important;
+    border-color: var(--border-color-outset)!important;
+    outline: none!important;
+    box-sizing: border-box!important;
+    height: clamp(1.5rem, 2rem, 2.5rem)!important;
+    color: var(--color-interactive)!important;
+    font-weight: bold!important;
+    margin: 0.5rem!important;
+    cursor: pointer!important;
+    line-height: unset!important;
+}
+.tox .tox-dialog__body-nav-item {
+    color: var(--color-interactive)!important;
+}
+.tox .tox-dialog__body-nav-item--active {
+    color: var(--color-success)!important;
+    border-bottom: var(--border-width) solid var(--color-success)!important;
+}
+.tox .tox-dialog__body-content {
+    color: var(--color-text)!important;
+}
+.tox .tox-dialog__body-content a {
+    color: var(--color-interactive)!important;
+    font-weight: bold!important;
+    text-decoration: none!important;
+    cursor: pointer!important;
+    border-style: outset!important;
+    border-radius: var(--border-radius)!important;
+    border-color: transparent!important;
+    padding: 0.1rem!important;
+    border-width: var(--border-width)!important;
+    outline: none!important;
+}
+.tox .tox-dialog__body-content a:link {
+    text-decoration-line: underline!important;
+}
+.tox .tox-dialog__body-content a:visited {
+    text-decoration: none!important;
+    border-style: inset!important;
+}
+.tox .tox-dialog__body-content a:hover, a:focus, a:active {
+    text-decoration: none!important;
+    border-color: var(--color-interactive)!important;
+}
+.tox .tox-dialog__body-content a:active {
+    filter: brightness(0.7)!important;
+}
+.tox-textarea {
+    background-color: var(--color-article)!important;
+    color: var(--color-text)!important;
+    border-width: var(--border-width)!important;
+    border-radius: var(--border-radius)!important;
+    border-style: solid!important;
+    border-color: var(--border-color-inset)!important;
+}
+.tox-textarea:hover {
+    outline: none!important;
+    filter: var(--border-shadow)!important;
+}
+.tox-textarea:focus, .tox-textarea:active {
+    outline: none!important;
+    border-color: var(--border-color-inset)!important;
+    filter: var(--border-shadow)!important;
+}
+.tox-textarea::-webkit-resizer {
+    border-bottom-right-radius: var(--border-radius)!important;
+    border-top-left-radius: var(--border-radius)!important;
+}
+.mce-content-body [data-mce-selected=inline-boundary] {
+    background-color: var(--color-block)!important;
+    filter: brightness(1.25)!important;
+}
+.mce-content-body audio[data-mce-selected], .mce-content-body embed[data-mce-selected], .mce-content-body img[data-mce-selected], .mce-content-body object[data-mce-selected], .mce-content-body table[data-mce-selected], .mce-content-body video[data-mce-selected] {
+    outline: none!important;
+    filter: brightness(1.25);
+}
+.mce-content-body div.mce-resizehandle {
+    background-color: var(--color-interactive)!important;
+    border-color:     var(--color-interactive)!important;
+}

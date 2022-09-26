@@ -1,0 +1,95 @@
+/*Classes to style things created by TinyMCE*/
+.tiny-color-body {
+    color: var(--color-body);
+}
+.tiny-color-block {
+    color: var(--color-block);
+}
+.tiny-color-article {
+    color: var(--color-article);
+}
+.tiny-color-text {
+    color: var(--color-text);
+}
+.tiny-color-interactive {
+    color: var(--color-interactive);
+}
+.tiny-color-success {
+    color: var(--color-success);
+}
+.tiny-color-failure {
+    color: var(--color-failure);
+}
+.tiny-color-warning {
+    color: var(--color-warning);
+}
+.tiny-color-disabled {
+    color: var(--color-disabled);
+}
+.tiny-color-dark-border {
+    color: var(--border-dark);
+}
+.tiny-color-light-border {
+    color: var(--border-light);
+}
+
+.tiny-bg-color-body {
+    background-color: var(--color-body);
+}
+.tiny-bg-color-block {
+    background-color: var(--color-block);
+}
+.tiny-bg-color-article {
+    background-color: var(--color-article);
+}
+.tiny-bg-color-text {
+    background-color: var(--color-text);
+}
+.tiny-bg-color-interactive {
+    background-color: var(--color-interactive);
+}
+.tiny-bg-color-success {
+    background-color: var(--color-success);
+}
+.tiny-bg-color-failure {
+    background-color: var(--color-failure);
+}
+.tiny-bg-color-warning {
+    background-color: var(--color-warning);
+}
+.tiny-bg-color-disabled {
+    background-color: var(--color-disabled);
+}
+.tiny-bg-color-dark-border {
+    background-color: var(--border-dark);
+}
+.tiny-bg-color-light-border {
+    background-color: var(--border-light);
+}
+
+.tiny-underline {
+    text-decoration: underline;
+}
+
+.tiny-align-left {
+    text-align: left;
+}
+.tiny-align-center {
+    text-align: center;
+}
+.tiny-align-right {
+    text-align: right;
+}
+.tiny-align-justify {
+    text-align: justify;
+}
+
+.tiny-valign-top {
+    vertical-align: top;
+}
+.tiny-valign-middle {
+    vertical-align: middle;
+}
+.tiny-valign-bottom {
+    vertical-align: bottom;
+}

@@ -52,4 +52,13 @@ function init()
     cleanGET();
     hashCheck();
     router();
+    let tinyList = document.querySelectorAll('textarea.tinymce');
+    if (tinyList.length > 0) {
+        // I fail to make TS see the file with anything I do in "paths", yet this is correct code, and it does work as expected, so just ignoring this
+        // @ts-ignore
+        import('/js/tinymce/tinymce.min.js').then(() => {
+            // @ts-ignore
+            tinymce.init(tinySettings);
+        });
+    }
 }
