@@ -17,6 +17,7 @@ gallery-close {
 #galleryGrid {
     opacity: 0.90;
     display: grid;
+    gap: 0;
     grid-template-rows: 3rem calc(100vh - 6rem) 3rem;
     grid-template-columns: 5rem calc(100vw - 10rem) 5rem;
     grid-template-areas:
@@ -123,7 +124,8 @@ image-carousel {
     justify-content: space-between;
     align-items: center;
     justify-items: stretch;
-    grid-template-columns: 1fr 23fr 1fr;
+    gap: 0;
+    grid-template-columns: 4% 92% 4%;
     grid-template-areas:
         'prev list next'
 }
