@@ -61,16 +61,16 @@ Header always set X-Content-Type-Options "nosniff"
 </ELSE>
 Header always set Referrer-Policy "no-referrer"
 
-# For LiteSpeed need to use regular set due to https://forum.openlitespeed.org/threads/setifempty-alternative.5450/
-# Luckilily for now there is no need to merge
 <IfModule !LiteSpeed>
-    Header merge vary Origin,Save-Data,Accept-Encoding
     Header merge timing-allow-origin https://${SERVNAME}:443
 </IfModule>
 <IfModule LiteSpeed>
-    Header set vary Origin,Save-Data,Accept-Encoding
-    Header set timing-allow-origin https://www.simbiat.ru:443
+    Header merge timing-allow-origin https://www.simbiat.ru:443
 </IfModule>
+# Ensure that "Vary" has certain values. Doing 1 by 1, due to LiteSpeed limitation (https://forum.openlitespeed.org/threads/setifempty-alternative.5450/) at the time of writing
+Header merge vary Origin
+Header merge vary Save-Data
+Header merge vary Accept-Encoding
 
 <IfModule !LiteSpeed>
     Header set access-control-expose-headers "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link" "expr=%{req_novary:ACCESS-CONTROL-EXPOSE-HEADERS} == ''"
@@ -141,7 +141,7 @@ Header set Cache-Control "max-age=31556952,public,immutable" "expr=%{CONTENT_TYP
 Header set Cache-Control "max-age=31556952,public,immutable" "expr=%{CONTENT_TYPE} =~ m#application/x-javascript#i"
 Header set Cache-Control "max-age=31556952,public,immutable" "expr=%{CONTENT_TYPE} =~ m#text/javascript#i"
 # Manifest files
-Header set Cache-Control "max-age=604800,public" "expr=%{CONTENT_TYPE} =~ m#application/manifest\+json; charset=utf-8#i"
+Header set Cache-Control "max-age=604800,public" "expr=%{CONTENT_TYPE} =~ m#application/manifest\+json#i"
 Header set Cache-Control "public,no-cache,no-transform" "expr=%{CONTENT_TYPE} =~ m#application/x-web-app-manifest\+json#i"
 Header set Cache-Control "public,no-cache,no-transform" "expr=%{CONTENT_TYPE} =~ m#text/cache-manifest#i"
 # Markdown
@@ -187,11 +187,12 @@ Header set Cache-Control "max-age=31536000,public,immutable" "expr=%{CONTENT_TYP
 Header set Cache-Control "max-age=604800,public" "expr=%{CONTENT_TYPE} =~ m#text/x-cross-domain-policy#i"
 
 #Add directives to ALL Cache-Control headers (that's why it's separate)
-Header merge Cache-Control stale-while-revalidate=1800,stale-if-error=1800,no-transform
-
+Header merge Cache-Control stale-while-revalidate=1800
+Header merge Cache-Control stale-if-error=1800
+Header merge Cache-Control no-transform
 
 ##############################
-# Wnauring charset is UTF
+# Ensure charset is UTF
 ##############################
 AddDefaultCharset UTF-8
 
@@ -205,8 +206,10 @@ RewriteEngine On
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,NC,L]
 
-#Force www
+#Force www when not accessing by IP
+RewriteCond %{HTTP_HOST} !((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*\[?((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?]?\s*$)) [NC]
 RewriteCond %{HTTP_HOST} !^www\. [NC]
+#Also ignore when accessing from localhost
 RewriteCond %{SERVER_ADDR} !=127.0.0.1
 RewriteCond %{SERVER_ADDR} !=::1
 RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,NC,L]
@@ -286,11 +289,17 @@ RewriteRule ^(.*)$  css/min.css [END]
 RewriteCond %{REQUEST_FILENAME} "((^|/)css/((\d+|min)\.)?css\.map)" [NC]
 RewriteRule ^(.*)$  css/min.css.map [END]
 
+#Rewriting for TinyMCE
+RewriteCond %{REQUEST_URI} "(^|/)js\/tinymce\/.*" [NC]
+RewriteRule (^|/)js/tinymce/(.*)$  composer/vendor/tinymce/tinymce/$2 [END]
+
 #Redirect everything to index.php
 #If not from /js folder
 RewriteCond %{REQUEST_FILENAME} !(^|/)js/.*\.(js|ts|jsx|tsx) [NC]
 #If not from /css/modules
 RewriteCond %{REQUEST_FILENAME} !(^|/)css/modules/.*\.css [NC]
+#If not tinymce
+RewriteCond %{REQUEST_FILENAME} !(^|/)css/tinymce\.css(\.map)? [NC]
 #If not from /static/ folder
 RewriteCond %{REQUEST_FILENAME} !(^|/)static/.* [NC]
 #Or not PHPMyAdmin
