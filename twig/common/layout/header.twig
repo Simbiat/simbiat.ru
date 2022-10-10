@@ -22,7 +22,7 @@
     {% endif %}
 {% else %}
     {% if isPROD == false %}
-        {% set extraHeaderIcon = '<a id="prodLink" href="' ~ url|replace({'https://local.':'https://www.'}) ~ '" target="_blank"><img class="linkIcon" src="/img/newtab.svg" alt="Open PROD version"></a>' %}
+        {% set extraHeaderIcon = '<a id="prodLink" href="' ~ url|replace({'https://local.':'https://www.', '.ru':'.dev'}) ~ '" target="_blank"><img class="linkIcon" src="/img/newtab.svg" alt="Open PROD version"></a>' %}
     {% endif %}
 {% endif %}
 <div id="header_logo">
