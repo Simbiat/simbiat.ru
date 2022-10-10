@@ -125,6 +125,10 @@ const tinySettings = {
     image_uploadtab: true,
     images_file_types: 'jpeg,jpg,png,gif,bmp,webp',
     images_upload_credentials: true,
+    images_reuse_filename: true,
+    paste_data_images: false,
+    paste_remove_styles_if_webkit: true,
+    paste_webkit_styles: 'none',
     image_class_list: [
         { title: 'None', value: '' },
         { title: 'Icon', value: 'linkIcon' }

@@ -8,6 +8,7 @@ use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use ipinfo\ipinfo\IPinfo;
 use Simbiat\Config\Common;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Security;
 
@@ -160,7 +161,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         ];
         try {
             return HomePage::$dbController->query($queries);
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception, 'Queries: '.json_encode($queries));
             return false;
         }
     }

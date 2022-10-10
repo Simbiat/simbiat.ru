@@ -1,1 +1,1 @@
-Code of https://www.simbiat.ru
+Code of https://www.simbiat.dev

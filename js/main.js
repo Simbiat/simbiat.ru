@@ -136,6 +136,164 @@ function init() {
         });
     }
 }
+const customColorMap = {
+    '#F5F0F0': 'text',
+    '#9AD4EA': 'interactive',
+    '#8AE59C': 'success',
+    '#F3A0B6': 'failure',
+    '#E6B63D': 'warning',
+    '#808080': 'disabled',
+    '#19424D': 'dark-border',
+    '#266373': 'light-border',
+    '#2E293D': 'article',
+    '#231F2E': 'block',
+    '#17141F': 'body',
+};
+const tinySettings = {
+    selector: 'textarea.tinymce',
+    relative_urls: false,
+    remove_script_host: true,
+    base_url: '/js/tinymce/',
+    document_base_url: window.location.protocol + '//' + window.location.hostname + '/',
+    referrer_policy: 'no-referer',
+    content_security_policy: "default-src 'self'",
+    skin: 'oxide-dark',
+    content_css: '/css/tinymce.css',
+    hidden_input: false,
+    readonly: false,
+    block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6;',
+    branding: true,
+    plugins: 'autolink autosave charmap code emoticons fullscreen help image insertdatetime link lists media preview quickbars searchreplace table visualblocks visualchars wordcount',
+    contextmenu: 'emoticons link image',
+    table_toolbar: 'tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | tabledelete',
+    quickbars_insert_toolbar: false,
+    font_formats: '',
+    fontsize_formats: '',
+    lineheight_formats: '',
+    menu: {
+        file: { title: 'File', items: 'newdocument restoredraft' },
+        edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
+        view: { title: 'View', items: 'code preview | visualaid visualchars visualblocks | fullscreen' },
+        format: { title: 'Format', items: 'underline strikethrough superscript subscript | align' },
+        insert: { title: 'Insert', items: 'link image media codeformat | emoticons charmap hr | insertdatetime' },
+        table: { title: 'Table', items: 'inserttable | cell row column | deletetable' },
+        help: { title: 'Help', items: 'help wordcount' }
+    },
+    valid_styles: {},
+    menubar: 'file edit view format insert table help',
+    toolbar: 'undo redo | blocks | bold italic | forecolor backcolor | blockquote bullist numlist | removeformat',
+    theme_advanced_default_foreground_color: "#F5F0F0",
+    style_formats: [],
+    toolbar_mode: 'wrap',
+    custom_colors: false,
+    color_map: Object.keys(customColorMap).map(function (key) { return [key, customColorMap[key]]; }).flat(),
+    formats: {
+        forecolor: {
+            inline: 'span',
+            attributes: {
+                class: (value) => 'tiny-color-' + customColorMap[value.value],
+            },
+            remove: 'none',
+        },
+        hilitecolor: {
+            inline: 'span',
+            remove: 'none',
+            attributes: {
+                class: (value) => 'tiny-bg-color-' + customColorMap[value.value],
+            },
+        },
+        underline: {
+            inline: 'span',
+            classes: 'tiny-underline',
+            remove: 'none',
+        },
+        alignleft: {
+            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            classes: 'tiny-align-left',
+            remove: 'none',
+        },
+        alignright: {
+            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            classes: 'tiny-align-right',
+            remove: 'none',
+        },
+        aligncenter: {
+            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            classes: 'tiny-align-center',
+            remove: 'none',
+        },
+        alignjustify: {
+            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            classes: 'tiny-align-justify',
+            remove: 'none',
+        },
+        valigntop: {
+            selector: 'td,th,table',
+            classes: 'tiny-valign-top',
+            remove: 'none',
+        },
+        valignmiddle: {
+            selector: 'td,th,table',
+            classes: 'tiny-valign-middle',
+            remove: 'none',
+        },
+        valignbottom: {
+            selector: 'td,th,table',
+            classes: 'tiny-valign-bottom',
+            remove: 'none',
+        }
+    },
+    visual: true,
+    entity_encoding: 'numeric',
+    invalid_styles: 'font-size line-height',
+    schema: 'html5-strict',
+    browser_spellcheck: true,
+    resize_img_proportional: true,
+    link_default_protocol: 'https',
+    autosave_restore_when_empty: true,
+    emoticons_database: 'emojis',
+    image_caption: true,
+    image_advtab: false,
+    image_title: true,
+    image_description: true,
+    image_uploadtab: true,
+    images_file_types: 'jpeg,jpg,png,gif,bmp,webp',
+    images_upload_credentials: true,
+    images_reuse_filename: true,
+    paste_data_images: false,
+    paste_remove_styles_if_webkit: true,
+    paste_webkit_styles: 'none',
+    image_class_list: [
+        { title: 'None', value: '' },
+        { title: 'Icon', value: 'linkIcon' }
+    ],
+    image_dimensions: false,
+    insertdatetime_element: true,
+    link_target_list: [
+        { title: 'New window', value: '_blank' },
+        { title: 'Current window', value: '_self' }
+    ],
+    default_link_target: '_blank',
+    link_assume_external_targets: 'https',
+    link_context_toolbar: true,
+    paste_block_drop: false,
+    visualblocks_default_state: false,
+    lists_indent_on_tab: true,
+    promotion: false,
+    table_appearance_options: false,
+    table_border_widths: [
+        { title: 'default', value: '0.125rem' },
+    ],
+    table_border_styles: [
+        { title: 'Solid', value: 'solid' },
+    ],
+    table_advtab: false,
+    table_cell_advtab: false,
+    table_row_advtab: false,
+    table_style_by_css: false,
+    object_resizing: false,
+    link_title: false,
+};
 function cleanGET() {
     let url = new URL(document.location.href);
     let params = new URLSearchParams(url.search);
@@ -1234,158 +1392,4 @@ class Textarea {
         Textarea._instance = this;
     }
 }
-const customColorMap = {
-    '#F5F0F0': 'text',
-    '#9AD4EA': 'interactive',
-    '#8AE59C': 'success',
-    '#F3A0B6': 'failure',
-    '#E6B63D': 'warning',
-    '#808080': 'disabled',
-    '#19424D': 'dark-border',
-    '#266373': 'light-border',
-    '#2E293D': 'article',
-    '#231F2E': 'block',
-    '#17141F': 'body',
-};
-const tinySettings = {
-    selector: 'textarea.tinymce',
-    relative_urls: false,
-    remove_script_host: true,
-    base_url: '/js/tinymce/',
-    document_base_url: window.location.protocol + '//' + window.location.hostname + '/',
-    referrer_policy: 'no-referer',
-    content_security_policy: "default-src 'self'",
-    skin: 'oxide-dark',
-    content_css: '/css/tinymce.css',
-    hidden_input: false,
-    readonly: false,
-    block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6;',
-    branding: true,
-    plugins: 'autolink autosave charmap code emoticons fullscreen help image insertdatetime link lists media preview quickbars searchreplace table visualblocks visualchars wordcount',
-    contextmenu: 'emoticons link image',
-    table_toolbar: 'tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | tabledelete',
-    quickbars_insert_toolbar: false,
-    font_formats: '',
-    fontsize_formats: '',
-    lineheight_formats: '',
-    menu: {
-        file: { title: 'File', items: 'newdocument restoredraft' },
-        edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
-        view: { title: 'View', items: 'code preview | visualaid visualchars visualblocks | fullscreen' },
-        format: { title: 'Format', items: 'underline strikethrough superscript subscript | align' },
-        insert: { title: 'Insert', items: 'link image media codeformat | emoticons charmap hr | insertdatetime' },
-        table: { title: 'Table', items: 'inserttable | cell row column | deletetable' },
-        help: { title: 'Help', items: 'help wordcount' }
-    },
-    valid_styles: {},
-    menubar: 'file edit view format insert table help',
-    toolbar: 'undo redo | blocks | bold italic | forecolor backcolor | blockquote bullist numlist | removeformat',
-    theme_advanced_default_foreground_color: "#F5F0F0",
-    style_formats: [],
-    toolbar_mode: 'wrap',
-    custom_colors: false,
-    color_map: Object.keys(customColorMap).map(function (key) { return [key, customColorMap[key]]; }).flat(),
-    formats: {
-        forecolor: {
-            inline: 'span',
-            attributes: {
-                class: (value) => 'tiny-color-' + customColorMap[value.value],
-            },
-            remove: 'none',
-        },
-        hilitecolor: {
-            inline: 'span',
-            remove: 'none',
-            attributes: {
-                class: (value) => 'tiny-bg-color-' + customColorMap[value.value],
-            },
-        },
-        underline: {
-            inline: 'span',
-            classes: 'tiny-underline',
-            remove: 'none',
-        },
-        alignleft: {
-            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
-            classes: 'tiny-align-left',
-            remove: 'none',
-        },
-        alignright: {
-            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
-            classes: 'tiny-align-right',
-            remove: 'none',
-        },
-        aligncenter: {
-            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
-            classes: 'tiny-align-center',
-            remove: 'none',
-        },
-        alignjustify: {
-            selector: 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
-            classes: 'tiny-align-justify',
-            remove: 'none',
-        },
-        valigntop: {
-            selector: 'td,th,table',
-            classes: 'tiny-valign-top',
-            remove: 'none',
-        },
-        valignmiddle: {
-            selector: 'td,th,table',
-            classes: 'tiny-valign-middle',
-            remove: 'none',
-        },
-        valignbottom: {
-            selector: 'td,th,table',
-            classes: 'tiny-valign-bottom',
-            remove: 'none',
-        }
-    },
-    visual: true,
-    entity_encoding: 'numeric',
-    invalid_styles: 'font-size line-height',
-    schema: 'html5-strict',
-    browser_spellcheck: true,
-    resize_img_proportional: true,
-    link_default_protocol: 'https',
-    autosave_restore_when_empty: true,
-    emoticons_database: 'emojis',
-    image_caption: true,
-    image_advtab: false,
-    image_title: true,
-    image_description: true,
-    image_uploadtab: true,
-    images_file_types: 'jpeg,jpg,png,gif,bmp,webp',
-    images_upload_credentials: true,
-    image_class_list: [
-        { title: 'None', value: '' },
-        { title: 'Icon', value: 'linkIcon' }
-    ],
-    image_dimensions: false,
-    insertdatetime_element: true,
-    link_target_list: [
-        { title: 'New window', value: '_blank' },
-        { title: 'Current window', value: '_self' }
-    ],
-    default_link_target: '_blank',
-    link_assume_external_targets: 'https',
-    link_context_toolbar: true,
-    paste_block_drop: false,
-    visualblocks_default_state: false,
-    lists_indent_on_tab: true,
-    promotion: false,
-    table_appearance_options: false,
-    table_border_widths: [
-        { title: 'default', value: '0.125rem' },
-    ],
-    table_border_styles: [
-        { title: 'Solid', value: 'solid' },
-    ],
-    table_advtab: false,
-    table_cell_advtab: false,
-    table_row_advtab: false,
-    table_style_by_css: false,
-    object_resizing: false,
-    link_title: false,
-};
 //# sourceMappingURL=main.js.map

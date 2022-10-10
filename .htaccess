@@ -43,7 +43,7 @@ Header unset X-Robots-Tag
     Header set Access-Control-Allow-Origin https://${SERVNAME}:443
 </IfModule>
 <IfModule LiteSpeed>
-    Header set Access-Control-Allow-Origin https://www.simbiat.ru:443
+    Header set Access-Control-Allow-Origin https://www.simbiat.dev:443
 </IfModule>
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set Access-Control-Max-Age "86400"
@@ -65,7 +65,7 @@ Header always set Referrer-Policy "no-referrer"
     Header merge timing-allow-origin https://${SERVNAME}:443
 </IfModule>
 <IfModule LiteSpeed>
-    Header merge timing-allow-origin https://www.simbiat.ru:443
+    Header merge timing-allow-origin https://www.simbiat.dev:443
 </IfModule>
 # Ensure that "Vary" has certain values. Doing 1 by 1, due to LiteSpeed limitation (https://forum.openlitespeed.org/threads/setifempty-alternative.5450/) at the time of writing
 Header merge vary Origin
@@ -213,6 +213,12 @@ RewriteCond %{HTTP_HOST} !^www\. [NC]
 RewriteCond %{SERVER_ADDR} !=127.0.0.1
 RewriteCond %{SERVER_ADDR} !=::1
 RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,NC,L]
+
+#Redirect to .dev domain, if not on localhost
+RewriteCond %{HTTP_HOST} !^www\.simbiat\.dev$ [NC]
+RewriteCond %{SERVER_ADDR} !=127.0.0.1
+RewriteCond %{SERVER_ADDR} !=::1
+RewriteRule ^ https://www.simbiat.dev/%{REQUEST_URI} [R=301,L]
 
 #Redirect bic links to bictracker
 RewriteCond %{REQUEST_URI} (^|/)bic/.* [NC]

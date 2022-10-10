@@ -7,6 +7,177 @@ declare const pageTitle = " on Simbiat Software";
 declare const emailRegex = "[\\p{L}\\d.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*";
 declare const userRegex = "^[\\p{L}\\d.!#$%&'*+\\\\/=?^_`{|}~\\- ]{1,64}$";
 declare function init(): void;
+declare const customColorMap: {
+    [key: string]: string;
+};
+declare const tinySettings: {
+    selector: string;
+    relative_urls: boolean;
+    remove_script_host: boolean;
+    base_url: string;
+    document_base_url: string;
+    referrer_policy: string;
+    content_security_policy: string;
+    skin: string;
+    content_css: string;
+    hidden_input: boolean;
+    readonly: boolean;
+    block_formats: string;
+    branding: boolean;
+    plugins: string;
+    contextmenu: string;
+    table_toolbar: string;
+    quickbars_insert_toolbar: boolean;
+    font_formats: string;
+    fontsize_formats: string;
+    lineheight_formats: string;
+    menu: {
+        file: {
+            title: string;
+            items: string;
+        };
+        edit: {
+            title: string;
+            items: string;
+        };
+        view: {
+            title: string;
+            items: string;
+        };
+        format: {
+            title: string;
+            items: string;
+        };
+        insert: {
+            title: string;
+            items: string;
+        };
+        table: {
+            title: string;
+            items: string;
+        };
+        help: {
+            title: string;
+            items: string;
+        };
+    };
+    valid_styles: {};
+    menubar: string;
+    toolbar: string;
+    theme_advanced_default_foreground_color: string;
+    style_formats: never[];
+    toolbar_mode: string;
+    custom_colors: boolean;
+    color_map: (string | undefined)[];
+    formats: {
+        forecolor: {
+            inline: string;
+            attributes: {
+                class: (value: any) => string;
+            };
+            remove: string;
+        };
+        hilitecolor: {
+            inline: string;
+            remove: string;
+            attributes: {
+                class: (value: any) => string;
+            };
+        };
+        underline: {
+            inline: string;
+            classes: string;
+            remove: string;
+        };
+        alignleft: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+        alignright: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+        aligncenter: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+        alignjustify: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+        valigntop: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+        valignmiddle: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+        valignbottom: {
+            selector: string;
+            classes: string;
+            remove: string;
+        };
+    };
+    visual: boolean;
+    entity_encoding: string;
+    invalid_styles: string;
+    schema: string;
+    browser_spellcheck: boolean;
+    resize_img_proportional: boolean;
+    link_default_protocol: string;
+    autosave_restore_when_empty: boolean;
+    emoticons_database: string;
+    image_caption: boolean;
+    image_advtab: boolean;
+    image_title: boolean;
+    image_description: boolean;
+    image_uploadtab: boolean;
+    images_file_types: string;
+    images_upload_credentials: boolean;
+    images_reuse_filename: boolean;
+    paste_data_images: boolean;
+    paste_remove_styles_if_webkit: boolean;
+    paste_webkit_styles: string;
+    image_class_list: {
+        title: string;
+        value: string;
+    }[];
+    image_dimensions: boolean;
+    insertdatetime_element: boolean;
+    link_target_list: {
+        title: string;
+        value: string;
+    }[];
+    default_link_target: string;
+    link_assume_external_targets: string;
+    link_context_toolbar: boolean;
+    paste_block_drop: boolean;
+    visualblocks_default_state: boolean;
+    lists_indent_on_tab: boolean;
+    promotion: boolean;
+    table_appearance_options: boolean;
+    table_border_widths: {
+        title: string;
+        value: string;
+    }[];
+    table_border_styles: {
+        title: string;
+        value: string;
+    }[];
+    table_advtab: boolean;
+    table_cell_advtab: boolean;
+    table_row_advtab: boolean;
+    table_style_by_css: boolean;
+    object_resizing: boolean;
+    link_title: boolean;
+};
 declare function cleanGET(): void;
 declare function hashCheck(): void;
 declare function router(): void;
@@ -159,170 +330,3 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
-declare const customColorMap: {
-    [key: string]: string;
-};
-declare const tinySettings: {
-    selector: string;
-    relative_urls: boolean;
-    remove_script_host: boolean;
-    base_url: string;
-    document_base_url: string;
-    referrer_policy: string;
-    content_security_policy: string;
-    skin: string;
-    content_css: string;
-    hidden_input: boolean;
-    readonly: boolean;
-    block_formats: string;
-    branding: boolean;
-    plugins: string;
-    contextmenu: string;
-    table_toolbar: string;
-    quickbars_insert_toolbar: boolean;
-    font_formats: string;
-    fontsize_formats: string;
-    lineheight_formats: string;
-    menu: {
-        file: {
-            title: string;
-            items: string;
-        };
-        edit: {
-            title: string;
-            items: string;
-        };
-        view: {
-            title: string;
-            items: string;
-        };
-        format: {
-            title: string;
-            items: string;
-        };
-        insert: {
-            title: string;
-            items: string;
-        };
-        table: {
-            title: string;
-            items: string;
-        };
-        help: {
-            title: string;
-            items: string;
-        };
-    };
-    valid_styles: {};
-    menubar: string;
-    toolbar: string;
-    theme_advanced_default_foreground_color: string;
-    style_formats: never[];
-    toolbar_mode: string;
-    custom_colors: boolean;
-    color_map: (string | undefined)[];
-    formats: {
-        forecolor: {
-            inline: string;
-            attributes: {
-                class: (value: any) => string;
-            };
-            remove: string;
-        };
-        hilitecolor: {
-            inline: string;
-            remove: string;
-            attributes: {
-                class: (value: any) => string;
-            };
-        };
-        underline: {
-            inline: string;
-            classes: string;
-            remove: string;
-        };
-        alignleft: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-        alignright: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-        aligncenter: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-        alignjustify: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-        valigntop: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-        valignmiddle: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-        valignbottom: {
-            selector: string;
-            classes: string;
-            remove: string;
-        };
-    };
-    visual: boolean;
-    entity_encoding: string;
-    invalid_styles: string;
-    schema: string;
-    browser_spellcheck: boolean;
-    resize_img_proportional: boolean;
-    link_default_protocol: string;
-    autosave_restore_when_empty: boolean;
-    emoticons_database: string;
-    image_caption: boolean;
-    image_advtab: boolean;
-    image_title: boolean;
-    image_description: boolean;
-    image_uploadtab: boolean;
-    images_file_types: string;
-    images_upload_credentials: boolean;
-    image_class_list: {
-        title: string;
-        value: string;
-    }[];
-    image_dimensions: boolean;
-    insertdatetime_element: boolean;
-    link_target_list: {
-        title: string;
-        value: string;
-    }[];
-    default_link_target: string;
-    link_assume_external_targets: string;
-    link_context_toolbar: boolean;
-    paste_block_drop: boolean;
-    visualblocks_default_state: boolean;
-    lists_indent_on_tab: boolean;
-    promotion: boolean;
-    table_appearance_options: boolean;
-    table_border_widths: {
-        title: string;
-        value: string;
-    }[];
-    table_border_styles: {
-        title: string;
-        value: string;
-    }[];
-    table_advtab: boolean;
-    table_cell_advtab: boolean;
-    table_row_advtab: boolean;
-    table_style_by_css: boolean;
-    object_resizing: boolean;
-    link_title: boolean;
-};
