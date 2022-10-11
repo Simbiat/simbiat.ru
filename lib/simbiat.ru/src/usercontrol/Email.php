@@ -9,9 +9,6 @@ use Simbiat\Config\Twig;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Security;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\Mailer;
-use Symfony\Component\Mailer\Transport;
 
 class Email extends Entity
 {
@@ -191,7 +188,7 @@ class Email extends Entity
     }
 
     #Send mail
-    public function send(string $subject, array $body = [], string $username = '', bool $debug = false): bool
+    public function send(string $subject, array $body = [], string $username = '', bool $debug = false): int|false
     {
         if (empty($this->id)) {
             return false;
@@ -200,31 +197,28 @@ class Email extends Entity
             #Log email (no sensitive data is supposed to be sent in any emails)
             Security::log('Email', 'Attempted to send email', ['subject' => $subject, 'to' => $this->id, 'body' => $body]);
             #Create transport
-            $transport = Transport::fromDsn(SMTP::getDSN());
+            $transport = SMTP::getTransport();
             #Create basic email
             $email = SMTP::getEmail();
             #Add receiver
             if (Common::$PROD) {
-                $email->addTo($this->id);
+                $email->addTo($this->id, $username ?? null);
             } else {
                 #On test always use admin mail
                 $email->addTo(Common::adminMail);
             }
             #Set priority for alerts
             if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
-                $email->priority(1);
+                $email->addHeader('Priority', 'Urgent');
+                $email->addHeader('Importance', 'High');
             }
             #Add content
-            $email->subject(Common::siteName.': '.$subject);
-            $email->html(Twig::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($this->id)])));
-            #Sign email
-            $signer = SMTP::getSigner();
-            $email = $signer->sign($email);
-            (new Mailer($transport))->send($email);
-            return true;
-        } catch (TransportExceptionInterface $e) {
-            Errors::error_log($e, $e->getDebug(), $debug);
-            return false;
+            $email->setSubject(Common::siteName.': '.$subject);
+            $email->addContent(
+                'text/html', Twig::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($this->id)]))
+            );
+            $response = $transport->send($email);
+            return $response->statusCode();
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $debug);
             return false;

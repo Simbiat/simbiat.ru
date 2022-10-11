@@ -26,30 +26,10 @@
       <path value="$PROJECT_DIR$/composer/vendor/league/uri-interfaces" />
       <path value="$PROJECT_DIR$/composer/vendor/symfony/html-sanitizer" />
       <path value="$PROJECT_DIR$/composer/vendor/masterminds/html5" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/event-dispatcher-contracts" />
-      <path value="$PROJECT_DIR$/composer/vendor/doctrine/lexer" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/mailer" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/mime" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-intl-idn" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-intl-normalizer" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-php72" />
-      <path value="$PROJECT_DIR$/composer/vendor/egulias/email-validator" />
-      <path value="$PROJECT_DIR$/composer/vendor/psr/container" />
-      <path value="$PROJECT_DIR$/composer/vendor/psr/event-dispatcher" />
-      <path value="$PROJECT_DIR$/composer/vendor/psr/log" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/event-dispatcher" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/service-contracts" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/error-handler" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/config" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/http-foundation" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/translation-contracts" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/var-dumper" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/http-kernel" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/filesystem" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/twig-bridge" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/dependency-injection" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/twig-bundle" />
       <path value="$PROJECT_DIR$/composer/vendor/tinymce/tinymce" />
+      <path value="$PROJECT_DIR$/composer/vendor/sendgrid/php-http-client" />
+      <path value="$PROJECT_DIR$/composer/vendor/sendgrid/sendgrid" />
+      <path value="$PROJECT_DIR$/composer/vendor/starkbank/ecdsa" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

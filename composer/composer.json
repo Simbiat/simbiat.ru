@@ -1,6 +1,6 @@
 {
     "name": "simbiat/simbiat.ru",
-    "description": "Package for simbiat.ru",
+    "description": "Package for simbiat.dev",
     "prefer-stable" : true,
     "minimum-stability": "dev",
     "license": "AGPL-3.0-or-later",
@@ -8,7 +8,7 @@
         {
           "name": "Dmitry Kustov",
           "email": "simbiat@outlook.com",
-          "homepage": "https://www.simbiat.ru",
+          "homepage": "https://www.simbiat.dev",
           "role": "Developer"
         }
     ],
@@ -17,8 +17,7 @@
         "matomo/device-detector": "^6",
         "twig/twig": "^3",
         "symfony/html-sanitizer": "^6",
-        "symfony/mailer": "^6",
-        "symfony/twig-bundle": "^6",
+        "sendgrid/sendgrid": "^8 ",
         "ipinfo/ipinfo": "^2",
         "tinymce/tinymce": "^6",
         "ext-zip": "*",

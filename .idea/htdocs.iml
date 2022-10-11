@@ -53,30 +53,10 @@
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/league/uri-interfaces" />
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/html-sanitizer" />
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/masterminds/html5" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/event-dispatcher-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/doctrine/lexer" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/mailer" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/mime" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/polyfill-intl-idn" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/polyfill-intl-normalizer" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/polyfill-php72" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/egulias/email-validator" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/container" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/event-dispatcher" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/log" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/event-dispatcher" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/service-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/error-handler" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/config" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/http-foundation" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/translation-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/var-dumper" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/http-kernel" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/filesystem" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/twig-bridge" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/dependency-injection" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/twig-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/tinymce/tinymce" />
+      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sendgrid/php-http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sendgrid/sendgrid" />
+      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/starkbank/ecdsa" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

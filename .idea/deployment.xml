@@ -10,7 +10,7 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="www.simbiat.ru">
+      <paths name="www.simbiat.dev">
         <serverdata>
           <mappings>
             <mapping deploy="/htdocs" local="$PROJECT_DIR$" web="/" />
@@ -18,6 +18,6 @@
         </serverdata>
       </paths>
     </serverData>
-    <option name="myUploadOnCheckinName" value="www.simbiat.ru" />
+    <option name="myUploadOnCheckinName" value="www.simbiat.dev" />
   </component>
 </project>
