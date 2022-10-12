@@ -267,3 +267,6 @@ blockquote>.copyQuote {
 .block {
     display: block;
 }
+.w100pc {
+    width: 100%;
+}
