@@ -32,7 +32,13 @@
                 {% if http_error and (static_page == false or (static_page and http_error != 'database' and http_error != 'maintenance')) and cached_page == false %}
                     <article id="http_error">
                         {% if construction == false %}
+                            {% if http_error not in ['database', 'maintenance', 'teapot'] %}
+                                <p>An error code <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not('httperror/'~http_error in url) %} to</p><code data-description="Failed URL">{{ url }}</code><p class="noLetter">page{% endif %}. Here's what the server has to say in its defence:</p>
+                            {% endif %}
                             {{ include('errors/'~http_error~'.twig') }}
+                            {% if http_error not in ['database', 'maintenance', 'teapot', 418] and session_data.prevPage %}
+                                <p>You can try going back to previous <a href="{{ session_data.prevPage }}">page</a>.</p>
+                            {% endif %}
                         {% else %}
                             {{ include('errors/construction.twig') }}
                         {% endif %}

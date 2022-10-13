@@ -1,8 +1,2 @@
-<p>Page not found.</p>
-{% if suggested_link %}
-    <p>Perhaps, this <a href="{{ suggested_link }}">page</a> can be of use to you?</p>
-{% endif %}
-{% if not('httperror/404' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">Page not found.{% if suggested_link %} Perhaps, this <a href="{{ suggested_link }}">page</a> can be of use to you?{% endif %}</blockquote>
 <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif">

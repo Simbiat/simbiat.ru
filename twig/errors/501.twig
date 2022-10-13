@@ -1,6 +1,3 @@
-<p>I do not get what you're saying. Yet. I am learning stuff.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/501' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">I do not get what you're saying. Yet. I am learning stuff.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="501 Not Implemented" src="/img/errors/lofi.gif">

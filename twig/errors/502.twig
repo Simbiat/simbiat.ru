@@ -1,6 +1,3 @@
-<p>Some trouble on the narrow path to content up ahead. Maybe, try again a bit later?</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/502' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">Some trouble on the narrow path to content up ahead. Maybe, try again a bit later?</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="502 Bad Gateway" src="/img/errors/badgateway.gif">

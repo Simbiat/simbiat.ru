@@ -1,6 +1,3 @@
-<p>You were too slow in sharing details of your request.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/408' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">You were too slow in sharing details of your request.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="408 Request Timeout" src="/img/errors/tooslow.gif">

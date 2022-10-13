@@ -1,6 +1,3 @@
-<p>Something was here someday. But not anymore. You will forget, as well, in time.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/410' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">Something was here someday. But not anymore. You will forget, as well, in time.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="410 Gone" src="/img/errors/gone.gif">

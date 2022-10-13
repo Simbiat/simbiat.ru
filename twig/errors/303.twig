@@ -1,6 +1,3 @@
-<p>How did you get here? This page represents the complicated internals of HTTP requests, you should not be able to reach it.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/303' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">How did you get here? This page represents the complicated internals of HTTP requests, you should not be able to reach it.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="303 See Other" src="/img/errors/seeother.gif">

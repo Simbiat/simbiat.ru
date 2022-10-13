@@ -1,6 +1,3 @@
-<p>Something went wrong, possibly a bug.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/500' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">Something went wrong, possibly a bug.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="500 Internal server error" src="/img/errors/bug.gif">

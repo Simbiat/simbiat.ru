@@ -1,6 +1,3 @@
-<p>Page is unavailable. Possibly a bug or some kind of issue.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/503' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">Page is unavailable. Possibly a bug or some kind of issue.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="503 Service unavailable" src="/img/errors/bug2.gif">

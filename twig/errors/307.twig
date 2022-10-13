@@ -1,6 +1,3 @@
-<p>Um... Actually, you were supposed to get redirected to a temporary page, but looks like something went wrong, and now you are kind of lost.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/307' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">Um... Actually, you were supposed to get redirected to a temporary page, but looks like something went wrong, and now you are kind of lost.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="307 Temporary Redirect" src="/img/errors/lost.gif">

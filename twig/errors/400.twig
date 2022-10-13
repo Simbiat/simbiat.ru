@@ -1,9 +1,3 @@
-<p>I do not get what you're saying.</p>
-{% if suggested_link %}
-    <p>Perhaps, you meant <a href="{{ suggested_link }}">this</a>?</p>
-{% endif %}
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/400' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">I do not get what you're saying.{% if suggested_link %} Perhaps, you meant <a href="{{ suggested_link }}">this</a>?{% endif %}</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="Do not understand" src="/img/errors/dontgetit.gif">

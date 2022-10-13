@@ -74,21 +74,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $data = unserialize($data);
         #Prepare empty array
         $queries = [];
-        #Add previous and current pages to attempt to determine if this is a page refresh or a new visit
-        $newView = false;
-        if (empty($data['prevPage']) && empty($data['curPage'])) {
-            $data['curPage'] = HomePage::$canonical;
-            $data['prevPage'] = null;
-            $newView = true;
-        } else {
-            if ($data['curPage'] !== HomePage::$canonical) {
-                $data['prevPage'] = $data['curPage'];
-                $data['curPage'] = HomePage::$canonical;
-                $newView = true;
-            }
-        }
-        #Update SEO related tables, if this was determined not to be a page refresh
-        if (empty($data['UA']['bot']) && $data['IP'] !== null && $newView) {
+        #Update SEO related tables, if this was determined to be a new page view
+        if (empty($data['UA']['bot']) && $data['IP'] !== null && $data['newView']) {
             #Update unique visitors
             $queries[] = [
                 'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
@@ -200,6 +187,19 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Try to get the data
         try {
             $this->getClientData($data);
+            #Add previous and current pages to attempt to determine if this is a page refresh or a new visit
+            $data['newView'] = false;
+            if (empty($data['prevPage']) && empty($data['curPage'])) {
+                $data['curPage'] = HomePage::$canonical;
+                $data['prevPage'] = null;
+                $data['newView'] = true;
+            } else {
+                if ($data['curPage'] !== HomePage::$canonical) {
+                    $data['prevPage'] = $data['curPage'];
+                    $data['curPage'] = HomePage::$canonical;
+                    $data['newView'] = true;
+                }
+            }
             #Check if IP is banned
             if (!empty($data['IP'])) {
                 try {

@@ -1,6 +1,3 @@
-<p>How did you get here? Are you lost? This is not Florida. Or Kansas for that matter. Check your map.</p>
-{% if reason %}<samp class="failure">{{ reason }}</samp>{% endif %}
-{% if not('httperror/302' in url) %}
-    <code>{{ url }}</code>
-{% endif %}
+<blockquote data-author="Server">How did you get here? Are you lost? This is not Florida. Or Kansas for that matter. Check your map.</blockquote>
+{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="302 Found" src="/img/errors/florida.gif">
