@@ -21,9 +21,14 @@ class Countables extends Page
     protected string $h1 = 'Sitemap: ';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Sitemap: ';
+    #Max elements per sitemap page
+    protected int $maxElements = 50000;
 
     protected function generate(array $path): array
     {
+        if ($this->maxElements > 50000 || $this->maxElements < 10) {
+            $this->maxElements = 50000;
+        }
         $format = $path[0];
         #Slice the path
         $path = array_slice($path, 1);
@@ -39,32 +44,32 @@ class Countables extends Page
         #Update link of breadcrumb
         $this->breadCrumb[0]['href'] .= $path[0].'/';
         #Set starting position for query
-        $start = ($path[1]-1)*50000;
+        $start = ($path[1]-1)*$this->maxElements;
         #Set values based on route
         switch($path[0]) {
             case 'bics':
                 $this->breadCrumb[0]['name'] = 'Russian Banks';
-                $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list`'.($format === 'html' ? ' ORDER BY `NameP`' : '').' LIMIT '.$start.', 50000';
+                $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list`'.($format === 'html' ? ' ORDER BY `NameP`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'characters':
                 $this->breadCrumb[0]['name'] = 'FFXIV Characters';
-                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', 50000';
+                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'freecompanies':
                 $this->breadCrumb[0]['name'] = 'FFXIV Free Companies';
-                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', 50000';
+                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'linkshells':
                 $this->breadCrumb[0]['name'] = 'FFXIV Linkshells';
-                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', 50000';
+                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'pvpteams':
                 $this->breadCrumb[0]['name'] = 'FFXIV PvP Teams';
-                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvpteamid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', 50000';
+                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvpteamid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'achievements':
                 $this->breadCrumb[0]['name'] = 'FFXIV Achievements';
-                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', 50000';
+                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb

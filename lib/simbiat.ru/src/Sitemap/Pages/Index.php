@@ -21,9 +21,14 @@ class Index extends Page
     protected string $h1 = 'Sitemap Index';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Sitemap Index';
+    #Max elements per sitemap page
+    protected int $maxElements = 50000;
 
     protected function generate(array $path): array
     {
+        if ($this->maxElements > 50000 || $this->maxElements < 10) {
+            $this->maxElements = 50000;
+        }
         if ($path[0] === 'txt' || $path[0] === 'xml') {
             $this->h2push = [];
         }
@@ -51,10 +56,10 @@ class Index extends Page
         }
         #Generate links
         foreach ($counts as $linkType) {
-            if ($linkType['count'] <= 50000) {
+            if ($linkType['count'] <= $this->maxElements) {
                 $links[] = ['loc'=>$linkType['link'].'/', 'name'=>$linkType['name']];
             } else {
-                $pages = intval(ceil($linkType['count']/50000));
+                $pages = intval(ceil($linkType['count']/$this->maxElements));
                 for ($page = 1; $page <= $pages; $page++) {
                     $links[] = ['loc'=>$linkType['link'].'/'.$page.'/', 'name'=>$linkType['name'].', Page '.$page];
                 }
