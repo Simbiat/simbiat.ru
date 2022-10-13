@@ -326,6 +326,14 @@ class User extends Entity
 
     public function login(bool $afterRegister = false): array
     {
+        #Check if already logged in and return early
+        if (!empty($_SESSION['userid'])) {
+            if ($afterRegister) {
+                return ['status' => 201, 'response' => true];
+            } else {
+                return ['response' => true];
+            }
+        }
         #Validating data
         if (empty($_POST['signinup']['email'])) {
             Security::log('Failed login', 'No email provided');
