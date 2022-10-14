@@ -31,6 +31,8 @@ abstract class Page
     protected string $language = '';
     #Flag to indicate this is a static page
     protected bool $static = false;
+    #Flag to indicate that session data change is possible on this page
+    protected bool $sessionChange = false;
     #Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
     #Cache strategy: aggressive, private, live, month, week, day, hour
@@ -65,6 +67,10 @@ abstract class Page
 
     public final function get(array $path): array
     {
+        #Close session early, if we know, that its data will not be changed (default)
+        if (!$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
         #Send page language
         if (!empty($this->language)) {
             @header('Content-Language: '.$this->language);
@@ -86,6 +92,10 @@ abstract class Page
                 #Generate the page
                 try {
                     $page = $this->generate($path);
+                    #Close session if it's still open. Normally at this point all manipulations have been done.
+                    if (session_status() === PHP_SESSION_ACTIVE) {
+                        session_write_close();
+                    }
                 } catch (\Throwable $exception) {
                     if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                         $page = ['http_error' => 400, 'reason' => $exception->getMessage()];

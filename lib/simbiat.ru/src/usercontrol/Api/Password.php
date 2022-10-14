@@ -18,6 +18,8 @@ class Password extends Api
     protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = true;
+    #Flag to indicate that session data change is possible on this page
+    protected bool $sessionChange = true;
 
     protected function genData(array $path): array
     {

@@ -120,6 +120,10 @@ class HomePage
                         if (self::$dbup && session_status() === PHP_SESSION_NONE && !self::$staleReturn) {
                             session_set_save_handler(new Session, true);
                             session_start();
+                            #Update CSRF token
+                            if ($uri[0] !== 'api') {
+                                $_SESSION['CSRF'] = Security::genToken();
+                            }
                             #Show that client is unsupported
                             if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
                                 self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
@@ -244,7 +248,7 @@ class HomePage
                 return false;
             } else {
                 try {
-                    $twigVars = array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]);
+                    $twigVars = array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]);
                     ob_end_clean();
                     ignore_user_abort(true);
                     ob_start();
@@ -267,18 +271,18 @@ class HomePage
         } else {
             ob_start();
             try {
-                $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? null]));
+                $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]));
             } catch (\Throwable $exception) {
                 (new Errors)->error_log($exception);
                 Headers::clientReturn('503', false);
                 try {
-                    $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['XCSRFToken' => $this->csrfUpdate($twigVars['template_override'] ?? 'index.twig')], ['session_data' => $_SESSION ?? NULL]));
+                    $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['session_data' => $_SESSION ?? NULL]));
                 } catch (\Throwable) {
                     $output = 'Twig failure';
                 }
             }
             #Close session
-            if (session_status() === PHP_SESSION_ACTIVE && !self::$staleReturn) {
+            if (session_status() === PHP_SESSION_ACTIVE) {
                 session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
@@ -293,18 +297,5 @@ class HomePage
             }
             exit;
         }
-    }
-
-    #Helper function to update CSRF token for HTML pages only (so that POST API calls from pages will still succeed)
-    private function csrfUpdate(string $template): string
-    {
-        if ($template === 'index.twig') {
-            #Update CSRF only if HTML pages are used
-            $XCSRFToken = Security::genToken();
-            $_SESSION['CSRF'] = $XCSRFToken;
-        } else {
-            $XCSRFToken = $_SESSION['CSRF'] ?? Security::genToken();
-        }
-        return $XCSRFToken;
     }
 }

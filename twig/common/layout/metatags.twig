@@ -19,7 +19,7 @@
 <meta itemprop="description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
 <meta itemprop="image" content="{{ ogimage|default(domain ~ '/img/favicons/ogimage.png') }}">
 
-<meta name="X-CSRF-Token" content="{{ XCSRFToken }}" />
+<meta name="X-CSRF-Token" content="{{ session_data.CSRF }}" />
 <!-- Custom meta tag to indicate whether Save-Data header was received -->
 <meta name="save_data" content="{{ save_data }}" />
 

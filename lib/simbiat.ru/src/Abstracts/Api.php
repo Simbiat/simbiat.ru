@@ -31,10 +31,16 @@ abstract class Api
     protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = false;
+    #Flag to indicate that session data change is possible on this page
+    protected bool $sessionChange = false;
 
     #This is general routing check for supported node
     public final function route(array $path): array
     {
+        #Close session early, if we know, that its data will not be changed (default)
+        if (!$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
         if ($this->topLevel) {
             #Send headers
             @header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
@@ -52,6 +58,10 @@ abstract class Api
         } else {
             try {
                 $data = $this->getData($path);
+                #Close session if it's still open. Normally at this point all manipulations have been done.
+                if (session_status() === PHP_SESSION_ACTIVE) {
+                    session_write_close();
+                }
             } catch (\Throwable $exception) {
                 if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                     $data = ['http_error' => 400, 'reason' => $exception->getMessage()];
