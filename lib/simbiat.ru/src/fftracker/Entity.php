@@ -118,7 +118,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         if ($check === true) {
             #Entity already registered
-            return 403;
+            return 409;
         } else {
             #Try to get data from Lodestone
             $this->lodestone = $this->getFromLodestone();

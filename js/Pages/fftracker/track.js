@@ -23,14 +23,14 @@ export class ffTrack {
             spinner.classList.remove('hidden');
             ajax(location.protocol + '//' + location.host + '/api/fftracker/' + this.select.value + '/' + this.idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
-                    new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was registered. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + this.select.value + '/' + this.idInput.value + '/' + '" target="_blank">here</a>.', 'success', 0);
+                    new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was registered. Check <a href="' + data.location + '" target="_blank">here</a>.', 'success', 0);
                 }
                 else if (data === '404') {
                     new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was not found on Lodestone.', 'failure', 10000);
                 }
                 else {
                     if (data.reason.match(/^ID `.*` is already registered$/ui)) {
-                        new Snackbar(data.reason + '. Check <a href="' + location.protocol + '//' + location.host + '/fftracker/' + this.select.value + '/' + this.idInput.value + '/' + '" target="_blank">here</a>.', 'warning', 0);
+                        new Snackbar(data.reason + '. Check <a href="' + data.location + '" target="_blank">here</a>.', 'warning', 0);
                     }
                     else {
                         new Snackbar(data.reason, 'failure', 10000);

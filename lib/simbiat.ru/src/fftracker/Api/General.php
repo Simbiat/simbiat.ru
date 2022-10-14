@@ -55,8 +55,8 @@ abstract class General extends Api
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } elseif ($data === 500 || $data === false) {
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
-        } elseif ($data === 403) {
-            return ['http_error' => 403, 'reason' => 'ID `'.$path[0].'` is already registered'];
+        } elseif ($data === 409) {
+            return ['http_error' => 409, 'reason' => 'ID `'.$path[0].'` is already registered', 'location' => '/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0]];
         } elseif ($data !== true && empty($data['id'])) {
             return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Tracker'];
         }
