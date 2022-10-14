@@ -33,6 +33,8 @@ abstract class Api
     protected bool $CSRF = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = false;
+    #List of allowed origins, if we want to limit them
+    protected array $allowedOrigins = [];
 
     #This is general routing check for supported node
     public final function route(array $path): array
@@ -53,7 +55,7 @@ abstract class Api
         #Check that user is authenticated
         } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
-        } elseif ($this->CSRF && !$this->antiCSRF(exit: false)) {
+        } elseif ($this->CSRF && !$this->antiCSRF($this->allowedOrigins)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
@@ -102,6 +104,10 @@ abstract class Api
                     #Suppressed due to https://youtrack.jetbrains.com/issue/WI-65237/Wrong-array-element-type-is-inferred-on-assignment
                     /** @noinspection PhpParamsInspection */
                     $this->fieldFilter($result['json_ready']['data']);
+                }
+                #Location is for returning a link for the new resource
+                if (!empty($data['location'])) {
+                    $result['json_ready']['location'] = $data['location'];
                 }
                 if (!empty($data['alt_links'])) {
                     $result['json_ready']['links'] = $data['alt_links'];
@@ -162,7 +168,7 @@ abstract class Api
     }
 
     #Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to $_SESSION
-    protected final function antiCSRF(array $allowOrigins = [], bool $originRequired = false, bool $exit = true): bool
+    protected final function antiCSRF(array $allowOrigins = []): bool
     {
         #Get CSRF token
         $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
@@ -181,8 +187,6 @@ abstract class Api
                     if (empty($allowOrigins) ||
                         #If origins are limited
                         (
-                            #Check if origin is not present and is enforced
-                            (empty($origin) && $originRequired === false) ||
                             #Check if origin is present
                             (!empty($origin) &&
                                 #Check if it's a valid origin and is allowed
@@ -214,7 +218,7 @@ abstract class Api
         ]);
         #Send 403 error code in header, with option to force close connection
         if (!HomePage::$staleReturn) {
-            Headers::clientReturn('403', $exit);
+            Headers::clientReturn('403', false);
         }
         return false;
     }

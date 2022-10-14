@@ -66,18 +66,19 @@ abstract class General extends Api
         $result = ['response' => $data];
         #Return 201 if we were registering an entity
         if ($path[1] === 'register' && $data === true) {
+            $result['location'] = '/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0];
             $result['status'] = 201;
         }
         #Link header/tag for API
         $result['alt_links'] = [
-            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/fftracker/'.$this->nameForLinks.'/' . $path[0]],
+            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/' . $path[0]],
         ];
         if (empty($data['dates']['deleted'])) {
             if ($path[1] !== 'lodestone') {
-                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.$this->nameForLinks.'/' . $path[0] . '/lodestone'];
+                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/' . $path[0] . '/lodestone'];
             }
             if ($path[1] === 'update' || $path[1] === 'register') {
-                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.$this->nameForLinks.'/' . $path[0]];
+                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/' . $path[0]];
             }
             if ($this->nameForLinks === 'achievement') {
                 if (!empty($data['dbid'])) {
