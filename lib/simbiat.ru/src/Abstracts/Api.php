@@ -82,6 +82,10 @@ abstract class Api
                 $result['cacheAge'] = $data['cacheAge'];
             }
             if (!empty($data['http_error'])) {
+                #Location is for returning a link for the already existing resource, if we tried to create a new one
+                if (!empty($data['location'])) {
+                    $result['json_ready']['location'] = $data['location'];
+                }
                 if (!empty($data['reason'])) {
                     $result['json_ready']['reason'] = $data['reason'];
                 }
