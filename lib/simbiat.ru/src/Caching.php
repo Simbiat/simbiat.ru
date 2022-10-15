@@ -96,9 +96,9 @@ class Caching
     public function key(string $key): string
     {
         if (empty($key)) {
-            $key = hash('sha3-256', HomePage::$canonical);
+            $key = hash('sha3-512', HomePage::$canonical);
         } else {
-            $key = hash('sha3-256', $key);
+            $key = hash('sha3-512', $key);
         }
         return $key;
     }
