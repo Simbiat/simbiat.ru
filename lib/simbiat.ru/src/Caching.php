@@ -48,7 +48,7 @@ class Caching
             #Generate key
             $key = $this->key($key);
             #Generate subdirectory name
-            $subDir = substr($key, 0, 2).'/'.substr($key, 2, 2).'/';
+            $subDir = substr($key, 0, 2).'/'.substr($key, 2, 2).'/'.substr($key, 4, 2).'/';
             #Create folder if missing
             if (!is_dir($this->cacheDir.$subDir)) {
                 @mkdir($this->cacheDir.$subDir, recursive: true);
@@ -71,7 +71,7 @@ class Caching
         #Generate key
         $key = $this->key($key);
         #Generate file name
-        $file = $this->cacheDir.substr($key, 0, 2).'/'.substr($key, 2, 2).'/'.$key. '.json';
+        $file = $this->cacheDir.substr($key, 0, 2).'/'.substr($key, 2, 2).'/'.substr($key, 4, 2).'/'.$key. '.json';
         $data = $this->getArrayFromFile($file);
         if (empty($data)) {
             @header('X-Server-Cached: false');
