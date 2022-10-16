@@ -10,17 +10,17 @@ class Images
     public static function download(string $from, string $to, bool $convert = true): string|false
     {
         #Download to temp
-        if (@file_put_contents(sys_get_temp_dir().'/'.basename($to), @fopen($from, 'r'))) {
+        $temp = (new Curl)->getFile($from);
+        if ($temp === false) {
+            return false;
+        } else {
             #Create directory if missing
             if (!is_dir(dirname($to))) {
                 #Create it recursively
                 @mkdir(dirname($to), recursive: true);
             }
-            #Copy to actual location
-            @copy(sys_get_temp_dir().'/'.basename($to), $to);
-            @unlink(sys_get_temp_dir().'/'.basename($to));
-        } else {
-            return false;
+            #Move file
+            rename($temp['server_path'].'/'.$temp['server_name'], $to);
         }
         if (is_file($to)) {
             if ($convert) {
