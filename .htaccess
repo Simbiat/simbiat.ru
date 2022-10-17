@@ -259,9 +259,13 @@ RewriteCond %{REQUEST_FILENAME} "((^|/)img/.*)" [NC]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule .* - [QSA,END]
 
+#Handle avatars
+RewriteCond %{REQUEST_URI} "((^|/)img/avatars/(.*))" [NC]
+RewriteCond %{DOCUMENT_ROOT}%2img/uploaded/%3 -f
+RewriteRule ((^|/)img/avatars/(.*)) img/uploaded/$3 [QSA,END]
 #Handle non existent avatars
-RewriteCond %{REQUEST_FILENAME} "((^|/)img/fftracker/avatars/.*)" [NC]
-RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} "((^|/)img/avatars/(.*))" [NC]
+RewriteCond %{DOCUMENT_ROOT}%2img/uploaded/%3 !-f
 RewriteRule .* img/avatar.svg [QSA,END]
 
 #Handle non existent crests
