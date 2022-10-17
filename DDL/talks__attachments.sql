@@ -1,23 +1,8 @@
-create table talks__attachments
+CREATE TABLE `talks__attachments`
 (
-    fileid    int unsigned auto_increment comment 'File ID',
-    postid    int unsigned                                not null comment 'ID of the post to which the file is attached',
-    name      varchar(128)                                not null comment 'Name of the file to be shown to humans',
-    mime      varchar(100)                                not null comment 'MIME Type',
-    size      bigint unsigned default 0                   not null comment 'Size of the file in bytes',
-    hash      varchar(256)                                not null comment 'File hash. Also used as file name on file system.',
-    added     timestamp       default current_timestamp() not null comment 'When file was added',
-    downloads int unsigned    default 0                   not null comment 'Number of downloads',
-    constraint fileid
-        unique (fileid),
-    constraint hash
-        unique (hash),
-    constraint file_to_post
-        foreign key (postid) references talks__posts (postid)
-            on update cascade
-)
-    comment 'List of file attachments';
-
-create index mime
-    on talks__attachments (mime);
-
+    `postid` INT UNSIGNED NOT NULL COMMENT 'Post ID',
+    `fileid` VARCHAR(128) NOT NULL COMMENT 'File hash, which is also its ID. Also used as file name on file system.',
+    PRIMARY KEY (`postid`, `fileid`),
+    CONSTRAINT `attachment_to_file` FOREIGN KEY (`fileid`) REFERENCES `sys__files` (`fileid`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `attachment_to_post` FOREIGN KEY (`postid`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE ON DELETE CASCADE
+);

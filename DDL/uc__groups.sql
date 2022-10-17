@@ -1,9 +1,6 @@
-create table uc__groups
+CREATE TABLE `uc__groups`
 (
-    groupid   int unsigned auto_increment
-        primary key,
-    groupname varchar(25) not null,
-    constraint groupname
-        unique (groupname)
+    `groupid`   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `groupname` VARCHAR(25) NOT NULL,
+    CONSTRAINT `groupname` UNIQUE (`groupname`)
 );
-

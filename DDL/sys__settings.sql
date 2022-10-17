@@ -1,8 +1,6 @@
-create table sys__settings
+CREATE TABLE `sys__settings`
 (
-    setting     varchar(100)  not null
-        primary key,
-    value       varchar(5000) null,
-    description text          null
+    `setting`     VARCHAR(100)  NOT NULL PRIMARY KEY,
+    `value`       VARCHAR(5000) NULL,
+    `description` TEXT          NULL
 );
-

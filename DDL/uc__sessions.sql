@@ -1,32 +1,23 @@
-create table uc__sessions
+CREATE TABLE `uc__sessions`
 (
-    sessionid varchar(256)                                    not null comment 'Session''s UID'
-        primary key,
-    cookieid  varchar(256)                                    null comment 'Cookie associated with the session',
-    time      timestamp           default current_timestamp() not null on update current_timestamp() comment 'Last time session was determined active',
-    userid    int unsigned                                    null comment 'User ID, in case session is related to a user. Needed mainly for invalidation in case of complete user deletion.',
-    bot       tinyint(1) unsigned default 0                   not null comment 'Whether session was determined to be a bot',
-    ip        varchar(45)                                     null comment 'Session''s IP',
-    useragent text                                            null comment 'UserAgent used in session',
-    username  varchar(64)                                     null comment 'Name of either user (if logged in) or bot, if session belongs to one',
-    page      varchar(256)                                    null comment 'Which page is being viewed at the moment',
-    data      text                                            null comment 'Session''s data. Not meant for sensitive information.',
-    constraint session_to_cookie
-        foreign key (cookieid) references uc__cookies (cookieid)
-            on update cascade on delete set null,
-    constraint session_to_user
-        foreign key (userid) references uc__users (userid)
-            on update cascade on delete cascade
+    `sessionid` VARCHAR(256)                                    NOT NULL COMMENT 'Session''s UID' PRIMARY KEY,
+    `cookieid`  VARCHAR(256)                                    NULL COMMENT 'Cookie associated with the session',
+    `time`      TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'Last time session was determined active',
+    `userid`    INT UNSIGNED                                    NULL COMMENT 'User ID, in case session is related to a user. Needed mainly for invalidation in case of complete user deletion.',
+    `bot`       TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Whether session was determined to be a bot',
+    `ip`        VARCHAR(45)                                     NULL COMMENT 'Session''s IP',
+    `useragent` TEXT                                            NULL COMMENT 'UserAgent used in session',
+    `username`  VARCHAR(64)                                     NULL COMMENT 'Name of either user (if logged in) or bot, if session belongs to one',
+    `page`      VARCHAR(256)                                    NULL COMMENT 'Which page is being viewed at the moment',
+    `data`      TEXT                                            NULL COMMENT 'Session''s data. Not meant for sensitive information.',
+    CONSTRAINT `session_to_cookie` FOREIGN KEY (`cookieid`) REFERENCES `uc__cookies` (`cookieid`) ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT `session_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create index bot
-    on uc__sessions (bot);
+CREATE INDEX `bot` ON `uc__sessions` (`bot`);
 
-create index time
-    on uc__sessions (time desc);
+CREATE INDEX `time` ON `uc__sessions` (`time` DESC);
 
-create index username
-    on uc__sessions (username);
+CREATE INDEX `username` ON `uc__sessions` (`username`);
 
-create index viewing
-    on uc__sessions (page);
+CREATE INDEX `viewing` ON `uc__sessions` (`page`);

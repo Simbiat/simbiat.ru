@@ -1,17 +1,12 @@
-create table ffxiv__freecompany_ranking
+CREATE TABLE `ffxiv__freecompany_ranking`
 (
-    freecompanyid varchar(20)                                      not null comment 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
-    date          date                 default current_timestamp() not null comment 'Date of the ranking as identified by tracker',
-    weekly        smallint(3) unsigned default 500                 not null comment 'Weekly ranking as reported by Lodestone',
-    monthly       smallint(3) unsigned default 500                 not null comment 'Monthly ranking as reported by Lodestone',
-    members       smallint(3) unsigned default 1                   not null comment 'Number of registered members at the date of rank update',
-    primary key (freecompanyid, date),
-    constraint fc_ranking_id
-        foreign key (freecompanyid) references ffxiv__freecompany (freecompanyid)
-            on update cascade on delete cascade
-)
-    comment 'Companies'' weekly and monthly rankings linked to members count';
+    `freecompanyid` VARCHAR(20)                                      NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
+    `date`          DATE                 DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'Date of the ranking as identified by tracker',
+    `weekly`        SMALLINT(3) UNSIGNED DEFAULT 500                 NOT NULL COMMENT 'Weekly ranking as reported by Lodestone',
+    `monthly`       SMALLINT(3) UNSIGNED DEFAULT 500                 NOT NULL COMMENT 'Monthly ranking as reported by Lodestone',
+    `members`       SMALLINT(3) UNSIGNED DEFAULT 1                   NOT NULL COMMENT 'Number of registered members at the date of rank update',
+    PRIMARY KEY (`freecompanyid`, `date`),
+    CONSTRAINT `fc_ranking_id` FOREIGN KEY (`freecompanyid`) REFERENCES `ffxiv__freecompany` (`freecompanyid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Companies'' weekly and monthly rankings linked to members count';
 
-create index date
-    on ffxiv__freecompany_ranking (date desc);
-
+CREATE INDEX `date` ON `ffxiv__freecompany_ranking` (`date` DESC);

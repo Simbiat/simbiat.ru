@@ -1,29 +1,22 @@
-create table seo__pageviews
+CREATE TABLE `seo__pageviews`
 (
-    page    varchar(256)                                not null comment 'Page URL',
-    referer varchar(256)    default ''                  not null comment 'Value of Referer HTTP header',
-    ip      varchar(45)     default ''                  not null comment 'IP of unique visitor',
-    os      varchar(100)    default ''                  not null comment 'OS version used by visitor',
-    client  varchar(100)    default ''                  not null comment 'Client version used by visitor',
-    first   timestamp       default current_timestamp() not null comment 'Time of first visit',
-    last    timestamp       default current_timestamp() not null on update current_timestamp() comment 'Time of last visit',
-    views   bigint unsigned default 1                   not null comment 'Number of views',
-    primary key (page, referer, ip, os, client)
-)
-    comment 'Views statistics per page';
+    `page`    VARCHAR(256)                                NOT NULL COMMENT 'Page URL',
+    `referer` VARCHAR(256)    DEFAULT ''                  NOT NULL COMMENT 'Value of Referer HTTP header',
+    `ip`      VARCHAR(45)     DEFAULT ''                  NOT NULL COMMENT 'IP of unique visitor',
+    `os`      VARCHAR(100)    DEFAULT ''                  NOT NULL COMMENT 'OS version used by visitor',
+    `client`  VARCHAR(100)    DEFAULT ''                  NOT NULL COMMENT 'Client version used by visitor',
+    `first`   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'Time of first visit',
+    `last`    TIMESTAMP       DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'Time of last visit',
+    `views`   BIGINT UNSIGNED DEFAULT 1                   NOT NULL COMMENT 'Number of views',
+    PRIMARY KEY (`page`, `referer`, `ip`, `os`, `client`)
+) COMMENT 'Views statistics per page';
 
-create index client
-    on seo__pageviews (client);
+CREATE INDEX `client` ON `seo__pageviews` (`client`);
 
-create index first
-    on seo__pageviews (first);
+CREATE INDEX `first` ON `seo__pageviews` (`first`);
 
-create index ip
-    on seo__pageviews (ip);
+CREATE INDEX `ip` ON `seo__pageviews` (`ip`);
 
-create index os
-    on seo__pageviews (os);
+CREATE INDEX `os` ON `seo__pageviews` (`os`);
 
-create index referer
-    on seo__pageviews (referer);
-
+CREATE INDEX `referer` ON `seo__pageviews` (`referer`);

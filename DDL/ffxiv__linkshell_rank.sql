@@ -1,12 +1,8 @@
-create table ffxiv__linkshell_rank
+CREATE TABLE `ffxiv__linkshell_rank`
 (
-    lsrankid tinyint(1) unsigned auto_increment comment 'Rank ID as registered by tracker'
-        primary key,
-    `rank`   varchar(6)  not null comment 'Rank name',
-    icon     varchar(20) null comment 'Name of the rank icon file'
-)
-    comment 'Rank names used by linkshells';
+    `lsrankid` TINYINT(1) UNSIGNED AUTO_INCREMENT COMMENT 'Rank ID as registered by tracker' PRIMARY KEY,
+    `rank`     VARCHAR(6)  NOT NULL COMMENT 'Rank name',
+    `icon`     VARCHAR(20) NULL COMMENT 'Name of the rank icon file'
+) COMMENT 'Rank names used by linkshells';
 
-create index lsrank
-    on ffxiv__linkshell_rank (`rank`);
-
+CREATE INDEX `lsrank` ON `ffxiv__linkshell_rank` (`rank`);

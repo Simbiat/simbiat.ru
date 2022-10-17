@@ -1,15 +1,10 @@
-create table ffxiv__freecompany_rank
+CREATE TABLE `ffxiv__freecompany_rank`
 (
-    freecompanyid varchar(20)         not null comment 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
-    rankid        tinyint(2) unsigned not null comment 'ID calculated based on rank icon on Lodestone',
-    rankname      varchar(15)         not null comment 'Name of the rank as reported by Lodestone',
-    primary key (freecompanyid, rankid),
-    constraint fcranks_freecompany
-        foreign key (freecompanyid) references ffxiv__freecompany (freecompanyid)
-            on update cascade on delete cascade
-)
-    comment 'Rank names used by companies';
+    `freecompanyid` VARCHAR(20)         NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
+    `rankid`        TINYINT(2) UNSIGNED NOT NULL COMMENT 'ID calculated based on rank icon on Lodestone',
+    `rankname`      VARCHAR(15)         NOT NULL COMMENT 'Name of the rank as reported by Lodestone',
+    PRIMARY KEY (`freecompanyid`, `rankid`),
+    CONSTRAINT `fcranks_freecompany` FOREIGN KEY (`freecompanyid`) REFERENCES `ffxiv__freecompany` (`freecompanyid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Rank names used by companies';
 
-create index rankid
-    on ffxiv__freecompany_rank (rankid);
-
+CREATE INDEX `rankid` ON `ffxiv__freecompany_rank` (`rankid`);

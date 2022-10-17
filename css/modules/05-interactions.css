@@ -650,7 +650,10 @@ snack-bar {
 }
 .snack_text {
     vertical-align: top;
-    flex: 1
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    overflow-y: auto;
 }
 .snack_close {
     display: inline-block;

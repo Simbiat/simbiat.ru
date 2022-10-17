@@ -1,11 +1,6 @@
-create table talks__tags
+CREATE TABLE `talks__tags`
 (
-    tagid int unsigned auto_increment comment 'Tag ID',
-    tag   varchar(25) not null comment 'Tag',
-    constraint tag
-        unique (tag),
-    constraint tagid
-        unique (tagid)
-)
-    comment 'List of tags';
-
+    `tagid` INT UNSIGNED AUTO_INCREMENT COMMENT 'Tag ID' PRIMARY KEY,
+    `tag`   VARCHAR(25) NOT NULL COMMENT 'Tag',
+    CONSTRAINT `tag` UNIQUE (`tag`)
+) COMMENT 'List of tags';

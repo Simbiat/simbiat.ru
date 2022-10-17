@@ -1,23 +1,16 @@
-create table bic__swift
+CREATE TABLE `bic__swift`
 (
-    BIC          int(9) unsigned zerofill                        not null comment 'БИК код',
-    SWBIC        varchar(11)                                     not null comment 'Банковский идентификационный код, присвоенный SWIFT',
-    DefaultSWBIC tinyint(1) unsigned default 0                   not null comment 'Признак использования БИК (СВИФТ), «по умолчанию»',
-    DateIn       date                default current_timestamp() null comment 'Дата добавления кода',
-    DateOut      date                                            null comment 'Дата удаления кода',
-    primary key (BIC, SWBIC),
-    constraint bic_swift
-        foreign key (BIC) references bic__list (BIC)
-            on update cascade on delete cascade
-)
-    comment 'Коды SWIFT';
+    `BIC`          INT(9) UNSIGNED ZEROFILL                        NOT NULL COMMENT 'БИК код',
+    `SWBIC`        VARCHAR(11)                                     NOT NULL COMMENT 'Банковский идентификационный код, присвоенный SWIFT',
+    `DefaultSWBIC` TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Признак использования БИК (СВИФТ), «по умолчанию»',
+    `DateIn`       DATE                DEFAULT CURRENT_TIMESTAMP() NULL COMMENT 'Дата добавления кода',
+    `DateOut`      DATE                                            NULL COMMENT 'Дата удаления кода',
+    PRIMARY KEY (`BIC`, `SWBIC`),
+    CONSTRAINT `bic_swift` FOREIGN KEY (`BIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Коды SWIFT';
 
-create index DateOut
-    on bic__swift (DateOut desc);
+CREATE INDEX `DateOut` ON `bic__swift` (`DateOut` DESC);
 
-create index DefaultSWBIC
-    on bic__swift (DefaultSWBIC desc);
+CREATE INDEX `DefaultSWBIC` ON `bic__swift` (`DefaultSWBIC` DESC);
 
-create index SWBIC
-    on bic__swift (SWBIC);
-
+CREATE INDEX `SWBIC` ON `bic__swift` (`SWBIC`);

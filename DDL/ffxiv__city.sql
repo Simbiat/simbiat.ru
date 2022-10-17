@@ -1,11 +1,7 @@
-create table ffxiv__city
+CREATE TABLE `ffxiv__city`
 (
-    cityid tinyint(1) unsigned auto_increment comment 'City ID as registered by the tracker'
-        primary key,
-    city   varchar(25) not null comment 'Name of the starting city',
-    region varchar(25) not null comment 'Name of the region the city is located in',
-    constraint city
-        unique (city)
-)
-    comment 'Known cities';
-
+    `cityid` TINYINT(1) UNSIGNED AUTO_INCREMENT COMMENT 'City ID as registered by the tracker' PRIMARY KEY,
+    `city`   VARCHAR(25) NOT NULL COMMENT 'Name of the starting city',
+    `region` VARCHAR(25) NOT NULL COMMENT 'Name of the region the city is located in',
+    CONSTRAINT `city` UNIQUE (`city`)
+) COMMENT 'Known cities';

@@ -1,11 +1,7 @@
-create table ffxiv__freecompany_names
+CREATE TABLE `ffxiv__freecompany_names`
 (
-    freecompanyid varchar(20) not null comment 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
-    name          varchar(50) not null comment 'Previous name of the company',
-    primary key (freecompanyid, name),
-    constraint fc_names_id
-        foreign key (freecompanyid) references ffxiv__freecompany (freecompanyid)
-            on update cascade on delete cascade
-)
-    comment 'Past names of the companies';
-
+    `freecompanyid` VARCHAR(20) NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
+    `name`          VARCHAR(50) NOT NULL COMMENT 'Previous name of the company',
+    PRIMARY KEY (`freecompanyid`, `name`),
+    CONSTRAINT `fc_names_id` FOREIGN KEY (`freecompanyid`) REFERENCES `ffxiv__freecompany` (`freecompanyid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Past names of the companies';

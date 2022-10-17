@@ -1,8 +1,5 @@
-create table bic__srvcs
+CREATE TABLE `bic__srvcs`
 (
-    Srvcs       varchar(1)   not null comment 'Код сервиса'
-        primary key,
-    Description varchar(100) not null comment 'Описание сервиса'
-)
-    comment 'Коды сервисов доступных участникам обмена';
-
+    `Srvcs`       VARCHAR(1)   NOT NULL COMMENT 'Код сервиса' PRIMARY KEY,
+    `Description` VARCHAR(100) NOT NULL COMMENT 'Описание сервиса'
+) COMMENT 'Коды сервисов доступных участникам обмена';

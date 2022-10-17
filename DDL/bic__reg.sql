@@ -1,9 +1,6 @@
-create table bic__reg
+CREATE TABLE `bic__reg`
 (
-    RGN    varchar(2)  not null comment 'Код территории Российской Федерации'
-        primary key,
-    NAME   varchar(40) not null comment 'Наименование территории в именительном падеже',
-    CENTER varchar(30) null comment 'Наименование административного центра'
-)
-    comment 'Наименование территории';
-
+    `RGN`    VARCHAR(2)  NOT NULL COMMENT 'Код территории Российской Федерации' PRIMARY KEY,
+    `NAME`   VARCHAR(40) NOT NULL COMMENT 'Наименование территории в именительном падеже',
+    `CENTER` VARCHAR(30) NULL COMMENT 'Наименование административного центра'
+) COMMENT 'Наименование территории';

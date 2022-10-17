@@ -348,6 +348,7 @@ return array(
     'Simbiat\\Tests\\Tests' => $baseDir . '/../lib/simbiat.ru/src/Tests/Tests.php',
     'Simbiat\\Twig\\Extension' => $baseDir . '/../lib/simbiat.ru/src/Twig/Extension.php',
     'Simbiat\\Twig\\RuntimeExtension' => $baseDir . '/../lib/simbiat.ru/src/Twig/RuntimeExtension.php',
+    'Simbiat\\Upload' => $baseDir . '/../lib/simbiat.ru/src/Upload.php',
     'Simbiat\\array2table' => $baseDir . '/../lib/array2table/src/array2table.php',
     'Simbiat\\bictracker\\Api' => $baseDir . '/../lib/simbiat.ru/src/bictracker/Api.php',
     'Simbiat\\bictracker\\Api\\Bic' => $baseDir . '/../lib/simbiat.ru/src/bictracker/Api/Bic.php',

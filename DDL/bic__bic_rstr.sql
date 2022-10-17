@@ -1,19 +1,12 @@
-create table bic__bic_rstr
+CREATE TABLE `bic__bic_rstr`
 (
-    BIC      int(9) unsigned zerofill         not null comment 'БИК участника',
-    Rstr     varchar(4)                       not null comment 'Код ограничения, наложенного на участника',
-    RstrDate date default current_timestamp() not null comment 'Дата начала действия ограничения участника',
-    DateOut  date                             null comment 'Дата окончания действия ограничения участника',
-    primary key (BIC, Rstr, RstrDate),
-    constraint rstr_to_bic
-        foreign key (BIC) references bic__list (BIC)
-            on update cascade on delete cascade,
-    constraint rstr_to_rstr
-        foreign key (Rstr) references bic__rstr (Rstr)
-            on update cascade on delete cascade
-)
-    comment 'Список ограничений наложенных на участника';
+    `BIC`      INT(9) UNSIGNED ZEROFILL         NOT NULL COMMENT 'БИК участника',
+    `Rstr`     VARCHAR(4)                       NOT NULL COMMENT 'Код ограничения, наложенного на участника',
+    `RstrDate` DATE DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'Дата начала действия ограничения участника',
+    `DateOut`  DATE                             NULL COMMENT 'Дата окончания действия ограничения участника',
+    PRIMARY KEY (`BIC`, `Rstr`, `RstrDate`),
+    CONSTRAINT `rstr_to_bic` FOREIGN KEY (`BIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `rstr_to_rstr` FOREIGN KEY (`Rstr`) REFERENCES `bic__rstr` (`Rstr`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Список ограничений наложенных на участника';
 
-create index RstrDate
-    on bic__bic_rstr (RstrDate desc);
-
+CREATE INDEX `RstrDate` ON `bic__bic_rstr` (`RstrDate` DESC);

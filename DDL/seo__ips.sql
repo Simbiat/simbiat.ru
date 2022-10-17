@@ -1,9 +1,6 @@
-create table seo__ips
+CREATE TABLE `seo__ips`
 (
-    ip      varchar(45)  not null comment 'IP address'
-        primary key,
-    country varchar(60)  not null comment 'Country name',
-    city    varchar(200) not null comment 'City name'
-)
-    comment 'IP to country and city based on ipinfo.io';
-
+    `ip`      VARCHAR(45)  NOT NULL COMMENT 'IP address' PRIMARY KEY,
+    `country` VARCHAR(60)  NOT NULL COMMENT 'Country name',
+    `city`    VARCHAR(200) NOT NULL COMMENT 'City name'
+) COMMENT 'IP to country and city based on ipinfo.io';

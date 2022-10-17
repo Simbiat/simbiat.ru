@@ -1,10 +1,6 @@
-create table ffxiv__nameday
+CREATE TABLE `ffxiv__nameday`
 (
-    namedayid smallint(3) unsigned auto_increment comment 'Nameday ID as registered by the tracker'
-        primary key,
-    nameday   varchar(32) not null comment 'Nameday',
-    constraint nameday
-        unique (nameday)
-)
-    comment 'Namedays as per lore';
-
+    `namedayid` SMALLINT(3) UNSIGNED AUTO_INCREMENT COMMENT 'Nameday ID as registered by the tracker' PRIMARY KEY,
+    `nameday`   VARCHAR(32) NOT NULL COMMENT 'Nameday',
+    CONSTRAINT `nameday` UNIQUE (`nameday`)
+) COMMENT 'Namedays as per lore';

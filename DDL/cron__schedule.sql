@@ -1,42 +1,33 @@
-create table cron__schedule
+CREATE TABLE `cron__schedule`
 (
-    task        varchar(100)                                    not null comment 'Task ID',
-    arguments   varchar(255)        default ''                  not null comment 'Optional arguments in JSON string',
-    frequency   int unsigned        default 0                   not null comment 'Frequency to run a task in seconds',
-    dayofmonth  varchar(255)                                    null comment 'Optional limit to run only on specific days of the month. Expects array of integers in JSON string.',
-    dayofweek   varchar(60)                                     null comment 'Optional limit to run only on specific days of the week. Expects array of integers in JSON string.',
-    priority    tinyint unsigned    default 0                   not null comment 'Priority of the task',
-    message     varchar(100)                                    null comment 'Optional message, that will be shown if launched outside of CLI',
-    status      tinyint(1) unsigned default 0                   not null comment 'Flag showing whether the job is running or not',
-    runby       varchar(30)                                     null comment 'If not NULL, indicates, that a job is queued for a run by a process.',
-    sse         tinyint(1) unsigned default 0                   not null comment 'Flag to indicate whether job is being ran by SSE call.',
-    registered  timestamp           default current_timestamp() not null comment 'When the job was initially registered',
-    updated     timestamp           default current_timestamp() not null comment 'When the job schedule was updated',
-    nextrun     timestamp           default current_timestamp() not null comment 'Next expected time for the job to be run',
-    lastrun     timestamp                                       null comment 'Time of the last run attempt',
-    lastsuccess timestamp                                       null comment 'Time of the last successful run',
-    lasterror   timestamp                                       null comment 'Time of the last error',
-    primary key (task, arguments),
-    constraint schedule_to_task
-        foreign key (task) references cron__tasks (task)
-            on update cascade on delete cascade
+    `task`        VARCHAR(100)                                    NOT NULL COMMENT 'Task ID',
+    `arguments`   VARCHAR(255)        DEFAULT ''                  NOT NULL COMMENT 'Optional arguments in JSON string',
+    `frequency`   INT UNSIGNED        DEFAULT 0                   NOT NULL COMMENT 'Frequency to run a task in seconds',
+    `dayofmonth`  VARCHAR(255)                                    NULL COMMENT 'Optional limit to run only on specific days of the month. Expects array of integers in JSON string.',
+    `dayofweek`   VARCHAR(60)                                     NULL COMMENT 'Optional limit to run only on specific days of the week. Expects array of integers in JSON string.',
+    `priority`    TINYINT UNSIGNED    DEFAULT 0                   NOT NULL COMMENT 'Priority of the task',
+    `message`     VARCHAR(100)                                    NULL COMMENT 'Optional message, that will be shown if launched outside of CLI',
+    `status`      TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag showing whether the job is running or not',
+    `runby`       VARCHAR(30)                                     NULL COMMENT 'If not NULL, indicates, that a job is queued for a run by a process.',
+    `sse`         TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag to indicate whether job is being ran by SSE call.',
+    `registered`  TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When the job was initially registered',
+    `updated`     TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When the job schedule was updated',
+    `nextrun`     TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'Next expected time for the job to be run',
+    `lastrun`     TIMESTAMP                                       NULL COMMENT 'Time of the last run attempt',
+    `lastsuccess` TIMESTAMP                                       NULL COMMENT 'Time of the last successful run',
+    `lasterror`   TIMESTAMP                                       NULL COMMENT 'Time of the last error',
+    PRIMARY KEY (`task`, `arguments`),
+    CONSTRAINT `schedule_to_task` FOREIGN KEY (`task`) REFERENCES `cron__tasks` (`task`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create index arguments
-    on cron__schedule (arguments);
+CREATE INDEX `arguments` ON `cron__schedule` (`arguments`);
 
-create index lastrun
-    on cron__schedule (lastrun);
+CREATE INDEX `lastrun` ON `cron__schedule` (`lastrun`);
 
-create index nextrun
-    on cron__schedule (nextrun);
+CREATE INDEX `nextrun` ON `cron__schedule` (`nextrun`);
 
-create index priority
-    on cron__schedule (priority);
+CREATE INDEX `priority` ON `cron__schedule` (`priority`);
 
-create index runby
-    on cron__schedule (runby);
+CREATE INDEX `runby` ON `cron__schedule` (`runby`);
 
-create index status
-    on cron__schedule (status);
-
+CREATE INDEX `status` ON `cron__schedule` (`status`);

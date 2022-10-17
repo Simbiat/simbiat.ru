@@ -1,10 +1,6 @@
-create table ffxiv__enemy
+CREATE TABLE `ffxiv__enemy`
 (
-    enemyid int unsigned auto_increment comment 'Internal ID of the enemy'
-        primary key,
-    name    varchar(50) not null comment 'Name of the enemy',
-    constraint FFXIVEnemyName
-        unique (name)
-)
-    comment 'List of some monsters, that are used for character ''deaths'', when they are marked as deleted';
-
+    `enemyid` INT UNSIGNED AUTO_INCREMENT COMMENT 'Internal ID of the enemy' PRIMARY KEY,
+    `name`    VARCHAR(50) NOT NULL COMMENT 'Name of the enemy',
+    CONSTRAINT `FFXIVEnemyName` UNIQUE (`name`)
+) COMMENT 'List of some monsters, that are used for character ''deaths'', when they are marked as deleted';

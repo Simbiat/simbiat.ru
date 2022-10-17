@@ -1,17 +1,11 @@
-create table ffxiv__estate
+CREATE TABLE `ffxiv__estate`
 (
-    estateid smallint unsigned auto_increment comment 'Estate ID as registered by the tracker'
-        primary key,
-    cityid   tinyint(2) unsigned default 5 not null comment 'City ID as registered by the tracker',
-    area     varchar(20)                   not null comment 'Estate area name',
-    ward     tinyint unsigned              not null comment 'Ward number',
-    plot     tinyint unsigned              not null comment 'Plot number',
-    size     tinyint(1) unsigned           not null comment 'Size of the house, where 1 is for small, 2 is for medium and 3 is for large',
-    constraint address
-        unique (area, ward, plot),
-    constraint estate_cityid
-        foreign key (cityid) references ffxiv__city (cityid)
-            on update cascade on delete cascade
-)
-    comment 'List of estates';
-
+    `estateid` SMALLINT UNSIGNED AUTO_INCREMENT COMMENT 'Estate ID as registered by the tracker' PRIMARY KEY,
+    `cityid`   TINYINT(2) UNSIGNED DEFAULT 5 NOT NULL COMMENT 'City ID as registered by the tracker',
+    `area`     VARCHAR(20)                   NOT NULL COMMENT 'Estate area name',
+    `ward`     TINYINT UNSIGNED              NOT NULL COMMENT 'Ward number',
+    `plot`     TINYINT UNSIGNED              NOT NULL COMMENT 'Plot number',
+    `size`     TINYINT(1) UNSIGNED           NOT NULL COMMENT 'Size of the house, where 1 is for small, 2 is for medium and 3 is for large',
+    CONSTRAINT `address` UNIQUE (`area`, `ward`, `plot`),
+    CONSTRAINT `estate_cityid` FOREIGN KEY (`cityid`) REFERENCES `ffxiv__city` (`cityid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'List of estates';

@@ -1,15 +1,8 @@
-create table talks__thread_to_tags
+CREATE TABLE `talks__thread_to_tags`
 (
-    threadid int unsigned not null comment 'Thread ID',
-    tagid    int unsigned not null comment 'Tag ID',
-    constraint threadid
-        unique (threadid, tagid),
-    constraint thr_tag_tag
-        foreign key (tagid) references talks__tags (tagid)
-            on update cascade on delete cascade,
-    constraint thr_tag_thread
-        foreign key (threadid) references talks__threads (threadid)
-            on update cascade on delete cascade
-)
-    comment 'Threads to tags junction table';
-
+    `threadid` INT UNSIGNED NOT NULL COMMENT 'Thread ID',
+    `tagid`    INT UNSIGNED NOT NULL COMMENT 'Tag ID',
+    PRIMARY KEY (`threadid`, `tagid`),
+    CONSTRAINT `thr_tag_tag` FOREIGN KEY (`tagid`) REFERENCES `talks__tags` (`tagid`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `thr_tag_thread` FOREIGN KEY (`threadid`) REFERENCES `talks__threads` (`threadid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Threads to tags junction table';

@@ -156,3 +156,7 @@
     background-color: var(--color-interactive)!important;
     border-color:     var(--color-interactive)!important;
 }
+.tox-dropzone {
+    background-color: var(--color-article)!important;
+    border-color: var(--color-interactive)!important;
+}

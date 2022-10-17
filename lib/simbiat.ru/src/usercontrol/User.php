@@ -73,7 +73,7 @@ class User extends Entity
         $dbData['activated'] = !in_array(2, $dbData['groups'], true);
         $dbData['deleted'] = in_array(4, $dbData['groups'], true);
         $dbData['banned'] = in_array(5, $dbData['groups'], true);
-        $dbData['currentAvatar'] = HomePage::$dbController->selectValue('SELECT `url` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
+        $dbData['currentAvatar'] = HomePage::$dbController->selectValue('SELECT CONCAT(\'/img/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
         return $dbData;
     }
 
@@ -112,7 +112,7 @@ class User extends Entity
     public function getAvatars(): array
     {
         try {
-            return HomePage::$dbController->selectAll('SELECT `url`, `current` FROM `uc__avatars` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
+            return HomePage::$dbController->selectAll('SELECT CONCAT(\'/img/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }

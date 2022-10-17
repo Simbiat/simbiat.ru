@@ -1,12 +1,10 @@
-create table cron__tasks
+CREATE TABLE `cron__tasks`
 (
-    task           varchar(100)              not null comment 'Function''s internal ID'
-        primary key,
-    function       varchar(255)              not null comment 'Actual function reference, that will be called by Cron processor',
-    object         varchar(255)              null comment 'Optional object',
-    parameters     varchar(5000)             null comment 'Optional parameters used on initial object creation in JSON string',
-    allowedreturns varchar(5000)             null comment 'Optional allowed return values to be treated as ''true'' by Cron processor in JSON string',
-    maxTime        int unsigned default 3600 not null comment 'Maximum time allowed for the task to run. If exceeded, it will be terminated by PHP.',
-    description    varchar(1000)             null comment 'Description of the task'
+    `task`           VARCHAR(100)              NOT NULL COMMENT 'Function''s internal ID' PRIMARY KEY,
+    `function`       VARCHAR(255)              NOT NULL COMMENT 'Actual function reference, that will be called by Cron processor',
+    `object`         VARCHAR(255)              NULL COMMENT 'Optional object',
+    `parameters`     VARCHAR(5000)             NULL COMMENT 'Optional parameters used on initial object creation in JSON string',
+    `allowedreturns` VARCHAR(5000)             NULL COMMENT 'Optional allowed return values to be treated as ''true'' by Cron processor in JSON string',
+    `maxTime`        INT UNSIGNED DEFAULT 3600 NOT NULL COMMENT 'Maximum time allowed for the task to run. If exceeded, it will be terminated by PHP.',
+    `description`    VARCHAR(1000)             NULL COMMENT 'Description of the task'
 );
-

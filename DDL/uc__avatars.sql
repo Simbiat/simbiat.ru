@@ -1,14 +1,9 @@
-create table uc__avatars
+CREATE TABLE `uc__avatars`
 (
-    userid      int unsigned                  not null comment 'User ID',
-    url         varchar(255)                  not null comment 'Link to file',
-    characterid int unsigned                  not null comment 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
-    current     tinyint(1) unsigned default 0 not null comment 'Flag to show if this avatar is the current one',
-    primary key (userid, url),
-    constraint avatar_to_user
-        foreign key (userid) references uc__users (userid)
-            on update cascade on delete cascade
+    `userid`  INT UNSIGNED                  NOT NULL COMMENT 'User ID',
+    `fileid`  VARCHAR(128)                  NOT NULL COMMENT 'File hash, which is also its ID. Also used as file name on file system.',
+    `current` TINYINT(1) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Flag to show if this avatar is the current one',
+    PRIMARY KEY (`userid`, `fileid`),
+    CONSTRAINT `avatar_to_file` FOREIGN KEY (`fileid`) REFERENCES `sys__files` (`fileid`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `avatar_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-create index avatarffcharid
-    on uc__avatars (characterid);

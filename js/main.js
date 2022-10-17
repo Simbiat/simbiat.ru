@@ -260,13 +260,19 @@ const tinySettings = {
     images_file_types: 'jpeg,jpg,png,gif,bmp,webp',
     images_upload_credentials: true,
     images_reuse_filename: true,
+    images_upload_url: '/api/upload/',
     paste_data_images: false,
     paste_remove_styles_if_webkit: true,
     paste_webkit_styles: 'none',
     image_class_list: [
-        { title: 'None', value: '' },
+        { title: 'None', value: 'w25pc middle block' },
+        { title: 'Fullwidth', value: 'w100pc middle block' },
         { title: 'Icon', value: 'linkIcon' }
     ],
+    automatic_uploads: true,
+    remove_trailing_brs: true,
+    file_picker_types: 'image',
+    block_unsupported_drop: true,
     image_dimensions: false,
     insertdatetime_element: true,
     link_target_list: [

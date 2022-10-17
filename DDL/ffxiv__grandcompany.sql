@@ -1,10 +1,6 @@
-create table ffxiv__grandcompany
+CREATE TABLE `ffxiv__grandcompany`
 (
-    gcId   tinyint(1) unsigned not null comment 'ID based on filters from Lodestone'
-        primary key,
-    gcName varchar(25)         not null comment 'Name of the company',
-    constraint gcName
-        unique (gcName)
-)
-    comment 'Grand Companies as per lore';
-
+    `gcId`   TINYINT(1) UNSIGNED NOT NULL COMMENT 'ID based on filters from Lodestone' PRIMARY KEY,
+    `gcName` VARCHAR(25)         NOT NULL COMMENT 'Name of the company',
+    CONSTRAINT `gcName` UNIQUE (`gcName`)
+) COMMENT 'Grand Companies as per lore';

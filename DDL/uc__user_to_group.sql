@@ -1,13 +1,8 @@
-create table uc__user_to_group
+CREATE TABLE `uc__user_to_group`
 (
-    userid  int unsigned           not null comment 'User ID',
-    groupid int unsigned default 2 not null comment 'Group ID',
-    primary key (userid, groupid),
-    constraint group_to_user
-        foreign key (userid) references uc__users (userid)
-            on update cascade on delete cascade,
-    constraint groupid
-        foreign key (groupid) references uc__groups (groupid)
-            on update cascade on delete cascade
+    `userid`  INT UNSIGNED           NOT NULL COMMENT 'User ID',
+    `groupid` INT UNSIGNED DEFAULT 2 NOT NULL COMMENT 'Group ID',
+    PRIMARY KEY (`userid`, `groupid`),
+    CONSTRAINT `group_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `groupid` FOREIGN KEY (`groupid`) REFERENCES `uc__groups` (`groupid`) ON UPDATE CASCADE ON DELETE CASCADE
 );
-

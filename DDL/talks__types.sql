@@ -1,11 +1,7 @@
-create table talks__types
+CREATE TABLE `talks__types`
 (
-    typeid      tinyint unsigned auto_increment comment 'Unique ID',
-    type        varchar(25)  not null comment 'Type name',
-    description varchar(100) null comment 'Description of the type',
-    icon        varchar(50)  null comment 'Name of the default icon file',
-    constraint typeid
-        unique (typeid)
-)
-    comment 'Types of forums';
-
+    `typeid`      TINYINT UNSIGNED AUTO_INCREMENT COMMENT 'Unique ID' PRIMARY KEY,
+    `type`        VARCHAR(25)  NOT NULL COMMENT 'Type name',
+    `description` VARCHAR(100) NULL COMMENT 'Description of the type',
+    `icon`        VARCHAR(50)  NULL COMMENT 'Name of the default icon file'
+) COMMENT 'Types of forums';

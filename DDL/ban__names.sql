@@ -1,12 +1,8 @@
-create table ban__names
+CREATE TABLE `ban__names`
 (
-    name   varchar(64)                           not null comment 'Banned (prohibited) name'
-        primary key,
-    added  timestamp default current_timestamp() not null comment 'When name was banned',
-    reason text                                  null comment 'Reason for the ban'
-)
-    comment 'Banned user names';
+    `name`   VARCHAR(64)                           NOT NULL COMMENT 'Banned (prohibited) name' PRIMARY KEY,
+    `added`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When name was banned',
+    `reason` TEXT                                  NULL COMMENT 'Reason for the ban'
+) COMMENT 'Banned user names';
 
-create index added
-    on ban__names (added);
-
+CREATE INDEX `added` ON `ban__names` (`added`);

@@ -1,22 +1,14 @@
-create table bic__accounts
+CREATE TABLE `bic__accounts`
 (
-    Account               varchar(20)                      not null comment 'Номер счёта',
-    BIC                   int(9) unsigned zerofill         not null comment 'БИК участника',
-    AccountCBRBIC         int(9) unsigned zerofill         null comment 'БИК ПБР, обслуживающего счёт участника перевода',
-    RegulationAccountType varchar(4)                       not null comment 'Тип счета в соответствии с нормативом',
-    CK                    varchar(2)                       null comment 'Контрольный ключ',
-    DateIn                date default current_timestamp() not null comment 'Дата открытия счета',
-    DateOut               date                             null comment 'Дата исключения информации о счете участника',
-    primary key (Account, BIC),
-    constraint account_to_bic
-        foreign key (BIC) references bic__list (BIC)
-            on update cascade on delete cascade,
-    constraint account_to_cbr
-        foreign key (AccountCBRBIC) references bic__list (BIC)
-            on update cascade on delete cascade,
-    constraint account_to_type
-        foreign key (RegulationAccountType) references bic__acc_type (RegulationAccountType)
-            on update cascade on delete cascade
-)
-    comment 'Список счетов';
-
+    `Account`               VARCHAR(20)                      NOT NULL COMMENT 'Номер счёта',
+    `BIC`                   INT(9) UNSIGNED ZEROFILL         NOT NULL COMMENT 'БИК участника',
+    `AccountCBRBIC`         INT(9) UNSIGNED ZEROFILL         NULL COMMENT 'БИК ПБР, обслуживающего счёт участника перевода',
+    `RegulationAccountType` VARCHAR(4)                       NOT NULL COMMENT 'Тип счета в соответствии с нормативом',
+    `CK`                    VARCHAR(2)                       NULL COMMENT 'Контрольный ключ',
+    `DateIn`                DATE DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'Дата открытия счета',
+    `DateOut`               DATE                             NULL COMMENT 'Дата исключения информации о счете участника',
+    PRIMARY KEY (`Account`, `BIC`),
+    CONSTRAINT `account_to_bic` FOREIGN KEY (`BIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `account_to_cbr` FOREIGN KEY (`AccountCBRBIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `account_to_type` FOREIGN KEY (`RegulationAccountType`) REFERENCES `bic__acc_type` (`RegulationAccountType`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Список счетов';

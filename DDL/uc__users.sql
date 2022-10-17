@@ -1,48 +1,38 @@
-create table uc__users
+CREATE TABLE `uc__users`
 (
-    userid     int unsigned auto_increment comment 'User ID'
-        primary key,
-    username   varchar(64)                                     not null comment 'User''s username/login',
-    phone      bigint(15) unsigned                             null comment 'User''s phone number in international format',
-    password   text                                            not null comment 'Hashed password',
-    strikes    tinyint(2) unsigned default 0                   not null comment 'Number of unsuccessful logins',
-    pw_reset   text                                            null comment 'Password reset code',
-    api_key    text                                            null comment 'API key',
-    ff_token   varchar(64)                                     not null comment 'Token for linking FFXIV characters',
-    registered timestamp           default current_timestamp() not null comment 'When user was registered',
-    updated    timestamp           default current_timestamp() not null on update current_timestamp() comment 'When user was updated',
-    parentid   int unsigned                                    null comment 'User ID, that added this one (if added manually)',
-    birthday   date                                            null comment 'User''s date of birth',
-    firstname  varchar(100)                                    null comment 'User''s first name',
-    lastname   varchar(100)                                    null comment 'User''s last/family name (also known as surname)',
-    middlename varchar(100)                                    null comment 'User''s middle name(s)',
-    fathername varchar(100)                                    null comment 'User''s patronymic or matronymic name (also known as father''s name or mother''s name)',
-    prefix     varchar(25)                                     null comment 'The prefix or title, such as "Mrs.", "Mr.", "Miss", "Ms.", "Dr.", or "Mlle."',
-    suffix     varchar(25)                                     null comment 'The suffix, such as "Jr.", "B.Sc.", "PhD.", "MBASW", or "IV"',
-    sex        tinyint(1) unsigned                             null comment 'User''s sex',
-    about      varchar(250)                                    null comment 'Introductory words from the user',
-    timezone   varchar(30)         default 'UTC'               not null comment 'User''s timezone',
-    country    varchar(60)                                     null comment 'User''s country',
-    city       varchar(200)                                    null comment 'User''s city',
-    website    varchar(255)                                    null comment 'User''s personal website',
-    constraint api_key
-        unique (api_key) using hash,
-    constraint ff_token
-        unique (ff_token),
-    constraint parent_to_user
-        foreign key (parentid) references uc__users (userid)
-            on update set null on delete set null
+    `userid`     INT UNSIGNED AUTO_INCREMENT COMMENT 'User ID' PRIMARY KEY,
+    `username`   VARCHAR(64)                                     NOT NULL COMMENT 'User''s username/login',
+    `phone`      BIGINT(15) UNSIGNED                             NULL COMMENT 'User''s phone number in international format',
+    `password`   TEXT                                            NOT NULL COMMENT 'Hashed password',
+    `strikes`    TINYINT(2) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Number of unsuccessful logins',
+    `pw_reset`   TEXT                                            NULL COMMENT 'Password reset code',
+    `api_key`    TEXT                                            NULL COMMENT 'API key',
+    `ff_token`   VARCHAR(64)                                     NOT NULL COMMENT 'Token for linking FFXIV characters',
+    `registered` TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When user was registered',
+    `updated`    TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'When user was updated',
+    `parentid`   INT UNSIGNED                                    NULL COMMENT 'User ID, that added this one (if added manually)',
+    `birthday`   DATE                                            NULL COMMENT 'User''s date of birth',
+    `firstname`  VARCHAR(100)                                    NULL COMMENT 'User''s first name',
+    `lastname`   VARCHAR(100)                                    NULL COMMENT 'User''s last/family name (also known as surname)',
+    `middlename` VARCHAR(100)                                    NULL COMMENT 'User''s middle name(s)',
+    `fathername` VARCHAR(100)                                    NULL COMMENT 'User''s patronymic or matronymic name (also known as father''s name or mother''s name)',
+    `prefix`     VARCHAR(25)                                     NULL COMMENT 'The prefix or title, such as "Mrs.", "Mr.", "Miss", "Ms.", "Dr.", or "Mlle."',
+    `suffix`     VARCHAR(25)                                     NULL COMMENT 'The suffix, such as "Jr.", "B.Sc.", "PhD.", "MBASW", or "IV"',
+    `sex`        TINYINT(1) UNSIGNED                             NULL COMMENT 'User''s sex',
+    `about`      VARCHAR(250)                                    NULL COMMENT 'Introductory words from the user',
+    `timezone`   VARCHAR(30)         DEFAULT 'UTC'               NOT NULL COMMENT 'User''s timezone',
+    `country`    VARCHAR(60)                                     NULL COMMENT 'User''s country',
+    `city`       VARCHAR(200)                                    NULL COMMENT 'User''s city',
+    `website`    VARCHAR(255)                                    NULL COMMENT 'User''s personal website',
+    CONSTRAINT `api_key` UNIQUE (`api_key`) USING HASH,
+    CONSTRAINT `ff_token` UNIQUE (`ff_token`),
+    CONSTRAINT `parent_to_user` FOREIGN KEY (`parentid`) REFERENCES `uc__users` (`userid`) ON UPDATE SET NULL ON DELETE SET NULL
 );
 
-create index birthday
-    on uc__users (birthday);
+CREATE INDEX `birthday` ON `uc__users` (`birthday`);
 
-create index parentid
-    on uc__users (parentid);
+CREATE INDEX `parentid` ON `uc__users` (`parentid`);
 
-create index registered
-    on uc__users (registered);
+CREATE INDEX `registered` ON `uc__users` (`registered`);
 
-create index usergender
-    on uc__users (sex);
-
+CREATE INDEX `usergender` ON `uc__users` (`sex`);

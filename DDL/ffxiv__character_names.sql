@@ -1,11 +1,7 @@
-create table ffxiv__character_names
+CREATE TABLE `ffxiv__character_names`
 (
-    characterid int unsigned not null comment 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
-    name        varchar(50)  not null comment 'Character''s previous name',
-    primary key (characterid, name),
-    constraint char_names_id
-        foreign key (characterid) references ffxiv__character (characterid)
-            on update cascade on delete cascade
-)
-    comment 'Past names used by characters';
-
+    `characterid` INT UNSIGNED NOT NULL COMMENT 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
+    `name`        VARCHAR(50)  NOT NULL COMMENT 'Character''s previous name',
+    PRIMARY KEY (`characterid`, `name`),
+    CONSTRAINT `char_names_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Past names used by characters';

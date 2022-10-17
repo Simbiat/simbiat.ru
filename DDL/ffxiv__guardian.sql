@@ -1,10 +1,6 @@
-create table ffxiv__guardian
+CREATE TABLE `ffxiv__guardian`
 (
-    guardianid tinyint(2) unsigned auto_increment comment 'Guardian ID as registered by the tracker'
-        primary key,
-    guardian   varchar(25) not null comment 'Guardian name',
-    constraint guardian
-        unique (guardian)
-)
-    comment 'Guardians as per lore';
-
+    `guardianid` TINYINT(2) UNSIGNED AUTO_INCREMENT COMMENT 'Guardian ID as registered by the tracker' PRIMARY KEY,
+    `guardian`   VARCHAR(25) NOT NULL COMMENT 'Guardian name',
+    CONSTRAINT `guardian` UNIQUE (`guardian`)
+) COMMENT 'Guardians as per lore';

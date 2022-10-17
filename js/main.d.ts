@@ -142,6 +142,7 @@ declare const tinySettings: {
     images_file_types: string;
     images_upload_credentials: boolean;
     images_reuse_filename: boolean;
+    images_upload_url: string;
     paste_data_images: boolean;
     paste_remove_styles_if_webkit: boolean;
     paste_webkit_styles: string;
@@ -149,6 +150,10 @@ declare const tinySettings: {
         title: string;
         value: string;
     }[];
+    automatic_uploads: boolean;
+    remove_trailing_brs: boolean;
+    file_picker_types: string;
+    block_unsupported_drop: boolean;
     image_dimensions: boolean;
     insertdatetime_element: boolean;
     link_target_list: {

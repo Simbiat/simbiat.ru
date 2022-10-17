@@ -2,4 +2,6 @@
 body {
     background-color: var(--color-article);
     display: block;
+    overflow-y: auto;
+    overflow-x: auto;
 }

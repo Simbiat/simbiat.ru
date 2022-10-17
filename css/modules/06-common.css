@@ -259,11 +259,23 @@ footer address a .linkIcon {
 .middle {
     text-align: center;
     vertical-align: middle;
+    margin: 0 auto;
 }
 
 .block {
     display: block;
 }
+
+/*Width in percents*/
 .w100pc {
     width: 100%;
+}
+.w75pc {
+    width: 75%;
+}
+.w50pc {
+    width: 50%;
+}
+.w25pc {
+    width: 25%;
 }

@@ -1,14 +1,8 @@
-create table ffxiv__grandcompany_rank
+CREATE TABLE `ffxiv__grandcompany_rank`
 (
-    gcrankid tinyint(2) unsigned auto_increment comment 'ID of character''s Grand Company''s affiliation and current rank there as registered by tracker'
-        primary key,
-    gcId     tinyint(1) unsigned not null comment 'Grand Company ID based on filters from Lodestone',
-    gc_rank  varchar(50)         not null comment 'Rank name',
-    constraint gc_rank
-        unique (gc_rank),
-    constraint gcRank_to_gc
-        foreign key (gcId) references ffxiv__grandcompany (gcId)
-            on update cascade on delete cascade
-)
-    comment 'Grand Companies'' ranks';
-
+    `gcrankid` TINYINT(2) UNSIGNED AUTO_INCREMENT COMMENT 'ID of character''s Grand Company''s affiliation and current rank there as registered by tracker' PRIMARY KEY,
+    `gcId`     TINYINT(1) UNSIGNED NOT NULL COMMENT 'Grand Company ID based on filters from Lodestone',
+    `gc_rank`  VARCHAR(50)         NOT NULL COMMENT 'Rank name',
+    CONSTRAINT `gc_rank` UNIQUE (`gc_rank`),
+    CONSTRAINT `gcRank_to_gc` FOREIGN KEY (`gcId`) REFERENCES `ffxiv__grandcompany` (`gcId`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Grand Companies'' ranks';

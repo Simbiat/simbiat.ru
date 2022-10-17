@@ -1,35 +1,21 @@
-create table talks__posts
+CREATE TABLE `talks__posts`
 (
-    postid    int unsigned auto_increment comment 'Post ID',
-    threadid  int unsigned                                    not null comment 'ID of a thread the post belongs to',
-    replyto   int unsigned                                    null comment 'Indicates an ID of a post, that this is a reply to (required to build chains)',
-    `system`  tinyint(1) unsigned default 0                   not null comment 'Flag indicating that post is system one, thus should not be deleted.',
-    locked    tinyint(1) unsigned default 0                   not null comment 'Flag to indicate if post is locked from editing',
-    created   timestamp           default current_timestamp() not null comment 'When post was created',
-    createdby int unsigned                                    null comment 'User ID of the creator',
-    updated   timestamp           default current_timestamp() not null comment 'When post was updated',
-    updatedby int unsigned                                    null comment 'User ID of the last updater',
-    text      longtext                                        not null comment 'Text of the post',
-    constraint postid
-        unique (postid),
-    constraint post_created_by
-        foreign key (createdby) references uc__users (userid)
-            on update cascade on delete set null,
-    constraint post_to_post
-        foreign key (replyto) references talks__posts (postid)
-            on update cascade on delete set null,
-    constraint post_to_thread
-        foreign key (threadid) references talks__threads (threadid)
-            on update cascade,
-    constraint post_updated_by
-        foreign key (updatedby) references uc__users (userid)
-            on update cascade on delete set null
-)
-    comment 'List of all posts';
+    `postid`    INT UNSIGNED AUTO_INCREMENT COMMENT 'Post ID' PRIMARY KEY,
+    `threadid`  INT UNSIGNED                                    NOT NULL COMMENT 'ID of a thread the post belongs to',
+    `replyto`   INT UNSIGNED                                    NULL COMMENT 'Indicates an ID of a post, that this is a reply to (required to build chains)',
+    `system`    TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag indicating that post is system one, thus should not be deleted.',
+    `locked`    TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag to indicate if post is locked from editing',
+    `created`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When post was created',
+    `createdby` INT UNSIGNED                                    NULL COMMENT 'User ID of the creator',
+    `updated`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When post was updated',
+    `updatedby` INT UNSIGNED                                    NULL COMMENT 'User ID of the last updater',
+    `text`      LONGTEXT                                        NOT NULL COMMENT 'Text of the post',
+    CONSTRAINT `post_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT `post_to_post` FOREIGN KEY (`replyto`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT `post_to_thread` FOREIGN KEY (`threadid`) REFERENCES `talks__threads` (`threadid`) ON UPDATE CASCADE,
+    CONSTRAINT `post_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE SET NULL
+) COMMENT 'List of all posts';
 
-create index created
-    on talks__posts (created desc);
+CREATE INDEX `created` ON `talks__posts` (`created` DESC);
 
-create fulltext index text
-    on talks__posts (text);
-
+CREATE FULLTEXT INDEX `text` ON `talks__posts` (`text`);

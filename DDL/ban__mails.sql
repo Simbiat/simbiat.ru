@@ -1,12 +1,8 @@
-create table ban__mails
+CREATE TABLE `ban__mails`
 (
-    mail   varchar(320)                          not null comment 'Banned e-mail'
-        primary key,
-    added  timestamp default current_timestamp() not null comment 'When e-mail was banned',
-    reason text                                  null comment 'Reason for the ban'
-)
-    comment 'Banned e-mail addresses';
+    `mail`   VARCHAR(320)                          NOT NULL COMMENT 'Banned e-mail' PRIMARY KEY,
+    `added`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When e-mail was banned',
+    `reason` TEXT                                  NULL COMMENT 'Reason for the ban'
+) COMMENT 'Banned e-mail addresses';
 
-create index added
-    on ban__mails (added);
-
+CREATE INDEX `added` ON `ban__mails` (`added`);

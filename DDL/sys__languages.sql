@@ -1,11 +1,7 @@
-create table sys__languages
+CREATE TABLE `sys__languages`
 (
-    tag  varchar(35)  not null comment 'Language tag as per RFC 5646',
-    name varchar(100) not null comment 'Human-readable name',
-    constraint name
-        unique (name),
-    constraint tag
-        unique (tag)
-)
-    comment 'List of language tags';
-
+    `tag`  VARCHAR(35)  NOT NULL COMMENT 'Language tag as per RFC 5646',
+    `name` VARCHAR(100) NOT NULL COMMENT 'Human-readable name',
+    CONSTRAINT `name` UNIQUE (`name`),
+    CONSTRAINT `tag` UNIQUE (`tag`)
+) COMMENT 'List of language tags';

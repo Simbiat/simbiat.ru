@@ -1,21 +1,16 @@
-create table seo__visitors
+CREATE TABLE `seo__visitors`
 (
-    ip     varchar(45)                                 not null comment 'IP of unique visitor',
-    os     varchar(100)    default ''                  not null comment 'OS version used by visitor',
-    client varchar(100)    default ''                  not null comment 'Client version used by visitor',
-    first  timestamp       default current_timestamp() not null comment 'Time of first visit',
-    last   timestamp       default current_timestamp() not null on update current_timestamp() comment 'Time of last visit',
-    views  bigint unsigned default 1                   not null comment 'Number of viewed pages',
-    primary key (ip, os, client)
-)
-    comment 'Views statistics per user';
+    `ip`     VARCHAR(45)                                 NOT NULL COMMENT 'IP of unique visitor',
+    `os`     VARCHAR(100)    DEFAULT ''                  NOT NULL COMMENT 'OS version used by visitor',
+    `client` VARCHAR(100)    DEFAULT ''                  NOT NULL COMMENT 'Client version used by visitor',
+    `first`  TIMESTAMP       DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'Time of first visit',
+    `last`   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'Time of last visit',
+    `views`  BIGINT UNSIGNED DEFAULT 1                   NOT NULL COMMENT 'Number of viewed pages',
+    PRIMARY KEY (`ip`, `os`, `client`)
+) COMMENT 'Views statistics per user';
 
-create index client
-    on seo__visitors (client);
+CREATE INDEX `client` ON `seo__visitors` (`client`);
 
-create index first
-    on seo__visitors (first);
+CREATE INDEX `first` ON `seo__visitors` (`first`);
 
-create index os
-    on seo__visitors (os);
-
+CREATE INDEX `os` ON `seo__visitors` (`os`);

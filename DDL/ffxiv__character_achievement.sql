@@ -1,21 +1,13 @@
-create table ffxiv__character_achievement
+CREATE TABLE `ffxiv__character_achievement`
 (
-    characterid   int unsigned                          not null comment 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
-    achievementid smallint unsigned                     not null comment 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
-    time          timestamp default current_timestamp() not null on update current_timestamp() comment 'Time when achievement was received according to Lodestone',
-    primary key (characterid, achievementid),
-    constraint char_ach_ach
-        foreign key (achievementid) references ffxiv__achievement (achievementid)
-            on update cascade on delete cascade,
-    constraint char_ach_char
-        foreign key (characterid) references ffxiv__character (characterid)
-            on update cascade on delete cascade
-)
-    comment 'Achievements linked to known characters';
+    `characterid`   INT UNSIGNED                          NOT NULL COMMENT 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
+    `achievementid` SMALLINT UNSIGNED                     NOT NULL COMMENT 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
+    `time`          TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'Time when achievement was received according to Lodestone',
+    PRIMARY KEY (`characterid`, `achievementid`),
+    CONSTRAINT `char_ach_ach` FOREIGN KEY (`achievementid`) REFERENCES `ffxiv__achievement` (`achievementid`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `char_ach_char` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Achievements linked to known characters';
 
-create index ach
-    on ffxiv__character_achievement (achievementid);
+CREATE INDEX `ach` ON `ffxiv__character_achievement` (`achievementid`);
 
-create index time
-    on ffxiv__character_achievement (time desc);
-
+CREATE INDEX `time` ON `ffxiv__character_achievement` (`time` DESC);

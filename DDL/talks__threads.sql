@@ -1,34 +1,21 @@
-create table talks__threads
+CREATE TABLE `talks__threads`
 (
-    threadid  int unsigned auto_increment comment 'Thread ID',
-    name      varchar(100)                                    not null comment 'Thread name',
-    forumid   int unsigned                                    not null comment 'Forum ID where the thread is located',
-    language  varchar(35)         default 'en'                not null comment 'Main language of the thread',
-    `system`  tinyint(1) unsigned default 0                   not null comment 'Flag indicating that thread is system one, thus should not be deleted.',
-    pinned    tinyint(1) unsigned default 0                   not null comment 'Flag to indicate if a thread needs to be shown above others in the list',
-    closed    timestamp                                       null comment 'Flag to indicate if a thread is closed',
-    private   tinyint(1) unsigned default 0                   not null comment 'Flag to indicate if thread is private',
-    created   timestamp           default current_timestamp() not null comment 'When thread was created',
-    createdby int unsigned                                    null comment 'User ID of the creator',
-    updated   timestamp           default current_timestamp() not null comment 'When thread was updated',
-    updatedby int unsigned                                    null comment 'User ID of the updater',
-    constraint threadid
-        unique (threadid),
-    constraint thread_created_by
-        foreign key (createdby) references uc__users (userid)
-            on update cascade on delete set null,
-    constraint thread_language
-        foreign key (language) references sys__languages (tag)
-            on update cascade,
-    constraint thread_to_forum
-        foreign key (forumid) references talks__forums (forumid)
-            on update cascade,
-    constraint thread_updated_by
-        foreign key (updatedby) references uc__users (userid)
-            on update cascade on delete set null
-)
-    comment 'List of threads';
+    `threadid`  INT UNSIGNED AUTO_INCREMENT COMMENT 'Thread ID' PRIMARY KEY,
+    `name`      VARCHAR(100)                                    NOT NULL COMMENT 'Thread name',
+    `forumid`   INT UNSIGNED                                    NOT NULL COMMENT 'Forum ID where the thread is located',
+    `language`  VARCHAR(35)         DEFAULT 'en'                NOT NULL COMMENT 'Main language of the thread',
+    `system`    TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',
+    `pinned`    TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag to indicate if a thread needs to be shown above others in the list',
+    `closed`    TIMESTAMP                                       NULL COMMENT 'Flag to indicate if a thread is closed',
+    `private`   TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag to indicate if thread is private',
+    `created`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When thread was created',
+    `createdby` INT UNSIGNED                                    NULL COMMENT 'User ID of the creator',
+    `updated`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When thread was updated',
+    `updatedby` INT UNSIGNED                                    NULL COMMENT 'User ID of the updater',
+    CONSTRAINT `thread_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT `thread_language` FOREIGN KEY (`language`) REFERENCES `sys__languages` (`tag`) ON UPDATE CASCADE,
+    CONSTRAINT `thread_to_forum` FOREIGN KEY (`forumid`) REFERENCES `talks__forums` (`forumid`) ON UPDATE CASCADE,
+    CONSTRAINT `thread_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE SET NULL
+) COMMENT 'List of threads';
 
-create fulltext index name
-    on talks__threads (name);
-
+CREATE FULLTEXT INDEX `name` ON `talks__threads` (`name`);

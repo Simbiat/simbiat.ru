@@ -1,11 +1,7 @@
-create table ffxiv__pvpteam_names
+CREATE TABLE `ffxiv__pvpteam_names`
 (
-    pvpteamid varchar(40) not null comment 'PvP Team ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/pvpteam/pvpteamid/)',
-    name      varchar(50) not null comment 'Previous PvP Team name',
-    primary key (pvpteamid, name),
-    constraint pvp_name_id
-        foreign key (pvpteamid) references ffxiv__pvpteam (pvpteamid)
-            on update cascade on delete cascade
-)
-    comment 'Past names of PvP teams';
-
+    `pvpteamid` VARCHAR(40) NOT NULL COMMENT 'PvP Team ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/pvpteam/pvpteamid/)',
+    `name`      VARCHAR(50) NOT NULL COMMENT 'Previous PvP Team name',
+    PRIMARY KEY (`pvpteamid`, `name`),
+    CONSTRAINT `pvp_name_id` FOREIGN KEY (`pvpteamid`) REFERENCES `ffxiv__pvpteam` (`pvpteamid`) ON UPDATE CASCADE ON DELETE CASCADE
+) COMMENT 'Past names of PvP teams';

@@ -502,6 +502,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\Tests\\Tests' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Tests/Tests.php',
         'Simbiat\\Twig\\Extension' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Twig/Extension.php',
         'Simbiat\\Twig\\RuntimeExtension' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Twig/RuntimeExtension.php',
+        'Simbiat\\Upload' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Upload.php',
         'Simbiat\\array2table' => __DIR__ . '/../..' . '/../lib/array2table/src/array2table.php',
         'Simbiat\\bictracker\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/bictracker/Api.php',
         'Simbiat\\bictracker\\Api\\Bic' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/bictracker/Api/Bic.php',

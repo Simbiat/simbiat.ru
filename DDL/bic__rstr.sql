@@ -1,8 +1,5 @@
-create table bic__rstr
+CREATE TABLE `bic__rstr`
 (
-    Rstr        varchar(4)   not null comment 'Код ограничения'
-        primary key,
-    Description varchar(150) not null comment 'Описание ограничения'
-)
-    comment 'Код ограничений для участников и их счетов';
-
+    `Rstr`        VARCHAR(4)   NOT NULL COMMENT 'Код ограничения' PRIMARY KEY,
+    `Description` VARCHAR(150) NOT NULL COMMENT 'Описание ограничения'
+) COMMENT 'Код ограничений для участников и их счетов';
