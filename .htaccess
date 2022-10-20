@@ -53,7 +53,7 @@ Header always set X-Content-Type-Options "nosniff"
 #CORS headers
 # FFTracker loads some images directly from FFXIV Lodestone and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
 # Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them
-<IF "%{THE_REQUEST} =~ m#^GET* /fftracker/?.*#">
+<IF "%{THE_REQUEST} =~ m#^GET* (/uc)?/fftracker/?.*#">
     Header always set Cross-Origin-Embedder-Policy "unsafe-none"
 </IF>
 <ELSE>
