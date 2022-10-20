@@ -636,22 +636,26 @@ class Library
                 if (preg_match('/\/s\/newbik/iu', $href) === 0) {
                     $href = self::bicBaseHref.$href;
                     #Attempt to actually download the zip file
-                    if (file_put_contents($fileName.'.zip', @fopen($href, 'r'))) {
-                        #Unzip the file
-                        if (file_exists($fileName.'.zip')) {
-                            $zip = new \ZipArchive;
-                            if ($zip->open($fileName.'.zip') === true) {
-                                $zip->extractTo(sys_get_temp_dir());
-                                $zip->close();
-                            }
-                            #Remove zip file
-                            @unlink($fileName.'.zip');
-                            #Check if ED807 file exists
-                            if (file_exists($fileName)) {
-                                return $fileName;
-                            } else {
-                                return false;
-                            }
+                    $bicFile = (new Curl())->getFile($href);
+                    if (is_array($bicFile) && !empty($bicFile['server_name'])) {
+                        $bicFile = $bicFile['server_path'].'/'.$bicFile['server_name'];
+                    } else {
+                        return false;
+                    }
+                    #Unzip the file
+                    if (file_exists($bicFile)) {
+                        $zip = new \ZipArchive;
+                        if ($zip->open($bicFile) === true) {
+                            $zip->extractTo(sys_get_temp_dir());
+                            $zip->close();
+                        }
+                        #Remove zip file
+                        @unlink($bicFile);
+                        #Check if ED807 file exists
+                        if (file_exists($fileName)) {
+                            return $fileName;
+                        } else {
+                            return false;
                         }
                     }
                     return true;

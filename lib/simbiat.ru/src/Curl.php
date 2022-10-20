@@ -61,6 +61,10 @@ class Curl
         }
         #Get page contents
         curl_setopt(self::$curlHandle, CURLOPT_HEADER, true);
+        #Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to browser directly even with CURLOPT_RETURNTRANSFER set to true
+        curl_setopt(self::$curlHandle, CURLOPT_FILE, tmpfile());
+        #For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
+        curl_setopt(self::$curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
         #Get response
         $response = curl_exec(self::$curlHandle);
