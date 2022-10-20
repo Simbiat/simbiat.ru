@@ -53,7 +53,7 @@ function router(): void
             if (path[1]) {
                 if (path[1] === 'track') {
                     import('/js/Pages/fftracker/track.js').then((module) => {new module.ffTrack();});
-                } else if (['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam',].includes(path[1])) {
+                } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(path[1])) {
                     import('/js/Pages/fftracker/entity.js').then((module) => {new module.ffEntity();});
                 }
             }

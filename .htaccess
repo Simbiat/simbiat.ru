@@ -53,7 +53,7 @@ Header always set X-Content-Type-Options "nosniff"
 #CORS headers
 # FFTracker loads some images directly from FFXIV Lodestone and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
 # Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them
-<IF "%{THE_REQUEST} =~ m#^.*/(fftracker)/.*#">
+<IF "%{THE_REQUEST} =~ m#^GET* /fftracker/?.*#">
     Header always set Cross-Origin-Embedder-Policy "unsafe-none"
 </IF>
 <ELSE>
@@ -114,6 +114,10 @@ Header set NEL: '{"report_to":"default","max_age":31536000,"include_subdomains":
     Header set feature-policy "accelerometer 'none'; gyroscope 'none'; magnetometer 'none'; camera 'none'; microphone 'none'; midi 'none'; usb 'none'; document-domain 'none'; encrypted-media 'self'; publickey-credentials-get 'self'; geolocation 'none'; xr-spatial-tracking 'none'; payment 'none'; display-capture 'none'; web-share 'none'; sync-xhr 'none'; autoplay 'none'; fullscreen 'none'; picture-in-picture 'none'" "expr=%{HTTP:FEATURE-POLICY} == '' && %{CONTENT_TYPE} =~ m#text/html#i"
     Header set permissions-policy "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(self), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(), speaker-selection=(), conversion-measurement=(), focus-without-user-activation=(self), hid=(), idle-detection=(), interest-cohort=(), serial=(), sync-script=(), trust-token-redemption=(self), window-placement=(), vertical-scroll=(self)" "expr=%{HTTP:PERMISSIONS-POLICY} == '' && %{CONTENT_TYPE} =~ m#text/html#i"
 </IfModule>
+#Need to allow blob: schema for avatar preview
+<If "%{THE_REQUEST} =~ m#^GET /uc/avatars/?.*#">
+    Header set content-security-policy "upgrade-insecure-requests; default-src 'self'; child-src 'self'; connect-src 'self'; font-src 'self'; frame-src 'self'; img-src 'self' blob:; manifest-src 'self'; media-src 'self'; object-src 'none'; prefetch-src 'self'; script-src 'report-sample' 'self'; script-src-elem 'report-sample' 'self'; script-src-attr 'none'; style-src 'report-sample' 'self'; style-src-elem 'report-sample' 'self'; style-src-attr 'none'; worker-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; navigate-to https:; report-to https://simbiat.report-uri.com/r/d/csp/enforce; report-uri https://simbiat.report-uri.com/r/d/csp/enforce;" "expr=%{HTTP:CONTENT-SECURITY-POLICY} == '' && %{CONTENT_TYPE} =~ m#text/html#i"
+</If>
 ##############################
 # Cache control headers based on content type
 ##############################

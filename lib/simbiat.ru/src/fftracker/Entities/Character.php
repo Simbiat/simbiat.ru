@@ -10,6 +10,7 @@ use Simbiat\HomePage;
 use Simbiat\Images;
 use Simbiat\Lodestone;
 use Simbiat\Security;
+use Simbiat\usercontrol\User;
 
 class Character extends Entity
 {
@@ -338,6 +339,12 @@ class Character extends Entity
                     (new Cron)->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->lodestone['pvp']['id']);
                 }
             }
+            #Check if character is linked to a user
+            $character = HomePage::$dbController->selectRow('SELECT `characterid`, `userid` FROM `ffxiv__character` WHERE `characterid`=:id;', [':id' => $this->id]);
+            if ($character['userid']) {
+                #Download avatar
+                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar']);
+            }
             return true;
         } catch(\Exception $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
@@ -414,15 +421,11 @@ class Character extends Entity
             if (!HomePage::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid AND `ff_token`=:token;', [':userid'=>$_SESSION['userid'], ':token'=>$token])) {
                 return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
             }
-            #Download avatar
-            $avatar = Images::download('https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', Common::$uploadedImg.'/'.$this->id.'.jpg');
-            $queries[] = ['UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],];
-            if ($avatar) {
-                $queries[] = ['INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES (:userid, \'fileid\', 0);', [':userid'=>$_SESSION['userid'],]];
-            }
             #Link character to user
-            $result = HomePage::$dbController->query($queries);
+            $result = HomePage::$dbController->query('UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
+            #Download avatar
+            (new User($_SESSION['userid']))->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg');
             return ['response' => $result];
         } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => $exception->getMessage()];

@@ -101,6 +101,9 @@ function deleteRow(element) {
         return false;
     }
 }
+function basename(text) {
+    return text.replace(/^.*\/|\.[^.]*$/g, '');
+}
 const pageTitle = ' on Simbiat Software';
 const emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
 const userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`{|}~\\- ]{1,64}$';
@@ -353,7 +356,7 @@ function router() {
                 if (path[1] === 'track') {
                     import('/js/Pages/fftracker/track.js').then((module) => { new module.ffTrack(); });
                 }
-                else if (['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam',].includes(path[1])) {
+                else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(path[1])) {
                     import('/js/Pages/fftracker/entity.js').then((module) => { new module.ffEntity(); });
                 }
             }

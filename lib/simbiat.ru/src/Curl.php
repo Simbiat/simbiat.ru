@@ -4,6 +4,7 @@ namespace Simbiat;
 
 #Class for cUrl related functions. Needed more for settings' uniformity
 use Simbiat\HTTP20\Common;
+use Simbiat\HTTP20\Sharing;
 
 class Curl
 {
@@ -34,6 +35,11 @@ class Curl
     ];
     #cURL Handle is static to allow reuse of single instance, if possible and needed
     public static \CurlHandle|null|false $curlHandle = null;
+    #Allowed MIME types
+    public const allowedMime = [
+        #For now only images
+        'image/avif','image/bmp','image/gif','image/jpeg','image/png','image/webp','image/svg+xml'
+    ];
 
     public final function __construct()
     {
@@ -127,6 +133,97 @@ class Curl
         if ($httpCode === 200) {
             return true;
         } else {
+            return false;
+        }
+    }
+    
+    #Function to process file uploads either through POST/PUT or by using a provided link
+    public function upload(string $link = ''): false|array
+    {
+        try {
+            #Check DB
+            if (empty(HomePage::$dbController)) {
+                return ['http_error' => 503, 'reason' => 'Database unavailable'];
+            }
+            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link]);
+            if (!empty($link)) {
+                $upload = $this->getFile($link);
+                if ($upload === false) {
+                    return false;
+                }
+            } else {
+                $upload = Sharing::upload(Config\Common::$uploaded, exit: false);
+                if (!is_array($upload) || empty($upload[0]['server_name'])) {
+                    return ['http_error' => 500, 'reason' => 'Failed to upload the file'];
+                } else {
+                    #If $upload had more than 1 file - remove all except 1st one
+                    if (count($upload) > 1) {
+                        foreach ($upload as $key => $file) {
+                            if ($key !== 0) {
+                                @unlink($file['server_path'].'/'.$file['server_name']);
+                            }
+                        }
+                    }
+                    $upload = $upload[0];
+                }
+            }
+            #Check if file is one of the allowed types
+            if (!in_array($upload['type'], self::allowedMime)) {
+                @unlink($upload['server_path'].'/'.$upload['server_name']);
+                return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
+            }
+            #Check if we have an image
+            if (preg_match('/^image\/.+/ui', $upload['type']) === 1) {
+                #Convert to webp, if it's a supported format
+                $converted = Images::toWebP($upload['server_path'].'/'.$upload['server_name']);
+                if ($converted) {
+                    $upload['hash'] = hash_file('sha3-512', $converted);
+                    $upload['size'] = filesize($converted);
+                    $upload['server_name'] = preg_replace('/(.+)(\..+$)/ui', '$1.webp', $upload['server_name']);
+                    $upload['new_name'] = $upload['hash'].'.webp';
+                    $upload['user_name'] = preg_replace('/(.+)(\..+$)/ui', '$1.webp', $upload['user_name']);
+                    $upload['type'] = 'image/webp';
+                } else {
+                    $upload['new_name'] = $upload['server_name'];
+                }
+                $upload['new_path'] = Config\Common::$uploadedImg;
+                $upload['location'] = '/img/uploaded/';
+            } else {
+                $upload['new_name'] = $upload['server_name'];
+                $upload['new_path'] = Config\Common::$uploaded;
+                $upload['location'] = '/data/uploaded/';
+            }
+            #Get extension
+            $upload['extension'] = pathinfo($upload['server_path'].'/'.$upload['server_name'], PATHINFO_EXTENSION);
+            #Get path for hash-tree structure
+            $upload['hash_tree'] = substr($upload['hash'], 0, 2).'/'.substr($upload['hash'], 2, 2).'/'.substr($upload['hash'], 4, 2).'/';
+            if (!is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
+                mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true);
+            }
+            #Set file location to return in output
+            $upload['location'] .= $upload['hash_tree'].$upload['new_name'];
+            #Move to hash-tree directory, only if file is not already present
+            if (!is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
+                if (rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
+                    #Add to database
+                    HomePage::$dbController->query(
+                        'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
+                        [
+                            ':hash' => $upload['hash'],
+                            ':userid' => $_SESSION['userid'],
+                            ':filename' => $upload['user_name'],
+                            ':extension' => $upload['extension'],
+                            ':mime' => $upload['type'],
+                            ':size' => [$upload['size'], 'int'],
+                        ]
+                    );
+                } else {
+                    @unlink($upload['server_path'].'/'.$upload['server_name']);
+                    return false;
+                }
+            }
+            return $upload;
+        } catch (\Throwable) {
             return false;
         }
     }

@@ -130,3 +130,45 @@ password-strength {
     font-size: smaller;
     font-style: italic;
 }
+
+#avatars_list {
+    list-style-type: none;
+    display:         flex;
+    flex-direction:  row;
+    flex-wrap:       wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin-top: 0;
+}
+#avatars_list .radio_and_label {
+    width: 6rem;
+    height: 6rem;
+}
+#avatars_list .avatar {
+    width: 6rem;
+    height: 6rem;
+}
+#avatars_list li {
+    position: relative;
+    margin: 0.5rem;
+    width: 7rem;
+    height: 7rem;
+}
+#avatars_list .delete_avatar {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#avatars_list input[type=radio]+label::before {
+    content: none;
+}
+#avatars_list input[type=radio]:checked+label::before {
+    content: none;
+}
+#avatars_list input[type=radio]:checked+label img {
+    border-color: var(--color-success);
+}
+#previewAvatar {
+    display: block;
+}

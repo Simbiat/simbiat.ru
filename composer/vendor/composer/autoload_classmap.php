@@ -399,6 +399,7 @@ return array(
     'Simbiat\\fftracker\\Statistics' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
     'Simbiat\\optimizeTables' => $baseDir . '/../lib/optimize-tables/src/optimizeTables.php',
     'Simbiat\\usercontrol\\Api' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api.php',
+    'Simbiat\\usercontrol\\Api\\Avatars' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Avatars.php',
     'Simbiat\\usercontrol\\Api\\Cookies' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Cookies.php',
     'Simbiat\\usercontrol\\Api\\Emails' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Emails.php',
     'Simbiat\\usercontrol\\Api\\FFLink' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/FFLink.php',

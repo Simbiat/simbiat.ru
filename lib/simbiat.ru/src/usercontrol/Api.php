@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
+use Simbiat\usercontrol\Api\Avatars;
 use Simbiat\usercontrol\Api\Cookies;
 use Simbiat\usercontrol\Api\Emails;
 use Simbiat\usercontrol\Api\FFLink;
@@ -18,7 +19,7 @@ class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'cookies', 'sessions',
+        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions',
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
@@ -31,6 +32,7 @@ class Api extends \Simbiat\Abstracts\Api
         'Username change',
         'Update profile details',
         'Link FFXIV characters',
+        'Avatars management',
         'Delete cookies',
         'Delete sessions',
     ];
@@ -51,6 +53,7 @@ class Api extends \Simbiat\Abstracts\Api
             'fflink' => (new FFLink)->route(array_slice($path, 1)),
             'cookies' => (new Cookies)->route(array_slice($path, 1)),
             'sessions' => (new Sessions)->route(array_slice($path, 1)),
+            'avatars' => (new Avatars)->route(array_slice($path, 1)),
         };
     }
 }

@@ -553,6 +553,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\fftracker\\Statistics' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
         'Simbiat\\optimizeTables' => __DIR__ . '/../..' . '/../lib/optimize-tables/src/optimizeTables.php',
         'Simbiat\\usercontrol\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api.php',
+        'Simbiat\\usercontrol\\Api\\Avatars' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Avatars.php',
         'Simbiat\\usercontrol\\Api\\Cookies' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Cookies.php',
         'Simbiat\\usercontrol\\Api\\Emails' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Emails.php',
         'Simbiat\\usercontrol\\Api\\FFLink' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/FFLink.php',

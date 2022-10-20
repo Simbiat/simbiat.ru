@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '8b7a75e3ddbb2c52c5604eb814c9cf5ac347b870',
+        'reference' => '8304c08d8e61549c525cebf17c3d3c4076f75172',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -74,9 +74,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.0.3',
-            'version' => '6.0.3.0',
-            'reference' => '6ba69e1afd24b45d66b6de7b04553213f7ef2151',
+            'pretty_version' => '6.0.4',
+            'version' => '6.0.4.0',
+            'reference' => 'aaed4d27c7a9876756d03ae85386977db306492d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -94,7 +94,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.0.3',
+                0 => '6.0.4',
             ),
         ),
         'psr/http-client' => array(
@@ -202,7 +202,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '8b7a75e3ddbb2c52c5604eb814c9cf5ac347b870',
+            'reference' => '8304c08d8e61549c525cebf17c3d3c4076f75172',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -57,3 +57,9 @@ function deleteRow(element: HTMLElement): boolean
         return false;
     }
 }
+
+//Simulation of basename() function to return only the name of the file (without path or extension)
+function basename(text: string): string
+{
+    return text.replace(/^.*\/|\.[^.]*$/g, '');
+}

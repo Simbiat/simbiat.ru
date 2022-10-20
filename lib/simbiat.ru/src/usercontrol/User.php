@@ -4,6 +4,7 @@ namespace Simbiat\usercontrol;
 
 use Simbiat\Abstracts\Entity;
 use Simbiat\Config\Common;
+use Simbiat\Curl;
 use Simbiat\HomePage;
 use Simbiat\Security;
 
@@ -73,7 +74,7 @@ class User extends Entity
         $dbData['activated'] = !in_array(2, $dbData['groups'], true);
         $dbData['deleted'] = in_array(4, $dbData['groups'], true);
         $dbData['banned'] = in_array(5, $dbData['groups'], true);
-        $dbData['currentAvatar'] = HomePage::$dbController->selectValue('SELECT CONCAT(\'/img/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid'=>[$this->id, 'int']]);
+        $dbData['currentAvatar'] = $this->getAvatar();
         return $dbData;
     }
 
@@ -108,14 +109,74 @@ class User extends Entity
             return [];
         }
     }
-
+    
+    #Get current avatar
+    public function getAvatar(): string
+    {
+        try {
+            $avatar = HomePage::$dbController->selectValue('SELECT CONCAT(\'/img/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid' => [$this->id, 'int']]);
+            if (empty($avatar)) {
+                $avatar = '/img/avatar.svg';
+            }
+        } catch (\Throwable) {
+            $avatar = '/img/avatar.svg';
+        }
+        return $avatar;
+    }
+    
+    #Get all avatars
     public function getAvatars(): array
     {
         try {
-            return HomePage::$dbController->selectAll('SELECT CONCAT(\'/img/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid;', [':userid' => [$this->id, 'int']]);
+            return HomePage::$dbController->selectAll('SELECT CONCAT(\'/img/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `uc__avatars`.`fileid`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid ORDER BY `current` DESC;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
+    }
+    
+    public function addAvatar(bool $setActive = false, string $link = ''): array
+    {
+        $upload = (new Curl)->upload($link);
+        if ($upload === false || empty($upload['type'])) {
+            return ['http_error' => 500, 'reason' => 'Failed to upload file'];
+        }
+        if (preg_match('/^image\/.+/ui', $upload['type']) !== 1) {
+            #Remove file from DB
+            @HomePage::$dbController->query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $upload['hash']]);
+            #Remove physical file
+            @unlink($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']);
+            return ['http_error' => 400, 'reason' => 'File is not an image'];
+        }
+        try {
+            #Add to DB
+            HomePage::$dbController->query('INSERT INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES (:userid, :fileid, 0) ON DUPLICATE KEY UPDATE `current`=1;', [':userid' => [$this->id, 'int'], ':fileid' => $upload['hash']]);
+            if ($setActive) {
+                return $this->setAvatar($upload['hash']);
+            }
+        } catch (\Throwable) {
+            return ['http_error' => 500, 'reason' => 'Failed to add avatar to library'];
+        }
+        return ['location' => $upload['location'], 'response' => true];
+    }
+    
+    public function delAvatar(): array
+    {
+        $fileid = $_POST['avatar'] ?? '';
+        #Delete the avatar (only allow deletion of those, that are not current)
+        HomePage::$dbController->query('DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid`=:fileid AND `current`=0;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]);
+        return ['location' => $this->getAvatar(), 'response' => true];
+    }
+    
+    public function setAvatar(string $fileid = ''): array
+    {
+        $fileid = $_POST['avatar'] ?? $fileid ?? '';
+        HomePage::$dbController->query([
+            #Set the chosen avatar as current
+            ['UPDATE `uc__avatars` SET `current`=1 WHERE `userid`=:userid AND `fileid`=:fileid;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]],
+            #Set the rest as non-current
+            ['UPDATE `uc__avatars` SET `current`=0 WHERE `userid`=:userid AND `fileid`<>:fileid;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]],
+        ]);
+        return ['location' => $this->getAvatar(), 'response' => true];
     }
 
     public function getFF(): array

@@ -1,19 +1,29 @@
-<form class="middle" id="profile_avatar">
-    <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your current avatar" src="{{ session_data.avatar|default('/img/avatar.svg') }}"></div>
+<p class="middle">Current avatar:</p>
+<div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your current avatar" id="currentAvatar" src="{{ session_data.avatar|default('/img/avatar.svg') }}"></div>
+<p class="middle">Select avatar from previous uploads:</p>
+<ul id="avatars_list">
     {% if avatars %}
-        <p>Select avatar from previous uploads:</p>
+        {% for avatar in avatars %}
+            <li id="{{ avatar.fileid }}">
+                <span class="radio_and_label">
+                    <input id="avatar_{{ loop.index }}" type="radio"{% if avatar.current %} checked{% endif %}>
+                    <label for="avatar_{{ loop.index }}">
+                        <img loading="lazy" decoding="async" alt="Avatar {{ loop.index }}" src="{{ avatar.url }}" class="avatar">
+                    </label>
+                </span>
+                <input id="del_{{ loop.index }}" alt="Delete avatar" type="image" class="delete_avatar{% if avatar.current %} hidden{% endif %}"{% if avatar.current %} disabled{% endif %} src="/img/close.svg">
+            </li>
+        {% endfor %}
     {% endif %}
+</ul>
+<form class="middle" id="profile_avatar">
     <p>Upload new avatar:</p>
     <div class="float_label_div">
-        <input form="profile_avatar" type="file" aria-required="false" name="avatar[file]" id="new_avatar_file" placeholder="Image file">
+        <input form="profile_avatar" type="file" aria-required="false" name="avatar[file]" id="new_avatar_file" placeholder="Image file" accept="image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml">
         <label for="new_avatar_file">Image file</label>
     </div>
-    <p>Input link to the image:</p>
-    <div class="float_label_div">
-        <input form="profile_avatar" type="url" aria-required="false" name="avatar[url]" id="new_avatar_url" placeholder="Image URL" autocomplete="photo" inputmode="text" minlength="1" maxlength="255" pattern="https://[^<>]]*">
-        <label for="new_avatar_url">Image URL</label>
-    </div>
     <br/>
-    <input role="button" form="profile_avatar" type="submit" name="submit" id="avatar_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Update">
-    <img id="avatar_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Updating avatar...">
+    <img loading="lazy" decoding="async" alt="New avatar preview" src="/img/avatar.svg" class="avatar middle hidden" id="previewAvatar">
+    <input role="button" form="profile_avatar" type="submit" name="submit" id="avatar_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Upload">
+    <img id="avatar_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Uploading avatar...">
 </form>
