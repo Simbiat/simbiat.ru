@@ -339,6 +339,7 @@ return array(
     'Simbiat\\Security' => $baseDir . '/../lib/simbiat.ru/src/Security.php',
     'Simbiat\\SimplePages\\Pages\\DeviceDetector' => $baseDir . '/../lib/simbiat.ru/src/SimplePages/Pages/DeviceDetector.php',
     'Simbiat\\SimplePages\\Router' => $baseDir . '/../lib/simbiat.ru/src/SimplePages/Router.php',
+    'Simbiat\\Sitemap\\Generate' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Generate.php',
     'Simbiat\\Sitemap\\Pages\\Countables' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/Countables.php',
     'Simbiat\\Sitemap\\Pages\\General' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/General.php',
     'Simbiat\\Sitemap\\Pages\\Index' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/Index.php',

@@ -23,8 +23,6 @@ class Router extends \Simbiat\Abstracts\Router
         #Check if format was provided in URL
         if (in_array($path[0], ['xml', 'txt', 'html'])) {
             $format = $path[0];
-            #Slice the path
-            #$path = array_slice($path, 1);
         }
         if (empty($format)) {
             $format = 'html';
