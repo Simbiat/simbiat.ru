@@ -5,6 +5,7 @@ namespace Simbiat\Sitemap;
 use Simbiat\Config\Common;
 use Simbiat\Config\Twig;
 use Simbiat\Errors;
+use Simbiat\HomePage;
 
 class Generate
 {
@@ -17,6 +18,8 @@ class Generate
             array_map('unlink', glob( Common::$sitemap.'txt/*/*.txt'));
             array_map('unlink', glob( Common::$sitemap.'xml/*.xml'));
             array_map('unlink', glob( Common::$sitemap.'xml/*/*.xml'));
+            #Set method, since router requires it
+            HomePage::$method = 'GET';
             #Cache router
             $router = (new Router);
             #Generate text index file
