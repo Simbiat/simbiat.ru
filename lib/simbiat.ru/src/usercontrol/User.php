@@ -149,7 +149,7 @@ class User extends Entity
         }
         try {
             #Add to DB
-            HomePage::$dbController->query('INSERT INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES (:userid, :fileid, 0) ON DUPLICATE KEY UPDATE `current`=1;', [':userid' => [$this->id, 'int'], ':fileid' => $upload['hash']]);
+            HomePage::$dbController->query('INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES (:userid, :fileid, 0);', [':userid' => [$this->id, 'int'], ':fileid' => $upload['hash']]);
             if ($setActive) {
                 return $this->setAvatar($upload['hash']);
             }
