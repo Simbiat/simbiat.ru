@@ -67,7 +67,7 @@ class HomePage
                 $healthCheck->dbDown();
                 #Check space availability
                 $healthCheck->noSpace();
-                #Do some maintenance stuff
+                #Run cron
                 (new Cron)->process(50);
                 #Ensure we exit no matter what happens with CRON
                 exit;
