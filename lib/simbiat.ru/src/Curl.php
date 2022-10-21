@@ -78,15 +78,8 @@ class Curl
     
     public function getFile(string $link): array|false
     {
-        #Generate random name. Using 64 to be consistent with sha3-512 hash
-        try {
-            $name = hash('sha3-512', random_bytes(64)).'.download';
-        } catch (\Throwable) {
-            #Use microseconds, if we somehow failed to get random value, since it''s unlikely we get more than 1 file upload at the same microsecond
-            $name = microtime().'.download';
-        }
         #Set temp filepath
-        $filepath = sys_get_temp_dir().'/'.$name;
+        $filepath = tempnam(sys_get_temp_dir(), 'download');
         if (!self::$curlHandle instanceof \CurlHandle) {
             return false;
         }
@@ -225,6 +218,9 @@ class Curl
                     @unlink($upload['server_path'].'/'.$upload['server_name']);
                     return false;
                 }
+            } else {
+                #Remove newly downloaded copy
+                @unlink($upload['server_path'].'/'.$upload['server_name']);
             }
             return $upload;
         } catch (\Throwable) {
