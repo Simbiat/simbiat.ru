@@ -143,10 +143,14 @@ class HomePage
                         #Do not do processing if we already encountered a problem
                         if (empty(self::$http_error)) {
                             #Check if there was an internal redirect to custom error page
-                            if (!empty($_SERVER['REDIRECT_URL']) && preg_match('/(^|\/)(http)?error(s)?\/\d{3}(\/|$)/ui', $_SERVER['REDIRECT_URL']) === 1) {
+                            if (!empty($_SERVER['REDIRECT_URL']) && preg_match('/(^|\/)(http)?error(s)?\/\d{3}(\/|$)/ui', $_SERVER['REDIRECT_URL']) === 1 && trim($_SERVER['REDIRECT_URL'], '/') !== trim($_SERVER['REQUEST_URI'], '/')) {
                                 $uri = explode('/', trim($_SERVER['REDIRECT_URL'], '/'));
+                                $vars = (new MainRouter)->route($uri);
+                                #Add a note to error pages
+                                $vars['internal_litespeed_redirect'] = true;
+                            } else {
+                                $vars = (new MainRouter)->route($uri);
                             }
-                            $vars = (new MainRouter)->route($uri);
                         } else {
                             $vars = self::$http_error;
                         }

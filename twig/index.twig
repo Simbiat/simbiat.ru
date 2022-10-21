@@ -33,6 +33,12 @@
                     <article id="http_error">
                         {% if construction == false %}
                             {% if http_error not in ['database', 'maintenance', 'teapot'] %}
+                                {% if internal_litespeed_redirect %}
+                                    <p class="error">You are seeing this message, because <a href="https://store.litespeedtech.com/store/aff.php?aff=1965" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/tech/LiteSpeed.svg" alt="LiteSpeed">LiteSpeed</a> does not want to admit an issue with custom error pages not working, when using a dynamic URL (rewrite rules are not applied, if there is no physical file for the URL).</p>
+                                    <p class="error">The only reason you are able to see this custom page is because I've created a dummy file to force the server apply rewrite rules.</p>
+                                    <p class="error">Until LiteSpeed acknowledges (and fixes) the issue, this message will be shown on respective error pages and I will be recommending <i>against</i> this server software.</p>
+                                    <br/>
+                                {% endif %}
                                 <p>An error code <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not('httperror/'~http_error in url) %} to</p><code data-description="Failed URL">{{ url }}</code><p class="noLetter">page{% endif %}. Here's what the server has to say in its defence:</p>
                             {% endif %}
                             {{ include('errors/'~http_error~'.twig') }}
