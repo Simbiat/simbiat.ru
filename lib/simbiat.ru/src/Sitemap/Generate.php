@@ -4,6 +4,7 @@ namespace Simbiat\Sitemap;
 
 use Simbiat\Config\Common;
 use Simbiat\Config\Twig;
+use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 
@@ -50,6 +51,12 @@ class Generate
                         file_put_contents($filePath.'/'.$fileName, Twig::getTwig()->render($mapVars['template_override'] ?? 'index.twig', $mapVars));
                     }
                 }
+            }
+            #Ping Google about update
+            try {
+                (new Curl)->getPage('https://www.google.com/ping?sitemap='.urlencode(Common::$baseUrl.'/sitemap/xml/index/'));
+            } catch (\Throwable) {
+                #Do nothing, it's not critical
             }
             return true;
         } catch (\Throwable $exception) {
