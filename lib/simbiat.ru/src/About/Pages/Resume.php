@@ -198,7 +198,7 @@ class Resume extends Page
                         'Level 1 support of subset of regional applications',
                         'Level 1 to level 3 support of local applications',
                         'Subject matter expert for several local applications',
-                        'Application management',
+                        'Application management (mix of product ownership, project management, business analysis, quality assurance, and some other roles)',
                         'Participate in projects',
                         'Testing of fixes and new features in supported applications',
                         'Assistance with integration of new applications or processes',
