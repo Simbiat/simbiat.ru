@@ -97,7 +97,6 @@ Header always set Cross-Origin-Resource-Policy "same-origin" "expr=%{CONTENT_TYP
 </IfModule>
 Header set X-DNS-Prefetch-Control "on" "expr=%{CONTENT_TYPE} =~ m#text/html#i"
 # https://report-uri.com/ headers
-Header set Expect-CT "max-age=86400, enforce, report-uri=https://simbiat.report-uri.com/r/d/ct/enforce" "expr=%{CONTENT_TYPE} =~ m#text/html#i"
 Header set Report-To '{"group":"default","max_age":31536000,"endpoints":[{"url":"https://simbiat.report-uri.com/a/d/g"}],"include_subdomains":true}' "expr=%{CONTENT_TYPE} =~ m#text/html#i"
 Header set NEL: '{"report_to":"default","max_age":31536000,"include_subdomains":true}' "expr=%{CONTENT_TYPE} =~ m#text/html#i"
 # CSP
