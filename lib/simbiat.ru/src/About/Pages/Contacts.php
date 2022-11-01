@@ -150,7 +150,7 @@ class Contacts extends StaticPage
                     'hidden' => false,
                 ],
                 [
-                    'url' => 'https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q',
+                    'url' => 'https://www.youtube.com/@simbiat',
                     'img' => '/img/social/youtube.svg',
                     'name' => 'Youtube',
                     'hidden' => false,
