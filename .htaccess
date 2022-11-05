@@ -39,12 +39,17 @@ Header unset X-Robots-Tag
 # Some common headers
 ##############################
 #Litespeed does not support ${SERVNAME}, but currently the only other server is a test one on Apache, so this if/else should do
-<IfModule !LiteSpeed>
-    Header set Access-Control-Allow-Origin https://${SERVNAME}:443
-</IfModule>
-<IfModule LiteSpeed>
-    Header set Access-Control-Allow-Origin https://www.simbiat.dev:443
-</IfModule>
+<If "%{REQUEST_URI} !~ m#^/img.*#">
+    <IfModule !LiteSpeed>
+        Header set Access-Control-Allow-Origin https://${SERVNAME}:443
+    </IfModule>
+    <IfModule LiteSpeed>
+        Header set Access-Control-Allow-Origin https://www.simbiat.dev:443
+    </IfModule>
+</If>
+<Else>
+    Header set Access-Control-Allow-Origin *
+</Else>
 Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 Header set Access-Control-Max-Age "86400"
 Header set Access-Control-Allow-Credentials "true"
@@ -53,7 +58,7 @@ Header always set X-Content-Type-Options "nosniff"
 #CORS headers
 # FFTracker loads some images directly from FFXIV Lodestone and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
 # Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them
-<IF "%{THE_REQUEST} =~ m#^GET* (/uc)?/fftracker/?.*#">
+<IF "%{THE_REQUEST} =~ m#^GET* ((/uc)?/fftracker|/talks/users)/?.*#">
     Header always set Cross-Origin-Embedder-Policy "unsafe-none"
 </IF>
 <ELSE>
@@ -80,7 +85,13 @@ Header merge vary Accept-Encoding
 </IfModule>
 # CORS headers
 Header always set Cross-Origin-Opener-Policy "same-origin" "expr=%{CONTENT_TYPE} =~ m#text/html#i"
-Header always set Cross-Origin-Resource-Policy "same-origin" "expr=%{CONTENT_TYPE} =~ m#text/html#i"
+# Allow linking to images
+<If "%{REQUEST_URI} !~ m#^/img.*#">
+    Header always set Cross-Origin-Resource-Policy "same-origin" "expr=%{CONTENT_TYPE} =~ m#text/html#i"
+</If>
+<Else>
+    Header always set Cross-Origin-Resource-Policy "cross-origin"
+</Else>
 # Security related stuff
 # Allow only GET, HEAD and OPTIONS methods for everything + POST for HTML
 <IfModule !LiteSpeed>
