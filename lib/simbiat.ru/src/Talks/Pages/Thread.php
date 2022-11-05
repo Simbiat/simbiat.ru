@@ -69,7 +69,8 @@ class Thread extends Page
             $this->attachCrumb('?page=' . $page, 'Page ' . $page);
         }
         #Update title, h1 and ogdesc
-        $this->title = $this->h1 = $outputArray['name'];
+        $this->title = '`'.$outputArray['name'].'` thread';
+        $this->h1 = $outputArray['name'];
         if (!empty($outputArray['posts']['entities'])) {
             $this->ogdesc = HTMLCut::Cut(Security::sanitizeHTML($outputArray['posts']['entities'][0]['text'], true), 160, 1);
         } else {
