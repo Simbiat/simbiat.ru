@@ -32,11 +32,11 @@
 <meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
 <meta property="og:description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
 <meta property="og:url" content="{{ url }}" />
-<meta property="og:image" content="{{ ogimage|default(domain ~ '/img/favicons/ogimage.png') }}" />
-<meta property="og:image:secure_url" content="{{ ogimage|default(domain ~ '/img/favicons/ogimage.png') }}" />
+<meta property="og:image" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/img/favicons/ogimage.png' }}{% endif %}" />
+<meta property="og:image:secure_url" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/img/favicons/ogimage.png' }}{% endif %}" />
+<meta property="og:image:width" content="{{ ogimagewidth|default('1200') }}" />
+<meta property="og:image:height" content="{{ ogimageheight|default('630') }}" />
 <meta property="og:image:type" content="image/png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
 {% if not ogtype %}
     <meta property="og:type" content="website" />
 {% else %}
@@ -88,7 +88,7 @@
 <link href="/img/logo.svg" rel="preload" type="image/svg+xml" as="image">
 <link href="/img/share.svg" rel="preload" type="image/svg+xml" as="image">
 <link href="/img/navigation/home.svg" rel="preload" type="image/svg+xml" as="image">
-<link href="/img/navigation/blog.svg" rel="preload" type="image/svg+xml" as="image">
+<link href="/img/navigation/talks.svg" rel="preload" type="image/svg+xml" as="image">
 <link href="/img/navigation/fftracker.svg" rel="preload" type="image/svg+xml" as="image">
 <link href="/img/navigation/bictracker.svg" rel="preload" type="image/svg+xml" as="image">
 <link href="/img/navigation/about.svg" rel="preload" type="image/svg+xml" as="image">

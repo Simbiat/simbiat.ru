@@ -1,5 +1,5 @@
 <section lang="ru-RU">
-    <article>
+    <article class="margin05rem">
         <details {% if not subServiceName %}class="persistent" open{% endif %}>
             <summary class="rightSummary aboutSection">О сервисе</summary>
             <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
@@ -14,7 +14,7 @@
         {{ include('common/elements/search.twig') }}
     {% endif %}
     {% if subServiceName %}
-        <article>
+        <article class="margin05rem">
             {% if subServiceName == 'keying' %}
                 {{ include('bictracker/keying.twig') }}
             {% elseif subServiceName == 'search' %}

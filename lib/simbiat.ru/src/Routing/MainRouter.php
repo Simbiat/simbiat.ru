@@ -5,12 +5,14 @@ namespace Simbiat\Routing;
 use Simbiat\About;
 use Simbiat\Abstracts;
 use Simbiat\bictracker;
+use Simbiat\Config\Talks;
 use Simbiat\Tests\Router;
 use Simbiat\Feeds;
 use Simbiat\fftracker;
 use Simbiat\HomePage;
 use Simbiat\Sitemap;
 use Simbiat\usercontrol;
+use Simbiat\usercontrol\User;
 
 class MainRouter extends Abstracts\Router
 {
@@ -20,8 +22,8 @@ class MainRouter extends Abstracts\Router
         '',
         'api',
         'tests',
-        #Forum/articles
-        #'forum', 'blog', 'thread',
+        #Forums, blogs, etc.
+        'talks',
         #Pages routing
         'about', 'fftracker', 'bictracker', 'uc', 'tests',
         #Simple pages
@@ -44,8 +46,7 @@ class MainRouter extends Abstracts\Router
         return match($path[0]) {
             'api' => array_merge(['template_override' => 'api.twig'], (new Api)->route(array_slice($path, 1))),
             #Forum/Articles
-            #'forum', 'blog' => (new Show)->forum($path),
-            #'thread' => (new Show)->thread($path),
+            'talks' => (new \Simbiat\Talks\Router())->route(array_slice($path, 1)),
             #Pages routing
             'about' => (new About\Router)->route(array_slice($path, 1)),
             'bictracker' => (new bictracker\Router)->route(array_slice($path, 1)),
@@ -68,7 +69,8 @@ class MainRouter extends Abstracts\Router
     private function landing(): array
     {
         $outputArray = ['h1' => 'Home', 'serviceName' => 'landing',];
-        $outputArray['posts'] = HomePage::$dbController->selectAll('SELECT `postid`, `talks__posts`.`created`, `talks__posts`.`text`, `talks__threads`.`name` FROM `talks__posts` LEFT JOIN `talks__threads` on `talks__posts`.`threadid` = `talks__threads`.`threadid` ORDER BY `talks__posts`.`created` DESC LIMIT 10');
+        $user = new User(Talks::ownerID);
+        $outputArray['posts'] = $user->getTalksStarters();
         return $outputArray;
     }
 

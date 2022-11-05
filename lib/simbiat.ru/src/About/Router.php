@@ -5,7 +5,7 @@ namespace Simbiat\About;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['me', 'website', 'tech', 'contacts', 'changelog', 'tos', 'privacy', 'security', 'resume'];
+    protected array $subRoutes = ['me', 'website', 'tech', 'contacts', 'tos', 'privacy', 'security', 'resume'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/about/', 'name'=>'About']
@@ -23,7 +23,6 @@ class Router extends \Simbiat\Abstracts\Router
             'website' => (new Pages\Website)->get(array_slice($path, 1)),
             'tech' => (new Pages\Tech)->get(array_slice($path, 1)),
             'contacts' => (new Pages\Contacts)->get(array_slice($path, 1)),
-            'changelog' => (new Pages\Changelog)->get(array_slice($path, 1)),
             'tos' => (new Pages\ToS)->get(array_slice($path, 1)),
             'privacy' => (new Pages\Privacy)->get(array_slice($path, 1)),
             'security' => (new Pages\Security)->get(array_slice($path, 1)),

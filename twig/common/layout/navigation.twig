@@ -17,21 +17,16 @@
             </div>
         </li>
     {% endif %}
-    <!--
     <li class="navElement">
         <div class="navLine">
-            <details class="navCat" {% if serviceName == 'blog' or serviceName == 'forum' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Blog" src="/img/navigation/blog.svg"><span itemprop="name">Blog</span></summary>
+            <details class="navCat" {% if serviceName == 'talks' %}open{% endif %}>
+                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Talks" src="/img/navigation/talks.svg"><span itemprop="name">Talks</span></summary>
                 <ul>
-                    <li><a class="navItem" href="/blog/" target="_self" itemprop="url"><span itemprop="name">All entries</span></a></li>
-                    <li><a class="navItem" href="/blog/review/" target="_self" itemprop="url"><span itemprop="name">Reviews</span></a></li>
-                    <li><a class="navItem" href="/blog/prose/" target="_self" itemprop="url"><span itemprop="name">Prose</span></a></li>
-                    <li><a class="navItem" href="/blog/poem/" target="_self" itemprop="url"><span itemprop="name">Poems</span></a></li>
+                    <li{% if type == 'Blog' or id == 1 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/1/" target="_self" itemprop="url"><span itemprop="name">Blogs</span></a></li>
                 </ul>
             </details>
         </div>
     </li>
-    -->
     <li class="navElement">
         <div class="navLine">
             <details class="navCat" {% if serviceName == 'fftracker' %}open{% endif %}>
@@ -86,7 +81,7 @@
                     <li{% if subServiceName == 'tos' %} class="current"{% endif %}><a class="navItem" href="/about/tos/" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
                     <li{% if subServiceName == 'privacy' %} class="current"{% endif %}><a class="navItem" href="/about/privacy/" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
                     <li{% if subServiceName == 'security' %} class="current"{% endif %}><a class="navItem" href="/about/security/" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a></li>
-                    <li{% if subServiceName == 'changelog' %} class="current"{% endif %}><a class="navItem" href="/about/changelog/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
+                    <li><a class="navItem" href="/talks/sections/7/" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
                 </ul>
             </details>
         </div>

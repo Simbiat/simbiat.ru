@@ -1,0 +1,4 @@
+{% for post in posts.entities %}
+    {% set post = post|merge({'noname': true}) %}
+    {{ include('common/elements/post.twig', post) }}
+{% endfor %}

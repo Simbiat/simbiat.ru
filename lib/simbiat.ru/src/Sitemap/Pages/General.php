@@ -36,7 +36,6 @@ class General extends StaticPage
                 ['loc'=>'about/tos/', 'name'=>'Terms of Service'],
                 ['loc'=>'about/privacy/', 'name'=>'Privacy Policy'],
                 ['loc'=>'about/security/', 'name'=>'Security Policy'],
-                ['loc'=>'about/changelog/', 'name'=>'Changelog'],
                 ['loc'=>'bictracker/search/', 'name'=>'BIC Tracker Search'],
                 ['loc'=>'bictracker/keying/', 'name'=>'BIC Tracker Keying'],
                 ['loc'=>'fftracker/search/', 'name'=>'FFXIV Tracker Search'],

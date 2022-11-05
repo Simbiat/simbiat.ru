@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Twig;
 
 use Simbiat\HomePage;
+use Simbiat\HTMLCut;
 use Simbiat\HTTP20\HTML;
 use Simbiat\Security;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -28,10 +29,25 @@ class RuntimeExtension implements RuntimeExtensionInterface
     {
         return basename($string);
     }
+    
+    public function preg_replace(string $string, string $pattern, string $replace): string
+    {
+        $newString = preg_replace($pattern, $replace, $string);
+        if (!is_string($newString)) {
+            return $string;
+        } else {
+            return $newString;
+        }
+    }
 
     public function sanitize(string $string, bool $head = false): string
     {
         return Security::sanitizeHTML($string, $head);
+    }
+    
+    public function htmlCut(string $string, int $length = 250): string
+    {
+        return HTMLCut::Cut($string, $length, 3);
     }
 
     public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string

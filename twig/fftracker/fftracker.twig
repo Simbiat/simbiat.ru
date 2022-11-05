@@ -1,5 +1,5 @@
 <section>
-    <article>
+    <article class="margin05rem">
         <details {% if not subServiceName %}class="persistent" open{% endif %}>
             <summary class="rightSummary aboutSection">About</summary>
             <p>Service to track different information for Free Companies (guilds), PvP Teams, Linkshells (chat groups) and individual characters for <b>Final Fantasy XIV</b> online game developed and published by <a href="https://www.square-enix.com" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/icons/SquareEnix.svg" alt="Square Enix">Square Enix</a>. Utilizes data grabbed from official <a href="https://eu.finalfantasyxiv.com/lodestone" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/icons/lodestone.svg" alt="Lodestone">Lodestone</a> with special <a href="https://github.com/Simbiat/lodestone-php" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/github.svg" alt="Github">parser</a>.</p>
@@ -24,7 +24,7 @@
         {{ include('common/elements/search.twig') }}
     {% endif %}
     {% if subServiceName %}
-        <article>
+        <article class="margin05rem">
             {% if subServiceName == 'search' %}
                 {{ include('common/pages/search.twig') }}
             {% elseif subServiceName == 'characters' %}

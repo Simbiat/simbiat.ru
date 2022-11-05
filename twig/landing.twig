@@ -1,9 +1,5 @@
 {% for post in posts %}
-    <article>
-        <div class="articleHeader">
-            <h2 class="articleName" id="post_{{ post.postid }}">{{ post.name }}</h2>
-            {{ timeTag(post.created, "d/m/Y H:i", "articleTime") }}
-        </div>
-        <section class="articleText">{{ sanitize(post.text)|nl2br }}</section>
-    </article>
+    {% set post = post|merge({'nouser': true, 'nofooter': true, 'htmlcut': true}) %}
+    {{ include('common/elements/post.twig', post) }}
 {% endfor %}
+<a id="landing_read_more" href="/talks/sections/6">Read more</a>

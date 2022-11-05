@@ -215,7 +215,14 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 @header('X-CSRF-Token: '.$data['CSRF']);
             }
             if (empty($data['userid'])) {
+                $data['userid'] = null;
                 $data['username'] = $data['UA']['bot'] ?? null;
+                $data['timezone'] = null;
+                $data['groups'] = [];
+                $data['activated'] = false;
+                $data['deleted'] = false;
+                $data['banned'] = false;
+                $data['avatar'] = null;
             } else {
                 $user = (new User($data['userid']))->get();
                 #Assign some data to the session

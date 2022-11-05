@@ -1,0 +1,101 @@
+<?php
+declare(strict_types=1);
+namespace Simbiat\Talks\Pages;
+
+use Simbiat\Abstracts\Page;
+use Simbiat\Config\Common;
+use Simbiat\HTMLCut;
+use Simbiat\Images;
+use Simbiat\Security;
+
+class Thread extends Page
+{
+    #Current breadcrumb for navigation
+    protected array $breadCrumb = [
+        ['href'=>'/talks/threads/', 'name'=>'Threads']
+    ];
+    #Sub service name
+    protected string $subServiceName = 'thread';
+    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    protected string $title = 'Talks';
+    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    protected string $h1 = 'Talks';
+    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    protected string $ogdesc = 'Talks';
+
+    #This is actual page generation based on further details of the $path
+    protected function generate(array $path): array
+    {
+        #Sanitize ID
+        $id = $path[0] ?? null;
+        if (empty($id) || intval($id) < 1) {
+            return ['http_error' => 400, 'reason' => 'Wrong ID'];
+        }
+        $outputArray = (new \Simbiat\Talks\Entities\Thread($id))->getArray();
+        if (empty($outputArray['id'])) {
+            return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
+        }
+        #Check if private
+        if ($outputArray['private'] && !in_array(1, $_SESSION['groups']) && $outputArray['createdBy'] !== $_SESSION['userid']) {
+            return ['http_error' => 403, 'reason' => 'This is a private thread'];
+        }
+        #Collect times
+        $times = [];
+        #Add time for the current section
+        if (!empty($outputArray['updated'])) {
+            $times[] = $outputArray['updated'];
+        }
+        #Add posts times
+        if (!empty($outputArray['posts']['entities'])) {
+            $times = array_merge($times, array_column($outputArray['posts']['entities'], 'updated'));
+        }
+        #Try to exit early based on modification date
+        if (!empty($times)) {
+            $this->lastModified(max($times) ?? 0);
+        }
+        #Generate pagination data
+        $page = intval($_GET['page'] ?? 1);
+        $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['posts']['pages'] ?? 1, 'prefix' => '?page='];
+        #Reset crumbs (we do not have "threads" list)
+        $this->breadCrumb = [];
+        #Add parents if we have any
+        foreach ($outputArray['parents'] as $parent) {
+            $this->breadCrumb[] = ['href' => '/talks/sections/'.$parent['sectionid'], 'name' => $parent['name']];
+        }
+        #Add thread
+        $this->breadCrumb[] = ['href' => '/talks/threads/'.$outputArray['id'], 'name' => $outputArray['name']];
+        #Add page, if there is one
+        if ($page > 1) {
+            $this->attachCrumb('?page=' . $page, 'Page ' . $page);
+        }
+        #Update title, h1 and ogdesc
+        $this->title = $this->h1 = $outputArray['name'];
+        if (!empty($outputArray['posts']['entities'])) {
+            $this->ogdesc = HTMLCut::Cut(Security::sanitizeHTML($outputArray['posts']['entities'][0]['text'], true), 160, 1);
+        } else {
+            $this->ogdesc = $outputArray['name'];
+        }
+        #Set ogimage
+        if (!empty($outputArray['ogimage'])) {
+            $outputArray = array_merge($outputArray, Images::ogImage($outputArray['ogimage']));
+        }
+        #Add article open graph tags
+        $outputArray['ogextra'] =
+            '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />
+            <meta property="article:modified_time" content="'.date('c', $outputArray['updated']).'" />'.
+            ($outputArray['createdBy'] === 1 ? '' : '<meta property="article:author" content="'.Common::$baseUrl.'/talks/user/'.$outputArray['createdBy'].'" />').
+            ($outputArray['updatedBy'] !== 1 && $outputArray['updatedBy'] !== $outputArray['createdBy'] ? '<meta property="article:author" content="'.Common::$baseUrl.'/talks/user/'.$outputArray['createdBy'].'" />' : '').
+            '<meta property="article:section" content="'.$outputArray['parents'][array_key_last($outputArray['parents'])]['name'].'" />'
+        ;
+        foreach ($outputArray['tags'] as $tag) {
+            $outputArray['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';
+        }
+        #Process alternative links, if any
+        foreach ($outputArray['externalLinks'] as $link) {
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => $link['type'], 'href' => $link['url']];
+        }
+        #Set language
+        $this->language = $outputArray['language'];
+        return $outputArray;
+    }
+}

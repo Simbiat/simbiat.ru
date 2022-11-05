@@ -1,0 +1,34 @@
+<article class="post{% if post.nouser == true %} nouser{% endif %}">
+    <section class="post_header">
+        {% if post.noname != true %}
+            <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ post.name }}{{ post.noname }}</a></div>
+        {% endif %}
+        <div class="post_time_id">
+            {{ timeTag(post.created, "d/m/Y H:i", "post_time") }}
+            {% if post.nopostid != true %}
+                <div class="post_id_wrapper">
+                    <h2 class="post_id" id="post_{{ post.id }}">#{{ post.id }}</h2>
+                    <a class="post_id_link" target="_blank" href="/talks/posts/{{ post.id }}"></a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+    {% if post.nouser != true %}
+        <section class="post_user">
+            <div class="post_username"><a href="/talks/users/{{ post.createdby }}">{{ post.createdby_name }}</a></div>
+            <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.createdby_name }}" src="{{ post.avatar }}" class="avatar"></div>
+        </section>
+    {% endif %}
+    {% if post.htmlcut == true %}
+        <section class="post_text">{{ preg_replace(htmlCut(sanitize(post.text)), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>')|nl2br }}</section>
+    {% else %}
+        <section class="post_text">{{ sanitize(post.text)|nl2br }}</section>
+    {% endif %}
+    {% if post.nofooter != true %}
+        {% if post.updated > post.created %}
+        <section class="post_footer">
+            <div class="post_edited">Edited {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby }}">{{ post.updatedby_name }}</a></div>
+        </section>
+        {% endif %}
+    {% endif %}
+</article>

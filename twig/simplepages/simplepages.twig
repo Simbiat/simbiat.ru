@@ -1,5 +1,5 @@
 <section>
-    <article>
+    <article class="margin05rem">
         <details {% if subServiceName == 'devicedetector' and path %}{% else %}class="persistent" open{% endif %}>
             <summary class="rightSummary aboutSection">About</summary>
             {% if not subServiceName %}
@@ -16,7 +16,7 @@
         </details>
     </article>
     {% if subServiceName %}
-        <article>
+        <article class="margin05rem">
             {% if subServiceName == 'devicedetector' %}
                 {{ include('simplepages/devicedetector.twig') }}
             {% endif %}

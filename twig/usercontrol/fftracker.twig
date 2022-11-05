@@ -27,11 +27,11 @@
         <p>Linked characters:</p>
         {% for character in characters %}
             <article class="ff_owned_block">
-                <div class="ff_owned_char"><img loading="lazy" decoding="async" class="avatar ff_owned" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatar }}c0_96x96.jpg"><a href="/fftracker/characters/{{ character.characterid|url_encode }}/{{ character.name|url_encode }}">{{ character.name }}</a></div>
+                <div class="ff_owned_char"><img loading="lazy" decoding="async" class="avatar ff_owned" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.icon }}c0_96x96.jpg"><a href="/fftracker/characters/{{ character.id|url_encode }}/{{ character.name|url_encode }}">{{ character.name }}</a></div>
                 <div class="ff_owned_groups">
-                    {% if groups[character.characterid] %}
+                    {% if groups[character.id] %}
                         <p>Owned groups:</p>
-                        {% for group in groups[character.characterid] %}
+                        {% for group in groups[character.id] %}
                             {{ include('common/elements/entitycard.twig', group) }}
                         {% endfor %}
                     {% else %}

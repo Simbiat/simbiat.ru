@@ -71,6 +71,10 @@ class Countables extends Page
                 $this->breadCrumb[0]['name'] = 'FFXIV Achievements';
                 $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
                 break;
+            case 'threads':
+                $this->breadCrumb[0]['name'] = 'Forums Threads';
+                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads`'.($format === 'html' ? ' FORCE INDEX (`name_sort`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                break;
         }
         #Update name of breadcrumb
         $this->breadCrumb[0]['name'] .= ', Page '.$path[1];

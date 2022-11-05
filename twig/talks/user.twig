@@ -1,0 +1,31 @@
+<div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="User's avatar" id="currentAvatar" src="{{ userData.currentAvatar|default('/img/avatar.svg') }}"></div>
+<div class="middle">{{ userData.username }}</div>
+{% if fftracker.characters %}
+    <section>
+        <div class="middle">Linked characters:</div>
+        <div class="searchResults">
+            {% for character in fftracker.characters %}
+                    {{ include('common/elements/entitycard.twig', character) }}
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+{% if threads %}
+    <section>
+        <div class="middle">Last created threads:</div>
+        <div class="searchResults">
+            {% for thread in threads %}
+                {{ include('common/elements/entitycard.twig', thread) }}
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+{% if posts %}
+    <section>
+        <div class="middle">Last posts:</div>
+        {% for post in posts %}
+            {% set post = post|merge({'nouser': true, 'nofooter': true, 'htmlcut': true}) %}
+            {{ include('common/elements/post.twig', post) }}
+        {% endfor %}
+    </section>
+{% endif %}

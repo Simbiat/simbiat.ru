@@ -7,6 +7,8 @@ use Simbiat\Config\Common;
 use Simbiat\Curl;
 use Simbiat\HomePage;
 use Simbiat\Security;
+use Simbiat\Talks\Search\Posts;
+use Simbiat\Talks\Search\Threads;
 
 class User extends Entity
 {
@@ -183,20 +185,20 @@ class User extends Entity
     {
         $outputArray = [];
         #Get token
-        $outputArray['token'] = HomePage::$dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => $_SESSION['userid']]);
+        $outputArray['token'] = HomePage::$dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         #Get linked characters
-        $outputArray['characters'] = HomePage::$dbController->selectAll('SELECT `characterid`, `name`, `avatar` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => $_SESSION['userid']]);
+        $outputArray['characters'] = HomePage::$dbController->selectAll('SELECT \'character\' as `type`, `characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']]);
         #Get linked groups
         if (!empty($outputArray['characters'])) {
             foreach ($outputArray['characters'] as $character) {
-                $outputArray['groups'][$character['characterid']] = HomePage::$dbController->selectAll(
+                $outputArray['groups'][$character['id']] = HomePage::$dbController->selectAll(
                     '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, NULL AS `icon` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rankid`=1)
                 UNION ALL
                 (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvpteamid` AS `id`, `ffxiv__pvpteam`.`name` as `name`, `ffxiv__pvpteam`.`crest` AS `icon` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rankid`=`ffxiv__pvpteam_rank`.`pvprankid` WHERE `characterid`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rankid`=1)
                 ORDER BY `name` ASC;',
-                    [':id' => $character['characterid']]
+                    [':id' => [$character['id'], 'int']]
                 );
             }
         }
@@ -224,7 +226,9 @@ class User extends Entity
             if ($result) {
                 $_SESSION['username'] = $newName;
             }
-            @session_regenerate_id(true);
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                @session_regenerate_id(true);
+            }
             #Log the change
             Security::log('User details change', 'Changed name', ['name'=> ['old' => $this->username, 'new' => $newName]]);
             return ['response' => $result];
@@ -449,7 +453,9 @@ class User extends Entity
         } else {
             Security::log('Login', 'Successful login');
         }
-        session_regenerate_id(true);
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            @session_regenerate_id(true);
+        }
         if ($afterRegister) {
             return ['status' => 201, 'response' => true];
         } else {
@@ -541,7 +547,9 @@ class User extends Entity
                 ':password' => [Security::passHash($password), 'string'],
             ]
         );
-        @session_regenerate_id(true);
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            @session_regenerate_id(true);
+        }
         Security::log('Password change', 'Attempted to change password', $result);
         return $result;
     }
@@ -587,5 +595,39 @@ class User extends Entity
                 ':session' => $_POST['session'],
             ]
         );
+    }
+    
+    public function getThreads(bool $publicOnly = true): array
+    {
+        $threads = (new Threads([':userid' => [$this->id, 'int'],], '`talks__threads`.`createdby`=:userid'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__threads`.`created` DESC'))->listEntities();
+        return $threads['entities'];
+    }
+    
+    public function getPosts(bool $publicOnly = true): array
+    {
+        $posts = (new Posts([':userid' => [$this->id, 'int'],], '`talks__posts`.`createdby`=:userid'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
+        return $posts['entities'];
+    }
+    
+    #Similar to getPosts(), but only gets posts, that are the first posts in threads
+    public function getTalksStarters(bool $publicOnly = true): array
+    {
+        #Can't think of a good way to get this in 1 query, thus first getting the latest threads
+        $threads = $this->getThreads($publicOnly);
+        $posts = [];
+        #Now we get post details
+        if (!empty($threads)) {
+            #Get post IDs
+            $ids = array_column($threads, 'firstPost');
+        } else {
+            return [];
+        }
+        #Get posts
+        $posts = (new Posts([], '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
+        if (!empty($posts['entities'])) {
+            return $posts['entities'];
+        } else {
+            return [];
+        }
     }
 }

@@ -70,6 +70,8 @@
                         {{ include('common/pages/sitemap.twig') }}
                     {% elseif serviceName == 'uc' %}
                         {{ include('usercontrol/usercontrol.twig') }}
+                    {% elseif serviceName == 'talks' %}
+                        {{ include('talks/talks.twig') }}
                     {% elseif serviceName == 'stylingTest' %}
                         {{ include('stylingTest.twig') }}
                     {% else %}

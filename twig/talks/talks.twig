@@ -1,0 +1,30 @@
+<section>
+    <article class="margin05rem">
+        <details {% if not subServiceName %}class="persistent" open{% endif %}>
+            <summary class="rightSummary aboutSection">About</summary>
+            <p>Here you can find all forums, blogs and similar sections, that are meant for different types of communication.</p>
+        </details>
+    </article>
+    {% if subServiceName == 'search' %}
+        {{ include('common/elements/search.twig') }}
+    {% endif %}
+    {% if subServiceName %}
+        {% if subServiceName != 'thread' and subServiceName != 'post' %}
+            <article class="margin05rem">
+                {% if subServiceName == 'search' %}
+                    {{ include('common/pages/search.twig') }}
+                {% elseif subServiceName == 'section' %}
+                    {{ include('talks/section.twig') }}
+                {% elseif subServiceName == 'user' %}
+                    {{ include('talks/user.twig') }}
+                {% endif %}
+            </article>
+        {% else %}
+            {% if subServiceName == 'thread' %}
+                {{ include('talks/thread.twig') }}
+            {% elseif subServiceName == 'post' %}
+                {{ include('talks/post.twig') }}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</section>

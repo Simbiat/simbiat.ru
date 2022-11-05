@@ -1,0 +1,45 @@
+{% if children.entities %}
+    <table id="sections_list">
+        <thead>
+            <tr>
+                <td></td><td>Section name</td><td>Threads</td><td>Posts</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for section in children.entities %}
+                <tr>
+                    <td>
+                        <img loading="lazy" decoding="async" alt="{{ section.type }}" src="{{ section.icon }}" class="section_icon{% if section.closed %} disabled{% endif %}">
+                    </td>
+                    <td>
+                        <div class="section_name"><a href="/talks/sections/{{ section.sectionid }}">{{ section.name }}</a></div>
+                        <div class="section_description">{{ section.description }}</div>
+                    </td>
+                    <td>{{ section.threads }}</td>
+                    <td>{{ section.posts }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% if threads.entities %}
+    <table id="threads_list">
+        <thead>
+        <tr>
+            <td>Thread name</td><td>Created by</td><td>Last Update</td><td>Posts</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for thread in threads.entities %}
+            <tr>
+                <td>
+                    <div class="thread_name{% if thread.closed %} disabled{% endif %}{% if thread.pinned %} pinned{% endif %}"><a href="/talks/threads/{{ thread.id }}">{{ thread.name }}</a></div>
+                </td>
+                <td><a href="/talks/users/{{ thread.createdby }}">{{ thread.createdby_name }}</a></td>
+                <td>{{ timeTag(thread.updated, "d/m/Y H:i") }}</td>
+                <td>{{ thread.posts }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}

@@ -46,7 +46,7 @@ abstract class Page
         '/img/logo.svg',
 	    '/img/share.svg',
         '/img/navigation/home.svg',
-        '/img/navigation/blog.svg',
+        '/img/navigation/talks.svg',
         '/img/navigation/fftracker.svg',
         '/img/navigation/bictracker.svg',
         '/img/navigation/about.svg',

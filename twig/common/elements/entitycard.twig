@@ -15,6 +15,8 @@
     {% else %}
         {% set url = 'fftracker/linkshells' %}
     {% endif %}
+{% elseif type == 'thread' %}
+    {% set url = 'talks/threads' %}
 {% endif %}
 {# Actual card #}
 <a class="entityCard{% if session_data.userid and userid and session_data.userid == userid %} ff_owned{% endif %}" href="/{{ url }}/{{ id|url_encode }}/{{ name|url_encode }}/" data-tooltip="{{ name }}">
@@ -43,9 +45,14 @@
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.webp">
         {% elseif type == 'linkshell' %}
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.webp">
+        {% else %}
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}">
         {% endif %}
     </span>
     <span class="entityName">
+        {% if type == 'thread' %}
+            {{ timeTag(thread.updated, "d/m/Y H:i") }}<br>
+        {% endif %}
         {% if lsrankid and lsrankid != 3 %}
             <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/lsranks/{{ lsrankid }}.webp">
         {% endif %}
@@ -55,7 +62,7 @@
         {% if rankid matches '/^\\d+$/' %}
             <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/fcranks/{{ rankid }}.webp">
         {% endif %}
-        {{ name }}{% if userid %}<sup>🔗</sup>{% endif %}
+        {% if type == 'thread' %}<b>{{ name }}</b>{% else %}{{ name }}{% endif %}{% if userid %}<sup>🔗</sup>{% endif %}
     </span>
     <span class="entityArrow">&#10151;</span>
 </a>

@@ -69,7 +69,7 @@ class Security
         if (self::$sanitizerConfig) {
             $config = self::$sanitizerConfig;
         } else {
-            $config = (new HtmlSanitizerConfig())->allowSafeElements()->allowRelativeLinks()->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+            $config = (new HtmlSanitizerConfig())->allowSafeElements()->allowRelativeLinks()->allowMediaHosts([Common::$http_host])->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
             #Block some extra elements
             foreach (['aside', 'basefont', 'body', 'font', 'footer', 'form', 'header', 'hgroup', 'html', 'input', 'main', 'nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
                 #Need to update the original, because clone is returned, instead of the same instance.
