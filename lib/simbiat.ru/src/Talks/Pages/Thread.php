@@ -79,6 +79,8 @@ class Thread extends Page
         if (!empty($outputArray['ogimage'])) {
             $outputArray = array_merge($outputArray, Images::ogImage($outputArray['ogimage']));
         }
+        #Set ogtype
+        $outputArray['ogtype'] = 'article';
         #Add article open graph tags
         $outputArray['ogextra'] =
             '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />

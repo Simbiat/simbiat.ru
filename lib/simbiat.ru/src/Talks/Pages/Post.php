@@ -57,6 +57,8 @@ class Post extends Page
         $outputArray['post'] = $outputArray;
         #Add flag to hide post ID
         $outputArray['post']['nopostid'] = true;
+        #Set ogtype
+        $outputArray['ogtype'] = 'article';
         #Add article open graph tags
         $outputArray['ogextra'] =
             '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />
