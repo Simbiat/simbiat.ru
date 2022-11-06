@@ -63,7 +63,7 @@ class Post extends Entity
         $this->system = boolval($fromDB['system']);
         $this->private = boolval($fromDB['thread']['private']);
         $this->locked = boolval($fromDB['locked']);
-        $this->closed = $fromDB['thread']['closed'] !== null ? strtotime($fromDB['thread']['closed']) : null;
+        $this->closed = $fromDB['thread']['closed'] ?? null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
         $this->createdby = $fromDB['createdby'] ?? Talks::deletedUserID;
         $this->createdby_name = $fromDB['createdby_name'] ?? 'Deleted user';

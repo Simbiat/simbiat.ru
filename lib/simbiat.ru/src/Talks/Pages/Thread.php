@@ -59,8 +59,13 @@ class Thread extends Page
         $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['posts']['pages'] ?? 1, 'prefix' => '?page='];
         if ($outputArray['pagination']['current'] > $outputArray['pagination']['total'] && $outputArray['pagination']['total'] !== 0) {
             #Redirect to last page
-            Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/talks/threads/'.($id === 'top' ? '' : $id).'?page='.$outputArray['pagination']['total'], false);
+            Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/talks/threads/'.$id.'?page='.$outputArray['pagination']['total'], false);
             return [];
+        }
+        #Changelogs have Unix timestamp for names, need to convert those to desired format
+        /** @noinspection DuplicatedCode */
+        if ($outputArray['type'] === 'Changelog' && is_numeric($outputArray['name'])) {
+            $outputArray['name'] = date('Y.m.d', intval($outputArray['name']));
         }
         #Reset crumbs (we do not have "threads" list)
         $this->breadCrumb = [];

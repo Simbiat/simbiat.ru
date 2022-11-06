@@ -22,7 +22,11 @@
             <details class="navCat" {% if serviceName == 'talks' %}open{% endif %}>
                 <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Talks" src="/img/navigation/talks.svg"><span itemprop="name">Talks</span></summary>
                 <ul>
-                    <li{% if type == 'Blog' or id == 1 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/1/" target="_self" itemprop="url"><span itemprop="name">Blogs</span></a></li>
+                    <li{% if type == 'Blog' or detailedType == 'Blog' or sectionid == 1 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/1/" target="_self" itemprop="url"><span itemprop="name">Blogs</span></a></li>
+                    <li{% if type == 'Forum' or detailedType == 'Forum' or sectionid == 2 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/2/" target="_self" itemprop="url"><span itemprop="name">Forums</span></a></li>
+                    <li{% if type == 'Changelog' or detailedType == 'Changelog' or sectionid == 3 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/3/" target="_self" itemprop="url"><span itemprop="name">Changelogs</span></a></li>
+                    <li{% if type == 'Knowledgebase' or detailedType == 'Knowledgebase' or sectionid == 4 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/4/" target="_self" itemprop="url"><span itemprop="name">Knowledgebases</span></a></li>
+                    <li{% if type == 'Support' or detailedType == 'Support' or sectionid == 5 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/5/" target="_self" itemprop="url"><span itemprop="name">Support</span></a></li>
                 </ul>
             </details>
         </div>

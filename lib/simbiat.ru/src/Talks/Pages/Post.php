@@ -40,6 +40,11 @@ class Post extends Page
         }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['updated']);
+        #Changelogs have Unix timestamp for names, need to convert those to desired format
+        /** @noinspection DuplicatedCode */
+        if ($outputArray['type'] === 'Changelog' && is_numeric($outputArray['name'])) {
+            $outputArray['name'] = date('Y.m.d', intval($outputArray['name']));
+        }
         #Reset crumbs (we do not have "posts" list)
         $this->breadCrumb = [];
         #Add parents

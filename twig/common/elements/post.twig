@@ -1,7 +1,11 @@
 <article class="post{% if post.nouser == true %} nouser{% endif %}">
     <section class="post_header">
         {% if post.noname != true %}
-            <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ post.name }}{{ post.noname }}</a></div>
+            {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
+                <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ timeTag(post.name, "Y.m.d") }}</a></div>
+            {% else %}
+                <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ post.name }}</a></div>
+            {% endif %}
         {% endif %}
         <div class="post_time_id">
             {{ timeTag(post.created, "d/m/Y H:i", "post_time") }}

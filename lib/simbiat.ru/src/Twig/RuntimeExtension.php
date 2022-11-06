@@ -30,6 +30,11 @@ class RuntimeExtension implements RuntimeExtensionInterface
         return basename($string);
     }
     
+    public function is_numeric(mixed $string): bool
+    {
+        return is_numeric($string);
+    }
+    
     public function preg_replace(string $string, string $pattern, string $replace): string
     {
         $newString = preg_replace($pattern, $replace, $string);

@@ -18,6 +18,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('timeline', [$runtime, 'timeline'], ['is_safe' => ['html']]),
             new TwigFunction('pagination', [$runtime, 'pagination'], ['is_safe' => ['html']]),
             new TwigFunction('basename', [$runtime, 'basename']),
+            new TwigFunction('is_numeric', [$runtime, 'is_numeric']),
             new TwigFunction('preg_replace', [$runtime, 'preg_replace'], ['is_safe' => ['html']]),
             new TwigFunction('sanitize', [$runtime, 'sanitize'], ['is_safe' => ['html']]),
             new TwigFunction('htmlCut', [$runtime, 'htmlCut'], ['is_safe' => ['html']]),

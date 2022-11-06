@@ -37,7 +37,7 @@
         {% for thread in threads.entities %}
             <tr>
                 <td>
-                    <div class="thread_name{% if thread.closed %} disabled{% endif %}{% if thread.pinned %} pinned{% endif %}"><a href="/talks/threads/{{ thread.id }}">{{ thread.name }}</a></div>
+                    <div class="thread_name{% if thread.closed %} disabled{% endif %}{% if thread.pinned %} pinned{% endif %}"><a href="/talks/threads/{{ thread.id }}">{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a></div>
                 </td>
                 <td><a href="/talks/users/{{ thread.createdby }}">{{ thread.createdby_name }}</a></td>
                 <td>{{ timeTag(thread.updated, "d/m/Y H:i") }}</td>
