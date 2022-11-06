@@ -179,7 +179,7 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` , ' . $this->relevancy() . ' as `relevance` FROM `' .'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'match']]));
+                    return HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` , ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'match']]));
                 } else {
                     if (empty($this->like)) {
                         return [];
