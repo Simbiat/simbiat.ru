@@ -1,4 +1,9 @@
-{% for post in posts.entities %}
-    {% set post = post|merge({'noname': true}) %}
-    {{ include('common/elements/post.twig', post) }}
-{% endfor %}
+{% if not posts.entities %}
+    <p class="middle">Looks like we've got nothing in here</p>
+    <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+{% else %}
+    {% for post in posts.entities %}
+        {% set post = post|merge({'noname': true}) %}
+        {{ include('common/elements/post.twig', post) }}
+    {% endfor %}
+{% endif %}

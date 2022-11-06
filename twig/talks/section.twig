@@ -1,3 +1,7 @@
+{% if not children.entities and not threads.entities %}
+    <p class="middle">Looks like we've got nothing in here</p>
+    <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+{% endif %}
 {% if children.entities %}
     <table id="sections_list">
         <thead>

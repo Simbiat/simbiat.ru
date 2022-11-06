@@ -32,7 +32,7 @@ class Section extends Page
         }
         $outputArray = (new \Simbiat\Talks\Entities\Section($id))->getArray();
         if (empty($outputArray['id'])) {
-            return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/2/'];
+            return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
         if ($id !== 'top' && $outputArray['private'] && !in_array(1, $_SESSION['groups']) && $outputArray['createdBy'] !== $_SESSION['userid']) {
@@ -41,7 +41,7 @@ class Section extends Page
         #Generate pagination data
         $page = intval($_GET['page'] ?? 1);
         $outputArray['pagination'] = ['current' => $page, 'total' => max($outputArray['threads']['pages'] ?? 1, $outputArray['children']['pages'] ?? 1), 'prefix' => '?page='];
-        if ($outputArray['pagination']['current'] > $outputArray['pagination']['total']) {
+        if ($outputArray['pagination']['current'] > $outputArray['pagination']['total'] && $outputArray['pagination']['total'] !== 0) {
             #Redirect to last page
             Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/talks/sections/'.($id === 'top' ? '' : $id).'?page='.$outputArray['pagination']['total'], false);
             return [];

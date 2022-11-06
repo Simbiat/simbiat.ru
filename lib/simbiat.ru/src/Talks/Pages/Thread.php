@@ -5,6 +5,7 @@ namespace Simbiat\Talks\Pages;
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
 use Simbiat\HTMLCut;
+use Simbiat\HTTP20\Headers;
 use Simbiat\Images;
 use Simbiat\Security;
 
@@ -56,6 +57,11 @@ class Thread extends Page
         #Generate pagination data
         $page = intval($_GET['page'] ?? 1);
         $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['posts']['pages'] ?? 1, 'prefix' => '?page='];
+        if ($outputArray['pagination']['current'] > $outputArray['pagination']['total'] && $outputArray['pagination']['total'] !== 0) {
+            #Redirect to last page
+            Headers::redirect(Common::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/talks/threads/'.($id === 'top' ? '' : $id).'?page='.$outputArray['pagination']['total'], false);
+            return [];
+        }
         #Reset crumbs (we do not have "threads" list)
         $this->breadCrumb = [];
         #Add parents if we have any
