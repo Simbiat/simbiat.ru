@@ -111,6 +111,7 @@ class Section extends Entity
         return $data;
     }
     
+    /** @noinspection DuplicatedCode */
     protected function process(array $fromDB): void
     {
         $this->name = $fromDB['name'];

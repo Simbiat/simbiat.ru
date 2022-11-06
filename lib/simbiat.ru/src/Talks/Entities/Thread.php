@@ -6,7 +6,6 @@ use Simbiat\Abstracts\Entity;
 use Simbiat\Config\Talks;
 use Simbiat\HomePage;
 use Simbiat\Talks\Search\Posts;
-use Simbiat\Talks\Search\Sections;
 use Simbiat\Talks\Search\Threads;
 
 class Thread extends Entity
