@@ -47,6 +47,10 @@
 .thread_name.disabled.pinned a:before {
     content: '📍🔒';
 }
+#threads_list,
+#sections_list {
+    margin-bottom: 1rem;
+}
 #threads_list tr td:nth-child(2) {
     width: 6rem;
     text-align: center;
