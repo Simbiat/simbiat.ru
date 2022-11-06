@@ -19,7 +19,7 @@ class Section extends Page
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Talks';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Talks';
+    protected string $ogdesc = 'Talks: forums, blogs and other ways of communication';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -80,7 +80,7 @@ class Section extends Page
             }
             #Update title, h1 and ogdesc
             $this->title = $this->h1 = $outputArray['name'].($page > 1 ? ', Page '.$page : '');
-            $this->ogdesc = $outputArray['type'].' with the name of `'.$outputArray['name'].'`';
+            $this->ogdesc = $outputArray['description'] ?? $outputArray['type'].' with the name of `'.$outputArray['name'].'`';
         }
         return $outputArray;
     }

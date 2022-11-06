@@ -22,6 +22,7 @@ class Section extends Entity
     public ?int $updated = null;
     public int $updatedBy = 1;
     public string $icon = '/img/talks/category.svg';
+    public string $description = '';
     #List of parents for the section
     public array $parents = [];
     #List of direct children
@@ -36,6 +37,7 @@ class Section extends Entity
         if ($this->id === 'top') {
             $data = [
                 'name' => '',
+                'description' => '',
                 'type' => 'Category',
                 'system' => true,
                 'private' => false,
@@ -51,7 +53,7 @@ class Section extends Entity
             #Get children
             $data['children'] = (new Sections(where: '`talks__sections`.`parentid` IS NULL'))->listEntities($page);
         } else {
-            $data = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid`, `closed`, `system`, `private`, `created`, `updated`, `createdby`, `updatedby`, COALESCE(`talks__sections`.`icon`, `talks__types`.`icon`) FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
+            $data = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__sections`.`description`, `talks__types`.`type`, `parentid`, `closed`, `system`, `private`, `created`, `updated`, `createdby`, `updatedby`, COALESCE(`talks__sections`.`icon`, `talks__types`.`icon`) FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
             #Return empty, if nothing was found
             if (empty($data)) {
                 return [];
@@ -127,6 +129,7 @@ class Section extends Entity
         $this->parents = $fromDB['parents'];
         $this->children = (is_array($fromDB['children']) ? $fromDB['children'] : ['pages' => $fromDB['children'], 'entities' => []]);
         $this->threads = (is_array($fromDB['threads']) ? $fromDB['threads'] : ['pages' => $fromDB['threads'], 'entities' => []]);
+        $this->description = $fromDB['description'] ?? '';
     }
     
     private function getParents(int $id): array
