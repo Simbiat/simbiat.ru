@@ -52,6 +52,8 @@ class Index extends Page
                 SELECT \'achievements\' AS `link`, \'FFXIV Achievements\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__achievement`
                 UNION ALL
                 SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0
+                UNION ALL
+                SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `userid`!=1
             ');
         } catch (\Throwable) {
             $counts = [];

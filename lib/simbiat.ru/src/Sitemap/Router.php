@@ -45,7 +45,7 @@ class Router extends \Simbiat\Abstracts\Router
         }
         $result = match($path[1]) {
             'general' => (new Pages\General)->get($path),
-            'bics', 'characters', 'freecompanies', 'linkshells', 'pvpteams', 'achievements', 'threads' => (new Pages\Countables)->get($path),
+            'bics', 'characters', 'freecompanies', 'linkshells', 'pvpteams', 'achievements', 'threads', 'users' => (new Pages\Countables)->get($path),
             default => (new Pages\Index)->get($path),
         };
         $result['format'] = $format;

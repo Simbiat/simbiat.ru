@@ -26,6 +26,7 @@ CREATE TABLE `uc__users`
     `website`    VARCHAR(255)                                    NULL COMMENT 'User''s personal website',
     CONSTRAINT `api_key` UNIQUE (`api_key`) USING HASH,
     CONSTRAINT `ff_token` UNIQUE (`ff_token`),
+    CONSTRAINT `username_unique` UNIQUE (`username`),
     CONSTRAINT `parent_to_user` FOREIGN KEY (`parentid`) REFERENCES `uc__users` (`userid`) ON UPDATE SET NULL ON DELETE SET NULL
 );
 
@@ -36,3 +37,5 @@ CREATE INDEX `parentid` ON `uc__users` (`parentid`);
 CREATE INDEX `registered` ON `uc__users` (`registered`);
 
 CREATE INDEX `usergender` ON `uc__users` (`sex`);
+
+CREATE FULLTEXT INDEX `username` ON `uc__users` (`username`);

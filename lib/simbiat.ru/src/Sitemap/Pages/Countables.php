@@ -73,7 +73,11 @@ class Countables extends Page
                 break;
             case 'threads':
                 $this->breadCrumb[0]['name'] = 'Forums Threads';
-                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads`'.($format === 'html' ? ' FORCE INDEX (`name_sort`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads`'.($format === 'html' ? ' FORCE INDEX (`name_sort`) WHERE `private`=0 ORDER BY `name`' : ' WHERE `private`=0').' LIMIT '.$start.', '.$this->maxElements;
+                break;
+            case 'users':
+                $this->breadCrumb[0]['name'] = 'Users';
+                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` FROM `uc__users`'.($format === 'html' ? ' FORCE INDEX (`username_unique`) WHERE `userid`!=1 ORDER BY `name`' : ' WHERE `userid`!=1').' LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb
