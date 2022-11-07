@@ -408,6 +408,8 @@ return array(
     'Simbiat\\fftracker\\Search\\Linkshells' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Search/Linkshells.php',
     'Simbiat\\fftracker\\Search\\PVP' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Search/PVP.php',
     'Simbiat\\fftracker\\Statistics' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
+    'Simbiat\\nl2Li' => $baseDir . '/../lib/nl2li/src/nl2li.php',
+    'Simbiat\\nl2p' => $baseDir . '/../lib/nl2p/src/nl2p.php',
     'Simbiat\\optimizeTables' => $baseDir . '/../lib/optimize-tables/src/optimizeTables.php',
     'Simbiat\\usercontrol\\Api' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api.php',
     'Simbiat\\usercontrol\\Api\\Avatars' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Avatars.php',

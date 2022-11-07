@@ -46,7 +46,9 @@
             "../lib/HTTP20/src",
             "../lib/lodestone-parser/src",
             "../lib/optimize-tables/src",
-            "../lib/sand-clock/src"
+            "../lib/sand-clock/src",
+            "../lib/nl2li/src",
+            "../lib/nl2p/src"
         ],
         "psr-4": {
             "Simbiat\\": "../lib/simbiat.ru/src"
