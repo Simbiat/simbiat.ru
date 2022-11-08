@@ -58,9 +58,6 @@
 [submodule "img/fftracker/crests-components"]
 	path = img/fftracker/crests-components
 	url = https://github.com/Simbiat/FFXIV-Crests-Components
-[submodule "lib/nl2p"]
-	path = lib/nl2p
-	url = https://github.com/Simbiat/nl2p
-[submodule "lib/nl2li"]
-	path = lib/nl2li
-	url = https://github.com/Simbiat/nl2li
+[submodule "lib/nl2tag"]
+	path = lib/nl2tag
+	url = https://github.com/Simbiat/nl2tag
