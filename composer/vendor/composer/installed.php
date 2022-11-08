@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '716945a707491e3a8542b47d833e4903724af081',
+        'reference' => '387508b51a0d1cdac0690108e94b60effc3527c9',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -202,7 +202,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '716945a707491e3a8542b47d833e4903724af081',
+            'reference' => '387508b51a0d1cdac0690108e94b60effc3527c9',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

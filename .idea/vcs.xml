@@ -16,8 +16,7 @@
     <mapping directory="$PROJECT_DIR$/lib/database" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/filename-sanitizer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/lodestone-parser" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/nl2li" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/nl2p" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/nl2tag" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/optimize-tables" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/sand-clock" vcs="Git" />
   </component>
