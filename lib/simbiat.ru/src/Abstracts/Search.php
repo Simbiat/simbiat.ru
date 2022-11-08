@@ -140,7 +140,7 @@ abstract class Search
                         return 0;
                     }
                     #Search using LIKE
-                    return HomePage::$dbController->count('SELECT COUNT'.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->like().')', array_merge($this->bindings, [':what' => [$what, 'string']]));
+                    return HomePage::$dbController->count($exactlyLike.$this->like().')', array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
                 }
             } else {
                 return HomePage::$dbController->count('SELECT COUNT('.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join). (empty($this->where) ? '' : ' WHERE ' . $this->where).';', $this->bindings);
@@ -185,7 +185,7 @@ abstract class Search
                         return [];
                     }
                     #Search using LIKE
-                    return HomePage::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string']]));
+                    return HomePage::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]));
                 }
             } else {
                 return HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join) . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset.';', $this->bindings);
@@ -205,7 +205,7 @@ abstract class Search
     #Generate WHERE for %LIKE% comparison
     protected final function like(): string
     {
-        return '`'.implode('` LIKE :what OR `', $this->like).'` LIKE :what';
+        return '`'.implode('` LIKE :like OR `', $this->like).'` LIKE :like';
     }
 
     #Helper function to generate relevancy statement
