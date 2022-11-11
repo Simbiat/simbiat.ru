@@ -408,7 +408,7 @@ return array(
     'Simbiat\\fftracker\\Search\\Linkshells' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Search/Linkshells.php',
     'Simbiat\\fftracker\\Search\\PVP' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Search/PVP.php',
     'Simbiat\\fftracker\\Statistics' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
-    'Simbiat\\nl2Tag' => $baseDir . '/../lib/nl2tag/src/nl2tag.php',
+    'Simbiat\\nl2tag' => $baseDir . '/../lib/nl2tag/src/nl2tag.php',
     'Simbiat\\optimizeTables' => $baseDir . '/../lib/optimize-tables/src/optimizeTables.php',
     'Simbiat\\usercontrol\\Api' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api.php',
     'Simbiat\\usercontrol\\Api\\Avatars' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Avatars.php',

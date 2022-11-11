@@ -5,6 +5,7 @@ namespace Simbiat\Twig;
 use Simbiat\HomePage;
 use Simbiat\HTMLCut;
 use Simbiat\HTTP20\HTML;
+use Simbiat\nl2tag;
 use Simbiat\Security;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -33,6 +34,11 @@ class RuntimeExtension implements RuntimeExtensionInterface
     public function is_numeric(mixed $string): bool
     {
         return is_numeric($string);
+    }
+    
+    public function nl2p(string $string): string
+    {
+        return (new nl2tag($string))->nl2p();
     }
     
     public function preg_replace(string $string, string $pattern, string $replace): string

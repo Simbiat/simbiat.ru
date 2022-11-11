@@ -562,7 +562,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\fftracker\\Search\\Linkshells' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Search/Linkshells.php',
         'Simbiat\\fftracker\\Search\\PVP' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Search/PVP.php',
         'Simbiat\\fftracker\\Statistics' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Statistics.php',
-        'Simbiat\\nl2Tag' => __DIR__ . '/../..' . '/../lib/nl2tag/src/nl2tag.php',
+        'Simbiat\\nl2tag' => __DIR__ . '/../..' . '/../lib/nl2tag/src/nl2tag.php',
         'Simbiat\\optimizeTables' => __DIR__ . '/../..' . '/../lib/optimize-tables/src/optimizeTables.php',
         'Simbiat\\usercontrol\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api.php',
         'Simbiat\\usercontrol\\Api\\Avatars' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Avatars.php',
