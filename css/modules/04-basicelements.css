@@ -169,6 +169,25 @@ samp.failure,
 samp.error {
     border-left: calc(var(--border-width) * 3) solid var(--color-failure);
 }
+var {
+    font-family: var(--font-mono);
+    white-space: pre;
+    display: inline-block;
+    /*Using em for font instead of rem, so that it will depend on parent's size, not on root size*/
+    font-size: 0.9em;
+    line-height: 1.25;
+    page-break-inside: avoid;
+    word-wrap: break-word;
+    box-sizing: border-box;
+    border-width: var(--border-width);
+    border-style: dashed;
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+    background-color: var(--color-block);
+    margin: 0.5rem;
+    padding: 0.2rem;
+    position: relative;
+}
 
 cite {
     font-style: italic;
