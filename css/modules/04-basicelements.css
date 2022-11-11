@@ -397,7 +397,7 @@ meter::-webkit-meter-even-less-good-value {
 /*Paragraphs*/
 p {
     margin: 0.25rem;
-    text-indent: 1rem;
+    text-indent: 1.5rem;
 }
 p+p {
     margin-top: 0.25rem;
