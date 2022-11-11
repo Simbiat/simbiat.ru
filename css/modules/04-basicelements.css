@@ -172,10 +172,7 @@ samp.error {
 var {
     font-family: var(--font-mono);
     white-space: pre;
-    display: inline-block;
-    /*Using em for font instead of rem, so that it will depend on parent's size, not on root size*/
-    font-size: 0.9em;
-    line-height: 1.25;
+    display: inline;
     page-break-inside: avoid;
     word-wrap: break-word;
     box-sizing: border-box;
@@ -184,8 +181,8 @@ var {
     border-radius: var(--border-radius);
     border-color: var(--border-color-inset);
     background-color: var(--color-block);
-    margin: 0.5rem;
-    padding: 0.2rem;
+    margin: .2rem;
+    padding: .2rem;
     position: relative;
 }
 
