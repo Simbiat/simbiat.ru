@@ -178,12 +178,14 @@ var {
     box-sizing: border-box;
     border-width: var(--border-width);
     border-style: dashed;
-    border-radius: var(--border-radius);
+    border-radius: calc(var(--border-radius) / 2);
     border-color: var(--border-color-inset);
     background-color: var(--color-block);
     margin: .2rem;
     padding: .2rem;
     position: relative;
+    font-style: normal;
+    color: var(--color-disabled);
 }
 
 cite {
