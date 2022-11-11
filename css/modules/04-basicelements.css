@@ -180,7 +180,7 @@ var {
     border-style: dashed;
     border-radius: calc(var(--border-radius) / 2);
     border-color: var(--border-color-inset);
-    background-color: var(--color-block);
+    background-color: var(--color-body);
     margin: .2rem;
     padding: .2rem;
     position: relative;
@@ -263,6 +263,7 @@ q {
     padding-left: 0.3rem;
     padding-right: 0.3rem;
     cursor: pointer;
+    background-color: var(--color-body);
 }
 q::before {
     content: '\2760';
