@@ -3,7 +3,7 @@ CREATE TABLE `sys__logs`
     `time`      TIMESTAMP DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When action occurred',
     `type`      TINYINT(2) UNSIGNED                   NOT NULL COMMENT 'Type of the action',
     `action`    VARCHAR(255)                          NOT NULL COMMENT 'Short description of the action',
-    `userid`    INT UNSIGNED                          NULL COMMENT 'Optional user ID, if available',
+    `userid`    INT UNSIGNED                          NOT NULL COMMENT 'Optional user ID, if available',
     `ip`        VARCHAR(45)                           NULL COMMENT 'IP, if available',
     `useragent` TEXT                                  NULL COMMENT 'Full useragent, if available',
     `extra`     TEXT                                  NULL COMMENT 'Any extra information available for the entry',

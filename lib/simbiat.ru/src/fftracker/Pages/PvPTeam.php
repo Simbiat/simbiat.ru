@@ -60,7 +60,7 @@ class PvPTeam extends Page
             }
         }
         #Check if linked to current user
-        if (!empty($_SESSION['userid']) && in_array($_SESSION['userid'], array_column($outputArray['pvpteam']['members'], 'userid'))) {
+        if ($_SESSION['userid'] !== 1 && in_array($_SESSION['userid'], array_column($outputArray['pvpteam']['members'], 'userid'))) {
             $outputArray['pvpteam']['linked'] = true;
         }
         return $outputArray;

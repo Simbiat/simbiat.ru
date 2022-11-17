@@ -26,7 +26,7 @@ class Password extends Api
         if (!empty($_POST['pass_userid']) && preg_match('/\d+/u', $_POST['pass_userid']) === 1) {
             $id = $_POST['pass_userid'];
         } else {
-            if (empty($_SESSION['userid'])) {
+            if ($_SESSION['userid'] === 1) {
                 return ['http_error' => 403, 'reason' => 'Not logged in'];
             } else {
                 $id = $_SESSION['userid'];

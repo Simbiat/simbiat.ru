@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\bictracker;
 
 use Simbiat\ArrayHelpers;
+use Simbiat\Config\Talks;
 use Simbiat\Curl;
 use Simbiat\HomePage;
 use Simbiat\Security;
@@ -602,7 +603,7 @@ class Library
     #Function to log updates
     private function log($bicdate, $message, bool $manual = false): void
     {
-        Security::log('BIC Tracker', ($manual ? 'Manual' : 'Cron').' update', $message.' ('.date('d.m.Y', $bicdate).')');
+        Security::log('BIC Tracker', ($manual ? 'Manual' : 'Cron').' update', $message.' ('.date('d.m.Y', $bicdate).')', ($manual === false ? Talks::systemUserID : null));
 
     }
 

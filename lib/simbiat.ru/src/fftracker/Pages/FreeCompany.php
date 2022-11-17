@@ -60,7 +60,7 @@ class FreeCompany extends Page
             }
         }
         #Check if linked to current user
-        if (!empty($_SESSION['userid']) && in_array($_SESSION['userid'], array_column($outputArray['freecompany']['members'], 'userid'))) {
+        if ($_SESSION['userid'] !== 1 && in_array($_SESSION['userid'], array_column($outputArray['freecompany']['members'], 'userid'))) {
             $outputArray['freecompany']['linked'] = true;
         }
         return $outputArray;

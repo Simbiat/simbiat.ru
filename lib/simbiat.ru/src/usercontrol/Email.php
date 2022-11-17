@@ -92,7 +92,7 @@ class Email extends Entity
 
     public function unsubscribe(): bool
     {
-        if (empty($_SESSION['userid'])) {
+        if ($_SESSION['userid'] === 1) {
             $result = HomePage::$dbController->query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
         } else {
             @session_regenerate_id(true);

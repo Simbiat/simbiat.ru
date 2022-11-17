@@ -11,7 +11,7 @@ CREATE TABLE `talks__sections`
     `private`     TINYINT(1) UNSIGNED DEFAULT 1                   NOT NULL COMMENT 'Flag indicating if forum is private',
     `created`     TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When forum was created',
     `createdby`   INT UNSIGNED                                    NULL COMMENT 'User ID of the creator',
-    `updated`     TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When forum was updated',
+    `updated`     TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'When forum was updated',
     `updatedby`   INT UNSIGNED                                    NULL COMMENT 'User ID of the last updater',
     `icon`        VARCHAR(50)                                     NULL COMMENT 'Icon override',
     CONSTRAINT `forum_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,

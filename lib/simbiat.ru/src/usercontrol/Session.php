@@ -8,6 +8,7 @@ use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use ipinfo\ipinfo\IPinfo;
 use Simbiat\Config\Common;
+use Simbiat\Config\Talks;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Security;
@@ -146,10 +147,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     (empty($data['username']) ? NULL : $data['username']),
                     (empty($data['username']) ? 'null' : 'string'),
                 ],
-                ':userid' => [
-                    (empty($data['userid']) ? NULL : $data['userid']),
-                    (empty($data['userid']) ? 'null' : 'int'),
-                ],
+                ':userid' => [$data['userid'], 'int'],
                 #What page is being viewed
                 ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),
                 #Actual session data
@@ -215,7 +213,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 @header('X-CSRF-Token: '.$data['CSRF']);
             }
             if (empty($data['userid'])) {
-                $data['userid'] = null;
+                $data['userid'] = Talks::unknownUserID;
                 $data['username'] = $data['UA']['bot'] ?? null;
                 $data['timezone'] = null;
                 $data['groups'] = [];
@@ -235,12 +233,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['banned'] = $user->banned;
                     $data['avatar'] = $user->currentAvatar;
                 } else {
-                    $data['userid'] = null;
+                    $data['userid'] = Talks::unknownUserID;
                     $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
                 }
             }
         } catch (\Throwable) {
-            $data['userid'] = null;
+            $data['userid'] = Talks::unknownUserID;
             $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
         }
     }

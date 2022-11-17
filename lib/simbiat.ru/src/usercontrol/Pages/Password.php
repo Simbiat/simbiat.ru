@@ -30,7 +30,7 @@ class Password extends Page
     protected function generate(array $path): array
     {
         $outputArray = [];
-        if (empty($_SESSION['userid'])) {
+        if ($_SESSION['userid'] === 1) {
             #Check if password reset is being attempted
             if (!empty($path[0]) && preg_match('/\d+/u', $path[0]) === 1) {
                 #Check token

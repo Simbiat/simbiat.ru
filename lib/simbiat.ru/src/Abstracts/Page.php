@@ -86,7 +86,7 @@ abstract class Page
             if (!in_array(HomePage::$method, $allowedMethods)) {
                 $page = ['http_error' => 405];
             #Check that user is authenticated
-            } elseif ($this->authenticationNeeded && empty($_SESSION['userid'])) {
+            } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
                 $page = ['http_error' => 403];
             } else {
                 #Generate the page

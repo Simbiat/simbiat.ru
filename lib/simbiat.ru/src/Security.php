@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\Config\Common;
+use Simbiat\Config\Talks;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
@@ -184,7 +185,7 @@ class Security
     }
 
     #Function to log actions
-    public static function log(string $type, string $action, mixed $extras = NULL): bool
+    public static function log(string $type, string $action, mixed $extras = NULL, ?int $userid = null): bool
     {
         if (!empty($extras)) {
             $extras = json_encode($extras, JSON_PRETTY_PRINT|JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
@@ -192,7 +193,7 @@ class Security
         #Get IP
         $ip = $_SESSION['IP'] ?? null;
         #Get username
-        $userid = $_SESSION['userid'] ?? null;
+        $userid = $_SESSION['userid'] ?? $userid ?? Talks::unknownUserID;
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {
@@ -202,10 +203,7 @@ class Security
                     [
                         ':type' => $type,
                         ':action' => $action,
-                        ':userid' => [
-                            (empty($userid) ? NULL : $userid),
-                            (empty($userid) ? 'null' : 'string'),
-                        ],
+                        ':userid' => [$userid,'int'],
                         ':ip' => [
                             (empty($ip) ? NULL : $ip),
                             (empty($ip) ? 'null' : 'string'),

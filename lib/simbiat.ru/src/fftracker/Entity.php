@@ -82,7 +82,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     #To be called from API to allow update only for owned character
     public function updateFromApi(): bool|array|string
     {
-        if (empty($_SESSION['userid'])) {
+        if ($_SESSION['userid'] === 1) {
             return ['http_error' => 403, 'reason' => 'Authentication required'];
         }
         #Check if any character currently registered in a group is linked to the user

@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat;
 
 #Class for cUrl related functions. Needed more for settings' uniformity
+use Simbiat\Config\Talks;
 use Simbiat\HTTP20\Common;
 use Simbiat\HTTP20\Sharing;
 
@@ -142,7 +143,7 @@ class Curl
             if (empty(HomePage::$dbController)) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link]);
+            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Talks::systemUserID);
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
@@ -211,7 +212,7 @@ class Curl
                         'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
                         [
                             ':hash' => $upload['hash'],
-                            ':userid' => $_SESSION['userid'],
+                            ':userid' => $_SESSION['userid'] ?? Talks::systemUserID,
                             ':filename' => $upload['user_name'],
                             ':extension' => $upload['extension'],
                             ':mime' => $upload['type'],

@@ -7,7 +7,7 @@ CREATE TABLE `talks__posts`
     `locked`    TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag to indicate if post is locked from editing',
     `created`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When post was created',
     `createdby` INT UNSIGNED                                    NULL COMMENT 'User ID of the creator',
-    `updated`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When post was updated',
+    `updated`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'When post was updated',
     `updatedby` INT UNSIGNED                                    NULL COMMENT 'User ID of the last updater',
     `text`      LONGTEXT                                        NOT NULL COMMENT 'Text of the post',
     CONSTRAINT `post_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,

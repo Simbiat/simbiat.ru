@@ -10,7 +10,7 @@ CREATE TABLE `talks__threads`
     `private`   TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag to indicate if thread is private',
     `created`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When thread was created',
     `createdby` INT UNSIGNED                                    NULL COMMENT 'User ID of the creator',
-    `updated`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When thread was updated',
+    `updated`   TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'When thread was updated',
     `updatedby` INT UNSIGNED                                    NULL COMMENT 'User ID of the updater',
     `ogimage`   VARCHAR(128)                                    NULL COMMENT 'Optional file ID to be used as og:image',
     CONSTRAINT `ogimage_to_fileid` FOREIGN KEY (`ogimage`) REFERENCES `sys__files` (`fileid`) ON UPDATE CASCADE ON DELETE SET NULL,

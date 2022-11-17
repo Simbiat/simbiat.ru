@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Sitemap\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\Talks;
 use Simbiat\HomePage;
 
 class Countables extends Page
@@ -77,7 +78,7 @@ class Countables extends Page
                 break;
             case 'users':
                 $this->breadCrumb[0]['name'] = 'Users';
-                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` FROM `uc__users`'.($format === 'html' ? ' FORCE INDEX (`username_unique`) WHERE `userid`!=1 ORDER BY `name`' : ' WHERE `userid`!=1').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` FROM `uc__users`'.($format === 'html' ? ' FORCE INDEX (`username_unique`) WHERE `userid` NOT IN ('.Talks::unknownUserID.', '.Talks::systemUserID.', '.Talks::deletedUserID.') ORDER BY `name`' : ' WHERE `userid` NOT IN ('.Talks::unknownUserID.', '.Talks::systemUserID.', '.Talks::deletedUserID.')').' LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb

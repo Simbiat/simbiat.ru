@@ -392,7 +392,7 @@ class User extends Entity
     public function login(bool $afterRegister = false): array
     {
         #Check if already logged in and return early
-        if (!empty($_SESSION['userid'])) {
+        if ($_SESSION['userid'] !== 1) {
             if ($afterRegister) {
                 return ['status' => 201, 'response' => true];
             } else {
@@ -478,7 +478,7 @@ class User extends Entity
                 #If we can't write to DB for some reason - do not share any data with client
                 return;
             }
-            if (HomePage::$dbController !== null && (!empty($_SESSION['userid']) || !empty($this->id))) {
+            if (HomePage::$dbController !== null && ($_SESSION['userid'] !== 1 || !empty($this->id))) {
                 HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,

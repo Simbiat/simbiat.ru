@@ -1,3 +1,3 @@
-<blockquote data-author="Server">Access prohibited. {% if not session_data.userid %}Login or contact{% else %}Contact{% endif %} administration, if you think this is a mistake.</blockquote>
+<blockquote data-author="Server">Access prohibited. {% if session_data.userid == 1 %}Login or contact{% else %}Contact{% endif %} administration, if you think this is a mistake.</blockquote>
 {% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
 <img loading="lazy" decoding="async" alt="No access" src="/img/errors/forbidden.gif">

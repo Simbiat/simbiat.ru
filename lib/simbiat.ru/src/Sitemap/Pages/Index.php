@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Sitemap\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\Talks;
 use Simbiat\HomePage;
 
 class Index extends Page
@@ -53,7 +54,7 @@ class Index extends Page
                 UNION ALL
                 SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0
                 UNION ALL
-                SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `userid`!=1
+                SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `userid` NOT IN ('.Talks::unknownUserID.', '.Talks::systemUserID.', '.Talks::deletedUserID.')
             ');
         } catch (\Throwable) {
             $counts = [];

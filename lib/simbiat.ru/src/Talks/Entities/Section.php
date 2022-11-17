@@ -81,7 +81,7 @@ class Section extends Entity
                 if (in_array(1, $_SESSION['groups'])) {
                     $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int']], '`talks__threads`.`sectionid`=:sectionid', $orderBy))->listEntities($page);
                 } else {
-                    if (empty($_SESSION['userid'])) {
+                    if ($_SESSION['userid'] === 1) {
                         $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int']], '`talks__threads`.`sectionid`=:sectionid AND `talks__threads`.`private`=0', $orderBy))->listEntities($page);
                     } else {
                         $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__threads`.`sectionid`=:sectionid AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:userid)', $orderBy))->listEntities($page);
