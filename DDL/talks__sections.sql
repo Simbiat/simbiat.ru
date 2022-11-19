@@ -1,7 +1,7 @@
 CREATE TABLE `talks__sections`
 (
     `sectionid`   INT UNSIGNED AUTO_INCREMENT COMMENT 'Forum ID' PRIMARY KEY,
-    `name`        VARCHAR(50)                                     NOT NULL COMMENT 'Forum name',
+    `name`        VARCHAR(64)                                     NOT NULL COMMENT 'Forum name',
     `description` VARCHAR(250)                                    NULL COMMENT 'Optional description of the forum',
     `parentid`    INT UNSIGNED                                    NULL COMMENT 'ID of the parent forum',
     `sequence`    INT(2) UNSIGNED     DEFAULT 0                   NOT NULL COMMENT 'Optional order for sorting. The higher the value, the higher in the list a forum will be. After that name sorting is expected.',

@@ -1,7 +1,7 @@
 CREATE TABLE `talks__threads`
 (
     `threadid`  INT UNSIGNED AUTO_INCREMENT COMMENT 'Thread ID' PRIMARY KEY,
-    `name`      VARCHAR(100)                                    NOT NULL COMMENT 'Thread name',
+    `name`      VARCHAR(70)                                     NOT NULL COMMENT 'Thread name',
     `sectionid` INT UNSIGNED                                    NOT NULL COMMENT 'Forum ID where the thread is located',
     `language`  VARCHAR(35)         DEFAULT 'en'                NOT NULL COMMENT 'Main language of the thread',
     `system`    TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',
