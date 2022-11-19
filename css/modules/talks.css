@@ -166,7 +166,7 @@
 .changelog_sublist_name::marker {
     color: transparent;
     text-shadow: 0 0 0 var(--color-interactive);
-    font-size: larger;
+    font-size: x-large;
 }
 .changelog_change {
     list-style-type: '✱';
@@ -175,6 +175,7 @@
 .changelog_change::marker {
     color: transparent;
     text-shadow: 0 0 0 var(--color-warning);
+    font-size: x-large;
 }
 .changelog_addition {
     list-style-type: '➕';
