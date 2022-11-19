@@ -150,3 +150,45 @@
 #landing_read_more:active {
     background-color: var(--color-article);
 }
+
+/*Styling of changelog list*/
+.changelog_list {
+    margin: .25rem;
+}
+.changelog_sublist {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+.changelog_sublist_name {
+    list-style-type: '❖';
+    list-style-position: outside;
+}
+.changelog_sublist_name::marker {
+    color: transparent;
+    text-shadow: 0 0 0 var(--color-interactive);
+    font-size: larger;
+}
+.changelog_change {
+    list-style-type: '✱';
+    list-style-position: outside;
+}
+.changelog_change::marker {
+    color: transparent;
+    text-shadow: 0 0 0 var(--color-warning);
+}
+.changelog_addition {
+    list-style-type: '➕';
+    list-style-position: outside;
+}
+.changelog_addition::marker {
+    color: transparent;
+    text-shadow: 0 0 0 var(--color-success);
+}
+.changelog_removal {
+    list-style-type: '➖';
+    list-style-position: outside;
+}
+.changelog_removal::marker {
+    color: transparent;
+    text-shadow: 0 0 0 var(--color-failure);
+}

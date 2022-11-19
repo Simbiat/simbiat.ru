@@ -38,7 +38,12 @@ class RuntimeExtension implements RuntimeExtensionInterface
     
     public function nl2p(string $string): string
     {
-        return (new nl2tag($string))->nl2p();
+        return (new nl2tag)->nl2p($string);
+    }
+    
+    public function changelog(string $string): string
+    {
+        return (new nl2tag)->changelog($string);
     }
     
     public function preg_replace(string $string, string $pattern, string $replace): string

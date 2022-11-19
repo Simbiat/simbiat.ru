@@ -24,9 +24,17 @@
         </section>
     {% endif %}
     {% if post.htmlcut == true %}
-        <section class="post_text">{{ nl2p(preg_replace(htmlCut(sanitize(post.text)), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>')) }}</section>
+        {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+            <section class="post_text">{{ sanitize(changelog(preg_replace(htmlCut(post.text), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>'))) }}</section>
+        {% else %}
+            <section class="post_text">{{ sanitize(nl2p(preg_replace(htmlCut(post.text), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>'))) }}</section>
+        {% endif %}
     {% else %}
-        <section class="post_text">{{ nl2p(sanitize(post.text)) }}</section>
+        {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+            <section class="post_text">{{ sanitize(changelog(post.text)) }}</section>
+        {% else %}
+            <section class="post_text">{{ sanitize(nl2p(post.text)) }}</section>
+        {% endif %}
     {% endif %}
     {% if post.nofooter != true %}
         {% if post.updated > post.created %}

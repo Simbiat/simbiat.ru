@@ -20,6 +20,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('basename', [$runtime, 'basename']),
             new TwigFunction('is_numeric', [$runtime, 'is_numeric']),
             new TwigFunction('nl2p', [$runtime, 'nl2p'], ['is_safe' => ['html']]),
+            new TwigFunction('changelog', [$runtime, 'changelog'], ['is_safe' => ['html']]),
             new TwigFunction('preg_replace', [$runtime, 'preg_replace'], ['is_safe' => ['html']]),
             new TwigFunction('sanitize', [$runtime, 'sanitize'], ['is_safe' => ['html']]),
             new TwigFunction('htmlCut', [$runtime, 'htmlCut'], ['is_safe' => ['html']]),
