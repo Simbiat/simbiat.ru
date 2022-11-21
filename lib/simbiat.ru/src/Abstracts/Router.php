@@ -58,6 +58,7 @@ abstract class Router
             } else {
                 #Not existent endpoint
                 $pageData['breadcrumbs'] = $this->breadCrumb;
+                $pageData['reason'] = 'Unsupported route';
                 $pageData['http_error'] = 404;
                 Headers::clientReturn('404', false);
             }

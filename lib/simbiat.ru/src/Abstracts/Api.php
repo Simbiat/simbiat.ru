@@ -51,7 +51,7 @@ abstract class Api
         }
         #Check if proper endpoint
         if (!empty($this->subRoutes) && (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes)))) {
-            $data = ['http_error' => 400, 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)];
+            $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)];
         #Check that user is authenticated
         } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
