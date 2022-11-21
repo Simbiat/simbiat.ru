@@ -4,6 +4,7 @@ namespace Simbiat\usercontrol;
 
 use Simbiat\Abstracts\Entity;
 use Simbiat\Config\Common;
+use Simbiat\Config\Talks;
 use Simbiat\Curl;
 use Simbiat\HomePage;
 use Simbiat\Security;
@@ -67,6 +68,9 @@ class User extends Entity
 
     protected function getFromDB(): array
     {
+        if (intval($this->id) === Talks::unknownUserID) {
+            return ['groups' => [0, 2, 4, 5], 'activated' => false, 'deleted' => false, 'banned' => false, 'currentAvatar' => '/img/avatar.svg'];
+        }
         $dbData =  HomePage::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
