@@ -68,19 +68,25 @@ class User extends Entity
 
     protected function getFromDB(): array
     {
-        if (intval($this->id) === Talks::unknownUserID) {
-            return ['groups' => [0, 2, 4, 5], 'activated' => false, 'deleted' => false, 'banned' => false, 'currentAvatar' => '/img/avatar.svg'];
-        }
+        
         $dbData =  HomePage::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
         }
-        #Get user's groups
-        $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
-        $dbData['activated'] = !in_array(2, $dbData['groups'], true);
-        $dbData['deleted'] = in_array(4, $dbData['groups'], true);
-        $dbData['banned'] = in_array(5, $dbData['groups'], true);
-        $dbData['currentAvatar'] = $this->getAvatar();
+        if (intval($this->id) === Talks::unknownUserID) {
+            $dbData['groups'] = [0, 2, 4, 5];
+            $dbData['activated'] = false;
+            $dbData['deleted'] = false;
+            $dbData['banned'] = false;
+            $dbData['currentAvatar'] = '/img/avatar.svg';
+        } else {
+            #Get user's groups
+            $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
+            $dbData['activated'] = !in_array(2, $dbData['groups'], true);
+            $dbData['deleted'] = in_array(4, $dbData['groups'], true);
+            $dbData['banned'] = in_array(5, $dbData['groups'], true);
+            $dbData['currentAvatar'] = $this->getAvatar();
+        }
         return $dbData;
     }
 
