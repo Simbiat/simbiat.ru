@@ -40,7 +40,7 @@ abstract class Api
     public final function route(array $path): array
     {
         #Close session early, if we know, that its data will not be changed (default)
-        if (!$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+        if ($this->finalNode && !$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
         if ($this->topLevel) {
