@@ -9,7 +9,12 @@
         <tbody>
             {% for cookie in cookies %}
                 <tr>
-                    <td>{% if cookie.cookieid and session_data.cookieid and cookie.cookieid == session_data.cookieid %}✅ Current{% else %}{{ timeTag(cookie.time, "d/m/Y H:i") }}{% endif %}</td><td>{{ cookie.ip }}</td><td>{% if cookie.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ cookie.country }}" src="{{ cookie.countryIcon }}">{% endif %}{{ cookie.city }}</td><td>{% if cookie.os.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="linkIcon">{% endif %}{{ cookie.os.name }} {{ cookie.os.version }}</td><td>{% if cookie.client.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="linkIcon">{% endif %}{{ cookie.client.name }} {{ cookie.client.version }}</td><td class="middle"><input class="cookie_deletion" data-cookie="{{ cookie.cookieid }}" type="image" src="/img/close.svg"{% if cookie.cookieid and session_data.cookieid and cookie.cookieid == session_data.cookieid %} disabled alt="Logout to remove"{% else %} alt="Delete cookie"{% endif %}><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing cookie..."></td>
+                    <td>{% if cookie.cookieid and session_data.cookieid and cookie.cookieid == session_data.cookieid %}✅ Current{% else %}{{ timeTag(cookie.time, "d/m/Y H:i") }}{% endif %}</td>
+                    <td>{{ cookie.ip }}</td>
+                    <td>{% if cookie.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ cookie.country }}" src="{{ cookie.countryIcon }}">{% endif %}{{ cookie.city }}</td>
+                    <td>{% if cookie.os.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="linkIcon">{% endif %}{{ cookie.os.name }} {{ cookie.os.version }}</td>
+                    <td>{% if cookie.client.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="linkIcon">{% endif %}{{ cookie.client.name }} {{ cookie.client.version }}</td>
+                    <td class="middle"><input class="cookie_deletion" data-cookie="{{ cookie.cookieid }}" type="image" src="/img/close.svg"{% if cookie.cookieid and session_data.cookieid and cookie.cookieid == session_data.cookieid %} disabled alt="Logout to remove"{% else %} alt="Delete cookie"{% endif %}><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing cookie..."></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -31,7 +36,12 @@
         <tbody>
         {% for session in sessions %}
             <tr>
-                <td>{% if session.sessionid and current_session and session.sessionid == current_session %}✅ Current{% else %}{{ timeTag(session.time, "d/m/Y H:i") }}{% endif %}</td><td>{{ session.ip }}</td><td>{% if session.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ session.country }}" src="{{ session.countryIcon }}">{% endif %}{{ session.city }}</td><td>{% if session.os.icon %}<img loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="linkIcon">{% endif %}{{ session.os.name }} {{ session.os.version }}</td><td>{% if session.client.icon %}<img loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="linkIcon">{% endif %}{{ session.client.name }} {{ session.client.version }}</td><td class="middle"><input class="session_deletion" data-session="{{ session.sessionid }}" type="image" src="/img/close.svg"{% if session.sessionid and current_session and session.sessionid == current_session %} disabled alt="Logout to remove"{% else %} alt="Delete session"{% endif %}><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing session..."></td>
+                <td>{% if session.sessionid and current_session and session.sessionid == current_session %}✅ Current{% else %}{{ timeTag(session.time, "d/m/Y H:i") }}{% endif %}</td>
+                <td>{{ session.ip }}</td>
+                <td>{% if session.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ session.country }}" src="{{ session.countryIcon }}">{% endif %}{{ session.city }}</td>
+                <td>{% if session.os.icon %}<img loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="linkIcon">{% endif %}{{ session.os.name }} {{ session.os.version }}</td>
+                <td>{% if session.client.icon %}<img loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="linkIcon">{% endif %}{{ session.client.name }} {{ session.client.version }}</td>
+                <td class="middle"><input class="session_deletion" data-session="{{ session.sessionid }}" type="image" src="/img/close.svg"{% if session.sessionid and current_session and session.sessionid == current_session %} disabled alt="Logout to remove"{% else %} alt="Delete session"{% endif %}><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing session..."></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -53,7 +63,12 @@
         <tbody>
         {% for log in logs %}
             <tr>
-                <td>{{ log.action }}</td><td>{{ timeTag(log.time, "d/m/Y H:i") }}</td><td>{{ log.ip }}</td><td>{% if log.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ log.country }}" src="{{ log.countryIcon }}">{% endif %}{{ log.city }}</td><td>{% if log.os.icon %}<img loading="lazy" decoding="async" alt="{{ log.os.name }}" src="{{ log.os.icon }}" class="linkIcon">{% endif %}{{ log.os.name }} {{ log.os.version }}</td><td>{% if log.client.icon %}<img loading="lazy" decoding="async" alt="{{ log.client.name }}" src="{{ log.client.icon }}" class="linkIcon">{% endif %}{{ log.client.name }} {{ log.client.version }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ timeTag(log.time, "d/m/Y H:i") }}</td>
+                <td>{{ log.ip }}</td>
+                <td>{% if log.countryIcon %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ log.country }}" src="{{ log.countryIcon }}">{% endif %}{{ log.city }}</td>
+                <td>{% if log.os.icon %}<img loading="lazy" decoding="async" alt="{{ log.os.name }}" src="{{ log.os.icon }}" class="linkIcon">{% endif %}{{ log.os.name }} {{ log.os.version }}</td>
+                <td>{% if log.client.icon %}<img loading="lazy" decoding="async" alt="{{ log.client.name }}" src="{{ log.client.icon }}" class="linkIcon">{% endif %}{{ log.client.name }} {{ log.client.version }}</td>
             </tr>
         {% endfor %}
         </tbody>
