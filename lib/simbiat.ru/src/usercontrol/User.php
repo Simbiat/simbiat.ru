@@ -609,13 +609,13 @@ class User extends Entity
     
     public function getThreads(bool $publicOnly = true): array
     {
-        $threads = (new Threads([':userid' => [$this->id, 'int'],], '`talks__threads`.`createdby`=:userid'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__threads`.`created` DESC'))->listEntities();
+        $threads = (new Threads([':userid' => [$this->id, 'int'],], '`talks__threads`.`createdby`=:userid AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__threads`.`created` DESC'))->listEntities();
         return $threads['entities'];
     }
     
     public function getPosts(bool $publicOnly = true): array
     {
-        $posts = (new Posts([':userid' => [$this->id, 'int'],], '`talks__posts`.`createdby`=:userid'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
+        $posts = (new Posts([':userid' => [$this->id, 'int'],], '`talks__posts`.`createdby`=:userid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
         return $posts['entities'];
     }
     
@@ -633,7 +633,7 @@ class User extends Entity
             return [];
         }
         #Get posts
-        $posts = (new Posts([], '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
+        $posts = (new Posts([], '`talks__posts`.`postid` IN ('.implode(',', $ids).') AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
         if (!empty($posts['entities'])) {
             return $posts['entities'];
         } else {

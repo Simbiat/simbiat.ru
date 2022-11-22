@@ -36,7 +36,7 @@ class Thread extends Entity
         #Set page required for threads
         $page = intval($_GET['page'] ?? 1);
         #Get general information
-        $data = (new Threads([':threadid' => [$this->id, 'int']], '`talks__threads`.`threadid`=:threadid'))->listEntities();
+        $data = (new Threads([':threadid' => [$this->id, 'int']], '`talks__threads`.`threadid`=:threadid AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()'))->listEntities();
         if (empty($data['entities'])) {
             return [];
         } else {
@@ -45,7 +45,7 @@ class Thread extends Entity
         #Get section details
         $data['section'] = (new Section($data['sectionid']))->getArray();
         #Get posts
-        $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'],], '`talks__posts`.`threadid`=:threadid', '`talks__posts`.`created` ASC'))->listEntities($page);
+        $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'],], '`talks__posts`.`threadid`=:threadid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()', '`talks__posts`.`created` ASC'))->listEntities($page);
         #Get tags
         $data['tags'] = HomePage::$dbController->selectColumn('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
         #Get external links

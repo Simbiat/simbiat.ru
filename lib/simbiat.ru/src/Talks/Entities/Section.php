@@ -51,9 +51,9 @@ class Section extends Entity
                 'threads' => [],
             ];
             #Get children
-            $data['children'] = (new Sections(where: '`talks__sections`.`parentid` IS NULL'))->listEntities($page);
+            $data['children'] = (new Sections(where: '`talks__sections`.`parentid` IS NULL AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
         } else {
-            $data = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__sections`.`description`, `talks__types`.`type`, `parentid`, `closed`, `system`, `private`, `created`, `updated`, `createdby`, `updatedby`, COALESCE(`talks__sections`.`icon`, `talks__types`.`icon`) FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
+            $data = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__sections`.`description`, `talks__types`.`type`, `parentid`, `closed`, `system`, `private`, `created`, `updated`, `createdby`, `updatedby`, COALESCE(`talks__sections`.`icon`, `talks__types`.`icon`) FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid AND `talks__sections`.`created`<=CURRENT_TIMESTAMP();', [':sectionid' => [$this->id, 'int']]);
             #Return empty, if nothing was found
             if (empty($data)) {
                 return [];
@@ -65,7 +65,7 @@ class Section extends Entity
                 $data['parents'] = $this->getParents(intval($data['parentid']));
             }
             #Get children
-            $data['children'] = (new Sections([':sectionid' => [$this->id, 'int']], '`talks__sections`.`parentid`=:sectionid'))->listEntities($page);
+            $data['children'] = (new Sections([':sectionid' => [$this->id, 'int']], '`talks__sections`.`parentid`=:sectionid AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
             #Get threads
             if ($data['type'] === 'Category') {
                 #Categories are not meant to have threads in them
@@ -79,12 +79,12 @@ class Section extends Entity
                 };
                 #If user is not an admin, also limit the selection to non-private threads or those created by the user
                 if (in_array(1, $_SESSION['groups'])) {
-                    $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int']], '`talks__threads`.`sectionid`=:sectionid', $orderBy))->listEntities($page);
+                    $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int']], '`talks__threads`.`sectionid`=:sectionid AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()', $orderBy))->listEntities($page);
                 } else {
                     if ($_SESSION['userid'] === 1) {
-                        $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int']], '`talks__threads`.`sectionid`=:sectionid AND `talks__threads`.`private`=0', $orderBy))->listEntities($page);
+                        $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int']], '`talks__threads`.`sectionid`=:sectionid AND `talks__threads`.`private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()', $orderBy))->listEntities($page);
                     } else {
-                        $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__threads`.`sectionid`=:sectionid AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:userid)', $orderBy))->listEntities($page);
+                        $data['threads'] = (new Threads([':sectionid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__threads`.`sectionid`=:sectionid AND `talks__threads`.`created`<=CURRENT_TIMESTAMP() AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:userid)', $orderBy))->listEntities($page);
                     }
                 }
             }
@@ -93,12 +93,12 @@ class Section extends Entity
         if (!empty($data['children']['entities'])) {
             foreach ($data['children']['entities'] as &$category) {
                 #Get threads' IDs
-                $threads = HomePage::$dbController->selectColumn('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid OR `sectionid` IN (SELECT `sectionid` FROM `talks__sections` WHERE `parentid`=:sectionid);', [':sectionid' => [$category['sectionid'], 'int']]);
+                $threads = HomePage::$dbController->selectColumn('SELECT `threadid` FROM `talks__threads` WHERE `talks__threads`.`created`<=CURRENT_TIMESTAMP() AND (`sectionid`=:sectionid OR `sectionid` IN (SELECT `sectionid` FROM `talks__sections` WHERE `parentid`=:sectionid));', [':sectionid' => [$category['sectionid'], 'int']]);
                 $threadCount = count($threads);
                 $category['threads'] = $threadCount;
                 #Get count of posts in those threads
                 if ($threadCount > 0) {
-                    $category['posts'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid` IN ('.implode(',', $threads).');');
+                    $category['posts'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid` IN ('.implode(',', $threads).') AND `talks__posts`.`created`<=CURRENT_TIMESTAMP();');
                 } else {
                     $category['posts'] = 0;
                 }
@@ -107,7 +107,7 @@ class Section extends Entity
         #Count posts
         if (!empty($data['threads']['entities'])) {
             foreach ($data['threads']['entities'] as &$thread) {
-                $thread['posts'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid`=:threadid;', [':threadid' => [$thread['id'], 'int']]);
+                $thread['posts'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid`=:threadid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP();', [':threadid' => [$thread['id'], 'int']]);
             }
         }
         return $data;
@@ -136,7 +136,7 @@ class Section extends Entity
     {
         $parents = [];
         #Get parent of the current ID
-        $parents[] = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid', [':sectionid' => [$id, 'int']]);
+        $parents[] = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid AND `talks__sections`.`created`<=CURRENT_TIMESTAMP();', [':sectionid' => [$id, 'int']]);
         if (empty($parents)) {
             return [];
         }

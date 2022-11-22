@@ -74,7 +74,7 @@ class Countables extends Page
                 break;
             case 'threads':
                 $this->breadCrumb[0]['name'] = 'Forums Threads';
-                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads`'.($format === 'html' ? ' FORCE INDEX (`name_sort`) WHERE `private`=0 ORDER BY `name`' : ' WHERE `private`=0').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads`'.($format === 'html' ? ' FORCE INDEX (`name_sort`) WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP() ORDER BY `name`' : ' WHERE `private`=0').' LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'users':
                 $this->breadCrumb[0]['name'] = 'Users';

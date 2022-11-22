@@ -31,7 +31,7 @@ class Post extends Entity
     protected function getFromDB(): array
     {
         #Set page required for threads
-        $data = (new Posts([':postid' => [$this->id, 'int'],], '`talks__posts`.`postid`=:postid'))->listEntities();
+        $data = (new Posts([':postid' => [$this->id, 'int'],], '`talks__posts`.`postid`=:postid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'))->listEntities();
         if (empty($data['entities'])) {
             return [];
         } else {
@@ -39,7 +39,7 @@ class Post extends Entity
         }
         #Get details of a post, to which this is a reply to
         if (!empty($data['replyto'])) {
-            $data['replyto'] = (new Posts([':postid' => [$data['replyto'], 'int'],], '`talks__posts`.`postid`=:postid'))->listEntities();
+            $data['replyto'] = (new Posts([':postid' => [$data['replyto'], 'int'],], '`talks__posts`.`postid`=:postid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'))->listEntities();
             if (empty($data['replyto']['entities'])) {
                 $data['replyto'] = [];
             } else {
