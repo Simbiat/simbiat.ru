@@ -31,7 +31,8 @@ export class EditSessions
             return;
         }
         //Traverse in reverse, because of numeric row IDs used for rows removal
-        Array.prototype.reverse.call(buttons).forEach(item => {
+        let ArrayOfButtons = Array.from(buttons).reverse();
+        ArrayOfButtons.forEach(item => {
             this.delete(item, false);
         });
         new Snackbar('All '+type+' except current were removed', 'success');
@@ -39,7 +40,6 @@ export class EditSessions
     
     public delete(button: HTMLInputElement, singular: boolean = true)
     {
-        let spinner = (button.parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
         //Generate form data
         let formData = new FormData();
         let type: string, typeSingular: string;
@@ -55,7 +55,7 @@ export class EditSessions
             new Snackbar('Unknown button type', 'failure', 10000);
             return;
         }
-        spinner.classList.remove('hidden');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/'+type+'/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
             if (data.data === true) {
                 deleteRow(button);
@@ -63,9 +63,9 @@ export class EditSessions
                     new Snackbar(typeSingular + ' removed', 'success');
                 }
             } else {
+                buttonToggle(button as HTMLInputElement);
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
         });
     }
 }

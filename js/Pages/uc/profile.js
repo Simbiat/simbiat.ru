@@ -34,8 +34,8 @@ export class EditProfile {
     }
     profile(auto = false) {
         let formData = new FormData(this.profileForm);
-        let spinner = document.getElementById('details_spinner');
-        spinner.classList.remove('hidden');
+        let button = this.profileForm.querySelector('#details_submit');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/profile/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 this.profileFormData = JSON.stringify([...formData.entries()]);
@@ -44,7 +44,7 @@ export class EditProfile {
                 if (auto) {
                     let autoTime = document.getElementById('lastAutoSave');
                     autoTime.classList.remove('hidden');
-                    let timeTag = autoTime.getElementsByTagName('time')[0];
+                    let timeTag = autoTime.querySelector('time');
                     let time = new Date();
                     timeTag.setAttribute('datetime', time.toISOString());
                     timeTag.innerHTML = time.toLocaleTimeString();
@@ -53,7 +53,7 @@ export class EditProfile {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
     profileOnChange() {
@@ -71,8 +71,8 @@ export class EditProfile {
     }
     username() {
         let formData = new FormData(this.usernameForm);
-        let spinner = document.getElementById('username_spinner');
-        spinner.classList.remove('hidden');
+        let button = this.usernameForm.querySelector('#username_submit');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/username/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 this.usernameField.setAttribute('data-original', this.usernameField.value);
@@ -82,7 +82,7 @@ export class EditProfile {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
 }

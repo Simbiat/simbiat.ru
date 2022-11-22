@@ -60,8 +60,8 @@ export class EditAvatars
     {
         //Get form data
         let formData = new FormData(this.form as HTMLFormElement);
-        let spinner = document.getElementById('avatar_spinner') as HTMLImageElement;
-        spinner.classList.remove('hidden');
+        let button = (this.form as HTMLFormElement).querySelector('#avatar_submit');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/avatars/add/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 //Add avatar to the list
@@ -74,7 +74,7 @@ export class EditAvatars
                 this.avatarFile.value = '';
                 this.preview(this.avatarFile);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button as HTMLInputElement);
         });
     }
     

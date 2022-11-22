@@ -14,8 +14,8 @@ export class EditFFLinks
     {
         //Get form data
         let formData = new FormData(this.form as HTMLFormElement);
-        let spinner = document.getElementById('ff_link_spinner') as HTMLImageElement;
-        spinner.classList.remove('hidden');
+        let button = (this.form as HTMLFormElement).querySelector('#ff_link_submit');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/fflink/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 new Snackbar('Character linked successfully. Reloading page...', 'success');
@@ -23,7 +23,7 @@ export class EditFFLinks
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button as HTMLInputElement);
         });
     }
 }

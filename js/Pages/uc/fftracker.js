@@ -8,8 +8,8 @@ export class EditFFLinks {
     }
     link() {
         let formData = new FormData(this.form);
-        let spinner = document.getElementById('ff_link_spinner');
-        spinner.classList.remove('hidden');
+        let button = this.form.querySelector('#ff_link_submit');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/fflink/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 new Snackbar('Character linked successfully. Reloading page...', 'success');
@@ -18,7 +18,7 @@ export class EditFFLinks {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
 }

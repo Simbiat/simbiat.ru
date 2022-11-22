@@ -19,7 +19,7 @@ export class bicRefresh {
                     }
                     else if (typeof data.data === 'number') {
                         let timestamp = new Date(data.data * 1000);
-                        let dateTime = document.getElementsByClassName('bic_date')[0];
+                        let dateTime = document.querySelector('.bic_date');
                         dateTime.setAttribute('datetime', timestamp.toISOString());
                         dateTime.innerHTML = ('0' + String(timestamp.getUTCDate())).slice(-2) + '.' + ('0' + String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());
                         new Snackbar('Применено обновление за ' + dateTime.innerHTML, 'success');

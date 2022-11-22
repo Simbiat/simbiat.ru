@@ -8,8 +8,8 @@ export class PasswordChange {
     }
     change() {
         let formData = new FormData(this.form);
-        let spinner = document.getElementById('pw_change_spinner');
-        spinner.classList.remove('hidden');
+        let button = this.form.querySelector('#password_submit');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 new Snackbar('Password changed', 'success');
@@ -17,7 +17,7 @@ export class PasswordChange {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
 }

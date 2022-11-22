@@ -42,8 +42,8 @@ export class EditProfile
     {
         //Get form data
         let formData = new FormData(this.profileForm as HTMLFormElement);
-        let spinner = document.getElementById('details_spinner') as HTMLImageElement;
-        spinner.classList.remove('hidden');
+        let button = (this.profileForm as HTMLFormElement).querySelector('#details_submit');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/profile/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 this.profileFormData = JSON.stringify([...formData.entries()]);
@@ -53,7 +53,7 @@ export class EditProfile
                 if (auto) {
                     let autoTime = document.getElementById('lastAutoSave') as HTMLParagraphElement;
                     autoTime.classList.remove('hidden');
-                    let timeTag = autoTime.getElementsByTagName('time')[0] as HTMLTimeElement;
+                    let timeTag = autoTime.querySelector('time') as HTMLTimeElement;
                     let time = new Date();
                     timeTag.setAttribute('datetime', time.toISOString());
                     timeTag.innerHTML = time.toLocaleTimeString();
@@ -61,7 +61,7 @@ export class EditProfile
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button as HTMLInputElement);
         });
     }
 
@@ -88,8 +88,8 @@ export class EditProfile
     {
         //Get form data
         let formData = new FormData(this.usernameForm as HTMLFormElement);
-        let spinner = document.getElementById('username_spinner') as HTMLImageElement;
-        spinner.classList.remove('hidden');
+        let button = (this.usernameForm as HTMLFormElement).querySelector('#username_submit');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/username/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 (this.usernameField as HTMLInputElement).setAttribute('data-original', (this.usernameField as HTMLInputElement).value);
@@ -98,7 +98,7 @@ export class EditProfile
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button as HTMLInputElement);
         });
     }
 }

@@ -28,8 +28,8 @@ export class Emails {
             return false;
         }
         let email = String(formData.get('email'));
-        let spinner = document.getElementById('addMail_spinner');
-        spinner.classList.remove('hidden');
+        let button = this.addMailForm.querySelector('#addMail_submit');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 let row = document.getElementById('emailsList').insertRow();
@@ -43,7 +43,7 @@ export class Emails {
                 cell.classList.add('warning');
                 cell = row.insertCell();
                 cell.innerHTML = '<td><input class="mail_deletion" data-email="' + email + '" type="image" src="/img/close.svg" alt="Delete ' + email + '" aria-invalid="false" placeholder="image" data-tooltip="Delete ' + email + '" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing ' + email + '..." data-tooltip="Removing ' + email + '...">';
-                let input = cell.getElementsByTagName('input')[0];
+                let input = cell.querySelector('input');
                 new Input().init(input);
                 row.querySelectorAll('.mail_activation').forEach(item => {
                     item.addEventListener('click', (event) => {
@@ -67,15 +67,14 @@ export class Emails {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
     delete(button) {
-        let spinner = button.parentElement.getElementsByClassName('spinner')[0];
         let formData = new FormData();
         let email = button.getAttribute('data-email') ?? '';
         formData.set('email', email);
-        spinner.classList.remove('hidden');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
             if (data.data === true) {
                 deleteRow(button);
@@ -83,9 +82,9 @@ export class Emails {
                 new Snackbar(email + ' removed', 'success');
             }
             else {
+                buttonToggle(button);
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
         });
     }
     blockDelete() {
@@ -97,9 +96,9 @@ export class Emails {
             else {
                 item.disabled = false;
                 if (item.getAttribute('data-tooltip') && item.getAttribute('data-tooltip') === 'Can\'t delete') {
-                    let email = item.parentElement.parentElement.getElementsByTagName('td')[0].innerHTML;
+                    let email = item.parentElement.parentElement.querySelector('td').innerHTML;
                     item.setAttribute('data-tooltip', 'Delete ' + email);
-                    let spinner = item.parentElement.getElementsByClassName('spinner')[0];
+                    let spinner = item.parentElement.querySelector('.spinner');
                     spinner.setAttribute('data-tooltip', 'Removing ' + email + '...');
                     spinner.setAttribute('alt', 'Removing ' + email + '...');
                 }
@@ -117,13 +116,12 @@ export class Emails {
         else {
             verb = 'unsubscribe';
         }
-        let label = checkbox.parentElement.getElementsByTagName('label')[0];
-        let spinner = checkbox.parentElement.parentElement.getElementsByClassName('spinner')[0];
+        let label = checkbox.parentElement.querySelector('label');
+        buttonToggle(checkbox);
         let email = checkbox.getAttribute('data-email') ?? '';
         let formData = new FormData();
         formData.set('verb', verb);
         formData.set('email', email);
-        spinner.classList.remove('hidden');
         ajax(location.protocol + '//' + location.host + '/api/uc/emails/' + verb + '/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 if (checkbox.checked) {
@@ -140,16 +138,15 @@ export class Emails {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(checkbox);
         });
     }
     activate(button) {
-        let spinner = button.parentElement.getElementsByClassName('spinner')[0];
         let email = button.getAttribute('data-email') ?? '';
         let formData = new FormData();
         formData.set('verb', 'activate');
         formData.set('email', email);
-        spinner.classList.remove('hidden');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 new Snackbar('Activation email sent to ' + email, 'success');
@@ -157,7 +154,7 @@ export class Emails {
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
 }

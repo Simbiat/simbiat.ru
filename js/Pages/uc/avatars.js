@@ -45,8 +45,8 @@ export class EditAvatars {
     }
     upload() {
         let formData = new FormData(this.form);
-        let spinner = document.getElementById('avatar_spinner');
-        spinner.classList.remove('hidden');
+        let button = this.form.querySelector('#avatar_submit');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/avatars/add/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 this.addToList(data.location);
@@ -58,7 +58,7 @@ export class EditAvatars {
                 this.avatarFile.value = '';
                 this.preview(this.avatarFile);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button);
         });
     }
     setActive(avatar) {

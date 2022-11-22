@@ -4,7 +4,7 @@ class PasswordShow extends HTMLElement
 
     constructor() {
         super();
-        this.passwordInput = (this.parentElement as HTMLDivElement).getElementsByTagName('input').item(0) as HTMLInputElement;
+        this.passwordInput = (this.parentElement as HTMLDivElement).querySelector('input') as HTMLInputElement;
         this.addEventListener('click', this.toggle)
     }
 
@@ -31,7 +31,7 @@ class PasswordRequirements extends HTMLElement
         super();
         this.classList.add('hidden');
         this.innerHTML = 'Only password requirement: at least 8 symbols';
-        this.passwordInput = (this.parentElement as HTMLDivElement).getElementsByTagName('input').item(0) as HTMLInputElement;
+        this.passwordInput = (this.parentElement as HTMLDivElement).querySelector('input') as HTMLInputElement;
         this.passwordInput.addEventListener('focus', this.show.bind(this));
         this.passwordInput.addEventListener('focusout', this.hide.bind(this));
         ['focus', 'change', 'input',].forEach((eventType: string) => {
@@ -75,8 +75,8 @@ class PasswordStrength extends HTMLElement
         super();
         this.classList.add('hidden');
         this.innerHTML = 'New password strength: <span class="password_strength">weak</span>';
-        this.passwordInput = (this.parentElement as HTMLDivElement).getElementsByTagName('input').item(0) as HTMLInputElement;
-        this.strengthSpan = this.getElementsByTagName('span')[0] as HTMLSpanElement;
+        this.passwordInput = (this.parentElement as HTMLDivElement).querySelector('input') as HTMLInputElement;
+        this.strengthSpan = this.querySelector('span') as HTMLSpanElement;
         this.passwordInput.addEventListener('focus', this.show.bind(this));
         this.passwordInput.addEventListener('focusout', this.hide.bind(this));
         ['focus', 'change', 'input',].forEach((eventType: string) => {

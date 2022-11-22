@@ -16,7 +16,7 @@ function hashCheck(): void
 {
     let url = new URL(document.location.href);
     let hash = url.hash;
-    let Gallery = document.getElementsByTagName('gallery-overlay')[0] as Gallery;
+    let Gallery = document.querySelector('gallery-overlay') as Gallery;
     const galleryLink = new RegExp('#gallery=\\d+', 'ui');
     if (Gallery) {
         if (galleryLink.test(hash)) {

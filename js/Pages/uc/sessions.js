@@ -26,13 +26,13 @@ export class EditSessions {
             new Snackbar('Unknown button type', 'failure', 10000);
             return;
         }
-        Array.prototype.reverse.call(buttons).forEach(item => {
+        let ArrayOfButtons = Array.from(buttons).reverse();
+        ArrayOfButtons.forEach(item => {
             this.delete(item, false);
         });
         new Snackbar('All ' + type + ' except current were removed', 'success');
     }
     delete(button, singular = true) {
-        let spinner = button.parentElement.getElementsByClassName('spinner')[0];
         let formData = new FormData();
         let type, typeSingular;
         if (button.classList.contains('cookie_deletion')) {
@@ -49,7 +49,7 @@ export class EditSessions {
             new Snackbar('Unknown button type', 'failure', 10000);
             return;
         }
-        spinner.classList.remove('hidden');
+        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/' + type + '/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
             if (data.data === true) {
                 deleteRow(button);
@@ -58,9 +58,9 @@ export class EditSessions {
                 }
             }
             else {
+                buttonToggle(button);
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
         });
     }
 }

@@ -19,8 +19,8 @@ export class ffTrack {
             selectText = 'Character';
         }
         if (this.idInput && this.select) {
-            let spinner = document.getElementById('ff_track_spinner');
-            spinner.classList.remove('hidden');
+            let button = document.getElementById('ff_track_submit');
+            buttonToggle(button);
             ajax(location.protocol + '//' + location.host + '/api/fftracker/' + this.select.value + '/' + this.idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was registered. Check <a href="' + data.location + '" target="_blank">here</a>.', 'success', 0);
@@ -36,7 +36,7 @@ export class ffTrack {
                         new Snackbar(data.reason, 'failure', 10000);
                     }
                 }
-                spinner.classList.add('hidden');
+                buttonToggle(button);
             });
         }
     }

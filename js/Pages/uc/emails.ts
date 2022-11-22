@@ -37,8 +37,8 @@ export class Emails
             return false;
         }
         let email = String(formData.get('email'));
-        let spinner = document.getElementById('addMail_spinner') as HTMLImageElement;
-        spinner.classList.remove('hidden');
+        let button = (this.addMailForm as HTMLFormElement).querySelector('#addMail_submit');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 //Add row to table
@@ -53,7 +53,7 @@ export class Emails
                 cell.classList.add('warning');
                 cell = row.insertCell();
                 cell.innerHTML ='<td><input class="mail_deletion" data-email="'+email+'" type="image" src="/img/close.svg" alt="Delete '+email+'" aria-invalid="false" placeholder="image" data-tooltip="Delete '+email+'" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing '+email+'..." data-tooltip="Removing '+email+'...">';
-                let input = cell.getElementsByTagName('input')[0] as HTMLInputElement;
+                let input = cell.querySelector('input') as HTMLInputElement;
                 new Input().init(input);
                 //Attach listeners
                 row.querySelectorAll('.mail_activation').forEach(item => {
@@ -80,27 +80,26 @@ export class Emails
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button as HTMLInputElement);
         });
     }
 
     public delete(button: HTMLInputElement): void
     {
-        let spinner = (button.parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
         //Generate form data
         let formData = new FormData();
         let email = button.getAttribute('data-email') ?? '';
         formData.set('email', email);
-        spinner.classList.remove('hidden');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
             if (data.data === true) {
                 deleteRow(button);
                 this.blockDelete();
                 new Snackbar(email+' removed', 'success');
             } else {
+                buttonToggle(button as HTMLInputElement);
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
         });
     }
 
@@ -116,9 +115,9 @@ export class Emails
                 (item as HTMLInputElement).disabled = false;
                 //Update tooltips
                 if (item.getAttribute('data-tooltip') && item.getAttribute('data-tooltip') === 'Can\'t delete') {
-                    let email = (((item.parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).getElementsByTagName('td')[0] as HTMLTableCellElement).innerHTML;
+                    let email = (((item.parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).querySelector('td') as HTMLTableCellElement).innerHTML;
                     item.setAttribute('data-tooltip', 'Delete '+email);
-                    let spinner = (item.parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
+                    let spinner = (item.parentElement as HTMLTableCellElement).querySelector('.spinner') as HTMLImageElement;
                     spinner.setAttribute('data-tooltip', 'Removing '+email+'...');
                     spinner.setAttribute('alt', 'Removing '+email+'...');
                 }
@@ -138,14 +137,13 @@ export class Emails
         } else {
             verb = 'unsubscribe';
         }
-        let label = (checkbox.parentElement as HTMLDivElement).getElementsByTagName('label')[0] as HTMLLabelElement;
-        let spinner = ((checkbox.parentElement as HTMLDivElement).parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
+        let label = (checkbox.parentElement as HTMLDivElement).querySelector('label') as HTMLLabelElement;
+        buttonToggle(checkbox as HTMLInputElement);
         //Generate form data
         let email = checkbox.getAttribute('data-email') ?? '';
         let formData = new FormData();
         formData.set('verb', verb);
         formData.set('email', email);
-        spinner.classList.remove('hidden');
         ajax(location.protocol+'//'+location.host+'/api/uc/emails/'+verb+'/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 if (checkbox.checked) {
@@ -160,26 +158,25 @@ export class Emails
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(checkbox as HTMLInputElement);
         });
     }
 
     public activate(button: HTMLInputElement): void
     {
-        let spinner = (button.parentElement as HTMLTableCellElement).getElementsByClassName('spinner')[0] as HTMLImageElement;
         //Generate form data
         let email = button.getAttribute('data-email') ?? '';
         let formData = new FormData();
         formData.set('verb', 'activate');
         formData.set('email', email);
-        spinner.classList.remove('hidden');
+        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 new Snackbar('Activation email sent to '+email, 'success');
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            spinner.classList.add('hidden');
+            buttonToggle(button as HTMLInputElement);
         });
     }
 }

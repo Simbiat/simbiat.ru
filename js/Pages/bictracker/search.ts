@@ -26,7 +26,7 @@ export class bicRefresh
                         //Create date from timestamp
                         let timestamp: Date = new Date(data.data * 1000);
                         //Get time block
-                        let dateTime = document.getElementsByClassName('bic_date')[0] as HTMLTimeElement;
+                        let dateTime = document.querySelector('.bic_date') as HTMLTimeElement;
                         //Update its value
                         dateTime.setAttribute('datetime', timestamp.toISOString());
                         dateTime.innerHTML = ('0'+String(timestamp.getUTCDate())).slice(-2) + '.' + ('0'+String(timestamp.getMonth() + 1)).slice(-2) + '.' + String(timestamp.getUTCFullYear());

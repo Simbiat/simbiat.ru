@@ -57,10 +57,10 @@ class Gallery extends HTMLElement
         //Get element from array
         let link = this.images[this.current] as HTMLAnchorElement;
         //Get image
-        let image = link.getElementsByTagName('img')[0] as HTMLImageElement;
+        let image = link.querySelector('img') as HTMLImageElement;
         image.classList.remove('zoomedIn');
         //Get figcaption
-        let caption = (link.parentElement as HTMLElement).getElementsByTagName('figcaption')[0];
+        let caption = (link.parentElement as HTMLElement).querySelector('figcaption');
         //Get name
         let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
         //Update elements
@@ -181,7 +181,7 @@ class GalleryPrev extends HTMLElement
 
     constructor() {
         super();
-        this.overlay = (document.getElementsByTagName('gallery-overlay')[0] as Gallery);
+        this.overlay = (document.querySelector('gallery-overlay') as Gallery);
         if (this.overlay.images.length > 1) {
             this.addEventListener('click', () => {
                 this.overlay.previous();
@@ -198,7 +198,7 @@ class GalleryNext extends HTMLElement
 
     constructor() {
         super();
-        this.overlay = (document.getElementsByTagName('gallery-overlay')[0] as Gallery);
+        this.overlay = (document.querySelector('gallery-overlay') as Gallery);
         if (this.overlay.images.length > 1) {
             this.addEventListener('click', () => {
                 this.overlay.next();
@@ -215,7 +215,7 @@ class GalleryClose extends HTMLElement
     {
         super();
         this.addEventListener('click', () => {
-            (document.getElementsByTagName('gallery-overlay')[0] as Gallery).close();
+            (document.querySelector('gallery-overlay') as Gallery).close();
         });
     }
 }
@@ -230,9 +230,9 @@ class CarouselList extends HTMLElement
     constructor()
     {
         super();
-        this.list = this.getElementsByClassName('imageCarouselList')[0] as HTMLUListElement;
-        this.next = this.getElementsByClassName('imageCarouselNext')[0] as HTMLDivElement;
-        this.previous = this.getElementsByClassName('imageCarouselPrev')[0] as HTMLDivElement;
+        this.list = this.querySelector('.imageCarouselList') as HTMLUListElement;
+        this.next = this.querySelector('.imageCarouselNext') as HTMLDivElement;
+        this.previous = this.querySelector('.imageCarouselPrev') as HTMLDivElement;
         if (this.list && this.next && this.previous) {
             //Get maximum scrollLeft value
             this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
@@ -255,7 +255,7 @@ class CarouselList extends HTMLElement
     {
         let scrollButton = event.target as HTMLElement;
         //Get width to scroll based on width of one of the images
-        let img = this.list.getElementsByTagName('img')[0] as HTMLImageElement;
+        let img = this.list.querySelector('img') as HTMLImageElement;
         let width = img.width;
         if (scrollButton.classList.contains('imageCarouselPrev')) {
             this.list.scrollLeft -= width;

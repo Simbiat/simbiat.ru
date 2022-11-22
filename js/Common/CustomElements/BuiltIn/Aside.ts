@@ -46,8 +46,8 @@ class Aside
                 formData.set('signinup[type]', 'logout');
             }
             formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
-            let spinner = document.getElementById('signinup_spinner') as HTMLImageElement;
-            spinner.classList.remove('hidden');
+            let button = this.loginForm.querySelector('#signinup_submit');
+            buttonToggle(button as HTMLInputElement);
             ajax(location.protocol + '//' + location.host + '/api/uc/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     if (formData.get('signinup[type]') === 'remind') {
@@ -58,7 +58,7 @@ class Aside
                 } else {
                     new Snackbar(data.reason, 'failure', 10000);
                 }
-                spinner.classList.add('hidden');
+                buttonToggle(button as HTMLInputElement);
             });
         }
     }

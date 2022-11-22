@@ -4,6 +4,7 @@ declare function updateHistory(newUrl: string, title: string): void;
 declare function submitIntercept(form: HTMLFormElement, callable: Function): void;
 declare function deleteRow(element: HTMLElement): boolean;
 declare function basename(text: string): string;
+declare function buttonToggle(button: HTMLInputElement, enable?: boolean): void;
 declare const pageTitle = " on Simbiat Software";
 declare const emailRegex = "[\\p{L}\\d.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*";
 declare const userRegex = "^[\\p{L}\\d.!#$%&'*+\\\\/=?^_`{|}~\\- ]{1,64}$";

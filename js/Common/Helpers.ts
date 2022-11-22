@@ -49,7 +49,7 @@ function deleteRow(element: HTMLElement): boolean
 {
     let table = element.closest('table') as HTMLTableElement;
     //Get row number
-    let tr = (element.closest('tr') as HTMLTableRowElement).rowIndex - 1;
+    let tr = (element.closest('tr') as HTMLTableRowElement).rowIndex;
     if (table && tr) {
         table.deleteRow(tr);
         return true;
@@ -62,4 +62,36 @@ function deleteRow(element: HTMLElement): boolean
 function basename(text: string): string
 {
     return text.replace(/^.*\/|\.[^.]*$/g, '');
+}
+
+//Function to start/stop spinner and disable/enable respective button
+function buttonToggle(button: HTMLInputElement, enable: boolean = true): void
+{
+    let spinner;
+    //If the button is inside form, then search for spinner inside it first
+    if (button.form) {
+        spinner = button.form.querySelector('.spinner');
+    }
+    //If spinner is empty at this point, try to get it from parent element
+    if (!spinner) {
+        spinner = (button.parentElement as HTMLElement).querySelector('.spinner');
+    }
+    //Check if button is disabled
+    if (button.disabled) {
+        //Enabled button, if we do not want it to stay disabled
+        if (enable) {
+            button.disabled = false;
+        }
+        //Hide spinner
+        if (spinner) {
+            spinner.classList.add('hidden');
+        }
+    } else {
+        //Disable button
+        button.disabled = true;
+        //Show spinner
+        if (spinner) {
+            spinner.classList.remove('hidden');
+        }
+    }
 }

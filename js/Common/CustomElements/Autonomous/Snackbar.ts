@@ -5,7 +5,7 @@ class Snackbar
 
     constructor(text: string, color: string = '', milliseconds = 3000)
     {
-        this.snacks = document.getElementsByTagName('snack-bar')[0] as HTMLDivElement;
+        this.snacks = document.querySelector('snack-bar') as HTMLDivElement;
         if (this.snacks) {
             //Generate element
             let snack = document.createElement('dialog');
@@ -41,7 +41,7 @@ class SnackbarClose extends HTMLElement
     {
         super();
         this.snack = this.parentElement as HTMLDialogElement;
-        this.snackbar = document.getElementsByTagName('snack-bar')[0] as HTMLDivElement;
+        this.snackbar = document.querySelector('snack-bar') as HTMLDivElement;
         this.addEventListener('click', this.close);
         let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0')
         if (closeIn > 0) {

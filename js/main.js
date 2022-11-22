@@ -92,7 +92,7 @@ function submitIntercept(form, callable) {
 }
 function deleteRow(element) {
     let table = element.closest('table');
-    let tr = element.closest('tr').rowIndex - 1;
+    let tr = element.closest('tr').rowIndex;
     if (table && tr) {
         table.deleteRow(tr);
         return true;
@@ -103,6 +103,29 @@ function deleteRow(element) {
 }
 function basename(text) {
     return text.replace(/^.*\/|\.[^.]*$/g, '');
+}
+function buttonToggle(button, enable = true) {
+    let spinner;
+    if (button.form) {
+        spinner = button.form.querySelector('.spinner');
+    }
+    if (!spinner) {
+        spinner = button.parentElement.querySelector('.spinner');
+    }
+    if (button.disabled) {
+        if (enable) {
+            button.disabled = false;
+        }
+        if (spinner) {
+            spinner.classList.add('hidden');
+        }
+    }
+    else {
+        button.disabled = true;
+        if (spinner) {
+            spinner.classList.remove('hidden');
+        }
+    }
 }
 const pageTitle = ' on Simbiat Software';
 const emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
@@ -317,7 +340,7 @@ function cleanGET() {
 function hashCheck() {
     let url = new URL(document.location.href);
     let hash = url.hash;
-    let Gallery = document.getElementsByTagName('gallery-overlay')[0];
+    let Gallery = document.querySelector('gallery-overlay');
     const galleryLink = new RegExp('#gallery=\\d+', 'ui');
     if (Gallery) {
         if (galleryLink.test(hash)) {
@@ -457,9 +480,9 @@ class Gallery extends HTMLElement {
     open() {
         this.tabIndex = 99;
         let link = this.images[this.current];
-        let image = link.getElementsByTagName('img')[0];
+        let image = link.querySelector('img');
         image.classList.remove('zoomedIn');
-        let caption = link.parentElement.getElementsByTagName('figcaption')[0];
+        let caption = link.parentElement.querySelector('figcaption');
         let name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\\/]/u, '');
         document.getElementById('galleryName').innerHTML = caption ? caption.innerHTML : name;
         document.getElementById('galleryNameLink').href = document.getElementById('galleryLoadedImage').src = link.href;
@@ -559,7 +582,7 @@ class GalleryPrev extends HTMLElement {
     overlay;
     constructor() {
         super();
-        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
+        this.overlay = document.querySelector('gallery-overlay');
         if (this.overlay.images.length > 1) {
             this.addEventListener('click', () => {
                 this.overlay.previous();
@@ -574,7 +597,7 @@ class GalleryNext extends HTMLElement {
     overlay;
     constructor() {
         super();
-        this.overlay = document.getElementsByTagName('gallery-overlay')[0];
+        this.overlay = document.querySelector('gallery-overlay');
         if (this.overlay.images.length > 1) {
             this.addEventListener('click', () => {
                 this.overlay.next();
@@ -589,7 +612,7 @@ class GalleryClose extends HTMLElement {
     constructor() {
         super();
         this.addEventListener('click', () => {
-            document.getElementsByTagName('gallery-overlay')[0].close();
+            document.querySelector('gallery-overlay').close();
         });
     }
 }
@@ -600,9 +623,9 @@ class CarouselList extends HTMLElement {
     maxScroll = 0;
     constructor() {
         super();
-        this.list = this.getElementsByClassName('imageCarouselList')[0];
-        this.next = this.getElementsByClassName('imageCarouselNext')[0];
-        this.previous = this.getElementsByClassName('imageCarouselPrev')[0];
+        this.list = this.querySelector('.imageCarouselList');
+        this.next = this.querySelector('.imageCarouselNext');
+        this.previous = this.querySelector('.imageCarouselPrev');
         if (this.list && this.next && this.previous) {
             this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
             this.list.addEventListener('scroll', () => {
@@ -618,7 +641,7 @@ class CarouselList extends HTMLElement {
     }
     toScroll(event) {
         let scrollButton = event.target;
-        let img = this.list.getElementsByTagName('img')[0];
+        let img = this.list.querySelector('img');
         let width = img.width;
         if (scrollButton.classList.contains('imageCarouselPrev')) {
             this.list.scrollLeft -= width;
@@ -647,7 +670,7 @@ class PasswordShow extends HTMLElement {
     passwordInput;
     constructor() {
         super();
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.passwordInput = this.parentElement.querySelector('input');
         this.addEventListener('click', this.toggle);
     }
     toggle(event) {
@@ -668,7 +691,7 @@ class PasswordRequirements extends HTMLElement {
         super();
         this.classList.add('hidden');
         this.innerHTML = 'Only password requirement: at least 8 symbols';
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
+        this.passwordInput = this.parentElement.querySelector('input');
         this.passwordInput.addEventListener('focus', this.show.bind(this));
         this.passwordInput.addEventListener('focusout', this.hide.bind(this));
         ['focus', 'change', 'input',].forEach((eventType) => {
@@ -705,8 +728,8 @@ class PasswordStrength extends HTMLElement {
         super();
         this.classList.add('hidden');
         this.innerHTML = 'New password strength: <span class="password_strength">weak</span>';
-        this.passwordInput = this.parentElement.getElementsByTagName('input').item(0);
-        this.strengthSpan = this.getElementsByTagName('span')[0];
+        this.passwordInput = this.parentElement.querySelector('input');
+        this.strengthSpan = this.querySelector('span');
         this.passwordInput.addEventListener('focus', this.show.bind(this));
         this.passwordInput.addEventListener('focusout', this.hide.bind(this));
         ['focus', 'change', 'input',].forEach((eventType) => {
@@ -786,7 +809,7 @@ class Snackbar {
     snacks;
     static notificationIndex = 0;
     constructor(text, color = '', milliseconds = 3000) {
-        this.snacks = document.getElementsByTagName('snack-bar')[0];
+        this.snacks = document.querySelector('snack-bar');
         if (this.snacks) {
             let snack = document.createElement('dialog');
             let id = Snackbar.notificationIndex++;
@@ -811,7 +834,7 @@ class SnackbarClose extends HTMLElement {
     constructor() {
         super();
         this.snack = this.parentElement;
-        this.snackbar = document.getElementsByTagName('snack-bar')[0];
+        this.snackbar = document.querySelector('snack-bar');
         this.addEventListener('click', this.close);
         let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0');
         if (closeIn > 0) {
@@ -981,8 +1004,8 @@ class Aside {
                 formData.set('signinup[type]', 'logout');
             }
             formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
-            let spinner = document.getElementById('signinup_spinner');
-            spinner.classList.remove('hidden');
+            let button = this.loginForm.querySelector('#signinup_submit');
+            buttonToggle(button);
             ajax(location.protocol + '//' + location.host + '/api/uc/' + formData.get('signinup[type]') + '/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     if (formData.get('signinup[type]') === 'remind') {
@@ -995,7 +1018,7 @@ class Aside {
                 else {
                     new Snackbar(data.reason, 'failure', 10000);
                 }
-                spinner.classList.add('hidden');
+                buttonToggle(button);
             });
         }
     }
