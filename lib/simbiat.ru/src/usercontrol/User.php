@@ -488,7 +488,7 @@ class User extends Entity
                 #If we can't write to DB for some reason - do not share any data with client
                 return;
             }
-            if (HomePage::$dbController !== null && ($_SESSION['userid'] !== 1 || !empty($this->id))) {
+            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Talks::unknownUserID, Talks::systemUserID, Talks::deletedUserID])) || !empty($this->id))) {
                 HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,
