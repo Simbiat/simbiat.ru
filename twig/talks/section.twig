@@ -16,7 +16,7 @@
                         <img loading="lazy" decoding="async" alt="{{ section.type }}" src="{{ section.icon }}" class="section_icon{% if section.closed %} disabled{% endif %}">
                     </td>
                     <td>
-                        <div class="section_name"><a href="/talks/sections/{{ section.sectionid }}">{{ section.name }}</a></div>
+                        <div class="section_name"><a href="/talks/sections/{{ section.sectionid }}/{{ prettyURL(section.name) }}">{{ section.name }}</a></div>
                         <div class="section_description">{{ section.description }}</div>
                     </td>
                     <td>{{ section.threads }}</td>
@@ -39,7 +39,7 @@
                 <td>
                     <div class="thread_name{% if thread.closed %} disabled{% endif %}{% if thread.pinned %} pinned{% endif %}"><a href="/talks/threads/{{ thread.id }}">{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a></div>
                 </td>
-                <td><a href="/talks/users/{{ thread.createdby }}">{{ thread.createdby_name }}</a></td>
+                <td><a href="/talks/users/{{ thread.createdby }}/{{ prettyURL(thread.createdby_name) }}">{{ thread.createdby_name }}</a></td>
                 <td>{{ timeTag(thread.updated, "d/m/Y H:i") }}</td>
                 <td>{{ thread.posts }}</td>
             </tr>

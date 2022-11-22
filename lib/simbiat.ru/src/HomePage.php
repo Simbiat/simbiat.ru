@@ -180,7 +180,7 @@ class HomePage
         #Remove bad UTF
         self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
         #Remove "friendly" portion of the links, but exclude API
-        self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
+        self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell
         self::$canonical = preg_replace('/crossworldlinkshells/iu', 'crossworld_linkshells', self::$canonical);
         #Update REQUEST_URI to ensure the data returned will be consistent

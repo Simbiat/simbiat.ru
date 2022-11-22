@@ -5,6 +5,7 @@ namespace Simbiat\Twig;
 use Simbiat\HomePage;
 use Simbiat\HTMLCut;
 use Simbiat\HTTP20\HTML;
+use Simbiat\HTTP20\PrettyURL;
 use Simbiat\nl2tag;
 use Simbiat\Security;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -96,5 +97,10 @@ class RuntimeExtension implements RuntimeExtensionInterface
     public function linkTags(array $links, string $type = 'header'): string
     {
         return HomePage::$headers->links($links, $type);
+    }
+    
+    public function prettyURL(string $string): string
+    {
+        return PrettyURL::pretty($string, '_');
     }
 }

@@ -4,7 +4,7 @@
             {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
                 <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ timeTag(post.name, "Y.m.d") }}</a></div>
             {% else %}
-                <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ post.name }}</a></div>
+                <div class="post_name"><a href="/talks/threads/{{ post.threadid }}/{{ prettyURL(post.name) }}">{{ post.name }}</a></div>
             {% endif %}
         {% endif %}
         <div class="post_time_id">
@@ -27,7 +27,7 @@
         {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
             <section class="post_text">{{ sanitize(changelog(preg_replace(htmlCut(post.text), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>'))) }}</section>
         {% else %}
-            <section class="post_text">{{ sanitize(nl2p(preg_replace(htmlCut(post.text), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>'))) }}</section>
+            <section class="post_text">{{ sanitize(nl2p(preg_replace(htmlCut(post.text), '/…$/ui', '<a href="/talks/threads/' ~ post.threadid ~ '/' ~ prettyURL(post.name) ~ '">…</a>'))) }}</section>
         {% endif %}
     {% else %}
         {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
