@@ -62,7 +62,7 @@
         {% if rankid matches '/^\\d+$/' %}
             <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/img/fftracker/fcranks/{{ rankid }}.webp">
         {% endif %}
-        {% if type == 'thread' %}<b>{{ name }}</b>{% else %}{{ name }}{% endif %}{% if userid %}<sup>🔗</sup>{% endif %}
+        {% if type == 'thread' %}<b>{% if detailedType == 'Changelog' and is_numeric(name) %}{{ timeTag(name, "Y.m.d") }}{% else %}{{ name }}{% endif %}</b>{% else %}{{ name }}{% endif %}{% if userid %}<sup>🔗</sup>{% endif %}
     </span>
     <span class="entityArrow">&#10151;</span>
 </a>
