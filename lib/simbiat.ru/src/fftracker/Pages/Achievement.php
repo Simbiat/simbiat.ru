@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\FFTracker;
 
 class Achievement extends Page
 {
@@ -20,6 +21,8 @@ class Achievement extends Page
     protected string $ogdesc = 'Achievement';
     #Link to JS module for preload
     protected string $jsModule = 'fftracker/entity';
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = ['viewFF'];
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -51,7 +54,7 @@ class Achievement extends Page
             $this->altLinks[] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/' .$outputArray['achievement']['rewards']['item']['id']];
         }
         #Set favicon
-        if (is_file(\Simbiat\Config\FFTracker::$icons.$outputArray['achievement']['icon'])) {
+        if (is_file(FFTracker::$icons.$outputArray['achievement']['icon'])) {
             $outputArray['favicon'] = '/img/fftracker/icons/'.$outputArray['achievement']['icon'];
         }
         return $outputArray;

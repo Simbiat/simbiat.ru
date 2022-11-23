@@ -20,6 +20,8 @@ class Section extends Page
     protected string $h1 = 'Talks';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Talks: forums, blogs and other ways of communication';
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = ['viewPosts'];
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -35,8 +37,12 @@ class Section extends Page
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($id !== 'top' && $outputArray['private'] && !in_array(1, $_SESSION['groups']) && $outputArray['createdBy'] !== $_SESSION['userid']) {
-            return ['http_error' => 403, 'reason' => 'This is a private section'];
+        if ($outputArray['private'] && !in_array('viewPrivate', $_SESSION['permissions']) && $outputArray['createdBy'] !== $_SESSION['userid']) {
+            return ['http_error' => 403, 'reason' => 'This section is private and you lack `viewPrivate` permission'];
+        }
+        #Check if scheduled
+        if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'This is a scheduled section and you lack `viewScheduled` permission'];
         }
         #Generate pagination data
         $page = intval($_GET['page'] ?? 1);

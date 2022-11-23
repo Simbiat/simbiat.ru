@@ -603,7 +603,7 @@ class Library
     #Function to log updates
     private function log($bicdate, $message, bool $manual = false): void
     {
-        Security::log('BIC Tracker', ($manual ? 'Manual' : 'Cron').' update', $message.' ('.date('d.m.Y', $bicdate).')', ($manual === false ? Talks::systemUserID : null));
+        Security::log('BIC Tracker', ($manual ? 'Manual' : 'Cron').' update', $message.' ('.date('d.m.Y', $bicdate).')', ($manual === false ? Talks::userIDs['System user'] : null));
 
     }
 

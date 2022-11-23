@@ -58,7 +58,7 @@ abstract class Search
         }
         #Override ORDER BY
         if (!is_null($order)) {
-            $this->orderDefault = $order;
+            $this->orderDefault = $this->orderList = $order;
         }
     }
 

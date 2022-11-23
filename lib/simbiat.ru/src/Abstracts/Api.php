@@ -29,6 +29,8 @@ abstract class Api
     protected array $description = [];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
+    #List of permissions, from which at least 1 is required to have access the node
+    protected array $requiredPermission = [];
     #Flag to indicate need to validate CSRF
     protected bool $CSRF = false;
     #Flag to indicate that session data change is possible on this page
@@ -59,7 +61,11 @@ abstract class Api
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                $data = $this->getData($path);
+                if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
+                    $data = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
+                } else {
+                    $data = $this->getData($path);
+                }
                 #Close session if it's still open. Normally at this point all manipulations have been done.
                 if (session_status() === PHP_SESSION_ACTIVE) {
                     session_write_close();

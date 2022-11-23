@@ -85,6 +85,9 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if ($_SESSION['userid'] === 1) {
             return ['http_error' => 403, 'reason' => 'Authentication required'];
         }
+        if (empty(array_intersect(['refreshOwnedFF', 'refreshAllFF'], $_SESSION['permissions']))) {
+            return ['http_error' => 403, 'reason' => 'No `'.implode('` or `', ['refreshOwnedFF', 'refreshAllFF']).'` permission'];
+        }
         #Check if any character currently registered in a group is linked to the user
         try {
             #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants

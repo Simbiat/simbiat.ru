@@ -78,7 +78,7 @@ class Countables extends Page
                 break;
             case 'users':
                 $this->breadCrumb[0]['name'] = 'Users';
-                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` FROM `uc__users`'.($format === 'html' ? ' FORCE INDEX (`username_unique`) WHERE `userid` NOT IN ('.Talks::unknownUserID.', '.Talks::systemUserID.', '.Talks::deletedUserID.') ORDER BY `name`' : ' WHERE `userid` NOT IN ('.Talks::unknownUserID.', '.Talks::systemUserID.', '.Talks::deletedUserID.')').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` FROM `uc__users`'.($format === 'html' ? ' FORCE INDEX (`username_unique`) WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].') ORDER BY `name`' : ' WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].')').' LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb

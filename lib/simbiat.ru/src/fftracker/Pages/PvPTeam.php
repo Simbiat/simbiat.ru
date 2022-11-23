@@ -21,6 +21,8 @@ class PvPTeam extends Page
     protected string $ogdesc = 'PvP Team';
     #Link to JS module for preload
     protected string $jsModule = 'fftracker/entity';
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = ['viewFF'];
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

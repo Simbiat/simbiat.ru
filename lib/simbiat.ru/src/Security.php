@@ -193,13 +193,13 @@ class Security
         #Get IP
         $ip = $_SESSION['IP'] ?? null;
         #Get username
-        $userid = $_SESSION['userid'] ?? $userid ?? Talks::unknownUserID;
+        $userid = $_SESSION['userid'] ?? $userid ?? Talks::userIDs['Unknown user'];
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {
             if (!is_null(HomePage::$dbController)) {
                 HomePage::$dbController->query(
-                    'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (current_timestamp(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
+                    'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (CURRENT_TIMESTAMP(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
                     [
                         ':type' => $type,
                         ':action' => $action,

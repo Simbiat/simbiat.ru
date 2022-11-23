@@ -213,13 +213,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 @header('X-CSRF-Token: '.$data['CSRF']);
             }
             if (empty($data['userid'])) {
-                $data['userid'] = Talks::unknownUserID;
+                $data['userid'] = Talks::userIDs['Unknown user'];
                 $data['username'] = $data['UA']['bot'] ?? null;
                 $data['timezone'] = null;
                 $data['groups'] = [];
+                $data['permissions'] = ['viewPosts', 'viewBic', 'viewFF'];
                 $data['activated'] = false;
-                $data['deleted'] = false;
-                $data['banned'] = false;
                 $data['avatar'] = null;
             } else {
                 $user = (new User($data['userid']))->get();
@@ -228,17 +227,16 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['username'] = $user->username;
                     $data['timezone'] = $user->timezone;
                     $data['groups'] = $user->groups;
+                    $data['permissions'] = $user->permissions;
                     $data['activated'] = $user->activated;
-                    $data['deleted'] = $user->deleted;
-                    $data['banned'] = $user->banned;
                     $data['avatar'] = $user->currentAvatar;
                 } else {
-                    $data['userid'] = Talks::unknownUserID;
+                    $data['userid'] = Talks::userIDs['Unknown user'];
                     $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
                 }
             }
         } catch (\Throwable) {
-            $data['userid'] = Talks::unknownUserID;
+            $data['userid'] = Talks::userIDs['Unknown user'];
             $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
         }
     }

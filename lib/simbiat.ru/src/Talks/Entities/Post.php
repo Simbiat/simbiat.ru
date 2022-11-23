@@ -31,7 +31,7 @@ class Post extends Entity
     protected function getFromDB(): array
     {
         #Set page required for threads
-        $data = (new Posts([':postid' => [$this->id, 'int'],], '`talks__posts`.`postid`=:postid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'))->listEntities();
+        $data = (new Posts([':postid' => [$this->id, 'int'],], '`talks__posts`.`postid`=:postid'))->listEntities();
         if (empty($data['entities'])) {
             return [];
         } else {
@@ -39,7 +39,7 @@ class Post extends Entity
         }
         #Get details of a post, to which this is a reply to
         if (!empty($data['replyto'])) {
-            $data['replyto'] = (new Posts([':postid' => [$data['replyto'], 'int'],], '`talks__posts`.`postid`=:postid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'))->listEntities();
+            $data['replyto'] = (new Posts([':postid' => [$data['replyto'], 'int'],], '`talks__posts`.`postid`=:postid'))->listEntities();
             if (empty($data['replyto']['entities'])) {
                 $data['replyto'] = [];
             } else {
@@ -62,10 +62,10 @@ class Post extends Entity
         $this->locked = boolval($fromDB['locked']);
         $this->closed = $fromDB['thread']['closed'] ?? null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->createdby = $fromDB['createdby'] ?? Talks::deletedUserID;
+        $this->createdby = $fromDB['createdby'] ?? Talks::userIDs['Deleted user'];
         $this->createdby_name = $fromDB['createdby_name'] ?? 'Deleted user';
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->updatedby = $fromDB['updatedby'] ?? Talks::deletedUserID;
+        $this->updatedby = $fromDB['updatedby'] ?? Talks::userIDs['Deleted user'];
         $this->updatedby_name = $fromDB['updatedby_name'] ?? 'Deleted user';
         $this->parents = $fromDB['thread']['parents'];
         $this->replyTo = $fromDB['replyto'];

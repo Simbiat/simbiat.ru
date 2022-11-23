@@ -2,12 +2,10 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
-use Simbiat\Config\Common;
 use Simbiat\Cron;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
-use Simbiat\Images;
 use Simbiat\Lodestone;
 use Simbiat\Security;
 use Simbiat\usercontrol\User;
@@ -422,7 +420,10 @@ class Character extends Entity
                 return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
             }
             #Link character to user
-            $result = HomePage::$dbController->query('UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id]);
+            $result = HomePage::$dbController->query([
+                'UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
+                'INSERT IGNORE INTO `uc__user_to_permission` (`userid`, `permission`) VALUES (:userid, \'postFF\'), (:userid, \'refreshOwnedFF\');', [':userid'=>$_SESSION['userid']],
+            ]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar
             (new User($_SESSION['userid']))->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg');

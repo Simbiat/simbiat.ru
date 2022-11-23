@@ -33,4 +33,6 @@ class Listing extends \Simbiat\Abstracts\Pages\Listing
     protected string $fullTitle = 'Поиск `%s` по БИК Трекеру';
     #Language override, to be sent in header (if present)
     protected string $language = 'ru-RU';
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = ['viewBic'];
 }

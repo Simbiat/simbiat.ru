@@ -39,6 +39,8 @@ abstract class Page
     protected string $cacheStrat = 'day';
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = [];
     #Link to JS module for preload
     protected string $jsModule = '';
     #List of images to H2 push
@@ -75,43 +77,48 @@ abstract class Page
         if (!empty($this->language)) {
             @header('Content-Language: '.$this->language);
         }
-        #Generate the page only if no prior errors detected
-        if (empty(HomePage::$http_error) || $this->static) {
-            #Generate list of allowed methods
-            $allowedMethods = (array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
-            #Send headers
-            @header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
-            @header('Allow: '.implode(', ', $allowedMethods));
-            #Check if allowed method is used
-            if (!in_array(HomePage::$method, $allowedMethods)) {
-                $page = ['http_error' => 405];
-            #Check that user is authenticated
-            } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
-                $page = ['http_error' => 403];
-            } else {
-                #Generate the page
-                try {
-                    $page = $this->generate($path);
-                    #Close session if it's still open. Normally at this point all manipulations have been done.
-                    if (session_status() === PHP_SESSION_ACTIVE) {
-                        session_write_close();
-                    }
-                } catch (\Throwable $exception) {
-                    if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
-                        $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
-                    } else {
-                        Errors::error_log($exception);
-                        $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
-                    }
-                }
-                #Send Last Modified header to potentially allow earlier exit
-                if (!$this->headerSent) {
-                    $this->lastModified($this->lastModified);
-                }
-                $page = array_merge($page, HomePage::$http_error);
-            }
+        #Check if user has required permission
+        if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
+            $page = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
         } else {
-            $page = HomePage::$http_error;
+            #Generate the page only if no prior errors detected
+            if (empty(HomePage::$http_error) || $this->static) {
+                #Generate list of allowed methods
+                $allowedMethods = (array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
+                #Send headers
+                @header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
+                @header('Allow: '.implode(', ', $allowedMethods));
+                #Check if allowed method is used
+                if (!in_array(HomePage::$method, $allowedMethods)) {
+                    $page = ['http_error' => 405];
+                    #Check that user is authenticated
+                } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
+                    $page = ['http_error' => 403, 'reason' => 'Authentication required'];
+                } else {
+                    #Generate the page
+                    try {
+                        $page = $this->generate($path);
+                        #Close session if it's still open. Normally at this point all manipulations have been done.
+                        if (session_status() === PHP_SESSION_ACTIVE) {
+                            session_write_close();
+                        }
+                    } catch (\Throwable $exception) {
+                        if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
+                            $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
+                        } else {
+                            Errors::error_log($exception);
+                            $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
+                        }
+                    }
+                    #Send Last Modified header to potentially allow earlier exit
+                    if (!$this->headerSent) {
+                        $this->lastModified($this->lastModified);
+                    }
+                    $page = array_merge($page, HomePage::$http_error);
+                }
+            } else {
+                $page = HomePage::$http_error;
+            }
         }
         #Ensure properties are included
         $page['http_method'] = HomePage::$method;

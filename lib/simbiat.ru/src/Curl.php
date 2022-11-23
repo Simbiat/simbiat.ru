@@ -143,7 +143,7 @@ class Curl
             if (empty(HomePage::$dbController)) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Talks::systemUserID);
+            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Talks::userIDs['System user']);
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
@@ -212,7 +212,7 @@ class Curl
                         'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
                         [
                             ':hash' => $upload['hash'],
-                            ':userid' => $_SESSION['userid'] ?? Talks::systemUserID,
+                            ':userid' => $_SESSION['userid'] ?? Talks::userIDs['System user'],
                             ':filename' => $upload['user_name'],
                             ':extension' => $upload['extension'],
                             ':mime' => $upload['type'],

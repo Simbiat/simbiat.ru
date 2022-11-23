@@ -53,12 +53,10 @@ class User extends Entity
     public ?string $website = null;
     #Groups
     public array $groups = [];
+    #Permissions
+    public array $permissions = ['viewPosts', 'viewBic', 'viewFF'];
     #Whether account is activated
     public bool $activated = false;
-    #Whether account is marked as deleted
-    public bool $deleted = false;
-    #Whether account is banned
-    public bool $banned = false;
     #Emails
     public array $emails = [];
     #Avatars
@@ -73,18 +71,17 @@ class User extends Entity
         if (empty($dbData)) {
             return [];
         }
-        if (intval($this->id) === Talks::unknownUserID) {
-            $dbData['groups'] = [0, 2, 4, 5];
+        if (intval($this->id) === Talks::userIDs['Unknown user']) {
+            $dbData['groups'] = [Talks::groupsIDs['Bots'], Talks::groupsIDs['Deleted'], Talks::groupsIDs['Banned']];
+            $dbData['permissions'] = ['viewPosts', 'viewBic', 'viewFF'];
             $dbData['activated'] = false;
-            $dbData['deleted'] = false;
-            $dbData['banned'] = false;
             $dbData['currentAvatar'] = '/img/avatar.svg';
         } else {
             #Get user's groups
             $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
-            $dbData['activated'] = !in_array(2, $dbData['groups'], true);
-            $dbData['deleted'] = in_array(4, $dbData['groups'], true);
-            $dbData['banned'] = in_array(5, $dbData['groups'], true);
+            #Get permissions
+            $dbData['permissions'] = $this->getPermissions();
+            $dbData['activated'] = !in_array(Talks::groupsIDs['Unverified'], $dbData['groups'], true);
             $dbData['currentAvatar'] = $this->getAvatar();
         }
         return $dbData;
@@ -113,6 +110,20 @@ class User extends Entity
         $this->arrayToProperties($fromDB);
     }
 
+    private function getPermissions(): array
+    {
+        try {
+            return HomePage::$dbController->selectColumn('
+                SELECT * FROM (
+                    SELECT `uc__group_to_permission`.`permission` FROM `uc__group_to_permission` LEFT JOIN `uc__groups` ON `uc__group_to_permission`.`groupid`=`uc__groups`.`groupid` LEFT JOIN `uc__permissions` ON `uc__group_to_permission`.`permission`=`uc__permissions`.`permission` LEFT JOIN `uc__user_to_group` ON `uc__group_to_permission`.`groupid`=`uc__user_to_group`.`groupid` WHERE `userid`=:userid
+                    UNION ALL
+                    SELECT `permission` FROM `uc__user_to_permission` WHERE `userid`=:userid
+                ) as `temp` GROUP BY `permission`;
+            ', ['userid' => [$this->id, 'int']]);
+        } catch (\Throwable) {
+            return [];
+        }
+    }
     public function getEmails(): array
     {
         try {
@@ -453,6 +464,11 @@ class User extends Entity
             Security::log('Failed login', 'Bad password');
             return ['http_error' => 403, 'reason' => 'Bad password'];
         }
+        #Get permissions
+        $_SESSION['permissions'] = $this->getPermissions();
+        if (!in_array('canLogin', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `canLogin` permission'];
+        }
         #Add username and userid to session
         $_SESSION['username'] = $credentials['username'];
         $_SESSION['userid'] = $credentials['userid'];
@@ -488,7 +504,7 @@ class User extends Entity
                 #If we can't write to DB for some reason - do not share any data with client
                 return;
             }
-            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Talks::unknownUserID, Talks::systemUserID, Talks::deletedUserID])) || !empty($this->id))) {
+            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Talks::userIDs['Unknown user'], Talks::userIDs['System user'], Talks::userIDs['Deleted user']])) || !empty($this->id))) {
                 HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,
@@ -607,24 +623,41 @@ class User extends Entity
         );
     }
     
-    public function getThreads(bool $publicOnly = true): array
+    public function getThreads(): array
     {
-        $threads = (new Threads([':userid' => [$this->id, 'int'],], '`talks__threads`.`createdby`=:userid AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__threads`.`created` DESC'))->listEntities();
+        $where = '`talks__threads`.`createdby`=:userid';
+        $bindings = [':userid' => [$this->id, 'int'],];
+        if (!in_array('viewScheduled', $_SESSION['permissions'])) {
+            $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()';
+        }
+        if (!in_array('viewPrivate', $_SESSION['permissions'])) {
+            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
+            $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
+        }
+        $threads = (new Threads($bindings, $where, '`talks__threads`.`created` DESC'))->listEntities();
         return $threads['entities'];
     }
     
-    public function getPosts(bool $publicOnly = true): array
+    public function getPosts(): array
     {
-        $posts = (new Posts([':userid' => [$this->id, 'int'],], '`talks__posts`.`createdby`=:userid AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
+        $where = '`talks__posts`.`createdby`=:userid';
+        $bindings = [':userid' => [$this->id, 'int'],];
+        if (!in_array('viewScheduled', $_SESSION['permissions'])) {
+            $where .= ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()';
+        }
+        if (!in_array('viewPrivate', $_SESSION['permissions'])) {
+            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
+            $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
+        }
+        $posts = (new Posts($bindings, $where, '`talks__posts`.`created` DESC'))->listEntities();
         return $posts['entities'];
     }
     
     #Similar to getPosts(), but only gets posts, that are the first posts in threads
-    public function getTalksStarters(bool $publicOnly = true): array
+    public function getTalksStarters(): array
     {
         #Can't think of a good way to get this in 1 query, thus first getting the latest threads
-        $threads = $this->getThreads($publicOnly);
-        $posts = [];
+        $threads = $this->getThreads();
         #Now we get post details
         if (!empty($threads)) {
             #Get post IDs
@@ -633,7 +666,16 @@ class User extends Entity
             return [];
         }
         #Get posts
-        $posts = (new Posts([], '`talks__posts`.`postid` IN ('.implode(',', $ids).') AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'.($publicOnly ? ' AND `talks__threads`.`private`=0' : ''), '`talks__posts`.`created` DESC'))->listEntities();
+        $where = '';
+        $bindings = [];
+        if (!in_array('viewScheduled', $_SESSION['permissions'])) {
+            $where .= ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()';
+        }
+        if (!in_array('viewPrivate', $_SESSION['permissions'])) {
+            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
+            $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
+        }
+        $posts = (new Posts($bindings, '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.$where, '`talks__posts`.`created` DESC'))->listEntities();
         if (!empty($posts['entities'])) {
             return $posts['entities'];
         } else {

@@ -9,7 +9,6 @@ use Simbiat\Config\Talks;
 use Simbiat\Tests\Router;
 use Simbiat\Feeds;
 use Simbiat\fftracker;
-use Simbiat\HomePage;
 use Simbiat\Sitemap;
 use Simbiat\usercontrol;
 use Simbiat\usercontrol\User;
@@ -69,7 +68,7 @@ class MainRouter extends Abstracts\Router
     private function landing(): array
     {
         $outputArray = ['h1' => 'Home', 'serviceName' => 'landing',];
-        $user = new User(Talks::ownerID);
+        $user = new User(Talks::userIDs['Owner']);
         $outputArray['posts'] = $user->getTalksStarters();
         return $outputArray;
     }

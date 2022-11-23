@@ -4,7 +4,6 @@ namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
 
 class Statistics extends Page
 {
@@ -20,6 +19,8 @@ class Statistics extends Page
     protected string $h1 = 'Statistics';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Statistics';
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = ['viewFF'];
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

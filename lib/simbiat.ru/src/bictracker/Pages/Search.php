@@ -33,6 +33,8 @@ class Search extends \Simbiat\Abstracts\Pages\Search
     protected string $language = 'ru-RU';
     #Link to JS module for preload
     protected string $jsModule = 'bictracker/search';
+    #List of permissions, from which at least 1 is required to have access to the page
+    protected array $requiredPermission = ['viewBic'];
 
     #Add any extra fields, if required by overriding this function
     protected function extras(): array
