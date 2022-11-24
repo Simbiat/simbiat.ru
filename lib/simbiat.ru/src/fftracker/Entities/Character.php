@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
+use Simbiat\Config\Talks;
 use Simbiat\Cron;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
@@ -422,7 +423,7 @@ class Character extends Entity
             #Link character to user
             $result = HomePage::$dbController->query([
                 'UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
-                'INSERT IGNORE INTO `uc__user_to_permission` (`userid`, `permission`) VALUES (:userid, \'postFF\'), (:userid, \'refreshOwnedFF\');', [':userid'=>$_SESSION['userid']],
+                'INSERT IGNORE INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, '.Talks::groupsIDs['Linked to FF'].');', [':userid'=>$_SESSION['userid']],
             ]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar
