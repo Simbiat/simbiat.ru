@@ -37,10 +37,15 @@
         {% endif %}
     {% endif %}
     {% if post.nofooter != true %}
-        {% if post.updated > post.created %}
         <section class="post_footer">
-            <div class="post_edited">Edited {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby }}">{{ post.updatedby_name }}</a></div>
+            <like-dis data-postid="{{ post.id }}" data-liked="{% if post.liked is null %}0{% else %}{{ post.liked }}{% endif %}">
+                <input type="button" value="👍" class="like_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked > 0 %}Remove like{% else %}Like{% endif %}">
+                <span class="likes_count{% if post.liked > 0 %} success{% endif %}">{{ post.likes }}</span>
+                <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
+                <span class="dislikes_count{% if post.liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
+                <img loading="lazy" decoding="async" class="hidden inline spinner" src="/img/spinner.svg" alt="Registering preference...">
+            </like-dis>
+            <div class="post_edited">{% if post.updated > post.created %}Edited {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby }}">{{ post.updatedby_name }}</a>{% endif %}</div>
         </section>
-        {% endif %}
     {% endif %}
 </article>

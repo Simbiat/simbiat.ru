@@ -337,3 +337,14 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
+declare class Likedis extends HTMLElement {
+    private readonly postId;
+    private likeValue;
+    private likesCount;
+    private dislikesCount;
+    private likeButton;
+    private dislikeButton;
+    constructor();
+    private like;
+    private updateCounts;
+}

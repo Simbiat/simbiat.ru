@@ -151,6 +151,7 @@ function init() {
     customElements.define('password-show', PasswordShow);
     customElements.define('password-requirements', PasswordRequirements);
     customElements.define('password-strength', PasswordStrength);
+    customElements.define('like-dis', Likedis);
     new A();
     cleanGET();
     hashCheck();
@@ -1423,6 +1424,95 @@ class Textarea {
             }
         });
         Textarea._instance = this;
+    }
+}
+class Likedis extends HTMLElement {
+    postId = 0;
+    likeValue = 0;
+    likesCount;
+    dislikesCount;
+    likeButton;
+    dislikeButton;
+    constructor() {
+        super();
+        this.likeValue = Number(this.getAttribute('data-liked') ?? 0);
+        this.postId = Number(this.getAttribute('data-postid') ?? 0);
+        this.likesCount = this.querySelector('.likes_count');
+        this.dislikesCount = this.querySelector('.dislikes_count');
+        this.likeButton = this.querySelector('.like_button');
+        this.dislikeButton = this.querySelector('.dislike_button');
+        this.likeButton.addEventListener('click', this.like.bind(this));
+        this.dislikeButton.addEventListener('click', this.like.bind(this));
+    }
+    like(event) {
+        let button = event.target;
+        let action;
+        if (button.classList.contains('like_button')) {
+            action = 'like';
+        }
+        else {
+            action = 'dislike';
+        }
+        if (this.postId === 0) {
+            new Snackbar('No post ID', 'failure', 10000);
+            return;
+        }
+        buttonToggle(button);
+        ajax(location.protocol + '//' + location.host + '/api/talks/posts/' + this.postId + '/' + action + '/', null, 'json', 'PUT', 60000, true).then(data => {
+            if (data.data === 0) {
+                this.updateCounts(data.data);
+            }
+            else if (data.data === 1) {
+                this.updateCounts(data.data);
+            }
+            else if (data.data === -1) {
+                this.updateCounts(data.data);
+            }
+            else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            buttonToggle(button);
+        });
+    }
+    updateCounts(newValue) {
+        this.likesCount.classList.remove('success');
+        this.dislikesCount.classList.remove('failure');
+        if (newValue === 0) {
+            if (this.likeValue === 1) {
+                this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) - 1);
+            }
+            else if (this.likeValue === -1) {
+                this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) - 1);
+            }
+            this.likeButton.setAttribute('data-tooltip', 'Like');
+            this.dislikeButton.setAttribute('data-tooltip', 'Dislike');
+        }
+        else if (newValue === 1) {
+            if (this.likeValue === -1) {
+                this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) - 1);
+            }
+            this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) + 1);
+            this.likesCount.classList.add('success');
+            this.likeButton.setAttribute('data-tooltip', 'Remove like');
+            this.dislikeButton.setAttribute('data-tooltip', 'Dislike');
+        }
+        else if (newValue === -1) {
+            if (this.likeValue === 1) {
+                this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) - 1);
+            }
+            this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) + 1);
+            this.dislikesCount.classList.add('failure');
+            this.likeButton.setAttribute('data-tooltip', 'Like');
+            this.dislikeButton.setAttribute('data-tooltip', 'Remove dislike');
+        }
+        if (Number(this.likesCount.innerHTML) < 0) {
+            this.likesCount.innerHTML = '0';
+        }
+        if (Number(this.dislikesCount.innerHTML) < 0) {
+            this.dislikesCount.innerHTML = '0';
+        }
+        this.setAttribute('data-liked', String(newValue));
+        this.likeValue = newValue;
     }
 }
 //# sourceMappingURL=main.js.map

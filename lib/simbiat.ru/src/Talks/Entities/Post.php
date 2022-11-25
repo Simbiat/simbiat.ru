@@ -4,6 +4,7 @@ namespace Simbiat\Talks\Entities;
 
 use Simbiat\Abstracts\Entity;
 use Simbiat\Config\Talks;
+use Simbiat\HomePage;
 use Simbiat\Talks\Search\Posts;
 
 class Post extends Entity
@@ -27,6 +28,10 @@ class Post extends Entity
     public string $avatar = '/img/avatar.svg';
     #List of parents for the section
     public array $parents = [];
+    #Likes of the post
+    public int $likes = 0;
+    public int $dislikes = 0;
+    public ?int $liked = null;
     
     protected function getFromDB(): array
     {
@@ -48,6 +53,7 @@ class Post extends Entity
         } else {
             $data['replyto'] = [];
         }
+        $data['liked'] = $this->isLiked();
         $data['thread'] = (new Thread($data['threadid']))->getArray();
         return $data;
     }
@@ -71,5 +77,76 @@ class Post extends Entity
         $this->replyTo = $fromDB['replyto'];
         $this->avatar = $fromDB['avatar'];
         $this->text = $fromDB['text'];
+        $this->likes = intval($fromDB['likes']);
+        $this->dislikes = intval($fromDB['dislikes']);
+        $this->liked = $fromDB['liked'];
+    }
+    
+    #Get value of like, the user has provided, if user has respective permission.
+    #Condition is used to help with performance. If user "loses" the permission for some reason, and we do not show it - we do not lose much.
+    #Especially considering, that at the time of writing, I do not expect this to happen, unless user is banned, when user will not be able to view posts regardless.
+    public function isLiked(): ?int
+    {
+        if (in_array('canLike', $_SESSION['permissions'])) {
+            return HomePage::$dbController->selectValue('SELECT `likevalue` FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
+                [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']]
+            );
+        } else {
+            return null;
+        }
+    }
+    
+    public function like(bool $dislike = false): array
+    {
+        #Check permission
+        if (!in_array('canLike', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `canLike` permission'];
+        }
+        #Get current value (if any)
+        $isLiked = $this->isLiked();
+        if (($dislike && $isLiked === -1) || (!$dislike && $isLiked === 1)) {
+            #Remove the (dis)like
+            try {
+                $result = HomePage::$dbController->query('DELETE FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
+                    [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']]
+                );
+            } catch (\Throwable) {
+                $result = false;
+            }
+            if ($result) {
+                return ['response' => 0];
+            } else {
+                return ['http_error' => 500, 'reason' => 'Failed to remove '.($dislike ? 'dis' : '').'like from post'];
+            }
+        } else {
+            #Insert/update the value
+            try {
+                $result = HomePage::$dbController->query('INSERT INTO `talks__likes` (`postid`, `userid`, `likevalue`) VALUES (:postid, :userid, :like) ON DUPLICATE KEY UPDATE `likevalue`=:like;',
+                    [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']]
+                );
+            } catch (\Throwable) {
+                $result = false;
+            }
+            if ($result) {
+                return ['response' => ($dislike ? -1 : 1)];
+            } else {
+                return ['http_error' => 500, 'reason' => 'Failed to '.($dislike ? 'dis' : '').'like post'];
+            }
+        }
+    }
+    
+    public function edit(): bool
+    {
+        return true;
+    }
+    
+    public function delete(): bool
+    {
+        return true;
+    }
+    
+    public function add(): array
+    {
+        return [];
     }
 }

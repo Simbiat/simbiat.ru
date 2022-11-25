@@ -46,6 +46,8 @@ function init()
     customElements.define('password-requirements', PasswordRequirements);
     //Define password strength fields
     customElements.define('password-strength', PasswordStrength);
+    //Define block for (dis)likes
+    customElements.define('like-dis', Likedis);
     //Add new tab icon to links opening in new tab
     new A();
     //Process URL

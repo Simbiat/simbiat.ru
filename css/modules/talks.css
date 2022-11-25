@@ -119,8 +119,6 @@
 }
 .post_footer {
     grid-area: post_footer;
-    font-size: smaller;
-    text-align: right;
     border-top: var(--border-light) calc(var(--border-width)/2) solid;
     background-color: var(--color-block);
     border-bottom-left-radius: var(--border-radius);
@@ -128,6 +126,10 @@
     padding-right: 0.25rem;
     padding-left: 0.25rem;
     font-style: italic;
+    display: grid;
+    grid-template-areas:
+          'post_likes post_edit';
+    align-items: end;
 }
 .post_user {
     grid-area: post_user;
@@ -195,4 +197,17 @@
 .changelog_removal::marker {
     color: transparent;
     text-shadow: 0 0 0 var(--color-failure);
+}
+
+like-dis {
+    grid-area: post_likes;
+    text-align: left;
+}
+like-dis input {
+    text-decoration: none!important;
+}
+.post_edited {
+    grid-area: post_edit;
+    font-size: smaller;
+    text-align: right;
 }

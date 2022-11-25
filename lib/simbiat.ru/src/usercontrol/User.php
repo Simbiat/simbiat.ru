@@ -8,6 +8,7 @@ use Simbiat\Config\Talks;
 use Simbiat\Curl;
 use Simbiat\HomePage;
 use Simbiat\Security;
+use Simbiat\Talks\Entities\Post;
 use Simbiat\Talks\Search\Posts;
 use Simbiat\Talks\Search\Threads;
 
@@ -650,6 +651,11 @@ class User extends Entity
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
         $posts = (new Posts($bindings, $where, '`talks__posts`.`created` DESC'))->listEntities();
+        #Get like value, for each post, if current user has appropriate permission
+        $postObject = new Post();
+        foreach ($posts['entities'] as &$post) {
+            $post['liked'] = $postObject->setId($post['id'])->isLiked();
+        }
         return $posts['entities'];
     }
     
@@ -677,6 +683,11 @@ class User extends Entity
         }
         $posts = (new Posts($bindings, '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.$where, '`talks__posts`.`created` DESC'))->listEntities();
         if (!empty($posts['entities'])) {
+            #Get like value, for each post, if current user has appropriate permission
+            $postObject = new Post();
+            foreach ($posts['entities'] as &$post) {
+                $post['liked'] = $postObject->setId($post['id'])->isLiked();
+            }
             return $posts['entities'];
         } else {
             return [];

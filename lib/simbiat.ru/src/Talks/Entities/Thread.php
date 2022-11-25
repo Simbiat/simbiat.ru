@@ -46,6 +46,11 @@ class Thread extends Entity
         $data['section'] = (new Section($data['sectionid']))->getArray();
         #Get posts
         $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'],], '`talks__posts`.`threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC'))->listEntities($page);
+        #Get like value, for each post, if current user has appropriate permission
+        $postObject = new Post();
+        foreach ($data['posts']['entities'] as &$post) {
+            $post['liked'] = $postObject->setId($post['id'])->isLiked();
+        }
         #Get tags
         $data['tags'] = HomePage::$dbController->selectColumn('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
         #Get external links
