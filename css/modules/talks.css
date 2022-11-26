@@ -9,10 +9,27 @@
     padding-left: 0.5rem;
     font-weight: bold;
     font-size: large;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+}
+.section_icons {
+    text-align: center;
+}
+.section_icons span {
+    text-decoration: none!important;
 }
 .section_name a,
 .thread_name a {
     display: block;
+    flex-grow: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-decoration: none!important;
 }
 .section_description {
     padding-left: 1.5rem;
@@ -31,21 +48,12 @@
 
 .thread_name {
     padding-left: 0.5rem;
-}
-.thread_name.disabled a:before {
-    content: '🔒';
-    filter: grayscale(1);
-}
-.thread_name.disabled a {
-    color: var(--color-disabled);
-    font-weight: unset;
-    text-decoration: unset;
-}
-.thread_name.pinned a:before {
-    content: '📍';
-}
-.thread_name.disabled.pinned a:before {
-    content: '📍🔒';
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
 }
 #threads_list,
 #sections_list {
@@ -104,6 +112,9 @@
     overflow: hidden;
     white-space: nowrap;
 }
+.post_name a {
+    text-decoration: none!important;
+}
 .post_id {
     display: inline;
     font-weight: normal;
@@ -125,11 +136,25 @@
     border-bottom-right-radius: var(--border-radius);
     padding-right: 0.25rem;
     padding-left: 0.25rem;
-    font-style: italic;
     display: grid;
     grid-template-areas:
-          'post_likes post_edit';
+            'post_likes post_icons'
+            'post_likes post_edit';
     align-items: end;
+}
+.post_edited {
+    grid-area: post_edit;
+    font-size: smaller;
+    text-align: right;
+    font-style: italic;
+}
+.post_icons {
+    grid-area: post_icons;
+    text-align: right;
+}
+.post_icons span {
+    text-decoration: none!important;
+    font-size: larger;
 }
 .post_user {
     grid-area: post_user;
@@ -204,10 +229,12 @@ like-dis {
     text-align: left;
 }
 like-dis input {
-    text-decoration: none!important;
+    text-decoration: none !important;
 }
-.post_edited {
-    grid-area: post_edit;
-    font-size: smaller;
-    text-align: right;
+
+.thread_icons {
+    text-align: center;
+}
+.thread_icons span {
+    text-decoration: none !important;
 }

@@ -4,7 +4,7 @@
             {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
                 <div class="post_name"><a href="/talks/threads/{{ post.threadid }}">{{ timeTag(post.name, "Y.m.d") }}</a></div>
             {% else %}
-                <div class="post_name"><a href="/talks/threads/{{ post.threadid }}/{{ prettyURL(post.name) }}">{{ post.name }}</a></div>
+                <div class="post_name"><a href="/talks/threads/{{ post.threadid }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></div>
             {% endif %}
         {% endif %}
         <div class="post_time_id">
@@ -36,16 +36,22 @@
             <section class="post_text">{{ sanitize(nl2p(post.text)) }}</section>
         {% endif %}
     {% endif %}
-    {% if post.nofooter != true %}
-        <section class="post_footer">
-            <like-dis data-postid="{{ post.id }}" data-liked="{% if post.liked is null %}0{% else %}{{ post.liked }}{% endif %}">
-                <input type="button" value="👍" class="like_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked > 0 %}Remove like{% else %}Like{% endif %}">
-                <span class="likes_count{% if post.liked > 0 %} success{% endif %}">{{ post.likes }}</span>
-                <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
-                <span class="dislikes_count{% if post.liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
-                <img loading="lazy" decoding="async" class="hidden inline spinner" src="/img/spinner.svg" alt="Registering preference...">
-            </like-dis>
+    <section class="post_footer">
+        <like-dis data-postid="{{ post.id }}" data-liked="{% if post.liked is null %}0{% else %}{{ post.liked }}{% endif %}">
+            <input type="button" value="👍" class="like_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked > 0 %}Remove like{% else %}Like{% endif %}">
+            <span class="likes_count{% if post.liked > 0 %} success{% endif %}">{{ post.likes }}</span>
+            <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
+            <span class="dislikes_count{% if post.liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
+            <img loading="lazy" decoding="async" class="hidden inline spinner" src="/img/spinner.svg" alt="Registering preference...">
+        </like-dis>
+        <div class="post_icons">
+            {% if post.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled post">⏲</span>{% endif %}
+            {% if post.locked and 'editLocked' in session_data.permissions %}<span data-tooltip="Locked post">🔒</span>{% endif %}
+            {% if post.private %}<span data-tooltip="Private post">⛔</span>{% endif %}
+            {% if post.system and 'removeSystem' in session_data.permissions %}<span data-tooltip="System post">🚫</span>{% endif %}
+        </div>
+        {% if post.noeditedtime != true %}
             <div class="post_edited">{% if post.updated > post.created %}Edited {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby }}">{{ post.updatedby_name }}</a>{% endif %}</div>
-        </section>
-    {% endif %}
+        {% endif %}
+    </section>
 </article>

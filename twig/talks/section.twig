@@ -1,6 +1,13 @@
 {% if not children.entities and not threads.entities %}
     <p class="middle">Looks like we've got nothing in here</p>
     <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+{% else %}
+    <div class="section_icons">
+        {% if created > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
+        {% if closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
+        {% if private %}<span data-tooltip="Private section">⛔</span>{% endif %}
+        {% if system and 'removeSystem' in session_data.permissions %}<span data-tooltip="System section">🚫</span>{% endif %}
+    </div>
 {% endif %}
 {% if children.entities %}
     <table id="sections_list">
@@ -13,10 +20,18 @@
             {% for section in children.entities %}
                 <tr>
                     <td>
-                        <img loading="lazy" decoding="async" alt="{{ section.type }}" src="{{ section.icon }}" class="section_icon{% if section.closed %} disabled{% endif %}">
+                        <img loading="lazy" decoding="async" alt="{{ section.type }}" src="{{ section.icon }}" class="section_icon">
                     </td>
                     <td>
-                        <div class="section_name"><a href="/talks/sections/{{ section.sectionid }}/{{ prettyURL(section.name) }}">{{ section.name }}</a></div>
+                        <div class="section_name">
+                            <div class="section_icons">
+                                {% if section.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
+                                {% if section.closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
+                                {% if section.private %}<span data-tooltip="Private section">⛔</span>{% endif %}
+                                {% if section.system and 'removeSystem' in session_data.permissions %}<span data-tooltip="System section">🚫</span>{% endif %}
+                            </div>
+                            <a href="/talks/sections/{{ section.sectionid }}/{{ prettyURL(section.name) }}" data-tooltip="{{ section.name }}">{{ section.name }}</a>
+                        </div>
                         <div class="section_description">{{ section.description }}</div>
                     </td>
                     <td>{{ section.threads }}</td>
@@ -37,7 +52,16 @@
         {% for thread in threads.entities %}
             <tr>
                 <td>
-                    <div class="thread_name{% if thread.closed %} disabled{% endif %}{% if thread.pinned %} pinned{% endif %}"><a href="/talks/threads/{{ thread.id }}">{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a></div>
+                    <div class="thread_name">
+                        <div class="thread_icons">
+                            {% if thread.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled thread">⏲</span>{% endif %}
+                            {% if thread.pinned %}<span data-tooltip="Pinned thread">📌</span>{% endif %}
+                            {% if thread.closed %}<span data-tooltip="Closed thread">🔒</span>{% endif %}
+                            {% if thread.private %}<span data-tooltip="Private thread">⛔</span>{% endif %}
+                            {% if thread.system and 'removeSystem' in session_data.permissions %}<span data-tooltip="System thread">🚫</span>{% endif %}
+                        </div>
+                        <a href="/talks/threads/{{ thread.id }}"{% if thread.detailedType != 'Changelog' or is_numeric(thread.name) == false %} data-tooltip="{{ thread.name }}"{% endif %}>{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
+                    </div>
                 </td>
                 <td><a href="/talks/users/{{ thread.createdby }}/{{ prettyURL(thread.createdby_name) }}">{{ thread.createdby_name }}</a></td>
                 <td>{{ timeTag(thread.updated, "d/m/Y H:i") }}</td>

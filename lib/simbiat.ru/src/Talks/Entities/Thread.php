@@ -15,6 +15,7 @@ class Thread extends Entity
     public string $type = 'Blog';
     public bool $system = false;
     public bool $private = false;
+    public bool $pinned = false;
     public ?int $closed = null;
     public ?int $created = null;
     public int $createdBy = 1;
@@ -66,6 +67,7 @@ class Thread extends Entity
         $this->type = $fromDB['detailedType'];
         $this->system = boolval($fromDB['system']);
         $this->private = boolval($fromDB['private']);
+        $this->pinned = boolval($fromDB['pinned']);
         $this->ogimage = $fromDB['ogimage'] ?? null;
         $this->closed = $fromDB['closed'] !== null ? strtotime($fromDB['closed']) : null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;

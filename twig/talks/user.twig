@@ -24,7 +24,7 @@
     <section>
         <div class="middle">Last posts:</div>
         {% for post in posts %}
-            {% set post = post|merge({'nouser': true, 'nofooter': true, 'htmlcut': true}) %}
+            {% set post = post|merge({'nouser': true, 'noeditedtime': true, 'htmlcut': true}) %}
             {{ include('common/elements/post.twig', post) }}
         {% endfor %}
     </section>
