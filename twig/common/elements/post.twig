@@ -51,7 +51,7 @@
             {% if post.system and 'removeSystem' in session_data.permissions %}<span data-tooltip="System post">🚫</span>{% endif %}
         </div>
         {% if post.noeditedtime != true %}
-            <div class="post_edited">{% if post.updated > post.created %}Edited {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby }}">{{ post.updatedby_name }}</a>{% endif %}</div>
+            <div class="post_edited">{% if post.updated > post.created %}{% if 'viewPostsHistory' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby }}">{{ post.updatedby_name }}</a>{% endif %}</div>
         {% endif %}
     </section>
 </article>

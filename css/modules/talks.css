@@ -238,3 +238,14 @@ like-dis input {
 .thread_icons span {
     text-decoration: none !important;
 }
+
+.post_history .selected::before {
+    content: '❱❱';
+    color: var(--color-success);
+    margin-right: 0.25rem;
+}
+.post_history .selected::after {
+    content: '❰❰';
+    color: var(--color-success);
+    margin-left: 0.25rem;
+}

@@ -1,1 +1,17 @@
 {{ include('common/elements/post.twig', post) }}
+{% if 'viewPostsHistory' in session_data.permissions %}
+    <h2>Version History</h2>
+    {% if history|length > 1 %}
+        <ol class="post_history" reversed>
+            {% for version, selected in history %}
+                {% if selected %}
+                    <li class="selected">{{ timeTag(version, "d/m/Y H:i") }}</li>
+                {% else %}
+                    <li><a href="/talks/posts/{{ post.id }}/{{ version }}/">{{ timeTag(version, "d/m/Y H:i") }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>There have been no edits to the text of this post.</p>
+    {% endif %}
+{% endif %}

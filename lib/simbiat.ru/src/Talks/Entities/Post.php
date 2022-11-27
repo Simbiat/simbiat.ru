@@ -82,6 +82,26 @@ class Post extends Entity
         $this->liked = $fromDB['liked'];
     }
     
+    #Get post's history, only if respective permission is available. Text is retrieved only for specific version, if it exists
+    public function getHistory(int $time = 0): array
+    {
+        try {
+            if (in_array('viewPostsHistory', $_SESSION['permissions'])) {
+                $data = HomePage::$dbController->selectPair('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `postid`=:postid ORDER BY `time` DESC;', [':postid' => [$this->id, 'int'], ':time' => [$time, 'time']]);
+            } else {
+                $data = [];
+            }
+        } catch (\Throwable) {
+            $data = [];
+        }
+        #If we have only 1 item, that means, that text has not changed, so treat this as "no history"
+        if (count($data) < 2) {
+            return [];
+        } else {
+            return $data;
+        }
+    }
+    
     #Get value of like, the user has provided, if user has respective permission.
     #Condition is used to help with performance. If user "loses" the permission for some reason, and we do not show it - we do not lose much.
     #Especially considering, that at the time of writing, I do not expect this to happen, unless user is banned, when user will not be able to view posts regardless.
