@@ -84,7 +84,7 @@ class Post extends Page
         $this->breadCrumb[] = ['href' => '/talks/posts/'.$outputArray['id'], 'name' => '#'.$outputArray['id']];
         #Add version link to breadcrumb
         if ($history) {
-            $this->breadCrumb[] = ['href' => '/talks/posts/'.$outputArray['id'].'/'.$time, 'name' => 'Version '.date('d/m/Y H:i', $time)];
+            $this->breadCrumb[] = ['href' => '/talks/posts/'.$outputArray['id'].'/'.$time, 'name' => date('d/m/Y H:i', $time)];
         }
         #Update title, h1 and ogdesc
         $this->title = $this->h1 = 'Post #'.$outputArray['id'];
