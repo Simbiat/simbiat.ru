@@ -8,15 +8,15 @@ class Snackbar
         this.snacks = document.querySelector('snack-bar') as HTMLDivElement;
         if (this.snacks) {
             //Generate element
-            let snack = document.createElement('dialog');
+            let template = (document.querySelector('#snackbar_template') as HTMLTemplateElement).content.cloneNode(true) as DocumentFragment;
             //Set ID for notification
             let id = Snackbar.notificationIndex++;
+            let snack = template.querySelector('dialog') as HTMLDialogElement;
             snack.setAttribute('id', 'snackbar' + id);
-            snack.setAttribute('role', 'alert');
-            //Add snackbar class
-            snack.classList.add('snackbar');
             //Add text
-            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            (snack.querySelector('.snack_text') as HTMLSpanElement).innerHTML = text;
+            //Update milliseconds for auto-closure
+            (snack.querySelector('snack-close') as HTMLElement).setAttribute('data-close-in', String(milliseconds));
             snack.querySelectorAll('a[target="_blank"]').forEach(anchor => {
                 new A().newTabStyle(anchor as HTMLAnchorElement);
             });

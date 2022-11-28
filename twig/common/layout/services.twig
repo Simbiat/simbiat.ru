@@ -1,0 +1,23 @@
+{% if serviceName == 'about' %}
+    {{ include('about/about.twig') }}
+{% elseif serviceName == 'fftracker' %}
+    {{ include('fftracker/fftracker.twig') }}
+{% elseif serviceName == 'bictracker' %}
+    {{ include('bictracker/bictracker.twig') }}
+{% elseif serviceName == 'simplepages' %}
+    {{ include('simplepages/simplepages.twig') }}
+{% elseif serviceName == 'landing' %}
+    {{ include('landing.twig') }}
+{% elseif serviceName == 'sitemap' %}
+    {{ include('common/pages/sitemap.twig') }}
+{% elseif serviceName == 'uc' %}
+    {{ include('usercontrol/usercontrol.twig') }}
+{% elseif serviceName == 'talks' %}
+    {{ include('talks/talks.twig') }}
+{% elseif serviceName == 'stylingTest' %}
+    {{ include('stylingTest.twig') }}
+{% else %}
+    <article id="http_error">
+        {{ include('errors/404.twig') }}
+    </article>
+{% endif %}

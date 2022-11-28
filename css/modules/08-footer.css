@@ -69,3 +69,6 @@ back-to-top {
 #footerContacts a:active {
     border-color: transparent;
 }
+html-templates {
+    display: none;
+}

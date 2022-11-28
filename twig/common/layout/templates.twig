@@ -1,0 +1,10 @@
+<html-templates>
+    {{ include('common/elements/snackbar.twig') }}
+    {% if serviceName == 'uc' %}
+        {% if subServiceName == 'emails' %}
+            {{ include('common/elements/emailrow.twig') }}
+        {% elseif subServiceName == 'avatars' %}
+            {{ include('common/elements/avataritem.twig') }}
+        {% endif %}
+    {% endif %}
+</html-templates>

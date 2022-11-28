@@ -812,12 +812,12 @@ class Snackbar {
     constructor(text, color = '', milliseconds = 3000) {
         this.snacks = document.querySelector('snack-bar');
         if (this.snacks) {
-            let snack = document.createElement('dialog');
+            let template = document.querySelector('#snackbar_template').content.cloneNode(true);
             let id = Snackbar.notificationIndex++;
+            let snack = template.querySelector('dialog');
             snack.setAttribute('id', 'snackbar' + id);
-            snack.setAttribute('role', 'alert');
-            snack.classList.add('snackbar');
-            snack.innerHTML = '<span class="snack_text">' + text + '</span><snack-close data-close-in="' + milliseconds + '"><input class="navIcon snack_close" alt="Close notification" type="image" src="/img/close.svg" aria-invalid="false" placeholder="image"></snack-close>';
+            snack.querySelector('.snack_text').innerHTML = text;
+            snack.querySelector('snack-close').setAttribute('data-close-in', String(milliseconds));
             snack.querySelectorAll('a[target="_blank"]').forEach(anchor => {
                 new A().newTabStyle(anchor);
             });

@@ -44,6 +44,14 @@ export class EditAvatars {
         }
     }
     upload() {
+        if (this.avatarFile && this.avatarFile.files.length === 0) {
+            new Snackbar('No file selected', 'failure', 10000);
+            return;
+        }
+        if (this.avatarFile.files[0].size === 0) {
+            new Snackbar('Selected file is empty', 'failure', 10000);
+            return;
+        }
         let formData = new FormData(this.form);
         let button = this.form.querySelector('#avatar_submit');
         buttonToggle(button);
@@ -77,11 +85,9 @@ export class EditAvatars {
     }
     refresh(avatar) {
         let hash = basename(avatar);
-        console.log(avatar);
-        console.log(hash);
         document.querySelectorAll('#avatars_list li').forEach(item => {
-            let radio = item.querySelectorAll('input[id^=avatar_]')[0];
-            let close = item.querySelectorAll('input[id^=del_]')[0];
+            let radio = item.querySelector('input[id^=avatar_]');
+            let close = item.querySelector('input[id^=del_]');
             if (item.id === hash) {
                 radio.checked = true;
                 close.classList.add('hidden');
@@ -102,11 +108,22 @@ export class EditAvatars {
     }
     addToList(avatar) {
         let hash = basename(avatar);
-        let li = '<li id="' + hash + '"><span class="radio_and_label"><input id="avatar_' + hash + '" type="radio" checked><label for="avatar_' + hash + '"><img loading="lazy" decoding="async" alt="New avatar" src="' + avatar + '" class="avatar"></label></span><input id="del_' + hash + '" alt="Delete avatar" type="image" class="delete_avatar hidden" disabled src="/img/close.svg"></li>';
+        let template = document.querySelector('#avatar_item').content.cloneNode(true);
+        template.querySelector('li').id = hash;
+        let inputs = template.querySelectorAll('input');
+        inputs[0].id = inputs[0].id.replace('hash', hash);
+        inputs[1].id = inputs[1].id.replace('hash', hash);
+        inputs[0].addEventListener('change', (event) => {
+            this.setActive(event.target);
+        });
+        inputs[1].addEventListener('click', (event) => {
+            this.delete(event.target);
+        });
+        template.querySelector('label').setAttribute('for', String(template.querySelector('label').getAttribute('for')).replace('hash', hash));
+        template.querySelector('img').src = avatar;
         let ul = document.getElementById('avatars_list');
         if (ul) {
-            ul.innerHTML += li;
-            this.listen();
+            ul.appendChild(template);
         }
         this.refresh(avatar);
     }
