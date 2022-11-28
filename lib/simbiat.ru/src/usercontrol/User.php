@@ -162,7 +162,11 @@ class User extends Entity
     {
         $upload = (new Curl)->upload($link);
         if ($upload === false || empty($upload['type'])) {
-            return ['http_error' => 500, 'reason' => 'Failed to upload file'];
+            if (!empty($upload['http_error'])) {
+                return $upload;
+            } else {
+                return ['http_error' => 500, 'reason' => 'Failed to upload file'];
+            }
         }
         if (preg_match('/^image\/.+/ui', $upload['type']) !== 1) {
             #Remove file from DB

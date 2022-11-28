@@ -153,9 +153,9 @@ abstract class Page
         if (!empty($page['http_error'])) {
             //$page['h1'] .= ' ('.(HomePage::$dbup === false ? 'Database unavailable' : (HomePage::$dbUpdate === true ? 'Site maintenance' : 'Error '.$page['http_error'])).')';
             if (in_array($page['http_error'], ['database', 'maintenance'])) {
-                Headers::clientReturn('503', false);
+                Headers::clientReturn(503, false);
             } else {
-                Headers::clientReturn(strval($page['http_error']), false);
+                Headers::clientReturn($page['http_error'], false);
             }
         }
         #Limit Ogdesc to 120 characters

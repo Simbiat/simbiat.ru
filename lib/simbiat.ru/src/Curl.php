@@ -152,7 +152,17 @@ class Curl
             } else {
                 $upload = Sharing::upload(Config\Common::$uploaded, exit: false);
                 if (!is_array($upload) || empty($upload[0]['server_name'])) {
-                    return ['http_error' => 500, 'reason' => 'Failed to upload the file'];
+                    return ['http_error' => $upload, 'reason' => match($upload) {
+                        405 => 'Unsupported method',
+                        415 => 'Unsupported file format',
+                        501 => 'Uploads are disabled',
+                        507 => 'Not enough space',
+                        400 => 'Empty request or file',
+                        413 => 'Too large or too many files',
+                        409, 403 => 'Failed to write file',
+                        411 => 'Length required',
+                        default => 'Failed to upload the file'.$upload,
+                    }];
                 } else {
                     #If $upload had more than 1 file - remove all except 1st one
                     if (count($upload) > 1) {

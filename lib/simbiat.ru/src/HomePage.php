@@ -166,7 +166,7 @@ class HomePage
         if (empty($_SERVER['HTTP_HOST'])) {
             #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
             if (!HomePage::$staleReturn) {
-                Headers::clientReturn('403');
+                Headers::clientReturn(403);
             }
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
@@ -272,7 +272,7 @@ class HomePage
                 $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]));
             } catch (\Throwable $exception) {
                 (new Errors)->error_log($exception);
-                Headers::clientReturn('503', false);
+                Headers::clientReturn(503, false);
                 try {
                     $output = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', array_merge(['http_error' => 'twig'], ['session_data' => $_SESSION ?? NULL]));
                 } catch (\Throwable) {

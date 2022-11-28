@@ -60,7 +60,7 @@ abstract class Router
                 $pageData['breadcrumbs'] = $this->breadCrumb;
                 $pageData['reason'] = 'Unsupported route';
                 $pageData['http_error'] = 404;
-                Headers::clientReturn('404', false);
+                Headers::clientReturn($pageData['http_error'], false);
             }
         }
         #Inherit title, H1 and description, if page does not have them and router does
