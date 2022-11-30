@@ -345,6 +345,7 @@ return array(
     'Simbiat\\Sitemap\\Router' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Router.php',
     'Simbiat\\Talks\\Api' => $baseDir . '/../lib/simbiat.ru/src/Talks/Api.php',
     'Simbiat\\Talks\\Api\\Posts' => $baseDir . '/../lib/simbiat.ru/src/Talks/Api/Posts.php',
+    'Simbiat\\Talks\\Cron' => $baseDir . '/../lib/simbiat.ru/src/Talks/Cron.php',
     'Simbiat\\Talks\\Entities\\Post' => $baseDir . '/../lib/simbiat.ru/src/Talks/Entities/Post.php',
     'Simbiat\\Talks\\Entities\\Section' => $baseDir . '/../lib/simbiat.ru/src/Talks/Entities/Section.php',
     'Simbiat\\Talks\\Entities\\Thread' => $baseDir . '/../lib/simbiat.ru/src/Talks/Entities/Thread.php',

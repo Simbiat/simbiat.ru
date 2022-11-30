@@ -499,6 +499,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\Sitemap\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Router.php',
         'Simbiat\\Talks\\Api' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Api.php',
         'Simbiat\\Talks\\Api\\Posts' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Api/Posts.php',
+        'Simbiat\\Talks\\Cron' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Cron.php',
         'Simbiat\\Talks\\Entities\\Post' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Entities/Post.php',
         'Simbiat\\Talks\\Entities\\Section' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Entities/Section.php',
         'Simbiat\\Talks\\Entities\\Thread' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Talks/Entities/Thread.php',
