@@ -104,3 +104,9 @@ password-requirements {
     margin-top: 1rem;
     text-align: left;
 }
+
+#own_profile_link {
+    text-decoration: none;
+    padding-top: 0;
+    padding-bottom: 0;
+}

@@ -1,6 +1,6 @@
 {% if session_data.userid != 1 %}
     <a id="uc_settings" href="/uc/profile/"><img loading="lazy" decoding="async" class="linkIcon" alt="Settings" src="/img/cog.svg"></a>
-    <div class="middle">Hi, {{ session_data.username }}!</div>
+    <div class="middle">Hi, <a href="/talks/users/{{ session_data.userid }}" id="own_profile_link">{{ session_data.username }}</a>!</div>
     <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebarAvatar" src="{{ session_data.avatar|default('/img/avatar.svg') }}"></div>
     {% if session_data.activated == false %}
         <div class="warning">Pending <a href="/uc/emails/">activation</a>.</div>
