@@ -412,7 +412,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime): false|int
     {
         try {
-            if (HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND);', [':life' => [$max_lifetime, 'int']])) {
+            if (HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
                 return HomePage::$dbController->getResult();
             } else {
                 return false;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\Config\Common;
+use Simbiat\Config\Talks;
 use Simbiat\Database\Pool;
 use Simbiat\usercontrol\Email;
 use Simbiat\usercontrol\Session;
@@ -63,6 +64,8 @@ class Maintenance
                 ];
             }
         }
+        #Add query to delete cookies for system users explicitly
+        $queries[] = 'DELETE FROM `uc__cookies` WHERE `userid` IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].');';
         $result = true;
         if (!empty($queries)) {
             try {
