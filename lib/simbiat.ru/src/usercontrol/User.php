@@ -72,19 +72,17 @@ class User extends Entity
         if (empty($dbData)) {
             return [];
         }
-        if (intval($this->id) === Talks::userIDs['Unknown user']) {
-            $dbData['groups'] = [Talks::groupsIDs['Bots'], Talks::groupsIDs['Deleted'], Talks::groupsIDs['Banned']];
-            $dbData['permissions'] = ['viewPosts', 'viewBic', 'viewFF'];
+        #Get user's groups
+        $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
+        #Get permissions
+        $dbData['permissions'] = $this->getPermissions();
+        if (in_array($this->id, [Talks::userIDs['Unknown user'], Talks::userIDs['System user'], Talks::userIDs['Deleted user']])) {
+            #System users need to be treated as not activated
             $dbData['activated'] = false;
-            $dbData['currentAvatar'] = '/img/avatar.svg';
         } else {
-            #Get user's groups
-            $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
-            #Get permissions
-            $dbData['permissions'] = $this->getPermissions();
             $dbData['activated'] = !in_array(Talks::groupsIDs['Unverified'], $dbData['groups'], true);
-            $dbData['currentAvatar'] = $this->getAvatar();
         }
+        $dbData['currentAvatar'] = $this->getAvatar();
         return $dbData;
     }
 
