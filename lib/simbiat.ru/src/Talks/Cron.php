@@ -6,6 +6,7 @@ namespace Simbiat\Talks;
 
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Security;
 use Simbiat\usercontrol\User;
@@ -17,7 +18,8 @@ class Cron
     {
         try {
             return HomePage::$dbController->query('UPDATE `talks__posts` SET `locked`=1 WHERE `created` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND `locked`=0;');
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
             return false;
         }
     }
@@ -52,7 +54,8 @@ class Cron
                 );
             }
             return true;
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
             return false;
         }
     }
@@ -111,7 +114,8 @@ class Cron
                 }
             }
             return true;
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
             return false;
         }
     }
