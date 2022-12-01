@@ -577,6 +577,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\usercontrol\\Api\\Profile' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Profile.php',
         'Simbiat\\usercontrol\\Api\\Register' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Register.php',
         'Simbiat\\usercontrol\\Api\\Remind' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Remind.php',
+        'Simbiat\\usercontrol\\Api\\Remove' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Remove.php',
         'Simbiat\\usercontrol\\Api\\Sessions' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Sessions.php',
         'Simbiat\\usercontrol\\Api\\Username' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Api/Username.php',
         'Simbiat\\usercontrol\\Email' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Email.php',

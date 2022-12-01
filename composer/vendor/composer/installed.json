@@ -1370,8 +1370,8 @@
         },
         {
             "name": "symfony/html-sanitizer",
-            "version": "v6.1.0",
-            "version_normalized": "6.1.0.0",
+            "version": "v6.2.0",
+            "version_normalized": "6.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/html-sanitizer.git",
@@ -1422,7 +1422,7 @@
                 "sanitizer"
             ],
             "support": {
-                "source": "https://github.com/symfony/html-sanitizer/tree/v6.1.0"
+                "source": "https://github.com/symfony/html-sanitizer/tree/v6.2.0"
             },
             "funding": [
                 {

@@ -29,7 +29,8 @@ class Removal extends Page
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $outputArray = [];
-        return $outputArray;
+        #This page is essentially static with 2 buttons.
+        #It's not marked as static, because it will still require a DB to get session data, without which it would be useless
+        return [];
     }
 }

@@ -12,6 +12,7 @@ use Simbiat\usercontrol\Api\Password;
 use Simbiat\usercontrol\Api\Profile;
 use Simbiat\usercontrol\Api\Register;
 use Simbiat\usercontrol\Api\Remind;
+use Simbiat\usercontrol\Api\Remove;
 use Simbiat\usercontrol\Api\Sessions;
 use Simbiat\usercontrol\Api\Username;
 
@@ -19,7 +20,7 @@ class Api extends \Simbiat\Abstracts\Api
 {
     #Supported edges
     protected array $subRoutes = [
-        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions',
+        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove'
     ];
     #Description of the nodes (need to be in same order)
     protected array $routesDesc = [
@@ -35,6 +36,7 @@ class Api extends \Simbiat\Abstracts\Api
         'Avatars management',
         'Delete cookies',
         'Delete sessions',
+        'Remove the user',
     ];
     #Flag to indicate, that this is a top level node (false by default)
     protected bool $topLevel = false;
@@ -54,6 +56,7 @@ class Api extends \Simbiat\Abstracts\Api
             'cookies' => (new Cookies)->route(array_slice($path, 1)),
             'sessions' => (new Sessions)->route(array_slice($path, 1)),
             'avatars' => (new Avatars)->route(array_slice($path, 1)),
+            'remove' => (new Remove)->route(array_slice($path, 1)),
         };
     }
 }

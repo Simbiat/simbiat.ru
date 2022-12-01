@@ -6,6 +6,7 @@ use Simbiat\Abstracts\Entity;
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
 use Simbiat\Curl;
+use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Security;
 use Simbiat\Talks\Entities\Post;
@@ -711,5 +712,116 @@ class User extends Entity
         } else {
             return [];
         }
+    }
+    
+    #Function to log the user out
+    public function logout(): bool
+    {
+        Security::log('Logout', 'Logout');
+        #Remove rememberme cookie
+        #From browser
+        setcookie('rememberme_'.Common::$http_host, '', ['expires' => gmdate('D, d-M-Y H:i:s', time()).' GMT', 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
+        #From DB
+        try {
+            if (HomePage::$dbController !== null && !empty($_SESSION['cookieid'])) {
+                HomePage::$dbController->query('DELETE FROM `uc__cookies` WHERE `cookieid`=:id', [':id' => $_SESSION['cookieid']]);
+            }
+        } catch (\Throwable) {
+            #Do nothing
+        }
+        #Clean session (affects $_SESSION only)
+        session_unset();
+        #Destroy session (destroys it storage)
+        return session_destroy();
+    }
+    
+    #Function to remove the user
+    #In case of errors, we return simple false. I think different error messages may be used by malicious actors here
+    public function remove(bool $hard = false): bool
+    {
+        #Check if we are trying to remove one of the system users and prevent that
+        if (in_array($this->id, Talks::userIDs)) {
+            return false;
+        }
+        try {
+            #Close session to avoid changing it in any way
+            @session_write_close();
+            #Check if hard removal or regular one was requested
+            if ($hard) {
+                #Hard removal means complete removal of the user entity, except for sections/threads/posts/files created, where we first update the user IDs
+                #The rest will be dealt with through foreign key constraints
+                $queries = [
+                    [
+                        'UPDATE `talks__sections` SET `createdby`=:deleted WHERE `createdby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'UPDATE `talks__sections` SET `updatedby`=:deleted WHERE `updatedby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'UPDATE `talks__threads` SET `createdby`=:deleted WHERE `createdby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'UPDATE `talks__threads` SET `updatedby`=:deleted WHERE `updatedby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'UPDATE `talks__posts` SET `createdby`=:deleted WHERE `createdby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'UPDATE `talks__posts` SET `updatedby`=:deleted WHERE `updatedby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'UPDATE `sys__files` SET `userid`=:deleted WHERE `userid`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'DELETE FROM `uc__users` WHERE `userid`=:userid;',
+                        [':userid' => [$this->id, 'int']]
+                    ],
+                ];
+            } else {
+                #Soft removal only changes groups for the user
+                $queries = [
+                    [
+                        'DELETE FROM `uc__user_to_group` WHERE `userid`=:userid;',
+                        [':userid' => [$this->id, 'int']]
+                    ],
+                    [
+                        'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, :groupid);',
+                        [
+                            ':userid' => [$this->id, 'int'],
+                            ':groupid' => [Talks::groupsIDs['Deleted'], 'int'],
+                        ]
+                    ],
+                ];
+            }
+            #We also remove all cookies and sessions
+            $queries[] = [
+                'DELETE FROM `uc__cookies` WHERE `userid`=:userid;',
+                [':userid' => $this->id]
+            ];
+            $queries[] = [
+                'DELETE FROM `uc__sessions` WHERE `userid`=:userid;',
+                [':userid' => $this->id]
+            ];
+            #If queries ran successfully - logout properly
+            if (HomePage::$dbController->query($queries)) {
+                $this->logout();
+                $result = true;
+            } else {
+                $result = false;
+            }
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
+            $result = false;
+        }
+        #Log
+        Security::log('User removal', 'Removal', ['userid' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? Talks::userIDs['Deleted user'] : $this->id));
+        return $result;
     }
 }

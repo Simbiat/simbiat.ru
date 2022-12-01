@@ -172,3 +172,9 @@ password-strength {
 #previewAvatar {
     display: block;
 }
+#remove_user.warning {
+    color: var(--color-warning)
+}
+#remove_user.failure {
+    color: var(--color-failure)
+}

@@ -423,6 +423,7 @@ return array(
     'Simbiat\\usercontrol\\Api\\Profile' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Profile.php',
     'Simbiat\\usercontrol\\Api\\Register' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Register.php',
     'Simbiat\\usercontrol\\Api\\Remind' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Remind.php',
+    'Simbiat\\usercontrol\\Api\\Remove' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Remove.php',
     'Simbiat\\usercontrol\\Api\\Sessions' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Sessions.php',
     'Simbiat\\usercontrol\\Api\\Username' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Api/Username.php',
     'Simbiat\\usercontrol\\Email' => $baseDir . '/../lib/simbiat.ru/src/usercontrol/Email.php',

@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '0f0905ae5d593a2d49f63e37e8d63b11f4338525',
+        'reference' => '363960ad1e4e4c9ed707fa0802f9bca23bfaea8c',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -202,7 +202,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '0f0905ae5d593a2d49f63e37e8d63b11f4338525',
+            'reference' => '363960ad1e4e4c9ed707fa0802f9bca23bfaea8c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -227,8 +227,8 @@
             'dev_requirement' => false,
         ),
         'symfony/html-sanitizer' => array(
-            'pretty_version' => 'v6.1.0',
-            'version' => '6.1.0.0',
+            'pretty_version' => 'v6.2.0',
+            'version' => '6.2.0.0',
             'reference' => '28d19124099e860ef52da06ae251e37738b750fe',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/html-sanitizer',
