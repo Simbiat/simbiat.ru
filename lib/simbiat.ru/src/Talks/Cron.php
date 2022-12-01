@@ -30,7 +30,6 @@ class Cron
             #Get users with more than 10 unused avatars
             $users = HomePage::$dbController->selectPair('SELECT `userid`, COUNT(*) as `count` FROM `uc__avatars` WHERE `current`=0 GROUP BY `userid` HAVING `count`>:limit;', [':limit' => [$limit, 'int']]);
             #Iterate over the list
-            $queries = [];
             foreach ($users as $user=>$count) {
                 #Count how many avatars are excessive
                 $excess = $count - $limit;
@@ -64,9 +63,8 @@ class Cron
         #Get the files from DB
         try {
             $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF((SELECT `fileid` FROM `talks__attachments` WHERE `talks__attachments`.`fileid`=`sys__files`.`fileid`), 1, 0) as `attachment`, IF((SELECT `fileid` FROM `talks__threads` WHERE `talks__threads`.`ogimage`=`sys__files`.`fileid`), 1, 0) as `ogimage`, IF((SELECT `fileid` FROM `uc__avatars` WHERE `uc__avatars`.`fileid`=`sys__files`.`fileid`), 1, 0) as `avatar` FROM `sys__files`;');
-            $queries = [];
             #Iterrate through the list
-            foreach ($dbFiles as $key=>$file) {
+            foreach ($dbFiles as $file) {
                 #Get expected full path of the file
                 if (preg_match('/^image\/.+$/ui', $file['mime']) === 1) {
                     $fullPath = Common::$uploadedImg;
