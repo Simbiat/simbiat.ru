@@ -44,12 +44,12 @@ class Cron
                 #Log the change
                 Security::log('Avatar', 'Automatically deleted avatars', $toDelete, userid: $user);
                 #Delete from DB
-                HomePage::$dbController->query([
+                HomePage::$dbController->query(
                     'DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `current`=0 AND `fileid` IN (\''.implode('\', \'', $toDelete).'\');',
                     [
                         ':userid' => [$user, 'int'],
                     ]
-                ]);
+                );
             }
             return true;
         } catch (\Throwable) {
@@ -76,10 +76,10 @@ class Cron
                     #Log the removal
                     Security::log('File upload', 'Automatically deleted file', $file['fileid'].'.'.$file['extension'], userid: $file['userid']);
                     #Remove from DB
-                    HomePage::$dbController->query([
+                    HomePage::$dbController->query(
                         'DELETE FROM `sys__files` WHERE `fileid`=:fileid;',
                         [':fileid' => $file['fileid']],
-                    ]);
+                    );
                     #Remove from drive
                     @unlink($fullPath);
                 }
