@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Simbiat\Talks;
 
 use Simbiat\Config\Common;
+use Simbiat\Config\Talks;
 use Simbiat\HomePage;
+use Simbiat\Security;
+use Simbiat\usercontrol\User;
 
 class Cron
 {
@@ -23,7 +26,7 @@ class Cron
     public function cleanAvatars(): bool
     {
         try {
-            $limit = 10;
+            $limit = User::avatarLimit;
             #Get users with more than 10 unused avatars
             $users = HomePage::$dbController->selectPair('SELECT `userid`, COUNT(*) as `count` FROM `uc__avatars` WHERE `current`=0 GROUP BY `userid` HAVING `count`>:limit;', [':limit' => [$limit, 'int']]);
             #Iterate over the list
@@ -39,16 +42,17 @@ class Cron
                         ':limit' => [$excess, 'int'],
                     ]
                 );
-                #Generate query
-                $queries[] = [
-                    'DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid` IN (\''.implode('\', \'', $toDelete).'\');',
+                #Log the change
+                Security::log('Avatar', 'Automatically deleted avatars', $toDelete, userid: $user);
+                #Delete from DB
+                HomePage::$dbController->query([
+                    'DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `current`=0 AND `fileid` IN (\''.implode('\', \'', $toDelete).'\');',
                     [
                         ':userid' => [$user, 'int'],
                     ]
-                ];
+                ]);
             }
-            #Run the queries
-            return HomePage::$dbController->query($queries);
+            return true;
         } catch (\Throwable) {
             return false;
         }
@@ -59,7 +63,7 @@ class Cron
     {
         #Get the files from DB
         try {
-            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, IF((SELECT `fileid` FROM `talks__attachments` WHERE `talks__attachments`.`fileid`=`sys__files`.`fileid`), 1, 0) as `attachment`, IF((SELECT `fileid` FROM `talks__threads` WHERE `talks__threads`.`ogimage`=`sys__files`.`fileid`), 1, 0) as `ogimage`, IF((SELECT `fileid` FROM `uc__avatars` WHERE `uc__avatars`.`fileid`=`sys__files`.`fileid`), 1, 0) as `avatar` FROM `sys__files`;');
+            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF((SELECT `fileid` FROM `talks__attachments` WHERE `talks__attachments`.`fileid`=`sys__files`.`fileid`), 1, 0) as `attachment`, IF((SELECT `fileid` FROM `talks__threads` WHERE `talks__threads`.`ogimage`=`sys__files`.`fileid`), 1, 0) as `ogimage`, IF((SELECT `fileid` FROM `uc__avatars` WHERE `uc__avatars`.`fileid`=`sys__files`.`fileid`), 1, 0) as `avatar` FROM `sys__files`;');
             $queries = [];
             #Iterrate through the list
             foreach ($dbFiles as $key=>$file) {
@@ -71,20 +75,16 @@ class Cron
                 }
                 $fullPath .= '/'.substr($file['fileid'], 0, 2).'/'.substr($file['fileid'], 2, 2).'/'.substr($file['fileid'], 4, 2).'/'.$file['fileid'].'.'.$file['extension'];
                 if (!is_file($fullPath) || (!$file['attachment'] && !$file['ogimage'] && !$file['avatar'])) {
-                    #File needs to be deleted
-                    $queries[] = [
+                    #Log the removal
+                    Security::log('File upload', 'Automatically deleted file', $file['fileid'].'.'.$file['extension'], userid: $file['userid']);
+                    #Remove from DB
+                    HomePage::$dbController->query([
                         'DELETE FROM `sys__files` WHERE `fileid`=:fileid;',
                         [':fileid' => $file['fileid']],
-                    ];
-                    #Remove file from the array
-                    unset($dbFiles[$key]);
-                    #Remove the file from drive
+                    ]);
+                    #Remove from drive
                     @unlink($fullPath);
                 }
-            }
-            #Remove files from DB
-            if (!empty($queries)) {
-                HomePage::$dbController->query($queries);
             }
             #Get all files from drive
             $allFiles = new \AppendIterator();
@@ -99,6 +99,8 @@ class Cron
                     if (!in_array(pathinfo($file, PATHINFO_FILENAME), $dbFiles)) {
                         #Get directory tree for the file
                         $dirs = [dirname($file), dirname($file, 2), dirname($file, 3)];
+                        #Log the removal
+                        Security::log('File upload', 'Automatically deleted file', basename($file), userid: Talks::userIDs['System user']);
                         #Remove the file
                         @unlink($file);
                         #Remove directory tree, if empty
