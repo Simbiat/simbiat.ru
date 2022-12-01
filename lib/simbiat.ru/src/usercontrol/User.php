@@ -14,6 +14,8 @@ use Simbiat\Talks\Search\Threads;
 
 class User extends Entity
 {
+    #Maximum number of unused avatars per user
+    public const avatarLimit = 10;
     #Entity's properties
     public string $username;
     #Real name
@@ -158,22 +160,33 @@ class User extends Entity
     
     public function addAvatar(bool $setActive = false, string $link = ''): array
     {
-        $upload = (new Curl)->upload($link);
-        if ($upload === false || empty($upload['type'])) {
-            if (!empty($upload['http_error'])) {
-                return $upload;
-            } else {
-                return ['http_error' => 500, 'reason' => 'Failed to upload file'];
-            }
-        }
-        if (preg_match('/^image\/.+/ui', $upload['type']) !== 1) {
-            #Remove file from DB
-            @HomePage::$dbController->query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $upload['hash']]);
-            #Remove physical file
-            @unlink($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']);
-            return ['http_error' => 400, 'reason' => 'File is not an image'];
-        }
         try {
+            #Get current avatars
+            $avatars = $this->getAvatars();
+            #Count values in `current` column
+            $counts = array_count_values(array_column($avatars, 'current'));
+            #Check if we are not trying to add an excessive avatar (compare number of non-current avatars to the limit)
+            if ($counts[0] === self::avatarLimit) {
+                return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
+            }
+            $upload = (new Curl)->upload($link);
+            if ($upload === false || empty($upload['type'])) {
+                if (!empty($upload['http_error'])) {
+                    return $upload;
+                } else {
+                    return ['http_error' => 500, 'reason' => 'Failed to upload file'];
+                }
+            }
+            #Check if file is an image
+            if (preg_match('/^image\/.+/ui', $upload['type']) !== 1) {
+                #Remove file from DB
+                @HomePage::$dbController->query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $upload['hash']]);
+                #Remove physical file
+                @unlink($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']);
+                return ['http_error' => 415, 'reason' => 'File is not an image'];
+            }
+            #Log the change
+            Security::log('Avatar', 'Added avatar', $upload['hash']);
             #Add to DB
             HomePage::$dbController->query('INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES (:userid, :fileid, 0);', [':userid' => [$this->id, 'int'], ':fileid' => $upload['hash']]);
             if ($setActive) {
@@ -188,6 +201,8 @@ class User extends Entity
     public function delAvatar(): array
     {
         $fileid = $_POST['avatar'] ?? '';
+        #Log the change
+        Security::log('Avatar', 'Deleted avatar', $fileid);
         #Delete the avatar (only allow deletion of those, that are not current)
         HomePage::$dbController->query('DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid`=:fileid AND `current`=0;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]);
         return ['location' => $this->getAvatar(), 'response' => true];
@@ -196,6 +211,8 @@ class User extends Entity
     public function setAvatar(string $fileid = ''): array
     {
         $fileid = $_POST['avatar'] ?? $fileid ?? '';
+        #Log the change
+        Security::log('Avatar', 'Changed active avatar', $fileid);
         HomePage::$dbController->query([
             #Set the chosen avatar as current
             ['UPDATE `uc__avatars` SET `current`=1 WHERE `userid`=:userid AND `fileid`=:fileid;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]],
