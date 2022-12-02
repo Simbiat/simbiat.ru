@@ -234,6 +234,17 @@ declare class CarouselList extends HTMLElement {
     toScroll(event: Event): void;
     disableScroll(): void;
 }
+declare class Likedis extends HTMLElement {
+    private readonly postId;
+    private likeValue;
+    private likesCount;
+    private dislikesCount;
+    private likeButton;
+    private dislikeButton;
+    constructor();
+    private like;
+    private updateCounts;
+}
 declare class PasswordShow extends HTMLElement {
     private passwordInput;
     constructor();
@@ -336,15 +347,4 @@ declare class Quotes {
 declare class Textarea {
     private static _instance;
     constructor();
-}
-declare class Likedis extends HTMLElement {
-    private readonly postId;
-    private likeValue;
-    private likesCount;
-    private dislikesCount;
-    private likeButton;
-    private dislikeButton;
-    constructor();
-    private like;
-    private updateCounts;
 }

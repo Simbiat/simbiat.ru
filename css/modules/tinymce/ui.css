@@ -1,7 +1,9 @@
 /*Override for UI*/
 .tox:not(.tox-tinymce-inline) .tox-editor-header,
 .tox .tox-menubar,
-.tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary {
+.tox .tox-toolbar,
+.tox .tox-toolbar__overflow,
+.tox .tox-toolbar__primary {
     background-color: var(--color-block)!important;
 }
 .tox .tox-tbtn--bespoke,
@@ -44,11 +46,13 @@
 .tox .tox-split-button .tox-tbtn {
     background-color: transparent!important;
 }
-.tox .tox-tbtn--enabled, .tox .tox-tbtn--enabled:hover {
+.tox .tox-tbtn--enabled,
+.tox .tox-tbtn--enabled:hover {
     background: var(--color-article)!important;
     color: var(--color-success)!important;
 }
-.tox .tox-tbtn--enabled svg, .tox .tox-tbtn--enabled:hover svg {
+.tox .tox-tbtn--enabled svg,
+.tox .tox-tbtn--enabled:hover svg {
     fill: var(--color-success)!important;
 }
 .tox .tox-tbtn svg {
@@ -116,7 +120,9 @@
     text-decoration: none!important;
     border-style: inset!important;
 }
-.tox .tox-dialog__body-content a:hover, a:focus, a:active {
+.tox .tox-dialog__body-content a:hover,
+.tox .tox-dialog__body-content a:focus,
+.tox .tox-dialog__body-content a:active {
     text-decoration: none!important;
     border-color: var(--color-interactive)!important;
 }
@@ -148,7 +154,12 @@
     background-color: var(--color-block)!important;
     filter: brightness(1.25)!important;
 }
-.mce-content-body audio[data-mce-selected], .mce-content-body embed[data-mce-selected], .mce-content-body img[data-mce-selected], .mce-content-body object[data-mce-selected], .mce-content-body table[data-mce-selected], .mce-content-body video[data-mce-selected] {
+.mce-content-body audio[data-mce-selected],
+.mce-content-body embed[data-mce-selected],
+.mce-content-body img[data-mce-selected],
+.mce-content-body object[data-mce-selected],
+.mce-content-body table[data-mce-selected],
+.mce-content-body video[data-mce-selected] {
     outline: none!important;
     filter: brightness(1.25);
 }

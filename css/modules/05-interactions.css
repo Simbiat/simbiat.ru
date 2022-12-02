@@ -7,7 +7,7 @@
 }
 
 /*Links styling*/
-a {
+a:not(.button) {
     color: var(--color-interactive);
     font-weight: bold;
     text-decoration: none;
@@ -19,24 +19,27 @@ a {
     border-width: var(--border-width);
     outline: none;
 }
-a:link {
+a:link:not(.button) {
     text-decoration-line: underline;
 }
-a:visited {
+a:visited:not(.button) {
     text-decoration: none;
     border-style: inset;
 }
-a:hover, a:focus, a:active {
+a:hover:not(.button),
+a:focus:not(.button),
+a:active:not(.button) {
     text-decoration: none;
     border-color: var(--color-interactive);
 }
-a:active {
+a:active:not(.button) {
     filter: brightness(0.7);
 }
 
 /*Inputs styling*/
 input,
 button,
+a.button,
 ::file-selector-button {
     background-color: var(--color-article);
     color: var(--color-text);
@@ -51,6 +54,7 @@ button,
 }
 /*Special styling for buttons*/
 button,
+a.button,
 input[type=submit],
 input[type=button],
 input[type=reset],
@@ -68,6 +72,9 @@ input:active,
 button:focus,
 button:hover,
 button:active,
+a.button:focus,
+a.button:hover,
+a.button:active,
 ::file-selector-button:focus,
 ::file-selector-button:hover,
 ::file-selector-button:active {
@@ -75,6 +82,7 @@ button:active,
     filter: var(--border-shadow);
 }
 button:active,
+a.button:active,
 input[type=submit]:active,
 input[type=button]:active,
 input[type=reset]:active,
@@ -90,6 +98,12 @@ input[type=file] {
     /*Need to set a height, that will not cut the button*/
     height: 2.4rem;
     cursor: pointer;
+}
+/*Some extra styling for links style as buttons*/
+a.button {
+    text-decoration: none;
+    -webkit-appearance: button;
+    padding: 1px 6px;
 }
 
 /*Border for valid/invalid input*/
@@ -299,8 +313,60 @@ details>.rightSummary {
 .rightSummary::after {
     content: ' ▷';
 }
-details[open] .rightSummary:after {
+details[open]>.rightSummary:after {
     content: ' ▼';
+}
+
+/*Spoiler and adult content blocks*/
+details.spoiler>summary,
+details.adult>summary {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-inset);
+    border-style: solid;
+    list-style: none;
+    text-align: center;
+    color: var(--color-disabled);
+    background-color: var(--color-block);
+}
+details.spoiler>summary:hover,
+details.adult>summary:hover {
+    color: var(--color-warning);
+    border-color: var(--color-warning);
+    border-style: inset;
+}
+details.spoiler>summary::-webkit-details-marker,
+details.adult>summary::-webkit-details-marker {
+    display: none
+}
+details[open].spoiler>summary,
+details[open].adult>summary{
+    display: none;
+}
+details[open].spoiler,
+details[open].adult {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--color-warning);
+    border-style: dotted;
+}
+details.spoiler>summary:before {
+    content: '📖 Here be spoilers 📺';
+}
+details.spoiler>summary:hover:before {
+    content: '🔎 I am ready for the truth 😲';
+}
+details.adult>summary:before {
+    content: '🍑 Here be adult content 🌶';
+}
+details.adult>summary:hover:before {
+    content: '😏 My body is ready 🍆';
+}
+details.spoiler.adult>summary:before {
+    content: '📖 Here be adult spoilers 🌶';
+}
+details.spoiler.adult>summary:hover:before {
+    content: '🔎 My body is ready 🍆';
 }
 
 /*Color picker*/
