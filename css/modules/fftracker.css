@@ -18,6 +18,7 @@
 }
 .ff_char_page > section {
     flex-grow: 1;
+    width: -moz-fit-content;
     width: fit-content;
     max-width: 100%;
     flex-basis: 45%;

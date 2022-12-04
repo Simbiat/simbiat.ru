@@ -653,7 +653,7 @@ main::-webkit-scrollbar {
 
 /*Style tooltips*/
 [data-tooltip]:not(q) {
-    text-decoration: underline dotted;
+    text-decoration: underline dotted 0.2rem;
     cursor: pointer;
 }
 tool-tip {
@@ -663,12 +663,11 @@ tool-tip {
     border-color: var(--border-color-outset);
     background-color: var(--color-block);
     color: var(--color-text);
-    text-align: center;
+    text-align: justify;
     padding: 0.25rem;
     z-index: 99;
     margin: 1rem auto;
-    height: 2rem;
-    line-height: 2rem;
+    height: fit-content;
     overflow: hidden;
     text-overflow: clip;
     word-break: keep-all;
@@ -683,10 +682,6 @@ tool-tip[data-tooltip] {
     display: block;
     transform: translate3d(var(--cursorX) px, var(--cursorY) px, 0px);
     text-decoration: none;
-}
-tool-tip[data-tooltip]::before {
-    display: block;
-    content: attr(data-tooltip);
 }
 
 /*Snackbar notifications*/

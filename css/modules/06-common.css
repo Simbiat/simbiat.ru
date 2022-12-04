@@ -147,7 +147,7 @@ footer address a .linkIcon {
     height: 2rem;
     background-color: var(--color-block);
     margin: 0.2rem;
-    border-color: var(--border-color-outset);
+    border-color: var(--border-color-outset)!important;
     padding: 0;
     display: inline-flex;
     flex-direction: row;

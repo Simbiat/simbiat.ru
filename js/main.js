@@ -1012,11 +1012,13 @@ class Tooltip extends HTMLElement {
     update(element) {
         let parent = element.parentElement;
         let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
-        if (tooltip && matchMedia('(pointer:fine)').matches) {
-            this.setAttribute('data-tooltip', tooltip);
+        if (tooltip && element !== this && matchMedia('(pointer:fine)').matches) {
+            this.setAttribute('data-tooltip', 'true');
+            this.innerHTML = tooltip;
         }
         else {
             this.removeAttribute('data-tooltip');
+            this.innerHTML = '';
         }
     }
 }

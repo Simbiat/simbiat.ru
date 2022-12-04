@@ -63,12 +63,16 @@ class Tooltip extends HTMLElement
     //Update tooltip data
     private update(element: HTMLElement): void
     {
-        let parent = element.parentElement as HTMLElement;
-        let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
-        if (tooltip && matchMedia('(pointer:fine)').matches) {
-            this.setAttribute('data-tooltip', tooltip);
-        } else {
-            this.removeAttribute('data-tooltip');
-        }
+        //if (element !== this) {
+            let parent = element.parentElement as HTMLElement;
+            let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
+            if (tooltip && element !== this && matchMedia('(pointer:fine)').matches) {
+                this.setAttribute('data-tooltip', 'true');
+                this.innerHTML = tooltip;
+            } else {
+                this.removeAttribute('data-tooltip');
+                this.innerHTML = '';
+            }
+        //}
     }
 }

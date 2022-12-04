@@ -45,6 +45,7 @@ password-strength {
     margin-left: calc(var(--border-radius) * 1.5);
     margin-right: calc(var(--border-radius) * 1.5);
     min-height: 2rem;
+    width: -moz-fit-content;
     width: fit-content;
 }
 .vertical_tabs>.nav_tab {
