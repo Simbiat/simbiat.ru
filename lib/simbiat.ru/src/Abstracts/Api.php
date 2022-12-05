@@ -41,10 +41,6 @@ abstract class Api
     #This is general routing check for supported node
     public final function route(array $path): array
     {
-        #Close session early, if we know, that its data will not be changed (default)
-        if ($this->finalNode && !$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
-            session_write_close();
-        }
         if ($this->topLevel) {
             #Send headers
             @header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
@@ -64,6 +60,10 @@ abstract class Api
                 if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
                     $data = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
                 } else {
+                    #Close session early, if we know, that its data will not be changed (default)
+                    if ($this->finalNode && !$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+                        session_write_close();
+                    }
                     $data = $this->getData($path);
                 }
                 #Close session if it's still open. Normally at this point all manipulations have been done.
