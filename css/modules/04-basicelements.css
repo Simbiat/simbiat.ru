@@ -406,15 +406,9 @@ p {
 p+p {
     margin-top: 0.25rem;
 }
-p:not(.failure):not(.warning):not(.success):not(.error)::first-letter {
+p::first-letter {
     font-weight: bold;
-    color: var(--color-success);
     text-transform: uppercase;
-}
-p.noLetter::first-letter {
-    font-weight: unset!important;
-    color: unset!important;
-    text-transform: unset!important;
 }
 article+article {
     margin-top: 1.5rem;

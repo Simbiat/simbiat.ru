@@ -40,7 +40,7 @@
                                     <p>Know a way to force LiteSpeed support (and devs) to stop ghosting me? Ticket number is 945335. Any help will be appreciated.</p>
                                     <br/>
                                 {% endif %}
-                                <p>An error code <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not('httperror/'~http_error in url) %} to</p><code data-description="Failed URL">{{ url }}</code><p class="noLetter">page{% endif %}. Here's what the server has to say in its defence:</p>
+                                <p>An error code <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not('httperror/'~http_error in url) %} to</p><code data-description="Failed URL">{{ url }}</code><p>page{% endif %}. Here's what the server has to say in its defence:</p>
                             {% endif %}
                             {{ include('errors/'~http_error~'.twig') }}
                             {% if http_error not in ['database', 'maintenance', 'teapot', 418] and session_data.prevPage %}
