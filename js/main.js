@@ -1460,13 +1460,19 @@ class Quotes {
             item.innerHTML = '<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">' + item.innerHTML;
         });
         document.querySelectorAll('blockquote[data-author]').forEach(item => {
-            item.innerHTML = '<span class="quoteAuthor">' + item.getAttribute('data-author') + '</span>' + item.innerHTML;
+            if (!/^\s*$/ui.test(item.getAttribute('data-author') ?? '')) {
+                item.innerHTML = '<span class="quoteAuthor">' + item.getAttribute('data-author') + '</span>' + item.innerHTML;
+            }
         });
         document.querySelectorAll('samp[data-description], code[data-description]').forEach(item => {
-            item.innerHTML = '<span class="codeDesc">' + item.getAttribute('data-description') + '</span>' + item.innerHTML;
+            if (!/^\s*$/ui.test(item.getAttribute('data-description') ?? '')) {
+                item.innerHTML = '<span class="codeDesc">' + item.getAttribute('data-description') + '</span>' + item.innerHTML;
+            }
         });
         document.querySelectorAll('blockquote[data-source], samp[data-source], code[data-source]').forEach(item => {
-            item.innerHTML = item.innerHTML + '<span class="quoteSource">' + item.getAttribute('data-source') + '</span>';
+            if (!/^\s*$/ui.test(item.getAttribute('data-source') ?? '')) {
+                item.innerHTML = item.innerHTML + '<span class="quoteSource">' + item.getAttribute('data-source') + '</span>';
+            }
         });
         Array.from(document.getElementsByTagName('q')).forEach(item => {
             item.setAttribute('data-tooltip', 'Click to copy quote');

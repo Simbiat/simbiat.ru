@@ -16,15 +16,21 @@ class Quotes
         });
         //Add author
         document.querySelectorAll('blockquote[data-author]').forEach(item => {
-            item.innerHTML = '<span class="quoteAuthor">'+item.getAttribute('data-author')+'</span>' + item.innerHTML;
+            if (!/^\s*$/ui.test(item.getAttribute('data-author') ?? '')) {
+                item.innerHTML = '<span class="quoteAuthor">' + item.getAttribute('data-author') + '</span>' + item.innerHTML;
+            }
         });
         //Add description
         document.querySelectorAll('samp[data-description], code[data-description]').forEach(item => {
-            item.innerHTML = '<span class="codeDesc">'+item.getAttribute('data-description')+'</span>' + item.innerHTML;
+            if (!/^\s*$/ui.test(item.getAttribute('data-description') ?? '')) {
+                item.innerHTML = '<span class="codeDesc">' + item.getAttribute('data-description') + '</span>' + item.innerHTML;
+            }
         });
         //Add source
         document.querySelectorAll('blockquote[data-source], samp[data-source], code[data-source]').forEach(item => {
-            item.innerHTML = item.innerHTML + '<span class="quoteSource">'+item.getAttribute('data-source')+'</span>';
+            if (!/^\s*$/ui.test(item.getAttribute('data-source') ?? '')) {
+                item.innerHTML = item.innerHTML + '<span class="quoteSource">' + item.getAttribute('data-source') + '</span>';
+            }
         });
         //q tag is inline and a visual button does not suit it, so we add tooltip to it
         Array.from(document.getElementsByTagName('q')).forEach(item => {
