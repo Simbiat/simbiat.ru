@@ -1,4 +1,7 @@
 <section>
+    {% if bicdetails.Ukraine %}
+        <img alt="Це Україна! Іди додому, окупанте!" src="/img/flags/Ukraine.svg">
+    {% endif %}
     {% if bicdetails.DateOut %}
         <p class="failure"><span class="emojiRed">&#10060;</span>Организация закрыта {{ timeTag(bicdetails.DateOut, "d/m/Y") }}<span class="emojiRed">&#10060;</span></p>
     {% endif %}

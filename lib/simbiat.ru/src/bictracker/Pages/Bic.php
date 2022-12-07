@@ -52,6 +52,12 @@ class Bic extends Page
         $this->ogdesc = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') в БИК трекере';
         #Link header/tag for API
         $this->altLinks = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/' . $BIC]];
+        if (in_array($outputArray['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ'])) {
+            $outputArray['bicdetails']['Ukraine'] = true;
+            $this->h1 = $this->title = 'Це Україна! Іди додому, окупанте!';
+        } else {
+            $outputArray['bicdetails']['Ukraine'] = false;
+        }
         return $outputArray;
     }
 }
