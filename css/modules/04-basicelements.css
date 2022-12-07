@@ -141,7 +141,7 @@ code, samp {
     display: block;
     /*Using em for font instead of rem, so that it will depend on parent's size, not on root size*/
     font-size: 0.9em;
-    line-height: 1.25;
+    line-height: 1.25rem;
     page-break-inside: avoid;
     word-wrap: break-word;
     max-width: calc(100% - 1rem);
@@ -248,6 +248,12 @@ code > .codeDesc {
     left:          1.5rem;
     font-size:     1rem;
     font-style:    italic;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    height: var(--line-height-base);
 }
 blockquote > .quoteAuthor:after,
 samp > .codeDesc:after,
@@ -267,6 +273,13 @@ code > .quoteSource {
     right:          3.5rem;
     font-size:     1rem;
     font-style:    italic;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    height: var(--line-height-base);
 }
 blockquote > .quoteSource:before,
 samp > .quoteSource:before,

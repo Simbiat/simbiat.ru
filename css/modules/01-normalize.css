@@ -9,7 +9,7 @@
  */
 
 html {
-  line-height: 1.15; /* 1 */
+  line-height: 1.15rem; /* 1 */
   /*-webkit prefixed version is required only for Firefox, the rest now use proper setting*/
   -webkit-text-size-adjust: 100%; /* 2 */
   text-size-adjust: 100%; /* 2 */
@@ -165,7 +165,7 @@ select,
 textarea {
   font-family: inherit; /* 1 */
   font-size: 100%; /* 1 */
-  line-height: 1.15; /* 1 */
+  line-height: 1.15rem; /* 1 */
   margin: 0; /* 2 */
 }
 
