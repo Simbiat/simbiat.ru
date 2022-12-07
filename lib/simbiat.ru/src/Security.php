@@ -78,6 +78,12 @@ class Security
             }
             #Allow class attribute
             $config = $config->allowAttribute('class', '*');
+            #Allow data-* attributes in blockquotes, code and samp
+            $config = $config->allowAttribute('data-author', 'blockquote');
+            $config = $config->allowAttribute('data-description', ['code', 'samp']);
+            $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
+            #Allow tooltips
+            $config = $config->allowAttribute('data-tooltip', '*');
             #Save config to static for future reuse
             self::$sanitizerConfig = $config;
         }
