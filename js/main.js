@@ -1460,10 +1460,13 @@ class Quotes {
             item.innerHTML = '<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">' + item.innerHTML;
         });
         document.querySelectorAll('blockquote[data-author]').forEach(item => {
-            item.innerHTML = '<span class="quoteAuthor">' + item.getAttribute('data-author') + ':</span>' + item.innerHTML;
+            item.innerHTML = '<span class="quoteAuthor">' + item.getAttribute('data-author') + '</span>' + item.innerHTML;
         });
         document.querySelectorAll('samp[data-description], code[data-description]').forEach(item => {
-            item.innerHTML = '<span class="codeDesc">' + item.getAttribute('data-description') + ':</span>' + item.innerHTML;
+            item.innerHTML = '<span class="codeDesc">' + item.getAttribute('data-description') + '</span>' + item.innerHTML;
+        });
+        document.querySelectorAll('blockquote[data-source], samp[data-source], code[data-source]').forEach(item => {
+            item.innerHTML = item.innerHTML + '<span class="quoteSource">' + item.getAttribute('data-source') + '</span>';
         });
         Array.from(document.getElementsByTagName('q')).forEach(item => {
             item.setAttribute('data-tooltip', 'Click to copy quote');
@@ -1490,10 +1493,19 @@ class Quotes {
                 tag = 'Quote';
                 break;
         }
+        let tagName = node.tagName.toLowerCase();
         let quoteText = String(node.textContent);
-        if (node.tagName.toLowerCase() === 'blockquote' && node.hasAttribute('data-author')) {
+        if (tagName === 'blockquote' && node.hasAttribute('data-author')) {
             let authorMatch = new RegExp('^(' + node.getAttribute('data-author') + ':)', 'ui');
             quoteText = quoteText.replace(authorMatch, '');
+        }
+        if ((tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-description')) {
+            let descMatch = new RegExp('^(' + node.getAttribute('data-description') + ':)', 'ui');
+            quoteText = quoteText.replace(descMatch, '');
+        }
+        if ((tagName === 'blockquote' || tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-source')) {
+            let sourceMatch = new RegExp('(' + node.getAttribute('data-source') + ')$', 'ui');
+            quoteText = quoteText.replace(sourceMatch, '');
         }
         navigator.clipboard.writeText(quoteText).then(function () {
             new Snackbar(tag + ' copied to clipboard', 'success');

@@ -16,11 +16,15 @@ class Quotes
         });
         //Add author
         document.querySelectorAll('blockquote[data-author]').forEach(item => {
-            item.innerHTML = '<span class="quoteAuthor">'+item.getAttribute('data-author')+':</span>' + item.innerHTML;
+            item.innerHTML = '<span class="quoteAuthor">'+item.getAttribute('data-author')+'</span>' + item.innerHTML;
         });
         //Add description
         document.querySelectorAll('samp[data-description], code[data-description]').forEach(item => {
-            item.innerHTML = '<span class="codeDesc">'+item.getAttribute('data-description')+':</span>' + item.innerHTML;
+            item.innerHTML = '<span class="codeDesc">'+item.getAttribute('data-description')+'</span>' + item.innerHTML;
+        });
+        //Add source
+        document.querySelectorAll('blockquote[data-source], samp[data-source], code[data-source]').forEach(item => {
+            item.innerHTML = item.innerHTML + '<span class="quoteSource">'+item.getAttribute('data-source')+'</span>';
         });
         //q tag is inline and a visual button does not suit it, so we add tooltip to it
         Array.from(document.getElementsByTagName('q')).forEach(item => {
@@ -52,12 +56,23 @@ class Quotes
                 tag = 'Quote';
                 break;
         }
+        let tagName = node.tagName.toLowerCase();
         //Set text
         let quoteText = String(node.textContent);
-        //Get author for blockquotes
-        if (node.tagName.toLowerCase() === 'blockquote' && node.hasAttribute('data-author')) {
+        //Remove author from blockquotes
+        if (tagName === 'blockquote' && node.hasAttribute('data-author')) {
             let authorMatch = new RegExp('^('+node.getAttribute('data-author')+':)', 'ui');
             quoteText = quoteText.replace(authorMatch,'');
+        }
+        //Remove description from code and samp
+        if ((tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-description')) {
+            let descMatch = new RegExp('^('+node.getAttribute('data-description')+':)', 'ui');
+            quoteText = quoteText.replace(descMatch,'');
+        }
+        //Remove source from blockquotes, code and samp
+        if ((tagName === 'blockquote' || tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-source')) {
+            let sourceMatch = new RegExp('('+node.getAttribute('data-source')+')$', 'ui');
+            quoteText = quoteText.replace(sourceMatch,'');
         }
         navigator.clipboard.writeText(quoteText).then(function() {
             new Snackbar(tag + ' copied to clipboard', 'success');

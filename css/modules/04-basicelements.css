@@ -249,9 +249,34 @@ code > .codeDesc {
     font-size:     1rem;
     font-style:    italic;
 }
+blockquote > .quoteAuthor:after,
+samp > .codeDesc:after,
+code > .codeDesc:after {
+    content: ':';
+}
 samp > .codeDesc,
 code > .codeDesc {
     left:          0.5rem;
+}
+blockquote > .quoteSource,
+samp > .quoteSource,
+code > .quoteSource {
+    color:         var(--color-disabled);
+    position:      absolute;
+    bottom:           -0.25rem;
+    right:          3.5rem;
+    font-size:     1rem;
+    font-style:    italic;
+}
+blockquote > .quoteSource:before,
+samp > .quoteSource:before,
+code > .quoteSource:before {
+    content: 'From \2760';
+}
+blockquote > .quoteSource:after,
+samp > .quoteSource:after,
+code > .quoteSource:after {
+    content: '\275D';
 }
 q {
     font-style: italic;
