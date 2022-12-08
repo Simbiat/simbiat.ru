@@ -137,7 +137,7 @@ kbd:active, kbd:active * {
 
 code, samp {
     font-family: var(--font-mono);
-    white-space: pre;
+    white-space: pre-wrap;
     display: block;
     /*Using em for font instead of rem, so that it will depend on parent's size, not on root size*/
     font-size: 0.9em;
@@ -171,7 +171,7 @@ samp.error {
 }
 var {
     font-family: var(--font-mono);
-    white-space: pre;
+    white-space: pre-wrap;
     display: inline;
     page-break-inside: avoid;
     word-wrap: break-word;
