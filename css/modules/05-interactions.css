@@ -736,4 +736,6 @@ snack-bar {
     height: 0.75rem;
     vertical-align: super;
     margin: 0;
+    -webkit-user-select: none;
+    user-select: none;
 }
