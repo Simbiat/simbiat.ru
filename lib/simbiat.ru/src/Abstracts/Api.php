@@ -60,15 +60,7 @@ abstract class Api
                 if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
                     $data = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
                 } else {
-                    #Close session early, if we know, that its data will not be changed (default)
-                    if ($this->finalNode && !$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
-                        session_write_close();
-                    }
                     $data = $this->getData($path);
-                }
-                #Close session if it's still open. Normally at this point all manipulations have been done.
-                if (session_status() === PHP_SESSION_ACTIVE) {
-                    session_write_close();
                 }
             } catch (\Throwable $exception) {
                 if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
@@ -242,6 +234,10 @@ abstract class Api
         $result = [];
         #If this is a final node, "convert" methods to GET "actions", if such mapping is set. Required for consistency
         if ($this->finalNode) {
+            #Close session early, if we know, that its data will not be changed (default)
+            if ($this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+                session_write_close();
+            }
             #Add description
             if (!empty($this->description)) {
                 $result['about'] = $this->description;
@@ -268,6 +264,10 @@ abstract class Api
             #Add cache age if set
             if (empty($result['cacheAge']) && $this->static === false) {
                 $result['cacheAge'] = $this->cacheAge;
+            }
+            #Close session if it's still open. Normally at this point all manipulations have been done.
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_write_close();
             }
         }
         return $result;
