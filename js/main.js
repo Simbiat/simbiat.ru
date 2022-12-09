@@ -1187,12 +1187,12 @@ class Details {
         if (Details._instance) {
             return Details._instance;
         }
-        Details.list = Array.from(document.getElementsByTagName('details'));
+        Details.list = Array.from(document.querySelectorAll('details:not(.persistent):not(.spoiler):not(.adult)'));
         Details.list.forEach((item, _, list) => {
             item.ontoggle = _ => {
-                if (item.open && !item.classList.contains('persistent')) {
+                if (item.open) {
                     list.forEach(tag => {
-                        if (tag !== item && !tag.classList.contains('persistent')) {
+                        if (tag !== item) {
                             tag.open = false;
                         }
                     });
@@ -1200,7 +1200,9 @@ class Details {
             };
         });
         Details.list.forEach((item) => {
-            item.addEventListener('click', (event) => { this.reset(event.target); });
+            item.addEventListener('click', (event) => {
+                this.reset(event.target);
+            });
         });
         Details._instance = this;
     }
