@@ -252,10 +252,25 @@ input[type=checkbox]+label {
     cursor: pointer;
 }
 /*Hide incremental buttons for number field. You can't style them (only replace), thus better remove completely by default for consistent look*/
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+    margin: 0;
+}
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+input[type=number].number_spinner {
+    -moz-appearance: auto;
+    appearance: auto;
+    margin: unset;
+}
+input[type=number].number_spinner::-webkit-inner-spin-button,
+input[type=number].number_spinner::-webkit-outer-spin-button {
+    -webkit-appearance: inner-spin-button;
+    margin: unset;
 }
 /*Mark fields as required, when they are*/
 input[required]+label:after {
