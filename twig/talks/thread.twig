@@ -6,8 +6,8 @@
         {% if created > 'now'|date('U') %}<span data-tooltip="Scheduled thread">⏲</span>{% endif %}
         {% if pinned %}<span data-tooltip="Pinned thread">📌</span>{% endif %}
         {% if closed %}<span data-tooltip="Closed thread">🔒</span>{% endif %}
-        {% if private %}<span data-tooltip="Private thread">⛔</span>{% endif %}
-        {% if system and 'removeSystem' in session_data.permissions %}<span data-tooltip="System thread">🚫</span>{% endif %}
+        {% if private %}<span data-tooltip="Private thread">🚷</span>{% endif %}
+        {% if system %}<span data-tooltip="System thread">⚠</span>{% endif %}
     </div>
     {% for post in posts.entities %}
         {% set post = post|merge({'noname': true}) %}

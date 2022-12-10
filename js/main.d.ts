@@ -348,3 +348,9 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
+declare class VerticalTabs extends HTMLElement {
+    private readonly tabs;
+    private readonly contents;
+    constructor();
+    private tabSwitch;
+}

@@ -40,47 +40,6 @@ password-strength {
     margin-bottom: 1rem;
 }
 
-/*Tabs styling for user control pages*/
-.vertical_tabs {
-    margin-left: calc(var(--border-radius) * 1.5);
-    margin-right: calc(var(--border-radius) * 1.5);
-    min-height: 2rem;
-    width: -moz-fit-content;
-    width: fit-content;
-}
-.vertical_tabs>.nav_tab {
-    text-decoration: none;
-    border-style: solid;
-    border-width: var(--border-width);
-    border-color: var(--border-color-outset);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    height: 1.8rem;
-    line-height: 1.8rem;
-    padding: .1rem .5rem;
-    margin-left: -0.275rem;
-    margin-bottom: 0.025rem;
-    display: inline-block;
-    color: var(--color-interactive);
-    font-weight: 700;
-}
-.vertical_tabs>.nav_tab.active {
-    border-color: var(--border-color-inset);
-    background-color: var(--color-article);
-    cursor: default;
-}
-.vertical_tabs>.nav_tab:hover {
-    border-color: var(--border-color-inset);
-    background-color: var(--color-article);
-}
-.vertical_tabs>.nav_tab.danger {
-    color: var(--color-failure);
-    font-weight: 100;
-    filter: brightness(0.7);
-}
-.vertical_tabs>.nav_tab.danger:hover {
-    filter: none;
-}
-
 #uc_settings {
     display: block;
     text-align: center;

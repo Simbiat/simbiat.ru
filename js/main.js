@@ -152,6 +152,7 @@ function init() {
     customElements.define('password-requirements', PasswordRequirements);
     customElements.define('password-strength', PasswordStrength);
     customElements.define('like-dis', Likedis);
+    customElements.define('vertical-tabs', VerticalTabs);
     new A();
     cleanGET();
     hashCheck();
@@ -1535,6 +1536,36 @@ class Textarea {
             }
         });
         Textarea._instance = this;
+    }
+}
+class VerticalTabs extends HTMLElement {
+    tabs;
+    contents;
+    constructor() {
+        super();
+        this.tabs = Array.from(this.querySelectorAll('tab-name'));
+        this.contents = Array.from(this.querySelectorAll('tab-content'));
+        this.tabs.forEach((item) => {
+            item.addEventListener('click', (event) => {
+                this.tabSwitch(event.target);
+            });
+        });
+    }
+    tabSwitch(target) {
+        let tabIndex = 0;
+        this.tabs.forEach((item, index) => {
+            if (item === target) {
+                tabIndex = index;
+            }
+            item.classList.remove('active');
+            if (this.contents[index]) {
+                this.contents[index].classList.remove('active');
+            }
+        });
+        target.classList.add('active');
+        if (this.contents[tabIndex]) {
+            this.contents[tabIndex].classList.add('active');
+        }
     }
 }
 //# sourceMappingURL=main.js.map

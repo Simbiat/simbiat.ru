@@ -5,6 +5,7 @@
             <p>Here you can find all forums, blogs and similar sections, that are meant for different types of communication.</p>
         </details>
     </article>
+    {{ include('talks/editmode.twig') }}
     {% if subServiceName == 'search' %}
         {{ include('common/elements/search.twig') }}
     {% endif %}

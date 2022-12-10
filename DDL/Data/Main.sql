@@ -396,3 +396,23 @@ INSERT IGNORE INTO `uc__user_to_permission` (`userid`, `permission`) VALUES
 (1, 'viewBic'),
 (1, 'viewFF'),
 (1, 'viewPosts');
+
+/*Data added or changed after initial setup above*/
+INSERT IGNORE INTO `sys__files` (`fileid`, `userid`, `name`, `extension`, `mime`, `size`, `added`) VALUES
+('36c4b98fcbbbdbdcaf7f4173e55b796f742510d55ac02a972c900907b3e098402e87f65d22b468c6352e5f490928b62a096a0343e61c7fab582ea5dfe1dc3927', 2, 'knowledgebase.svg', 'svg', 'image/svg+xml', 2912, '2022-12-10 11:07:30'),
+('818b80c8e771bd57fae093b08608c987da756fe5b08a883b8d2ba1d6393dd882cc92e852b6911890a0bf275d090ef948572adedbfe523f8e5e7dc2ab34cd2056', 2, 'forum.svg', 'svg', 'image/svg+xml', 1173, '2022-12-10 11:07:10'),
+('8eeaa8280a4dd26d44a507155d80954da8812d2ea2f10be6a63189ec1ffe9dbdc29dff29d04fc73f3722c2de8d7dc75f5ea24eaefb41106ff59d8dc76473cfe3', 2, 'category.svg', 'svg', 'image/svg+xml', 406, '2022-12-10 11:07:00'),
+('a1438f63ae1cc7f796c558692c01cf24cc70eca2066d85e8c0237938d6da9b97bf2242543c5834aa3e8c4b9e9e3250e5cdadc64d4c28b3d932ff13aa63d56f4b', 2, 'changelog.svg', 'svg', 'image/svg+xml', 5464, '2022-12-10 11:07:05'),
+('c754408745db0714ea79c4dffdf76635e9a8ea38d3e7538324aa2bd03a83acfb7223a6ad378ced1c25ca68655d6ec84dce678be79282aa04969c80b7fd94ed4e', 2, 'support.svg', 'svg', 'image/svg+xml', 2323, '2022-12-10 11:07:55'),
+('d073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac', 2, 'logo.svg', 'svg', 'image/svg+xml', 7671, '2022-12-10 11:07:37'),
+('fffe718e9439d816e09253f35dcd1606cda99318a0c1ce870204e6f5ebee946560b17d0eb9b5147f5dcfb1d08006effd2f50b8876c242437f8f0a45c92229aaa', 2, 'blog.svg', 'svg', 'image/svg+xml', 3075, '2022-12-10 11:06:54');
+UPDATE `talks__types` SET `icon` = '8eeaa8280a4dd26d44a507155d80954da8812d2ea2f10be6a63189ec1ffe9dbdc29dff29d04fc73f3722c2de8d7dc75f5ea24eaefb41106ff59d8dc76473cfe3' WHERE `talks__types`.`typeid` = 1;
+UPDATE `talks__types` SET `icon` = 'fffe718e9439d816e09253f35dcd1606cda99318a0c1ce870204e6f5ebee946560b17d0eb9b5147f5dcfb1d08006effd2f50b8876c242437f8f0a45c92229aaa' WHERE `talks__types`.`typeid` = 2;
+UPDATE `talks__types` SET `icon` = '818b80c8e771bd57fae093b08608c987da756fe5b08a883b8d2ba1d6393dd882cc92e852b6911890a0bf275d090ef948572adedbfe523f8e5e7dc2ab34cd2056' WHERE `talks__types`.`typeid` = 3;
+UPDATE `talks__types` SET `icon` = 'a1438f63ae1cc7f796c558692c01cf24cc70eca2066d85e8c0237938d6da9b97bf2242543c5834aa3e8c4b9e9e3250e5cdadc64d4c28b3d932ff13aa63d56f4b' WHERE `talks__types`.`typeid` = 4;
+UPDATE `talks__types` SET `icon` = 'c754408745db0714ea79c4dffdf76635e9a8ea38d3e7538324aa2bd03a83acfb7223a6ad378ced1c25ca68655d6ec84dce678be79282aa04969c80b7fd94ed4e' WHERE `talks__types`.`typeid` = 5;
+UPDATE `talks__types` SET `icon` = '36c4b98fcbbbdbdcaf7f4173e55b796f742510d55ac02a972c900907b3e098402e87f65d22b468c6352e5f490928b62a096a0343e61c7fab582ea5dfe1dc3927' WHERE `talks__types`.`typeid` = 6;
+ALTER TABLE `talks__types` ADD CONSTRAINT `section_type_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files`(`fileid`) ON DELETE RESTRICT ON UPDATE CASCADE;
+UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`sectionid` = 6;
+UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`sectionid` = 7;
+ALTER TABLE `talks__sections` ADD CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files`(`fileid`) ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,0 +1,63 @@
+{% if editMode %}
+    <vertical-tabs class="vertical_tabs">
+        <tab-names>
+            {% if subServiceName == 'section' %}
+                {% if 'addSections' in session_data.permissions %}
+                    <tab-name class="nav_tab active">Add subsection</tab-name>
+                {% endif %}
+                {% if 'editSections' in session_data.permissions %}
+                    <tab-name class="nav_tab">Edit</tab-name>
+                {% endif %}
+                {% if 'removeSections' in session_data.permissions %}
+                    <tab-name class="nav_tab danger">Remove</tab-name>
+                {% endif %}
+            {% endif %}
+        </tab-names>
+        <tab-contents>
+            {% if subServiceName == 'section' %}
+                {% if 'addSections' in session_data.permissions %}
+                    <tab-content class="active">
+                        <form role="form" id="addSectionForm" name="addSectionForm" autocomplete="off" class="middle">
+                            <input type="hidden" name="parentid" value="{{ sectionid }}">
+                            <div class="float_label_div">
+                                <input form="addSectionForm" type="text" aria-required="true" name="details[name]" id="new_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+                                <label for="new_section_name">Name</label>
+                            </div>
+                            <div class="float_label_div">
+                                <input form="addSectionForm" type="text" aria-required="false" name="details[description]" id="new_section_description" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">
+                                <label for="new_section_description">Description</label>
+                            </div>
+                            <div class="float_label_div">
+                                <select form="addSectionForm" required aria-required="true" name="details[type]" id="new_section_type">
+                                    <option value="1">Category</option>
+                                    <option value="2">Blog</option>
+                                    <option value="3">Forum</option>
+                                    <option value="4">Changelog</option>
+                                    <option value="5">Support</option>
+                                    <option value="6">Knowledgebase</option>
+                                </select>
+                                <label for="new_section_type" data-tooltip="Type of the entity you want to register">Type</label>
+                            </div>
+                            <div class="float_label_div">
+                                <input form="addSectionForm" type="number" inputmode="decimal" min="0" max="99" value="0" step="1" class="number_spinner" aria-required="false" name="details[sequence]" id="new_section_sequence" placeholder="Sequence">
+                                <label for="new_section_sequence">Sequence</label>
+                            </div>
+                        </form>
+                    </tab-content>
+                {% endif %}
+                {% if 'editSections' in session_data.permissions %}
+                    <tab-content>Edit section</tab-content>
+                {% endif %}
+                {% if 'removeSections' in session_data.permissions %}
+                    <tab-content>Delete section</tab-content>
+                {% endif %}
+            {% endif %}
+        </tab-contents>
+    </vertical-tabs>
+{% else %}
+    {% if hasEditMode %}
+        {% if subServiceName == 'section' %}
+            <a class="button" href="/talks/edit/sections/{{ sectionid }}/">Section management</a>
+        {% endif %}
+    {% endif %}
+{% endif %}

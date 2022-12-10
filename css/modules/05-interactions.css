@@ -754,3 +754,76 @@ snack-bar {
     -webkit-user-select: none;
     user-select: none;
 }
+
+/*Style vertical tabs*/
+tab-names {
+    min-height: 2rem;
+    width: -moz-fit-content;
+    width: fit-content;
+    display: block;
+    margin-left: calc(var(--border-radius) * 2.25);
+    margin-right: calc(var(--border-radius) * 2.25);
+    margin-bottom: -0.65rem;
+}
+a.nav_tab,
+tab-name {
+    border-style: solid;
+    border-width: var(--border-width);
+    border-color: var(--border-color-outset);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    height: 1.8rem;
+    line-height: 1.8rem;
+    padding: .1rem .5rem;
+    margin-left: -0.275rem;
+    margin-bottom: 0.025rem;
+    display: inline-block;
+    color: var(--color-interactive);
+    background-color: var(--color-body);
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+}
+a.nav_tab.active,
+tab-name.active {
+    border-color: var(--border-color-inset);
+    background-color: var(--color-article);
+    cursor: default;
+    text-decoration: none;
+}
+a.nav_tab:hover,
+tab-name:hover {
+    border-color: var(--border-color-inset);
+    background-color: var(--color-article);
+    text-decoration: none;
+}
+a.nav_tab.danger,
+tab-name.danger {
+    color: var(--color-failure);
+    font-weight: 100;
+    filter: brightness(0.7);
+}
+a.nav_tab.danger.active,
+tab-name.danger.active {
+    filter: none;
+}
+a.nav_tab.danger:hover,
+tab-name.danger:hover {
+    filter: none;
+}
+/*Styling of vertical-tabs content*/
+tab-contents {
+    display: block;
+    background-color: var(--color-article);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+    padding: .5rem .5rem;
+    margin: .5rem;
+}
+tab-content {
+    display: none;
+}
+tab-content.active {
+    display: block;
+}

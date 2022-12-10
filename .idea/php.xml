@@ -3,6 +3,15 @@
   <component name="BladeDebugConfiguration">
     <cachePath />
   </component>
+  <component name="MessDetectorOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCSFixerOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
+  <component name="PHPCodeSnifferOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/composer/vendor/mustangostang/spyc" />
@@ -131,10 +140,16 @@
       <extension name="zmq" enabled="false" />
     </extensions>
   </component>
+  <component name="PhpStanOptionsConfiguration">
+    <option name="transferred" value="true" />
+  </component>
   <component name="PhpUnit">
     <phpunit_settings>
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/composer/vendor/autoload.php" />
     </phpunit_settings>
+  </component>
+  <component name="PsalmOptionsConfiguration">
+    <option name="transferred" value="true" />
   </component>
   <component name="TwigDebugConfiguration">
     <cachePath>$PROJECT_DIR$/data/cache/twig</cachePath>
