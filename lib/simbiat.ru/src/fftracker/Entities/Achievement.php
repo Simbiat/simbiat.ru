@@ -66,7 +66,7 @@ class Achievement extends Entity
         #Iterrate list
         foreach ($altChars as $char) {
             $data = $Lodestone->getCharacterAchievements($char, intval($this->id))->getResult();
-            if (!empty($data['characters'][$char]['achievements'][$this->id])) {
+            if (!empty($data['characters'][$char]['achievements'][$this->id]) && is_array($data['characters'][$char]['achievements'][$this->id])) {
                 #Update character ID
                 #Try to get achievement ID as seen in Lodestone database (play guide)
                 $data = $Lodestone->searchDatabase('achievement', 0, 0, $data['characters'][$char]['achievements'][$this->id]['name'])->getResult();
