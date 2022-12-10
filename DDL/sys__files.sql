@@ -10,8 +10,10 @@ CREATE TABLE `sys__files`
     CONSTRAINT `file_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
 ) COMMENT 'List of file attachments';
 
-CREATE INDEX `added` ON `sys__files` (`added` DESC);
+CREATE INDEX `added` ON `sys__files` (`added`);
 
 CREATE INDEX `mime` ON `sys__files` (`mime`);
+
+CREATE INDEX `size` ON `sys__files` (`size` DESC);
 
 CREATE INDEX `userid` ON `sys__files` (`userid`);
