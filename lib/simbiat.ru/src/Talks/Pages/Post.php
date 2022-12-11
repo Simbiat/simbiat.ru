@@ -23,6 +23,8 @@ class Post extends Page
     protected string $ogdesc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $requiredPermission = ['viewPosts'];
+    #Flag to indicate editor mode
+    protected bool $editMode = false;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -88,7 +90,7 @@ class Post extends Page
         }
         #Update title, h1 and ogdesc
         $this->title = $this->h1 = 'Post #'.$outputArray['id'];
-        $this->ogdesc = HTMLCut::Cut(Security::sanitizeHTML($outputArray['text'], true), 160, 1);
+        $this->ogdesc = Security::sanitizeHTML(HTMLCut::Cut($outputArray['text'], 160, 1), true);
         #Duplicate the array to `post` key (required for Twig template and consistency with other pages)
         $outputArray['post'] = $outputArray;
         #Add flag to hide post ID
@@ -103,6 +105,8 @@ class Post extends Page
             ($outputArray['updatedby'] !== 1 && $outputArray['updatedby'] !== $outputArray['createdby'] ? '<meta property="article:author" content="'.Common::$baseUrl.'/talks/user/'.$outputArray['createdby'].'" />' : '').
             '<meta property="article:section" content="'.$outputArray['name'].'" />'
         ;
+        #Set flag indicating that we are in edit mode
+        $outputArray['editMode'] = $this->editMode;
         return $outputArray;
     }
 }

@@ -25,6 +25,8 @@ class Thread extends Page
     protected string $ogdesc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $requiredPermission = ['viewPosts'];
+    #Flag to indicate editor mode
+    protected bool $editMode = false;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -44,7 +46,7 @@ class Thread extends Page
         }
         #Check if scheduled
         if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'This is a scheduled thread and you lack `viewScheduled` permission'];
+            return ['http_error' => 403, 'reason' => 'This is a thread scheduled for '.date('Y-m-d H:i:s', $outputArray['created']).' UTC, current UTC time is '.date('Y-m-d H:i:s', time()).' and you lack `viewScheduled` permission'];
         }
         #Collect times
         $times = [];
@@ -89,7 +91,7 @@ class Thread extends Page
         $this->title = '`'.$outputArray['name'].'` thread';
         $this->h1 = $outputArray['name'];
         if (!empty($outputArray['posts']['entities'])) {
-            $this->ogdesc = HTMLCut::Cut(Security::sanitizeHTML($outputArray['posts']['entities'][0]['text'], true), 160, 1);
+            $this->ogdesc = Security::sanitizeHTML(HTMLCut::Cut($outputArray['posts']['entities'][0]['text'], 160, 1), true);
         } else {
             $this->ogdesc = $outputArray['name'];
         }
@@ -116,6 +118,8 @@ class Thread extends Page
         }
         #Set language
         $this->language = $outputArray['language'];
+        #Set flag indicating that we are in edit mode
+        $outputArray['editMode'] = $this->editMode;
         return $outputArray;
     }
 }
