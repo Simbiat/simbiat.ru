@@ -65,7 +65,7 @@ class Cron
     {
         #Get the files from DB
         try {
-            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF((SELECT `fileid` FROM `talks__attachments` WHERE `talks__attachments`.`fileid`=`sys__files`.`fileid`), 1, 0) as `attachment`, IF((SELECT `fileid` FROM `talks__threads` WHERE `talks__threads`.`ogimage`=`sys__files`.`fileid`), 1, 0) as `ogimage`, IF((SELECT `fileid` FROM `uc__avatars` WHERE `uc__avatars`.`fileid`=`sys__files`.`fileid`), 1, 0) as `avatar`, IF((SELECT `icon` FROM `talks__sections` WHERE `icon`=`sys__files`.`fileid`), 1, 0) as `section` FROM `sys__files`;');
+            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF((SELECT `fileid` FROM `talks__attachments` WHERE `talks__attachments`.`fileid`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `attachment`, IF((SELECT `fileid` FROM `talks__threads` WHERE `talks__threads`.`ogimage`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `ogimage`, IF((SELECT `fileid` FROM `uc__avatars` WHERE `uc__avatars`.`fileid`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `avatar`, IF((SELECT `icon` FROM `talks__sections` WHERE `icon`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `section` FROM `sys__files`;');
             #Iterrate through the list
             foreach ($dbFiles as $file) {
                 #Get expected full path of the file
