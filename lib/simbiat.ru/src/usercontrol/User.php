@@ -192,7 +192,7 @@ class User extends Entity
             Security::log('Avatar', 'Added avatar', $upload['hash']);
             #Add to DB
             HomePage::$dbController->query(
-                'INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `characterid`, `current`) VALUES (:userid, :character, :fileid, 0);',
+                'INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `characterid`, `current`) VALUES (:userid, :fileid, :character, 0);',
                 [
                     ':userid' => [$this->id, 'int'],
                     ':fileid' => $upload['hash'],
