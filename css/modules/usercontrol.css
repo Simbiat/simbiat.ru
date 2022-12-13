@@ -129,9 +129,6 @@ password-strength {
 #avatars_list input[type=radio]:checked+label img {
     border-color: var(--color-success);
 }
-#previewAvatar {
-    display: block;
-}
 #remove_user.warning {
     color: var(--color-warning)
 }

@@ -9,7 +9,7 @@ export class EditAvatars
     {
         this.currentAvatar = document.getElementById('currentAvatar') as HTMLImageElement;
         this.sidebarAvatar = document.getElementById('sidebarAvatar') as HTMLImageElement;
-        this.avatarFile = document.getElementById('new_avatar_file') as HTMLInputElement;
+        this.avatarFile = document.getElementById('profile_avatar_file') as HTMLInputElement;
         this.form = document.getElementById('profile_avatar') as HTMLFormElement;
         //Attach form listener
         if (this.form) {

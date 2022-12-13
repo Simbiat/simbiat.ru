@@ -831,3 +831,6 @@ tab-content.active {
 image-upload {
     display: block;
 }
+image-upload img {
+    display: block;
+}

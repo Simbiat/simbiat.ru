@@ -6,7 +6,7 @@ export class EditAvatars {
     constructor() {
         this.currentAvatar = document.getElementById('currentAvatar');
         this.sidebarAvatar = document.getElementById('sidebarAvatar');
-        this.avatarFile = document.getElementById('new_avatar_file');
+        this.avatarFile = document.getElementById('profile_avatar_file');
         this.form = document.getElementById('profile_avatar');
         if (this.form) {
             submitIntercept(this.form, this.upload.bind(this));
