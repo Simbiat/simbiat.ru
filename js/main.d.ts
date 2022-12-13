@@ -354,3 +354,10 @@ declare class VerticalTabs extends HTMLElement {
     constructor();
     private tabSwitch;
 }
+declare class ImageUpload extends HTMLElement {
+    private readonly preview;
+    private readonly file;
+    private readonly label;
+    constructor();
+    private update;
+}

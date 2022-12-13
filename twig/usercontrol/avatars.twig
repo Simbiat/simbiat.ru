@@ -18,12 +18,13 @@
 </ul>
 <form class="middle" id="profile_avatar">
     <p>Upload new avatar:</p>
-    <div class="float_label_div">
-        <input form="profile_avatar" type="file" aria-required="false" name="avatar[file]" id="new_avatar_file" placeholder="Image file" accept="image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml">
-        <label for="new_avatar_file">Image file</label>
-    </div>
-    <br/>
-    <img loading="lazy" decoding="async" alt="New avatar preview" src="/img/avatar.svg" class="avatar middle hidden" id="previewAvatar">
+    <image-upload>
+        <div class="float_label_div">
+            <input form="profile_avatar" type="file" aria-required="false" name="avatar[file]" id="new_avatar_file">
+            <label for="new_avatar_file">New avatar</label>
+        </div>
+        <img loading="lazy" decoding="async" alt="Preview of" src="/img/avatar.svg" class="avatar middle hidden" id="previewAvatar">
+    </image-upload>
     <input role="button" form="profile_avatar" type="submit" name="submit" id="avatar_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Upload">
     <img id="avatar_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Uploading avatar...">
 </form>

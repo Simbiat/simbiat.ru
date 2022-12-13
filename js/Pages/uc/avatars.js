@@ -2,21 +2,14 @@ export class EditAvatars {
     form = null;
     currentAvatar = null;
     sidebarAvatar = null;
-    previewAvatar = null;
     avatarFile = null;
     constructor() {
         this.currentAvatar = document.getElementById('currentAvatar');
         this.sidebarAvatar = document.getElementById('sidebarAvatar');
-        this.previewAvatar = document.getElementById('previewAvatar');
         this.avatarFile = document.getElementById('new_avatar_file');
         this.form = document.getElementById('profile_avatar');
         if (this.form) {
             submitIntercept(this.form, this.upload.bind(this));
-        }
-        if (this.avatarFile) {
-            this.avatarFile.addEventListener('change', (event) => {
-                this.preview(event.target);
-            });
         }
         this.listen();
     }
@@ -31,17 +24,6 @@ export class EditAvatars {
                 this.delete(event.target);
             });
         });
-    }
-    preview(field) {
-        if (this.previewAvatar) {
-            if (field.id === 'new_avatar_file' && field.files && field.files[0]) {
-                this.previewAvatar.src = URL.createObjectURL(field.files[0]);
-                this.previewAvatar.classList.remove('hidden');
-            }
-            else {
-                this.previewAvatar.classList.add('hidden');
-            }
-        }
     }
     upload() {
         if (this.avatarFile && this.avatarFile.files.length === 0) {
@@ -64,7 +46,7 @@ export class EditAvatars {
             }
             if (this.avatarFile) {
                 this.avatarFile.value = '';
-                this.preview(this.avatarFile);
+                this.avatarFile.dispatchEvent(new Event('change'));
             }
             buttonToggle(button);
         });

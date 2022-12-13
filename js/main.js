@@ -153,6 +153,7 @@ function init() {
     customElements.define('password-strength', PasswordStrength);
     customElements.define('like-dis', Likedis);
     customElements.define('vertical-tabs', VerticalTabs);
+    customElements.define('image-upload', ImageUpload);
     new A();
     cleanGET();
     hashCheck();
@@ -1565,6 +1566,37 @@ class VerticalTabs extends HTMLElement {
         target.classList.add('active');
         if (this.contents[tabIndex]) {
             this.contents[tabIndex].classList.add('active');
+        }
+    }
+}
+class ImageUpload extends HTMLElement {
+    preview = null;
+    file = null;
+    label = null;
+    constructor() {
+        super();
+        this.file = this.querySelector('input[type=file]');
+        this.label = this.querySelector('label');
+        this.preview = this.querySelector('img');
+        this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
+        this.file.placeholder = 'Image file';
+        this.preview.alt = 'Preview of ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
+        this.preview.setAttribute('data-tooltip', this.preview.alt);
+        if (this.file) {
+            this.file.addEventListener('change', () => {
+                this.update();
+            });
+        }
+    }
+    update() {
+        if (this.preview && this.file) {
+            if (this.file.files && this.file.files[0]) {
+                this.preview.src = URL.createObjectURL(this.file.files[0]);
+                this.preview.classList.remove('hidden');
+            }
+            else {
+                this.preview.classList.add('hidden');
+            }
         }
     }
 }

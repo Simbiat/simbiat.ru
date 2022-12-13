@@ -48,8 +48,10 @@ function init()
     customElements.define('password-strength', PasswordStrength);
     //Define block for (dis)likes
     customElements.define('like-dis', Likedis);
-    //Define vertical-tabs
+    //Define vertical tabs
     customElements.define('vertical-tabs', VerticalTabs);
+    //Define image upload blocks
+    customElements.define('image-upload', ImageUpload);
     //Add new tab icon to links opening in new tab
     new A();
     //Process URL

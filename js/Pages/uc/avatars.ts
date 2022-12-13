@@ -3,25 +3,17 @@ export class EditAvatars
     private readonly form: HTMLFormElement | null = null;
     private readonly currentAvatar: HTMLImageElement | null = null;
     private readonly sidebarAvatar: HTMLImageElement | null = null;
-    private readonly previewAvatar: HTMLImageElement | null = null;
     private readonly avatarFile: HTMLInputElement | null = null;
     
     constructor()
     {
         this.currentAvatar = document.getElementById('currentAvatar') as HTMLImageElement;
         this.sidebarAvatar = document.getElementById('sidebarAvatar') as HTMLImageElement;
-        this.previewAvatar = document.getElementById('previewAvatar') as HTMLImageElement;
         this.avatarFile = document.getElementById('new_avatar_file') as HTMLInputElement;
         this.form = document.getElementById('profile_avatar') as HTMLFormElement;
         //Attach form listener
         if (this.form) {
             submitIntercept(this.form, this.upload.bind(this));
-        }
-        //Attach listener to file upload fields
-        if (this.avatarFile) {
-            this.avatarFile.addEventListener('change', (event: Event) => {
-                this.preview(event.target as HTMLInputElement);
-            });
         }
         this.listen();
     }
@@ -40,19 +32,6 @@ export class EditAvatars
                 this.delete(event.target as HTMLInputElement);
             });
         });
-    }
-    
-    //Function to update preview of the avatar
-    public preview(field: HTMLInputElement)
-    {
-        if (this.previewAvatar) {
-            if (field.id === 'new_avatar_file' && field.files && field.files[0]) {
-                this.previewAvatar.src = URL.createObjectURL(field.files[0] as File);
-                this.previewAvatar.classList.remove('hidden');
-            } else {
-                this.previewAvatar.classList.add('hidden');
-            }
-        }
     }
     
     //Upload a new avatar
@@ -80,7 +59,7 @@ export class EditAvatars
             //Remove file and preview
             if (this.avatarFile) {
                 this.avatarFile.value = '';
-                this.preview(this.avatarFile);
+                this.avatarFile.dispatchEvent(new Event('change'));
             }
             buttonToggle(button as HTMLInputElement);
         });
