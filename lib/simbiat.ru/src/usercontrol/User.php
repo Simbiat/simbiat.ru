@@ -166,6 +166,10 @@ class User extends Entity
             $avatars = $this->getAvatars();
             #Count values in `current` column
             $counts = array_count_values(array_column($avatars, 'current'));
+            #If count of 0 values does not exist, then we set it to 0 properly
+            if (empty($counts[0])) {
+                $counts[0] = 0;
+            }
             #Check if we are not trying to add an excessive avatar (compare number of non-current avatars to the limit)
             if ($counts[0] === self::avatarLimit) {
                 return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
@@ -196,7 +200,11 @@ class User extends Entity
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to add avatar to library'];
         }
-        return ['location' => $upload['location'], 'response' => true];
+        if (empty($upload['location'])) {
+            return ['http_error' => 500, 'reason' => 'No file path determined'];
+        } else {
+            return ['location' => $upload['location'], 'response' => true];
+        }
     }
     
     public function delAvatar(): array
@@ -361,7 +369,7 @@ class User extends Entity
         }
         #Query for website
         if (isset($_POST['details']['website'])) {
-            if (preg_match('/https?:\/\/(www\.)?[-a-zA-Z\d@:%._+~#=]{1,256}\.[a-zA-Z\d()]{1,6}\b([-a-zA-Z\d()@:%_+.~#?&/=]*)/ui', $_POST['details']['website']) !== 1 || mb_strlen($_POST['details']['website']) > 255) {
+            if (preg_match('/https?:\/\/(www\.)?[-a-zA-Z\d@:%._+~#=]{1,256}\.[a-zA-Z\d()]{1,6}\b([-a-zA-Z\d()@:%_+.~#?&\/=]*)/ui', $_POST['details']['website']) !== 1 || mb_strlen($_POST['details']['website']) > 255) {
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {
