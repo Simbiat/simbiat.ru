@@ -342,7 +342,7 @@ class Character extends Entity
             $character = HomePage::$dbController->selectRow('SELECT `characterid`, `userid` FROM `ffxiv__character` WHERE `characterid`=:id;', [':id' => $this->id]);
             if ($character['userid']) {
                 #Download avatar
-                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar']);
+                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], $this->id);
             }
             return true;
         } catch(\Exception $e) {
@@ -427,7 +427,7 @@ class Character extends Entity
             ]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar
-            (new User($_SESSION['userid']))->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg');
+            (new User($_SESSION['userid']))->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', $this->id);
             return ['response' => $result];
         } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => $exception->getMessage()];

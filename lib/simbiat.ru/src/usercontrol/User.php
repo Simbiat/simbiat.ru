@@ -159,7 +159,7 @@ class User extends Entity
         }
     }
     
-    public function addAvatar(bool $setActive = false, string $link = ''): array
+    public function addAvatar(bool $setActive = false, string $link = '', ?int $character = null): array
     {
         try {
             #Get current avatars
@@ -171,7 +171,8 @@ class User extends Entity
                 $counts[0] = 0;
             }
             #Check if we are not trying to add an excessive avatar (compare number of non-current avatars to the limit)
-            if ($counts[0] === self::avatarLimit) {
+            #If we are setting one for a character - ignore this limitation, though, because it is possible that this character is being used as current avatar, which we will need to update
+            if (empty($character) && $counts[0] === self::avatarLimit) {
                 return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
             }
             $upload = (new Curl)->upload($link);
@@ -184,18 +185,34 @@ class User extends Entity
             }
             #Check if file is an image
             if (preg_match('/^image\/.+/ui', $upload['type']) !== 1) {
-                #Remove file from DB
-                @HomePage::$dbController->query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $upload['hash']]);
-                #Remove physical file
-                @unlink($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']);
+                #No need to remove the file. It will not be linked to anything at this point, so it will be removed by respective CRON job
                 return ['http_error' => 415, 'reason' => 'File is not an image'];
             }
             #Log the change
             Security::log('Avatar', 'Added avatar', $upload['hash']);
             #Add to DB
-            HomePage::$dbController->query('INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES (:userid, :fileid, 0);', [':userid' => [$this->id, 'int'], ':fileid' => $upload['hash']]);
+            HomePage::$dbController->query(
+                'INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `characterid`, `current`) VALUES (:userid, :character, :fileid, 0);',
+                [
+                    ':userid' => [$this->id, 'int'],
+                    ':fileid' => $upload['hash'],
+                    ':character' => [
+                        (empty($character) ? null : $character),
+                        (empty($character) ? 'null' : 'int')
+                    ]
+                ]
+            );
             if ($setActive) {
                 return $this->setAvatar($upload['hash']);
+            } else {
+                #If character ID is provided, we may need to set the avatar as active one, even if the setActive flag is false
+                if (!empty($character)) {
+                    #Check if user has active avatar linked to the character
+                    if (HomePage::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:uesrid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
+                        #Set the new one as active
+                        return $this->setAvatar($upload['hash']);
+                    }
+                }
             }
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to add avatar to library'];
