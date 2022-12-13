@@ -20,6 +20,8 @@ class User extends Page
     protected string $h1 = 'User profile';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'User profile';
+    #Flag to indicate editor mode
+    protected bool $editMode = false;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -49,6 +51,8 @@ class User extends Page
             (is_null($outputArray['userData']['name']['lastname']) ? '' : '<meta property="profile:last_name" content="'.htmlspecialchars($outputArray['userData']['name']['lastname']).'" />').
             (is_null($outputArray['userData']['sex']) ? '' : '<meta property="profile:gender" content="'.htmlspecialchars(($outputArray['userData']['sex'] === 1 ? 'male' : 'female')).'" />')
         ;
+        #Set flag indicating that we are in edit mode
+        $outputArray['editMode'] = $this->editMode;
         return $outputArray;
     }
 }
