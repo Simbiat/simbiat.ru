@@ -18,7 +18,7 @@
 </ul>
 <form class="middle" id="profile_avatar">
     <p>Upload new avatar:</p>
-    {{ include('common/elements/imageupload.twig', {'formName': 'profile_avatar', 'inputName': 'avatar[file]', 'previewClasses': 'avatar middle'}, with_context = false) }}
+    {{ include('common/elements/imageupload.twig', {'formName': 'profile_avatar', 'placeholder': 'New avatar', 'inputName': 'avatar[file]', 'previewClasses': 'avatar middle'}, with_context = false) }}
     <input role="button" form="profile_avatar" type="submit" name="submit" id="avatar_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Upload">
     <img id="avatar_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Uploading avatar...">
 </form>
