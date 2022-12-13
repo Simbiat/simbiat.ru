@@ -216,20 +216,7 @@ class Curl
             $upload['location'] .= $upload['hash_tree'].$upload['new_name'];
             #Move to hash-tree directory, only if file is not already present
             if (!is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
-                if (rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
-                    #Add to database
-                    HomePage::$dbController->query(
-                        'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
-                        [
-                            ':hash' => $upload['hash'],
-                            ':userid' => $_SESSION['userid'] ?? Talks::userIDs['System user'],
-                            ':filename' => $upload['user_name'],
-                            ':extension' => $upload['extension'],
-                            ':mime' => $upload['type'],
-                            ':size' => [$upload['size'], 'int'],
-                        ]
-                    );
-                } else {
+                if (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                     @unlink($upload['server_path'].'/'.$upload['server_name']);
                     return false;
                 }
@@ -237,6 +224,18 @@ class Curl
                 #Remove newly downloaded copy
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
             }
+            #Add to database
+            HomePage::$dbController->query(
+                'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
+                [
+                    ':hash' => $upload['hash'],
+                    ':userid' => $_SESSION['userid'] ?? Talks::userIDs['System user'],
+                    ':filename' => $upload['user_name'],
+                    ':extension' => $upload['extension'],
+                    ':mime' => $upload['type'],
+                    ':size' => [$upload['size'], 'int'],
+                ]
+            );
             return $upload;
         } catch (\Throwable) {
             return false;
