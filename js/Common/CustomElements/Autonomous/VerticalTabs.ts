@@ -2,9 +2,11 @@ class VerticalTabs extends HTMLElement
 {
     private readonly tabs: HTMLSpanElement[];
     private readonly contents: HTMLDivElement[];
+    private readonly wrapper: HTMLDivElement;
     
     constructor() {
         super();
+        this.wrapper = this.querySelector('tab-contents') as HTMLDivElement;
         this.tabs = Array.from(this.querySelectorAll('tab-name'));
         this.contents = Array.from(this.querySelectorAll('tab-content'));
         //Attach listener to tabs
@@ -13,11 +15,16 @@ class VerticalTabs extends HTMLElement
                 this.tabSwitch(event.target as HTMLSpanElement)
             });
         });
+        //Hide tab-contents block, if there is no active tab at the initial load
+        if (!this.wrapper.querySelector('.active')) {
+            this.wrapper.classList.add('hidden');
+        }
     }
     
     //Function to switch tabs
     private tabSwitch(target: HTMLSpanElement)
     {
+        this.wrapper.classList.remove('hidden');
         let tabIndex = 0;
         //Hide all the content first, so that there would not be a case, when we have 2 content divs shown at once
         this.tabs.forEach((item, index) => {

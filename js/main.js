@@ -1059,8 +1059,10 @@ class Tooltip extends HTMLElement {
 class VerticalTabs extends HTMLElement {
     tabs;
     contents;
+    wrapper;
     constructor() {
         super();
+        this.wrapper = this.querySelector('tab-contents');
         this.tabs = Array.from(this.querySelectorAll('tab-name'));
         this.contents = Array.from(this.querySelectorAll('tab-content'));
         this.tabs.forEach((item) => {
@@ -1068,8 +1070,12 @@ class VerticalTabs extends HTMLElement {
                 this.tabSwitch(event.target);
             });
         });
+        if (!this.wrapper.querySelector('.active')) {
+            this.wrapper.classList.add('hidden');
+        }
     }
     tabSwitch(target) {
+        this.wrapper.classList.remove('hidden');
         let tabIndex = 0;
         this.tabs.forEach((item, index) => {
             if (item === target) {

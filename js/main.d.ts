@@ -299,6 +299,7 @@ declare class Tooltip extends HTMLElement {
 declare class VerticalTabs extends HTMLElement {
     private readonly tabs;
     private readonly contents;
+    private readonly wrapper;
     constructor();
     private tabSwitch;
 }
