@@ -342,7 +342,7 @@ class Character extends Entity
             $character = HomePage::$dbController->selectRow('SELECT `characterid`, `userid` FROM `ffxiv__character` WHERE `characterid`=:id;', [':id' => $this->id]);
             if ($character['userid']) {
                 #Download avatar
-                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], $this->id);
+                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], intval($this->id));
             }
             return true;
         } catch(\Exception $e) {
