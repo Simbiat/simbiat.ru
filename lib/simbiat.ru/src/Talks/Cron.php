@@ -65,7 +65,9 @@ class Cron
     {
         #Get the files from DB
         try {
-            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF((SELECT `fileid` FROM `talks__attachments` WHERE `talks__attachments`.`fileid`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `attachment`, IF((SELECT `fileid` FROM `talks__threads` WHERE `talks__threads`.`ogimage`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `ogimage`, IF((SELECT `fileid` FROM `uc__avatars` WHERE `uc__avatars`.`fileid`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `avatar`, IF((SELECT `icon` FROM `talks__sections` WHERE `icon`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `section`, IF((SELECT `icon` FROM `talks__types` WHERE `icon`=`sys__files`.`fileid` LIMIT 1), 1, 0) as `section_defaults` FROM `sys__files`;');
+            #PHPStorm does not like HAVING in the query, even though it is completely normal, so suppressing inspection for it
+            /** @noinspection SqlAggregates */
+            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF(`fileid` IN (SELECT `fileid` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`fileid` IN (SELECT `ogimage` FROM `talks__threads`), 1, 0) as `ogimage`, IF(`fileid` IN (SELECT `fileid` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`fileid` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`fileid` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` HAVING `attachment`+`ogimage`+`avatar`+`section`+`section_defaults`=0;');
             #Iterrate through the list
             foreach ($dbFiles as $file) {
                 #Get expected full path of the file
@@ -75,17 +77,12 @@ class Cron
                     $fullPath = Common::$uploaded;
                 }
                 $fullPath .= '/'.substr($file['fileid'], 0, 2).'/'.substr($file['fileid'], 2, 2).'/'.substr($file['fileid'], 4, 2).'/'.$file['fileid'].'.'.$file['extension'];
-                if (!is_file($fullPath) || (!$file['attachment'] && !$file['ogimage'] && !$file['avatar'] && !$file['section'] && !$file['section_defaults'])) {
-                    #Log the removal
-                    Security::log('File upload', 'Automatically deleted file', $file['fileid'].'.'.$file['extension'], userid: $file['userid']);
-                    #Remove from DB
-                    HomePage::$dbController->query(
-                        'DELETE FROM `sys__files` WHERE `fileid`=:fileid;',
-                        [':fileid' => $file['fileid']],
-                    );
-                    #Remove from drive
-                    @unlink($fullPath);
-                }
+                #Log the removal
+                Security::log('File upload', 'Automatically deleted file', $file['fileid'].'.'.$file['extension'], userid: $file['userid']);
+                #Remove from DB
+                HomePage::$dbController->query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;',[':fileid' => $file['fileid']]);
+                #Remove from drive
+                @unlink($fullPath);
             }
             #Get all files from drive
             $allFiles = new \AppendIterator();
