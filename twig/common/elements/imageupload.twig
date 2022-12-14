@@ -1,7 +1,7 @@
 <image-upload>
     <div class="float_label_div">
-        <input form="{{ formName }}" type="file" aria-required="false" id="{{ formName }}_file" name="{{ inputName }}">
+        <input form="{{ formName }}" type="file" aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} id="{{ formName }}_file" name="{{ inputName }}">
         <label for="{{ formName }}_file">{{ placeholder }}</label>
     </div>
-    <img loading="lazy" decoding="async" alt="Preview of" src="/img/avatar.svg" class="{{ previewClasses }} hidden" id="{{ formName }}_preview">
+    <img loading="lazy" decoding="async" alt="Preview of " src="/img/noimage.svg" class="{{ previewClasses }} hidden" id="{{ formName }}_preview">
 </image-upload>
