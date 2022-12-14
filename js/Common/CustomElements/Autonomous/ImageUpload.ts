@@ -1,3 +1,4 @@
+//Class for input type "file" with image preview
 class ImageUpload extends HTMLElement
 {
     private readonly preview: HTMLImageElement | null = null;

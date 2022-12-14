@@ -1,0 +1,14 @@
+<select-custom>
+    <div class="select_wrapper">
+        <img loading="lazy" decoding="async" alt="Icon for " src="/img/noimage.svg" class="select_icon hidden">
+        <div class="float_label_div">
+            <select form="{{ formName }}" aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} name="{{ inputName }}" id="{{ formName }}_select_{{ inputName }}">
+                {% for item in items %}
+                    <option value="{{ item.value }}"{% if item.description %} data-description="{{ item.description }}"{% endif %}{% if item.icon %} data-icon="{{ item.icon }}"{% endif %}>{{ item.name }}</option>
+                {% endfor %}
+            </select>
+            <label for="{{ formName }}_select_{{ inputName }}">{{ placeholder }}</label>
+        </div>
+    </div>
+    <div class="select_description hidden"></div>
+</select-custom>

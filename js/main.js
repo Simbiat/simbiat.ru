@@ -154,6 +154,7 @@ function init() {
     customElements.define('like-dis', Likedis);
     customElements.define('vertical-tabs', VerticalTabs);
     customElements.define('image-upload', ImageUpload);
+    customElements.define('select-custom', SelectCustom);
     new A();
     cleanGET();
     hashCheck();
@@ -669,6 +670,37 @@ class CarouselList extends HTMLElement {
         }
     }
 }
+class ImageUpload extends HTMLElement {
+    preview = null;
+    file = null;
+    label = null;
+    constructor() {
+        super();
+        this.file = this.querySelector('input[type=file]');
+        this.label = this.querySelector('label');
+        this.preview = this.querySelector('img');
+        this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
+        this.file.placeholder = 'Image file';
+        this.preview.alt = 'Preview of ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
+        this.preview.setAttribute('data-tooltip', this.preview.alt);
+        if (this.file) {
+            this.file.addEventListener('change', () => {
+                this.update();
+            });
+        }
+    }
+    update() {
+        if (this.preview && this.file) {
+            if (this.file.files && this.file.files[0]) {
+                this.preview.src = URL.createObjectURL(this.file.files[0]);
+                this.preview.classList.remove('hidden');
+            }
+            else {
+                this.preview.classList.add('hidden');
+            }
+        }
+    }
+}
 class Likedis extends HTMLElement {
     postId = 0;
     likeValue = 0;
@@ -1021,6 +1053,36 @@ class Tooltip extends HTMLElement {
         else {
             this.removeAttribute('data-tooltip');
             this.innerHTML = '';
+        }
+    }
+}
+class VerticalTabs extends HTMLElement {
+    tabs;
+    contents;
+    constructor() {
+        super();
+        this.tabs = Array.from(this.querySelectorAll('tab-name'));
+        this.contents = Array.from(this.querySelectorAll('tab-content'));
+        this.tabs.forEach((item) => {
+            item.addEventListener('click', (event) => {
+                this.tabSwitch(event.target);
+            });
+        });
+    }
+    tabSwitch(target) {
+        let tabIndex = 0;
+        this.tabs.forEach((item, index) => {
+            if (item === target) {
+                tabIndex = index;
+            }
+            item.classList.remove('active');
+            if (this.contents[index]) {
+                this.contents[index].classList.remove('active');
+            }
+        });
+        target.classList.add('active');
+        if (this.contents[tabIndex]) {
+            this.contents[tabIndex].classList.add('active');
         }
     }
 }
@@ -1539,63 +1601,48 @@ class Textarea {
         Textarea._instance = this;
     }
 }
-class VerticalTabs extends HTMLElement {
-    tabs;
-    contents;
-    constructor() {
-        super();
-        this.tabs = Array.from(this.querySelectorAll('tab-name'));
-        this.contents = Array.from(this.querySelectorAll('tab-content'));
-        this.tabs.forEach((item) => {
-            item.addEventListener('click', (event) => {
-                this.tabSwitch(event.target);
-            });
-        });
-    }
-    tabSwitch(target) {
-        let tabIndex = 0;
-        this.tabs.forEach((item, index) => {
-            if (item === target) {
-                tabIndex = index;
-            }
-            item.classList.remove('active');
-            if (this.contents[index]) {
-                this.contents[index].classList.remove('active');
-            }
-        });
-        target.classList.add('active');
-        if (this.contents[tabIndex]) {
-            this.contents[tabIndex].classList.add('active');
-        }
-    }
-}
-class ImageUpload extends HTMLElement {
-    preview = null;
-    file = null;
+class SelectCustom extends HTMLElement {
+    icon = null;
+    select = null;
     label = null;
+    description = null;
     constructor() {
         super();
-        this.file = this.querySelector('input[type=file]');
+        this.select = this.querySelector('select');
         this.label = this.querySelector('label');
-        this.preview = this.querySelector('img');
-        this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
-        this.file.placeholder = 'Image file';
-        this.preview.alt = 'Preview of ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
-        this.preview.setAttribute('data-tooltip', this.preview.alt);
-        if (this.file) {
-            this.file.addEventListener('change', () => {
+        this.icon = this.querySelector('.select_icon');
+        this.description = this.querySelector('.select_description');
+        this.icon.alt = 'Icon for ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
+        this.icon.setAttribute('data-tooltip', this.icon.alt);
+        if (this.select) {
+            this.select.addEventListener('change', () => {
                 this.update();
             });
         }
+        this.update();
     }
     update() {
-        if (this.preview && this.file) {
-            if (this.file.files && this.file.files[0]) {
-                this.preview.src = URL.createObjectURL(this.file.files[0]);
-                this.preview.classList.remove('hidden');
+        if (this.select) {
+            let option = this.select[this.select.selectedIndex];
+            let description = option.getAttribute('data-description') ?? '';
+            let icon = option.getAttribute('data-icon') ?? '';
+            if (this.description) {
+                if (!/^\s*$/ui.test(description)) {
+                    this.description.innerHTML = description;
+                    this.description.classList.remove('hidden');
+                }
+                else {
+                    this.description.classList.add('hidden');
+                }
             }
-            else {
-                this.preview.classList.add('hidden');
+            if (this.icon) {
+                if (!/^\s*$/ui.test(icon)) {
+                    this.icon.src = icon;
+                    this.icon.classList.remove('hidden');
+                }
+                else {
+                    this.icon.classList.add('hidden');
+                }
             }
         }
     }

@@ -234,6 +234,13 @@ declare class CarouselList extends HTMLElement {
     toScroll(event: Event): void;
     disableScroll(): void;
 }
+declare class ImageUpload extends HTMLElement {
+    private readonly preview;
+    private readonly file;
+    private readonly label;
+    constructor();
+    private update;
+}
 declare class Likedis extends HTMLElement {
     private readonly postId;
     private likeValue;
@@ -288,6 +295,12 @@ declare class Tooltip extends HTMLElement {
     onFocus(event: Event): void;
     private tooltipCursor;
     private update;
+}
+declare class VerticalTabs extends HTMLElement {
+    private readonly tabs;
+    private readonly contents;
+    constructor();
+    private tabSwitch;
 }
 declare class WebShare extends HTMLElement {
     constructor();
@@ -348,16 +361,11 @@ declare class Textarea {
     private static _instance;
     constructor();
 }
-declare class VerticalTabs extends HTMLElement {
-    private readonly tabs;
-    private readonly contents;
-    constructor();
-    private tabSwitch;
-}
-declare class ImageUpload extends HTMLElement {
-    private readonly preview;
-    private readonly file;
+declare class SelectCustom extends HTMLElement {
+    private readonly icon;
+    private readonly select;
     private readonly label;
+    private readonly description;
     constructor();
     private update;
 }

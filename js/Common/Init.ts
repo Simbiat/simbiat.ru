@@ -52,6 +52,8 @@ function init()
     customElements.define('vertical-tabs', VerticalTabs);
     //Define image upload blocks
     customElements.define('image-upload', ImageUpload);
+    //Define custom select blocks
+    customElements.define('select-custom', SelectCustom);
     //Add new tab icon to links opening in new tab
     new A();
     //Process URL

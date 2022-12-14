@@ -828,9 +828,39 @@ tab-content.active {
     display: block;
 }
 
+/*Styling custom image upload*/
 image-upload {
     display: block;
 }
 image-upload img {
     display: block;
+}
+
+/*Styling custom select block*/
+select-custom {
+    display: block;
+    border-style: solid;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-color: var(--border-color-outset);
+    width: fit-content;
+    padding: 0.5rem;
+    margin: 0.5rem auto;
+}
+.select_wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    text-align: center;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+.select_icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-right: 0.5rem;
 }
