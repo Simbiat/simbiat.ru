@@ -208,7 +208,7 @@ class User extends Entity
                 #If character ID is provided, we may need to set the avatar as active one, even if the setActive flag is false
                 if (!empty($character)) {
                     #Check if user has active avatar linked to the character
-                    if (HomePage::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:uesrid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
+                    if (HomePage::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
                         #Set the new one as active
                         return $this->setAvatar($upload['hash']);
                     }
