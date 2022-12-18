@@ -50,8 +50,8 @@ class Gallery extends HTMLElement
             this.addEventListener('keydown', this.keyNav.bind(this));
         }
     }
-
-    public open(): void
+    
+    private open(): void
     {
         this.tabIndex = 99;
         //Get element from array
@@ -164,8 +164,8 @@ class GalleryImage extends HTMLElement
             this.image.addEventListener('click', this.zoomListener);
         }
     }
-
-    public zoom(): void
+    
+    private zoom(): void
     {
         if (this.image.classList.contains('zoomedIn')) {
             this.image.classList.remove('zoomedIn');
@@ -250,8 +250,8 @@ class CarouselList extends HTMLElement
             this.disableScroll();
         }
     }
-
-    public toScroll(event: Event): void
+    
+    private toScroll(event: Event): void
     {
         let scrollButton = event.target as HTMLElement;
         //Get width to scroll based on width of one of the images
@@ -264,8 +264,8 @@ class CarouselList extends HTMLElement
         }
         this.disableScroll();
     }
-
-    public disableScroll(): void
+    
+    private disableScroll(): void
     {
         if (this.list.scrollLeft === 0) {
             this.previous.classList.add('disabled');

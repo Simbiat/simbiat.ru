@@ -4,15 +4,7 @@
 <ul id="avatars_list">
     {% if avatars %}
         {% for avatar in avatars %}
-            <li id="{{ avatar.fileid }}">
-                <span class="radio_and_label">
-                    <input id="avatar_{{ loop.index }}" type="radio"{% if avatar.current %} checked{% endif %}>
-                    <label for="avatar_{{ loop.index }}">
-                        <img loading="lazy" decoding="async" alt="Avatar {{ loop.index }}" src="{{ avatar.url }}" class="avatar">
-                    </label>
-                </span>
-                <input id="del_{{ loop.index }}" alt="Delete avatar" type="image" class="delete_avatar{% if avatar.current %} hidden{% endif %}"{% if avatar.current %} disabled{% endif %} src="/img/close.svg">
-            </li>
+            {{ include('common/elements/avataritem.twig', {'avatar': avatar, 'number': loop.index}, with_context = false) }}
         {% endfor %}
     {% endif %}
 </ul>

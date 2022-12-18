@@ -247,9 +247,22 @@ abstract class Api
             if (!$this->methodCheck()) {
                 return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported HTTP method used']);
             }
-            #Convert only if method is not HEAD, OPTIONS or GET and if respective method has a verb set for it
+            #Override $path[1] with `verb` from POST, if it was provided
+            $path[1] = $_POST['verb'] ?? $path[1] ?? '';
+            #Override based on method only if method is not HEAD, OPTIONS or GET and if respective method has a verb set for it
             if (!in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET']) && !empty($this->methods[HomePage::$method])) {
-                $path[1] = $this->methods[HomePage::$method];
+                if (is_string($this->methods[HomePage::$method])) {
+                    $path[1] = $this->methods[ HomePage::$method ];
+                #If we have an array of possible verbs for method, check that proper verb is provided
+                } elseif (is_array($this->methods[HomePage::$method])) {
+                    if (empty($path[1])) {
+                        return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple AIP verbs, none provided']);
+                    } else {
+                        if (!in_array($path[1], $this->methods[ HomePage::$method ])) {
+                            return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
+                        }
+                    }
+                }
             }
             if (!empty($path[1]) && !in_array($path[1], array_keys($this->verbs))) {
                 return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);

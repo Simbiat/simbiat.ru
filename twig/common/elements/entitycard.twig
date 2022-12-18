@@ -23,9 +23,9 @@
     <span class="entityIcon">
         {% if type == 'bic' %}
             {% if DateOut %}
-                <span class="emojiRed">&#10060;</span>
+                <span class="emojiRed">❌</span>
             {% else %}
-                <span class="emojiGreen">&#10004;</span>
+                <span class="emojiGreen">✔</span>
             {% endif %}
         {% elseif type == 'achievement' %}
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ icon }}">
@@ -64,5 +64,5 @@
         {% endif %}
         {% if type == 'thread' %}<b>{% if detailedType == 'Changelog' and is_numeric(name) %}{{ timeTag(name, "Y.m.d") }}{% else %}{{ name }}{% endif %}</b>{% else %}{{ name }}{% endif %}{% if userid %}<sup>🔗</sup>{% endif %}
     </span>
-    <span class="entityArrow">&#10151;</span>
+    <span class="entityArrow">➧</span>
 </a>

@@ -95,3 +95,15 @@ function buttonToggle(button: HTMLInputElement, enable: boolean = true): void
         }
     }
 }
+
+//Function replicating PHP's rawurlencode for consistency.
+function rawurlencode(str: string): string
+{
+    str = str + '';
+    return encodeURIComponent(str)
+        .replace(/!/ug, '%21')
+        .replace(/'/ug, '%27')
+        .replace(/\(/ug, '%28')
+        .replace(/\)/ug, '%29')
+        .replace(/\*/ug, '%2A');
+}

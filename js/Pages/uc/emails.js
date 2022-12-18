@@ -32,30 +32,7 @@ export class Emails {
         buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
-                let template = document.querySelector('#email_row').content.cloneNode(true);
-                let cells = template.querySelectorAll('td');
-                cells[0].innerHTML = email;
-                let inputElement = cells[1].querySelector('input');
-                new Input().init(inputElement);
-                inputElement.setAttribute('data-email', email);
-                inputElement.addEventListener('click', (event) => {
-                    this.activate(event.target);
-                });
-                let spinner = cells[1].querySelector('img');
-                spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-                spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-                inputElement = cells[3].querySelector('input');
-                new Input().init(inputElement);
-                inputElement.setAttribute('data-email', email);
-                inputElement.setAttribute('data-tooltip', String(inputElement.getAttribute('data-tooltip')).replace('email', email));
-                inputElement.setAttribute('alt', String(inputElement.getAttribute('alt')).replace('email', email));
-                inputElement.addEventListener('click', (event) => {
-                    this.delete(event.target);
-                });
-                spinner = cells[3].querySelector('img');
-                spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-                spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-                document.querySelector('#emailsList tbody').appendChild(template);
+                this.addRow(email);
                 this.blockDelete();
                 this.addMailForm.reset();
                 new Snackbar(email + ' added', 'success');
@@ -65,6 +42,32 @@ export class Emails {
             }
             buttonToggle(button);
         });
+    }
+    addRow(email) {
+        let template = document.querySelector('#email_row').content.cloneNode(true);
+        let cells = template.querySelectorAll('td');
+        cells[0].innerHTML = email;
+        let inputElement = cells[1].querySelector('input');
+        new Input().init(inputElement);
+        inputElement.setAttribute('data-email', email);
+        inputElement.addEventListener('click', (event) => {
+            this.activate(event.target);
+        });
+        let spinner = cells[1].querySelector('img');
+        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
+        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
+        inputElement = cells[3].querySelector('input');
+        new Input().init(inputElement);
+        inputElement.setAttribute('data-email', email);
+        inputElement.setAttribute('data-tooltip', String(inputElement.getAttribute('data-tooltip')).replace('email', email));
+        inputElement.setAttribute('alt', String(inputElement.getAttribute('alt')).replace('email', email));
+        inputElement.addEventListener('click', (event) => {
+            this.delete(event.target);
+        });
+        spinner = cells[3].querySelector('img');
+        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
+        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
+        document.querySelector('#emailsList tbody').appendChild(template);
     }
     delete(button) {
         let formData = new FormData();
@@ -112,7 +115,6 @@ export class Emails {
         else {
             verb = 'unsubscribe';
         }
-        let label = checkbox.parentElement.querySelector('label');
         buttonToggle(checkbox);
         let email = checkbox.getAttribute('data-email') ?? '';
         let formData = new FormData();
@@ -122,12 +124,10 @@ export class Emails {
             if (data.data === true) {
                 if (checkbox.checked) {
                     checkbox.checked = false;
-                    label.innerText = 'Subscribe';
                     new Snackbar(email + ' unsubscribed', 'success');
                 }
                 else {
                     checkbox.checked = true;
-                    label.innerText = 'Unsubscribe';
                     new Snackbar(email + ' subscribed', 'success');
                 }
             }

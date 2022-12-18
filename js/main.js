@@ -127,6 +127,15 @@ function buttonToggle(button, enable = true) {
         }
     }
 }
+function rawurlencode(str) {
+    str = str + '';
+    return encodeURIComponent(str)
+        .replace(/!/ug, '%21')
+        .replace(/'/ug, '%27')
+        .replace(/\(/ug, '%28')
+        .replace(/\)/ug, '%29')
+        .replace(/\*/ug, '%2A');
+}
 const pageTitle = ' on Simbiat Software';
 const emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
 const userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`{|}~\\- ]{1,64}$';
@@ -413,6 +422,13 @@ function router() {
                 }
             }
         }
+        else if (path[0] === 'talks') {
+            if (path[1] === 'edit') {
+                if (path[2] === 'sections') {
+                    import('/js/Pages/talks/edit/sections.js').then((module) => { new module.editSections(); });
+                }
+            }
+        }
     }
 }
 class BackToTop extends HTMLElement {
@@ -688,6 +704,11 @@ class ImageUpload extends HTMLElement {
                 this.update();
             });
         }
+        let current = this.preview.getAttribute('data-current') ?? '';
+        if (!/^\s*$/ui.test(current)) {
+            this.preview.src = current;
+            this.preview.classList.remove('hidden');
+        }
     }
     update() {
         if (this.preview && this.file) {
@@ -733,7 +754,7 @@ class Likedis extends HTMLElement {
             return;
         }
         buttonToggle(button);
-        ajax(location.protocol + '//' + location.host + '/api/talks/posts/' + this.postId + '/' + action + '/', null, 'json', 'PUT', 60000, true).then(data => {
+        ajax(location.protocol + '//' + location.host + '/api/talks/posts/' + this.postId + '/' + action + '/', null, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === 0) {
                 this.updateCounts(data.data);
             }
@@ -929,6 +950,52 @@ class PasswordStrength extends HTMLElement {
         this.classList.add('hidden');
     }
 }
+class SelectCustom extends HTMLElement {
+    icon = null;
+    select = null;
+    label = null;
+    description = null;
+    constructor() {
+        super();
+        this.select = this.querySelector('select');
+        this.label = this.querySelector('label');
+        this.icon = this.querySelector('.select_icon');
+        this.description = this.querySelector('.select_description');
+        this.icon.alt = 'Icon for ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
+        this.icon.setAttribute('data-tooltip', this.icon.alt);
+        if (this.select) {
+            this.select.addEventListener('change', () => {
+                this.update();
+            });
+        }
+        this.update();
+    }
+    update() {
+        if (this.select) {
+            let option = this.select[this.select.selectedIndex];
+            let description = option.getAttribute('data-description') ?? '';
+            let icon = option.getAttribute('data-icon') ?? '';
+            if (this.description) {
+                if (!/^\s*$/ui.test(description)) {
+                    this.description.innerHTML = description;
+                    this.description.classList.remove('hidden');
+                }
+                else {
+                    this.description.classList.add('hidden');
+                }
+            }
+            if (this.icon) {
+                if (!/^\s*$/ui.test(icon)) {
+                    this.icon.src = icon;
+                    this.icon.classList.remove('hidden');
+                }
+                else {
+                    this.icon.classList.add('hidden');
+                }
+            }
+        }
+    }
+}
 class Snackbar {
     snacks;
     static notificationIndex = 0;
@@ -971,7 +1038,7 @@ class SnackbarClose extends HTMLElement {
         this.snack.classList.remove('fadeIn');
         this.snack.classList.add('fadeOut');
         this.snack.addEventListener('animationend', () => {
-            if (this.snack) {
+            if (this.snack && this.snackbar.contains(this.snack)) {
                 this.snackbar.removeChild(this.snack);
             }
         });
@@ -1326,15 +1393,6 @@ class Form {
             return false;
         }
     }
-    rawurlencode(str) {
-        str = str + '';
-        return encodeURIComponent(str)
-            .replace(/!/ug, '%21')
-            .replace(/'/ug, '%27')
-            .replace(/\(/ug, '%28')
-            .replace(/\)/ug, '%29')
-            .replace(/\*/ug, '%2A');
-    }
     inputBackSpace(event) {
         let current = event.target;
         if (event.code === 'Backspace' && !current.value) {
@@ -1605,52 +1663,6 @@ class Textarea {
             }
         });
         Textarea._instance = this;
-    }
-}
-class SelectCustom extends HTMLElement {
-    icon = null;
-    select = null;
-    label = null;
-    description = null;
-    constructor() {
-        super();
-        this.select = this.querySelector('select');
-        this.label = this.querySelector('label');
-        this.icon = this.querySelector('.select_icon');
-        this.description = this.querySelector('.select_description');
-        this.icon.alt = 'Icon for ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
-        this.icon.setAttribute('data-tooltip', this.icon.alt);
-        if (this.select) {
-            this.select.addEventListener('change', () => {
-                this.update();
-            });
-        }
-        this.update();
-    }
-    update() {
-        if (this.select) {
-            let option = this.select[this.select.selectedIndex];
-            let description = option.getAttribute('data-description') ?? '';
-            let icon = option.getAttribute('data-icon') ?? '';
-            if (this.description) {
-                if (!/^\s*$/ui.test(description)) {
-                    this.description.innerHTML = description;
-                    this.description.classList.remove('hidden');
-                }
-                else {
-                    this.description.classList.add('hidden');
-                }
-            }
-            if (this.icon) {
-                if (!/^\s*$/ui.test(icon)) {
-                    this.icon.src = icon;
-                    this.icon.classList.remove('hidden');
-                }
-                else {
-                    this.icon.classList.add('hidden');
-                }
-            }
-        }
     }
 }
 //# sourceMappingURL=main.js.map

@@ -28,8 +28,8 @@ class Tooltip extends HTMLElement
             item.addEventListener('focus', () => {this.removeAttribute('data-tooltip');})
         });
     }
-
-    public onMouseMove(event: MouseEvent): void
+    
+    private onMouseMove(event: MouseEvent): void
     {
         this.update(event.target as HTMLElement);
         this.x = event.clientX;
@@ -37,8 +37,8 @@ class Tooltip extends HTMLElement
         //Get block dimensions
         this.tooltipCursor();
     }
-
-    public onFocus(event: Event): void
+    
+    private onFocus(event: Event): void
     {
         this.update(event.target as HTMLElement);
         let coordinates = (event.target as HTMLElement).getBoundingClientRect();
@@ -63,16 +63,14 @@ class Tooltip extends HTMLElement
     //Update tooltip data
     private update(element: HTMLElement): void
     {
-        //if (element !== this) {
-            let parent = element.parentElement as HTMLElement;
-            let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
-            if (tooltip && element !== this && matchMedia('(pointer:fine)').matches) {
-                this.setAttribute('data-tooltip', 'true');
-                this.innerHTML = tooltip;
-            } else {
-                this.removeAttribute('data-tooltip');
-                this.innerHTML = '';
-            }
-        //}
+        let parent = element.parentElement as HTMLElement;
+        let tooltip = element.getAttribute('data-tooltip') ?? parent.getAttribute('data-tooltip') ?? null;
+        if (tooltip && element !== this && matchMedia('(pointer:fine)').matches) {
+            this.setAttribute('data-tooltip', 'true');
+            this.innerHTML = tooltip;
+        } else {
+            this.removeAttribute('data-tooltip');
+            this.innerHTML = '';
+        }
     }
 }

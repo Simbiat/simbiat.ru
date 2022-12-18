@@ -30,8 +30,8 @@ class Form
         });
         Form._instance = this;
     }
-
-    public formEnter(event: KeyboardEvent): void | boolean
+    
+    private formEnter(event: KeyboardEvent): void | boolean
     {
         let form = (event.target as HTMLInputElement).form as HTMLFormElement;
         if ((event.code === 'Enter' || event.code === 'NumpadEnter') && !form.action) {
@@ -39,18 +39,6 @@ class Form
             event.preventDefault();
             return false;
         }
-    }
-
-    //Function replicating PHP's rawurlencode for consistency.
-    public rawurlencode(str: string): string
-    {
-        str = str + '';
-        return encodeURIComponent(str)
-            .replace(/!/ug, '%21')
-            .replace(/'/ug, '%27')
-            .replace(/\(/ug, '%28')
-            .replace(/\)/ug, '%29')
-            .replace(/\*/ug, '%2A');
     }
 
     //Track backspace and focus previous input field, if input is empty, when it's pressed
@@ -83,7 +71,7 @@ class Form
     }
 
     //Find next/previous input
-    public nextInput(initial: HTMLInputElement, reverse: boolean = false): HTMLInputElement | boolean
+    private nextInput(initial: HTMLInputElement, reverse: boolean = false): HTMLInputElement | boolean
     {
         //Get form
         let form = initial.form;

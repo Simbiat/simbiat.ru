@@ -32,8 +32,8 @@ class Details
         });
         Details._instance = this;
     }
-
-    public reset(target: HTMLDetailsElement)
+    
+    private reset(target: HTMLDetailsElement)
     {
         Details.list.forEach((details: HTMLDetailsElement)=>{
             if (details.open && details !== target && !details.contains(target as HTMLDetailsElement)) {
@@ -49,8 +49,8 @@ class Details
             }
         });
     }
-
-    public clickOutsideDetails(event: MouseEvent, details: HTMLDetailsElement)
+    
+    private clickOutsideDetails(event: MouseEvent, details: HTMLDetailsElement)
     {
         if (details !== event.target && !details.contains(event.target as HTMLElement)) {
             details.open = false;

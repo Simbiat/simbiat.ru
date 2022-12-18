@@ -5,6 +5,7 @@ declare function submitIntercept(form: HTMLFormElement, callable: Function): voi
 declare function deleteRow(element: HTMLElement): boolean;
 declare function basename(text: string): string;
 declare function buttonToggle(button: HTMLInputElement, enable?: boolean): void;
+declare function rawurlencode(str: string): string;
 declare const pageTitle = " on Simbiat Software";
 declare const emailRegex = "[\\p{L}\\d.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*";
 declare const userRegex = "^[\\p{L}\\d.!#$%&'*+\\\\/=?^_`{|}~\\- ]{1,64}$";
@@ -192,7 +193,7 @@ declare class BackToTop extends HTMLElement {
     private static content;
     private static BTTs;
     constructor();
-    toggleButtons(): void;
+    private toggleButtons;
 }
 declare class Gallery extends HTMLElement {
     private _current;
@@ -200,7 +201,7 @@ declare class Gallery extends HTMLElement {
     get current(): number;
     set current(value: number);
     constructor();
-    open(): void;
+    private open;
     close(): void;
     previous(): void;
     next(): void;
@@ -212,7 +213,7 @@ declare class GalleryImage extends HTMLElement {
     private readonly zoomListener;
     constructor();
     private checkZoom;
-    zoom(): void;
+    private zoom;
 }
 declare class GalleryPrev extends HTMLElement {
     private overlay;
@@ -231,8 +232,8 @@ declare class CarouselList extends HTMLElement {
     private readonly previous;
     private readonly maxScroll;
     constructor();
-    toScroll(event: Event): void;
-    disableScroll(): void;
+    private toScroll;
+    private disableScroll;
 }
 declare class ImageUpload extends HTMLElement {
     private readonly preview;
@@ -272,6 +273,14 @@ declare class PasswordStrength extends HTMLElement {
     private show;
     private hide;
 }
+declare class SelectCustom extends HTMLElement {
+    private readonly icon;
+    private readonly select;
+    private readonly label;
+    private readonly description;
+    constructor();
+    private update;
+}
 declare class Snackbar {
     private readonly snacks;
     private static notificationIndex;
@@ -281,7 +290,7 @@ declare class SnackbarClose extends HTMLElement {
     private readonly snackbar;
     private readonly snack;
     constructor();
-    close(): void;
+    private close;
 }
 declare class Timer extends HTMLElement {
     private readonly interval;
@@ -291,8 +300,8 @@ declare class Tooltip extends HTMLElement {
     private x;
     private y;
     constructor();
-    onMouseMove(event: MouseEvent): void;
-    onFocus(event: Event): void;
+    private onMouseMove;
+    private onFocus;
     private tooltipCursor;
     private update;
 }
@@ -305,7 +314,7 @@ declare class VerticalTabs extends HTMLElement {
 }
 declare class WebShare extends HTMLElement {
     constructor();
-    share(): Promise<void>;
+    private share;
 }
 declare class A {
     private static _instance;
@@ -317,30 +326,29 @@ declare class Aside {
     private sidebarDiv;
     private readonly loginForm;
     constructor();
-    singInUpSubmit(): void;
-    loginRadioCheck(): void;
+    private singInUpSubmit;
+    private loginRadioCheck;
 }
 declare class Details {
     static list: HTMLDetailsElement[];
     private static _instance;
     constructor();
-    reset(target: HTMLDetailsElement): void;
-    clickOutsideDetails(event: MouseEvent, details: HTMLDetailsElement): void;
+    private reset;
+    private clickOutsideDetails;
 }
 declare class Form {
     private static _instance;
     constructor();
-    formEnter(event: KeyboardEvent): void | boolean;
-    rawurlencode(str: string): string;
+    private formEnter;
     private inputBackSpace;
     private autoNext;
-    nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | boolean;
+    private nextInput;
     private pasteSplit;
 }
 declare class Headings {
     private static _instance;
     constructor();
-    copyLink(target: HTMLHeadingElement): string;
+    private copyLink;
 }
 declare class Input {
     private static _instance;
@@ -356,17 +364,9 @@ declare class Nav {
 declare class Quotes {
     private static _instance;
     constructor();
-    copy(node: HTMLElement): string;
+    private copy;
 }
 declare class Textarea {
     private static _instance;
     constructor();
-}
-declare class SelectCustom extends HTMLElement {
-    private readonly icon;
-    private readonly select;
-    private readonly label;
-    private readonly description;
-    constructor();
-    private update;
 }

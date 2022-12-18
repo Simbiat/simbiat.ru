@@ -136,7 +136,7 @@ class Curl
     }
     
     #Function to process file uploads either through POST/PUT or by using a provided link
-    public function upload(string $link = '', bool $toWebp = true): false|array
+    public function upload(string $link = '', bool $onlyImages = false, bool $toWebp = true): array
     {
         try {
             #Check DB
@@ -147,7 +147,7 @@ class Curl
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
-                    return false;
+                    return ['http_error' => 500, 'reason' => 'Failed to download remote file'];
                 }
             } else {
                 $upload = Sharing::upload(Config\Common::$uploaded, exit: false);
@@ -201,6 +201,10 @@ class Curl
                 $upload['new_path'] = Config\Common::$uploadedImg;
                 $upload['location'] = '/img/uploaded/';
             } else {
+                if ($onlyImages) {
+                    #We do not accept non-images
+                    return ['http_error' => 415, 'reason' => 'File is not an image'];
+                }
                 $upload['new_name'] = $upload['server_name'];
                 $upload['new_path'] = Config\Common::$uploaded;
                 $upload['location'] = '/data/uploaded/';
@@ -218,7 +222,7 @@ class Curl
             if (!is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                 if (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                     @unlink($upload['server_path'].'/'.$upload['server_name']);
-                    return false;
+                    return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
                 }
             } else {
                 #Remove newly downloaded copy
@@ -238,7 +242,7 @@ class Curl
             );
             return $upload;
         } catch (\Throwable) {
-            return false;
+            return ['http_error' => 500, 'reason' => 'Failed to upload file'];
         }
     }
 }

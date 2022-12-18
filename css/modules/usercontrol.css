@@ -135,3 +135,10 @@ password-strength {
 #remove_user.failure {
     color: var(--color-failure)
 }
+
+.mail_subscription:not(:checked)+label:after {
+    content: 'Subscribe';
+}
+.mail_subscription:checked+label:after {
+    content: 'Unsubscribe';
+}

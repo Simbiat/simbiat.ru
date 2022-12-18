@@ -50,15 +50,15 @@ class SnackbarClose extends HTMLElement
             }, closeIn);
         }
     }
-
-    public close(): void
+    
+    private close(): void
     {
         //Animate removal
         this.snack.classList.remove('fadeIn');
         this.snack.classList.add('fadeOut');
         //Actual removal
         this.snack.addEventListener('animationend', () => {
-            if (this.snack) {
+            if (this.snack && this.snackbar.contains(this.snack)) {
                 this.snackbar.removeChild(this.snack);
             }
         });

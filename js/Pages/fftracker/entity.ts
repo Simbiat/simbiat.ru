@@ -12,7 +12,7 @@ export class ffEntity
         }
     }
     
-    public refresh(event: Event): void
+    private refresh(event: Event): void
     {
         if (this.forceRefresh.classList.contains('spin')) {
             //It already has been clicked, cancel event

@@ -16,7 +16,7 @@ export class ffTrack
     }
 
     //Track the entity
-    public add(): void
+    private add(): void
     {
         let selectedOption = this.select.selectedOptions[0];
         let selectText: string;
@@ -46,7 +46,7 @@ export class ffTrack
     }
 
     //Updates pattern for input field
-    public typeChange(): void
+    private typeChange(): void
     {
         //Set default value for pattern
         let pattern = '^\\d{1,20}$';

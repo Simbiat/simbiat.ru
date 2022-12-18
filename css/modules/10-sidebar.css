@@ -72,7 +72,7 @@ password-show {
     left: 0.25rem;
     cursor: pointer;
     display: none;
-    content: '\1F441';
+    content: '👁';
     width: var(--showpassword-width);
     font-size: 1.75rem;
     text-align: center;
@@ -80,13 +80,13 @@ password-show {
 
 /*Add eye icon to class for ease of use*/
 input~password-show:before {
-    content: '\1F441';
+    content: '👁';
     font-size: smaller;
 }
 
 /*Add diagonal line to the eye icon if it's text field*/
 input[type^=text]~password-show:after {
-    content: '\2571';
+    content: '╱';
     position: absolute;
     left: 0.25rem;
     font-weight: bold;

@@ -13,7 +13,7 @@ class BackToTop extends HTMLElement
         this.addEventListener('click', () => {(BackToTop.content as HTMLElement).scrollTop = 0;});
     }
 
-    public toggleButtons(): void
+    private toggleButtons(): void
     {
         if (BackToTop.BTTs) {
             if ((BackToTop.content as HTMLElement).scrollTop === 0) {

@@ -6,7 +6,7 @@ export class bicKeying
         (document.getElementById('account_key') as HTMLInputElement).addEventListener('input', () => {this.calc();});
     }
 
-    public calc(): void | boolean
+    private calc(): void | boolean
     {
         let form = document.getElementById('bic_keying') as HTMLFormElement;
         //Get form data
@@ -60,7 +60,7 @@ export class bicKeying
     }
 
     //Helper function for styling
-    public styleBic(element: HTMLSpanElement, newClass: string, text: string = ''): void
+    private styleBic(element: HTMLSpanElement, newClass: string, text: string = ''): void
     {
         element.classList.remove(...element.classList);
         element.classList.add(newClass);

@@ -416,3 +416,7 @@ ALTER TABLE `talks__types` ADD CONSTRAINT `section_type_to_file` FOREIGN KEY (`i
 UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`sectionid` = 6;
 UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`sectionid` = 7;
 ALTER TABLE `talks__sections` ADD CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files`(`fileid`) ON DELETE CASCADE ON UPDATE CASCADE;
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('postInClosed', 'Can create sections/threads/posts in closed sections/threads');
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'postInClosed');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('hideUpdate', 'Has option to not change post\'s update date (text change will still be recorded to history)');
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'hideUpdate');

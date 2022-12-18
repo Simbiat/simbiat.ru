@@ -43,7 +43,7 @@ class Quotes
     }
 
     //Copy the text of q tag or respective block
-    public copy(node: HTMLElement): string
+    private copy(node: HTMLElement): string
     {
         //Get parent node, if click was on the copy picture/button
         if (node.tagName.toLowerCase() !== 'q') {

@@ -16,7 +16,7 @@ export class EditSessions
         });
     }
     
-    public deleteAll(button: HTMLInputElement)
+    private deleteAll(button: HTMLInputElement)
     {
         let buttons: NodeListOf<HTMLInputElement>;
         let type: string;
@@ -38,7 +38,7 @@ export class EditSessions
         new Snackbar('All '+type+' except current were removed', 'success');
     }
     
-    public delete(button: HTMLInputElement, singular: boolean = true)
+    private delete(button: HTMLInputElement, singular: boolean = true)
     {
         //Generate form data
         let formData = new FormData();

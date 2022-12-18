@@ -175,18 +175,9 @@ class User extends Entity
             if (empty($character) && $counts[0] === self::avatarLimit) {
                 return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
             }
-            $upload = (new Curl)->upload($link);
-            if ($upload === false || empty($upload['type'])) {
-                if (!empty($upload['http_error'])) {
-                    return $upload;
-                } else {
-                    return ['http_error' => 500, 'reason' => 'Failed to upload file'];
-                }
-            }
-            #Check if file is an image
-            if (preg_match('/^image\/.+/ui', $upload['type']) !== 1) {
-                #No need to remove the file. It will not be linked to anything at this point, so it will be removed by respective CRON job
-                return ['http_error' => 415, 'reason' => 'File is not an image'];
+            $upload = (new Curl)->upload($link, true);
+            if (!empty($upload['http_error'])) {
+                return $upload;
             }
             #Log the change
             Security::log('Avatar', 'Added avatar', $upload['hash']);

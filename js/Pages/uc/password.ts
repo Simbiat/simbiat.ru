@@ -9,8 +9,8 @@ export class PasswordChange
             submitIntercept(this.form, this.change.bind(this));
         }
     }
-
-    public change(): void
+    
+    private change(): void
     {
         //Get form data
         let formData = new FormData(this.form as HTMLFormElement);

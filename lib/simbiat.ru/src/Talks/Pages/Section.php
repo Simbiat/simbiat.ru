@@ -4,6 +4,7 @@ namespace Simbiat\Talks\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
+use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 
 class Section extends Page
@@ -22,6 +23,8 @@ class Section extends Page
     protected string $ogdesc = 'Talks: forums, blogs and other ways of communication';
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $requiredPermission = ['viewPosts'];
+    #Flag to indicate editor mode
+    protected bool $editMode = false;
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -87,6 +90,22 @@ class Section extends Page
             #Update title, h1 and ogdesc
             $this->title = $this->h1 = $outputArray['name'].($page > 1 ? ', Page '.$page : '');
             $this->ogdesc = $outputArray['description'] ?? $outputArray['type'].' with the name of `'.$outputArray['name'].'`';
+        }
+        #Set flag indicating that we are in edit mode
+        $outputArray['editMode'] = $this->editMode;
+        #Set flag indicating that user has access to editMode
+        if (!$this->editMode) {
+            if (empty(array_intersect(['editSections', 'addSections', 'removeSections'], $_SESSION['permissions']))) {
+                $outputArray['hasEditMode'] = false;
+            } else {
+                $outputArray['hasEditMode'] = true;
+            }
+        } else {
+            #Add edit mode to breadcrumb
+            $this->breadCrumb[] = ['href' => '/talks/edit/sections/'.($id !== 'top' ? $id : ''), 'name' => 'Edit mode'];
+            $this->title = $this->h1 = 'Editing `'.($id !== 'top' ? $outputArray['name'] : 'Root section').'`'.($page > 1 ? ', Page '.$page : '');
+            #Get types
+            $outputArray['section_types'] = HomePage::$dbController->selectAll('SELECT `typeid` as `value`, `type` as `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid` ORDER BY `typeid`;');
         }
         return $outputArray;
     }

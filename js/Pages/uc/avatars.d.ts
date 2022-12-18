@@ -5,9 +5,9 @@ export declare class EditAvatars {
     private readonly avatarFile;
     constructor();
     private listen;
-    upload(): void;
-    setActive(avatar: HTMLInputElement): void;
-    refresh(avatar: string): void;
-    addToList(avatar: string): void;
-    delete(avatar: HTMLInputElement): void;
+    private upload;
+    private setActive;
+    private refresh;
+    private addToList;
+    private delete;
 }

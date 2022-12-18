@@ -1,6 +1,6 @@
 export class RemoveProfile
 {
-    private button: HTMLInputElement | null = null;
+    private readonly button: HTMLInputElement | null = null;
     private readonly checkbox: HTMLInputElement | null = null;
     
     constructor()

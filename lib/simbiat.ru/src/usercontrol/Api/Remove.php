@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol\Api;
 
 use Simbiat\Abstracts\Api;
+use Simbiat\HomePage;
 use Simbiat\usercontrol\User;
 
 class Remove extends Api
@@ -10,7 +11,7 @@ class Remove extends Api
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-    protected array $methods = ['PATCH' => ''];
+    protected array $methods = ['PATCH' => '', 'DELETE' => ''];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = [];
     #Flag indicating that authentication is required
@@ -22,6 +23,10 @@ class Remove extends Api
 
     protected function genData(array $path): array
     {
+        #If DELETE method is used, enforce hard deletion
+        if (HomePage::$method === 'DELETE') {
+            $_POST['hard'] = true;
+        }
         return ['response' => (new User($_SESSION['userid']))->remove(boolval($_POST['hard'] ?? false))];
     }
 }

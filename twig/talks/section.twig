@@ -16,54 +16,16 @@
                 {% if editMode %}
                     <td>ID</td>
                     {% if 'editSections' in session_data.permissions %}
-                        <td data-tooltip="Optional order for sorting.<br>The higher the value, the higher in the list a forum will be.<br>After that name sorting is expected.">Sequence</td>
-                        <td data-tooltip="Flag indicating if the forum is closed.">Closed</td>
-                        <td data-tooltip="Flag indicating if forum is private.">Private</td>
-                    {% endif %}
-                    {% if 'removeSections' in session_data.permissions %}
-                        <td>Delete</td>
+                        <td data-tooltip="Optional order for sorting.<br>The higher the value, the higher in the list a section will be.<br>After that name sorting is expected.">Order</td>
+                        <td data-tooltip="Flag indicating if section is closed.<br>Click the icon to toggle.">Closed</td>
+                        <td data-tooltip="Flag indicating if section is private.<br>Click the icon to toggle.">Private</td>
                     {% endif %}
                 {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for section in children.entities %}
-                <tr>
-                    <td>
-                        <img loading="lazy" decoding="async" alt="{{ section.detailedType }}" src="{{ section.icon }}" class="section_icon">
-                    </td>
-                    <td>
-                        <div class="section_name">
-                            <div class="section_icons">
-                                {% if section.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
-                                {% if 'editSections' not in session_data.permissions %}
-                                    {% if section.closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
-                                    {% if section.private %}<span data-tooltip="Private section">🚷</span>{% endif %}
-                                    {% if section.system %}<span data-tooltip="System section">⚠</span>{% endif %}
-                                {% endif %}
-                            </div>
-                            <a href="/talks/{% if editMode %}edit/{% endif %}sections/{{ section.sectionid }}/{{ prettyURL(section.name) }}" data-tooltip="{{ section.name }}">{{ section.name }}</a>
-                        </div>
-                        <div class="section_description">{{ section.description }}</div>
-                    </td>
-                    <td>{{ section.threads }}</td>
-                    <td>{{ section.posts }}</td>
-                    {% if editMode %}
-                        <td>{{ section.sectionid }}</td>
-                        {% if 'editSections' in session_data.permissions %}
-                            <td><span class="float_label_div"><input id="section_sequence_{{ section.id }}" class="section_sequence number_spinner" type="number" inputmode="decimal" min="0" max="99" step="1" value="{{ section.sequence }}"><label for="section_sequence_{{ section.id }}">&nbsp</label></span></td>
-                            <td><span class="radio_and_label"><input id="section_closed_checkbox_{{ section.id }}" class="section_close" data-section="{{ section.id }}" type="checkbox"{% if section.closed %} checked{% endif %}><label for="section_closed_checkbox_{{ section.id }}">{% if section.closed %}Closed{% else %}Open{% endif %}</label></span><img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Opening/closing section {{ section.id }}..."></td>
-                            <td><span class="radio_and_label"><input id="section_private_checkbox_{{ section.id }}" class="section_private" data-section="{{ section.id }}" type="checkbox"{% if private.closed %} checked{% endif %}><label for="section_private_checkbox_{{ section.id }}">{% if section.private %}Private{% else %}Public{% endif %}</label></span><img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Making section {{ section.id }} public/private..."></td>
-                        {% endif %}
-                        {% if 'removeSections' in session_data.permissions %}
-                            {% if section.system %}
-                                <td data-tooltip="System section, can't be deleted">🚫</td>
-                            {% else %}
-                                <td><input class="section_deletion" data-email="{{ section.id }}" type="image" src="/img/close.svg" alt="Delete section {{ section.id }}"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing section..."></td>
-                            {% endif %}
-                        {% endif %}
-                    {% endif %}
-                </tr>
+                {{ include('common/elements/sectionrow.twig', {'section': section, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
             {% endfor %}
         </tbody>
     </table>

@@ -9,7 +9,7 @@ export class bicRefresh
     }
 
     //Refresh BIC library through API
-    public refresh(event: Event): void
+    private refresh(event: Event): void
     {
         if (this.refreshButton.classList.contains('spin')) {
             //It already has been clicked, cancel event

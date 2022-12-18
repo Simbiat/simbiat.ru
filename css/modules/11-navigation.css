@@ -80,14 +80,14 @@
     outline: none;
 }
 .navCat ul {
-    list-style-type: '\1F359';
+    list-style-type: '🍙';
     padding-left: 3.5rem;
 }
 .navCat ul li .navItem {
     box-sizing: border-box;
 }
 .navCat ul .current {
-    list-style-type: '\1F358';
+    list-style-type: '🍘';
 }
 .navCat ul .current a {
     font-weight: normal;

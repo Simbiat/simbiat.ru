@@ -1,9 +1,10 @@
 export declare class Emails {
     private readonly addMailForm;
     constructor();
-    add(): boolean | void;
-    delete(button: HTMLInputElement): void;
-    blockDelete(): void;
-    subscribe(event: Event): void;
-    activate(button: HTMLInputElement): void;
+    private add;
+    private addRow;
+    private delete;
+    private blockDelete;
+    private subscribe;
+    private activate;
 }

@@ -75,6 +75,12 @@ function router(): void
                     import('/js/Pages/uc/removal.js').then((module) => {new module.RemoveProfile();});
                 }
             }
+        } else if (path[0] === 'talks') {
+            if (path[1] === 'edit') {
+                if (path[2] === 'sections') {
+                    import('/js/Pages/talks/edit/sections.js').then((module) => {new module.editSections();});
+                }
+            }
         }
     }
 }

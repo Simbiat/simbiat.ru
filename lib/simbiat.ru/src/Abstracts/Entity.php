@@ -7,7 +7,7 @@ use Simbiat\Errors;
 abstract class Entity
 {
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
-    protected bool $attempted = false;
+    public bool $attempted = false;
     #If ID was retrieved, this needs to not be null
     public ?string $id = null;
     #Format for IDs
@@ -45,13 +45,13 @@ abstract class Entity
     #Update entity properties
     public final function get(): self
     {
+        #Set flag, that we have tried to get data
+        $this->attempted = true;
         try {
             #Set ID
             if ($this->id === null) {
                 throw new \UnexpectedValueException('ID can\'t be empty.');
             }
-            #Set flag, that we have tried to get data
-            $this->attempted = true;
             #Get data
             $result = $this->getFromDB();
             if (empty($result)) {

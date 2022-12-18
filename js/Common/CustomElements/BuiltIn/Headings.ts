@@ -30,7 +30,7 @@ class Headings
     }
 
     //Copy anchor to the header tag on click
-    public copyLink(target: HTMLHeadingElement): string
+    private copyLink(target: HTMLHeadingElement): string
     {
         //Checking for selection. If it's present most likely the text in anchor is being selected with intention of copying it.
         //In this case, if we copy the anchor link, we may provide undesired effect (although ctrl+c will most likely fire after this).

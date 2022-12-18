@@ -21,6 +21,12 @@ class ImageUpload extends HTMLElement
                 this.update();
             });
         }
+        //In case we have a data-current, that is not empty - attempt to show it
+        let current = this.preview.getAttribute('data-current') ?? '';
+        if (!/^\s*$/ui.test(current)) {
+            this.preview.src = current;
+            this.preview.classList.remove('hidden');
+        }
     }
     
     //Function to update preview of the avatar

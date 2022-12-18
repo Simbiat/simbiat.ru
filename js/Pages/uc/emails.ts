@@ -15,6 +15,7 @@ export class Emails
             });
             //Listener for mail subscription checkbox
             document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+                //Tracking click to be able to roll back change easily
                 item.addEventListener('click', (event: Event) => {
                     this.subscribe(event);
                 });
@@ -27,8 +28,8 @@ export class Emails
             });
         }
     }
-
-    public add(): boolean | void
+    
+    private add(): boolean | void
     {
         //Get form data
         let formData = new FormData(this.addMailForm as HTMLFormElement);
@@ -42,38 +43,7 @@ export class Emails
         ajax(location.protocol+'//'+location.host+'/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 //Add row to table
-                let template = (document.querySelector('#email_row') as HTMLTemplateElement).content.cloneNode(true) as DocumentFragment;
-                let cells = template.querySelectorAll('td');
-                //Set email as value of the first cell
-                (cells[0] as HTMLTableCellElement).innerHTML = email;
-                //Update attributes of the second cell's input
-                let inputElement = (cells[1] as HTMLTableCellElement).querySelector('input') as HTMLInputElement;
-                new Input().init(inputElement);
-                inputElement.setAttribute('data-email', email);
-                //Attach listener
-                inputElement.addEventListener('click', (event: Event) => {
-                    this.activate(event.target as HTMLInputElement);
-                });
-                //Update attributes of the second cell's spinner
-                let spinner = (cells[1] as HTMLTableCellElement).querySelector('img') as HTMLImageElement;
-                spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-                spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-                //Update attributes of the 4th cell's input
-                inputElement = (cells[3] as HTMLTableCellElement).querySelector('input') as HTMLInputElement;
-                new Input().init(inputElement);
-                inputElement.setAttribute('data-email', email);
-                inputElement.setAttribute('data-tooltip', String(inputElement.getAttribute('data-tooltip')).replace('email', email));
-                inputElement.setAttribute('alt', String(inputElement.getAttribute('alt')).replace('email', email));
-                //Attach listener
-                inputElement.addEventListener('click', (event: Event) => {
-                    this.delete(event.target as HTMLInputElement);
-                });
-                //Update attributes of the 4th cell's spinner
-                spinner = (cells[3] as HTMLTableCellElement).querySelector('img') as HTMLImageElement;
-                spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-                spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-                //Attach the row to table body
-                (document.querySelector('#emailsList tbody') as HTMLTableElement).appendChild(template);
+                this.addRow(email);
                 //Refresh delete buttons' status
                 this.blockDelete();
                 (this.addMailForm as HTMLFormElement).reset();
@@ -84,8 +54,44 @@ export class Emails
             buttonToggle(button as HTMLInputElement);
         });
     }
-
-    public delete(button: HTMLInputElement): void
+    
+    private addRow(email: string)
+    {
+        let template = (document.querySelector('#email_row') as HTMLTemplateElement).content.cloneNode(true) as DocumentFragment;
+        let cells = template.querySelectorAll('td');
+        //Set email as value of the first cell
+        (cells[0] as HTMLTableCellElement).innerHTML = email;
+        //Update attributes of the second cell's input
+        let inputElement = (cells[1] as HTMLTableCellElement).querySelector('input') as HTMLInputElement;
+        new Input().init(inputElement);
+        inputElement.setAttribute('data-email', email);
+        //Attach listener
+        inputElement.addEventListener('click', (event: Event) => {
+            this.activate(event.target as HTMLInputElement);
+        });
+        //Update attributes of the second cell's spinner
+        let spinner = (cells[1] as HTMLTableCellElement).querySelector('img') as HTMLImageElement;
+        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
+        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
+        //Update attributes of the 4th cell's input
+        inputElement = (cells[3] as HTMLTableCellElement).querySelector('input') as HTMLInputElement;
+        new Input().init(inputElement);
+        inputElement.setAttribute('data-email', email);
+        inputElement.setAttribute('data-tooltip', String(inputElement.getAttribute('data-tooltip')).replace('email', email));
+        inputElement.setAttribute('alt', String(inputElement.getAttribute('alt')).replace('email', email));
+        //Attach listener
+        inputElement.addEventListener('click', (event: Event) => {
+            this.delete(event.target as HTMLInputElement);
+        });
+        //Update attributes of the 4th cell's spinner
+        spinner = (cells[3] as HTMLTableCellElement).querySelector('img') as HTMLImageElement;
+        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
+        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
+        //Attach the row to table body
+        (document.querySelector('#emailsList tbody') as HTMLTableElement).appendChild(template);
+    }
+    
+    private delete(button: HTMLInputElement): void
     {
         //Generate form data
         let formData = new FormData();
@@ -105,7 +111,7 @@ export class Emails
     }
 
     //Function to block button for mail removal if we have less than 2 confirmed mails
-    public blockDelete(): void
+    private blockDelete(): void
     {
         let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
         document.querySelectorAll('.mail_deletion').forEach(item => {
@@ -125,8 +131,8 @@ export class Emails
             }
         });
     }
-
-    public subscribe(event: Event): void
+    
+    private subscribe(event: Event): void
     {
         event.preventDefault();
         event.stopPropagation();
@@ -138,7 +144,6 @@ export class Emails
         } else {
             verb = 'unsubscribe';
         }
-        let label = (checkbox.parentElement as HTMLDivElement).querySelector('label') as HTMLLabelElement;
         buttonToggle(checkbox as HTMLInputElement);
         //Generate form data
         let email = checkbox.getAttribute('data-email') ?? '';
@@ -149,11 +154,9 @@ export class Emails
             if (data.data === true) {
                 if (checkbox.checked) {
                     checkbox.checked = false;
-                    label.innerText = 'Subscribe';
                     new Snackbar(email+' unsubscribed', 'success');
                 } else {
                     checkbox.checked = true;
-                    label.innerText = 'Unsubscribe';
                     new Snackbar(email+' subscribed', 'success');
                 }
             } else {
@@ -162,8 +165,8 @@ export class Emails
             buttonToggle(checkbox as HTMLInputElement);
         });
     }
-
-    public activate(button: HTMLInputElement): void
+    
+    private activate(button: HTMLInputElement): void
     {
         //Generate form data
         let email = button.getAttribute('data-email') ?? '';

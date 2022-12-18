@@ -192,12 +192,12 @@ cite {
     font-style: italic;
 }
 cite:before {
-    content: '\2760';
+    content: '❠';
     margin-left: 0.25rem;
     padding-right: 0.1rem;
 }
 cite:after {
-    content: '\275D';
+    content: '❝';
     margin-right: 0.25rem;
     padding-left: 0.1rem;
 }
@@ -220,7 +220,7 @@ blockquote {
     height: fit-content;
 }
 blockquote::before {
-    content: '\2760';
+    content: '❠';
     padding-right: 0.1rem;
     color: var(--color-disabled);
     position: absolute;
@@ -230,7 +230,7 @@ blockquote::before {
     font-style: italic;
 }
 blockquote::after {
-    content: '\275D';
+    content: '❝';
     padding-left: 0.1rem;
     color: var(--color-disabled);
     position: absolute;
@@ -289,7 +289,7 @@ code > .quoteSource:before {
 blockquote > .quoteSource:after,
 samp > .quoteSource:after,
 code > .quoteSource:after {
-    content: '\275D';
+    content: '❝';
 }
 q {
     font-style: italic;
@@ -304,12 +304,12 @@ q {
     background-color: var(--color-body);
 }
 q::before {
-    content: '\2760';
+    content: '❠';
     padding-right: 0.1rem;
     color: var(--color-disabled);
 }
 q::after {
-    content: '\275D';
+    content: '❝';
     padding-left: 0.1rem;
     color: var(--color-disabled);
 }
@@ -345,7 +345,7 @@ h1:target, h2:target, h3:target, h4:target, h5:target, h6:target {
 }
 /*Add anchor symbol to left of headers by default*/
 h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
-    content: '\1F517';
+    content: '🔗';
     color: transparent;
     text-shadow: 0 0 0 var(--color-interactive);
     font-size: small;

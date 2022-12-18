@@ -10,7 +10,7 @@ use Simbiat\Talks\Pages\User;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['sections', 'threads', 'posts', 'users'];
+    protected array $subRoutes = ['sections', 'threads', 'posts', 'users', 'edit'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/talks/', 'name'=>'Talks']
@@ -29,6 +29,7 @@ class Router extends \Simbiat\Abstracts\Router
             'threads' => (new Thread)->get(array_slice($path, 1)),
             'posts' => (new Post)->get(array_slice($path, 1)),
             'users' => (new User)->get(array_slice($path, 1)),
+            'edit' => (new Edit)->route(array_slice($path, 1)),
         };
     }
 }

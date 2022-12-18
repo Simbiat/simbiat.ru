@@ -37,8 +37,8 @@ export class EditProfile
             submitIntercept(this.profileForm, this.profile.bind(this));
         }
     }
-
-    public profile(auto: boolean = false): void
+    
+    private profile(auto: boolean = false): void
     {
         //Get form data
         let formData = new FormData(this.profileForm as HTMLFormElement);
@@ -64,8 +64,8 @@ export class EditProfile
             buttonToggle(button as HTMLInputElement);
         });
     }
-
-    public profileOnChange(): void
+    
+    private profileOnChange(): void
     {
         if (this.timeOut) {
             clearTimeout(this.timeOut);
@@ -78,13 +78,13 @@ export class EditProfile
             this.timeOut = setTimeout(() => {this.profile(true)}, 10000);
         }
     }
-
-    public usernameOnChange(): void
+    
+    private usernameOnChange(): void
     {
         (this.usernameSubmit as HTMLInputElement).disabled = (this.usernameField as HTMLInputElement).getAttribute('data-original') === (this.usernameField as HTMLInputElement).value;
     }
-
-    public username(): void
+    
+    private username(): void
     {
         //Get form data
         let formData = new FormData(this.usernameForm as HTMLFormElement);

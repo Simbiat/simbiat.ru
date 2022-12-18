@@ -2,54 +2,94 @@
     <vertical-tabs class="vertical_tabs">
         <tab-names>
             {% if subServiceName == 'section' %}
-                {% if 'addSections' in session_data.permissions %}
-                    <tab-name class="nav_tab active">Add subsection</tab-name>
+                {% if 'addSections' in session_data.permissions and not closed %}
+                    <tab-name class="nav_tab">Add subsection</tab-name>
                 {% endif %}
                 {% if 'editSections' in session_data.permissions %}
                     <tab-name class="nav_tab">Edit</tab-name>
                 {% endif %}
-                {% if 'removeSections' in session_data.permissions %}
+                {% if 'removeSections' in session_data.permissions and not system %}
                     <tab-name class="nav_tab danger">Remove</tab-name>
                 {% endif %}
             {% endif %}
         </tab-names>
         <tab-contents>
             {% if subServiceName == 'section' %}
-                {% if 'addSections' in session_data.permissions %}
-                    <tab-content class="active">
+                {% if 'addSections' in session_data.permissions and not closed %}
+                    <tab-content>
                         <form role="form" id="addSectionForm" name="addSectionForm" autocomplete="off" class="middle">
-                            <input type="hidden" name="parentid" value="{{ sectionid }}">
+                            <input type="hidden" name="newSection[parentid]" value="{{ sectionid }}" required>
                             <div class="float_label_div">
-                                <input form="addSectionForm" type="text" aria-required="true" name="details[name]" id="new_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+                                <input form="addSectionForm" type="text" aria-required="true" required name="newSection[name]" id="new_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
                                 <label for="new_section_name">Name</label>
                             </div>
                             <div class="float_label_div">
-                                <input form="addSectionForm" type="text" aria-required="false" name="details[description]" id="new_section_description" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">
+                                <input form="addSectionForm" type="number" inputmode="decimal" min="0" max="99" value="0" step="1" class="number_spinner" aria-required="false" name="newSection[order]" id="new_section_sequence" placeholder="Order">
+                                <label for="new_section_sequence">Order</label>
+                            </div>
+                            <br>
+                            <div class="float_label_div w100pc">
+                                <textarea id="new_section_description" form="addSectionForm" name="newSection[description]" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100"></textarea>
                                 <label for="new_section_description">Description</label>
                             </div>
-                            <div class="float_label_div">
-                                <select form="addSectionForm" required aria-required="true" name="details[type]" id="new_section_type">
-                                    <option value="1">Category</option>
-                                    <option value="2">Blog</option>
-                                    <option value="3">Forum</option>
-                                    <option value="4">Changelog</option>
-                                    <option value="5">Support</option>
-                                    <option value="6">Knowledgebase</option>
-                                </select>
-                                <label for="new_section_type" data-tooltip="Type of the entity you want to register">Type</label>
-                            </div>
-                            <div class="float_label_div">
-                                <input form="addSectionForm" type="number" inputmode="decimal" min="0" max="99" value="0" step="1" class="number_spinner" aria-required="false" name="details[sequence]" id="new_section_sequence" placeholder="Sequence">
-                                <label for="new_section_sequence">Sequence</label>
-                            </div>
+                            <br>
+                            <span class="radio_and_label"><input form="addSectionForm" id="new_section_private" class="section_private" name="newSection[private]" type="checkbox"><label for="new_section_private" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label></span>
+                            <span class="radio_and_label"><input form="addSectionForm" id="new_section_closed" class="section_closed" name="newSection[closed]" type="checkbox"><label for="new_section_closed" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label></span>
+                            {{ include('common/elements/selectcustom.twig', {'formName': 'addSectionForm', 'placeholder': 'Type', 'inputName': 'newSection[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+                            {{ include('common/elements/imageupload.twig', {'formName': 'addSectionForm', 'placeholder': 'Custom icon', 'inputName': 'newSection[icon]', 'previewClasses': 'middle', 'required': false}, with_context = false) }}
+                            <input role="button" form="addSectionForm" type="submit" name="newSection[submit]" id="addSection_submit" formaction="/api/talks/sections/" formmethod="post" formtarget="_self" value="Add">
+                            <img id="addSection_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating section...">
                         </form>
                     </tab-content>
                 {% endif %}
                 {% if 'editSections' in session_data.permissions %}
-                    <tab-content>Edit section</tab-content>
+                    <tab-content>
+                        <form role="form" id="editSectionForm" name="editSectionForm" autocomplete="off" class="middle">
+                            <input type="hidden" name="curSection[sectionid]" id="curSection_id" value="{{ sectionid }}" required>
+                            <div class="float_label_div">
+                                <input form="editSectionForm" type="text" aria-required="true" required name="curSection[name]" id="cur_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64" value="{{ name }}">
+                                <label for="cur_section_name">Name</label>
+                            </div>
+                            <div class="float_label_div">
+                                <input form="editSectionForm" type="number" inputmode="decimal" min="1" value="{{ parentID }}" step="1" class="number_spinner" aria-required="false" name="curSection[parentid]" id="cur_section_parent" placeholder="Parent ID">
+                                <label for="cur_section_parent" data-tooltip="ID of parent section.<br>Change it to move the section.">Parent ID</label>
+                            </div>
+                            <div class="float_label_div">
+                                <input form="editSectionForm" type="number" inputmode="decimal" min="0" max="99" value="{{ sequence|default('0') }}" step="1" class="number_spinner" aria-required="false" name="curSection[order]" id="cur_section_sequence" placeholder="Order">
+                                <label for="cur_section_sequence">Order</label>
+                            </div>
+                            <br>
+                            <div class="float_label_div w100pc">
+                                <textarea id="cur_section_description" form="editSectionForm" name="curSection[description]" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">{{ description }}</textarea>
+                                <label for="cur_section_description">Description</label>
+                            </div>
+                            <br>
+                            <span class="radio_and_label"><input form="editSectionForm" id="cur_section_private" class="section_private" name="curSection[private]" type="checkbox"{% if private %} checked{% endif %}><label for="cur_section_private" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label></span>
+                            <span class="radio_and_label"><input form="editSectionForm" id="cur_section_closed" class="section_closed" name="curSection[closed]" type="checkbox"{% if closed %} checked{% endif %}><label for="cur_section_closed" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label></span>
+                            {{ include('common/elements/selectcustom.twig', {'formName': 'editSectionForm', 'placeholder': 'Type', 'inputName': 'curSection[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+                            {{ include('common/elements/imageupload.twig', {'formName': 'editSectionForm', 'placeholder': 'Custom icon', 'inputName': 'curSection[icon]', 'previewClasses': 'middle section_icon', 'required': false, 'imageUrl': icon}, with_context = false) }}
+                            <div class="radio_and_label">
+                                <input form="editSectionForm" id="cur_section_clear_icon" name="curSection[clearicon]" type="checkbox">
+                                <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section, replacing it with the default icon for selected section type.<br>Physical file will not be removed on save, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
+                            </div>
+                            <br>
+                            <input role="button" form="editSectionForm" type="submit" name="curSection[submit]" id="editSection_submit" formaction="/api/talks/sections/" formmethod="post" formtarget="_self" value="Update">
+                            <img id="editSection_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating section...">
+                        </form>
+                    </tab-content>
                 {% endif %}
-                {% if 'removeSections' in session_data.permissions %}
-                    <tab-content>Delete section</tab-content>
+                {% if 'removeSections' in session_data.permissions and not system %}
+                    <tab-content>
+                        {% if children.entities or threads.entities %}
+                            <p>This section has subsections or/and threads. Removal is not possible.</p>
+                        {% else %}
+                            <p>Pressing below button will delete the current section completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+                            <p>If section has a custom icon it will not be removed along with the section. Instead, it will be removed during routine check for orphaned files, if the icon file is not linked to anything else.</p>
+                            <p>If deletion is successful you will be redirected to respective parent section.</p>
+                            <input role="button" type="button" id="delete_section" value="Delete" data-section="{{ sectionid }}">
+                            <img loading="lazy" decoding="async" id="section_delete_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Deleting section...">
+                        {% endif %}
+                    </tab-content>
                 {% endif %}
             {% endif %}
         </tab-contents>

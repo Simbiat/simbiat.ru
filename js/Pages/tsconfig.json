@@ -27,13 +27,14 @@
         "listFiles": true,
         //Other settings
         "allowJs": false,
-        "checkJs": true,
+        "checkJs": false,
         "composite": true,
         "noErrorTruncation": true,
     },
     //Include only .ts files in the same dir
     "include": [
-        "./*/*.ts"
+        "./*/*.ts",
+        "./*/*/*.ts"
     ],
     "exclude": [
         "node_modules"

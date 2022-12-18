@@ -1,5 +1,9 @@
-<template id="avatar_item">
-    <li id="hash">
-        <span class="radio_and_label"><input id="avatar_hash" type="radio" checked><label for="avatar_hash"><img loading="lazy" decoding="async" alt="New avatar" src="/img/avatar.svg" class="avatar"></label></span><input id="del_hash" alt="Delete avatar" type="image" class="delete_avatar hidden" disabled src="/img/close.svg">
-    </li>
-</template>
+<li id="{{ avatar.fileid|default('hash') }}">
+    <span class="radio_and_label">
+        <input id="avatar_{{ avatar.fileid|default('hash') }}" type="radio"{% if avatar.current %} checked{% endif %}>
+        <label for="avatar_{{ avatar.fileid|default('hash') }}">
+            <img loading="lazy" decoding="async" alt="Avatar {{ number }}" src="{{ avatar.url }}" class="avatar">
+        </label>
+    </span>
+    <input id="del_{{ avatar.fileid|default('hash') }}" alt="Delete avatar" type="image" class="delete_avatar{% if avatar and avatar.current %} hidden{% endif %}"{% if avatar and avatar.current %} disabled{% endif %} src="/img/close.svg">
+</li>

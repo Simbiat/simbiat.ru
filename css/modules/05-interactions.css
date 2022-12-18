@@ -471,16 +471,16 @@ input[type=radio]+label:active::before {
     filter: var(--border-shadow);
 }
 input[type=checkbox]:checked+label::before {
-    content: '\1F5F9';
+    content: '🗹';
 }
 input[type=checkbox]:not(:checked)+label::before {
-    content: '\2610';
+    content: '☐';
 }
 input[type=radio]:checked+label::before {
-    content: '\29BF';
+    content: '⦿';
 }
 input[type=radio]:not(:checked)+label::before {
-    content: '\2B58';
+    content: '⭘';
 }
 
 /*Style disabled elements*/
@@ -834,6 +834,7 @@ image-upload {
 }
 image-upload img {
     display: block;
+    width: 10rem;
 }
 
 /*Styling custom select block*/

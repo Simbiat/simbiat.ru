@@ -36,8 +36,8 @@ class Aside
         }
         Aside._instance = this;
     }
-
-    public singInUpSubmit(): void
+    
+    private singInUpSubmit(): void
     {
         if (this.loginForm) {
             //Get form data
@@ -64,7 +64,7 @@ class Aside
     }
 
     //Handle some adjustments when using radio-button switch
-    public loginRadioCheck(): void
+    private loginRadioCheck(): void
     {
         //Assign actual elements to variables
         let existUser = document.getElementById('radio_existuser') as HTMLInputElement;

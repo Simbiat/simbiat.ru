@@ -77,7 +77,7 @@ class HomePage
                 #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
                 Headers::multiPartFormParse();
                 if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
-                    $_POST = $this::$headers::$_PUT ?: $this::$headers::$_DELETE ?: $this::$headers::$_PATCH ?: [];
+                    $_POST = array_change_key_case(self::$headers::$_PUT ?: self::$headers::$_DELETE ?: self::$headers::$_PATCH ?: []);
                 }
                 #Set canonical URL
                 $this->canonical();

@@ -35,7 +35,7 @@ export class EditAvatars
     }
     
     //Upload a new avatar
-    public upload()
+    private upload()
     {
         if (this.avatarFile && (this.avatarFile.files as FileList).length === 0) {
             new Snackbar('No file selected', 'failure', 10000);
@@ -66,7 +66,7 @@ export class EditAvatars
     }
     
     //Change current avatar
-    public setActive(avatar: HTMLInputElement)
+    private setActive(avatar: HTMLInputElement)
     {
         //Get li element
         let li = (avatar.parentElement as HTMLElement).closest('li');
@@ -84,7 +84,7 @@ export class EditAvatars
     }
     
     //Function to refresh the current avatar on the page without reloading
-    public refresh(avatar: string)
+    private refresh(avatar: string)
     {
         let hash = basename(avatar);
         document.querySelectorAll('#avatars_list li').forEach(item => {
@@ -112,7 +112,7 @@ export class EditAvatars
     }
     
     //Function to add avatar to list
-    public addToList(avatar: string)
+    private addToList(avatar: string)
     {
         let hash = basename(avatar);
         //Create list item
@@ -146,7 +146,7 @@ export class EditAvatars
     }
     
     //Function to delete avatar
-    public delete(avatar: HTMLInputElement)
+    private delete(avatar: HTMLInputElement)
     {
         //Get li element
         let li = (avatar.parentElement as HTMLElement).closest('li');

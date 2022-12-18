@@ -10,8 +10,8 @@ class WebShare extends HTMLElement
             this.classList.add('hidden');
         }
     }
-
-    public share(): Promise<void>
+    
+    private share(): Promise<void>
     {
         return navigator.share({
             title: document.title,

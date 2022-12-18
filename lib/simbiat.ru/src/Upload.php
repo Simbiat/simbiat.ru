@@ -26,8 +26,8 @@ class Upload extends Api
         header('P3P: CP="There is no P3P policy."');
         try {
             $upload = (new Curl)->upload();
-            if ($upload === false || empty($upload['location'])) {
-                return ['http_error' => 500, 'reason' => 'Failed to upload file'];
+            if (!empty($upload['http_error'])) {
+                return $upload;
             }
             return ['response' => true, 'location' => $upload['location']];
         } catch (\Throwable $throwable) {

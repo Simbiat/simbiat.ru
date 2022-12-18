@@ -9,8 +9,8 @@ export class EditFFLinks
             submitIntercept(this.form, this.link.bind(this));
         }
     }
-
-    public link(): void
+    
+    private link(): void
     {
         //Get form data
         let formData = new FormData(this.form as HTMLFormElement);

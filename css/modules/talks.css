@@ -41,11 +41,14 @@
 }
 #sections_list tr td:nth-child(3),
 #sections_list tr td:nth-child(4),
-#sections_list tr td:nth-child(7),
-#sections_list tr td:nth-child(8),
 #sections_list tr td:nth-child(9),
 #sections_list tr td:nth-child(10) {
     width: 4rem;
+    text-align: center;
+}
+#sections_list tr td:nth-child(7),
+#sections_list tr td:nth-child(8) {
+    width: 5rem;
     text-align: center;
 }
 #sections_list tr td:nth-child(5) {
@@ -260,4 +263,56 @@ like-dis input {
     content: '❰❰';
     color: var(--color-success);
     margin-left: 0.25rem;
+}
+
+/*Checkboxes*/
+.section_private+label,
+.section_closed+label {
+    text-decoration-color: var(--color-interactive);
+}
+.section_private:not(:checked)+label:after {
+    content: 'Public';
+}
+.section_private:checked+label:after {
+    content: 'Private';
+}
+input[type=checkbox].section_private:not(:checked)+label::before {
+    content: '🚶';
+}
+input[type=checkbox].section_private:checked+label::before {
+    content: '🚷';
+}
+.section_closed:not(:checked)+label:after {
+    content: 'Open';
+}
+.section_closed:checked+label:after {
+    content: 'Closed';
+}
+input[type=checkbox].section_closed:not(:checked)+label::before {
+    content: '🔓';
+}
+input[type=checkbox].section_closed:checked+label::before {
+    content: '🔒';
+}
+
+#delete_section {
+    display: block;
+    color: var(--color-failure);
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+
+image-upload > .section_icon {
+    width: 2rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+/*Style textarea tags for section description*/
+#new_section_description,
+#cur_section_description {
+    width: 100%;
+    max-width: 100ch;
 }

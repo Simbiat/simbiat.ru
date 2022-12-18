@@ -1,12 +1,10 @@
-<template id="email_row">
-    <tr class="middle">
-        <td>email</td>
-        <td>
-            <input type="button" value="Confirm" class="mail_activation" data-email="email" aria-invalid="false" placeholder="Confirm"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Activating email..." data-tooltip="Activating email...">
-        </td>
-        <td class="warning">Confirm address to change setting</td>
-        <td>
-            <input class="mail_deletion" data-email="email" type="image" src="/img/close.svg" alt="Delete email" aria-invalid="false" placeholder="image" data-tooltip="Delete email" tabindex="0"><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing email..." data-tooltip="Removing email...">
-        </td>
-    </tr>
-</template>
+<tr class="middle">
+    <td>{{ email.email|default('email') }}</td>
+    <td>
+        {% if not email or email.activation %}<input type="button" value="Confirm" class="mail_activation" data-email="{{ email.email }}"><img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Activating {{ email.email }}...">{% else %}<span class="mail_confirmed">✅</span>{% endif %}
+    </td>
+    <td{% if not email or email.activation %} class="warning"{% endif %}>{% if not email or email.activation %}Confirm address to change setting{% else %}<span class="radio_and_label"><input id="subscription_checkbox_{{ number }}" class="mail_subscription" data-email="{{ email.email }}" type="checkbox"{% if email.subscribed %} checked{% endif %}><label for="subscription_checkbox_{{ number }}"></label></span><img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Changing subscription for {{ email.email }}...">{% endif %}</td>
+    <td>
+        <input class="mail_deletion" data-email="{{ email.email }}" type="image" src="/img/close.svg" {% if email and ((email.activation and countActivated == 0) or (not email.activation and (emails|length < 2 or countActivated < 2))) %}disabled alt="Can't delete" {% else %}alt="Delete {{ email.email|default('email') }}"{% endif %}><img class="hidden spinner inline" src="/img/spinner.svg" alt="Removing {{ email.email|default('email') }}...">
+    </td>
+</tr>

@@ -3,7 +3,7 @@
         <img alt="Це Україна! Іди додому, окупанте!" src="/img/flags/Ukraine.svg">
     {% endif %}
     {% if bicdetails.DateOut %}
-        <p class="failure"><span class="emojiRed">&#10060;</span>Организация закрыта {{ timeTag(bicdetails.DateOut, "d/m/Y") }}<span class="emojiRed">&#10060;</span></p>
+        <p class="failure"><span class="emojiRed">❌</span>Организация закрыта {{ timeTag(bicdetails.DateOut, "d/m/Y") }}<span class="emojiRed">❌</span></p>
     {% endif %}
     <table>
         <caption><h2 class="zeroMargin">Информация для расчётов</h2></caption>
@@ -205,7 +205,7 @@
                 <td>Телефон{% if bicdetails.DBF.contacts.TELEF.phones|length > 1 %}ы{% endif %}:</td>
                 <td>{% if bicdetails.DBF.contacts.TELEF %}
                         {% for tel in bicdetails.DBF.contacts.TELEF.phones %}
-                            &#128222;<a target="_blank" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}
+                            📞<a target="_blank" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}
                         {% endfor %}
                         {% if bicdetails.DBF.contacts.TELEF.dob %}
                             (доб. {{ bicdetails.DBF.contacts.TELEF.dob }})
