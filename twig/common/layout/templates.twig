@@ -3,20 +3,12 @@
     {% if serviceName == 'uc' %}
         {% if subServiceName == 'emails' %}
             <template id="email_row">
-                {{ include('common/elements/emailrow.twig', with_context = false) }}
+                {{ include('usercontrol/emailrow.twig', with_context = false) }}
             </template>
         {% elseif subServiceName == 'avatars' %}
             <template id="avatar_item">
-                {{ include('common/elements/avataritem.twig', with_context = false) }}
+                {{ include('usercontrol/avataritem.twig', with_context = false) }}
             </template>
-        {% endif %}
-    {% elseif serviceName == 'talks' %}
-        {% if subServiceName == 'section' %}
-            {% if editMode and 'addSections' in session_data.permissions and not closed %}
-                <template id="section_row">
-                    {{ include('common/elements/sectionrow.twig', with_context = false) }}
-                </template>
-            {% endif %}
         {% endif %}
     {% endif %}
 </html-templates>

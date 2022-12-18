@@ -4,7 +4,7 @@
 <ul id="avatars_list">
     {% if avatars %}
         {% for avatar in avatars %}
-            {{ include('common/elements/avataritem.twig', {'avatar': avatar, 'number': loop.index}, with_context = false) }}
+            {{ include('usercontrol/avataritem.twig', {'avatar': avatar, 'number': loop.index}, with_context = false) }}
         {% endfor %}
     {% endif %}
 </ul>

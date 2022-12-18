@@ -25,7 +25,7 @@
         </thead>
         <tbody>
             {% for section in children.entities %}
-                {{ include('common/elements/sectionrow.twig', {'section': section, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
+                {{ include('talks/sectionrow.twig', {'section': section, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
             {% endfor %}
         </tbody>
     </table>
