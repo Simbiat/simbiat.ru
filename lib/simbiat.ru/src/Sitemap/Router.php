@@ -29,7 +29,7 @@ class Router extends \Simbiat\Abstracts\Router
         }
         #Send 406 if format is not acceptable
         match ($format) {
-            'html' =>Headers::notAccept(['text/html']),
+            'html' =>Headers::notAccept(),
             'txt' => Headers::notAccept(['text/plain']),
             'xml' => Headers::notAccept(['application/xml']),
         };
