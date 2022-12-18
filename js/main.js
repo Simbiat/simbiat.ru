@@ -1378,8 +1378,9 @@ class Form {
         document.querySelectorAll('form input[type="email"], form input[type="password"], form input[type="search"], form input[type="tel"], form input[type="text"], form input[type="url"]').forEach((item) => {
             item.addEventListener('keydown', this.inputBackSpace.bind(this));
             if (item.getAttribute('maxlength')) {
-                item.addEventListener('input', this.autoNext.bind(this));
-                item.addEventListener('change', this.autoNext.bind(this));
+                ['input', 'change',].forEach((eventType) => {
+                    item.addEventListener(eventType, this.autoNext.bind(this));
+                });
                 item.addEventListener('paste', this.pasteSplit.bind(this));
             }
         });
@@ -1523,9 +1524,9 @@ class Input {
         Input._instance = this;
     }
     init(inputElement) {
-        inputElement.addEventListener('focus', () => { this.ariaNation(inputElement); });
-        inputElement.addEventListener('change', () => { this.ariaNation(inputElement); });
-        inputElement.addEventListener('input', () => { this.ariaNation(inputElement); });
+        ['focus', 'change', 'input',].forEach((eventType) => {
+            inputElement.addEventListener(eventType, () => { this.ariaNation(inputElement); });
+        });
         this.ariaNation(inputElement);
     }
     ariaNation(inputElement) {
@@ -1661,8 +1662,27 @@ class Textarea {
             if (!item.hasAttribute('placeholder')) {
                 item.setAttribute('placeholder', item.value || item.type || 'placeholder');
             }
+            if (item.maxLength > 0) {
+                ['change', 'keydown', 'keyup',].forEach((eventType) => {
+                    item.addEventListener(eventType, (event) => { this.countCharacters(event.target); });
+                });
+                this.countCharacters(item);
+            }
         });
         Textarea._instance = this;
+    }
+    countCharacters(textarea) {
+        let label = textarea.labels[0];
+        label.setAttribute('data-curlength', '(' + String(textarea.value.length) + '/' + String(textarea.maxLength) + 'ch)');
+        label.className = '';
+        if (textarea.value.length >= textarea.maxLength) {
+            label.classList.add('at_the_limit');
+        }
+        else {
+            if (((100 * textarea.value.length) / textarea.maxLength) >= 75) {
+                label.classList.add('close_to_limit');
+            }
+        }
     }
 }
 //# sourceMappingURL=main.js.map

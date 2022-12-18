@@ -23,8 +23,9 @@ class Form
             //Somehow backspace can be tracked only on keydown, not keypress
             item.addEventListener('keydown', this.inputBackSpace.bind(this));
             if (item.getAttribute('maxlength')) {
-                item.addEventListener('input', this.autoNext.bind(this));
-                item.addEventListener('change', this.autoNext.bind(this));
+                ['input', 'change', ].forEach((eventType: string) => {
+                    item.addEventListener(eventType, this.autoNext.bind(this));
+                });
                 item.addEventListener('paste', this.pasteSplit.bind(this));
             }
         });

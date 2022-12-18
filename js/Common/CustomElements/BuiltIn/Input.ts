@@ -16,9 +16,9 @@ class Input
     //Simplifying attaching of listeners and initial run of ariaNation for new elements
     public init(inputElement: HTMLInputElement): void
     {
-        inputElement.addEventListener('focus', () => {this.ariaNation(inputElement)});
-        inputElement.addEventListener('change', () => {this.ariaNation(inputElement)});
-        inputElement.addEventListener('input', () => {this.ariaNation(inputElement)});
+        ['focus', 'change', 'input',].forEach((eventType: string) => {
+            inputElement.addEventListener(eventType, () => {this.ariaNation(inputElement);});
+        });
         this.ariaNation(inputElement);
     }
 

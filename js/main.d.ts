@@ -369,4 +369,5 @@ declare class Quotes {
 declare class Textarea {
     private static _instance;
     constructor();
+    countCharacters(textarea: HTMLTextAreaElement): void;
 }

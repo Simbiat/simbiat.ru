@@ -308,6 +308,18 @@ textarea::-webkit-resizer {
     border-bottom-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
 }
+textarea+label:after {
+    content: attr(data-curlength);
+    margin-left: 0.5rem;
+}
+textarea+label.close_to_limit:after {
+    color: var(--color-warning);
+    font-weight: bold;
+}
+textarea+label.at_the_limit:after {
+    color: var(--color-failure);
+    font-weight: bold;
+}
 
 /*Add a more obvious styling for summary tag by making it more like a link*/
 summary {
