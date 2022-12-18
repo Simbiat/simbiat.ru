@@ -20,6 +20,22 @@ class Textarea
                 //Call to set initial value
                 this.countCharacters(item);
             }
+            if (item.classList.contains('tinymce') && item.id) {
+                let settings = tinySettings;
+                settings.selector = '#'+item.id;
+                if (item.classList.contains('nomedia')) {
+                    //Remove plugins that allow upload of media
+                    settings.plugins = settings.plugins.replace('image ', '').replace('media ', '');
+                    settings.images_upload_url = '';
+                    settings.menu.insert.items = settings.menu.insert.items.replace('image ', '').replace('media ', '');
+                }
+                // I fail to make TS see the file with anything I do in "paths", yet this is correct code, and it does work as expected, so just ignoring this
+                // @ts-ignore
+                import('/js/tinymce/tinymce.min.js').then(() => {
+                    // @ts-ignore
+                    tinymce.init(settings);
+                });
+            }
         });
         Textarea._instance = this;
     }

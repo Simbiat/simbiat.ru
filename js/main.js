@@ -168,12 +168,6 @@ function init() {
     cleanGET();
     hashCheck();
     router();
-    let tinyList = document.querySelectorAll('textarea.tinymce');
-    if (tinyList.length > 0) {
-        import('/js/tinymce/tinymce.min.js').then(() => {
-            tinymce.init(tinySettings);
-        });
-    }
 }
 const customColorMap = {
     '#F5F0F0': 'text',
@@ -296,7 +290,7 @@ const tinySettings = {
     image_title: true,
     image_description: true,
     image_uploadtab: true,
-    images_file_types: 'jpeg,jpg,png,gif,bmp,webp',
+    images_file_types: 'jpeg,jpg,png,gif,bmp,webp,svg',
     images_upload_credentials: true,
     images_reuse_filename: true,
     images_upload_url: '/api/upload/',
@@ -310,7 +304,7 @@ const tinySettings = {
     ],
     automatic_uploads: true,
     remove_trailing_brs: true,
-    file_picker_types: 'image',
+    file_picker_types: 'file image media',
     block_unsupported_drop: true,
     image_dimensions: false,
     insertdatetime_element: true,
@@ -1667,6 +1661,18 @@ class Textarea {
                     item.addEventListener(eventType, (event) => { this.countCharacters(event.target); });
                 });
                 this.countCharacters(item);
+            }
+            if (item.classList.contains('tinymce') && item.id) {
+                let settings = tinySettings;
+                settings.selector = '#' + item.id;
+                if (item.classList.contains('nomedia')) {
+                    settings.plugins = settings.plugins.replace('image ', '').replace('media ', '');
+                    settings.images_upload_url = '';
+                    settings.menu.insert.items = settings.menu.insert.items.replace('image ', '').replace('media ', '');
+                }
+                import('/js/tinymce/tinymce.min.js').then(() => {
+                    tinymce.init(settings);
+                });
             }
         });
         Textarea._instance = this;
