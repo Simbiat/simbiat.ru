@@ -337,6 +337,7 @@ function cleanGET() {
     let url = new URL(document.location.href);
     let params = new URLSearchParams(url.search);
     params.delete('cacheReset');
+    params.delete('sidebar');
     if (params.toString() === '') {
         window.history.replaceState(document.title, document.title, location.pathname + location.hash);
     }
@@ -1238,7 +1239,7 @@ class Aside {
                         new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
                     }
                     else {
-                        window.location.href = window.location.href;
+                        window.location.href = window.location.href + '?sidebar=' + formData.get('signinup[type]');
                     }
                 }
                 else {

@@ -1,9 +1,12 @@
-//Remove cacheReset flag
+//Remove certain GET parameters, to avoid them being saved to favourites or shared
 function cleanGET(): void
 {
     let url = new URL(document.location.href);
     let params = new URLSearchParams(url.search);
+    //Flag for resetting cache on server side
     params.delete('cacheReset');
+    //Flag used to attempt to force proper reload of a page when logging in/out
+    params.delete('sidebar');
     if (params.toString() === '') {
         window.history.replaceState(document.title, document.title, location.pathname + location.hash);
     } else {

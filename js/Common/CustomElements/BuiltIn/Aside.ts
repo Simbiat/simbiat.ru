@@ -54,10 +54,7 @@ class Aside
                         new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
                     } else {
                         //window.location.reload seems to always hit browser cache, which results in page showing you as logged in/out, when in fact it's the reverse.
-                        //Assignment like this seems to work as a workaround and properly refresh the page.
-                        //Taken from https://stackoverflow.com/questions/22841312/full-refresh-of-page-ctrlf5
-                        //noinspection SillyAssignmentJS
-                        window.location.href = window.location.href;
+                        window.location.href = window.location.href+'?sidebar='+formData.get('signinup[type]');
                     }
                 } else {
                     new Snackbar(data.reason, 'failure', 10000);
