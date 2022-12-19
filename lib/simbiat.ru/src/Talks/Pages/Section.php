@@ -25,6 +25,8 @@ class Section extends Page
     protected array $requiredPermission = ['viewPosts'];
     #Flag to indicate editor mode
     protected bool $editMode = false;
+    #Link to JS module for preload
+    protected string $jsModule = 'talks/sections';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -93,19 +95,14 @@ class Section extends Page
         }
         #Set flag indicating that we are in edit mode
         $outputArray['editMode'] = $this->editMode;
-        #Set flag indicating that user has access to editMode
-        if (!$this->editMode) {
-            if (empty(array_intersect(['editSections', 'addSections', 'removeSections'], $_SESSION['permissions']))) {
-                $outputArray['hasEditMode'] = false;
-            } else {
-                $outputArray['hasEditMode'] = true;
-            }
-        } else {
+        #Get types
+        if (in_array('addSections', $_SESSION['permissions'])) {
+            $outputArray['section_types'] = HomePage::$dbController->selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid` ORDER BY `typeid`;');
+        }
+        if ($this->editMode) {
             #Add edit mode to breadcrumb
             $this->breadCrumb[] = ['href' => '/talks/edit/sections/'.($id !== 'top' ? $id : ''), 'name' => 'Edit mode'];
             $this->title = $this->h1 = 'Editing `'.($id !== 'top' ? $outputArray['name'] : 'Root section').'`'.($page > 1 ? ', Page '.$page : '');
-            #Get types
-            $outputArray['section_types'] = HomePage::$dbController->selectAll('SELECT `typeid` as `value`, `type` as `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid` ORDER BY `typeid`;');
         }
         return $outputArray;
     }

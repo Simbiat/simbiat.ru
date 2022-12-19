@@ -419,8 +419,11 @@ function router() {
         else if (path[0] === 'talks') {
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
-                    import('/js/Pages/talks/edit/sections.js').then((module) => { new module.editSections(); });
+                    import('/js/Pages/talks/sections.js').then((module) => { new module.editSections(); });
                 }
+            }
+            else if (path[1] === 'edit') {
+                import('/js/Pages/talks/sections.js').then((module) => { new module.editSections(); });
             }
         }
     }
@@ -1235,7 +1238,7 @@ class Aside {
                         new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
                     }
                     else {
-                        location.reload();
+                        window.location.href = window.location.href;
                     }
                 }
                 else {

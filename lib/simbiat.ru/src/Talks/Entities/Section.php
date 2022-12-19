@@ -7,6 +7,7 @@ use Simbiat\Config\Talks;
 use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\SandClock;
 use Simbiat\Talks\Search\Sections;
 use Simbiat\Talks\Search\Threads;
 
@@ -229,7 +230,7 @@ class Section extends Entity
         }
         try {
             $newID = HomePage::$dbController->insertAI(
-                'INSERT INTO `talks__sections`(`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `closed`, `private`, `createdby`, `updatedby`, `icon`) VALUES (NULL,:name,:description,:parentid,:sequence,:type,:closed,:private,:userid,:userid,:icon);',
+                'INSERT INTO `talks__sections`(`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `closed`, `private`, `created`, `createdby`, `updatedby`, `icon`) VALUES (NULL,:name,:description,:parentid,:sequence,:type,:closed,:private,:time,:userid,:userid,:icon);',
                 [
                     ':name' => trim($data['name']),
                     ':description' => trim($data['name']),
@@ -244,6 +245,10 @@ class Section extends Entity
                         ($data['closed'] ? 'time' : 'null')
                     ],
                     ':private' => [$data['private'], 'bool'],
+                    ':time' => [
+                        (empty($data['time']) ? 'now' : $data['time']),
+                        'time'
+                    ],
                     ':userid' => [$_SESSION['userid'], 'int'],
                     ':icon' => [
                         (empty($data['icon']) ? null : $data['icon']),
@@ -346,6 +351,16 @@ class Section extends Entity
             } else {
                 return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parentid'].'` is not numeric'];
             }
+        }
+        #If time was set, convert to UTC
+        if (empty($data['time'])) {
+            $data['time'] = null;
+        } else {
+            if (empty($data['timezone'])) {
+                $data['timezone'] = 'UTC';
+            }
+            $datetime = SandClock::convertTimezone($data['time'], $_SESSION['timezone'] ?? $data['timezone']);
+            $data['time'] = $datetime->getTimestamp();
         }
         #Strip tags from description, since we do not allow HTML here
         $data['description'] = strip_tags($data['description'] ?? '');

@@ -5,7 +5,29 @@
             <p>Here you can find all forums, blogs and similar sections, that are meant for different types of communication.</p>
         </details>
     </article>
-    {{ include('talks/editmode.twig') }}
+    <vertical-tabs class="vertical_tabs">
+        <tab-names>
+            {% if subServiceName == 'section' %}
+                {% if type != 'Category' and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+                    <tab-name class="nav_tab">Start thread</tab-name>
+                {% endif %}
+                {% if 'addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+                    <tab-name class="nav_tab">Add subsection</tab-name>
+                {% endif %}
+                {% if 'editSections' in session_data.permissions %}
+                    <tab-name class="nav_tab">Edit</tab-name>
+                {% endif %}
+                {% if 'removeSections' in session_data.permissions and not system %}
+                    <tab-name class="nav_tab danger">Remove</tab-name>
+                {% endif %}
+            {% endif %}
+        </tab-names>
+        <tab-contents>
+            {% if subServiceName == 'section' %}
+                {{ include('talks/tabs/sections.twig') }}
+            {% endif %}
+        </tab-contents>
+    </vertical-tabs>
     {% if subServiceName == 'search' %}
         {{ include('common/elements/search.twig') }}
     {% endif %}

@@ -33,8 +33,7 @@
     },
     //Include only .ts files in the same dir
     "include": [
-        "./*/*.ts",
-        "./*/*/*.ts"
+        "./*/*.ts"
     ],
     "exclude": [
         "node_modules"
