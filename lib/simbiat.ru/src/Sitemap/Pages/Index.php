@@ -35,7 +35,7 @@ class Index extends Page
         }
         #Sitemap for general links (non-countable)
         $links = [
-            ['loc'=>'general/', 'name'=>'General links'],
+            ['loc'=>'general'.(($path[0] === 'txt' || $path[0] === 'xml') ? '.'.$path[0] : ''), 'name'=>'General links'],
         ];
         #Get countable links
         try {
@@ -62,11 +62,11 @@ class Index extends Page
         #Generate links
         foreach ($counts as $linkType) {
             if ($linkType['count'] <= $this->maxElements) {
-                $links[] = ['loc'=>$linkType['link'].'/', 'name'=>$linkType['name']];
+                $links[] = ['loc'=>$linkType['link'].(($path[0] === 'txt' || $path[0] === 'xml') ? '.'.$path[0] : ''), 'name'=>$linkType['name']];
             } else {
                 $pages = intval(ceil($linkType['count']/$this->maxElements));
                 for ($page = 1; $page <= $pages; $page++) {
-                    $links[] = ['loc'=>$linkType['link'].'/'.$page.'/', 'name'=>$linkType['name'].', Page '.$page];
+                    $links[] = ['loc'=>$linkType['link'].'/'.$page.(($path[0] === 'txt' || $path[0] === 'xml') ? '.'.$path[0] : ''), 'name'=>$linkType['name'].', Page '.$page];
                 }
             }
         }

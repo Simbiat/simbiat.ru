@@ -35,6 +35,10 @@ class Countables extends Page
         $path = array_slice($path, 1);
         if ($format === 'txt' || $format === 'xml') {
             $this->h2push = [];
+            #Remove potential file extension at the end of path
+            if (!empty($path[1])) {
+                $path[1] = preg_replace('/\.'.$format.'$/ui', '', $path[1]);
+            }
         }
         #Get page
         if (empty($path[1]) || !is_numeric($path[1]) || $path[1] < 1) {
