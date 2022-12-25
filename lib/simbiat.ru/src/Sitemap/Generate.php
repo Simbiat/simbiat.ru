@@ -37,7 +37,7 @@ class Generate
             foreach ($links as $link) {
                 if (!empty($link)) {
                     #Get path to use for router function (without format)
-                    $path = explode('/', trim(str_replace(Common::$baseUrl.'/sitemap/txt/', '', $link), '/'));
+                    $path = explode('/', trim(str_replace('.txt', '', str_replace(Common::$baseUrl.'/sitemap/txt/', '', $link)), '/'));
                     foreach (['xml', 'txt'] as $format) {
                         #Get filepath and filename
                         $filePath = rtrim(Common::$sitemap.$format.'/'.implode('/', array_slice($path, 0, -1)), '/');

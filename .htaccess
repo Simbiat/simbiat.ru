@@ -313,7 +313,6 @@ RewriteRule (^|/)sitemap/(txt|xml)/(.+)$ data/sitemap/$2/$3 [QSA,END]
 #If XML or TXT sitemap does not have a file name after the format - redirect to index
 RewriteCond %{REQUEST_URI} "(^|/)sitemap/(txt|xml)/?$" [NC]
 RewriteRule (^|/)sitemap/(txt|xml)/?$ https://%{HTTP_HOST}/sitemap/$2/index.$2 [R=301,NC,L]
-#RewriteRule (^|/)sitemap/(txt|xml)/?$ data/sitemap/$2/index.$2 [QSA,END]
 
 #Rewrite JS, CSS and their map
 RewriteCond %{REQUEST_FILENAME} "(^|/)js/.*\.\d{10,}\.js(\.map)?" [NC]
