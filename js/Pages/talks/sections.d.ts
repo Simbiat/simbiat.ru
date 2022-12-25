@@ -1,14 +1,18 @@
-export declare class editSections {
+export declare class Sections {
     private readonly addSectionForm;
+    private readonly addThreadForm;
     private readonly editSectionForm;
     private readonly sectionsList;
-    private readonly deleteButton;
+    private readonly deleteSectionButton;
     constructor();
-    private makePrivate;
-    private close;
-    private order;
+    private makeSectionPrivate;
+    private closeSection;
+    private orderSection;
     private sort;
-    private add;
-    private edit;
-    private delete;
+    private addSection;
+    private editSection;
+    private deleteSection;
+    private addThread;
+    private makeThreadPrivate;
+    private pinThread;
 }

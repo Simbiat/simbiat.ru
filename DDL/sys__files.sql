@@ -1,7 +1,7 @@
 CREATE TABLE `sys__files`
 (
     `fileid`    VARCHAR(128)                                NOT NULL COMMENT 'File hash, which is also its ID. Also used as file name on file system.' PRIMARY KEY,
-    `userid`    INT UNSIGNED                                NOT NULL COMMENT 'ID of the uploader',
+    `userid`    INT UNSIGNED    DEFAULT 1                   NOT NULL COMMENT 'ID of the uploader',
     `name`      VARCHAR(128)                                NOT NULL COMMENT 'Name of the file to be shown to humans',
     `extension` VARCHAR(25)                                 NOT NULL COMMENT 'File extension',
     `mime`      VARCHAR(100)                                NOT NULL COMMENT 'MIME Type',

@@ -1,0 +1,12 @@
+{% if type != 'Category' and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+    <tab-name class="nav_tab">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</tab-name>
+{% endif %}
+{% if 'addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+    <tab-name class="nav_tab">Add subsection</tab-name>
+{% endif %}
+{% if 'editSections' in session_data.permissions %}
+    <tab-name class="nav_tab">Edit</tab-name>
+{% endif %}
+{% if 'removeSections' in session_data.permissions and not system %}
+    <tab-name class="nav_tab danger">Delete</tab-name>
+{% endif %}

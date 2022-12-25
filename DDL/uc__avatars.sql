@@ -1,6 +1,6 @@
 CREATE TABLE `uc__avatars`
 (
-    `userid`      INT UNSIGNED                  NOT NULL COMMENT 'User ID',
+    `userid`      INT UNSIGNED        DEFAULT 1 NOT NULL COMMENT 'User ID',
     `fileid`      VARCHAR(128)                  NOT NULL COMMENT 'File hash, which is also its ID. Also used as file name on file system.',
     `characterid` INT UNSIGNED                  NULL COMMENT 'Character ID, if avatar is linked to FFXIV character',
     `current`     TINYINT(1) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Flag to show if this avatar is the current one',

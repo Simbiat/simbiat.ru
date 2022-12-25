@@ -81,10 +81,12 @@ function router(): void
         } else if (path[0] === 'talks') {
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
-                    import('/js/Pages/talks/sections.js').then((module) => {new module.editSections();});
+                    import('/js/Pages/talks/sections.js').then((module) => {new module.Sections();});
                 }
-            } else if (path[1] === 'edit') {
-                import('/js/Pages/talks/sections.js').then((module) => {new module.editSections();});
+            } else if (path[1] === 'sections') {
+                import('/js/Pages/talks/sections.js').then((module) => {new module.Sections();});
+            } else if (path[1] === 'threads') {
+                import('/js/Pages/talks/threads.js').then((module) => {new module.Threads();});
             }
         }
     }

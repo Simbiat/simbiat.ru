@@ -27,9 +27,10 @@
         "listFiles": true,
         //Other settings
         "allowJs": false,
-        "checkJs": false,
+        "checkJs": true,
         "composite": true,
         "noErrorTruncation": true,
+        "lib": ["esnext", "dom", "WebWorker"]
     },
     //Include only .ts files in the same dir
     "include": [

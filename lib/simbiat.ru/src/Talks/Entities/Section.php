@@ -7,7 +7,7 @@ use Simbiat\Config\Talks;
 use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
-use Simbiat\SandClock;
+use Simbiat\Sanitization;
 use Simbiat\Talks\Search\Sections;
 use Simbiat\Talks\Search\Threads;
 
@@ -88,8 +88,9 @@ class Section extends Entity
             } else {
                 #If we have a blog or changelog - order by creation date, if forum or support - by update date, if knowledgebase - by name
                 $orderBy = match ($data['detailedType']) {
-                    'Blog', 'Changelog' => '`created` DESC, `updated` DESC, `name` ASC',
-                    'Forum', 'Support' => '`updated` DESC, `name` ASC',
+                    'Blog', 'Changelog' => '`created` DESC, `lastpost` DESC, `name` ASC',
+                    'Forum' => '`lastpost` DESC, `name` ASC',
+                    'Support' => '`closed` IS NOT NULL, `closed` DESC, `lastpost` DESC, `name` ASC',
                     'Knowledgebase' => '`name` ASC',
                 };
                 #If user is not an admin, also limit the selection to non-private threads or those created by the user
@@ -155,7 +156,7 @@ class Section extends Entity
         $this->updatedBy = $fromDB['updatedby'] ?? Talks::userIDs['Deleted user'];
         $this->icon = $fromDB['icon'] ?? '/img/talks/category.svg';
         $this->parents = $fromDB['parents'];
-        $this->parentID = $fromDB['parentid'] ?? 0;
+        $this->parentID = intval($fromDB['parentid'] ?? 0);
         $this->children = (is_array($fromDB['children']) ? $fromDB['children'] : ['pages' => $fromDB['children'], 'entities' => []]);
         $this->threads = (is_array($fromDB['threads']) ? $fromDB['threads'] : ['pages' => $fromDB['threads'], 'entities' => []]);
         $this->description = $fromDB['description'] ?? '';
@@ -272,8 +273,9 @@ class Section extends Entity
             return $sanitize;
         }
         try {
-            HomePage::$dbController->query(
-                'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `parentid`=:parentid, `sequence`=:sequence, `type`=:type, `closed`=:closed, `private`=:private, `updatedby`=:userid, `icon`=:icon WHERE `sectionid`=:sectionid;',
+            $queries = [];
+            $queries[] = [
+                'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `parentid`=:parentid, `sequence`=:sequence, `type`=:type, `closed`=:closed, `private`=:private, `updatedby`=:userid, `icon`=COALESCE(:icon, `icon`) WHERE `sectionid`=:sectionid;',
                 [
                     ':sectionid' => [$this->id, 'int'],
                     ':name' => trim($data['name']),
@@ -295,7 +297,17 @@ class Section extends Entity
                         (empty($data['icon']) ? 'null' : 'string')
                     ],
                 ]
-            );
+            ];
+            #Nullify the icon, if `clearicon` flag was set
+            if ($data['clearicon']) {
+                $queries[] = [
+                    'UPDATE `talks__sections` SET `icon`=NULL, `updated`=`updated` WHERE `sectionid`=:sectionid;',
+                    [
+                        ':sectionid' => [$this->id, 'int'],
+                    ]
+                ];
+            }
+            HomePage::$dbController->query($queries);
             return ['response' => true];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -308,33 +320,9 @@ class Section extends Entity
         if (empty($data)) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
         }
-        if (!isset($data['closed'])) {
-            $data['closed'] = false;
-        } else {
-            if (strtolower($data['closed']) === 'off') {
-                $data['closed'] = false;
-            } else {
-                $data['closed'] = true;
-            }
-        }
-        if (!isset($data['private'])) {
-            $data['private'] = false;
-        } else {
-            if (strtolower($data['private']) === 'off') {
-                $data['private'] = false;
-            } else {
-                $data['private'] = true;
-            }
-        }
-        if (!isset($data['clearicon'])) {
-            $data['clearicon'] = false;
-        } else {
-            if (strtolower($data['clearicon']) === 'off') {
-                $data['clearicon'] = false;
-            } else {
-                $data['clearicon'] = true;
-            }
-        }
+        $data['closed'] = Sanitization::checkboxToBoolean($data['closed']);
+        $data['private'] = Sanitization::checkboxToBoolean($data['private']);
+        $data['clearicon'] = Sanitization::checkboxToBoolean($data['clearicon']);
         $data['icon'] = !(strtolower($data['icon']) === 'false');
         $data['type'] = intval($data['type']);
         $data['order'] = intval($data['order']);
@@ -353,15 +341,7 @@ class Section extends Entity
             }
         }
         #If time was set, convert to UTC
-        if (empty($data['time'])) {
-            $data['time'] = null;
-        } else {
-            if (empty($data['timezone'])) {
-                $data['timezone'] = 'UTC';
-            }
-            $datetime = SandClock::convertTimezone($data['time'], $_SESSION['timezone'] ?? $data['timezone']);
-            $data['time'] = $datetime->getTimestamp();
-        }
+        $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         #Strip tags from description, since we do not allow HTML here
         $data['description'] = strip_tags($data['description'] ?? '');
         #Check if name is empty or whitespaces
@@ -385,7 +365,7 @@ class Section extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            in_array($data['name'], array_column($parent->children['entities'], 'name'))
+            HomePage::$dbController->check('SELECT `name` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$this->id, 'int']])
         ) {
             return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
         }
@@ -426,7 +406,7 @@ class Section extends Entity
         }
         #Check if section has any subsections or threads
         if (!empty($this->children['entities']) || !empty($this->threads['entities'])) {
-            return ['http_error' => 400, 'reason' => 'Can\'t delete system section'];
+            return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty section'];
         }
         #Set location for successful removal
         if (!empty($this->parentID)) {
@@ -442,5 +422,10 @@ class Section extends Entity
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to delete section'];
         }
+    }
+    
+    public static function getSectionTypes(): array
+    {
+        return HomePage::$dbController->selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid` ORDER BY `typeid`;');
     }
 }

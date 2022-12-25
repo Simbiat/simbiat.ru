@@ -1,6 +1,8 @@
 {% if not children.entities and not threads.entities %}
-    <p class="middle">Looks like we've got nothing in here</p>
-    <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+    <article class="margin05rem">
+        <p class="middle">Looks like we've got nothing in here</p>
+        <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+    </article>
 {% else %}
     <div class="section_icons">
         {% if created > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
@@ -25,7 +27,7 @@
         </thead>
         <tbody>
             {% for section in children.entities %}
-                {{ include('talks/sectionrow.twig', {'section': section, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
+                {{ include('talks/rows/section.twig', {'section': section, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
             {% endfor %}
         </tbody>
     </table>
@@ -34,27 +36,21 @@
     <table id="threads_list">
         <thead>
         <tr>
-            <td>Thread name</td><td>Created by</td><td>Last Update</td><td>Posts</td>
+            <td>Thread name</td><td>Created</td><td>Last post</td><td>Posts</td>
+            {% if editMode %}
+                <td>ID</td>
+                {% if 'canPin' in session_data.permissions %}
+                    <td data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change.">Pinned</td>
+                {% endif %}
+                {% if type != 'Support' and 'markPrivate' in session_data.permissions %}
+                    <td data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change.">Private</td>
+                {% endif %}
+            {% endif %}
         </tr>
         </thead>
         <tbody>
         {% for thread in threads.entities %}
-            <tr>
-                <td>
-                    <div class="thread_name">
-                        <div class="thread_icons">
-                            {% if thread.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled thread">⏲</span>{% endif %}
-                            {% if thread.pinned %}<span data-tooltip="Pinned thread">📌</span>{% endif %}
-                            {% if thread.closed %}<span data-tooltip="Closed thread">🔒</span>{% endif %}
-                            {% if thread.private %}<span data-tooltip="Private thread">🚷</span>{% endif %}
-                        </div>
-                        <a href="/talks/{% if editMode %}edit/{% endif %}threads/{{ thread.id }}"{% if thread.detailedType != 'Changelog' or is_numeric(thread.name) == false %} data-tooltip="{{ thread.name }}"{% endif %}>{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
-                    </div>
-                </td>
-                <td><a href="/talks/users/{{ thread.createdby }}/{{ prettyURL(thread.createdby_name) }}">{{ thread.createdby_name }}</a></td>
-                <td>{{ timeTag(thread.updated, "d/m/Y H:i") }}</td>
-                <td>{{ thread.posts }}</td>
-            </tr>
+            {{ include('talks/rows/thread.twig', {'thread': thread, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
         {% endfor %}
         </tbody>
     </table>

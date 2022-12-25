@@ -1,6 +1,11 @@
+{% if ogimage %}
+    <img loading="lazy" decoding="async" alt="Custom thread banner" src="{{ ogimage }}" id="thread_ogimage" data-tooltip="Click to hide">
+{% endif %}
 {% if not posts.entities %}
-    <p class="middle">Looks like we've got nothing in here</p>
-    <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+    <article class="margin05rem">
+        <p class="middle">Looks like we've got nothing in here</p>
+        <img loading="lazy" decoding="async" alt="Not found" src="/img/errors/notfound.gif" class="middle block">
+    </article>
 {% else %}
     <div class="thread_icons">
         {% if created > 'now'|date('U') %}<span data-tooltip="Scheduled thread">⏲</span>{% endif %}

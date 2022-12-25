@@ -1,0 +1,98 @@
+<?php
+declare(strict_types=1);
+namespace Simbiat;
+
+use Simbiat\Config\Common;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+
+#Class for some common sanitization functions
+class Sanitization
+{
+
+    #Static sanitizer config for a little bit performance
+    public static ?HtmlSanitizerConfig $sanitizerConfig = null;
+
+    public static function sanitizeHTML(string $string, bool $head = false): string
+    {
+        #Check if config has been created already
+        if (self::$sanitizerConfig) {
+            $config = self::$sanitizerConfig;
+        } else {
+            $config = (new HtmlSanitizerConfig())->withMaxInputLength(-1)->allowSafeElements()->allowRelativeLinks()->allowMediaHosts([Common::$http_host])->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+            #Block some extra elements
+            foreach (['aside', 'basefont', 'body', 'font', 'footer', 'form', 'header', 'hgroup', 'html', 'input', 'main', 'nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
+                #Need to update the original, because clone is returned, instead of the same instance.
+                $config = $config->blockElement($element);
+            }
+            #Allow class attribute
+            $config = $config->allowAttribute('class', '*');
+            #Allow data-* attributes in blockquotes, code and samp
+            $config = $config->allowAttribute('data-author', 'blockquote');
+            $config = $config->allowAttribute('data-description', ['code', 'samp']);
+            $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
+            #Allow tooltips
+            $config = $config->allowAttribute('data-tooltip', '*');
+            #Save config to static for future reuse
+            self::$sanitizerConfig = $config;
+        }
+        #Allow some property attributes for meta tags
+        if ($head) {
+            $config = $config->allowAttribute('property', 'meta');
+        }
+        $sanitizer = new HtmlSanitizer($config);
+        #Remove excessive new lines
+        $string = preg_replace('/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi', '', preg_replace('/(\s*<br \/>\s*){5,}/mi', '<br>', $string));
+        if ($head) {
+            return $sanitizer->sanitizeFor('head', $string);
+        } else {
+            return $sanitizer->sanitize($string);
+        }
+    }
+    
+    #Function to convert checkbox values to boolean.
+    #Using reference to "simulate" isset()/empty() behaviour (as per https://stackoverflow.com/questions/55060/php-function-argument-error-suppression-empty-isset-emulation)
+    #Thus also suppressing respective inspection.
+    #I mean, I could use @ when calling it, but if I forget it, it can result in error and even unexpected behaviour.
+    /** @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection */
+    public static function checkboxToBoolean(mixed &$checkbox): bool
+    {
+        if (!isset($checkbox)) {
+            return false;
+        } else {
+            if (is_string($checkbox)) {
+                if (strtolower($checkbox) === 'off') {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return boolval($checkbox);
+            }
+        }
+    }
+    
+    #Function to sanitize time for creating scheduled section/threads/posts
+    public static function scheduledTime(string|int|null &$time, ?string &$timezone = null): ?int
+    {
+        if (in_array('postScheduled', $_SESSION['permissions'])) {
+            if (empty($time)) {
+                $time = null;
+            } else {
+                if (empty($timezone) || !in_array($timezone, timezone_identifiers_list())) {
+                    $timezone = 'UTC';
+                }
+                $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
+                $time = $datetime->getTimestamp();
+                $curTime = time();
+                #Sections should not be created in the past, so if time is less than current one - correct it
+                if (!in_array('postBacklog', $_SESSION['permissions']) && $time < $curTime) {
+                    $time = $curTime;
+                }
+            }
+        } else {
+            $time = null;
+        }
+        return $time;
+    }
+}

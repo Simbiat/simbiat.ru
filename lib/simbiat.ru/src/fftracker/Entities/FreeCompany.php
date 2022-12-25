@@ -7,6 +7,7 @@ use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
 use Simbiat\Lodestone;
+use Simbiat\Sanitization;
 use Simbiat\Security;
 
 class FreeCompany extends Entity
@@ -189,7 +190,7 @@ class FreeCompany extends Entity
                     ],
                     ':rank'=>$this->lodestone['rank'],
                     ':slogan'=>[
-                        (empty($this->lodestone['slogan']) ? NULL : Security::sanitizeHTML($this->lodestone['slogan'])),
+                        (empty($this->lodestone['slogan']) ? NULL : Sanitization::sanitizeHTML($this->lodestone['slogan'])),
                         (empty($this->lodestone['slogan']) ? 'null' : 'string'),
                     ],
                     ':active'=>[
@@ -206,7 +207,7 @@ class FreeCompany extends Entity
                         (empty($this->lodestone['estate']['address']) ? 'null' : 'string'),
                     ],
                     ':estate_message'=>[
-                        (empty($this->lodestone['estate']['greeting']) ? NULL : Security::sanitizeHTML($this->lodestone['estate']['greeting'])),
+                        (empty($this->lodestone['estate']['greeting']) ? NULL : Sanitization::sanitizeHTML($this->lodestone['estate']['greeting'])),
                         (empty($this->lodestone['estate']['greeting']) ? 'null' : 'string'),
                     ],
                     ':rolePlaying'=>(empty($this->lodestone['focus']) ? 0 : $this->lodestone['focus'][array_search('Role-playing', array_column($this->lodestone['focus'], 'name'))]['enabled']),

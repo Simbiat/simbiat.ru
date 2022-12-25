@@ -420,11 +420,14 @@ function router() {
         else if (path[0] === 'talks') {
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
-                    import('/js/Pages/talks/sections.js').then((module) => { new module.editSections(); });
+                    import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
                 }
             }
-            else if (path[1] === 'edit') {
-                import('/js/Pages/talks/sections.js').then((module) => { new module.editSections(); });
+            else if (path[1] === 'sections') {
+                import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
+            }
+            else if (path[1] === 'threads') {
+                import('/js/Pages/talks/threads.js').then((module) => { new module.Threads(); });
             }
         }
     }
@@ -1125,6 +1128,7 @@ class VerticalTabs extends HTMLElement {
     tabs;
     contents;
     wrapper;
+    currentTab = null;
     constructor() {
         super();
         this.wrapper = this.querySelector('tab-contents');
@@ -1135,12 +1139,11 @@ class VerticalTabs extends HTMLElement {
                 this.tabSwitch(event.target);
             });
         });
-        if (!this.wrapper.querySelector('.active')) {
-            this.wrapper.classList.add('hidden');
+        if (this.wrapper.querySelector('.active')) {
+            this.wrapper.classList.remove('hidden');
         }
     }
     tabSwitch(target) {
-        this.wrapper.classList.remove('hidden');
         let tabIndex = 0;
         this.tabs.forEach((item, index) => {
             if (item === target) {
@@ -1154,6 +1157,13 @@ class VerticalTabs extends HTMLElement {
         target.classList.add('active');
         if (this.contents[tabIndex]) {
             this.contents[tabIndex].classList.add('active');
+        }
+        if (this.currentTab === tabIndex) {
+            this.wrapper.classList.add('hidden');
+        }
+        else {
+            this.currentTab = tabIndex;
+            this.wrapper.classList.remove('hidden');
         }
     }
 }

@@ -16,6 +16,7 @@ class Post extends Entity
     public bool $private = false;
     public bool $locked = false;
     public ?int $closed = null;
+    public bool $owned = false;
     public ?int $created = null;
     public int $createdby = 1;
     public string $createdby_name = 'Deleted user';
@@ -69,6 +70,7 @@ class Post extends Entity
         $this->closed = $fromDB['thread']['closed'] ?? null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
         $this->createdby = $fromDB['createdby'] ?? Talks::userIDs['Deleted user'];
+        $this->owned = ($this->createdBy === $_SESSION['userid']);
         $this->createdby_name = $fromDB['createdby_name'] ?? 'Deleted user';
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
         $this->updatedby = $fromDB['updatedby'] ?? Talks::userIDs['Deleted user'];

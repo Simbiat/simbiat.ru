@@ -5,6 +5,7 @@ namespace Simbiat\Talks\Pages;
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
 use Simbiat\HTMLCut;
+use Simbiat\Sanitization;
 use Simbiat\Security;
 
 class Post extends Page
@@ -90,7 +91,7 @@ class Post extends Page
         }
         #Update title, h1 and ogdesc
         $this->title = $this->h1 = 'Post #'.$outputArray['id'];
-        $this->ogdesc = Security::sanitizeHTML(HTMLCut::Cut($outputArray['text'], 160, 1), true);
+        $this->ogdesc = Sanitization::sanitizeHTML(HTMLCut::Cut($outputArray['text'], 160, 1), true);
         #Duplicate the array to `post` key (required for Twig template and consistency with other pages)
         $outputArray['post'] = $outputArray;
         #Add flag to hide post ID

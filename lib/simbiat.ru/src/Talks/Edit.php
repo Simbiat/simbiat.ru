@@ -4,13 +4,12 @@ namespace Simbiat\Talks;
 
 use Simbiat\Talks\Pages\Edit\Post;
 use Simbiat\Talks\Pages\Edit\Section;
-use Simbiat\Talks\Pages\Edit\Thread;
 use Simbiat\Talks\Pages\Edit\User;
 
 class Edit extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['sections', 'threads', 'posts', 'users'];
+    protected array $subRoutes = ['sections', 'posts', 'users'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/talks/edit/', 'name'=>'Talks']
@@ -26,7 +25,6 @@ class Edit extends \Simbiat\Abstracts\Router
     {
         return match($path[0]) {
             'sections' => (new Section)->get(array_slice($path, 1)),
-            'threads' => (new Thread)->get(array_slice($path, 1)),
             'posts' => (new Post)->get(array_slice($path, 1)),
             'users' => (new User)->get(array_slice($path, 1)),
         };

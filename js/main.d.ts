@@ -309,6 +309,7 @@ declare class VerticalTabs extends HTMLElement {
     private readonly tabs;
     private readonly contents;
     private readonly wrapper;
+    private currentTab;
     constructor();
     private tabSwitch;
 }

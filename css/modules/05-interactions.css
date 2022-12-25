@@ -263,9 +263,11 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0;
 }
 input[type=number].number_spinner {
+    /*PHPStorm does not (yet) know the auto value for -moz-appearance, so suppressing inspection for it*/
+    /*noinspection CssInvalidPropertyValue*/
     -moz-appearance: auto;
-    appearance: auto;
-    margin: unset;
+    appearance:      auto;
+    margin:          unset;
 }
 input[type=number].number_spinner::-webkit-inner-spin-button,
 input[type=number].number_spinner::-webkit-outer-spin-button {
@@ -679,9 +681,9 @@ main::-webkit-scrollbar {
 }
 
 /*Style tooltips*/
-[data-tooltip]:not(q) {
+[data-tooltip]:not([data-tooltip='']):not(q):not(a.button):not(input[type=button]) {
     text-decoration: underline dotted 0.2rem;
-    cursor: pointer;
+    cursor: help;
 }
 tool-tip {
     border-radius: var(--border-radius);
@@ -708,7 +710,7 @@ tool-tip {
 tool-tip[data-tooltip] {
     display: block;
     transform: translate3d(var(--cursorX) px, var(--cursorY) px, 0px);
-    text-decoration: none;
+    text-decoration: none!important;
 }
 
 /*Snackbar notifications*/
@@ -799,8 +801,14 @@ a.nav_tab.active,
 tab-name.active {
     border-color: var(--border-color-inset);
     background-color: var(--color-article);
-    cursor: default;
     text-decoration: none;
+    cursor: default;
+}
+.vertical_tabs tab-name.active {
+    cursor: pointer;
+}
+.vertical_tabs_links tab-name.active {
+    cursor: default;
 }
 a.nav_tab:hover,
 tab-name:hover {

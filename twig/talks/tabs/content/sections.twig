@@ -1,0 +1,165 @@
+{% if type != 'Category' and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+    <tab-content>
+        <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
+        <form role="form" id="addThreadForm" name="addThreadForm" autocomplete="off" class="middle">
+            <input type="hidden" name="verb" value="add" required>
+            <input type="hidden" name="newThread[parentid]" value="{{ sectionid }}" required>
+            <div class="float_label_div">
+                <input form="addThreadForm" type="text" aria-required="true" required name="newThread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+                <label for="new_thread_name">Name</label>
+            </div>
+            {% if 'postPrivate' in session_data.permissions %}
+                <span class="radio_and_label">
+                    <input form="addSThreadForm" id="new_thread_private" class="thread_private" name="newThread[private]" type="checkbox">
+                    <label for="new_thread_private" data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+                </span>
+            {% endif %}
+            {% if 'closeOwnThreads' in session_data.permissions %}
+                <span class="radio_and_label">
+                    <input form="addThreadForm" id="new_thread_closed" class="thread_closed" name="newThread[closed]" type="checkbox">
+                    <label for="new_thread_closed" data-tooltip="Open threads allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+                </span>
+            {% endif %}
+            {% if 'canPin' in session_data.permissions %}
+                <span class="radio_and_label">
+                    <input form="addThreadForm" id="new_thread_pin" class="thread_pin" name="newThread[pinned]" type="checkbox">
+                    <label for="new_thread_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change."></label>
+                </span>
+            {% endif %}
+            {% if type != 'Support' %}
+                <br>
+                <div class="float_label_div">
+                    <select form="addThreadForm" id="newThread_language" name="newThread[language]">
+                        {% for language in thread_languages %}
+                            <option value="{{ language.value }}"{% if language.value == 'en' %} selected{% endif %}>{{ language.name }}{% if language.value == 'en' %} (Default){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="newThread_language" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>
+                </div>
+                {{ include('common/elements/imageupload.twig', {'formName': 'addThreadForm', 'placeholder': 'Custom banner', 'inputName': 'newThread[ogimage]', 'previewClasses': 'middle', 'required': false, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link.<br>If not set no banner will be shown on page, and social media will show a general one.<br>Only PNG files accepted. Resolution ratio needs to be 1.91:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
+                {% if 'postScheduled' in session_data.permissions %}
+                    <div class="float_label_div">
+                        <input form="addThreadForm" id="new_thread_time" name="newThread[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
+                        <label for="new_thread_time" data-tooltip="You can select a future time at which, the thread and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
+                    </div>
+                    <br>
+                {% endif %}
+                <details>
+                    <summary>Alternative links</summary>
+                    <p>If the content being posted is available on one of the supported website, you can add a link to it below, so that respective links would be shown in the sidebar.</p>
+                    {% for altlink in thread_link_types %}
+                        <span class="float_label_div">
+                            <input form="addThreadForm" type="url" aria-required="false" name="newThread[altlinks][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
+                            <label for="new_thread_{{ altlink.type }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
+                        </span>
+                    {% endfor %}
+                </details>
+            {% endif %}
+            <input role="button" form="addThreadForm" type="submit" name="newThread[submit]" id="addThread_submit" formaction="/api/talks/threads/" formmethod="post" formtarget="_self" value="Post">
+            <img id="addThread_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if 'addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+    <tab-content>
+        <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
+        <form role="form" id="addSectionForm" name="addSectionForm" autocomplete="off" class="middle">
+            <input type="hidden" name="verb" value="add" required>
+            <input type="hidden" name="newSection[parentid]" value="{{ sectionid }}" required>
+            <div class="float_label_div">
+                <input form="addSectionForm" type="text" aria-required="true" required name="newSection[name]" id="new_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+                <label for="new_section_name">Name</label>
+            </div>
+            <div class="float_label_div">
+                <input form="addSectionForm" type="number" inputmode="decimal" min="0" max="99" value="0" step="1" class="number_spinner" aria-required="false" name="newSection[order]" id="new_section_sequence" placeholder="Order">
+                <label for="new_section_sequence">Order</label>
+            </div>
+            <span class="radio_and_label">
+                <input form="addSectionForm" id="new_section_private" class="section_private" name="newSection[private]" type="checkbox">
+                <label for="new_section_private" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+            </span>
+            <span class="radio_and_label">
+                <input form="addSectionForm" id="new_section_closed" class="section_closed" name="newSection[closed]" type="checkbox">
+                <label for="new_section_closed" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+            </span>
+            <br>
+            <div class="float_label_div w100pc">
+                <textarea id="new_section_description" form="addSectionForm" name="newSection[description]" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100"></textarea>
+                <label for="new_section_description">Description</label>
+            </div>
+            <br>
+            {{ include('common/elements/selectcustom.twig', {'formName': 'addSectionForm', 'placeholder': 'Type', 'inputName': 'newSection[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+            {{ include('common/elements/imageupload.twig', {'formName': 'addSectionForm', 'placeholder': 'Custom icon', 'inputName': 'newSection[icon]', 'previewClasses': 'middle', 'required': false}, with_context = false) }}
+            {% if 'postScheduled' in session_data.permissions %}
+                <div class="float_label_div">
+                    <input form="addSectionForm" id="new_section_time" name="newSection[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
+                    <label for="new_section_time" data-tooltip="You can select a future time at which, the section and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
+                </div>
+                <br>
+            {% endif %}
+            <input role="button" form="addSectionForm" type="submit" name="newSection[submit]" id="addSection_submit" formaction="/api/talks/sections/" formmethod="post" formtarget="_self" value="Add">
+            <img id="addSection_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating section...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if 'editSections' in session_data.permissions %}
+    <tab-content>
+        {% if editMode %}
+            <form role="form" id="editSectionForm" name="editSectionForm" autocomplete="off" class="middle">
+                <input type="hidden" name="verb" value="edit" required>
+                <input type="hidden" name="curSection[sectionid]" id="curSection_id" value="{{ sectionid }}" required>
+                <div class="float_label_div">
+                    <input form="editSectionForm" type="text" aria-required="true" required name="curSection[name]" id="cur_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64" value="{{ name }}">
+                    <label for="cur_section_name">Name</label>
+                </div>
+                <div class="float_label_div">
+                    <input form="editSectionForm" type="number" inputmode="decimal" min="1" value="{{ parentID }}" step="1" aria-required="true" required name="curSection[parentid]" id="cur_section_parent" placeholder="Parent ID">
+                    <label for="cur_section_parent" data-tooltip="ID of parent section.<br>Change it to move the section.">Parent ID</label>
+                </div>
+                <div class="float_label_div">
+                    <input form="editSectionForm" type="number" inputmode="decimal" min="0" max="99" value="{{ sequence|default('0') }}" step="1" class="number_spinner" aria-required="false" name="curSection[order]" id="cur_section_sequence" placeholder="Order">
+                    <label for="cur_section_sequence">Order</label>
+                </div>
+                <span class="radio_and_label">
+                    <input form="editSectionForm" id="cur_section_private" class="section_private" name="curSection[private]" type="checkbox"{% if private %} checked{% endif %}>
+                    <label for="cur_section_private" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+                </span>
+                <span class="radio_and_label">
+                    <input form="editSectionForm" id="cur_section_closed" class="section_closed" name="curSection[closed]" type="checkbox"{% if closed %} checked{% endif %}>
+                    <label for="cur_section_closed" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+                </span>
+                <br>
+                <div class="float_label_div w100pc">
+                    <textarea id="cur_section_description" form="editSectionForm" name="curSection[description]" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">{{ description }}</textarea>
+                    <label for="cur_section_description">Description</label>
+                </div>
+                <br>
+                {{ include('common/elements/selectcustom.twig', {'formName': 'editSectionForm', 'placeholder': 'Type', 'inputName': 'curSection[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+                {{ include('common/elements/imageupload.twig', {'formName': 'editSectionForm', 'placeholder': 'Custom icon', 'inputName': 'curSection[icon]', 'previewClasses': 'middle section_icon', 'required': false, 'imageUrl': icon}, with_context = false) }}
+                <div class="radio_and_label">
+                    <input form="editSectionForm" id="cur_section_clear_icon" name="curSection[clearicon]" type="checkbox">
+                    <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section, replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
+                </div>
+                <br>
+                <input role="button" form="editSectionForm" type="submit" name="curSection[submit]" id="editSection_submit" formaction="/api/talks/sections/" formmethod="post" formtarget="_self" value="Update">
+                <img id="editSection_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating section...">
+            </form>
+        {% else %}
+            <p>For editing this section, please, use the edit mode using the button below.</p>
+            <a class="button" href="/talks/edit/sections/{{ sectionid }}/">Edit mode</a>
+        {% endif %}
+    </tab-content>
+{% endif %}
+{% if 'removeSections' in session_data.permissions and not system %}
+    <tab-content>
+        {% if children.entities or threads.entities %}
+            <p>This section has subsections or/and threads. Removal is not possible.</p>
+        {% else %}
+            <p>Pressing below button will delete the current section completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+            <p>If section has a custom icon it will not be removed along with the section. Instead, it will be removed during routine check for orphaned files, if the icon file is not linked to anything else.</p>
+            <p>If deletion is successful you will be redirected to respective parent section.</p>
+            <input role="button" type="button" id="delete_section" value="Delete" data-section="{{ sectionid }}">
+            <img loading="lazy" decoding="async" id="section_delete_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Deleting section...">
+        {% endif %}
+    </tab-content>
+{% endif %}

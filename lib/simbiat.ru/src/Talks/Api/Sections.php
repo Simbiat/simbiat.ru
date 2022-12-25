@@ -12,7 +12,7 @@ class Sections extends Api
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['close', 'open', 'markprivate', 'markpublic', 'order']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-    protected array $verbs = ['add' => 'Add section', 'delete' => 'Delete post', 'edit' => 'Edit section', 'close' => 'Close section', 'open' => 'Open section',
+    protected array $verbs = ['add' => 'Add section', 'delete' => 'Delete section', 'edit' => 'Edit section', 'close' => 'Close section', 'open' => 'Open section',
                                 'markprivate' => 'Mark the section as private', 'markpublic' => 'Mark the section as public', 'order' => 'Change order of the section',
     ];
     #Flag indicating that authentication is required
@@ -26,11 +26,14 @@ class Sections extends Api
     {
         #Reset verb for consistency, if it's not set
         if (empty($path[1])) {
-            $path[1] = '';
+            $path[1] = 'add';
         }
         #Check for ID
         if (empty($path[0])) {
             #Only support adding a new post here
+            if (!in_array('addSections', $_SESSION['permissions'])) {
+                return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
+            }
             return (new Section)->add();
         } else {
             $section = (new Section($path[0]))->get();
@@ -39,14 +42,12 @@ class Sections extends Api
             }
             #Check permissions
             if (
-                in_array($path[1], ['edit', 'close', 'open', 'markprivate', 'markpublic', 'order']) && !in_array('editSections', $_SESSION['permissions']) ||
-                $path[1] === 'add' && !in_array('addSections', $_SESSION['permissions']) ||
-                $path[1] === 'delete' && !in_array('removeSections', $_SESSION['permissions'])
+                (in_array($path[1], ['edit', 'close', 'open', 'markprivate', 'markpublic', 'order']) && !in_array('editSections', $_SESSION['permissions'])) ||
+                ($path[1] === 'delete' && !in_array('removeSections', $_SESSION['permissions']))
             ) {
                 return ['http_error' => 403, 'reason' => 'Lacking permission for `'.$path[1].'` action'];
             }
             return match($path[1]) {
-                'add' => $section->add(),
                 'edit' => $section->edit(),
                 'delete' => $section->delete(),
                 'markprivate' => ['response' => $section->setPrivate(true)],

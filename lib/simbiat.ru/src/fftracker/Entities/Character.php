@@ -8,6 +8,7 @@ use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
 use Simbiat\Lodestone;
+use Simbiat\Sanitization;
 use Simbiat\Security;
 use Simbiat\usercontrol\User;
 
@@ -203,7 +204,7 @@ class Character extends Entity
                 ];
             }
             #Reduce number of <br>s in biography
-            $this->lodestone['bio'] = Security::sanitizeHTML($this->lodestone['bio'] ?? '');
+            $this->lodestone['bio'] = Sanitization::sanitizeHTML($this->lodestone['bio'] ?? '');
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `ffxiv__character`(

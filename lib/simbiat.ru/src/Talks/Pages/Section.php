@@ -95,9 +95,14 @@ class Section extends Page
         }
         #Set flag indicating that we are in edit mode
         $outputArray['editMode'] = $this->editMode;
-        #Get types
+        #Get section types
         if (in_array('addSections', $_SESSION['permissions'])) {
-            $outputArray['section_types'] = HomePage::$dbController->selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid` ORDER BY `typeid`;');
+            $outputArray['section_types'] = \Simbiat\Talks\Entities\Section::getSectionTypes();
+        }
+        #Get stuff for threads
+        if (in_array('canPost', $_SESSION['permissions'])) {
+            $outputArray['thread_languages'] = \Simbiat\Talks\Entities\Thread::getLanguages();
+            $outputArray['thread_link_types'] = \Simbiat\Talks\Entities\Thread::getAltLinkTypes();
         }
         if ($this->editMode) {
             #Add edit mode to breadcrumb

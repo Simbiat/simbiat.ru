@@ -8,6 +8,7 @@ use Simbiat\HTTP20\HTML;
 use Simbiat\HTTP20\PrettyURL;
 use Simbiat\nl2tag;
 use Simbiat\SandClock;
+use Simbiat\Sanitization;
 use Simbiat\Security;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -60,7 +61,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
 
     public function sanitize(string $string, bool $head = false): string
     {
-        return Security::sanitizeHTML($string, $head);
+        return Sanitization::sanitizeHTML($string, $head);
     }
     
     public function htmlCut(string $string, int $length = 250): string

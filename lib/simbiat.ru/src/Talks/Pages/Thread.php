@@ -7,6 +7,7 @@ use Simbiat\Config\Common;
 use Simbiat\HTMLCut;
 use Simbiat\HTTP20\Headers;
 use Simbiat\Images;
+use Simbiat\Sanitization;
 use Simbiat\Security;
 
 class Thread extends Page
@@ -25,8 +26,8 @@ class Thread extends Page
     protected string $ogdesc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $requiredPermission = ['viewPosts'];
-    #Flag to indicate editor mode
-    protected bool $editMode = false;
+    #Link to JS module for preload
+    protected string $jsModule = 'talks/threads';
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -91,7 +92,7 @@ class Thread extends Page
         $this->title = '`'.$outputArray['name'].'` thread';
         $this->h1 = $outputArray['name'];
         if (!empty($outputArray['posts']['entities'])) {
-            $this->ogdesc = Security::sanitizeHTML(HTMLCut::Cut($outputArray['posts']['entities'][0]['text'], 160, 1), true);
+            $this->ogdesc = Sanitization::sanitizeHTML(HTMLCut::Cut($outputArray['posts']['entities'][0]['text'], 160, 1), true);
         } else {
             $this->ogdesc = $outputArray['name'];
         }
@@ -113,13 +114,19 @@ class Thread extends Page
             $outputArray['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';
         }
         #Process alternative links, if any
-        foreach ($outputArray['externalLinks'] as $link) {
-            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => $link['type'], 'href' => $link['url']];
+        foreach ($outputArray['externalLinks'] as $type=>$link) {
+            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => $type, 'href' => $link['url']];
         }
         #Set language
         $this->language = $outputArray['language'];
-        #Set flag indicating that we are in edit mode
-        $outputArray['editMode'] = $this->editMode;
+        #Get stuff for threads editing
+        if (
+            ($outputArray['owned'] && in_array('editOwnThreads', $_SESSION['permissions'])) ||
+            (!$outputArray['owned'] && in_array('editOthersThreads', $_SESSION['permissions']))
+        ) {
+            $outputArray['thread_languages'] = \Simbiat\Talks\Entities\Thread::getLanguages();
+            $outputArray['thread_link_types'] = \Simbiat\Talks\Entities\Thread::getAltLinkTypes();
+        }
         return $outputArray;
     }
 }

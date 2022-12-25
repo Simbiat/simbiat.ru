@@ -52,7 +52,7 @@
     text-align: center;
 }
 #sections_list tr td:nth-child(5) {
-    width: 2rem;
+    width: clamp(1rem,2rem,3rem);
     text-align: center;
 }
 #sections_list tr td:nth-child(6) {
@@ -74,12 +74,9 @@
 #sections_list {
     margin-bottom: 1rem;
 }
-#threads_list tr td:nth-child(2) {
-    width: 6rem;
-    text-align: center;
-}
+#threads_list tr td:nth-child(2),
 #threads_list tr td:nth-child(3) {
-    width: 6rem;
+    width: 7rem;
     text-align: center;
 }
 #threads_list tbody tr td:nth-child(2),
@@ -88,6 +85,15 @@
 }
 #threads_list tr td:nth-child(4) {
     width: 4rem;
+    text-align: center;
+}
+#threads_list tr td:nth-child(5) {
+    width: clamp(1rem, 2rem, 3rem);
+    text-align: center;
+}
+#threads_list tr td:nth-child(6),
+#threads_list tr td:nth-child(7) {
+    width: 7rem;
     text-align: center;
 }
 
@@ -128,7 +134,10 @@
     white-space: nowrap;
 }
 .post_name a {
+    /*For cleaner look and to suppress data-tooltip styling*/
     text-decoration: none!important;
+    /*To suppress data-tooltip styling*/
+    cursor: pointer!important;
 }
 .post_id {
     display: inline;
@@ -267,31 +276,54 @@ like-dis input {
 
 /*Checkboxes*/
 .section_private+label,
-.section_closed+label {
+.section_closed+label,
+.thread_private+label,
+.thread_closed+label,
+.thread_pin+label {
     text-decoration-color: var(--color-interactive);
 }
-.section_private:not(:checked)+label:after {
+.thread_pin:not(:checked)+label:after {
+    content: 'Not pinned';
+}
+.thread_pin:checked+label:after {
+    content: 'Pinned';
+}
+input[type=checkbox].thread_pin:checked+label::before {
+    content: '📌';
+}
+input[type=checkbox].thread_pin:not(:checked)+label::before {
+    content: '·';
+}
+.section_private:not(:checked)+label:after,
+.thread_private:not(:checked)+label:after {
     content: 'Public';
 }
-.section_private:checked+label:after {
+.section_private:checked+label:after,
+.thread_private:checked+label:after {
     content: 'Private';
 }
-input[type=checkbox].section_private:not(:checked)+label::before {
+input[type=checkbox].section_private:not(:checked)+label::before,
+input[type=checkbox].thread_private:not(:checked)+label::before {
     content: '🚶';
 }
-input[type=checkbox].section_private:checked+label::before {
+input[type=checkbox].section_private:checked+label::before,
+input[type=checkbox].thread_private:checked+label::before {
     content: '🚷';
 }
-.section_closed:not(:checked)+label:after {
+.section_closed:not(:checked)+label:after,
+.thread_closed:not(:checked)+label:after {
     content: 'Open';
 }
-.section_closed:checked+label:after {
+.section_closed:checked+label:after,
+.thread_closed:checked+label:after {
     content: 'Closed';
 }
-input[type=checkbox].section_closed:not(:checked)+label::before {
+input[type=checkbox].section_closed:not(:checked)+label::before,
+input[type=checkbox].thread_closed:not(:checked)+label::before {
     content: '🔓';
 }
-input[type=checkbox].section_closed:checked+label::before {
+input[type=checkbox].section_closed:checked+label::before,
+input[type=checkbox].thread_closed:checked+label::before {
     content: '🔒';
 }
 
@@ -315,4 +347,14 @@ image-upload > .section_icon {
 #cur_section_description {
     width: 100%;
     max-width: 100ch;
+}
+
+#thread_ogimage {
+    width: calc(100% - 1rem - 2 * var(--border-width));
+    margin: 0.5rem;
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-outset);
+    cursor: pointer;
 }

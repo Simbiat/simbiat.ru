@@ -1,25 +1,30 @@
-export class editSections
+export class Sections
 {
     private readonly addSectionForm: HTMLFormElement | null = null;
+    private readonly addThreadForm: HTMLFormElement | null = null;
     private readonly editSectionForm: HTMLFormElement | null = null;
     private readonly sectionsList: HTMLTableElement | null = null;
-    private readonly deleteButton: HTMLInputElement | null = null;
+    private readonly deleteSectionButton: HTMLInputElement | null = null;
     
     constructor()
     {
         this.sectionsList = document.getElementById('sections_list') as HTMLTableElement;
         this.addSectionForm = document.getElementById('addSectionForm') as HTMLFormElement;
+        this.addThreadForm = document.getElementById('addThreadForm') as HTMLFormElement;
         this.editSectionForm = document.getElementById('editSectionForm') as HTMLFormElement;
-        this.deleteButton = document.getElementById('delete_section') as HTMLInputElement;
+        this.deleteSectionButton = document.getElementById('delete_section') as HTMLInputElement;
         if (this.addSectionForm) {
-            submitIntercept(this.addSectionForm, this.add.bind(this));
+            submitIntercept(this.addSectionForm, this.addSection.bind(this));
+        }
+        if (this.addThreadForm) {
+            submitIntercept(this.addThreadForm, this.addThread.bind(this));
         }
         if (this.editSectionForm) {
-            submitIntercept(this.editSectionForm, this.edit.bind(this));
+            submitIntercept(this.editSectionForm, this.editSection.bind(this));
         }
-        if (this.deleteButton) {
-            this.deleteButton.addEventListener('click', () => {
-                this.delete();
+        if (this.deleteSectionButton) {
+            this.deleteSectionButton.addEventListener('click', () => {
+                this.deleteSection();
             });
         }
         if (this.sectionsList) {
@@ -27,27 +32,44 @@ export class editSections
             document.querySelectorAll('.section_private[id^=section_private_checkbox_]').forEach(item => {
                 //Tracking click to be able to roll back change easily
                 item.addEventListener('click', (event: Event) => {
-                    this.makePrivate(event);
+                    this.makeSectionPrivate(event);
                 });
             });
             //Listener for opening/closing sections
             document.querySelectorAll('.section_closed[id^=section_closed_checkbox_]').forEach(item => {
                 //Tracking click to be able to roll back change easily
                 item.addEventListener('click', (event: Event) => {
-                    this.close(event);
+                    this.closeSection(event);
                 });
             });
             //Listener for ordering sections
             document.querySelectorAll('.section_sequence[id^=section_sequence_]').forEach(item => {
                 //Tracking click to be able to roll back change easily
                 item.addEventListener('change', (event: Event) => {
-                    this.order(event);
+                    this.orderSection(event);
+                });
+            });
+        }
+        //Listeners if there are threads
+        if (document.getElementById('threads_list')) {
+            //Listener for marking threads private/public
+            document.querySelectorAll('.thread_private[id^=thread_private_checkbox_]').forEach(item => {
+                //Tracking click to be able to roll back change easily
+                item.addEventListener('click', (event: Event) => {
+                    this.makeThreadPrivate(event);
+                });
+            });
+            //Listener for (un)pinning threads
+            document.querySelectorAll('.thread_pin[id^=thread_pin_checkbox_]').forEach(item => {
+                //Tracking click to be able to roll back change easily
+                item.addEventListener('click', (event: Event) => {
+                    this.pinThread(event);
                 });
             });
         }
     }
     
-    private makePrivate(event: Event)
+    private makeSectionPrivate(event: Event)
     {
         event.preventDefault();
         event.stopPropagation();
@@ -77,7 +99,7 @@ export class editSections
         });
     }
     
-    private close(event: Event)
+    private closeSection(event: Event)
     {
         event.preventDefault();
         event.stopPropagation();
@@ -107,7 +129,7 @@ export class editSections
         });
     }
     
-    private order(event: Event)
+    private orderSection(event: Event)
     {
         event.preventDefault();
         event.stopPropagation();
@@ -159,7 +181,7 @@ export class editSections
         }
     }
     
-    private add()
+    private addSection()
     {
         if (this.addSectionForm) {
             //Get submit button
@@ -188,7 +210,7 @@ export class editSections
         }
     }
     
-    private edit()
+    private editSection()
     {
         if (this.editSectionForm) {
             //Get submit button
@@ -215,12 +237,12 @@ export class editSections
         }
     }
     
-    private delete()
+    private deleteSection()
     {
-        if (this.deleteButton) {
-            let id = this.deleteButton.getAttribute('data-section');
+        if (this.deleteSectionButton) {
+            let id = this.deleteSectionButton.getAttribute('data-section');
             if (id) {
-                buttonToggle(this.deleteButton as HTMLInputElement);
+                buttonToggle(this.deleteSectionButton as HTMLInputElement);
                 ajax(location.protocol + '//' + location.host + '/api/talks/sections/'+id+'/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
                     if (data.data === true) {
                         new Snackbar('Section removed. Redirecting to parent...', 'success');
@@ -228,9 +250,98 @@ export class editSections
                     } else {
                         new Snackbar(data.reason, 'failure', 10000);
                     }
-                    buttonToggle(this.deleteButton as HTMLInputElement);
+                    buttonToggle(this.deleteSectionButton as HTMLInputElement);
                 });
             }
         }
+    }
+    
+    private addThread()
+    {
+        if (this.addThreadForm) {
+            //Get submit button
+            let button = this.addThreadForm.querySelector('input[type=submit]')
+            //Get form data
+            let formData = new FormData(this.addThreadForm);
+            //Check if custom icon is being attached
+            let ogimage = this.addThreadForm.querySelector('input[type=file]') as HTMLInputElement;
+            if (ogimage && ogimage.files && ogimage.files[0]) {
+                formData.append('newThread[ogimage]', 'true');
+            } else {
+                formData.append('newThread[ogimage]', 'false');
+            }
+            //Add timezone
+            formData.append('newThread[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            buttonToggle(button as HTMLInputElement);
+            ajax(location.protocol + '//' + location.host + '/api/talks/threads/', formData, 'json', 'POST', 60000, true).then(data => {
+                if (data.data === true) {
+                    new Snackbar('Thread created. Reloading...', 'success');
+                    window.location.href = data.location;
+                } else {
+                    new Snackbar(data.reason, 'failure', 10000);
+                }
+                buttonToggle(button as HTMLInputElement);
+            });
+        }
+    }
+    
+    private makeThreadPrivate(event: Event)
+    {
+        event.preventDefault();
+        event.stopPropagation();
+        let checkbox = event.target as HTMLInputElement;
+        //Get verb
+        let verb;
+        if (checkbox.checked) {
+            verb = 'private';
+        } else {
+            verb = 'public';
+        }
+        buttonToggle(checkbox as HTMLInputElement);
+        let threadId = checkbox.getAttribute('data-thread') ?? '';
+        ajax(location.protocol+'//'+location.host+'/api/talks/threads/'+threadId+'/mark'+verb+'/', null, 'json', 'PATCH', 60000, true).then(data => {
+            if (data.data === true) {
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    new Snackbar('Thread marked as public', 'success');
+                } else {
+                    checkbox.checked = true;
+                    new Snackbar('Thread marked as private', 'success');
+                }
+            } else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            buttonToggle(checkbox as HTMLInputElement);
+        });
+    }
+    
+    private pinThread(event: Event)
+    {
+        event.preventDefault();
+        event.stopPropagation();
+        let checkbox = event.target as HTMLInputElement;
+        //Get verb
+        let verb;
+        if (checkbox.checked) {
+            verb = 'pin';
+        } else {
+            verb = 'unpin';
+        }
+        buttonToggle(checkbox as HTMLInputElement);
+        let threadId = checkbox.getAttribute('data-thread') ?? '';
+        ajax(location.protocol+'//'+location.host+'/api/talks/threads/'+threadId+'/'+verb+'/', null, 'json', 'PATCH', 60000, true).then(data => {
+            if (data.data === true) {
+                if (checkbox.checked) {
+                    checkbox.checked = false;
+                    new Snackbar('Thread unpinned', 'success');
+                } else {
+                    checkbox.checked = true;
+                    new Snackbar('Thread pinned', 'success');
+                }
+            } else {
+                new Snackbar(data.reason, 'failure', 10000);
+            }
+            buttonToggle(checkbox as HTMLInputElement);
+        });
     }
 }

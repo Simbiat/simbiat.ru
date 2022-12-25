@@ -672,6 +672,12 @@ class User extends Entity
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
         $threads = (new Threads($bindings, $where, '`talks__threads`.`created` DESC'))->listEntities();
+        #Clean any threads with empty `firstPost` (means thread is either empty or is in progress of creation)
+        foreach ($threads['entities'] as $key=>$thread) {
+            if (empty($thread['firstPost'])) {
+                unset($threads['entities'][$key]);
+            }
+        }
         return $threads['entities'];
     }
     
@@ -784,6 +790,10 @@ class User extends Entity
                         [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
                     ],
                     [
+                        'UPDATE `talks__threads` SET `lastpostby`=:deleted WHERE `lastpostby`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
                         'UPDATE `talks__posts` SET `createdby`=:deleted WHERE `createdby`=:userid;',
                         [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
                     ],
@@ -794,6 +804,10 @@ class User extends Entity
                     [
                         'UPDATE `sys__files` SET `userid`=:deleted WHERE `userid`=:userid;',
                         [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
+                        'DELETE FROM `talks__likes` WHERE `userid`=:userid;',
+                        [':userid' => [$this->id, 'int']]
                     ],
                     [
                         'DELETE FROM `uc__users` WHERE `userid`=:userid;',

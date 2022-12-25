@@ -252,17 +252,17 @@ INSERT IGNORE INTO `sys__settings` (`setting`, `value`, `description`) VALUES
 ('registration', '1', 'Flag determining whether registration of new users is open or not.'),
 ('site_name', 'Simbiat Software', 'General name of the website for \"title\" and meta-tags');
 
-INSERT IGNORE INTO `talks__alt_link_types` (`type`, `icon`) VALUES
-('Facebook', '/img/social/facebook.svg'),
-('IMDB', '/img/social/imdb.svg'),
-('Instagram', '/img/social/instagram.svg'),
-('Kitsu', '/img/social/kitsu.svg'),
-('LinkedIn', '/img/social/linkedin.svg'),
-('Proza', '/img/icons/proza.svg'),
-('Steam', '/img/social/steam.svg'),
-('Stihi', '/img/icons/stihi.svg'),
-('VK', '/img/social/VK.svg'),
-('YouTube', '/img/social/youtube.svg');
+INSERT IGNORE INTO `talks__alt_link_types` (`type`, `icon`, `regex`) VALUES
+('Facebook', '/img/social/facebook.svg', '(facebook\\.com|fb\\.(com|gg|me|watch)|metacareers\\.com|fbwat\\.ch)'),
+('IMDB', '/img/social/imdb.svg', 'imdb\\.com'),
+('Instagram', '/img/social/instagram.svg', '(instagram\\.com|ig\\.me)'),
+('Kitsu', '/img/social/kitsu.svg', 'kitsu\\.io'),
+('LinkedIn', '/img/social/linkedin.svg', '(linkedin\\.(com|at|cn)|lnkd\\.in)'),
+('Proza.ru', '/img/icons/proza.svg', 'proza\\.ru'),
+('Steam', '/img/social/steam.svg', '(store\\.steampowered\\.com|steamchina\\.com|steamcommunity\\.com)'),
+('Stihi.ru', '/img/icons/stihi.svg', 'stihi\\.ru'),
+('VK', '/img/social/VK.svg', 'vk\\.(com|ru)'),
+('YouTube', '/img/social/youtube.svg', '((yt|youtu)\\.be|youtube\\.com)');
 
 INSERT IGNORE INTO `talks__types` (`typeid`, `type`, `description`, `icon`) VALUES
 (1, 'Category', 'Section that is used only for grouping', '/img/talks/category.svg'),
@@ -397,7 +397,7 @@ INSERT IGNORE INTO `uc__user_to_permission` (`userid`, `permission`) VALUES
 (1, 'viewFF'),
 (1, 'viewPosts');
 
-/*Data added or changed after initial setup above*/
+/*Stuff added or changed after initial setup above*/
 INSERT IGNORE INTO `sys__files` (`fileid`, `userid`, `name`, `extension`, `mime`, `size`, `added`) VALUES
 ('36c4b98fcbbbdbdcaf7f4173e55b796f742510d55ac02a972c900907b3e098402e87f65d22b468c6352e5f490928b62a096a0343e61c7fab582ea5dfe1dc3927', 2, 'knowledgebase.svg', 'svg', 'image/svg+xml', 2912, '2022-12-10 11:07:30'),
 ('818b80c8e771bd57fae093b08608c987da756fe5b08a883b8d2ba1d6393dd882cc92e852b6911890a0bf275d090ef948572adedbfe523f8e5e7dc2ab34cd2056', 2, 'forum.svg', 'svg', 'image/svg+xml', 1173, '2022-12-10 11:07:10'),
@@ -412,11 +412,17 @@ UPDATE `talks__types` SET `icon` = '818b80c8e771bd57fae093b08608c987da756fe5b08a
 UPDATE `talks__types` SET `icon` = 'a1438f63ae1cc7f796c558692c01cf24cc70eca2066d85e8c0237938d6da9b97bf2242543c5834aa3e8c4b9e9e3250e5cdadc64d4c28b3d932ff13aa63d56f4b' WHERE `talks__types`.`typeid` = 4;
 UPDATE `talks__types` SET `icon` = 'c754408745db0714ea79c4dffdf76635e9a8ea38d3e7538324aa2bd03a83acfb7223a6ad378ced1c25ca68655d6ec84dce678be79282aa04969c80b7fd94ed4e' WHERE `talks__types`.`typeid` = 5;
 UPDATE `talks__types` SET `icon` = '36c4b98fcbbbdbdcaf7f4173e55b796f742510d55ac02a972c900907b3e098402e87f65d22b468c6352e5f490928b62a096a0343e61c7fab582ea5dfe1dc3927' WHERE `talks__types`.`typeid` = 6;
-ALTER TABLE `talks__types` ADD CONSTRAINT `section_type_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files`(`fileid`) ON DELETE RESTRICT ON UPDATE CASCADE;
 UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`sectionid` = 6;
 UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`sectionid` = 7;
-ALTER TABLE `talks__sections` ADD CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files`(`fileid`) ON DELETE CASCADE ON UPDATE CASCADE;
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('postInClosed', 'Can create sections/threads/posts in closed sections/threads');
 INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'postInClosed');
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('hideUpdate', 'Has option to not change post\'s update date (text change will still be recorded to history)');
 INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'hideUpdate');
+UPDATE `uc__permissions` SET `permission` = 'canPin', `description` = 'Can pin threads' WHERE `uc__permissions`.`permission` = 'premoderate';
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'canPin');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('postBacklog', 'Can post with creation time set in the past');
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'postBacklog');
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'removeThreads');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveThreads', 'Can move threads to different sections');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('movePosts', 'Can move posts to different threads');
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'moveThreads'), ('1', 'movePosts');

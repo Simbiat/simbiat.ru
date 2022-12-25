@@ -3,7 +3,7 @@ CREATE TABLE `uc__sessions`
     `sessionid` VARCHAR(256)                                    NOT NULL COMMENT 'Session''s UID' PRIMARY KEY,
     `cookieid`  VARCHAR(256)                                    NULL COMMENT 'Cookie associated with the session',
     `time`      TIMESTAMP           DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'Last time session was determined active',
-    `userid`    INT UNSIGNED                                    NOT NULL COMMENT 'User ID, in case session is related to a user. Needed mainly for invalidation in case of complete user deletion.',
+    `userid`    INT UNSIGNED        DEFAULT 1                   NOT NULL COMMENT 'User ID',
     `bot`       TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Whether session was determined to be a bot',
     `ip`        VARCHAR(45)                                     NULL COMMENT 'Session''s IP',
     `useragent` TEXT                                            NULL COMMENT 'UserAgent used in session',

@@ -1,0 +1,83 @@
+{% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+    <tab-content>New post</tab-content>
+{% endif %}
+{% if (owned and 'editOwnThreads' in session_data.permissions) or (not owned and 'editOthersThreads' in session_data.permissions) %}
+    <tab-content>
+        <form role="form" id="editThreadForm" name="editThreadForm" autocomplete="off" class="middle">
+            <input type="hidden" name="verb" value="edit" required>
+            <input type="hidden" name="curThread[threadid]" value="{{ id }}" required>
+            <div class="float_label_div">
+                <input form="editThreadForm" type="text" value="{{ name }}" aria-required="true" required name="curThread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+                <label for="new_thread_name">Name</label>
+            </div>
+            {% if 'moveThreads' in session_data.permissions %}
+                <div class="float_label_div">
+                    <input form="editThreadForm" type="number" inputmode="decimal" min="1" value="{{ parentID }}" step="1" aria-required="true" required name="curThread[parentid]" id="cur_thread_parent" placeholder="Parent ID">
+                    <label for="cur_thread_parent" data-tooltip="ID of parent section.<br>Change it to move the thread.">Parent ID</label>
+                </div>
+            {% else %}
+                <input type="hidden" name="curThread[parentid]" value="{{ parentID }}" required>
+            {% endif %}
+            {% if 'markPrivate' in session_data.permissions %}
+                <span class="radio_and_label">
+                    <input form="editThreadForm" id="new_thread_private" class="thread_private" name="curThread[private]" type="checkbox"{% if private %} checked{% endif %}>
+                    <label for="new_thread_private" data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+                </span>
+            {% endif %}
+            {% if 'canPin' in session_data.permissions %}
+                <span class="radio_and_label">
+                    <input form="editThreadForm" id="new_thread_pin" class="thread_pin" name="curThread[pinned]" type="checkbox"{% if pinned %} checked{% endif %}>
+                    <label for="new_thread_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change."></label>
+                </span>
+            {% endif %}
+            {% if type != 'Support' %}
+                <br>
+                <div class="float_label_div">
+                    <select form="editThreadForm" id="curThread_language" name="curThread[language]">
+                        {% for language in thread_languages %}
+                            <option value="{{ language.value }}"{% if language.value == 'en' %} selected{% endif %}>{{ language.name }}{% if language.value == 'en' %} (Default){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="curThread_language" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>
+                </div>
+                {{ include('common/elements/imageupload.twig', {'formName': 'editThreadForm', 'placeholder': 'Custom banner', 'inputName': 'curThread[ogimage]', 'previewClasses': 'middle', 'required': false, 'imageUrl': ogimage,'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link.<br>If not set no banner will be shown on page, and social media will show a general one.<br>Only PNG files accepted. Resolution ratio needs to be 1.91:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
+                <div class="radio_and_label">
+                    <input form="editThreadForm" id="cur_thread_clear_icon" name="curThread[clearogimage]" type="checkbox">
+                    <label for="cur_thread_clear_icon" data-tooltip="If checked will remove custom banner for the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}, replacing it with the default one.<br>Physical file will not be removed on update, it will only be unlinked from the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove banner</label>
+                </div>
+                <details>
+                    <summary>Alternative links</summary>
+                    <p>If the content being posted is available on one of the supported website, you can add a link to it below.</p>
+                    {% for altlink in thread_link_types %}
+                        <span class="float_label_div">
+                            <input form="editThreadForm" type="url" aria-required="false" name="curThread[altlinks][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" value="{{ externalLinks[altlink.type].url }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
+                            <label for="new_thread_{{ altlink.type }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
+                        </span>
+                    {% endfor %}
+                </details>
+            {% endif %}
+            <input role="button" form="editThreadForm" type="submit" name="curThread[submit]" id="editThread_submit" formaction="/api/talks/threads/" formmethod="post" formtarget="_self" value="Update">
+            <img id="editThread_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if (type == 'Support' and (owned or (not owned and 'closeOthersThreads' in session_data.permissions))) or (type != 'Support' and ((owned and 'closeOwnThreads' in session_data.permissions) or (not owned and 'closeOthersThreads' in session_data.permissions))) %}
+    <tab-content>
+        <p>Pressing below button will {% if closed %}reopen{% else %}close{% endif %} the current thread <b class="warning">{% if closed %}allowing{% else %}preventing{% endif %}</b> users to post in it.</p>
+        <input role="button" type="button" id="close_thread" value="{% if closed %}Open{% else %}Close{% endif %}" data-thread="{{ id }}">
+        <img loading="lazy" decoding="async" id="thread_close_spinner" class="hidden spinner" src="/img/spinner.svg" alt="{% if closed %}Reopening{% else %}Closing{% endif %} thread...">
+    </tab-content>
+{% endif %}
+{% if 'removeThreads' in session_data.permissions %}
+    <tab-content>
+        {% if posts.entities %}
+            <p>This thread has posts in it. Removal is not possible.</p>
+        {% else %}
+            <p>Pressing below button will delete the current thread completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+            <p>If thread has a custom banner it will not be removed along with the thread. Instead, it will be removed during routine check for orphaned files, if the banner file is not linked to anything else.</p>
+            <p>If deletion is successful you will be redirected to respective parent section.</p>
+            <input role="button" type="button" id="delete_thread" value="Delete" data-thread="{{ id }}">
+            <img loading="lazy" decoding="async" id="thread_delete_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Deleting thread...">
+        {% endif %}
+    </tab-content>
+{% endif %}
