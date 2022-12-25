@@ -685,6 +685,11 @@ main::-webkit-scrollbar {
     text-decoration: underline dotted 0.2rem;
     cursor: help;
 }
+/*This is to prevent use of help cursor for links and images inside links*/
+a[data-tooltip]:not([data-tooltip='']),
+a img[data-tooltip]:not([data-tooltip='']) {
+    cursor: revert!important;
+}
 tool-tip {
     border-radius: var(--border-radius);
     border-style: solid;
