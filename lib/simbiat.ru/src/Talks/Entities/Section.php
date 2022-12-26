@@ -179,28 +179,42 @@ class Section extends Entity
     }
     
     #Function to (un)mark section as private
-    public function setPrivate(bool $private = false): bool
+    public function setPrivate(bool $private = false): array
     {
+        #Check permission
+        if (!in_array('editSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        }
         try {
-            return HomePage::$dbController->query('UPDATE `talks__sections` SET `private`=:private WHERE `sectionid`=:sectionid;', [':private' => [$private, 'int'], ':sectionid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__sections` SET `private`=:private WHERE `sectionid`=:sectionid;', [':private' => [$private, 'int'], ':sectionid' => [$this->id, 'int']]);
+            return ['response' => true];
         } catch (\Throwable) {
-            return false;
+            return ['response' => false];
         }
     }
     
     #Function to close/open a section
-    public function setClosed(bool $closed = false): bool
+    public function setClosed(bool $closed = false): array
     {
+        #Check permission
+        if (!in_array('editSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        }
         try {
-            return HomePage::$dbController->query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'time' : 'null')], ':sectionid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'time' : 'null')], ':sectionid' => [$this->id, 'int']]);
+            return ['response' => true];
         } catch (\Throwable) {
-            return false;
+            return ['response' => false];
         }
     }
     
     #Function to change order (sequence) of a section
     public function order(): array
     {
+        #Check permission
+        if (!in_array('editSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        }
         #Check value
         if (!isset($_POST['order'])) {
             return ['http_error' => 400, 'reason' => 'No order provided'];
@@ -223,6 +237,10 @@ class Section extends Entity
     
     public function add(): array
     {
+        #Check permission
+        if (!in_array('addSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
+        }
         #Sanitize data
         $data = $_POST['newsection'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -266,6 +284,10 @@ class Section extends Entity
     
     public function edit(): array
     {
+        #Check permission
+        if (!in_array('editSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        }
         #Sanitize data
         $data = $_POST['cursection'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -389,16 +411,16 @@ class Section extends Entity
     
     public function delete(): array
     {
+        #Check permission
+        if (!in_array('removeSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `removeSections` permission'];
+        }
         #Deletion is critical, so ensure, that we get the actual data, even if this function is somehow called outside of API
         if (!$this->attempted) {
             $this->get();
         }
         if (is_null($this->id)) {
             return ['http_error' => 404, 'reason' => 'Section not found'];
-        }
-        #For the same reason check permissions once again
-        if (!in_array('removeSections', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'No `removeSections` permission'];
         }
         #Check if the section is system one
         if ($this->system) {

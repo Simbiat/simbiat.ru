@@ -31,29 +31,19 @@ class Sections extends Api
         #Check for ID
         if (empty($path[0])) {
             #Only support adding a new post here
-            if (!in_array('addSections', $_SESSION['permissions'])) {
-                return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
-            }
             return (new Section)->add();
         } else {
             $section = (new Section($path[0]))->get();
             if (is_null($section->id)) {
                 return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
             }
-            #Check permissions
-            if (
-                (in_array($path[1], ['edit', 'close', 'open', 'markprivate', 'markpublic', 'order']) && !in_array('editSections', $_SESSION['permissions'])) ||
-                ($path[1] === 'delete' && !in_array('removeSections', $_SESSION['permissions']))
-            ) {
-                return ['http_error' => 403, 'reason' => 'Lacking permission for `'.$path[1].'` action'];
-            }
             return match($path[1]) {
                 'edit' => $section->edit(),
                 'delete' => $section->delete(),
-                'markprivate' => ['response' => $section->setPrivate(true)],
-                'markpublic' => ['response' => $section->setPrivate()],
-                'close' => ['response' => $section->setClosed(true)],
-                'open' => ['response' => $section->setClosed()],
+                'markprivate' => $section->setPrivate(true),
+                'markpublic' => $section->setPrivate(),
+                'close' => $section->setClosed(true),
+                'open' => $section->setClosed(),
                 'order' => $section->order(),
                 default => ['http_error' => 405, 'reason' => 'Unsupported API verb used'],
             };
