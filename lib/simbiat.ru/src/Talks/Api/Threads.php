@@ -31,52 +31,25 @@ class Threads extends Api
         #Check for ID
         if (empty($path[0])) {
             #Only support adding a new post here
-            if (!in_array('canPost', $_SESSION['permissions'])) {
-                return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
-            }
             return (new Thread)->add();
         } else {
             #If we are not adding a thread (which can take some time with writing up a post) - check CSRF token
-            if ($path[1] !== 'add') {
-                if (!$this->antiCSRF($this->allowedOrigins)) {
-                    return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
-                }
+            if (!$this->antiCSRF($this->allowedOrigins)) {
+                return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
             }
-            $section = (new Thread($path[0]))->get();
-            if (is_null($section->id)) {
+            $thread = (new Thread($path[0]))->get();
+            if (is_null($thread->id)) {
                 return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
             }
-            #Check permissions
-            if (
-                (in_array($path[1], ['markprivate', 'markpublic']) && !in_array('markPrivate', $_SESSION['permissions'])) ||
-                (in_array($path[1], ['pin', 'unpin']) && !in_array('canPin', $_SESSION['permissions'])) ||
-                ($path[1] === 'add' && !in_array('canPost', $_SESSION['permissions'])) ||
-                ($path[1] === 'delete' && !in_array('removeThreads', $_SESSION['permissions'])) ||
-                ($_SESSION['userid'] === $section->createdBy &&
-                    (
-                        (in_array($path[1], ['close', 'open']) && !in_array('closeOwnThreads', $_SESSION['permissions'])) ||
-                        ($path[1] === 'edit' && !in_array('editOwnThreads', $_SESSION['permissions']))
-                    )
-                ) ||
-                ($_SESSION['userid'] !== $section->createdBy &&
-                    (
-                        (in_array($path[1], ['close', 'open']) && !in_array('closeOthersThreads', $_SESSION['permissions'])) ||
-                        ($path[1] === 'edit' && !in_array('editOthersThreads', $_SESSION['permissions']))
-                    )
-                )
-            ) {
-                return ['http_error' => 403, 'reason' => 'Lacking permission for `'.$path[1].'` action'];
-            }
             return match($path[1]) {
-                'add' => $section->add(),
-                'edit' => $section->edit(),
-                'delete' => $section->delete(),
-                'markprivate' => ['response' => $section->setPrivate(true)],
-                'markpublic' => ['response' => $section->setPrivate()],
-                'close' => ['response' => $section->setClosed(true)],
-                'open' => ['response' => $section->setClosed()],
-                'pin' => ['response' => $section->setPinned(true)],
-                'unpin' => ['response' => $section->setPinned()],
+                'edit' => $thread->edit(),
+                'delete' => $thread->delete(),
+                'markprivate' => $thread->setPrivate(true),
+                'markpublic' => $thread->setPrivate(),
+                'close' => $thread->setClosed(true),
+                'open' => $thread->setClosed(),
+                'pin' => $thread->setPinned(true),
+                'unpin' => $thread->setPinned(),
                 default => ['http_error' => 405, 'reason' => 'Unsupported API verb used'],
             };
         }

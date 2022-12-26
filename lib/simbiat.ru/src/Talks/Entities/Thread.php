@@ -109,32 +109,54 @@ class Thread extends Entity
     }
     
     #Function to (un)mark section as thread
-    public function setPrivate(bool $private = false): bool
+    public function setPrivate(bool $private = false): array
     {
+        #Check permission
+        if (!in_array('markPrivate', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `markPrivate` permission'];
+        }
         try {
-            return HomePage::$dbController->query('UPDATE `talks__threads` SET `private`=:private WHERE `threadid`=:threadid;', [':private' => [$private, 'int'], ':threadid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__threads` SET `private`=:private WHERE `threadid`=:threadid;', [':private' => [$private, 'int'], ':threadid' => [$this->id, 'int']]);
+            return ['response' => true];
         } catch (\Throwable) {
-            return false;
+            return ['response' => false];
         }
     }
     
     #Function to close/open a thread
-    public function setClosed(bool $closed = false): bool
+    public function setClosed(bool $closed = false): array
     {
+        #Closure is critical, so ensure, that we get the actual data, even if this function is somehow called outside of API
+        if (!$this->attempted) {
+            $this->get();
+        }
+        #Check permissions
+        if ($this->owned && !in_array('closeOwnThreads', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `closeOwnThreads` permission'];
+        }
+        if (!$this->owned && !in_array('closeOthersThreads', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `closeOthersThreads` permission'];
+        }
         try {
-            return HomePage::$dbController->query('UPDATE `talks__threads` SET `closed`=:closed WHERE `threadid`=:threadid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'time' : 'null')], ':threadid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__threads` SET `closed`=:closed WHERE `threadid`=:threadid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'time' : 'null')], ':threadid' => [$this->id, 'int']]);
+            return ['response' => true];
         } catch (\Throwable) {
-            return false;
+            return ['response' => false];
         }
     }
     
     #Function to pin/unpin a thread
-    public function setPinned(bool $pinned = false): bool
+    public function setPinned(bool $pinned = false): array
     {
+        #Check permission
+        if (!in_array('canPin', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `canPin` permission'];
+        }
         try {
-            return HomePage::$dbController->query('UPDATE `talks__threads` SET `pinned`=:pinned WHERE `threadid`=:threadid;', [':pinned' => [$pinned, 'int'], ':threadid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__threads` SET `pinned`=:pinned WHERE `threadid`=:threadid;', [':pinned' => [$pinned, 'int'], ':threadid' => [$this->id, 'int']]);
+            return ['response' => true];
         } catch (\Throwable) {
-            return false;
+            return ['response' => false];
         }
     }
     
@@ -142,6 +164,10 @@ class Thread extends Entity
     #Useful when creating "special" threads, meant to not be owned by a user posting, so that they cannot edit it
     public function add(bool $withPost = true): array
     {
+        #Check permission
+        if (!in_array('canPost', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
+        }
         #Sanitize data
         $data = $_POST['newthread'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -210,6 +236,17 @@ class Thread extends Entity
     
     public function edit(): array
     {
+        #Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            $this->get();
+        }
+        #Check permissions
+        if ($this->owned && !in_array('editOwnThreads', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editOwnThreads` permission'];
+        }
+        if (!$this->owned && !in_array('editOthersThreads', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editOthersThreads` permission'];
+        }
         #Sanitize data
         $data = $_POST['curthread'] ?? [];
         $sanitize = $this->sanitizeInput($data, true);
@@ -351,8 +388,8 @@ class Thread extends Entity
         if ($edit) {
             if (
                 #Closing of own threads should be possible for Support even without respective permission
-                ($this->created === $_SESSION['userid'] && !(in_array('closeOwnThreads', $_SESSION['permissions']) || $parent->type === 'Support')) ||
-                ($this->created !== $_SESSION['userid'] && !in_array('closeOthersThreads', $_SESSION['permissions']))
+                ($this->owned && !(in_array('closeOwnThreads', $_SESSION['permissions']) || $parent->type === 'Support')) ||
+                (!$this->owned && !in_array('closeOthersThreads', $_SESSION['permissions']))
             ) {
                 $data['closed'] = null;
             }
