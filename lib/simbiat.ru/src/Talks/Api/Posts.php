@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Talks\Api;
 
 use Simbiat\Abstracts\Api;
+use Simbiat\HomePage;
 use Simbiat\Talks\Entities\Post;
 
 class Posts extends Api
@@ -28,9 +29,16 @@ class Posts extends Api
         }
         #Check for ID
         if (empty($path[0])) {
+            #Limit accidental spam by extra checks
+            if (HomePage::$method !== 'POST' && $path[1] === 'add') {
+                return ['http_error' => 405, 'reason' => 'Incorrect method or verb used'];
+            }
             #Only support adding a new post here
             return (new Post)->add();
         } else {
+            if (!is_numeric($path[0])) {
+                return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` is not numeric'];
+            }
             $post = (new Post($path[0]))->get();
             if (is_null($post->id)) {
                 return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
@@ -46,8 +54,8 @@ class Posts extends Api
             return match($path[1]) {
                 'like' => $post->like(),
                 'dislike' => $post->like(true),
-                'edit' => ['response' => $post->edit()],
-                'delete' => ['response' => $post->delete()],
+                'edit' => $post->edit(),
+                'delete' => $post->delete(),
                 default => ['http_error' => 405, 'reason' => 'Unsupported API verb used'],
             };
         }

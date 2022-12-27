@@ -72,9 +72,9 @@
         <label for="website_value">Website</label>
     </div>
     <br/>
-    <div class="float_label_div">
+    <div class="float_label_div wrapper_for_tinymce">
         <textarea class="tinymce nomedia" form="profile_details" id="about_value" name="details[about]" placeholder="About" spellcheck="true" wrap="soft">{{ userData.about }}</textarea>
-        <label for="about_value">About</label>
+        <label for="about_value" class="label_for_tinymce">About</label>
     </div>
     <br/>
     <input role="button" form="profile_details" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">

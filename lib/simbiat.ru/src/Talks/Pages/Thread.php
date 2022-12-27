@@ -103,6 +103,7 @@ class Thread extends Page
         #Set ogtype
         $outputArray['ogtype'] = 'article';
         #Add article open graph tags
+        /** @noinspection DuplicatedCode */
         $outputArray['ogextra'] =
             '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />
             <meta property="article:modified_time" content="'.date('c', $outputArray['updated']).'" />'.

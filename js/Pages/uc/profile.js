@@ -4,9 +4,11 @@ export class EditProfile {
     usernameField = null;
     profileForm = null;
     profileSubmit = null;
+    aboutValue = null;
     profileFormData = '';
     timeOut = null;
     constructor() {
+        this.aboutValue = document.getElementById('about_value');
         this.usernameForm = document.getElementById('profile_username');
         if (this.usernameForm) {
             this.usernameField = document.getElementById('username_value');
@@ -34,8 +36,6 @@ export class EditProfile {
     }
     profile(auto = false) {
         let formData = new FormData(this.profileForm);
-        let button = this.profileForm.querySelector('#details_submit');
-        buttonToggle(button);
         ajax(location.protocol + '//' + location.host + '/api/uc/profile/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 this.profileFormData = JSON.stringify([...formData.entries()]);
@@ -49,21 +49,23 @@ export class EditProfile {
                     timeTag.setAttribute('datetime', time.toISOString());
                     timeTag.innerHTML = time.toLocaleTimeString();
                 }
+                if (this.aboutValue && this.aboutValue.id) {
+                    saveTinyMCE(this.aboutValue.id);
+                }
             }
             else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            buttonToggle(button);
         });
     }
     profileOnChange() {
         if (this.timeOut) {
-            clearTimeout(this.timeOut);
+            window.clearTimeout(this.timeOut);
         }
         let formData = new FormData(this.profileForm);
         this.profileSubmit.disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
         if (!this.profileSubmit.disabled) {
-            this.timeOut = setTimeout(() => { this.profile(true); }, 10000);
+            this.timeOut = window.setTimeout(() => { this.profile(true); }, 10000);
         }
     }
     usernameOnChange() {

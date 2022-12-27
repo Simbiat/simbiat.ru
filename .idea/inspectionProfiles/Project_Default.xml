@@ -4,7 +4,7 @@
     <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myValues">
         <value>
-          <list size="31">
+          <list size="32">
             <item index="0" class="java.lang.String" itemvalue="nobr" />
             <item index="1" class="java.lang.String" itemvalue="noembed" />
             <item index="2" class="java.lang.String" itemvalue="comment" />
@@ -36,6 +36,7 @@
             <item index="28" class="java.lang.String" itemvalue="tab-content" />
             <item index="29" class="java.lang.String" itemvalue="image-upload" />
             <item index="30" class="java.lang.String" itemvalue="select-custom" />
+            <item index="31" class="java.lang.String" itemvalue="post-form" />
           </list>
         </value>
       </option>

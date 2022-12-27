@@ -323,6 +323,21 @@ textarea+label.at_the_limit:after {
     font-weight: bold;
 }
 
+/*Label for textarea which are replaced by TinyMCE*/
+.wrapper_for_tinymce {
+    position: relative;
+    width: 98%;
+}
+.wrapper_for_tinymce .label_for_tinymce {
+    color: var(--color-interactive);
+    filter: var(--border-shadow);
+    position: absolute;
+    top: -.75rem;
+    left: .5rem;
+    /*If no z-index, label gets covered by TinyMCE for some reason*/
+    z-index: 1;
+}
+
 /*Add a more obvious styling for summary tag by making it more like a link*/
 summary {
     color: var(--color-interactive);

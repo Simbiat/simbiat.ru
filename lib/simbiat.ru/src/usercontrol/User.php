@@ -802,6 +802,10 @@ class User extends Entity
                         [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
                     ],
                     [
+                        'UPDATE `talks__posts_history` SET `userid`=:deleted WHERE `userid`=:userid;',
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
+                    ],
+                    [
                         'UPDATE `sys__files` SET `userid`=:deleted WHERE `userid`=:userid;',
                         [':userid' => [$this->id, 'int'], ':deleted' => [Talks::userIDs['Deleted user'], 'int']]
                     ],

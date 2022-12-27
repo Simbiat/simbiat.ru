@@ -13,7 +13,7 @@ export class ffEntity {
         }
         else {
             this.forceRefresh.classList.add('spin');
-            setTimeout(async () => {
+            window.setTimeout(async () => {
                 await ajax(location.protocol + '//' + location.host + this.forceRefresh.getAttribute('data-link'), null, 'json', 'PUT', 300000).then(data => {
                     if (data.data === true) {
                         new Snackbar('Data updated. Reloading page...', 'success');

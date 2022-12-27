@@ -210,19 +210,21 @@ export class Sections {
     }
     deleteSection() {
         if (this.deleteSectionButton) {
-            let id = this.deleteSectionButton.getAttribute('data-section');
-            if (id) {
-                buttonToggle(this.deleteSectionButton);
-                ajax(location.protocol + '//' + location.host + '/api/talks/sections/' + id + '/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
-                    if (data.data === true) {
-                        new Snackbar('Section removed. Redirecting to parent...', 'success');
-                        window.location.href = data.location;
-                    }
-                    else {
-                        new Snackbar(data.reason, 'failure', 10000);
-                    }
+            if (confirm('This is the last chance to back out.\nIf you press \'OK\' this section will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
+                let id = this.deleteSectionButton.getAttribute('data-section');
+                if (id) {
                     buttonToggle(this.deleteSectionButton);
-                });
+                    ajax(location.protocol + '//' + location.host + '/api/talks/sections/' + id + '/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
+                        if (data.data === true) {
+                            new Snackbar('Section removed. Redirecting to parent...', 'success');
+                            window.location.href = data.location;
+                        }
+                        else {
+                            new Snackbar(data.reason, 'failure', 10000);
+                        }
+                        buttonToggle(this.deleteSectionButton);
+                    });
+                }
             }
         }
     }
@@ -241,6 +243,10 @@ export class Sections {
             buttonToggle(button);
             ajax(location.protocol + '//' + location.host + '/api/talks/threads/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
+                    let textarea = this.addThreadForm.querySelector('textarea');
+                    if (textarea && textarea.id) {
+                        saveTinyMCE(textarea.id);
+                    }
                     new Snackbar('Thread created. Reloading...', 'success');
                     window.location.href = data.location;
                 }

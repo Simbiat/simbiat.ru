@@ -29,6 +29,7 @@ class Thread extends Entity
     public int $updatedBy = 1;
     public ?int $lastPost = null;
     public int $lastPostBy = 1;
+    public int $lastPage = 1;
     public ?string $ogimage = null;
     public string $language = 'en';
     #List of parents for the thread
@@ -96,6 +97,7 @@ class Thread extends Entity
         $this->language = $fromDB['language'];
         $this->tags = $fromDB['tags'];
         $this->externalLinks = ArrayHelpers::DigitToKey($fromDB['links'], 'type');
+        $this->lastPage = $fromDB['posts']['pages'];
     }
     
     public static function getLanguages(): array
@@ -168,6 +170,9 @@ class Thread extends Entity
         if (!in_array('canPost', $_SESSION['permissions'])) {
             return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
         }
+        if ($withPost && empty($_POST['postform'])) {
+            return ['http_error' => 400, 'reason' => 'No post data provided'];
+        }
         #Sanitize data
         $data = $_POST['newthread'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -204,10 +209,6 @@ class Thread extends Entity
                     ],
                 ]
             );
-            #Add post
-            if ($withPost) {
-            
-            }
             #Add alt links
             $queries = [];
             foreach ($data['altlinks'] as $key=>$link) {
@@ -226,6 +227,12 @@ class Thread extends Entity
                 } catch (\Throwable) {
                     #Do nothing, this is not critical
                 }
+            }
+            #Add post
+            if ($withPost) {
+                $_POST['postform']['threadid'] = $newID;
+                $_POST['postform']['time'] = $data['time'];
+                return (new Post())->add();
             }
             return ['response' => true, 'location' => '/talks/threads/'.$newID];
         } catch (\Throwable $throwable) {
@@ -252,6 +259,10 @@ class Thread extends Entity
         $sanitize = $this->sanitizeInput($data, true);
         if (is_array($sanitize)) {
             return $sanitize;
+        }
+        #Check if we are moving thread and have permission for that
+        if ($this->parentID !== $data['parentid'] && !in_array('moveThreads', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `moveThreads` permission'];
         }
         try {
             $queries = [];
@@ -362,7 +373,7 @@ class Thread extends Entity
         }
         #Check if parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create thread in closed section `'.$parent->name.'`'];
+            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed section `'.$parent->name.'`'];
         }
         #Check if category (where we cannot create threads)
         if ($parent->type === 'Category') {
@@ -378,7 +389,7 @@ class Thread extends Entity
             ) &&
             HomePage::$dbController->check('SELECT `name` FROM `talks__threads` WHERE `sectionid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']])
         ) {
-            return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
+            return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
         }
         #Enforce private flag and prevent time change for support threads
         if ($parent->type === 'Support') {
@@ -442,16 +453,16 @@ class Thread extends Entity
     
     public function delete(): array
     {
+        #Check permission
+        if (!in_array('removeThreads', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `removeThreads` permission'];
+        }
         #Deletion is critical, so ensure, that we get the actual data, even if this function is somehow called outside of API
         if (!$this->attempted) {
             $this->get();
         }
         if (is_null($this->id)) {
             return ['http_error' => 404, 'reason' => 'Thread not found'];
-        }
-        #For the same reason check permissions once again
-        if (!in_array('removeThreads', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'No `removeThreads` permission'];
         }
         #Check if the section is system one
         if ($this->system) {

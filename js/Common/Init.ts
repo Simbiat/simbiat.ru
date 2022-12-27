@@ -54,6 +54,8 @@ function init()
     customElements.define('image-upload', ImageUpload);
     //Define custom select blocks
     customElements.define('select-custom', SelectCustom);
+    //Define post form
+    customElements.define('post-form', PostForm);
     //Add new tab icon to links opening in new tab
     new A();
     //Process URL

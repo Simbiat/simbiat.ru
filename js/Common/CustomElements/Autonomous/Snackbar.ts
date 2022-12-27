@@ -45,7 +45,7 @@ class SnackbarClose extends HTMLElement
         this.addEventListener('click', this.close);
         let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0')
         if (closeIn > 0) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.close();
             }, closeIn);
         }

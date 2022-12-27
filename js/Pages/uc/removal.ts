@@ -17,7 +17,7 @@ export class RemoveProfile
     
     private remove()
     {
-        if (confirm('This is the last chance to back out.\nIf you press \'OK\' your user will be '+(this.checkbox && this.checkbox.checked ? 'permanently ' : '')+'removed.\nPress \'Cancel\' to cancel the action.')) {
+        if (confirm('This is the last chance to back out.\nIf you press \'OK\' your user will be '+(this.checkbox && this.checkbox.checked ? 'permanently deleted' : 'removed')+'.\nPress \'Cancel\' to cancel the action.')) {
             //Get form data
             let formData = new FormData();
             //Append value of the checkbox

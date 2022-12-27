@@ -4,7 +4,9 @@ namespace Simbiat\Talks\Entities;
 
 use Simbiat\Abstracts\Entity;
 use Simbiat\Config\Talks;
+use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\Sanitization;
 use Simbiat\Talks\Search\Posts;
 
 class Post extends Entity
@@ -18,11 +20,11 @@ class Post extends Entity
     public ?int $closed = null;
     public bool $owned = false;
     public ?int $created = null;
-    public int $createdby = 1;
-    public string $createdby_name = 'Deleted user';
+    public int $createdBy = 1;
+    public string $createdBy_name = 'Deleted user';
     public ?int $updated = null;
-    public int $updatedby = 1;
-    public string $updatedby_name = 'Deleted user';
+    public int $updatedBy = 1;
+    public string $updatedBy_name = 'Deleted user';
     public ?int $threadid = null;
     public array $replyTo = [];
     public string $text = '';
@@ -69,12 +71,12 @@ class Post extends Entity
         $this->locked = boolval($fromDB['locked']);
         $this->closed = $fromDB['thread']['closed'] ?? null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->createdby = $fromDB['createdby'] ?? Talks::userIDs['Deleted user'];
+        $this->createdBy = $fromDB['createdby'] ?? Talks::userIDs['Deleted user'];
         $this->owned = ($this->createdBy === $_SESSION['userid']);
-        $this->createdby_name = $fromDB['createdby_name'] ?? 'Deleted user';
+        $this->createdBy_name = $fromDB['createdby_name'] ?? 'Deleted user';
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->updatedby = $fromDB['updatedby'] ?? Talks::userIDs['Deleted user'];
-        $this->updatedby_name = $fromDB['updatedby_name'] ?? 'Deleted user';
+        $this->updatedBy = $fromDB['updatedby'] ?? Talks::userIDs['Deleted user'];
+        $this->updatedBy_name = $fromDB['updatedby_name'] ?? 'Deleted user';
         $this->parents = $fromDB['thread']['parents'];
         $this->replyTo = $fromDB['replyto'];
         $this->avatar = $fromDB['avatar'];
@@ -157,18 +159,217 @@ class Post extends Entity
         }
     }
     
-    public function edit(): bool
-    {
-        return true;
-    }
-    
-    public function delete(): bool
-    {
-        return true;
-    }
-    
     public function add(): array
     {
-        return [];
+        #Check permission
+        if (!in_array('canPost', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
+        }
+        #Sanitize data
+        $data = $_POST['postform'] ?? [];
+        $sanitize = $this->sanitizeInput($data, true);
+        if (is_array($sanitize)) {
+            return $sanitize;
+        }
+        try {
+            #Create post itself
+            $newID = HomePage::$dbController->insertAI(
+                'INSERT INTO `talks__posts`(`postid`, `threadid`, `replyto`, `created`, `createdby`, `updatedby`, `text`) VALUES (NULL,:threadid,:replyto,:time,:userid,:userid,:text);',
+                [
+                    ':threadid' => [$data['threadid'], 'int'],
+                    ':replyto' => [
+                        (empty($data['replyto']) ? null : $data['replyto']),
+                        (empty($data['replyto']) ? 'null' : 'int')
+                    ],
+                    ':time' => [
+                        (empty($data['time']) ? 'now' : $data['time']),
+                        'time'
+                    ],
+                    ':userid' => [$_SESSION['userid'], 'int'],
+                    ':text' => $data['text'],
+                ]
+            );
+            #Update last post for thread
+            HomePage::$dbController->query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=CURRENT_TIMESTAMP(), `lastpostby`=:userid WHERE `threadid`=:threadid;',
+                [
+                    ':threadid' => [$data['threadid'], 'int'],
+                    ':userid' => [$_SESSION['userid'], 'int'],
+                ]
+            );
+            #Refresh data
+            $this->setId($newID)->get();
+            #Add text to history
+            $this->addHistory($this->text);
+            #Get the up-to-date data for the thread, to get the last page for location
+            $thread = (new Thread($data['threadid']))->get();
+            return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($thread->lastPage === 1 ? '' : '?page='.$thread->lastPage)];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+            return ['http_error' => 500, 'reason' => 'Failed to create new post'];
+        }
+    }
+    
+    #Helper to add text to history
+    private function addHistory(string $text): void
+    {
+        try {
+            HomePage::$dbController->query('INSERT INTO `talks__posts_history` (`postid`, `userid`, `text`) VALUES (:postid, :userid, :text);',
+                [
+                    ':postid' => [$this->id, 'int'],
+                    ':userid' => [$_SESSION['userid'], 'int'],
+                    ':text' => $text,
+                ]
+            );
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+        }
+    }
+    
+    public function edit(): array
+    {
+        #Check permission
+        if (!in_array('canPost', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
+        }
+        #Ensure we have current data to check ownership
+        if (!$this->attempted) {
+            $this->get();
+        }
+        #Check permissions
+        if ($this->owned && !in_array('editOwnPosts', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editOwnPosts` permission'];
+        }
+        if (!$this->owned && !in_array('editOthersPosts', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `editOthersPosts` permission'];
+        }
+        if ($this->locked && !in_array('editLocked', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'Post is locked and no `editLocked` permission'];
+        }
+        #Sanitize data
+        $data = $_POST['postform'] ?? [];
+        $sanitize = $this->sanitizeInput($data, true);
+        if (is_array($sanitize)) {
+            return $sanitize;
+        }
+        #Check if we are moving post and have permission for that
+        if ($this->threadid !== $data['threadid'] && !in_array('movePosts', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `movePosts` permission'];
+        }
+        #Check if the text is different
+        if ($this->text === $data['text']) {
+            #Do not do anything
+            return ['response' => true];
+        }
+        try {
+            #Prepare queries
+            $queries = [];
+            #Update text
+            $queries[] = [
+                'UPDATE `talks__posts` SET `threadid`=:threadid,`updatedby`=:userid,`text`=:text, `updated`=`updated` WHERE `postid`=:postid;',
+                [
+                    ':postid' => [$this->id, 'int'],
+                    ':userid' => [$_SESSION['userid'], 'int'],
+                    ':threadid' => $data['threadid'],
+                    ':text' => $data['text'],
+                ]
+            ];
+            #Update time
+            if (!$data['hideupdate']) {
+                $queries[] = [
+                    'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP() WHERE `postid`=:postid;',
+                    [
+                        ':postid' => [$this->id, 'int'],
+                    ]
+                ];
+            }
+            #Run queries
+            HomePage::$dbController->query($queries);
+            #Add text to history
+            $this->addHistory($data['text']);
+            return ['response' => true];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+            return ['http_error' => 500, 'reason' => 'Failed to update post'];
+        }
+    }
+    
+    private function sanitizeInput(array &$data, bool $edit = false): bool|array
+    {
+        if (empty($data)) {
+            return ['http_error' => 400, 'reason' => 'No form data provided'];
+        }
+        #Check for thread ID
+        if (empty($data['threadid'])) {
+            return ['http_error' => 400, 'reason' => 'No thread ID provided'];
+        }
+        if (!is_numeric($data['threadid'])) {
+            return ['http_error' => 400, 'reason' => 'Thread ID `'.$data['threadid'].'` is not numeric'];
+        }
+        #Check text is not empty
+        if (empty($data['text'])) {
+            return ['http_error' => 400, 'reason' => 'Post text cannot be empty'];
+        } else {
+            $data['text'] = Sanitization::sanitizeHTML($data['text']);
+        }
+        #Attempt to get the thread
+        $parent = (new Thread($data['threadid']))->get();
+        if (is_null($parent->id)) {
+            return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parentid'].'` does not exist'];
+        }
+        #Check if parent is closed
+        if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed thread `'.$parent->name.'`'];
+        }
+        #Check if thread is private, and we can post in it
+        if ($parent->private && !$parent->owned && !in_array('viewPrivate', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'Cannot post in private and not owned thread'];
+        }
+        #Check if replyto is set
+        if (!empty($data['replyto'])) {
+            if (!is_numeric($data['replyto'])) {
+                return ['http_error' => 400, 'reason' => 'Only numeric thread IDs allowed'];
+            }
+            #Check if post exists
+            if (!HomePage::$dbController->check('SELECT `postid` FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$data['replyto'], 'int']])) {
+                return ['http_error' => 400, 'reason' => 'The post ID `'.$data['replyto'].'` your are replying to does not exist'];
+            }
+        }
+        #If time was set, convert to UTC
+        $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
+        $data['hideupdate'] = Sanitization::checkboxToBoolean($data['hideupdate']);
+        return true;
+    }
+    
+    public function delete(): array
+    {
+        #Check permission
+        if (!in_array('removePosts', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `removePosts` permission'];
+        }
+        #Deletion is critical, so ensure, that we get the actual data, even if this function is somehow called outside of API
+        if (!$this->attempted) {
+            $this->get();
+        }
+        if (is_null($this->id)) {
+            return ['http_error' => 404, 'reason' => 'Post not found'];
+        }
+        #Check if the section is system one
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t delete system post'];
+        }
+        #Set location for successful removal
+        if (!empty($this->threadid)) {
+            $location = '/talks/threads/'.$this->threadid.'/';
+        } else {
+            $location = '/talks/sections/';
+        }
+        #Attempt removal
+        try {
+            HomePage::$dbController->query('DELETE FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$this->id, 'int']]);
+            return ['response' => true, 'location' => $location];
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+            return ['http_error' => 500, 'reason' => 'Failed to delete post'];
+        }
     }
 }

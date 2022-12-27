@@ -1,5 +1,8 @@
 <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="User's avatar" id="currentAvatar" src="{{ userData.currentAvatar|default('/img/avatar.svg') }}"></div>
 <div class="middle">{{ userData.username }}</div>
+{% if userData.about %}
+    <div id="about_user">{{ sanitize(userData.about) }}</div>
+{% endif %}
 {% if fftracker.characters %}
     <section>
         <div class="middle">Linked characters:</div>

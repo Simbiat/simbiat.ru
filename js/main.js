@@ -2,7 +2,7 @@
 async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
     let result;
     let controller = new AbortController();
-    setTimeout(() => controller.abort(), timeout);
+    window.setTimeout(() => controller.abort(), timeout);
     try {
         let response = await fetch(url, {
             method: method,
@@ -164,6 +164,7 @@ function init() {
     customElements.define('vertical-tabs', VerticalTabs);
     customElements.define('image-upload', ImageUpload);
     customElements.define('select-custom', SelectCustom);
+    customElements.define('post-form', PostForm);
     new A();
     cleanGET();
     hashCheck();
@@ -283,7 +284,9 @@ const tinySettings = {
     browser_spellcheck: true,
     resize_img_proportional: true,
     link_default_protocol: 'https',
+    autosave_ask_before_unload: true,
     autosave_restore_when_empty: true,
+    autosave_interval: '5s',
     emoticons_database: 'emojis',
     image_caption: true,
     image_advtab: false,
@@ -333,6 +336,45 @@ const tinySettings = {
     object_resizing: false,
     link_title: false,
 };
+function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
+    if (id.match(/^\s*$/ui)) {
+        return;
+    }
+    let textarea = document.getElementById(id);
+    if (textarea) {
+        let settings = tinySettings;
+        settings.selector = '#' + id;
+        if (noMedia) {
+            settings.plugins = settings.plugins.replace('image ', '').replace('media ', '');
+            settings.images_upload_url = '';
+            settings.menu.insert.items = settings.menu.insert.items.replace('image ', '').replace('media ', '');
+        }
+        if (noRestoreOnEmpty) {
+            settings.autosave_restore_when_empty = false;
+        }
+        import('/js/tinymce/tinymce.min.js').then(() => {
+            tinymce.init(settings).then(() => {
+                let tinyInstance = tinymce.get(id);
+                tinyInstance.on('input', () => {
+                    textarea.value = tinyInstance.getContent();
+                    textarea.dispatchEvent(new Event('input'));
+                });
+            });
+        });
+    }
+}
+function saveTinyMCE(id) {
+    if (id.match(/^\s*$/ui)) {
+        return;
+    }
+    let textarea = document.getElementById(id);
+    if (textarea) {
+        import('/js/tinymce/tinymce.min.js').then(() => {
+            let tinyInstance = tinymce.get(id);
+            tinyInstance.save();
+        });
+    }
+}
 function cleanGET() {
     let url = new URL(document.location.href);
     let params = new URLSearchParams(url.search);
@@ -421,6 +463,9 @@ function router() {
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
                     import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
+                }
+                else if (path[2] === 'posts') {
+                    import('/js/Pages/talks/posts.js').then((module) => { new module.Posts(); });
                 }
             }
             else if (path[1] === 'sections') {
@@ -1030,7 +1075,7 @@ class SnackbarClose extends HTMLElement {
         this.addEventListener('click', this.close);
         let closeIn = parseInt(this.getAttribute('data-close-in') ?? '0');
         if (closeIn > 0) {
-            setTimeout(() => {
+            window.setTimeout(() => {
                 this.close();
             }, closeIn);
         }
@@ -1139,11 +1184,15 @@ class VerticalTabs extends HTMLElement {
                 this.tabSwitch(event.target);
             });
         });
-        if (this.wrapper.querySelector('.active')) {
+        if (this.wrapper && this.wrapper.querySelector('.active')) {
             this.wrapper.classList.remove('hidden');
         }
     }
     tabSwitch(target) {
+        if (target.hasAttribute('data-url')) {
+            window.location.href = String(target.getAttribute('data-url'));
+            return;
+        }
         let tabIndex = 0;
         this.tabs.forEach((item, index) => {
             if (item === target) {
@@ -1677,16 +1726,7 @@ class Textarea {
                 this.countCharacters(item);
             }
             if (item.classList.contains('tinymce') && item.id) {
-                let settings = tinySettings;
-                settings.selector = '#' + item.id;
-                if (item.classList.contains('nomedia')) {
-                    settings.plugins = settings.plugins.replace('image ', '').replace('media ', '');
-                    settings.images_upload_url = '';
-                    settings.menu.insert.items = settings.menu.insert.items.replace('image ', '').replace('media ', '');
-                }
-                import('/js/tinymce/tinymce.min.js').then(() => {
-                    tinymce.init(settings);
-                });
+                loadTinyMCE(item.id);
             }
         });
         Textarea._instance = this;
@@ -1703,6 +1743,29 @@ class Textarea {
                 label.classList.add('close_to_limit');
             }
         }
+    }
+}
+class PostForm extends HTMLElement {
+    textarea = null;
+    replyToInput = null;
+    label = null;
+    constructor() {
+        super();
+        this.textarea = this.querySelector('textarea');
+        this.replyToInput = this.querySelector('#replyingTo');
+        this.label = this.querySelector('.label_for_tinymce');
+        if (this.textarea && this.textarea.id) {
+            loadTinyMCE(this.textarea.id, true, true);
+        }
+    }
+    replyTo(postId) {
+        if (this.replyToInput && !postId.match(/^\s*$/ui)) {
+            this.replyToInput.value = postId;
+            if (this.label) {
+                this.label.innerHTML = 'Replying to post #' + postId;
+            }
+        }
+        window.location.href = '#postForm';
     }
 }
 //# sourceMappingURL=main.js.map

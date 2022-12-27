@@ -15,7 +15,10 @@
         {% if system %}<span data-tooltip="System thread">⚠</span>{% endif %}
     </div>
     {% for post in posts.entities %}
-        {% set post = post|merge({'noname': true}) %}
+        {% set post = post|merge({'noname': true, 'allowReplyTo': true}) %}
         {{ include('common/elements/post.twig', post) }}
     {% endfor %}
+{% endif %}
+{% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+    {{ include('common/elements/postform.twig', {'verb': 'add', 'newThread': false, 'threadid': id}, with_context = false) }}
 {% endif %}

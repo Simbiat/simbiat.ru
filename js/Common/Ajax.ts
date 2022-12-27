@@ -2,7 +2,7 @@ async function ajax(url: string, formData: FormData | null = null, type ='json',
 {
     let result;
     let controller = new AbortController();
-    setTimeout(() => controller.abort(), timeout);
+    window.setTimeout(() => controller.abort(), timeout);
     try {
         let response = await fetch(url, {
             method: method,

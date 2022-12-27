@@ -30,7 +30,7 @@
         "checkJs": true,
         "composite": true,
         "noErrorTruncation": true,
-        "lib": ["esnext", "dom", "WebWorker"]
+        "lib": ["esnext", "dom", "WebWorker", "dom.iterable"]
     },
     //Include only .ts files in the same dir
     "include": [

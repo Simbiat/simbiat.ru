@@ -1,13 +1,20 @@
 export class Threads {
+    addPostForm = null;
     editThreadForm = null;
     closeThreadButton = null;
     deleteThreadButton = null;
+    postForm = null;
     ogimage = null;
     constructor() {
+        this.addPostForm = document.getElementById('postForm');
         this.editThreadForm = document.getElementById('editThreadForm');
         this.closeThreadButton = document.getElementById('close_thread');
         this.deleteThreadButton = document.getElementById('delete_thread');
         this.ogimage = document.getElementById('thread_ogimage');
+        this.postForm = document.querySelector('post-form');
+        if (this.addPostForm) {
+            submitIntercept(this.addPostForm, this.addPost.bind(this));
+        }
         if (this.editThreadForm) {
             submitIntercept(this.editThreadForm, this.editThread.bind(this));
         }
@@ -26,22 +33,57 @@ export class Threads {
                 this.deleteThread();
             });
         }
+        document.querySelectorAll('.replyto_button').forEach(item => {
+            item.addEventListener('click', (event) => {
+                this.replyTo(event.target);
+            });
+        });
+    }
+    replyTo(button) {
+        let replyto = button.getAttribute('data-postid') ?? '';
+        if (this.postForm && replyto) {
+            this.postForm.replyTo(replyto);
+        }
+    }
+    addPost() {
+        if (this.addPostForm) {
+            let button = this.addPostForm.querySelector('input[type=submit]');
+            let formData = new FormData(this.addPostForm);
+            formData.append('postForm[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            buttonToggle(button);
+            ajax(location.protocol + '//' + location.host + '/api/talks/posts/', formData, 'json', 'POST', 60000, true).then(data => {
+                if (data.data === true) {
+                    let textarea = this.addPostForm.querySelector('textarea');
+                    if (textarea && textarea.id) {
+                        saveTinyMCE(textarea.id);
+                    }
+                    new Snackbar('Post created. Reloading...', 'success');
+                    window.location.href = data.location;
+                }
+                else {
+                    new Snackbar(data.reason, 'failure', 10000);
+                }
+                buttonToggle(button);
+            });
+        }
     }
     deleteThread() {
         if (this.deleteThreadButton) {
-            let id = this.deleteThreadButton.getAttribute('data-thread');
-            if (id) {
-                buttonToggle(this.deleteThreadButton);
-                ajax(location.protocol + '//' + location.host + '/api/talks/threads/' + id + '/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
-                    if (data.data === true) {
-                        new Snackbar('Thread removed. Redirecting to parent...', 'success');
-                        window.location.href = data.location;
-                    }
-                    else {
-                        new Snackbar(data.reason, 'failure', 10000);
-                    }
+            if (confirm('This is the last chance to back out.\nIf you press \'OK\' this thread will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
+                let id = this.deleteThreadButton.getAttribute('data-thread');
+                if (id) {
                     buttonToggle(this.deleteThreadButton);
-                });
+                    ajax(location.protocol + '//' + location.host + '/api/talks/threads/' + id + '/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
+                        if (data.data === true) {
+                            new Snackbar('Thread removed. Redirecting to parent...', 'success');
+                            window.location.href = data.location;
+                        }
+                        else {
+                            new Snackbar(data.reason, 'failure', 10000);
+                        }
+                        buttonToggle(this.deleteThreadButton);
+                    });
+                }
             }
         }
     }

@@ -82,6 +82,8 @@ function router(): void
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
                     import('/js/Pages/talks/sections.js').then((module) => {new module.Sections();});
+                } else if (path[2] === 'posts') {
+                    import('/js/Pages/talks/posts.js').then((module) => {new module.Posts();});
                 }
             } else if (path[1] === 'sections') {
                 import('/js/Pages/talks/sections.js').then((module) => {new module.Sections();});

@@ -135,7 +135,9 @@ declare const tinySettings: {
     browser_spellcheck: boolean;
     resize_img_proportional: boolean;
     link_default_protocol: string;
+    autosave_ask_before_unload: boolean;
     autosave_restore_when_empty: boolean;
+    autosave_interval: string;
     emoticons_database: string;
     image_caption: boolean;
     image_advtab: boolean;
@@ -186,6 +188,8 @@ declare const tinySettings: {
     object_resizing: boolean;
     link_title: boolean;
 };
+declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: boolean): void;
+declare function saveTinyMCE(id: string): void;
 declare function cleanGET(): void;
 declare function hashCheck(): void;
 declare function router(): void;
@@ -371,4 +375,11 @@ declare class Textarea {
     private static _instance;
     constructor();
     countCharacters(textarea: HTMLTextAreaElement): void;
+}
+declare class PostForm extends HTMLElement {
+    private readonly textarea;
+    private readonly replyToInput;
+    private readonly label;
+    constructor();
+    replyTo(postId: string): void;
 }

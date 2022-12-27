@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Talks\Api;
 
 use Simbiat\Abstracts\Api;
+use Simbiat\HomePage;
 use Simbiat\Talks\Entities\Thread;
 
 class Threads extends Api
@@ -30,9 +31,16 @@ class Threads extends Api
         }
         #Check for ID
         if (empty($path[0])) {
+            #Limit accidental spam by extra checks
+            if (HomePage::$method !== 'POST' && $path[1] === 'add') {
+                return ['http_error' => 405, 'reason' => 'Incorrect method or verb used'];
+            }
             #Only support adding a new post here
             return (new Thread)->add();
         } else {
+            if (!is_numeric($path[0])) {
+                return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` is not numeric'];
+            }
             #If we are not adding a thread (which can take some time with writing up a post) - check CSRF token
             if (!$this->antiCSRF($this->allowedOrigins)) {
                 return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];

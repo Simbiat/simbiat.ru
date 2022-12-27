@@ -17,7 +17,7 @@ class VerticalTabs extends HTMLElement
             });
         });
         //Hide tab-contents block, if there is no active tab at the initial load
-        if (this.wrapper.querySelector('.active')) {
+        if (this.wrapper && this.wrapper.querySelector('.active')) {
             this.wrapper.classList.remove('hidden');
         }
     }
@@ -25,6 +25,10 @@ class VerticalTabs extends HTMLElement
     //Function to switch tabs
     private tabSwitch(target: HTMLSpanElement)
     {
+        if (target.hasAttribute('data-url')) {
+            window.location.href = String(target.getAttribute('data-url'));
+            return;
+        }
         let tabIndex = 0;
         //Hide all the content first, so that there would not be a case, when we have 2 content divs shown at once
         this.tabs.forEach((item, index) => {

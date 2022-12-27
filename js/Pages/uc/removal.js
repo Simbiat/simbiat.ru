@@ -10,7 +10,7 @@ export class RemoveProfile {
         }
     }
     remove() {
-        if (confirm('This is the last chance to back out.\nIf you press \'OK\' your user will be ' + (this.checkbox && this.checkbox.checked ? 'permanently ' : '') + 'removed.\nPress \'Cancel\' to cancel the action.')) {
+        if (confirm('This is the last chance to back out.\nIf you press \'OK\' your user will be ' + (this.checkbox && this.checkbox.checked ? 'permanently deleted' : 'removed') + '.\nPress \'Cancel\' to cancel the action.')) {
             let formData = new FormData();
             formData.append('hard', (this.checkbox && this.checkbox.checked ? 'true' : 'false'));
             buttonToggle(this.button);

@@ -1,11 +1,14 @@
 {% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
-    <tab-content>New post</tab-content>
+    <tab-content>
+        <!--suppress HtmlUnknownAnchorTarget -->
+        <a class="button" href="#postForm">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</a>
+    </tab-content>
 {% endif %}
 {% if (owned and 'editOwnThreads' in session_data.permissions) or (not owned and 'editOthersThreads' in session_data.permissions) %}
     <tab-content>
         <form role="form" id="editThreadForm" name="editThreadForm" autocomplete="off" class="middle">
-            <input type="hidden" name="verb" value="edit" required>
-            <input type="hidden" name="curThread[threadid]" value="{{ id }}" required>
+            <input form="editThreadForm" type="hidden" name="verb" value="edit" required>
+            <input form="editThreadForm" type="hidden" name="curThread[threadid]" value="{{ id }}" required>
             <div class="float_label_div">
                 <input form="editThreadForm" type="text" value="{{ name }}" aria-required="true" required name="curThread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
                 <label for="new_thread_name">Name</label>

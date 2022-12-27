@@ -11,7 +11,7 @@ export class bicRefresh {
         }
         else {
             this.refreshButton.classList.add('spin');
-            setTimeout(async () => {
+            window.setTimeout(async () => {
                 await ajax(location.protocol + '//' + location.host + '/api/bictracker/dbupdate/', null, 'json', 'PUT', 300000).then(data => {
                     if (data.data === true) {
                         new Snackbar('Библиотека БИК обновлена', 'success');

@@ -1,0 +1,35 @@
+<post-form>
+    {% if not newThread %}
+        <form role="form" id="postForm" name="postForm" autocomplete="off" class="middle">
+    {% endif %}
+        <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="verb" value="{{ verb }}" required>
+        {% if not newThread %}
+            <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[threadid]" value="{{ threadid }}" required>
+            {% if verb == 'add' %}
+                <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" id="replyingTo" name="postForm[replyto]" value="">
+            {% endif %}
+        {% endif %}
+        {% if verb == 'edit' %}
+            <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[postid]" value="{{ postid }}">
+        {% endif %}
+        <div class="float_label_div wrapper_for_tinymce">
+            <textarea class="nomedia" form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="postText" name="postForm[text]" placeholder="Text" spellcheck="true" wrap="soft">{{ text }}</textarea>
+            <label for="postText" class="label_for_tinymce">{% if verb == 'add' %}{% if newThread %}Text{% else %}Replying to thread{% endif %}{% else %}Updating post{% endif %}</label>
+        </div>
+        {% if 'hideUpdate' in permissions %}
+            <div class="radio_and_label">
+                <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="post_hide_update" name="postForm[hideupdate]" type="checkbox">
+                <label for="post_hide_update" data-tooltip="If checked and there is a text change, the `updated` time of the post will not be changed.">Hide update</label>
+            </div>
+        {% endif %}
+        {% if not newThread %}
+            <br>
+            <div id="postForm_submit_wrapper">
+                <input role="button" form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="submit" name="postForm[submit]" id="postForm_submit" formaction="/api/talks/posts/" formmethod="post" formtarget="_self" value="{% if verb == 'add' %}Reply{% else %}Update{% endif %}">
+            </div>
+            <img id="postForm_spinner" class="hidden spinner" src="/img/spinner.svg" alt="{% if verb == 'add' %}Posting{% else %}Updating{% endif %}...">
+        {% endif %}
+    {% if not newThread %}
+        </form>
+    {% endif %}
+</post-form>

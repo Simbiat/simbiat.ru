@@ -116,7 +116,9 @@ const tinySettings = {
     browser_spellcheck: true,
     resize_img_proportional: true,
     link_default_protocol: 'https',
+    autosave_ask_before_unload: true,
     autosave_restore_when_empty: true,
+    autosave_interval: '5s',
     emoticons_database: 'emojis',
     image_caption: true,
     image_advtab: false,
@@ -166,3 +168,54 @@ const tinySettings = {
     object_resizing: false,
     link_title: false,
 };
+
+function loadTinyMCE(id: string, noMedia: boolean = true, noRestoreOnEmpty: boolean = false)
+{
+    if (id.match(/^\s*$/ui)) {
+        return;
+    }
+    let textarea = document.getElementById(id) as HTMLTextAreaElement;
+    if (textarea) {
+        let settings = tinySettings;
+        settings.selector = '#' + id;
+        if (noMedia) {
+            //Remove plugins that allow upload of media
+            settings.plugins = settings.plugins.replace('image ', '').replace('media ', '');
+            settings.images_upload_url = '';
+            settings.menu.insert.items = settings.menu.insert.items.replace('image ', '').replace('media ', '');
+        }
+        if (noRestoreOnEmpty) {
+            settings.autosave_restore_when_empty = false;
+        }
+        // I fail to make TS see the file with anything I do in "paths", yet this is correct code, and it does work as expected, so just ignoring this
+        // @ts-ignore
+        import('/js/tinymce/tinymce.min.js').then(() => {
+            // @ts-ignore
+            tinymce.init(settings).then(() => {
+                // @ts-ignore
+                let tinyInstance = tinymce.get(id);
+                tinyInstance.on('input', () => {
+                    //We want the dump to textarea to be done on every change for maximum transparency and to avoid extra calls to TinyMCE from outside
+                    textarea.value = tinyInstance.getContent();
+                    textarea.dispatchEvent(new Event('input'));
+                });
+            });
+        });
+    }
+}
+
+function saveTinyMCE(id: string)
+{
+    if (id.match(/^\s*$/ui)) {
+        return;
+    }
+    let textarea = document.getElementById(id) as HTMLTextAreaElement;
+    if (textarea) {
+        // @ts-ignore
+        import('/js/tinymce/tinymce.min.js').then(() => {
+            // @ts-ignore
+            let tinyInstance = tinymce.get(id);
+            tinyInstance.save();
+        });
+    }
+}

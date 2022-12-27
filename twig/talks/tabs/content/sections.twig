@@ -2,8 +2,8 @@
     <tab-content>
         <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
         <form role="form" id="addThreadForm" name="addThreadForm" autocomplete="off" class="middle">
-            <input type="hidden" name="verb" value="add" required>
-            <input type="hidden" name="newThread[parentid]" value="{{ sectionid }}" required>
+            <input form="addThreadForm" type="hidden" name="verb" value="add" required>
+            <input form="addThreadForm" type="hidden" name="newThread[parentid]" value="{{ sectionid }}" required>
             <div class="float_label_div">
                 <input form="addThreadForm" type="text" aria-required="true" required name="newThread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
                 <label for="new_thread_name">Name</label>
@@ -55,6 +55,7 @@
                     {% endfor %}
                 </details>
             {% endif %}
+            {{ include('common/elements/postform.twig', {'verb': 'add', 'newThread': true}, with_context = false) }}
             <input role="button" form="addThreadForm" type="submit" name="newThread[submit]" id="addThread_submit" formaction="/api/talks/threads/" formmethod="post" formtarget="_self" value="Post">
             <img id="addThread_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
         </form>
@@ -64,8 +65,8 @@
     <tab-content>
         <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
         <form role="form" id="addSectionForm" name="addSectionForm" autocomplete="off" class="middle">
-            <input type="hidden" name="verb" value="add" required>
-            <input type="hidden" name="newSection[parentid]" value="{{ sectionid }}" required>
+            <input form="addSectionForm" type="hidden" name="verb" value="add" required>
+            <input form="addSectionForm" type="hidden" name="newSection[parentid]" value="{{ sectionid }}" required>
             <div class="float_label_div">
                 <input form="addSectionForm" type="text" aria-required="true" required name="newSection[name]" id="new_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
                 <label for="new_section_name">Name</label>
@@ -106,8 +107,8 @@
     <tab-content>
         {% if editMode %}
             <form role="form" id="editSectionForm" name="editSectionForm" autocomplete="off" class="middle">
-                <input type="hidden" name="verb" value="edit" required>
-                <input type="hidden" name="curSection[sectionid]" id="curSection_id" value="{{ sectionid }}" required>
+                <input form="editSectionForm" type="hidden" name="verb" value="edit" required>
+                <input form="editSectionForm" type="hidden" name="curSection[sectionid]" id="curSection_id" value="{{ sectionid }}" required>
                 <div class="float_label_div">
                     <input form="editSectionForm" type="text" aria-required="true" required name="curSection[name]" id="cur_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64" value="{{ name }}">
                     <label for="cur_section_name">Name</label>

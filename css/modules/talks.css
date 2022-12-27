@@ -358,3 +358,64 @@ image-upload > .section_icon {
     border-color: var(--border-color-outset);
     cursor: pointer;
 }
+
+#about_user {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+    position: relative;
+}
+#about_user::before {
+    content: 'About';
+    color: var(--color-interactive);
+    filter: var(--border-shadow);
+    position: absolute;
+    top: -.75rem;
+    left: .5rem;
+}
+
+#deletePostForm {
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--color-failure);
+    width: 98%;
+}
+
+#addThread_submit {
+    margin: 0 auto;
+    display: block;
+    width: 98%;
+}
+
+post-form {
+    display: block;
+}
+#postForm_submit {
+    width: 98%
+}
+#postForm_submit_wrapper {
+    position: relative;
+}
+#postForm_submit_wrapper::after {
+    content: '📩';
+    position: absolute;
+    top: 0.75rem;
+    right: 4rem;
+    z-index: 1;
+}
+#postForm_submit_wrapper::before {
+    content: '📩';
+    position: absolute;
+    top: 0.75rem;
+    left: 4rem;
+    /*Without z-index it disappears on hover for some reason*/
+    z-index: 1;
+}
+textarea.tinymce {
+    display: none;
+}
+post-form textarea {
+    display: none;
+}

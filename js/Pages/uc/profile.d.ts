@@ -4,6 +4,7 @@ export declare class EditProfile {
     private readonly usernameField;
     private readonly profileForm;
     private readonly profileSubmit;
+    private readonly aboutValue;
     private profileFormData;
     private timeOut;
     constructor();

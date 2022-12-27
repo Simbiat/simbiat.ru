@@ -5,11 +5,13 @@ export class EditProfile
     private readonly usernameField: HTMLInputElement | null = null;
     private readonly profileForm: HTMLFormElement | null = null;
     private readonly profileSubmit: HTMLInputElement | null = null;
+    private readonly aboutValue: HTMLTextAreaElement | null = null;
     private profileFormData: string = '';
     private timeOut: number | null = null;
 
     constructor()
     {
+        this.aboutValue = document.getElementById('about_value') as HTMLTextAreaElement;
         this.usernameForm = document.getElementById('profile_username') as HTMLFormElement;
         if (this.usernameForm) {
             this.usernameField = document.getElementById('username_value') as HTMLInputElement;
@@ -42,8 +44,6 @@ export class EditProfile
     {
         //Get form data
         let formData = new FormData(this.profileForm as HTMLFormElement);
-        let button = (this.profileForm as HTMLFormElement).querySelector('#details_submit');
-        buttonToggle(button as HTMLInputElement);
         ajax(location.protocol+'//'+location.host+'/api/uc/profile/', formData, 'json', 'PATCH', 60000, true).then(data => {
             if (data.data === true) {
                 this.profileFormData = JSON.stringify([...formData.entries()]);
@@ -58,24 +58,27 @@ export class EditProfile
                     timeTag.setAttribute('datetime', time.toISOString());
                     timeTag.innerHTML = time.toLocaleTimeString();
                 }
+                //Notify TinyMCE, that data was saved
+                if (this.aboutValue && this.aboutValue.id) {
+                    saveTinyMCE(this.aboutValue.id)
+                }
             } else {
                 new Snackbar(data.reason, 'failure', 10000);
             }
-            buttonToggle(button as HTMLInputElement);
         });
     }
     
     private profileOnChange(): void
     {
         if (this.timeOut) {
-            clearTimeout(this.timeOut);
+            window.clearTimeout(this.timeOut);
         }
         let formData = new FormData(this.profileForm as HTMLFormElement);
         //Comparing stringify versions of data, because FormData === FormData always returns false
         (this.profileSubmit as HTMLInputElement).disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
         if (!(this.profileSubmit as HTMLInputElement).disabled) {
             //Schedule auto save
-            this.timeOut = setTimeout(() => {this.profile(true)}, 10000);
+            this.timeOut = window.setTimeout(() => {this.profile(true)}, 10000);
         }
     }
     
