@@ -306,7 +306,7 @@ class Post extends Entity
             return ['http_error' => 400, 'reason' => 'Thread ID `'.$data['threadid'].'` is not numeric'];
         }
         #Check text is not empty
-        if (empty($data['text'])) {
+        if (empty($data['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $data['text']) === 1) {
             return ['http_error' => 400, 'reason' => 'Post text cannot be empty'];
         } else {
             $data['text'] = Sanitization::sanitizeHTML($data['text']);

@@ -170,8 +170,8 @@ class Thread extends Entity
         if (!in_array('canPost', $_SESSION['permissions'])) {
             return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
         }
-        if ($withPost && empty($_POST['postform'])) {
-            return ['http_error' => 400, 'reason' => 'No post data provided'];
+        if ($withPost && (empty($_POST['postform']) || empty($_POST['postform']['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $_POST['postform']['text']) === 1)) {
+            return ['http_error' => 400, 'reason' => 'No post text provided'];
         }
         #Sanitize data
         $data = $_POST['newthread'] ?? [];
