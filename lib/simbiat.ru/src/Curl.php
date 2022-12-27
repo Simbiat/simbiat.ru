@@ -220,7 +220,7 @@ class Curl
             $upload['location'] .= $upload['hash_tree'].$upload['new_name'];
             #Move to hash-tree directory, only if file is not already present
             if (!is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
-                if (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
+                if (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']) === false) {
                     @unlink($upload['server_path'].'/'.$upload['server_name']);
                     return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
                 }
