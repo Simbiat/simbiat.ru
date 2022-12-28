@@ -92,7 +92,7 @@ class Thread extends Page
         $this->title = '`'.$outputArray['name'].'` thread';
         $this->h1 = $outputArray['name'];
         if (!empty($outputArray['posts']['entities'])) {
-            $this->ogdesc = Sanitization::sanitizeHTML(HTMLCut::Cut($outputArray['posts']['entities'][0]['text'], 160, 1), true);
+            $this->ogdesc = strip_tags(HTMLCut::Cut($outputArray['posts']['entities'][0]['text'], 160, 1));
         } else {
             $this->ogdesc = $outputArray['name'];
         }
