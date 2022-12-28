@@ -121,7 +121,7 @@ class Post extends Page
         } else {
             $this->title = $this->h1 = 'Post #'.$id;
         }
-        $this->ogdesc = Sanitization::sanitizeHTML(HTMLCut::Cut($outputArray['text'], 160, 1), true);
+        $this->ogdesc = strip_tags(HTMLCut::Cut($outputArray['text'], 160, 1));
         #Duplicate the array to `post` key (required for Twig template and consistency with other pages)
         $outputArray['post'] = $outputArray;
         #Add flag to hide post ID
