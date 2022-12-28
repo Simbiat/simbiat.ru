@@ -175,7 +175,7 @@ export class Sections {
             ajax(location.protocol + '//' + location.host + '/api/talks/sections/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     new Snackbar('Section created. Reloading...', 'success');
-                    location.reload();
+                    window.location.href = window.location.href + '?forceReload=true';
                 }
                 else {
                     new Snackbar(data.reason, 'failure', 10000);
@@ -199,7 +199,7 @@ export class Sections {
             ajax(location.protocol + '//' + location.host + '/api/talks/sections/' + (formData.get('curSection[sectionid]') ?? '0') + '/edit/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     new Snackbar('Section updated. Reloading...', 'success');
-                    location.reload();
+                    window.location.href = window.location.href + '?forceReload=true';
                 }
                 else {
                     new Snackbar(data.reason, 'failure', 10000);

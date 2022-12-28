@@ -25,7 +25,7 @@ export class Posts {
                         saveTinyMCE(textarea.id);
                     }
                     new Snackbar('Post updated. Reloading...', 'success');
-                    location.reload();
+                    window.location.href = window.location.href + '?forceReload=true';
                 }
                 else {
                     new Snackbar(data.reason, 'failure', 10000);

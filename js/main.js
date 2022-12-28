@@ -379,7 +379,7 @@ function cleanGET() {
     let url = new URL(document.location.href);
     let params = new URLSearchParams(url.search);
     params.delete('cacheReset');
-    params.delete('sidebar');
+    params.delete('forceReload');
     if (params.toString() === '') {
         window.history.replaceState(document.title, document.title, location.pathname + location.hash);
     }
@@ -1094,7 +1094,7 @@ class Timer extends HTMLElement {
     interval = null;
     constructor() {
         super();
-        this.interval = setInterval(() => {
+        this.interval = window.setInterval(() => {
             if (parseInt(this.innerHTML) > 0 || Boolean(this.getAttribute('data-negative'))) {
                 if (Boolean(this.getAttribute('data-increase'))) {
                     this.innerHTML = String(parseInt(this.innerHTML) + 1);
@@ -1106,7 +1106,7 @@ class Timer extends HTMLElement {
             else {
                 clearInterval(Number(this.interval));
                 if (this.id === 'refresh_timer') {
-                    location.reload();
+                    window.location.href = window.location.href + '?forceReload=true';
                 }
             }
         }, 1000);
@@ -1298,7 +1298,7 @@ class Aside {
                         new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
                     }
                     else {
-                        window.location.href = window.location.href + '?sidebar=' + formData.get('signinup[type]');
+                        window.location.href = window.location.href + '?forceReload=true';
                     }
                 }
                 else {

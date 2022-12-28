@@ -4,7 +4,7 @@ class Timer extends HTMLElement
 
     constructor() {
         super();
-        this.interval = setInterval(() => {
+        this.interval = window.setInterval(() => {
             if (parseInt(this.innerHTML) > 0 || Boolean(this.getAttribute('data-negative'))) {
                 if (Boolean(this.getAttribute('data-increase'))) {
                     this.innerHTML = String(parseInt(this.innerHTML) + 1);
@@ -14,7 +14,7 @@ class Timer extends HTMLElement
             } else {
                 clearInterval(Number(this.interval));
                 if (this.id === 'refresh_timer') {
-                    location.reload();
+                    window.location.href = window.location.href+'?forceReload=true';
                 }
             }
         }, 1000);

@@ -13,7 +13,7 @@ export class EditFFLinks {
         ajax(location.protocol + '//' + location.host + '/api/uc/fflink/', formData, 'json', 'POST', 60000, true).then(data => {
             if (data.data === true) {
                 new Snackbar('Character linked successfully. Reloading page...', 'success');
-                location.reload();
+                window.location.href = window.location.href + '?forceReload=true';
             }
             else {
                 new Snackbar(data.reason, 'failure', 10000);

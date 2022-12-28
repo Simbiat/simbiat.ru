@@ -5,8 +5,10 @@ function cleanGET(): void
     let params = new URLSearchParams(url.search);
     //Flag for resetting cache on server side
     params.delete('cacheReset');
-    //Flag used to attempt to force proper reload of a page when logging in/out
-    params.delete('sidebar');
+    //Flag used to attempt to force proper reload (with cache clear) of a page.
+    //window.location.reload seems to always hit browser cache, which results in, for example, page showing you as logged in/out, when in fact it's the reverse.
+    //Thus, I am using direct window.location.href assignment with a flag instead of reload, but we need to clear the flag itself
+    params.delete('forceReload');
     if (params.toString() === '') {
         window.history.replaceState(document.title, document.title, location.pathname + location.hash);
     } else {

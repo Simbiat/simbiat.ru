@@ -26,7 +26,7 @@ export class RemoveProfile
             ajax(location.protocol+'//'+location.host+'/api/uc/remove/', formData, 'json', 'PATCH', 60000, true).then(data => {
                 if (data.data === true) {
                     new Snackbar('Sad to see you go 😭', 'success', 10000);
-                    location.reload();
+                    window.location.href = window.location.href+'?forceReload=true';
                 } else {
                     new Snackbar('Gods gave you another chance with this failure. 😇 Time to rethink your decision, maybe? 🤔', 'failure', 10000);
                 }

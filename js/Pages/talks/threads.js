@@ -101,7 +101,7 @@ export class Threads {
                         else {
                             new Snackbar('Thread reopened. Refreshing...', 'success');
                         }
-                        window.location.reload();
+                        window.location.href = window.location.href + '?forceReload=true';
                     }
                     else {
                         new Snackbar(data.reason, 'failure', 10000);
@@ -126,7 +126,7 @@ export class Threads {
             ajax(location.protocol + '//' + location.host + '/api/talks/threads/' + (formData.get('curThread[threadid]') ?? '0') + '/edit/', formData, 'json', 'POST', 60000, true).then(data => {
                 if (data.data === true) {
                     new Snackbar('Thread updated. Reloading...', 'success');
-                    location.reload();
+                    window.location.href = window.location.href + '?forceReload=true';
                 }
                 else {
                     new Snackbar(data.reason, 'failure', 10000);

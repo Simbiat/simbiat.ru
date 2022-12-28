@@ -53,8 +53,7 @@ class Aside
                     if (formData.get('signinup[type]') === 'remind') {
                         new Snackbar('If respective account is registered an email has been sent with password reset link.', 'success');
                     } else {
-                        //window.location.reload seems to always hit browser cache, which results in page showing you as logged in/out, when in fact it's the reverse.
-                        window.location.href = window.location.href+'?sidebar='+formData.get('signinup[type]');
+                        window.location.href = window.location.href+'?forceReload=true';
                     }
                 } else {
                     new Snackbar(data.reason, 'failure', 10000);

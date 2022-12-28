@@ -25,7 +25,7 @@ export class ffEntity
                     if (data.data === true) {
                         new Snackbar('Data updated. Reloading page...', 'success');
                         this.forceRefresh.classList.remove('spin');
-                        location.reload();
+                        window.location.href = window.location.href+'?forceReload=true';
                     } else {
                         new Snackbar('Failed to update data', 'failure', 10000);
                         this.forceRefresh.classList.remove('spin');
