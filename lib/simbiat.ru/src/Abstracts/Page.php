@@ -5,6 +5,7 @@ namespace Simbiat\Abstracts;
 use Simbiat\Config\Common;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\HTMLCut;
 use Simbiat\HTTP20\Headers;
 
 abstract class Page
@@ -202,6 +203,16 @@ abstract class Page
     protected final function getLastCrumb(): string
     {
         return $this->breadCrumb[array_key_last($this->breadCrumb)]['href'];
+    }
+    
+    #Function to set og:desc
+    protected final function setOgDesc(string $string): void
+    {
+        $newDesc = strip_tags(HTMLCut::Cut($string, 160, 1));
+        #Update description only if it's not empty
+        if (preg_match('/^\s*$/ui', $newDesc) === 0) {
+            $this->ogdesc = $newDesc;
+        }
     }
     
     #Generation of the page data

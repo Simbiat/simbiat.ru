@@ -4,11 +4,8 @@ namespace Simbiat\Talks\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
-use Simbiat\HTMLCut;
 use Simbiat\HTTP20\Headers;
 use Simbiat\Images;
-use Simbiat\Sanitization;
-use Simbiat\Security;
 
 class Thread extends Page
 {
@@ -92,7 +89,7 @@ class Thread extends Page
         $this->title = '`'.$outputArray['name'].'` thread';
         $this->h1 = $outputArray['name'];
         if (!empty($outputArray['posts']['entities'])) {
-            $this->ogdesc = strip_tags(HTMLCut::Cut($outputArray['posts']['entities'][0]['text'], 160, 1));
+            $this->setOgDesc($outputArray['posts']['entities'][0]['text']);
         } else {
             $this->ogdesc = $outputArray['name'];
         }
