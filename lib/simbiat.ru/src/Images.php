@@ -169,7 +169,7 @@ class Images
         } else {
             list($info['width'], $info['height']) = getimagesize($file);
         }
-        if ($info['width'] < 1200 || $info['height'] < 630 || $info['width']/$info['height'] !== 1200/630) {
+        if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width']/$info['height'], 1) !== 1.9) {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
         }
         return ['ogimage' => '/img/uploaded/'.$hashTree.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];

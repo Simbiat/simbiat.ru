@@ -442,7 +442,7 @@ class Thread extends Entity
             }
             $ogimage = Images::ogImage($upload['hash']);
             if (is_null($ogimage['ogimage'])) {
-                return ['http_error' => 400, 'reason' => 'Bad image for banner provided. Only PNG files are allowed. Resolution ratio needs to be 1.91:1 with minimum being 1200x630 pixels.'];
+                return ['http_error' => 400, 'reason' => 'Bad image for banner provided. Only PNG files are allowed. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'];
             }
             $data['ogimage'] = $upload['hash'];
         } else {
