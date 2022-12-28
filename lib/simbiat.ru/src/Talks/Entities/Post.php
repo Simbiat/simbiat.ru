@@ -190,8 +190,12 @@ class Post extends Entity
                 ]
             );
             #Update last post for thread
-            HomePage::$dbController->query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=CURRENT_TIMESTAMP(), `lastpostby`=:userid WHERE `threadid`=:threadid;',
+            HomePage::$dbController->query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=:time, `lastpostby`=:userid WHERE `threadid`=:threadid;',
                 [
+                    ':time' => [
+                        (empty($data['time']) ? 'now' : $data['time']),
+                        'time'
+                    ],
                     ':threadid' => [$data['threadid'], 'int'],
                     ':userid' => [$_SESSION['userid'], 'int'],
                 ]
