@@ -171,3 +171,8 @@
     background-color: var(--color-article)!important;
     border-color: var(--color-interactive)!important;
 }
+/*Byt default this thing is spawned at the top of the page blocking all possible controls there with high z-index.
+Enforcing it to auto to prevent such behavior*/
+.tox .tox-silver-sink .tox-tinymce-aux {
+    z-index: auto!important;
+}
