@@ -171,8 +171,9 @@
     background-color: var(--color-article)!important;
     border-color: var(--color-interactive)!important;
 }
-/*Byt default this thing is spawned at the top of the page blocking all possible controls there with high z-index.
-Enforcing it to auto to prevent such behavior*/
-.tox .tox-silver-sink .tox-tinymce-aux {
-    z-index: auto!important;
+/*By default TineMCE spawns a modal at the top of the page blocking all possible controls there.
+Making it's width 0 seems to help. Also changing cursor, since this affects cursor in menus*/
+body>div.tox.tox-silver-sink.tox-tinymce-aux {
+    width: 0!important;
+    cursor: pointer;
 }
