@@ -171,9 +171,9 @@
     background-color: var(--color-article)!important;
     border-color: var(--color-interactive)!important;
 }
-/*By default TineMCE spawns a modal at the top of the page blocking all possible controls there.
-Making it's width 0 seems to help. Also changing cursor, since this affects cursor in menus*/
+/*By default TineMCE spawns a block, that behaves badly with body having `display: grid`.
+Adding a `grid-area` seems to fix it. We also style the cursor here*/
 body>div.tox.tox-silver-sink.tox-tinymce-aux {
-    width: 0!important;
+    grid-area: tiny-sink;
     cursor: pointer;
 }
