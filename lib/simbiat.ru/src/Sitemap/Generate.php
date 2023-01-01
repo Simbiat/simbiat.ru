@@ -54,7 +54,7 @@ class Generate
             }
             #Ping Google about update
             try {
-                (new Curl)->getPage('https://www.google.com/ping?sitemap='.urlencode(Common::$baseUrl.'/sitemap/xml/index/'));
+                (new Curl)->getPage('https://www.google.com/ping?sitemap='.urlencode(Common::$baseUrl.'/sitemap/xml/index.xml'));
             } catch (\Throwable) {
                 #Do nothing, it's not critical
             }
