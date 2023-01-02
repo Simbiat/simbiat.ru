@@ -11,7 +11,7 @@ class Posts extends Api
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
-    protected array $methods = ['POST' => 'add', 'DELETE' => 'delete', 'PATCH' => ['like', 'dislike', 'edit']];
+    protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['like', 'dislike']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add post', 'delete' => 'Delete post', 'edit' => 'Edit post', 'like' => 'Like a post', 'dislike' => 'Dislike a post'];
     #Flag indicating that authentication is required

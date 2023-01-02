@@ -167,7 +167,7 @@ class Post extends Entity
         }
         #Sanitize data
         $data = $_POST['postform'] ?? [];
-        $sanitize = $this->sanitizeInput($data, true);
+        $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;
         }
@@ -251,7 +251,7 @@ class Post extends Entity
         }
         #Sanitize data
         $data = $_POST['postform'] ?? [];
-        $sanitize = $this->sanitizeInput($data, true);
+        $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;
         }
@@ -269,7 +269,7 @@ class Post extends Entity
             $queries = [];
             #Update text
             $queries[] = [
-                'UPDATE `talks__posts` SET `threadid`=:threadid,`updatedby`=:userid,`text`=:text, `updated`=`updated` WHERE `postid`=:postid;',
+                'UPDATE `talks__posts` SET `threadid`=:threadid,`updatedby`=:userid,`text`=:text, `updated`=GREATEST(`created`, `updated`) WHERE `postid`=:postid;',
                 [
                     ':postid' => [$this->id, 'int'],
                     ':userid' => [$_SESSION['userid'], 'int'],
@@ -297,7 +297,7 @@ class Post extends Entity
         }
     }
     
-    private function sanitizeInput(array &$data, bool $edit = false): bool|array
+    private function sanitizeInput(array &$data): bool|array
     {
         if (empty($data)) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
@@ -311,7 +311,7 @@ class Post extends Entity
         }
         #Check text is not empty
         if (empty($data['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $data['text']) === 1) {
-            return ['http_error' => 400, 'reason' => 'Post text cannot be empty'];
+            return ['http_error' => 400, 'reason' => $data['text']];
         } else {
             $data['text'] = Sanitization::sanitizeHTML($data['text']);
         }
