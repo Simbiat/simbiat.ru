@@ -17,7 +17,7 @@ class Cron
     public function lockPosts(): bool
     {
         try {
-            return HomePage::$dbController->query('UPDATE `talks__posts` SET `locked`=1 WHERE `created` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND `locked`=0;');
+            return HomePage::$dbController->query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND `locked`=0;');
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
             return false;
