@@ -174,7 +174,7 @@ class Post extends Entity
         try {
             #Create post itself
             $newID = HomePage::$dbController->insertAI(
-                'INSERT INTO `talks__posts`(`postid`, `threadid`, `replyto`, `created`, `createdby`, `updatedby`, `text`) VALUES (NULL,:threadid,:replyto,:time,:userid,:userid,:text);',
+                'INSERT INTO `talks__posts`(`postid`, `threadid`, `replyto`, `created`, `updated`, `createdby`, `updatedby`, `text`) VALUES (NULL,:threadid,:replyto,:time,:time,:userid,:userid,:text);',
                 [
                     ':threadid' => [$data['threadid'], 'int'],
                     ':replyto' => [
