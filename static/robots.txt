@@ -2,7 +2,7 @@
 
 # Allow crawling of all content
 User-agent: *
-Sitemap: https://www.simbiat.dev/sitemap/xml/index.xml
+Sitemap: https://www.simbiat.dev/sitemap.xml
 # Forbid some folders
 Disallow: /cgi-bin/
 Disallow: /data/

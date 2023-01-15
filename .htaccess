@@ -306,6 +306,9 @@ RewriteCond %{REQUEST_URI}::$1 ^(.*?/)(.*)::\2
 RewriteCond %{DOCUMENT_ROOT}%1static/%2 -f
 RewriteRule ^(.*)$  static/$1 [END]
 
+#Direct /sitemap.xml to the actual index file. This is an attempt to force Google Search recognize the sitemaps
+RewriteCond %{REQUEST_URI} "(^|/)sitemap\.xml$" [NC]
+RewriteRule (^|/)sitemap\.xml$ data/sitemap/xml/index.xml [QSA,END]
 #Direct XML and TXT sitemaps to respective files, if they exist
 RewriteCond %{REQUEST_URI} "(^|/)sitemap/(txt|xml)(.*)$" [NC]
 RewriteCond %{DOCUMENT_ROOT}%1data/sitemap/%2/%3 -f
