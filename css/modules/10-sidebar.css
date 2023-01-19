@@ -110,3 +110,7 @@ password-requirements {
     padding-top: 0;
     padding-bottom: 0;
 }
+
+#rememberme_div {
+    display: flex;
+}

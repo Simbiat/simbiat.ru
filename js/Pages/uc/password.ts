@@ -1,28 +1,34 @@
 export class PasswordChange
 {
     private readonly form: HTMLFormElement | null = null;
+    private readonly button: HTMLInputElement | null = null;
 
-    constructor()
+    public constructor()
     {
-        this.form = document.getElementById('password_change') as HTMLFormElement;
+        this.form = document.querySelector('#password_change');
         if (this.form) {
             submitIntercept(this.form, this.change.bind(this));
+            this.button = this.form.querySelector('#password_submit');
         }
     }
     
     private change(): void
     {
-        //Get form data
-        let formData = new FormData(this.form as HTMLFormElement);
-        let button = (this.form as HTMLFormElement).querySelector('#password_submit');
-        buttonToggle(button as HTMLInputElement);
-        ajax(location.protocol+'//'+location.host+'/api/uc/password/', formData, 'json', 'PATCH', 60000, true).then(data => {
-            if (data.data === true) {
-                new Snackbar('Password changed', 'success');
-            } else {
-                new Snackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(button as HTMLInputElement);
-        });
+        if (this.form && this.button) {
+            //Get form data
+            const formData = new FormData(this.form);
+            buttonToggle(this.button);
+            void ajax(`${location.protocol}//${location.host}/api/uc/password/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    addSnackbar('Password changed', 'success');
+                } else {
+                    addSnackbar(data.reason, 'failure', 10000);
+                }
+                if (this.button) {
+                    buttonToggle(this.button);
+                }
+            });
+        }
     }
 }

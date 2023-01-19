@@ -1,186 +1,235 @@
 export class Emails
 {
     private readonly addMailForm: HTMLFormElement | null = null;
+    private readonly submit: HTMLInputElement | null = null;
+    private readonly template: HTMLTemplateElement | null = null;
+    private readonly tbody: HTMLTableElement | null = null;
 
-    constructor()
+    public constructor()
     {
-        this.addMailForm = document.getElementById('addMailForm') as HTMLFormElement;
+        this.addMailForm = document.querySelector('#addMailForm');
+        this.template = document.querySelector('#email_row');
+        this.tbody = document.querySelector('#emailsList tbody');
         if (this.addMailForm) {
+            this.submit = this.addMailForm.querySelector('#addMail_submit');
             submitIntercept(this.addMailForm, this.add.bind(this));
             //Listener for mail activation buttons
-            document.querySelectorAll('.mail_activation').forEach(item => {
+            document.querySelectorAll('.mail_activation').forEach((item) => {
                 item.addEventListener('click', (event: Event) => {
-                    this.activate(event.target as HTMLInputElement);
+                    Emails.activate(event.target as HTMLInputElement);
                 });
             });
             //Listener for mail subscription checkbox
-            document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+            document.querySelectorAll('[id^=subscription_checkbox_]').forEach((item) => {
                 //Tracking click to be able to roll back change easily
                 item.addEventListener('click', (event: Event) => {
-                    this.subscribe(event);
+                    Emails.subscribe(event);
                 });
             });
             //Listener for mail deletion buttons
-            document.querySelectorAll('.mail_deletion').forEach(item => {
+            document.querySelectorAll('.mail_deletion').forEach((item) => {
                 item.addEventListener('click', (event: Event) => {
-                    this.delete(event.target as HTMLInputElement);
+                    Emails.delete(event.target as HTMLInputElement);
                 });
             });
         }
     }
     
-    private add(): boolean | void
+    private add(): void
     {
-        //Get form data
-        let formData = new FormData(this.addMailForm as HTMLFormElement);
-        if (!formData.get('email')) {
-            new Snackbar('Please, enter a valid email address', 'failure');
-            return false;
-        }
-        let email = String(formData.get('email'));
-        let button = (this.addMailForm as HTMLFormElement).querySelector('#addMail_submit');
-        buttonToggle(button as HTMLInputElement);
-        ajax(location.protocol+'//'+location.host+'/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
-            if (data.data === true) {
-                //Add row to table
-                this.addRow(email);
-                //Refresh delete buttons' status
-                this.blockDelete();
-                (this.addMailForm as HTMLFormElement).reset();
-                new Snackbar(email+' added', 'success');
-            } else {
-                new Snackbar(data.reason, 'failure', 10000);
+        if (this.addMailForm && this.submit) {
+            //Get form data
+            const formData = new FormData(this.addMailForm);
+            if (empty(formData.get('email'))) {
+                addSnackbar('Please, enter a valid email address', 'failure');
+                return;
             }
-            buttonToggle(button as HTMLInputElement);
-        });
+            const email = String(formData.get('email'));
+            buttonToggle(this.submit);
+            void ajax(`${location.protocol}//${location.host}/api/uc/emails/add/`, formData, 'json', 'POST', 60000, true).
+                then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        //Add row to table
+                        this.addRow(email);
+                        //Refresh delete buttons' status
+                        Emails.blockDelete();
+                        if (this.addMailForm) {
+                            this.addMailForm.reset();
+                        }
+                        addSnackbar(`${email} added`, 'success');
+                    } else {
+                        addSnackbar(data.reason, 'failure', 10000);
+                    }
+                    if (this.submit) {
+                        buttonToggle(this.submit);
+                    }
+                });
+        }
     }
     
-    private addRow(email: string)
+    private addRow(email: string): void
     {
-        let template = (document.querySelector('#email_row') as HTMLTemplateElement).content.cloneNode(true) as DocumentFragment;
-        let cells = template.querySelectorAll('td');
-        //Set email as value of the first cell
-        (cells[0] as HTMLTableCellElement).innerHTML = email;
-        //Update attributes of the second cell's input
-        let inputElement = (cells[1] as HTMLTableCellElement).querySelector('input') as HTMLInputElement;
-        new Input().init(inputElement);
-        inputElement.setAttribute('data-email', email);
-        //Attach listener
-        inputElement.addEventListener('click', (event: Event) => {
-            this.activate(event.target as HTMLInputElement);
-        });
-        //Update attributes of the second cell's spinner
-        let spinner = (cells[1] as HTMLTableCellElement).querySelector('img') as HTMLImageElement;
-        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-        //Update attributes of the 4th cell's input
-        inputElement = (cells[3] as HTMLTableCellElement).querySelector('input') as HTMLInputElement;
-        new Input().init(inputElement);
-        inputElement.setAttribute('data-email', email);
-        inputElement.setAttribute('data-tooltip', String(inputElement.getAttribute('data-tooltip')).replace('email', email));
-        inputElement.setAttribute('alt', String(inputElement.getAttribute('alt')).replace('email', email));
-        //Attach listener
-        inputElement.addEventListener('click', (event: Event) => {
-            this.delete(event.target as HTMLInputElement);
-        });
-        //Update attributes of the 4th cell's spinner
-        spinner = (cells[3] as HTMLTableCellElement).querySelector('img') as HTMLImageElement;
-        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-        //Attach the row to table body
-        (document.querySelector('#emailsList tbody') as HTMLTableElement).appendChild(template);
+        if (this.tbody && this.template) {
+            const clone = this.template.content.cloneNode(true) as HTMLElement;
+            const cells = clone.querySelectorAll('td');
+            //Set email as value of the first cell
+            if (cells[0]) {
+                cells[0].innerHTML = email;
+            }
+            if (cells[1]) {
+                //Update attributes of the second cell's input
+                const inputElement1: HTMLInputElement | null = cells[1].querySelector('input');
+                if (inputElement1) {
+                    inputElement1.setAttribute('data-email', email);
+                    //Attach listener
+                    inputElement1.addEventListener('click', (event: Event) => {
+                        Emails.activate(event.target as HTMLInputElement);
+                    });
+                }
+                //Update attributes of the second cell's spinner
+                const spinner1: HTMLImageElement | null = cells[1].querySelector('img');
+                if (spinner1) {
+                    spinner1.setAttribute('data-tooltip', String(spinner1.getAttribute('data-tooltip')).
+                        replace('email', email));
+                    spinner1.setAttribute('alt', String(spinner1.getAttribute('alt')).
+                        replace('email', email));
+                }
+            }
+            if (cells[3]) {
+                //Update attributes of the 4th cell's input
+                const inputElement3: HTMLInputElement | null = cells[3].querySelector('input');
+                if (inputElement3) {
+                    inputElement3.setAttribute('data-email', email);
+                    inputElement3.setAttribute('data-tooltip', String(inputElement3.getAttribute('data-tooltip')).
+                        replace('email', email));
+                    inputElement3.setAttribute('alt', String(inputElement3.getAttribute('alt')).
+                        replace('email', email));
+                    //Attach listener
+                    inputElement3.addEventListener('click', (event: Event) => {
+                        Emails.delete(event.target as HTMLInputElement);
+                    });
+                }
+                //Update attributes of the 4th cell's spinner
+                const spinner3: HTMLImageElement | null = cells[3].querySelector('img');
+                if (spinner3) {
+                    spinner3.setAttribute('data-tooltip', String(spinner3.getAttribute('data-tooltip')).
+                        replace('email', email));
+                    spinner3.setAttribute('alt', String(spinner3.getAttribute('alt')).
+                        replace('email', email));
+                }
+            }
+            //Attach the row to table body
+            this.tbody.appendChild(clone);
+        }
     }
     
-    private delete(button: HTMLInputElement): void
+    private static delete(button: HTMLInputElement): void
     {
         //Generate form data
-        let formData = new FormData();
-        let email = button.getAttribute('data-email') ?? '';
+        const formData = new FormData();
+        const email = button.getAttribute('data-email') ?? '';
         formData.set('email', email);
-        buttonToggle(button as HTMLInputElement);
-        ajax(location.protocol+'//'+location.host+'/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
+        buttonToggle(button);
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/delete/`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+            const data = response as ajaxJSONResponse;
             if (data.data === true) {
                 deleteRow(button);
-                this.blockDelete();
-                new Snackbar(email+' removed', 'success');
+                Emails.blockDelete();
+                addSnackbar(`${email} removed`, 'success');
             } else {
-                buttonToggle(button as HTMLInputElement);
-                new Snackbar(data.reason, 'failure', 10000);
+                buttonToggle(button);
+                addSnackbar(data.reason, 'failure', 10000);
             }
         });
     }
 
     //Function to block button for mail removal if we have less than 2 confirmed mails
-    private blockDelete(): void
+    private static blockDelete(): void
     {
-        let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
-        document.querySelectorAll('.mail_deletion').forEach(item => {
-            //Check if row is for confirmed mail
-            if ((((item as HTMLInputElement).parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).getElementsByClassName('mail_confirmed').length > 0) {
-                (item as HTMLInputElement).disabled = confirmedMail < 2;
-            } else {
-                (item as HTMLInputElement).disabled = false;
-                //Update tooltips
-                if (item.getAttribute('data-tooltip') && item.getAttribute('data-tooltip') === 'Can\'t delete') {
-                    let email = (((item.parentElement as HTMLTableCellElement).parentElement as HTMLTableRowElement).querySelector('td') as HTMLTableCellElement).innerHTML;
-                    item.setAttribute('data-tooltip', 'Delete '+email);
-                    let spinner = (item.parentElement as HTMLTableCellElement).querySelector('.spinner') as HTMLImageElement;
-                    spinner.setAttribute('data-tooltip', 'Removing '+email+'...');
-                    spinner.setAttribute('alt', 'Removing '+email+'...');
+        const confirmedMail = document.querySelectorAll('.mail_confirmed').length;
+        document.querySelectorAll('.mail_deletion').forEach((item) => {
+            const input = item as HTMLInputElement;
+            const cell = input.parentElement;
+            if (cell) {
+                const row = cell.parentElement;
+                if (row) {
+                    //Check if row is for confirmed mail
+                    if (row.querySelectorAll('.mail_confirmed').length > 0) {
+                        input.disabled = confirmedMail < 2;
+                    } else {
+                        input.disabled = false;
+                        //Update tooltips
+                        if (input.hasAttribute('data-tooltip') && input.getAttribute('data-tooltip') === 'Can\'t delete') {
+                            const email = String(row.querySelector('td')?.innerHTML);
+                            input.setAttribute('data-tooltip', `Delete ${email}`);
+                            const spinner = cell.querySelector('.spinner');
+                            spinner?.setAttribute('data-tooltip', `Removing ${email}...`);
+                            spinner?.setAttribute('alt', `Removing ${email}...`);
+                        }
+                    }
                 }
             }
         });
     }
     
-    private subscribe(event: Event): void
+    private static subscribe(event: Event): void
     {
         event.preventDefault();
         event.stopPropagation();
-        let checkbox = event.target as HTMLInputElement;
+        const checkbox = event.target;
+        if (!checkbox) {
+            return;
+        }
+        if (!(checkbox as HTMLInputElement).hasAttribute('data-email')) {
+            return;
+        }
         //Get verb
         let verb;
-        if (checkbox.checked) {
+        if ((checkbox as HTMLInputElement).checked) {
             verb = 'subscribe';
         } else {
             verb = 'unsubscribe';
         }
         buttonToggle(checkbox as HTMLInputElement);
         //Generate form data
-        let email = checkbox.getAttribute('data-email') ?? '';
-        let formData = new FormData();
+        const email = String((checkbox as HTMLInputElement).getAttribute('data-email'));
+        const formData = new FormData();
         formData.set('verb', verb);
         formData.set('email', email);
-        ajax(location.protocol+'//'+location.host+'/api/uc/emails/'+verb+'/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/${verb}/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            const data = response as ajaxJSONResponse;
             if (data.data === true) {
-                if (checkbox.checked) {
-                    checkbox.checked = false;
-                    new Snackbar(email+' unsubscribed', 'success');
+                if ((checkbox as HTMLInputElement).checked) {
+                    (checkbox as HTMLInputElement).checked = false;
+                    addSnackbar(`${email} unsubscribed`, 'success');
                 } else {
-                    checkbox.checked = true;
-                    new Snackbar(email+' subscribed', 'success');
+                    (checkbox as HTMLInputElement).checked = true;
+                    addSnackbar(`${email} subscribed`, 'success');
                 }
             } else {
-                new Snackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
             buttonToggle(checkbox as HTMLInputElement);
         });
     }
     
-    private activate(button: HTMLInputElement): void
+    private static activate(button: HTMLInputElement): void
     {
         //Generate form data
-        let email = button.getAttribute('data-email') ?? '';
-        let formData = new FormData();
+        const email = button.getAttribute('data-email') ?? '';
+        const formData = new FormData();
         formData.set('verb', 'activate');
         formData.set('email', email);
-        buttonToggle(button as HTMLInputElement);
-        ajax(location.protocol+'//'+location.host+'/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        buttonToggle(button);
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/activate/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            const data = response as ajaxJSONResponse;
             if (data.data === true) {
-                new Snackbar('Activation email sent to '+email, 'success');
+                addSnackbar(`Activation email sent to ${email}`, 'success');
             } else {
-                new Snackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
-            buttonToggle(button as HTMLInputElement);
+            buttonToggle(button);
         });
     }
 }

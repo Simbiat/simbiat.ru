@@ -67,7 +67,7 @@ web-share:active {
     position: relative;
     display: inline-block;
 }
-#logoIcon, #showNav {
+#logoIcon, nav-show {
     position: absolute;
 }
 #h1title a {

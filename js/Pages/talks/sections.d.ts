@@ -5,14 +5,14 @@ export declare class Sections {
     private readonly sectionsList;
     private readonly deleteSectionButton;
     constructor();
-    private makeSectionPrivate;
-    private closeSection;
+    private static makeSectionPrivate;
+    private static closeSection;
     private orderSection;
     private sort;
     private addSection;
     private editSection;
     private deleteSection;
     private addThread;
-    private makeThreadPrivate;
-    private pinThread;
+    private static makeThreadPrivate;
+    private static pinThread;
 }

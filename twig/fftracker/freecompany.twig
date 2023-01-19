@@ -47,7 +47,7 @@
             {% else %}
                 land
             {% endif %}
-            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom" href="/img/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a>.
+            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom noNewTabIcon" href="/img/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a>.
         {% endif %}
     </p>
     {% if freecompany.location.estate.message %}

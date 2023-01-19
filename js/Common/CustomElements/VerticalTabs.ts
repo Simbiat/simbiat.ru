@@ -2,28 +2,28 @@ class VerticalTabs extends HTMLElement
 {
     private readonly tabs: HTMLSpanElement[];
     private readonly contents: HTMLDivElement[];
-    private readonly wrapper: HTMLDivElement;
+    private readonly wrapper: HTMLDivElement | null = null;
     private currentTab: number | null = null;
     
-    constructor() {
+    public constructor() {
         super();
-        this.wrapper = this.querySelector('tab-contents') as HTMLDivElement;
+        this.wrapper = this.querySelector('tab-contents');
         this.tabs = Array.from(this.querySelectorAll('tab-name'));
         this.contents = Array.from(this.querySelectorAll('tab-content'));
         //Attach listener to tabs
         this.tabs.forEach((item) => {
             item.addEventListener('click', (event) => {
-                this.tabSwitch(event.target as HTMLSpanElement)
+                this.tabSwitch(event.target as HTMLSpanElement);
             });
         });
         //Hide tab-contents block, if there is no active tab at the initial load
-        if (this.wrapper && this.wrapper.querySelector('.active')) {
+        if (this.wrapper?.querySelector('.active')) {
             this.wrapper.classList.remove('hidden');
         }
     }
     
     //Function to switch tabs
-    private tabSwitch(target: HTMLSpanElement)
+    private tabSwitch(target: HTMLSpanElement): void
     {
         if (target.hasAttribute('data-url')) {
             window.location.href = String(target.getAttribute('data-url'));
@@ -46,12 +46,14 @@ class VerticalTabs extends HTMLElement
         if (this.contents[tabIndex]) {
             (this.contents[tabIndex] as HTMLSpanElement).classList.add('active');
         }
-        //If we clicked on the same tab - hide everything
-        if (this.currentTab === tabIndex) {
-            this.wrapper.classList.add('hidden');
-        } else {
-            this.currentTab = tabIndex;
-            this.wrapper.classList.remove('hidden');
+        if (this.wrapper) {
+            //If we clicked on the same tab - hide everything
+            if (this.currentTab === tabIndex) {
+                this.wrapper.classList.add('hidden');
+            } else {
+                this.currentTab = tabIndex;
+                this.wrapper.classList.remove('hidden');
+            }
         }
     }
 }

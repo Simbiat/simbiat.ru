@@ -1,66 +1,87 @@
 export class bicKeying
 {
-    constructor()
+    private readonly form: HTMLFormElement | null = null;
+    private readonly result: HTMLSpanElement | null = null;
+    private readonly bicKeySample: HTMLSpanElement | null = null;
+    private readonly accKeySample: HTMLSpanElement | null = null;
+    private readonly spinner: HTMLImageElement | null = null;
+    
+    public constructor()
     {
-        (document.getElementById('bic_key') as HTMLInputElement).addEventListener('input', () => {this.calc();});
-        (document.getElementById('account_key') as HTMLInputElement).addEventListener('input', () => {this.calc();});
+        this.form = document.querySelector('#bic_keying');
+        this.result = document.querySelector('#accCheckResult');
+        this.bicKeySample = document.querySelector('#bic_key_sample');
+        this.accKeySample = document.querySelector('#account_key_sample');
+        this.spinner = document.querySelector('#bic_spinner');
+        
+    }
+    
+    public init(): void
+    {
+        ['change', 'input', 'paste'].forEach((eventType: string) => {
+            document.querySelector('#bic_key')?.addEventListener(eventType, () => { this.calc(); });
+            document.querySelector('#account_key')?.addEventListener(eventType, () => { this.calc(); });
+        });
     }
 
-    private calc(): void | boolean
+    private calc(): boolean
     {
-        let form = document.getElementById('bic_keying') as HTMLFormElement;
-        //Get form data
-        let formData = new FormData(form);
-        let result = document.getElementById('accCheckResult') as HTMLSpanElement;
-        let bicKey = String(formData.get('bic_key'));
-        let accKey = String(formData.get('account_key'));
-        let bicKeySample = document.getElementById('bic_key_sample') as HTMLSpanElement;
-        let accKeySample = document.getElementById('account_key_sample') as HTMLSpanElement;
-        result.classList.remove(...result.classList);
-        if (/^\d{9}$/u.exec(bicKey) === null) {
-            result.classList.add('failure');
-            result.innerHTML = 'Неверный формат БИКа';
-            this.styleBic(bicKeySample, 'warning', 'БИК');
-            return;
-        } else {
-            this.styleBic(bicKeySample, 'success', bicKey);
-        }
-        if (/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u.exec(accKey) === null) {
-            result.classList.add('failure');
-            result.innerHTML = 'Неверный формат счёта';
-            this.styleBic(accKeySample, 'warning', 'СЧЁТ');
-            return;
-        } else {
-            this.styleBic(accKeySample, 'success', accKey);
-        }
-        //Change address
-        updateHistory(location.protocol+'//'+location.host+'/bictracker/keying/'+bicKey+'/'+accKey+'/', 'Ключевание счёта '+accKey+pageTitle);
-        //Initiate request
-        result.classList.add('warning');
-        result.innerHTML = 'Проверяем...';
-        //Get spinner
-        let spinner = document.getElementById('bic_spinner') as HTMLImageElement;
-        spinner.classList.remove('hidden');
-        ajax(location.protocol+'//'+location.host+'/api/bictracker/keying/', formData, 'json', 'POST', 60000, true).then(data => {
-            result.classList.remove(...result.classList);
-            if (data.data === true) {
-                result.classList.add('success');
-                result.innerHTML = 'Правильное ключевание';
-            } else {
-                result.classList.add('failure');
-                if (data.data === false) {
-                    result.innerHTML = 'Непредвиденная ошибка';
-                } else {
-                    result.innerHTML = 'Неверное ключевание. Ожидаемый ключ: ' + data.data + ' (' + accKey.replace(/(^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(\d)(\d{11})$/u, '$1<span class="success">' + data.data + '</span>$3') + ')';
-                }
+        if (this.form && this.result && this.bicKeySample && this.accKeySample) {
+            //Get form data
+            const formData = new FormData(this.form);
+            const bicKey = String(formData.get('bic_key') ?? '');
+            const accKey = String(formData.get('account_key') ?? '');
+            this.result.classList.remove(...this.result.classList);
+            if ((/^\d{9}$/u).exec(bicKey) === null) {
+                this.result.classList.add('failure');
+                this.result.innerHTML = 'Неверный формат БИКа';
+                bicKeying.styleBic(this.bicKeySample, 'warning', 'БИК');
+                return false;
             }
-            spinner.classList.add('hidden');
-        });
-        return;
+            bicKeying.styleBic(this.bicKeySample, 'success', bicKey);
+            if ((/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u).exec(accKey) === null) {
+                this.result.classList.add('failure');
+                this.result.innerHTML = 'Неверный формат счёта';
+                bicKeying.styleBic(this.accKeySample, 'warning', 'СЧЁТ');
+                return false;
+            }
+            bicKeying.styleBic(this.accKeySample, 'success', accKey);
+            //Initiate request
+            this.result.classList.add('warning');
+            this.result.innerHTML = 'Проверяем...';
+            if (this.spinner) {
+                this.spinner.classList.remove('hidden');
+            }
+            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying/`, formData, 'json', 'POST', 60000, true).
+                then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    //Change address
+                    updateHistory(`${location.protocol}//${location.host}/bictracker/keying/${bicKey}/${accKey}/`, `Ключевание счёта ${accKey}`);
+                    if (this.result) {
+                        this.result.classList.remove(...this.result.classList);
+                        if (data.data === true) {
+                            this.result.classList.add('success');
+                            this.result.innerHTML = 'Правильное ключевание';
+                        } else {
+                            this.result.classList.add('failure');
+                            if (data.data === false) {
+                                this.result.innerHTML = 'Непредвиденная ошибка';
+                            } else {
+                                this.result.innerHTML = `Неверное ключевание. Ожидаемый ключ: ${data.data} (${accKey.replace(/(?<beforeKey>^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{2})(?<key>\d)(?<afterKey>\d{11})$/u, `$<beforeKey><span class="success">${data.data}</span>$<afterKey>`)})`;
+                            }
+                        }
+                    }
+                    if (this.spinner) {
+                        this.spinner.classList.add('hidden');
+                    }
+                    return true;
+                });
+        }
+        return false;
     }
 
     //Helper function for styling
-    private styleBic(element: HTMLSpanElement, newClass: string, text: string = ''): void
+    private static styleBic(element: HTMLSpanElement, newClass: string, text = ''): void
     {
         element.classList.remove(...element.classList);
         element.classList.add(newClass);

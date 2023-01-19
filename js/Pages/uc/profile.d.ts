@@ -5,6 +5,8 @@ export declare class EditProfile {
     private readonly profileForm;
     private readonly profileSubmit;
     private readonly aboutValue;
+    private readonly autoTime;
+    private readonly timeTag;
     private profileFormData;
     private timeOut;
     constructor();

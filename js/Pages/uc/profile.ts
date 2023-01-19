@@ -6,102 +6,125 @@ export class EditProfile
     private readonly profileForm: HTMLFormElement | null = null;
     private readonly profileSubmit: HTMLInputElement | null = null;
     private readonly aboutValue: HTMLTextAreaElement | null = null;
-    private profileFormData: string = '';
+    private readonly autoTime: HTMLParagraphElement | null = null;
+    private readonly timeTag: HTMLTimeElement | null = null;
+    private profileFormData = '';
     private timeOut: number | null = null;
 
-    constructor()
+    public constructor()
     {
-        this.aboutValue = document.getElementById('about_value') as HTMLTextAreaElement;
-        this.usernameForm = document.getElementById('profile_username') as HTMLFormElement;
+        this.aboutValue = document.querySelector('#about_value');
+        this.usernameForm = document.querySelector('#profile_username');
+        this.autoTime = document.querySelector('#lastAutoSave');
+        if (this.autoTime) {
+            this.timeTag = this.autoTime.querySelector('time');
+        }
         if (this.usernameForm) {
-            this.usernameField = document.getElementById('username_value') as HTMLInputElement;
-            this.usernameSubmit = document.getElementById('username_submit') as HTMLInputElement;
+            this.usernameField = document.querySelector('#username_value');
+            this.usernameSubmit = document.querySelector('#username_submit');
             ['focus', 'change', 'input',].forEach((eventType: string) => {
-                (this.usernameField as HTMLInputElement).addEventListener(eventType, this.usernameOnChange.bind(this));
+                if (this.usernameField) {
+                    this.usernameField.addEventListener(eventType, this.usernameOnChange.bind(this));
+                }
             });
             this.usernameOnChange();
             submitIntercept(this.usernameForm, this.username.bind(this));
         }
-        this.profileForm = document.getElementById('profile_details') as HTMLFormElement;
+        this.profileForm = document.querySelector('#profile_details');
         if (this.profileForm) {
-            this.profileSubmit = document.getElementById('details_submit') as HTMLInputElement;
+            this.profileSubmit = document.querySelector('#details_submit');
             //Save initial values
             this.profileFormData = JSON.stringify([...new FormData(this.profileForm).entries()]);
             this.profileOnChange();
             //Monitor changes in all fields of the form
             ['select', 'textarea', 'input',].forEach((elementType: string) => {
-                Array.from((this.profileForm as HTMLFormElement).getElementsByTagName(elementType)).forEach((element: Element) => {
-                    ['focus', 'change', 'input',].forEach((eventType: string) => {
-                        (element as HTMLElement).addEventListener(eventType, this.profileOnChange.bind(this));
+                if (this.profileForm) {
+                    Array.from(this.profileForm.querySelectorAll(elementType)).forEach((element: Element) => {
+                        ['focus', 'change', 'input',].forEach((eventType: string) => {
+                            (element as HTMLElement).addEventListener(eventType, this.profileOnChange.bind(this));
+                        });
                     });
-                });
+                }
             });
             submitIntercept(this.profileForm, this.profile.bind(this));
         }
     }
     
-    private profile(auto: boolean = false): void
+    private profile(auto = false): void
     {
-        //Get form data
-        let formData = new FormData(this.profileForm as HTMLFormElement);
-        ajax(location.protocol+'//'+location.host+'/api/uc/profile/', formData, 'json', 'PATCH', 60000, true).then(data => {
-            if (data.data === true) {
-                this.profileFormData = JSON.stringify([...formData.entries()]);
-                this.profileOnChange();
-                new Snackbar('Profile updated', 'success');
-                //If auto-save, update the time
-                if (auto) {
-                    let autoTime = document.getElementById('lastAutoSave') as HTMLParagraphElement;
-                    autoTime.classList.remove('hidden');
-                    let timeTag = autoTime.querySelector('time') as HTMLTimeElement;
-                    let time = new Date();
-                    timeTag.setAttribute('datetime', time.toISOString());
-                    timeTag.innerHTML = time.toLocaleTimeString();
+        if (this.profileForm) {
+            //Get form data
+            const formData = new FormData(this.profileForm);
+            void ajax(`${location.protocol}//${location.host}/api/uc/profile/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    this.profileFormData = JSON.stringify([...formData.entries()]);
+                    this.profileOnChange();
+                    addSnackbar('Profile updated', 'success');
+                    //If auto-save, update the time
+                    if (auto) {
+                        this.autoTime?.classList.remove('hidden');
+                        if (this.timeTag) {
+                            const time = new Date();
+                            this.timeTag.setAttribute('datetime', time.toISOString());
+                            this.timeTag.innerHTML = time.toLocaleTimeString();
+                        }
+                    }
+                    //Notify TinyMCE, that data was saved
+                    if (this.aboutValue && !empty(this.aboutValue.id)) {
+                        saveTinyMCE(this.aboutValue.id);
+                    }
+                } else {
+                    addSnackbar(data.reason, 'failure', 10000);
                 }
-                //Notify TinyMCE, that data was saved
-                if (this.aboutValue && this.aboutValue.id) {
-                    saveTinyMCE(this.aboutValue.id)
-                }
-            } else {
-                new Snackbar(data.reason, 'failure', 10000);
-            }
-        });
+            });
+        }
     }
     
     private profileOnChange(): void
     {
-        if (this.timeOut) {
-            window.clearTimeout(this.timeOut);
-        }
-        let formData = new FormData(this.profileForm as HTMLFormElement);
-        //Comparing stringify versions of data, because FormData === FormData always returns false
-        (this.profileSubmit as HTMLInputElement).disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
-        if (!(this.profileSubmit as HTMLInputElement).disabled) {
-            //Schedule auto save
-            this.timeOut = window.setTimeout(() => {this.profile(true)}, 10000);
+        if (this.profileForm && this.profileSubmit) {
+            if (this.timeOut !== null) {
+                window.clearTimeout(this.timeOut);
+            }
+            const formData = new FormData(this.profileForm);
+            //Comparing stringify versions of data, because FormData === FormData always returns false
+            this.profileSubmit.disabled = this.profileFormData === JSON.stringify([...formData.entries()]);
+            if (!this.profileSubmit.disabled) {
+                //Schedule auto save
+                this.timeOut = window.setTimeout(() => {
+                    this.profile(true);
+                }, 10000);
+            }
         }
     }
     
     private usernameOnChange(): void
     {
-        (this.usernameSubmit as HTMLInputElement).disabled = (this.usernameField as HTMLInputElement).getAttribute('data-original') === (this.usernameField as HTMLInputElement).value;
+        if (this.usernameField && this.usernameSubmit) {
+            this.usernameSubmit.disabled = this.usernameField.getAttribute('data-original') === this.usernameField.value;
+        }
     }
     
     private username(): void
     {
-        //Get form data
-        let formData = new FormData(this.usernameForm as HTMLFormElement);
-        let button = (this.usernameForm as HTMLFormElement).querySelector('#username_submit');
-        buttonToggle(button as HTMLInputElement);
-        ajax(location.protocol+'//'+location.host+'/api/uc/username/', formData, 'json', 'PATCH', 60000, true).then(data => {
-            if (data.data === true) {
-                (this.usernameField as HTMLInputElement).setAttribute('data-original', (this.usernameField as HTMLInputElement).value);
-                this.usernameOnChange();
-                new Snackbar('Username changed', 'success');
-            } else {
-                new Snackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(button as HTMLInputElement);
-        });
+        if (this.usernameForm && this.usernameSubmit) {
+            //Get form data
+            const formData = new FormData(this.usernameForm);
+            buttonToggle(this.usernameSubmit);
+            void ajax(`${location.protocol}//${location.host}/api/uc/username/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    (this.usernameField as HTMLInputElement).setAttribute('data-original', (this.usernameField as HTMLInputElement).value);
+                    this.usernameOnChange();
+                    addSnackbar('Username changed', 'success');
+                } else {
+                    addSnackbar(data.reason, 'failure', 10000);
+                }
+                if (this.usernameSubmit) {
+                    buttonToggle(this.usernameSubmit);
+                }
+            });
+        }
     }
 }

@@ -1,51 +1,61 @@
 export class ffTrack {
-    select;
-    idInput;
+    form = null;
+    select = null;
+    idInput = null;
     constructor() {
-        this.idInput = document.getElementById('ff_track_id');
-        this.select = document.getElementById('ff_track_type');
-        this.select.addEventListener('change', () => {
-            this.typeChange();
-        });
-        submitIntercept(document.getElementById('ff_track_register'), this.add.bind(this));
+        this.form = document.querySelector('#ff_track_register');
+        this.idInput = document.querySelector('#ff_track_id');
+        this.select = document.querySelector('#ff_track_type');
+        if (this.select) {
+            this.select.addEventListener('change', () => {
+                this.typeChange();
+            });
+        }
+        if (this.form) {
+            submitIntercept(this.form, this.add.bind(this));
+        }
     }
     add() {
-        let selectedOption = this.select.selectedOptions[0];
-        let selectText;
-        if (selectedOption) {
-            selectText = selectedOption.text;
-        }
-        else {
-            selectText = 'Character';
-        }
-        if (this.idInput && this.select) {
-            let button = document.getElementById('ff_track_submit');
-            buttonToggle(button);
-            ajax(location.protocol + '//' + location.host + '/api/fftracker/' + this.select.value + '/' + this.idInput.value + '/', null, 'json', 'POST', 60000, true).then(data => {
-                if (data.data === true) {
-                    new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was registered. Check <a href="' + data.location + '" target="_blank">here</a>.', 'success', 0);
-                }
-                else if (data === '404') {
-                    new Snackbar(selectText + ' with ID ' + this.idInput.value + ' was not found on Lodestone.', 'failure', 10000);
-                }
-                else {
-                    if (data.reason.match(/^ID `.*` is already registered$/ui)) {
-                        new Snackbar(data.reason + '. Check <a href="' + data.location + '" target="_blank">here</a>.', 'warning', 0);
+        if (this.select) {
+            const selectedOption = this.select.selectedOptions[0];
+            let selectText;
+            if (selectedOption) {
+                selectText = selectedOption.text;
+            }
+            else {
+                selectText = 'Character';
+            }
+            if (this.idInput) {
+                const button = document.querySelector('#ff_track_submit');
+                buttonToggle(button);
+                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}/`, null, 'json', 'POST', 60000, true).
+                    then((response) => {
+                    const data = response;
+                    if (data.data === true) {
+                        addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was registered. Check <a href="${data.location}" target="_blank">here</a>.`, 'success', 0);
+                    }
+                    else if (data.status === 404) {
+                        addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was not found on Lodestone.`, 'failure', 10000);
+                    }
+                    else if ((/^ID `.*` is already registered$/ui).exec(data.reason)) {
+                        addSnackbar(`${data.reason}. Check <a href="${data.location}" target="_blank">here</a>.`, 'warning', 0);
                     }
                     else {
-                        new Snackbar(data.reason, 'failure', 10000);
+                        addSnackbar(data.reason, 'failure', 10000);
                     }
-                }
-                buttonToggle(button);
-            });
+                    buttonToggle(button);
+                });
+            }
         }
     }
     typeChange() {
-        let pattern = '^\\d{1,20}$';
-        if (this.select.value === 'pvpteam' || this.select.value === 'crossworld_linkshell') {
-            pattern = '^[\\da-z]{40}$';
+        if (this.select && this.idInput) {
+            let pattern = '^\\d{1,20}$';
+            if (this.select.value === 'pvpteam' || this.select.value === 'crossworld_linkshell') {
+                pattern = '^[\\da-z]{40}$';
+            }
+            this.idInput.setAttribute('pattern', pattern);
         }
-        this.idInput.setAttribute('pattern', pattern);
     }
 }
 //# sourceMappingURL=track.js.map

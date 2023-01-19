@@ -1,8 +1,8 @@
 //Remove certain GET parameters, to avoid them being saved to favourites or shared
 function cleanGET(): void
 {
-    let url = new URL(document.location.href);
-    let params = new URLSearchParams(url.search);
+    const url = new URL(document.location.href);
+    const params = new URLSearchParams(url.search);
     //Flag for resetting cache on server side
     params.delete('cacheReset');
     //Flag used to attempt to force proper reload (with cache clear) of a page.
@@ -12,85 +12,90 @@ function cleanGET(): void
     if (params.toString() === '') {
         window.history.replaceState(document.title, document.title, location.pathname + location.hash);
     } else {
-        window.history.replaceState(document.title, document.title, '?' + params + location.hash);
+        window.history.replaceState(document.title, document.title, `?${params.toString()}${location.hash}`);
     }
 }
 
 //Special processing for special hash links
 function hashCheck(): void
 {
-    let url = new URL(document.location.href);
-    let hash = url.hash;
-    let Gallery = document.querySelector('gallery-overlay') as Gallery;
-    const galleryLink = new RegExp('#gallery=\\d+', 'ui');
+    const url = new URL(document.location.href);
+    const hash = url.hash;
+    const Gallery = document.querySelector('gallery-overlay');
+    const galleryLink = /#gallery=\d+/ui;
     if (Gallery) {
         if (galleryLink.test(hash)) {
-            let imageID = Number(hash.replace(/(#gallery=)(\d+)/ui, '$2'));
+            const imageID = Number(hash.replace(/(?<hash>#gallery=)(?<number>\d+)/ui, '$<number>'));
             if (imageID) {
-                if (Gallery.images[imageID - 1]) {
-                    Gallery.current = imageID - 1;
+                if ((Gallery as Gallery).images[imageID - 1]) {
+                    (Gallery as Gallery).current = imageID - 1;
                 } else {
-                    new Snackbar('Image number ' + imageID + ' not found on page', 'failure');
+                    addSnackbar(`Image number ${imageID} not found on page`, 'failure');
                     window.history.replaceState(document.title, document.title, document.location.href.replace(hash, ''));
                 }
             }
         } else {
-            Gallery.close();
+            (Gallery as Gallery).close();
         }
     }
 }
 
 //Function to initialize page-specific code
+//I do not see a good alternative for using `new` keyword for the respective objects, so that everything would still be
+// limited to respective classes, so suppressing `no-new` rule for the function
 function router(): void
 {
-    let url = new URL(document.location.href);
-    let path = url.pathname.replace(/(\/)(.*)(\/)?/ui, '$2').toLowerCase().split('/');
-    if (path[0]) {
+    /* eslint-disable no-new */
+    const url = new URL(document.location.href);
+    const path = url.pathname.replace(/(?<startingSlash>\/)(?<url>.*)(?<endingSlash>\/)?/ui, '$<url>').
+                                toLowerCase().
+                                split('/');
+    if (!empty(path[0])) {
         if (path[0] === 'bictracker') {
-            if (path[1]) {
+            if (!empty(path[1])) {
                 if (path[1] === 'keying') {
-                    import('/js/Pages/bictracker/keying.js').then((module) => {new module.bicKeying();});
+                    void import('/js/Pages/bictracker/keying.js').then((module) => { new module.bicKeying(); });
                 } else if (path[1] === 'search') {
-                    import('/js/Pages/bictracker/search.js').then((module) => {new module.bicRefresh();});
+                    void import('/js/Pages/bictracker/search.js').then((module) => { new module.bicRefresh(); });
                 }
             }
         } else if (path[0] === 'fftracker') {
-            if (path[1]) {
+            if (!empty(path[1])) {
                 if (path[1] === 'track') {
-                    import('/js/Pages/fftracker/track.js').then((module) => {new module.ffTrack();});
-                } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(path[1])) {
-                    import('/js/Pages/fftracker/entity.js').then((module) => {new module.ffEntity();});
+                    void import('/js/Pages/fftracker/track.js').then((module) => { new module.ffTrack(); });
+                } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(String(path[1]))) {
+                    void import('/js/Pages/fftracker/entity.js').then((module) => { new module.ffEntity(); });
                 }
             }
         } else if (path[0] === 'uc') {
-            if (path[1]) {
+            if (!empty(path[1])) {
                 if (path[1] === 'emails') {
-                    import('/js/Pages/uc/emails.js').then((module) => {new module.Emails();});
+                    void import('/js/Pages/uc/emails.js').then((module) => { new module.Emails(); });
                 } else if (path[1] === 'password') {
-                    import('/js/Pages/uc/password.js').then((module) => {new module.PasswordChange();});
+                    void import('/js/Pages/uc/password.js').then((module) => { new module.PasswordChange(); });
                 } else if (path[1] === 'profile') {
-                    import('/js/Pages/uc/profile.js').then((module) => {new module.EditProfile();});
+                    void import('/js/Pages/uc/profile.js').then((module) => { new module.EditProfile(); });
                 } else if (path[1] === 'avatars') {
-                    import('/js/Pages/uc/avatars.js').then((module) => {new module.EditAvatars();});
+                    void import('/js/Pages/uc/avatars.js').then((module) => { new module.EditAvatars(); });
                 } else if (path[1] === 'sessions') {
-                    import('/js/Pages/uc/sessions.js').then((module) => {new module.EditSessions();});
+                    void import('/js/Pages/uc/sessions.js').then((module) => { new module.EditSessions(); });
                 } else if (path[1] === 'fftracker') {
-                    import('/js/Pages/uc/fftracker.js').then((module) => {new module.EditFFLinks();});
+                    void import('/js/Pages/uc/fftracker.js').then((module) => { new module.EditFFLinks(); });
                 } else if (path[1] === 'removal') {
-                    import('/js/Pages/uc/removal.js').then((module) => {new module.RemoveProfile();});
+                    void import('/js/Pages/uc/removal.js').then((module) => { new module.RemoveProfile(); });
                 }
             }
         } else if (path[0] === 'talks') {
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
-                    import('/js/Pages/talks/sections.js').then((module) => {new module.Sections();});
+                    void import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
                 } else if (path[2] === 'posts') {
-                    import('/js/Pages/talks/posts.js').then((module) => {new module.Posts();});
+                    void import('/js/Pages/talks/posts.js').then((module) => { new module.Posts(); });
                 }
             } else if (path[1] === 'sections') {
-                import('/js/Pages/talks/sections.js').then((module) => {new module.Sections();});
+                void import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
             } else if (path[1] === 'threads') {
-                import('/js/Pages/talks/threads.js').then((module) => {new module.Threads();});
+                void import('/js/Pages/talks/threads.js').then((module) => { new module.Threads(); });
             }
         }
     }

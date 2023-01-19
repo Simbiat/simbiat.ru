@@ -1,5 +1,5 @@
 export declare class bicRefresh {
-    private refreshButton;
+    private readonly refreshButton;
     constructor();
     private refresh;
 }

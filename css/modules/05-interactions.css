@@ -310,7 +310,7 @@ textarea::-webkit-resizer {
     border-bottom-right-radius: var(--border-radius);
     border-top-left-radius: var(--border-radius);
 }
-textarea+label:after {
+label[data-curlength]:not([data-curlength='']):after {
     content: attr(data-curlength);
     margin-left: 0.5rem;
 }

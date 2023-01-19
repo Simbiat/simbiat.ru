@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="EslintConfiguration">
+    <extra-options value="--cache --cache-location=&quot;/js/.eslintcache&quot; --cache-strategy=content" />
+  </component>
+</project>

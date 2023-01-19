@@ -13,6 +13,10 @@ gallery-close {
     right: 0.5rem;
     top: 0.5rem;
     z-index: 2;
+    cursor: pointer!important;
+}
+#closeGalleryIcon {
+    cursor: pointer!important;
 }
 #galleryGrid {
     opacity: 0.90;

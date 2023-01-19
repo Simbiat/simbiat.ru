@@ -37,7 +37,7 @@
         "./*/*.ts"
     ],
     "exclude": [
-        "node_modules"
+        "*node_modules*"
     ],
     "references": [
         {"path": "../Common/tsconfig.json"}

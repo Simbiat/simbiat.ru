@@ -21,9 +21,11 @@
         "moduleResolution": "nodenext",
         "baseUrl": ".",
         "paths": {
-            "*": ["/js/Pages/*", "../../*"],
+            "/js/tinymce/*": ["../../composer/vendor/tinymce/tinymce/*"],
+            "*": ["/js/Pages/*", "../../*"]
         },
         "sourceMap": true,
+        "rootDir": "../../",
         "sourceRoot": "/js/Common/",
         "removeComments": true,
         "outDir": "../",
@@ -31,19 +33,24 @@
         "explainFiles": true,
         "listFiles": true,
         //Other settings
-        "allowJs": false,
+        "allowJs": true,
         "checkJs": true,
         "composite": true,
         "noErrorTruncation": true,
         "lib": ["esnext", "dom", "WebWorker", "dom.iterable"]
     },
+    "files": [
+        "../../composer/vendor/tinymce/tinymce/tinymce.min.js",
+        "../../composer/vendor/tinymce/tinymce/tinymce.d.ts"
+    ],
     //Include only .ts files in the same dir
     "include": [
         "./*.ts",
+        "./CustomElements/*.ts",
         "./CustomElements/*/*.ts"
     ],
     "exclude": [
-        "node_modules"
+        "*node_modules*"
     ],
     "references": [
         {"path":  "../Pages/tsconfig.json"}

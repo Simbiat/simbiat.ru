@@ -7,14 +7,14 @@ export class Threads
     private readonly postForm: PostForm | null = null;
     private readonly ogimage: HTMLImageElement | null = null;
     
-    constructor()
+    public constructor()
     {
-        this.addPostForm = document.getElementById('postForm') as HTMLFormElement;
-        this.editThreadForm = document.getElementById('editThreadForm') as HTMLFormElement;
-        this.closeThreadButton = document.getElementById('close_thread') as HTMLInputElement;
-        this.deleteThreadButton = document.getElementById('delete_thread') as HTMLInputElement;
-        this.ogimage = document.getElementById('thread_ogimage') as HTMLImageElement;
-        this.postForm = document.querySelector('post-form') as PostForm;
+        this.addPostForm = document.querySelector('#postForm');
+        this.editThreadForm = document.querySelector('#editThreadForm');
+        this.closeThreadButton = document.querySelector('#close_thread');
+        this.deleteThreadButton = document.querySelector('#delete_thread');
+        this.ogimage = document.querySelector('#thread_ogimage');
+        this.postForm = document.querySelector('post-form');
         if (this.addPostForm) {
             submitIntercept(this.addPostForm, this.addPost.bind(this));
         }
@@ -40,7 +40,7 @@ export class Threads
             });
         }
         //Listener for `reply to` buttons
-        document.querySelectorAll('.replyto_button').forEach(item => {
+        document.querySelectorAll('.replyto_button').forEach((item) => {
             //Tracking click to be able to roll back change easily
             item.addEventListener('click', (event: Event) => {
                 this.replyTo(event.target as HTMLInputElement);
@@ -48,115 +48,125 @@ export class Threads
         });
     }
     
-    private replyTo(button: HTMLInputElement)
+    private replyTo(button: HTMLInputElement): void
     {
         //Get the post ID
-        let replyto = button.getAttribute('data-postid') ?? '';
+        const replyto = button.getAttribute('data-postid') ?? '';
         if (this.postForm && replyto) {
             this.postForm.replyTo(replyto);
         }
     }
     
-    private addPost()
+    private addPost(): void
     {
         if (this.addPostForm) {
             //Get submit button
-            let button = this.addPostForm.querySelector('input[type=submit]')
+            const button = this.addPostForm.querySelector('input[type=submit]');
             //Get form data
-            let formData = new FormData(this.addPostForm);
+            const formData = new FormData(this.addPostForm);
             //Add timezone
             formData.append('postForm[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             buttonToggle(button as HTMLInputElement);
-            ajax(location.protocol + '//' + location.host + '/api/talks/posts/', formData, 'json', 'POST', 60000, true).then(data => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/posts/`, formData, 'json', 'POST', 60000, true).then((response) => {
+                const data = response as ajaxJSONResponse;
                 if (data.data === true) {
-                    //Notify TinyMCE, that data was saved
-                    let textarea = (this.addPostForm as HTMLFormElement).querySelector('textarea');
-                    if (textarea && textarea.id) {
-                        saveTinyMCE(textarea.id)
+                    if (this.addPostForm) {
+                        //Notify TinyMCE, that data was saved
+                        const textarea = this.addPostForm.querySelector('textarea');
+                        if (textarea && !empty(textarea.id)) {
+                            saveTinyMCE(textarea.id);
+                        }
                     }
-                    new Snackbar('Post created. Reloading...', 'success');
+                    addSnackbar('Post created. Reloading...', 'success');
                     window.location.href = data.location;
                 } else {
-                    new Snackbar(data.reason, 'failure', 10000);
+                    addSnackbar(data.reason, 'failure', 10000);
                 }
                 buttonToggle(button as HTMLInputElement);
             });
         }
     }
     
-    private deleteThread()
+    private deleteThread(): void
     {
         if (this.deleteThreadButton) {
             if (confirm('This is the last chance to back out.\nIf you press \'OK\' this thread will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-                let id = this.deleteThreadButton.getAttribute('data-thread');
-                if (id) {
-                    buttonToggle(this.deleteThreadButton as HTMLInputElement);
-                    ajax(location.protocol + '//' + location.host + '/api/talks/threads/' + id + '/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
+                const id = this.deleteThreadButton.getAttribute('data-thread') ?? '';
+                if (!empty(id)) {
+                    buttonToggle(this.deleteThreadButton);
+                    void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete/`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                        const data = response as ajaxJSONResponse;
                         if (data.data === true) {
-                            new Snackbar('Thread removed. Redirecting to parent...', 'success');
+                            addSnackbar('Thread removed. Redirecting to parent...', 'success');
                             window.location.href = data.location;
                         } else {
-                            new Snackbar(data.reason, 'failure', 10000);
+                            addSnackbar(data.reason, 'failure', 10000);
                         }
-                        buttonToggle(this.deleteThreadButton as HTMLInputElement);
+                        if (this.deleteThreadButton) {
+                            buttonToggle(this.deleteThreadButton);
+                        }
                     });
                 }
             }
         }
     }
     
-    private closeThread()
+    private closeThread(): void
     {
         if (this.closeThreadButton) {
-            let id = this.closeThreadButton.getAttribute('data-thread');
-            let verb = this.closeThreadButton.value.toLowerCase();
-            if (id) {
-                buttonToggle(this.closeThreadButton as HTMLInputElement);
-                ajax(location.protocol + '//' + location.host + '/api/talks/threads/'+id+'/'+verb+'/', null, 'json', 'PATCH', 60000, true).then(data => {
+            const id = this.closeThreadButton.getAttribute('data-thread') ?? '';
+            const verb = this.closeThreadButton.value.toLowerCase();
+            if (!empty(id)) {
+                buttonToggle(this.closeThreadButton);
+                void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+                    const data = response as ajaxJSONResponse;
                     if (data.data === true) {
                         if (verb === 'close') {
-                            new Snackbar('Thread closed. Refreshing...', 'success');
+                            addSnackbar('Thread closed. Refreshing...', 'success');
                         } else {
-                            new Snackbar('Thread reopened. Refreshing...', 'success');
+                            addSnackbar('Thread reopened. Refreshing...', 'success');
                         }
-                        window.location.href = window.location.href+'?forceReload=true';
+                        pageRefresh();
                     } else {
-                        new Snackbar(data.reason, 'failure', 10000);
+                        addSnackbar(data.reason, 'failure', 10000);
                     }
-                    buttonToggle(this.closeThreadButton as HTMLInputElement);
+                    if (this.closeThreadButton) {
+                        buttonToggle(this.closeThreadButton);
+                    }
                 });
             }
         }
     }
     
-    private editThread()
+    private editThread(): void
     {
         if (this.editThreadForm) {
             //Get submit button
-            let button = this.editThreadForm.querySelector('input[type=submit]')
+            const button = this.editThreadForm.querySelector('input[type=submit]');
             //Get form data
-            let formData = new FormData(this.editThreadForm);
+            const formData = new FormData(this.editThreadForm);
             //Check if custom icon is being attached
-            let ogimage = this.editThreadForm.querySelector('input[type=file]') as HTMLInputElement;
-            if (ogimage && ogimage.files && ogimage.files[0]) {
+            const ogimage: HTMLInputElement | null = this.editThreadForm.querySelector('input[type=file]');
+            if (ogimage?.files?.[0]) {
                 formData.append('curThread[ogimage]', 'true');
             } else {
                 formData.append('curThread[ogimage]', 'false');
             }
             buttonToggle(button as HTMLInputElement);
-            ajax(location.protocol + '//' + location.host + '/api/talks/threads/'+(formData.get('curThread[threadid]') ?? '0')+'/edit/', formData, 'json', 'POST', 60000, true).then(data => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit/`, formData, 'json', 'POST', 60000, true).then((response) => {
+                const data = response as ajaxJSONResponse;
                 if (data.data === true) {
-                    new Snackbar('Thread updated. Reloading...', 'success');
-                    window.location.href = window.location.href+'?forceReload=true';
+                    addSnackbar('Thread updated. Reloading...', 'success');
+                    pageRefresh();
                 } else {
-                    new Snackbar(data.reason, 'failure', 10000);
+                    addSnackbar(data.reason, 'failure', 10000);
                     buttonToggle(button as HTMLInputElement);
                 }
             });
         }
     }
     
-    private hideBanner()
+    private hideBanner(): void
     {
         if (this.ogimage) {
             this.ogimage.classList.add('hidden');

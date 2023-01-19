@@ -6,15 +6,17 @@ class SelectCustom extends HTMLElement
     private readonly label: HTMLLabelElement | null = null;
     private readonly description: HTMLDivElement | null = null;
     
-    constructor() {
+    public constructor() {
         super();
-        this.select = this.querySelector('select') as HTMLSelectElement;
-        this.label = this.querySelector('label') as HTMLLabelElement;
-        this.icon = this.querySelector('.select_icon') as HTMLImageElement;
-        this.description = this.querySelector('.select_description') as HTMLDivElement;
+        this.select = this.querySelector('select');
+        this.label = this.querySelector('label');
+        this.icon = this.querySelector('.select_icon');
+        this.description = this.querySelector('.select_description');
         //Enforcing certain values of the items
-        this.icon.alt = 'Icon for ' + this.label.innerText.charAt(0).toLowerCase() + this.label.innerText.slice(1);
-        this.icon.setAttribute('data-tooltip', this.icon.alt);
+        if (this.icon && this.label) {
+            this.icon.alt = `Icon for ${this.label.innerText.charAt(0).toLowerCase()}${this.label.innerText.slice(1)}`;
+            this.icon.setAttribute('data-tooltip', this.icon.alt);
+        }
         //Attach listener to file upload field
         if (this.select) {
             this.select.addEventListener('change', () => {
@@ -26,26 +28,26 @@ class SelectCustom extends HTMLElement
     }
     
     //Function to update preview of the avatar
-    private update()
+    private update(): void
     {
         if (this.select) {
-            let option = this.select[this.select.selectedIndex] as HTMLOptionElement;
-            let description = option.getAttribute('data-description') ?? '';
-            let icon = option.getAttribute('data-icon') ?? '';
+            const option = this.select[this.select.selectedIndex] as HTMLOptionElement;
+            const description = option.getAttribute('data-description') ?? '';
+            const icon = option.getAttribute('data-icon') ?? '';
             if (this.description) {
-                if (!/^\s*$/ui.test(description)) {
+                if ((/^\s*$/ui).test(description)) {
+                    this.description.classList.add('hidden');
+                } else {
                     this.description.innerHTML = description;
                     this.description.classList.remove('hidden');
-                } else {
-                    this.description.classList.add('hidden');
                 }
             }
             if (this.icon) {
-                if (!/^\s*$/ui.test(icon)) {
+                if ((/^\s*$/ui).test(icon)) {
+                    this.icon.classList.add('hidden');
+                } else {
                     this.icon.src = icon;
                     this.icon.classList.remove('hidden');
-                } else {
-                    this.icon.classList.add('hidden');
                 }
             }
         }

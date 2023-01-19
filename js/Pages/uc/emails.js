@@ -1,113 +1,160 @@
 export class Emails {
     addMailForm = null;
+    submit = null;
+    template = null;
+    tbody = null;
     constructor() {
-        this.addMailForm = document.getElementById('addMailForm');
+        this.addMailForm = document.querySelector('#addMailForm');
+        this.template = document.querySelector('#email_row');
+        this.tbody = document.querySelector('#emailsList tbody');
         if (this.addMailForm) {
+            this.submit = this.addMailForm.querySelector('#addMail_submit');
             submitIntercept(this.addMailForm, this.add.bind(this));
-            document.querySelectorAll('.mail_activation').forEach(item => {
+            document.querySelectorAll('.mail_activation').forEach((item) => {
                 item.addEventListener('click', (event) => {
-                    this.activate(event.target);
+                    Emails.activate(event.target);
                 });
             });
-            document.querySelectorAll('[id^=subscription_checkbox_]').forEach(item => {
+            document.querySelectorAll('[id^=subscription_checkbox_]').forEach((item) => {
                 item.addEventListener('click', (event) => {
-                    this.subscribe(event);
+                    Emails.subscribe(event);
                 });
             });
-            document.querySelectorAll('.mail_deletion').forEach(item => {
+            document.querySelectorAll('.mail_deletion').forEach((item) => {
                 item.addEventListener('click', (event) => {
-                    this.delete(event.target);
+                    Emails.delete(event.target);
                 });
             });
         }
     }
     add() {
-        let formData = new FormData(this.addMailForm);
-        if (!formData.get('email')) {
-            new Snackbar('Please, enter a valid email address', 'failure');
-            return false;
+        if (this.addMailForm && this.submit) {
+            const formData = new FormData(this.addMailForm);
+            if (empty(formData.get('email'))) {
+                addSnackbar('Please, enter a valid email address', 'failure');
+                return;
+            }
+            const email = String(formData.get('email'));
+            buttonToggle(this.submit);
+            void ajax(`${location.protocol}//${location.host}/api/uc/emails/add/`, formData, 'json', 'POST', 60000, true).
+                then((response) => {
+                const data = response;
+                if (data.data === true) {
+                    this.addRow(email);
+                    Emails.blockDelete();
+                    if (this.addMailForm) {
+                        this.addMailForm.reset();
+                    }
+                    addSnackbar(`${email} added`, 'success');
+                }
+                else {
+                    addSnackbar(data.reason, 'failure', 10000);
+                }
+                if (this.submit) {
+                    buttonToggle(this.submit);
+                }
+            });
         }
-        let email = String(formData.get('email'));
-        let button = this.addMailForm.querySelector('#addMail_submit');
-        buttonToggle(button);
-        ajax(location.protocol + '//' + location.host + '/api/uc/emails/add/', formData, 'json', 'POST', 60000, true).then(data => {
-            if (data.data === true) {
-                this.addRow(email);
-                this.blockDelete();
-                this.addMailForm.reset();
-                new Snackbar(email + ' added', 'success');
-            }
-            else {
-                new Snackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(button);
-        });
     }
     addRow(email) {
-        let template = document.querySelector('#email_row').content.cloneNode(true);
-        let cells = template.querySelectorAll('td');
-        cells[0].innerHTML = email;
-        let inputElement = cells[1].querySelector('input');
-        new Input().init(inputElement);
-        inputElement.setAttribute('data-email', email);
-        inputElement.addEventListener('click', (event) => {
-            this.activate(event.target);
-        });
-        let spinner = cells[1].querySelector('img');
-        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-        inputElement = cells[3].querySelector('input');
-        new Input().init(inputElement);
-        inputElement.setAttribute('data-email', email);
-        inputElement.setAttribute('data-tooltip', String(inputElement.getAttribute('data-tooltip')).replace('email', email));
-        inputElement.setAttribute('alt', String(inputElement.getAttribute('alt')).replace('email', email));
-        inputElement.addEventListener('click', (event) => {
-            this.delete(event.target);
-        });
-        spinner = cells[3].querySelector('img');
-        spinner.setAttribute('data-tooltip', String(spinner.getAttribute('data-tooltip')).replace('email', email));
-        spinner.setAttribute('alt', String(spinner.getAttribute('alt')).replace('email', email));
-        document.querySelector('#emailsList tbody').appendChild(template);
+        if (this.tbody && this.template) {
+            const clone = this.template.content.cloneNode(true);
+            const cells = clone.querySelectorAll('td');
+            if (cells[0]) {
+                cells[0].innerHTML = email;
+            }
+            if (cells[1]) {
+                const inputElement1 = cells[1].querySelector('input');
+                if (inputElement1) {
+                    inputElement1.setAttribute('data-email', email);
+                    inputElement1.addEventListener('click', (event) => {
+                        Emails.activate(event.target);
+                    });
+                }
+                const spinner1 = cells[1].querySelector('img');
+                if (spinner1) {
+                    spinner1.setAttribute('data-tooltip', String(spinner1.getAttribute('data-tooltip')).
+                        replace('email', email));
+                    spinner1.setAttribute('alt', String(spinner1.getAttribute('alt')).
+                        replace('email', email));
+                }
+            }
+            if (cells[3]) {
+                const inputElement3 = cells[3].querySelector('input');
+                if (inputElement3) {
+                    inputElement3.setAttribute('data-email', email);
+                    inputElement3.setAttribute('data-tooltip', String(inputElement3.getAttribute('data-tooltip')).
+                        replace('email', email));
+                    inputElement3.setAttribute('alt', String(inputElement3.getAttribute('alt')).
+                        replace('email', email));
+                    inputElement3.addEventListener('click', (event) => {
+                        Emails.delete(event.target);
+                    });
+                }
+                const spinner3 = cells[3].querySelector('img');
+                if (spinner3) {
+                    spinner3.setAttribute('data-tooltip', String(spinner3.getAttribute('data-tooltip')).
+                        replace('email', email));
+                    spinner3.setAttribute('alt', String(spinner3.getAttribute('alt')).
+                        replace('email', email));
+                }
+            }
+            this.tbody.appendChild(clone);
+        }
     }
-    delete(button) {
-        let formData = new FormData();
-        let email = button.getAttribute('data-email') ?? '';
+    static delete(button) {
+        const formData = new FormData();
+        const email = button.getAttribute('data-email') ?? '';
         formData.set('email', email);
         buttonToggle(button);
-        ajax(location.protocol + '//' + location.host + '/api/uc/emails/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/delete/`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+            const data = response;
             if (data.data === true) {
                 deleteRow(button);
-                this.blockDelete();
-                new Snackbar(email + ' removed', 'success');
+                Emails.blockDelete();
+                addSnackbar(`${email} removed`, 'success');
             }
             else {
                 buttonToggle(button);
-                new Snackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
         });
     }
-    blockDelete() {
-        let confirmedMail = document.getElementsByClassName('mail_confirmed').length;
-        document.querySelectorAll('.mail_deletion').forEach(item => {
-            if (item.parentElement.parentElement.getElementsByClassName('mail_confirmed').length > 0) {
-                item.disabled = confirmedMail < 2;
-            }
-            else {
-                item.disabled = false;
-                if (item.getAttribute('data-tooltip') && item.getAttribute('data-tooltip') === 'Can\'t delete') {
-                    let email = item.parentElement.parentElement.querySelector('td').innerHTML;
-                    item.setAttribute('data-tooltip', 'Delete ' + email);
-                    let spinner = item.parentElement.querySelector('.spinner');
-                    spinner.setAttribute('data-tooltip', 'Removing ' + email + '...');
-                    spinner.setAttribute('alt', 'Removing ' + email + '...');
+    static blockDelete() {
+        const confirmedMail = document.querySelectorAll('.mail_confirmed').length;
+        document.querySelectorAll('.mail_deletion').forEach((item) => {
+            const input = item;
+            const cell = input.parentElement;
+            if (cell) {
+                const row = cell.parentElement;
+                if (row) {
+                    if (row.querySelectorAll('.mail_confirmed').length > 0) {
+                        input.disabled = confirmedMail < 2;
+                    }
+                    else {
+                        input.disabled = false;
+                        if (input.hasAttribute('data-tooltip') && input.getAttribute('data-tooltip') === 'Can\'t delete') {
+                            const email = String(row.querySelector('td')?.innerHTML);
+                            input.setAttribute('data-tooltip', `Delete ${email}`);
+                            const spinner = cell.querySelector('.spinner');
+                            spinner?.setAttribute('data-tooltip', `Removing ${email}...`);
+                            spinner?.setAttribute('alt', `Removing ${email}...`);
+                        }
+                    }
                 }
             }
         });
     }
-    subscribe(event) {
+    static subscribe(event) {
         event.preventDefault();
         event.stopPropagation();
-        let checkbox = event.target;
+        const checkbox = event.target;
+        if (!checkbox) {
+            return;
+        }
+        if (!checkbox.hasAttribute('data-email')) {
+            return;
+        }
         let verb;
         if (checkbox.checked) {
             verb = 'subscribe';
@@ -116,39 +163,41 @@ export class Emails {
             verb = 'unsubscribe';
         }
         buttonToggle(checkbox);
-        let email = checkbox.getAttribute('data-email') ?? '';
-        let formData = new FormData();
+        const email = String(checkbox.getAttribute('data-email'));
+        const formData = new FormData();
         formData.set('verb', verb);
         formData.set('email', email);
-        ajax(location.protocol + '//' + location.host + '/api/uc/emails/' + verb + '/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/${verb}/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            const data = response;
             if (data.data === true) {
                 if (checkbox.checked) {
                     checkbox.checked = false;
-                    new Snackbar(email + ' unsubscribed', 'success');
+                    addSnackbar(`${email} unsubscribed`, 'success');
                 }
                 else {
                     checkbox.checked = true;
-                    new Snackbar(email + ' subscribed', 'success');
+                    addSnackbar(`${email} subscribed`, 'success');
                 }
             }
             else {
-                new Snackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
             buttonToggle(checkbox);
         });
     }
-    activate(button) {
-        let email = button.getAttribute('data-email') ?? '';
-        let formData = new FormData();
+    static activate(button) {
+        const email = button.getAttribute('data-email') ?? '';
+        const formData = new FormData();
         formData.set('verb', 'activate');
         formData.set('email', email);
         buttonToggle(button);
-        ajax(location.protocol + '//' + location.host + '/api/uc/emails/activate/', formData, 'json', 'PATCH', 60000, true).then(data => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/activate/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            const data = response;
             if (data.data === true) {
-                new Snackbar('Activation email sent to ' + email, 'success');
+                addSnackbar(`Activation email sent to ${email}`, 'success');
             }
             else {
-                new Snackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
             buttonToggle(button);
         });

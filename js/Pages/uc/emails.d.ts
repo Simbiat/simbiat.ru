@@ -1,10 +1,13 @@
 export declare class Emails {
     private readonly addMailForm;
+    private readonly submit;
+    private readonly template;
+    private readonly tbody;
     constructor();
     private add;
     private addRow;
-    private delete;
-    private blockDelete;
-    private subscribe;
-    private activate;
+    private static delete;
+    private static blockDelete;
+    private static subscribe;
+    private static activate;
 }

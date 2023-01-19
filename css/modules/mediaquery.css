@@ -25,10 +25,9 @@ since they show em as most consistent*/
 @media (min-width: 55.599999em) and (max-width: 62em) {
     body {
         grid-template-columns: 20% calc(80% - var(--grid-gap));
-        grid-template-rows: var(--header-height) 6rem calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3) var(--footer-height);
+        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3) var(--footer-height);
         grid-template-areas:
           'header header'
-          'navigation sidebar'
           'navigation content'
           'footer footer';
     }
@@ -237,55 +236,55 @@ since they show em as most consistent*/
 
 /*Adjust some buttons*/
 @media (max-width: 44.599999em) {
-    #hideNav {
+    nav-hide {
         position: absolute;
         right: 0;
         top: 0;
     }
 }
 @media (max-width: 55.599999em) {
-    #hideSidebar {
+    side-hide {
         position: absolute;
         right: 0;
         top: 0;
     }
-    #showSidebar, #hideSidebar {
+    side-show, side-hide {
         display: block;
     }
 }
 @media (max-height: 20.599999em) {
-    #showNav {
+    nav-show {
         left: -1.25rem;
         top: -1.75rem;
     }
 }
 @media (max-width: 44.599999em) {
-    #showNav {
+    nav-show {
         left: -1.25rem;
         top: -1.75rem;
     }
 }
 @media (max-width: 44.599999em) {
-    #showNav {
+    nav-show {
         display: block;
     }
-    #showSidebar {
+    side-show {
         margin-top: 2rem;
     }
 }
 @media (min-width: 44.599999em) {
-    #showNav, #hideNav {
+    nav-show, nav-hide {
         display: none;
     }
 }
-@media (min-width: 55.599999em) {
-    #showSidebar, #hideSidebar {
+@media (min-width: 62em) {
+    side-show, side-hide {
         display: none;
     }
 }
 
 /*Adjust sidebar*/
-@media (max-width: 55.599999em) {
+@media (max-width: 62em) {
     #sidebar {
         grid-area: unset;
         display: none;
@@ -295,28 +294,9 @@ since they show em as most consistent*/
         width: 100vw;
         z-index: 2;
     }
-    #loginForm {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translateY(-50%) translateX(-50%);
-    }
-}
-@media (min-width: 55.599999em) and (max-width: 62em) {
-    #sidebar {
-        height: 6rem;
-    }
 }
 @media (max-width: 62em) {
     #radio_signinup br {
         display: none;
-    }
-    #rememberme_div {
-        display: inline-flex;
-    }
-}
-@media (min-width: 62em) {
-    #rememberme_div {
-        display: flex;
     }
 }

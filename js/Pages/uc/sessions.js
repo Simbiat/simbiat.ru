@@ -1,11 +1,15 @@
 export class EditSessions {
+    cookieButtons;
+    sessionButtons;
     constructor() {
-        document.querySelectorAll('.cookie_deletion, .session_deletion').forEach(item => {
+        this.cookieButtons = document.querySelectorAll('.cookie_deletion:not([disabled])');
+        this.sessionButtons = document.querySelectorAll('.session_deletion:not([disabled])');
+        document.querySelectorAll('.cookie_deletion, .session_deletion').forEach((item) => {
             item.addEventListener('click', (event) => {
-                this.delete(event.target);
+                EditSessions.delete(event.target);
             });
         });
-        document.querySelectorAll('#delete_cookies, #delete_sessions').forEach(item => {
+        document.querySelectorAll('#delete_cookies, #delete_sessions').forEach((item) => {
             item.addEventListener('click', (event) => {
                 this.deleteAll(event.target);
             });
@@ -16,50 +20,52 @@ export class EditSessions {
         let type;
         if (button.id === 'delete_cookies') {
             type = 'cookies';
-            buttons = document.querySelectorAll('.cookie_deletion:not([disabled])');
+            buttons = this.cookieButtons;
         }
         else if (button.id === 'delete_sessions') {
             type = 'sessions';
-            buttons = document.querySelectorAll('.session_deletion:not([disabled])');
+            buttons = this.sessionButtons;
         }
         else {
-            new Snackbar('Unknown button type', 'failure', 10000);
+            addSnackbar('Unknown button type', 'failure', 10000);
             return;
         }
-        let ArrayOfButtons = Array.from(buttons).reverse();
-        ArrayOfButtons.forEach(item => {
-            this.delete(item, false);
+        const ArrayOfButtons = Array.from(buttons).reverse();
+        ArrayOfButtons.forEach((item) => {
+            EditSessions.delete(item, false);
         });
-        new Snackbar('All ' + type + ' except current were removed', 'success');
+        addSnackbar(`All ${type} except current were removed`, 'success');
     }
-    delete(button, singular = true) {
-        let formData = new FormData();
-        let type, typeSingular;
+    static delete(button, singular = true) {
+        const formData = new FormData();
+        let type;
+        let typeSingular;
         if (button.classList.contains('cookie_deletion')) {
             type = 'cookies';
             typeSingular = 'Cookie';
-            formData.set('cookie', button.getAttribute('data-cookie'));
+            formData.set('cookie', String(button.getAttribute('data-cookie')));
         }
         else if (button.classList.contains('session_deletion')) {
             type = 'sessions';
             typeSingular = 'Session';
-            formData.set('session', button.getAttribute('data-session'));
+            formData.set('session', String(button.getAttribute('data-session')));
         }
         else {
-            new Snackbar('Unknown button type', 'failure', 10000);
+            addSnackbar('Unknown button type', 'failure', 10000);
             return;
         }
         buttonToggle(button);
-        ajax(location.protocol + '//' + location.host + '/api/uc/' + type + '/delete/', formData, 'json', 'DELETE', 60000, true).then(data => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete/`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+            const data = response;
             if (data.data === true) {
                 deleteRow(button);
                 if (singular) {
-                    new Snackbar(typeSingular + ' removed', 'success');
+                    addSnackbar(`${typeSingular} removed`, 'success');
                 }
             }
             else {
                 buttonToggle(button);
-                new Snackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', 10000);
             }
         });
     }

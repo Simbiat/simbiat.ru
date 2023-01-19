@@ -65,7 +65,7 @@
         "no-new-object": "error",
         "no-new-wrappers": "error",
         "no-octal-escape": "error",
-        "no-plusplus": "error",
+        "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
         "no-proto": "error",
         "no-return-assign": "error",
         "no-script-url": "error",
@@ -116,7 +116,7 @@
         "new-parens": "error",
         "no-multi-spaces": "error",
         "no-tabs": "error",
-        "no-trailing-spaces": "error",
+        "no-trailing-spaces": ["error", { "skipBlankLines": true }],
         "no-whitespace-before-property": "error",
         "object-property-newline": "error",
         "operator-linebreak": ["error", "before"],
@@ -202,6 +202,9 @@
         //Unsure if really needed, may be removed later
         "@typescript-eslint/consistent-type-exports": "error",
         "@typescript-eslint/consistent-type-imports": "error",
-        "@typescript-eslint/prefer-enum-initializers": "error"
+        "@typescript-eslint/prefer-enum-initializers": "error",
+        //Disabling rules, since relying on IDE's functionallity, which do not trigger as much false positives in current project structure
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "off"
     }
 }

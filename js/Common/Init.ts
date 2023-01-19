@@ -1,31 +1,80 @@
-const pageTitle = ' on Simbiat Software';
-//Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
-const emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
-//Regex for username. This is NOT JS Regex, thus it has doubled slashes.
-const userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`{|}~\\- ]{1,64}$';
-
-//Stuff to do on load
-document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('hashchange', function() {hashCheck();});
-
 //Runs initialization routines
-function init()
+function init(): void
 {
     //Input tags standardization
-    new Input();
+    const inputs = document.querySelectorAll('input');
+    if (!empty(inputs)) {
+        inputs.forEach((input) => {
+            inputInit(input);
+        });
+    }
     //Minor standardization of textarea
-    new Textarea();
+    const textAreas = document.querySelectorAll('textarea');
+    if (!empty(textAreas)) {
+        textAreas.forEach((textarea) => {
+            textareaInit(textarea);
+        });
+    }
+    //Icons for new tabs
+    const anchors = document.querySelectorAll('a[target="_blank"]');
+    if (!empty(anchors)) {
+        anchors.forEach((anchor) => {
+            newTabStyle(anchor as HTMLAnchorElement);
+        });
+    }
+    //Allow copying anchor links from Heading
+    const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+    if (!empty(headings)) {
+        headings.forEach((heading) => {
+            headingInit(heading as HTMLHeadingElement);
+        });
+    }
     //Customization of forms
-    new Form();
+    const forms = document.querySelectorAll('form');
+    if (!empty(forms)) {
+        forms.forEach((form) => {
+            formInit(form);
+        });
+    }
     //Customization for details tags
-    new Details();
+    const detailsTags = document.querySelectorAll('details');
+    if (!empty(detailsTags)) {
+        detailsTags.forEach((details) => {
+            detailsInit(details);
+        });
+    }
     //Customization for code and quote blocks
-    new Quotes();
-    //Click handling for toggling sidebar
-    new Aside();
-    new Nav();
-    //Some customization for H1-H6 tags
-    new Headings();
+    const sampTags = document.querySelectorAll('samp');
+    if (!empty(sampTags)) {
+        sampTags.forEach((samp) => {
+            sampInit(samp);
+        });
+    }
+    const codeTags = document.querySelectorAll('code');
+    if (!empty(codeTags)) {
+        codeTags.forEach((code) => {
+            codeInit(code);
+        });
+    }
+    const blockquotes = document.querySelectorAll('blockquote');
+    if (!empty(blockquotes)) {
+        blockquotes.forEach((blockquote) => {
+            blockquoteInit(blockquote);
+        });
+    }
+    const quotes = document.querySelectorAll('q');
+    if (!empty(quotes)) {
+        quotes.forEach((quote) => {
+            qInit(quote);
+        });
+    }
+    //Click handling for toggling navigation and sidebar
+    customElements.define('nav-show', NavShow);
+    customElements.define('nav-hide', NavHide);
+    customElements.define('side-show', SideShow);
+    customElements.define('side-hide', SideHide);
+    //Login form
+    customElements.define('login-form', LoginForm);
     //Back-to-top buttons
     customElements.define('back-to-top', BackToTop);
     //Timers
@@ -38,6 +87,10 @@ function init()
     customElements.define('snack-close', SnackbarClose);
     //Gallery overlay
     customElements.define('gallery-overlay', Gallery);
+    customElements.define('gallery-close', GalleryClose);
+    customElements.define('gallery-prev', GalleryPrev);
+    customElements.define('gallery-next', GalleryNext);
+    customElements.define('gallery-image', GalleryImage);
     //Define image carousels
     customElements.define('image-carousel', CarouselList);
     //Define show-password icons
@@ -56,10 +109,26 @@ function init()
     customElements.define('select-custom', SelectCustom);
     //Define post form
     customElements.define('post-form', PostForm);
-    //Add new tab icon to links opening in new tab
-    new A();
+    //Create observer to react to new elements
+    const newNodesObserver = new MutationObserver((mutations_list) => {
+        mutations_list.forEach((mutation) => {
+            mutation.addedNodes.forEach((added_node) => {
+                customizeNewElements(added_node);
+            });
+        });
+    });
+    newNodesObserver.observe(document, {
+        'attributes': false,
+        'characterData': false,
+        'childList': true,
+        'subtree': true
+    });
     //Process URL
     cleanGET();
     hashCheck();
     router();
 }
+
+//Stuff to do on load
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('hashchange', () => { hashCheck(); });

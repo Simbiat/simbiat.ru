@@ -3,10 +3,10 @@ export class Posts
     private readonly postForm: HTMLFormElement | null = null;
     private readonly deletePostButton: HTMLInputElement | null = null;
     
-    constructor()
+    public constructor()
     {
-        this.postForm = document.querySelector('post-form form') as HTMLFormElement;
-        this.deletePostButton = document.getElementById('delete_post') as HTMLInputElement;
+        this.postForm = document.querySelector('post-form form');
+        this.deletePostButton = document.querySelector('#delete_post');
         //Listener for form
         if (this.postForm) {
             submitIntercept(this.postForm, this.editPost.bind(this));
@@ -19,46 +19,52 @@ export class Posts
         }
     }
     
-    private editPost()
+    private editPost(): void
     {
         if (this.postForm) {
             //Get submit button
-            let button = this.postForm.querySelector('input[type=submit]')
+            const button = this.postForm.querySelector('input[type=submit]');
             //Get form data
-            let formData = new FormData(this.postForm);
+            const formData = new FormData(this.postForm);
             buttonToggle(button as HTMLInputElement);
-            ajax(location.protocol + '//' + location.host + '/api/talks/posts/'+(formData.get('postForm[postid]') ?? '0')+'/edit/', formData, 'json', 'PATCH', 60000, true).then(data => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit/`, formData, 'json', 'POST', 60000, true).then((response) => {
+                const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     //Notify TinyMCE, that data was saved
-                    let textarea = (this.postForm as HTMLFormElement).querySelector('textarea');
-                    if (textarea && textarea.id) {
-                        saveTinyMCE(textarea.id)
+                    if (this.postForm) {
+                        const textarea = this.postForm.querySelector('textarea');
+                        if (textarea && !empty(textarea.id)) {
+                            saveTinyMCE(textarea.id);
+                        }
                     }
-                    new Snackbar('Post updated. Reloading...', 'success');
-                    window.location.href = window.location.href+'?forceReload=true';
+                    addSnackbar('Post updated. Reloading...', 'success');
+                    pageRefresh();
                 } else {
-                    new Snackbar(data.reason, 'failure', 10000);
+                    addSnackbar(data.reason, 'failure', 10000);
                     buttonToggle(button as HTMLInputElement);
                 }
             });
         }
     }
     
-    private deletePost()
+    private deletePost(): void
     {
         if (this.deletePostButton) {
             if (confirm('This is the last chance to back out.\nIf you press \'OK\' this post will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-                let id = this.deletePostButton.getAttribute('data-post');
-                if (id) {
-                    buttonToggle(this.deletePostButton as HTMLInputElement);
-                    ajax(location.protocol + '//' + location.host + '/api/talks/posts/' + id + '/delete/', null, 'json', 'DELETE', 60000, true).then(data => {
+                const id = this.deletePostButton.getAttribute('data-post') ?? '';
+                if (!empty(id)) {
+                    buttonToggle(this.deletePostButton);
+                    void ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete/`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                        const data = response as ajaxJSONResponse;
                         if (data.data === true) {
-                            new Snackbar('Post removed. Redirecting to thread...', 'success');
+                            addSnackbar('Post removed. Redirecting to thread...', 'success');
                             window.location.href = data.location;
                         } else {
-                            new Snackbar(data.reason, 'failure', 10000);
+                            addSnackbar(data.reason, 'failure', 10000);
                         }
-                        buttonToggle(this.deletePostButton as HTMLInputElement);
+                        if (this.deletePostButton) {
+                            buttonToggle(this.deletePostButton);
+                        }
                     });
                 }
             }
