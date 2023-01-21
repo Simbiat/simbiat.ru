@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '240ce7f904fe2b153f964edda7cb080bf0f4fa1b',
+        'reference' => '10614bdc0adeedac55818c5ec41c309e4e49a156',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -74,9 +74,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.0.4',
-            'version' => '6.0.4.0',
-            'reference' => 'aaed4d27c7a9876756d03ae85386977db306492d',
+            'pretty_version' => '6.0.6',
+            'version' => '6.0.6.0',
+            'reference' => 'ce5ef5e6776c16af306d38e20674973f072e05ed',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -94,7 +94,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.0.4',
+                0 => '6.0.6',
             ),
         ),
         'psr/http-client' => array(
@@ -202,7 +202,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '240ce7f904fe2b153f964edda7cb080bf0f4fa1b',
+            'reference' => '10614bdc0adeedac55818c5ec41c309e4e49a156',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -263,9 +263,9 @@
             'dev_requirement' => false,
         ),
         'twig/twig' => array(
-            'pretty_version' => 'v3.4.3',
-            'version' => '3.4.3.0',
-            'reference' => 'c38fd6b0b7f370c198db91ffd02e23b517426b58',
+            'pretty_version' => 'v3.5.0',
+            'version' => '3.5.0.0',
+            'reference' => '3ffcf4b7d890770466da3b2666f82ac054e7ec72',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),
