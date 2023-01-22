@@ -8134,3 +8134,6 @@ INSERT IGNORE INTO `ffxiv__timeactive` (`activeid`, `active`) VALUES
 (3, 'Always'),
 (1, 'Weekdays'),
 (2, 'Weekends');
+
+/*New data after initial dump*/
+INSERT INTO `ffxiv__estate`(`cityid`, `area`, `ward`, `plot`, `size`) SELECT `cityid`, `area`, `ward`+20 as `ward`, `plot`, `size` FROM `ffxiv__estate` WHERE `ward` IN (5, 6, 7, 8, 9, 10);
