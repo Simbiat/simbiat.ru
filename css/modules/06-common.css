@@ -156,6 +156,11 @@ footer address a .linkIcon {
     justify-content: space-evenly;
     align-items: center;
 }
+.entityCard:active,
+.entityCard:focus,
+.entityCard:hover {
+    border-color: var(--color-interactive)!important;
+}
 .entityIcon, .entityArrow {
     width: 2rem;
     height: 2rem;

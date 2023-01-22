@@ -7,7 +7,7 @@
 }
 
 /*Links styling*/
-a:not(.button) {
+a:not(.button):not(.galleryZoom) {
     color: var(--color-interactive);
     font-weight: bold;
     text-decoration: none;
