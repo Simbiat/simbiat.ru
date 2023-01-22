@@ -4,24 +4,17 @@ export class Threads {
     closeThreadButton = null;
     deleteThreadButton = null;
     postForm = null;
-    ogimage = null;
     constructor() {
         this.addPostForm = document.querySelector('#postForm');
         this.editThreadForm = document.querySelector('#editThreadForm');
         this.closeThreadButton = document.querySelector('#close_thread');
         this.deleteThreadButton = document.querySelector('#delete_thread');
-        this.ogimage = document.querySelector('#thread_ogimage');
         this.postForm = document.querySelector('post-form');
         if (this.addPostForm) {
             submitIntercept(this.addPostForm, this.addPost.bind(this));
         }
         if (this.editThreadForm) {
             submitIntercept(this.editThreadForm, this.editThread.bind(this));
-        }
-        if (this.ogimage) {
-            this.ogimage.addEventListener('click', () => {
-                this.hideBanner();
-            });
         }
         if (this.closeThreadButton) {
             this.closeThreadButton.addEventListener('click', () => {
@@ -143,11 +136,6 @@ export class Threads {
                     buttonToggle(button);
                 }
             });
-        }
-    }
-    hideBanner() {
-        if (this.ogimage) {
-            this.ogimage.classList.add('hidden');
         }
     }
 }

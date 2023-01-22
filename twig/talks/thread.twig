@@ -1,5 +1,5 @@
 {% if ogimage %}
-    <img loading="lazy" decoding="async" alt="Custom thread banner" src="{{ ogimage }}" id="thread_ogimage" data-tooltip="Click to hide">
+    {{ include('common/elements/ogimage.twig', {'ogimage': ogimage}, with_context = false) }}
 {% endif %}
 {% if not posts.entities %}
     <article class="margin05rem">

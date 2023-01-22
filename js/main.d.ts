@@ -391,3 +391,9 @@ declare class WebShare extends HTMLElement {
     constructor();
     private share;
 }
+declare class OGImage extends HTMLElement {
+    private readonly ogimage;
+    private readonly hideBanner;
+    constructor();
+    private toggleBanner;
+}

@@ -100,6 +100,8 @@ function init(): void
     customElements.define('gallery-image', GalleryImage);
     //Define image carousels
     customElements.define('image-carousel', CarouselList);
+    //Define OG Image
+    customElements.define('og-image', OGImage);
     //Define show-password icons
     customElements.define('password-show', PasswordShow);
     //Define password strength fields

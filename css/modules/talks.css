@@ -349,7 +349,8 @@ image-upload > .section_icon {
     max-width: 100ch;
 }
 
-#thread_ogimage {
+og-image {
+    display: block;
     width: calc(100% - 1rem - 2 * var(--border-width));
     margin: 0.5rem;
     border-width: var(--border-width);
@@ -357,6 +358,22 @@ image-upload > .section_icon {
     border-style: solid;
     border-color: var(--border-color-outset);
     cursor: pointer;
+}
+og-image img {
+    width: 100%;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+og-image hide-banner {
+    width: 100%;
+    display: block;
+    text-align: center;
+    font-size: x-small;
+    color: var(--color-interactive);
+    height: 1rem;
+    line-height: 1rem;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
 }
 
 #about_user {

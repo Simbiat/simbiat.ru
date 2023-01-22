@@ -4088,6 +4088,7 @@ function init() {
     customElements.define('gallery-next', GalleryNext);
     customElements.define('gallery-image', GalleryImage);
     customElements.define('image-carousel', CarouselList);
+    customElements.define('og-image', OGImage);
     customElements.define('password-show', PasswordShow);
     customElements.define('password-requirements', PasswordRequirements);
     customElements.define('password-strength', PasswordStrength);
@@ -5609,6 +5610,32 @@ class WebShare extends HTMLElement {
             addSnackbar('Failed to share link, possibly unsupported feature.', 'failure', 10000);
             this.classList.add('hidden');
         });
+    }
+}
+class OGImage extends HTMLElement {
+    ogimage = null;
+    hideBanner = null;
+    constructor() {
+        super();
+        this.ogimage = document.querySelector('#ogimage');
+        this.hideBanner = document.querySelector('hide-banner');
+        if (this.hideBanner) {
+            this.hideBanner.addEventListener('click', () => {
+                this.toggleBanner();
+            });
+        }
+    }
+    toggleBanner() {
+        if (this.ogimage && this.hideBanner) {
+            if (this.ogimage.classList.contains('hidden')) {
+                this.ogimage.classList.remove('hidden');
+                this.hideBanner.textContent = 'Hide banner';
+            }
+            else {
+                this.ogimage.classList.add('hidden');
+                this.hideBanner.textContent = 'Show banner';
+            }
+        }
     }
 }
 //# sourceMappingURL=main.js.map

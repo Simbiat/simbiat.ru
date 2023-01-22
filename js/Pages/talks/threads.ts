@@ -5,7 +5,6 @@ export class Threads
     private readonly closeThreadButton: HTMLInputElement | null = null;
     private readonly deleteThreadButton: HTMLInputElement | null = null;
     private readonly postForm: PostForm | null = null;
-    private readonly ogimage: HTMLImageElement | null = null;
     
     public constructor()
     {
@@ -13,19 +12,12 @@ export class Threads
         this.editThreadForm = document.querySelector('#editThreadForm');
         this.closeThreadButton = document.querySelector('#close_thread');
         this.deleteThreadButton = document.querySelector('#delete_thread');
-        this.ogimage = document.querySelector('#thread_ogimage');
         this.postForm = document.querySelector('post-form');
         if (this.addPostForm) {
             submitIntercept(this.addPostForm, this.addPost.bind(this));
         }
         if (this.editThreadForm) {
             submitIntercept(this.editThreadForm, this.editThread.bind(this));
-        }
-        //Listener to hide ogimage
-        if (this.ogimage) {
-            this.ogimage.addEventListener('click', () => {
-                this.hideBanner();
-            });
         }
         //Listener for closure
         if (this.closeThreadButton) {
@@ -163,13 +155,6 @@ export class Threads
                     buttonToggle(button as HTMLInputElement);
                 }
             });
-        }
-    }
-    
-    private hideBanner(): void
-    {
-        if (this.ogimage) {
-            this.ogimage.classList.add('hidden');
         }
     }
 }
