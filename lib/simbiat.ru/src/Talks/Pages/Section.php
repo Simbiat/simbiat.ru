@@ -47,7 +47,7 @@ class Section extends Page
         }
         #Check if scheduled
         if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'This is a scheduled section and you lack `viewScheduled` permission'];
+            return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Generate pagination data
         $page = intval($_GET['page'] ?? 1);

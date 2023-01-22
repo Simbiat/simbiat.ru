@@ -44,7 +44,7 @@ class Thread extends Page
         }
         #Check if scheduled
         if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'This is a thread scheduled for '.date('Y-m-d H:i:s', $outputArray['created']).' UTC, current UTC time is '.date('Y-m-d H:i:s', time()).' and you lack `viewScheduled` permission'];
+            return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Collect times
         $times = [];

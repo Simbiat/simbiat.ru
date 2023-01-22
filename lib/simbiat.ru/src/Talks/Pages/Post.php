@@ -43,7 +43,7 @@ class Post extends Page
         }
         #Check if scheduled
         if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'This is a scheduled post and you lack `viewScheduled` permission'];
+            return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if we are trying to edit a post, that we can't edit
         if ($this->editMode) {
