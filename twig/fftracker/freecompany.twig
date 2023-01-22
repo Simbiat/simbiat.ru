@@ -1,5 +1,5 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ freecompany.name }}"
+    <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ freecompany.name }}"
         {% if freecompany.crest %}
             src="/img/fftracker/merged-crests/{{ freecompany.crest|slice(0,2) }}/{{ freecompany.crest|slice(2,2) }}/{{ freecompany.crest }}.webp"
         {% else %}
@@ -24,7 +24,7 @@
         <blockquote>{{ sanitize(freecompany.slogan) }}</blockquote>
     {% endif %}
     <p>
-        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>, leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon" alt="{{ freecompany.grandCompany }}"
+        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>, leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grandCompany }}"
         {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
             src="/img/fftracker/cities/2.webp"
         {% elseif freecompany.grandCompany == 'Immortal Flames' %}
@@ -47,7 +47,7 @@
             {% else %}
                 land
             {% endif %}
-            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom noNewTabIcon" href="/img/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a>.
+            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/img/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a>.
         {% endif %}
     </p>
     {% if freecompany.location.estate.message %}

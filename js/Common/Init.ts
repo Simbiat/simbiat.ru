@@ -68,6 +68,13 @@ function init(): void
             qInit(quote);
         });
     }
+    //Add images to gallery
+    const images = document.querySelectorAll('img.galleryZoom');
+    if (!empty(images)) {
+        images.forEach((image) => {
+            imgInit(image as HTMLImageElement);
+        });
+    }
     //Click handling for toggling navigation and sidebar
     customElements.define('nav-show', NavShow);
     customElements.define('nav-hide', NavHide);

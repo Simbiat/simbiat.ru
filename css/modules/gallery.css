@@ -104,9 +104,11 @@ gallery-next.disabled {
 }
 #galleryLoadedImage.zoomedIn {
     height: unset;
+    max-height: unset;
+    max-width: unset;
     cursor: zoom-out;
 }
-.galleryZoom {
+.galleryZoom:not(img) {
     text-decoration: none;
     border-color: var(--color-interactive);
     cursor: zoom-in;

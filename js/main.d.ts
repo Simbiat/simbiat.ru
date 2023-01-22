@@ -17,6 +17,7 @@ declare function codeInit(code: HTMLElement): void;
 declare function blockquoteInit(quote: HTMLElement): void;
 declare function qInit(quote: HTMLQuoteElement): void;
 declare function detailsInit(details: HTMLDetailsElement): void;
+declare function imgInit(img: HTMLImageElement): void;
 declare function customizeNewElements(newNode: Node): void;
 declare function getAllDetailsTags(): NodeListOf<HTMLDetailsElement>;
 declare function closeAllDetailsTags(target: HTMLDetailsElement): void;

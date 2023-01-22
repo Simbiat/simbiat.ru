@@ -288,3 +288,12 @@ footer address a .linkIcon {
 .margin05rem {
     margin: 0.5rem;
 }
+
+.interactiveBorder {
+    cursor: pointer;
+    border-style: outset;
+    border-radius: var(--border-radius);
+    border-color: var(--color-interactive);
+    padding: 0.1rem;
+    border-width: var(--border-width);
+}

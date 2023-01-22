@@ -168,6 +168,29 @@ function detailsInit(details: HTMLDetailsElement): void
     }
 }
 
+function imgInit(img: HTMLImageElement): void
+{
+    if (img.classList.contains('galleryZoom')) {
+        //Check if parent is already a link
+        const parent = img.parentElement;
+        if (parent && parent.nodeName.toLowerCase() !== 'a') {
+            //Prepare link
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.target = '_blank';
+            link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+            link.classList.add('galleryZoom');
+            //Create a clone of the image, and remove galleryZoom class for cleanliness
+            const clone = img.cloneNode(true) as HTMLImageElement;
+            clone.classList.remove('galleryZoom');
+            //Append the clone to link
+            link.appendChild(clone);
+            //Replace original image with link
+            img.replaceWith(link);
+        }
+    }
+}
+
 //Function to apply custom initializers from observer
 function customizeNewElements(newNode: Node): void
 {
@@ -196,6 +219,9 @@ function customizeNewElements(newNode: Node): void
             case 'h5':
             case 'h6':
                 headingInit(newNode as HTMLHeadingElement);
+                break;
+            case 'img':
+                imgInit(newNode as HTMLImageElement);
                 break;
             case 'input':
                 inputInit(newNode as HTMLInputElement);

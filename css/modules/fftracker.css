@@ -33,6 +33,7 @@
 .ff_crest {
     width: 4rem;
     height: 4rem;
+    margin: 0.25rem;
 }
 #ff_track_id,
 #ff_track_type {

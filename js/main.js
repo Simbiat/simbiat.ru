@@ -3757,6 +3757,22 @@ function detailsInit(details) {
         });
     }
 }
+function imgInit(img) {
+    if (img.classList.contains('galleryZoom')) {
+        const parent = img.parentElement;
+        if (parent && parent.nodeName.toLowerCase() !== 'a') {
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.target = '_blank';
+            link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+            link.classList.add('galleryZoom');
+            const clone = img.cloneNode(true);
+            clone.classList.remove('galleryZoom');
+            link.appendChild(clone);
+            img.replaceWith(link);
+        }
+    }
+}
 function customizeNewElements(newNode) {
     if (newNode.nodeType === 1) {
         const nodeName = newNode.nodeName.toLowerCase();
@@ -3783,6 +3799,9 @@ function customizeNewElements(newNode) {
             case 'h5':
             case 'h6':
                 headingInit(newNode);
+                break;
+            case 'img':
+                imgInit(newNode);
                 break;
             case 'input':
                 inputInit(newNode);
@@ -4045,6 +4064,12 @@ function init() {
     if (!empty(quotes)) {
         quotes.forEach((quote) => {
             qInit(quote);
+        });
+    }
+    const images = document.querySelectorAll('img.galleryZoom');
+    if (!empty(images)) {
+        images.forEach((image) => {
+            imgInit(image);
         });
     }
     customElements.define('nav-show', NavShow);

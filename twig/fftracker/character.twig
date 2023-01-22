@@ -34,9 +34,9 @@
 <section class="ff_char_page">
     <section class="ff_char_block">
         {% if not character.avatarID %}
-            <img loading="lazy" decoding="async"{% if character.owned.id and session_data.userid == character.owned.id %} class="ff_owned"{% endif %} id="ff_portrait_img" alt="{{ character.name }}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
+            <img loading="lazy" decoding="async" class="galleryZoom{% if character.owned.id and session_data.userid == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="/img/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
         {% else %}
-            <img loading="lazy" decoding="async"{% if character.owned.id and session_data.userid == character.owned.id %} class="ff_owned"{% endif %} id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatarID }}l0_640x873.jpg">
+            <img loading="lazy" decoding="async" class="galleryZoom{% if character.owned.id and session_data.userid == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatarID }}l0_640x873.jpg">
         {% endif %}
     </section>
     <section class="ff_char_block">
