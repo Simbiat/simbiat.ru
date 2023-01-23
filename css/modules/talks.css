@@ -106,17 +106,17 @@
     justify-items: stretch;
     margin: 0.5rem 0.5rem 1rem;
     grid-template-areas:
-          'post_header post_header'
-          'post_user post_text'
-          'post_footer post_footer';
-    grid-template-columns: 15% calc(85% - var(--grid-gap));
-}
-.post.nouser {
-    grid-template-areas:
           'post_header'
           'post_text'
           'post_footer';
     grid-template-columns: 100%;
+}
+.post.nouser.hasbanner {
+    grid-template-areas:
+          'post_header post_header'
+          'post_banner post_text'
+          'post_footer post_footer';
+    grid-template-columns: 30% calc(70% - var(--grid-gap));
 }
 .post_header {
     grid-area: post_header;
@@ -181,9 +181,26 @@
     font-size: larger;
 }
 .post_user {
-    grid-area: post_user;
     text-align: center;
-    border-right: var(--border-light) calc(var(--border-width)/2) dotted;
+    border-right: var(--border-light) var(--border-width) dotted;
+    border-bottom: var(--border-light) var(--border-width) dotted;
+    float: left;
+    padding: 1rem;
+    margin-top: -1rem;
+    margin-right: 1rem;
+}
+.post_banner {
+    float: left;
+    padding: 1rem;
+    margin-top: -1rem;
+    max-width: 15rem;
+}
+.post_banner a {
+    border: none!important;
+    display: block;
+}
+.post_banner img {
+    width: 100%;
 }
 .post_username {
     margin-bottom: 0.25rem;

@@ -3,11 +3,13 @@ declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
 use Simbiat\Abstracts\Entity;
+use Simbiat\ArrayHelpers;
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
 use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
+use Simbiat\Images;
 use Simbiat\Security;
 use Simbiat\Talks\Entities\Post;
 use Simbiat\Talks\Search\Posts;
@@ -708,6 +710,8 @@ class User extends Entity
         $threads = $this->getThreads();
         #Now we get post details
         if (!empty($threads)) {
+            #Convert regular 0, 1, ... n IDs to real thread IDs for later use
+            $threads = ArrayHelpers::DigitToKey($threads, 'id');
             #Get post IDs
             $ids = array_column($threads, 'firstPost');
         } else {
@@ -723,12 +727,16 @@ class User extends Entity
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
+        //var_dump($ids, $threads);exit;
         $posts = (new Posts($bindings, '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.$where, '`talks__posts`.`created` DESC'))->listEntities();
         if (!empty($posts['entities'])) {
             #Get like value, for each post, if current user has appropriate permission
             $postObject = new Post();
             foreach ($posts['entities'] as &$post) {
                 $post['liked'] = $postObject->setId($post['id'])->isLiked();
+                if (!empty($threads[$post['threadid']]['ogimage'])) {
+                    $post = array_merge($post, Images::ogImage($threads[$post['threadid']]['ogimage']));
+                }
             }
             return $posts['entities'];
         } else {

@@ -162,7 +162,8 @@ class Images
         } else {
             $file = $file[0];
         }
-        $info = pathinfo($file);
+        #Using array_merge to suppress PHPStorm's complaints about array keys
+        $info = array_merge(pathinfo($file));
         $info['mime'] = mime_content_type($file);
         if ($info['mime'] !== 'image/png') {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];

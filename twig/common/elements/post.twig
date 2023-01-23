@@ -1,4 +1,4 @@
-<article class="post{% if post.nouser == true %} nouser{% endif %}">
+<article class="post">
     <section class="post_header">
         {% if post.noname != true %}
             {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
@@ -17,24 +17,33 @@
             {% endif %}
         </div>
     </section>
-    {% if post.nouser != true %}
-        <section class="post_user">
-            <div class="post_username"><a href="/talks/users/{{ post.createdby }}">{{ post.createdby_name }}</a></div>
-            <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.createdby_name }}" src="{{ post.avatar }}" class="avatar"></div>
-        </section>
-    {% endif %}
     {% if post.htmlcut == true %}
-        {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
-            <section class="post_text">{{ sanitize(preg_replace(htmlCut(changelog(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}</section>
-        {% else %}
-            <section class="post_text">{{ sanitize(preg_replace(htmlCut(nl2p(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '/">…</a>$1')) }}</section>
-        {% endif %}
+        <section class="post_text">
+            {% if post.showbanner == true and post.ogimage %}
+                <section class="post_banner">
+                    <a href="/talks/threads/{{ post.threadid }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage }}"></a>
+                </section>
+            {% endif %}
+            {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+                {{ sanitize(preg_replace(htmlCut(changelog(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
+            {% else %}
+                {{ sanitize(preg_replace(htmlCut(nl2p(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '/">…</a>$1')) }}
+            {% endif %}
+        </section>
     {% else %}
-        {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
-            <section class="post_text">{{ sanitize(changelog(post.text)) }}</section>
-        {% else %}
-            <section class="post_text">{{ sanitize(nl2p(post.text)) }}</section>
-        {% endif %}
+        <section class="post_text">
+            {% if post.nouser != true %}
+                <section class="post_user">
+                    <div class="post_username"><a href="/talks/users/{{ post.createdby }}">{{ post.createdby_name }}</a></div>
+                    <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.createdby_name }}" src="{{ post.avatar }}" class="avatar"></div>
+                </section>
+            {% endif %}
+            {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+                {{ sanitize(changelog(post.text)) }}
+            {% else %}
+                {{ sanitize(nl2p(post.text)) }}
+            {% endif %}
+        </section>
     {% endif %}
     <section class="post_footer">
         <like-dis data-postid="{{ post.id }}" data-liked="{% if post.liked is null %}0{% else %}{{ post.liked }}{% endif %}">
