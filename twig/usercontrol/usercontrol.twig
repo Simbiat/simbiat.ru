@@ -1,12 +1,12 @@
 <vertical-tabs class="vertical_tabs_links">
     <tab-names>
-        {% if subServiceName == 'profile' %}<tab-name class="active">Profile</tab-name>{% else %}<a class="nav_tab" href="/uc/profile/">Profile</a>{% endif %}
-        {% if subServiceName == 'avatars' %}<tab-name class="active">Avatars</tab-name>{% else %}<a class="nav_tab" href="/uc/avatars/">Avatars</a>{% endif %}
-        {% if subServiceName == 'fftracker' %}<tab-name class="active">FFXIV</tab-name>{% else %}<a class="nav_tab" href="/uc/fftracker/">FFXIV</a>{% endif %}
-        {% if subServiceName == 'emails' %}<tab-name class="active">Emails</tab-name>{% else %}<a class="nav_tab" href="/uc/emails/">Emails</a>{% endif %}
-        {% if subServiceName == 'password' %}<tab-name class="active">Password</tab-name>{% else %}<a class="nav_tab" href="/uc/password/">Password</a>{% endif %}
-        {% if subServiceName == 'sessions' %}<tab-name class="active">Sessions</tab-name>{% else %}<a class="nav_tab" href="/uc/sessions/">Sessions</a>{% endif %}
-        {% if subServiceName == 'removal' %}<tab-name class="active danger">Removal</tab-name>{% else %}<a class="nav_tab danger" href="/uc/removal/">Removal</a>{% endif %}
+        <tab-name {% if subServiceName == 'profile' %}class="active" {% endif %}data-url="/uc/profile/">Profile</tab-name>
+        <tab-name {% if subServiceName == 'avatars' %}class="active" {% endif %}data-url="/uc/avatars/">Avatars</tab-name>
+        <tab-name {% if subServiceName == 'fftracker' %}class="active" {% endif %}data-url="/uc/fftracker/">FFXIV</tab-name>
+        <tab-name {% if subServiceName == 'emails' %}class="active" {% endif %}data-url="/uc/emails/">Emails</tab-name>
+        <tab-name {% if subServiceName == 'password' %}class="active" {% endif %}data-url="/uc/password/">Password</tab-name>
+        <tab-name {% if subServiceName == 'sessions' %}class="active" {% endif %}data-url="/uc/sessions/">Sessions</tab-name>
+        <tab-name class="danger{% if subServiceName == 'removal' %} active{% endif %}" data-url="/uc/removal/">Removal</tab-name>
     </tab-names>
 </vertical-tabs>
 <section>

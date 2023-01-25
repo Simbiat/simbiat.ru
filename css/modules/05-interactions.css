@@ -286,6 +286,7 @@ input[required]+label:after {
 }
 input[type=image] {
     padding: 0.2rem;
+    cursor: pointer!important;
 }
 
 /*Textarea*/

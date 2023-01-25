@@ -5562,7 +5562,9 @@ class VerticalTabs extends HTMLElement {
     }
     tabSwitch(target) {
         if (target.hasAttribute('data-url')) {
-            window.location.href = String(target.getAttribute('data-url'));
+            if (!target.classList.contains('active')) {
+                window.location.href = String(target.getAttribute('data-url'));
+            }
             return;
         }
         let tabIndex = 0;
