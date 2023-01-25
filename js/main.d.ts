@@ -220,7 +220,7 @@ declare const tinySettings: {
     visualblocks_default_state: boolean;
 };
 declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: boolean): void;
-declare function saveTinyMCE(id: string): void;
+declare function saveTinyMCE(id: string, textareaOnly?: boolean): void;
 declare function cleanGET(): void;
 declare function hashCheck(): void;
 declare function router(): void;
@@ -386,6 +386,7 @@ declare class VerticalTabs extends HTMLElement {
     private currentTab;
     constructor();
     private tabSwitch;
+    private updateCurrentTab;
 }
 declare class WebShare extends HTMLElement {
     constructor();

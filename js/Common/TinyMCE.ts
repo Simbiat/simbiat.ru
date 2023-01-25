@@ -23,7 +23,7 @@ const tinySettings = {
     'branding': true,
     'browser_spellcheck': true,
     'color_map': Object.keys(customColorMap).map((key) => { return [key, customColorMap[key]]; }).
-                                                                                                flat(),
+                                                                                                    flat(),
     'content_css': '/css/tinymce.css',
     'content_security_policy': "default-src 'self'",
     'contextmenu': 'emoticons link image',
@@ -100,9 +100,9 @@ const tinySettings = {
     'image_caption': true,
     'image_class_list': [
         { 'title': 'None',
-            'value': 'w25pc middle block' },
+            'value': 'w25pc middle block galleryZoom' },
         { 'title': 'Fullwidth',
-            'value': 'w100pc middle block' },
+            'value': 'w100pc middle block galleryZoom' },
         { 'title': 'Icon',
             'value': 'linkIcon' }
     ],
@@ -227,7 +227,7 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
     }
 }
 
-function saveTinyMCE(id: string): void
+function saveTinyMCE(id: string, textareaOnly = false): void
 {
     if ((/^\s*$/ui).exec(id)) {
         return;
@@ -240,8 +240,14 @@ function saveTinyMCE(id: string): void
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             const tinyInstance = tinymce.get(id);
             if (tinyInstance !== null) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                tinyInstance.save();
+                if (textareaOnly) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                    (textarea as HTMLTextAreaElement).value = String(tinyInstance.getContent());
+                    textarea.dispatchEvent(new Event('input'));
+                } else {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                    tinyInstance.save();
+                }
             }
         });
     }

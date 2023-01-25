@@ -10,7 +10,7 @@ class PostForm extends HTMLElement
         this.replyToInput = this.querySelector('#replyingTo');
         this.label = this.querySelector('.label_for_tinymce');
         if (this.textarea && !empty(this.textarea.id)) {
-            loadTinyMCE(this.textarea.id, true, true);
+            loadTinyMCE(this.textarea.id, false, true);
         }
     }
     

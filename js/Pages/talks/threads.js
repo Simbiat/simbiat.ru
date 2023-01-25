@@ -40,6 +40,10 @@ export class Threads {
     }
     addPost() {
         if (this.addPostForm) {
+            const textarea = this.addPostForm.querySelector('textarea');
+            if (textarea && !empty(textarea.id)) {
+                saveTinyMCE(textarea.id, true);
+            }
             const button = this.addPostForm.querySelector('input[type=submit]');
             const formData = new FormData(this.addPostForm);
             formData.append('postForm[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -48,7 +52,6 @@ export class Threads {
                 const data = response;
                 if (data.data === true) {
                     if (this.addPostForm) {
-                        const textarea = this.addPostForm.querySelector('textarea');
                         if (textarea && !empty(textarea.id)) {
                             saveTinyMCE(textarea.id);
                         }

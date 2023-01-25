@@ -13,7 +13,7 @@
             <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[postid]" value="{{ postid }}">
         {% endif %}
         <div class="float_label_div wrapper_for_tinymce">
-            <textarea class="nomedia" form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="postText" name="postForm[text]" placeholder="Text" spellcheck="true" wrap="soft">{{ text }}</textarea>
+            <textarea form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="postText" name="postForm[text]" placeholder="Text" spellcheck="true" wrap="soft">{{ text }}</textarea>
             <label for="postText" class="label_for_tinymce">{% if verb == 'add' %}{% if newThread %}Text{% else %}Replying to thread{% endif %}{% else %}Updating post{% endif %}</label>
         </div>
         {% if 'hideUpdate' in permissions %}

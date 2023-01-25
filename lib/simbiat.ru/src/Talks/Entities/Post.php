@@ -204,12 +204,48 @@ class Post extends Entity
             $this->setId($newID)->get();
             #Add text to history
             $this->addHistory($this->text);
+            #Link attachments
+            $this->attach([], $data['inlineFiles']);
             #Get the up-to-date data for the thread, to get the last page for location
             $thread = (new Thread($data['threadid']))->get();
             return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($thread->lastPage === 1 ? '' : '?page='.$thread->lastPage)];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to create new post'];
+        }
+    }
+    
+    private function attach(array $regular, array $inline): void
+    {
+        try {
+            $fileQueries = [];
+            $fileQueries[] = [
+                'DELETE FROM `talks__attachments` WHERE `postid`=:postid;',
+                [
+                    ':postid' => [$this->id, 'int'],
+                ],
+            ];
+            foreach ($regular as $file) {
+                $fileQueries[] = [
+                    'INSERT INTO `talks__attachments` (`postid`, `fileid`, `inline`) VALUES (:postid, :fileid, 0);',
+                    [
+                        ':postid' => [$this->id, 'int'],
+                        ':fileid' => $file,
+                    ],
+                ];
+            }
+            foreach ($inline as $file) {
+                $fileQueries[] = [
+                    'INSERT INTO `talks__attachments` (`postid`, `fileid`, `inline`) VALUES (:postid, :fileid, 1);',
+                    [
+                        ':postid' => [$this->id, 'int'],
+                        ':fileid' => $file,
+                    ],
+                ];
+            }
+            HomePage::$dbController->query($fileQueries);
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
         }
     }
     
@@ -315,6 +351,16 @@ class Post extends Entity
         } else {
             $data['text'] = Sanitization::sanitizeHTML($data['text']);
         }
+        #Get inline images
+        preg_match_all('/(<img[^>]*src="\/img\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'],$inlineImages, PREG_PATTERN_ORDER);
+        $inlineImages = $inlineImages[2] ?? [];
+        #Remove any files that are not in DB from the array of inline files
+        foreach ($inlineImages as $key=>$image) {
+            if (!HomePage::$dbController->check('SELECT `fileid` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image])) {
+                unset($inlineImages[$key]);
+            }
+        }
+        $data['inlineFiles'] = $inlineImages;
         #Attempt to get the thread
         $parent = (new Thread($data['threadid']))->get();
         if (is_null($parent->id)) {

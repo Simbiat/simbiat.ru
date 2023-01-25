@@ -52,6 +52,11 @@ export class Threads
     private addPost(): void
     {
         if (this.addPostForm) {
+            const textarea = this.addPostForm.querySelector('textarea');
+            //Ensure we have the latest version of the text from TinyMCE instance
+            if (textarea && !empty(textarea.id)) {
+                saveTinyMCE(textarea.id, true);
+            }
             //Get submit button
             const button = this.addPostForm.querySelector('input[type=submit]');
             //Get form data
@@ -64,7 +69,6 @@ export class Threads
                 if (data.data === true) {
                     if (this.addPostForm) {
                         //Notify TinyMCE, that data was saved
-                        const textarea = this.addPostForm.querySelector('textarea');
                         if (textarea && !empty(textarea.id)) {
                             saveTinyMCE(textarea.id);
                         }

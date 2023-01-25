@@ -170,6 +170,11 @@ function detailsInit(details: HTMLDetailsElement): void
 
 function imgInit(img: HTMLImageElement): void
 {
+    //Add alt, if empty
+    if (empty(img.alt)) {
+        img.alt = basename(String(img.src));
+    }
+    //Wrap galleryZoom images in anchor
     if (img.classList.contains('galleryZoom')) {
         //Check if parent is already a link
         const parent = img.parentElement;

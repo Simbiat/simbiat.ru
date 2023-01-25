@@ -1,0 +1,22 @@
+/*Styling of blocks (or objects in more general sense) inserted by TinyMCE*/
+figure.image {
+    display: grid;
+    grid-template-areas:
+            'image'
+            'caption';
+}
+figure.image br {
+    display: none;
+}
+figure.image img {
+    grid-area: image;
+}
+figure.image figcaption {
+    grid-area: caption;
+    height: 1rem;
+    line-height: 1rem;
+    overflow: clip;
+    text-overflow: ellipsis;
+    text-align: center;
+    font-style: italic;
+}

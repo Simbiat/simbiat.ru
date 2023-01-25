@@ -3758,6 +3758,9 @@ function detailsInit(details) {
     }
 }
 function imgInit(img) {
+    if (empty(img.alt)) {
+        img.alt = basename(String(img.src));
+    }
     if (img.classList.contains('galleryZoom')) {
         const parent = img.parentElement;
         if (parent && parent.nodeName.toLowerCase() !== 'a') {
@@ -4066,7 +4069,7 @@ function init() {
             qInit(quote);
         });
     }
-    const images = document.querySelectorAll('img.galleryZoom');
+    const images = document.querySelectorAll('img');
     if (!empty(images)) {
         images.forEach((image) => {
             imgInit(image);
@@ -4376,9 +4379,9 @@ const tinySettings = {
     'image_caption': true,
     'image_class_list': [
         { 'title': 'None',
-            'value': 'w25pc middle block' },
+            'value': 'w25pc middle block galleryZoom' },
         { 'title': 'Fullwidth',
-            'value': 'w100pc middle block' },
+            'value': 'w100pc middle block galleryZoom' },
         { 'title': 'Icon',
             'value': 'linkIcon' }
     ],
@@ -4490,7 +4493,7 @@ function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
         });
     }
 }
-function saveTinyMCE(id) {
+function saveTinyMCE(id, textareaOnly = false) {
     if ((/^\s*$/ui).exec(id)) {
         return;
     }
@@ -4499,7 +4502,13 @@ function saveTinyMCE(id) {
         void import('/js/tinymce/tinymce.min.js').then(() => {
             const tinyInstance = tinymce.get(id);
             if (tinyInstance !== null) {
-                tinyInstance.save();
+                if (textareaOnly) {
+                    textarea.value = String(tinyInstance.getContent());
+                    textarea.dispatchEvent(new Event('input'));
+                }
+                else {
+                    tinyInstance.save();
+                }
             }
         });
     }
@@ -5372,7 +5381,7 @@ class PostForm extends HTMLElement {
         this.replyToInput = this.querySelector('#replyingTo');
         this.label = this.querySelector('.label_for_tinymce');
         if (this.textarea && !empty(this.textarea.id)) {
-            loadTinyMCE(this.textarea.id, true, true);
+            loadTinyMCE(this.textarea.id, false, true);
         }
     }
     replyTo(postId) {
@@ -5525,6 +5534,12 @@ class Tooltip extends HTMLElement {
         if (this.x + this.offsetWidth > window.innerWidth) {
             this.x = window.innerWidth - (this.offsetWidth * 1.5);
         }
+        if (this.x < 0) {
+            this.x = 0;
+        }
+        if (this.y < 0) {
+            this.y = 0;
+        }
         document.documentElement.style.setProperty('--cursorX', `${this.x}px`);
         document.documentElement.style.setProperty('--cursorY', `${this.y}px`);
     }
@@ -5556,40 +5571,48 @@ class VerticalTabs extends HTMLElement {
                 this.tabSwitch(event.target);
             });
         });
+        this.updateCurrentTab();
         if (this.wrapper?.querySelector('.active')) {
             this.wrapper.classList.remove('hidden');
         }
     }
     tabSwitch(target) {
-        if (target.hasAttribute('data-url')) {
-            if (!target.classList.contains('active')) {
-                window.location.href = String(target.getAttribute('data-url'));
-            }
-            return;
-        }
-        let tabIndex = 0;
-        this.tabs.forEach((item, index) => {
-            if (item === target) {
-                tabIndex = index;
-            }
-            item.classList.remove('active');
-            if (this.contents[index]) {
-                this.contents[index].classList.remove('active');
-            }
-        });
-        target.classList.add('active');
-        if (this.contents[tabIndex]) {
-            this.contents[tabIndex].classList.add('active');
-        }
         if (this.wrapper) {
-            if (this.currentTab === tabIndex) {
-                this.wrapper.classList.add('hidden');
+            let tabIndex = 0;
+            this.tabs.forEach((item, index) => {
+                if (item === target) {
+                    tabIndex = index;
+                }
+                item.classList.remove('active');
+                if (this.contents[index]) {
+                    this.contents[index].classList.remove('active');
+                }
+            });
+            this.wrapper.classList.add('hidden');
+            if (target.hasAttribute('data-url')) {
+                this.currentTab = null;
+                window.location.href = String(target.getAttribute('data-url'));
+                return;
             }
-            else {
-                this.currentTab = tabIndex;
+            if (this.currentTab !== tabIndex) {
+                target.classList.add('active');
+                if (this.contents[tabIndex]) {
+                    this.contents[tabIndex].classList.add('active');
+                }
+            }
+            this.updateCurrentTab();
+            if (this.wrapper.querySelector('.active')) {
                 this.wrapper.classList.remove('hidden');
             }
         }
+    }
+    updateCurrentTab() {
+        this.currentTab = null;
+        this.tabs.forEach((item, index) => {
+            if (item.classList.contains('active')) {
+                this.currentTab = index;
+            }
+        });
     }
 }
 class WebShare extends HTMLElement {

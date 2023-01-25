@@ -723,6 +723,8 @@ tool-tip {
     word-break: keep-all;
     width: -moz-fit-content;
     width: fit-content;
+    max-width: 100vw;
+    overflow-wrap: break-word;
     display: none;
     position: absolute;
     left: var(--cursorX);

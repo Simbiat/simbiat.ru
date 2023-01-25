@@ -69,10 +69,10 @@ function init(): void
         });
     }
     //Add images to gallery
-    const images = document.querySelectorAll('img.galleryZoom');
+    const images = document.querySelectorAll('img');
     if (!empty(images)) {
         images.forEach((image) => {
-            imgInit(image as HTMLImageElement);
+            imgInit(image);
         });
     }
     //Click handling for toggling navigation and sidebar

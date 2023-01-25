@@ -56,6 +56,12 @@ class Tooltip extends HTMLElement
         if (this.x + this.offsetWidth > window.innerWidth) {
             this.x = window.innerWidth - (this.offsetWidth * 1.5);
         }
+        if (this.x < 0) {
+            this.x = 0;
+        }
+        if (this.y < 0) {
+            this.y = 0;
+        }
         document.documentElement.style.setProperty('--cursorX', `${this.x}px`);
         document.documentElement.style.setProperty('--cursorY', `${this.y}px`);
     }
