@@ -34,8 +34,8 @@
         <section class="post_text">
             {% if post.nouser != true %}
                 <section class="post_user">
-                    <div class="post_username"><a href="/talks/users/{{ post.createdby }}">{{ post.createdby_name }}</a></div>
-                    <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.createdby_name }}" src="{{ post.avatar }}" class="avatar"></div>
+                    <div class="post_username"><a href="/talks/users/{{ post.createdby ?? post.createdBy }}">{{ post.createdby_name ?? post.createdBy_name }}</a></div>
+                    <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.createdby_name ?? post.createdBy_name }}" src="{{ post.avatar }}" class="avatar"></div>
                 </section>
             {% endif %}
             {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
