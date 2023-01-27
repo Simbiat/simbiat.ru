@@ -5205,6 +5205,32 @@ class SideHide extends HTMLElement {
         });
     }
 }
+class OGImage extends HTMLElement {
+    ogimage = null;
+    hideBanner = null;
+    constructor() {
+        super();
+        this.ogimage = document.querySelector('#ogimage');
+        this.hideBanner = document.querySelector('hide-banner');
+        if (this.hideBanner) {
+            this.hideBanner.addEventListener('click', () => {
+                this.toggleBanner();
+            });
+        }
+    }
+    toggleBanner() {
+        if (this.ogimage && this.hideBanner) {
+            if (this.ogimage.classList.contains('hidden')) {
+                this.ogimage.classList.remove('hidden');
+                this.hideBanner.textContent = 'Hide banner';
+            }
+            else {
+                this.ogimage.classList.add('hidden');
+                this.hideBanner.textContent = 'Show banner';
+            }
+        }
+    }
+}
 class PasswordShow extends HTMLElement {
     passwordInput = null;
     constructor() {
@@ -5577,29 +5603,29 @@ class VerticalTabs extends HTMLElement {
         }
     }
     tabSwitch(target) {
+        let tabIndex = 0;
+        this.tabs.forEach((item, index) => {
+            if (item === target) {
+                tabIndex = index;
+            }
+            item.classList.remove('active');
+            if (this.contents[index]) {
+                this.contents[index].classList.remove('active');
+            }
+        });
+        this.wrapper?.classList.add('hidden');
+        if (target.hasAttribute('data-url')) {
+            this.currentTab = null;
+            window.location.href = String(target.getAttribute('data-url'));
+            return;
+        }
+        if (this.currentTab !== tabIndex) {
+            target.classList.add('active');
+            if (this.contents[tabIndex]) {
+                this.contents[tabIndex].classList.add('active');
+            }
+        }
         if (this.wrapper) {
-            let tabIndex = 0;
-            this.tabs.forEach((item, index) => {
-                if (item === target) {
-                    tabIndex = index;
-                }
-                item.classList.remove('active');
-                if (this.contents[index]) {
-                    this.contents[index].classList.remove('active');
-                }
-            });
-            this.wrapper.classList.add('hidden');
-            if (target.hasAttribute('data-url')) {
-                this.currentTab = null;
-                window.location.href = String(target.getAttribute('data-url'));
-                return;
-            }
-            if (this.currentTab !== tabIndex) {
-                target.classList.add('active');
-                if (this.contents[tabIndex]) {
-                    this.contents[tabIndex].classList.add('active');
-                }
-            }
             this.updateCurrentTab();
             if (this.wrapper.querySelector('.active')) {
                 this.wrapper.classList.remove('hidden');
@@ -5635,32 +5661,6 @@ class WebShare extends HTMLElement {
             addSnackbar('Failed to share link, possibly unsupported feature.', 'failure', 10000);
             this.classList.add('hidden');
         });
-    }
-}
-class OGImage extends HTMLElement {
-    ogimage = null;
-    hideBanner = null;
-    constructor() {
-        super();
-        this.ogimage = document.querySelector('#ogimage');
-        this.hideBanner = document.querySelector('hide-banner');
-        if (this.hideBanner) {
-            this.hideBanner.addEventListener('click', () => {
-                this.toggleBanner();
-            });
-        }
-    }
-    toggleBanner() {
-        if (this.ogimage && this.hideBanner) {
-            if (this.ogimage.classList.contains('hidden')) {
-                this.ogimage.classList.remove('hidden');
-                this.hideBanner.textContent = 'Hide banner';
-            }
-            else {
-                this.ogimage.classList.add('hidden');
-                this.hideBanner.textContent = 'Show banner';
-            }
-        }
     }
 }
 //# sourceMappingURL=main.js.map

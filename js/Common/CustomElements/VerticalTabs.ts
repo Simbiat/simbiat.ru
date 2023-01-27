@@ -26,7 +26,6 @@ class VerticalTabs extends HTMLElement
     //Function to switch tabs
     private tabSwitch(target: HTMLSpanElement): void
     {
-        if (this.wrapper) {
             let tabIndex = 0;
             //Hide all the content first, so that there would not be a case, when we have 2 content divs shown at once
             this.tabs.forEach((item, index) => {
@@ -39,7 +38,7 @@ class VerticalTabs extends HTMLElement
                     (this.contents[index] as HTMLSpanElement).classList.remove('active');
                 }
             });
-            this.wrapper.classList.add('hidden');
+            this.wrapper?.classList.add('hidden');
             if (target.hasAttribute('data-url')) {
                 this.currentTab = null;
                 window.location.href = String(target.getAttribute('data-url'));
@@ -52,6 +51,7 @@ class VerticalTabs extends HTMLElement
                     (this.contents[tabIndex] as HTMLSpanElement).classList.add('active');
                 }
             }
+        if (this.wrapper) {
             this.updateCurrentTab();
             if (this.wrapper.querySelector('.active')) {
                 this.wrapper.classList.remove('hidden');

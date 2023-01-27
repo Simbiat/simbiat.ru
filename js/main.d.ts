@@ -325,6 +325,12 @@ declare class SideHide extends HTMLElement {
     private readonly sidebar;
     constructor();
 }
+declare class OGImage extends HTMLElement {
+    private readonly ogimage;
+    private readonly hideBanner;
+    constructor();
+    private toggleBanner;
+}
 declare class PasswordShow extends HTMLElement {
     private readonly passwordInput;
     constructor();
@@ -391,10 +397,4 @@ declare class VerticalTabs extends HTMLElement {
 declare class WebShare extends HTMLElement {
     constructor();
     private share;
-}
-declare class OGImage extends HTMLElement {
-    private readonly ogimage;
-    private readonly hideBanner;
-    constructor();
-    private toggleBanner;
 }
