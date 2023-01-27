@@ -352,15 +352,24 @@ class Post extends Entity
             $data['text'] = Sanitization::sanitizeHTML($data['text']);
         }
         #Get inline images
+        $data['inlineFiles'] = [];
         preg_match_all('/(<img[^>]*src="\/img\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'],$inlineImages, PREG_PATTERN_ORDER);
-        $inlineImages = $inlineImages[2] ?? [];
         #Remove any files that are not in DB from the array of inline files
-        foreach ($inlineImages as $key=>$image) {
-            if (!HomePage::$dbController->check('SELECT `fileid` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image])) {
-                unset($inlineImages[$key]);
+        foreach ($inlineImages[2] as $key=>$image) {
+            $filename = HomePage::$dbController->selectValue('SELECT `name` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image]);
+            #If no filename - no file exists
+            if (!empty($filename)) {
+                #Add the file to list
+                $data['inlineFiles'][] = $image;
+                #Check if `alt` attribute is set for the original
+                if (preg_match('/ alt="\S+"/ui', $inlineImages[0][$key]) === 0) {
+                    #Set `alt` to the human-readable name
+                    $newImgString = preg_replace('/( alt(="\s*")?)/ui', ' alt="'.$filename.'"', $inlineImages[0][$key]);
+                    #Replace the original string in the text
+                    $data['text'] = str_replace($inlineImages[0][$key], $newImgString, $data['text']);
+                }
             }
         }
-        $data['inlineFiles'] = $inlineImages;
         #Attempt to get the thread
         $parent = (new Thread($data['threadid']))->get();
         if (is_null($parent->id)) {
