@@ -90,8 +90,8 @@ declare const tinySettings: {
         forecolor: {
             attributes: {
                 class: (value: any) => string;
-                inline: string;
             };
+            inline: string;
             remove: string;
         };
         hilitecolor: {
@@ -100,6 +100,66 @@ declare const tinySettings: {
             };
             inline: string;
             remove: string;
+        };
+        'list-circle': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-decimal': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-decimal-leading-zero': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-disc': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-disclosure-closed': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-disclosure-open': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-lower-alpha': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-lower-greek': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-lower-roman': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-square': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-upper-alpha': {
+            classes: string;
+            remove: string;
+            selector: string;
+        };
+        'list-upper-roman': {
+            classes: string;
+            remove: string;
+            selector: string;
         };
         underline: {
             classes: string;
@@ -125,10 +185,18 @@ declare const tinySettings: {
     hidden_input: boolean;
     image_advtab: boolean;
     image_caption: boolean;
-    image_class_list: {
+    image_class_list: ({
         title: string;
         value: string;
-    }[];
+        menu?: never;
+    } | {
+        menu: {
+            title: string;
+            value: string;
+        }[];
+        title: string;
+        value?: never;
+    })[];
     image_description: boolean;
     image_dimensions: boolean;
     image_title: boolean;
@@ -138,6 +206,7 @@ declare const tinySettings: {
     images_upload_credentials: boolean;
     images_upload_url: string;
     insertdatetime_element: boolean;
+    invalid_elements: string;
     invalid_styles: string;
     lineheight_formats: string;
     link_assume_external_targets: string;
@@ -197,7 +266,14 @@ declare const tinySettings: {
     schema: string;
     selector: string;
     skin: string;
-    style_formats: never[];
+    style_formats: {
+        items: {
+            format: string;
+            title: string;
+        }[];
+        title: string;
+    }[];
+    style_formats_autohide: boolean;
     table_advtab: boolean;
     table_appearance_options: boolean;
     table_border_styles: {
@@ -209,7 +285,11 @@ declare const tinySettings: {
         value: string;
     }[];
     table_cell_advtab: boolean;
+    table_default_attributes: {};
+    table_header_type: string;
+    table_resize_bars: boolean;
     table_row_advtab: boolean;
+    table_sizing_mode: string;
     table_style_by_css: boolean;
     table_toolbar: string;
     theme_advanced_default_foreground_color: string;
@@ -219,6 +299,8 @@ declare const tinySettings: {
     visual: boolean;
     visualblocks_default_state: boolean;
 };
+declare function tinyMCEtoTextarea(textarea: HTMLTextAreaElement, tinyInstance: any): void;
+declare function tinyMCEHideInputs(): void;
 declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: boolean): void;
 declare function saveTinyMCE(id: string, textareaOnly?: boolean): void;
 declare function cleanGET(): void;

@@ -5,3 +5,100 @@ body {
     overflow-y: auto;
     overflow-x: auto;
 }
+
+table {
+    border-radius: var(--border-radius)!important;
+    border-width: var(--border-width)!important;
+    border-style: solid!important;
+    border-color: var(--border-color-outset)!important;
+    border-spacing: 0!important;
+    border-collapse: separate!important;
+    width: 100%!important;
+    table-layout: fixed!important;
+    overflow-wrap: anywhere!important;
+    word-break: break-word!important;
+}
+table tr td,
+table tr th {
+    border-right-width: var(--border-width)!important;
+    border-right-style: solid!important;
+    border-right-color: var(--border-light)!important;
+    border-bottom-width: var(--border-width)!important;
+    border-bottom-style: solid!important;
+    border-bottom-color: var(--border-light)!important;
+    border-top: none!important;
+    border-left: none!important;
+}
+table tr th:last-child,
+table tr td:last-child {
+    border-right-width: var(--border-width)!important;
+    border-right-style: none!important;
+    border-right-color: var(--border-color-outset)!important;
+}
+table tr:last-child td,
+table tr:last-child th {
+    border-bottom-width: var(--border-width)!important;
+    border-bottom-style: none!important;
+    border-bottom-color: var(--border-color-outset)!important;
+}
+table thead,
+table tfoot {
+    font-weight: bold!important;
+    text-align: center!important;
+    vertical-align: middle!important;
+    background-color: var(--color-block)!important;
+}
+/* top-left border-radius */
+table :not(tfoot) tr:first-child th:first-child,
+table :not(tfoot) tr:first-child td:first-child {
+    border-top-left-radius: var(--border-radius)!important;
+    border-bottom-left-radius: 0!important;
+}
+
+/* top-right border-radius */
+table :not(tfoot) tr:first-child th:last-child,
+table :not(tfoot) tr:first-child td:last-child {
+    border-top-right-radius: var(--border-radius)!important;
+    border-bottom-right-radius: 0!important;
+}
+
+/* bottom-left border-radius */
+table :not(thead) tr:last-child th:first-child,
+table :not(thead) tr:last-child td:first-child {
+    border-bottom-left-radius: var(--border-radius)!important;
+}
+
+/* bottom-right border-radius */
+table :not(thead) tr:last-child th:last-child,
+table :not(thead) tr:last-child td:last-child{
+    border-bottom-right-radius: var(--border-radius)!important;
+}
+/*Handle thead and tfoot borders*/
+table thead tr:first-child th,
+table thead tr:first-child td {
+    border-top-style: none!important;
+}
+table thead tr:last-child th,
+table thead tr:last-child td {
+    border-bottom-style: solid!important;
+    border-bottom-width: var(--border-width)!important;
+    border-bottom-color: var(--border-light)!important;
+}
+table tfoot tr:last-child th,
+table tfoot tr:last-child td {
+    border-bottom-style: none!important;
+}
+table tfoot tr:first-child th,
+table tfoot tr:first-child td {
+    border-top-style: solid!important;
+    border-top-width: var(--border-width)!important;
+    border-top-color: var(--border-light)!important;
+}
+table tr:first-child th,
+table tr:first-child td {
+    border-top-style: none!important;
+}
+table caption {
+    font-weight: bold!important;
+    font-style: italic!important;
+}

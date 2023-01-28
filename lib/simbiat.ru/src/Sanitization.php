@@ -19,9 +19,12 @@ class Sanitization
         if (self::$sanitizerConfig) {
             $config = self::$sanitizerConfig;
         } else {
-            $config = (new HtmlSanitizerConfig())->withMaxInputLength(-1)->allowSafeElements()->allowRelativeLinks()->allowMediaHosts([Common::$http_host])->allowRelativeMedias()->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+            $config = (new HtmlSanitizerConfig())->withMaxInputLength(-1)->allowSafeElements()
+                        ->allowRelativeLinks()->allowMediaHosts([Common::$http_host])->allowRelativeMedias()
+                        ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
             #Block some extra elements
-            foreach (['aside', 'basefont', 'body', 'font', 'footer', 'form', 'header', 'hgroup', 'html', 'input', 'main', 'nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
+            foreach (['aside', 'basefont', 'body', 'figure', 'figcaption', 'font', 'footer', 'form', 'header', 'hgroup',
+                         'html', 'input', 'main','nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
                 #Need to update the original, because clone is returned, instead of the same instance.
                 $config = $config->blockElement($element);
             }
@@ -33,6 +36,10 @@ class Sanitization
             $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
             #Allow tooltips
             $config = $config->allowAttribute('data-tooltip', '*');
+            #Drop title element, since it will create a tooltip using the browser's engine, which can create inconsistent experience
+            $config = $config->dropAttribute('title', '*');
+            #TinyMCE adds `border` attribute to tables, which we do not use, so dropping it for cleaner code
+            $config = $config->dropAttribute('border', '*');
             #Save config to static for future reuse
             self::$sanitizerConfig = $config;
         }
