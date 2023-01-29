@@ -191,7 +191,7 @@ const tinySettings = {
     'images_upload_credentials': true,
     'images_upload_url': '/api/upload/',
     'insertdatetime_element': true,
-    'invalid_elements': 'aside,basefont,body,figure,figcaption,font,footer,form,header,hgroup,html,input,main,nav,option,ruby,select,selectmenu,template,textarea',
+    'invalid_elements': 'acronym,applet,area,aside,base,basefont,bgsound,big,blink,body,button,canvas,center,content,datalist,dialog,dir,embed,fieldset,figure,figcaption,font,footer,form,frame,frameset,head,header,hgroup,html,iframe,input,image,keygen,legend,link,main,map,marquee,menuitem,meter,nav,nobr,noembed,noframes,noscript,object,optgroup,option,param,picture,plaintext,portal,pre,progress,rb,rp,rt,rtc,ruby,script,select,selectmenu,shadow,slot,strike,style,spacer,template,textarea,title,tt,xmp',
     'invalid_styles': 'font-size line-height',
     'lineheight_formats': '',
     'link_assume_external_targets': 'https',
@@ -374,6 +374,11 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                     tinyInstance.on('OpenWindow', () => {
                         tinyMCEHideInputs();
+                    });
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                    tinyInstance.on('CloseWindow', () => {
+                        //This is an attempt to ensure we have up-to-date data after modifying source code
+                        tinyMCEtoTextarea(textarea as HTMLTextAreaElement, tinyInstance);
                     });
                 }
             });

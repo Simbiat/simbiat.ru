@@ -4470,7 +4470,7 @@ const tinySettings = {
     'images_upload_credentials': true,
     'images_upload_url': '/api/upload/',
     'insertdatetime_element': true,
-    'invalid_elements': 'aside,basefont,body,figure,figcaption,font,footer,form,header,hgroup,html,input,main,nav,option,ruby,select,selectmenu,template,textarea',
+    'invalid_elements': 'acronym,applet,area,aside,base,basefont,bgsound,big,blink,body,button,canvas,center,content,datalist,dialog,dir,embed,fieldset,figure,figcaption,font,footer,form,frame,frameset,head,header,hgroup,html,iframe,input,image,keygen,legend,link,main,map,marquee,menuitem,meter,nav,nobr,noembed,noframes,noscript,object,optgroup,option,param,picture,plaintext,portal,pre,progress,rb,rp,rt,rtc,ruby,script,select,selectmenu,shadow,slot,strike,style,spacer,template,textarea,title,tt,xmp',
     'invalid_styles': 'font-size line-height',
     'lineheight_formats': '',
     'link_assume_external_targets': 'https',
@@ -4630,6 +4630,9 @@ function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
                     });
                     tinyInstance.on('OpenWindow', () => {
                         tinyMCEHideInputs();
+                    });
+                    tinyInstance.on('CloseWindow', () => {
+                        tinyMCEtoTextarea(textarea, tinyInstance);
                     });
                 }
             });

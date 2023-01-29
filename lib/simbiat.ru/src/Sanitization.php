@@ -23,8 +23,11 @@ class Sanitization
                         ->allowRelativeLinks()->allowMediaHosts([Common::$http_host])->allowRelativeMedias()
                         ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
             #Block some extra elements
-            foreach (['aside', 'basefont', 'body', 'figure', 'figcaption', 'font', 'footer', 'form', 'header', 'hgroup',
-                         'html', 'input', 'main','nav', 'option', 'ruby', 'select', 'selectmenu', 'template', 'textarea',] as $element) {
+            foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
+                         'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
+                         'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
+                         'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
+                         'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp'] as $element) {
                 #Need to update the original, because clone is returned, instead of the same instance.
                 $config = $config->blockElement($element);
             }
