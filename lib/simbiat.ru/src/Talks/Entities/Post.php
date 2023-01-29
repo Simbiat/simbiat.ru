@@ -362,7 +362,7 @@ class Post extends Entity
                 #Add the file to list
                 $data['inlineFiles'][] = $image;
                 #Check if `alt` attribute is set for the original
-                if (preg_match('/ alt="\S+"/ui', $inlineImages[0][$key]) === 0) {
+                if (preg_match('/ alt=".*\S.*"/ui', $inlineImages[0][$key]) === 0) {
                     #Set `alt` to the human-readable name
                     $newImgString = preg_replace('/( alt(="\s*")?)/ui', ' alt="'.$filename.'"', $inlineImages[0][$key]);
                     #Replace the original string in the text
