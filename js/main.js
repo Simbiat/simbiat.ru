@@ -4415,7 +4415,7 @@ const tinySettings = {
     'image_caption': false,
     'image_class_list': [
         { 'title': 'Default',
-            'value': 'w100pc middle block galleryZoom' },
+            'value': 'w50pc middle block galleryZoom' },
         {
             'menu': [
                 {
@@ -4445,7 +4445,7 @@ const tinySettings = {
                 },
                 {
                     'title': 'Half width',
-                    'value': 'w50pc middle block galleryZoom'
+                    'value': 'w50pc middle galleryZoom'
                 },
                 {
                     'title': '3 quarters width',
