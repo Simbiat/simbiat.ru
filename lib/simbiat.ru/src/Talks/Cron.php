@@ -67,7 +67,7 @@ class Cron
         try {
             #PHPStorm does not like HAVING in the query, even though it is completely normal, so suppressing inspection for it
             /** @noinspection SqlAggregates */
-            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF(`fileid` IN (SELECT `fileid` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`fileid` IN (SELECT `ogimage` FROM `talks__threads`), 1, 0) as `ogimage`, IF(`fileid` IN (SELECT `fileid` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`fileid` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`fileid` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` HAVING `attachment`+`ogimage`+`avatar`+`section`+`section_defaults`=0;');
+            $dbFiles = HomePage::$dbController->selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF(`fileid` IN (SELECT `fileid` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`fileid` IN (SELECT `ogimage` FROM `talks__threads`), 1, 0) as `ogimage`, IF(`fileid` IN (SELECT `fileid` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`fileid` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`fileid` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` WHERE `added` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) HAVING `attachment`+`ogimage`+`avatar`+`section`+`section_defaults`=0;');
             #Iterrate through the list
             foreach ($dbFiles as $file) {
                 #Get expected full path of the file
