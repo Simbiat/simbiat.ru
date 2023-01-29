@@ -1,6 +1,6 @@
 <image-upload>
     <div class="float_label_div">
-        <input form="{{ formName }}" type="file" aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} id="{{ formName }}_file" name="{{ inputName }}">
+        <input form="{{ formName }}" type="file"{% if mime %} accept="{{ mime }}"{% endif%} aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} id="{{ formName }}_file" name="{{ inputName }}">
         <label for="{{ formName }}_file" data-tooltip="{{ tooltip }}">{{ placeholder }}</label>
     </div>
     <img loading="lazy" decoding="async" alt="Preview of " src="/img/noimage.svg" data-current="{{ imageUrl }}" class="{{ previewClasses }} hidden" id="{{ formName }}_preview">

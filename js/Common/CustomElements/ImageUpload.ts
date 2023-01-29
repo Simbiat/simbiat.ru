@@ -13,7 +13,9 @@ class ImageUpload extends HTMLElement
         this.preview = this.querySelector('img');
         if (this.file) {
             //Enforcing certain values of the items
-            this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
+            if (empty(this.file.accept)) {
+                this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
+            }
             this.file.placeholder = 'Image file';
             //Attach listener to file upload field
             this.file.addEventListener('change', () => {

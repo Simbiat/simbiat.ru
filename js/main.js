@@ -5071,7 +5071,9 @@ class ImageUpload extends HTMLElement {
         this.label = this.querySelector('label');
         this.preview = this.querySelector('img');
         if (this.file) {
-            this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
+            if (empty(this.file.accept)) {
+                this.file.accept = 'image/avif,image/bmp,image/gif,image/jpeg,image/png,image/webp,image/svg+xml';
+            }
             this.file.placeholder = 'Image file';
             this.file.addEventListener('change', () => {
                 this.update();
