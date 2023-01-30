@@ -314,7 +314,7 @@ class Resume extends Page
                     'position' => 'Student',
                     'responsibilities' => null,
                     'achievements' => null,
-                    'description' => 'Game Design and production',
+                    'description' => 'Game Design and Production',
                 ],
             ],
             'feedbacks' =>
