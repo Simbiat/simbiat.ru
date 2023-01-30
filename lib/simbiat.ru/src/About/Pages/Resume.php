@@ -294,6 +294,28 @@ class Resume extends Page
                     'achievements' => '<a href="https://www.credly.com/badges/746c851c-6bb2-4fc1-b3f4-e5902e789654/public_url" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
                     'description' => 'Creative Foundational certification',
                 ],
+                [
+                    'startTime' => '2023-01-02',
+                    'endTime' => null,
+                    'name' => 'XAMK',
+                    'icon' => '/img/icons/XAMK.svg',
+                    'href' => 'https://www.xamk.fi/en/open-amk-courses/introduction-to-video-games-creation/',
+                    'position' => 'Student',
+                    'responsibilities' => null,
+                    'achievements' => null,
+                    'description' => 'Introduction to Video Game Creation',
+                ],
+                [
+                    'startTime' => '2023-01-24',
+                    'endTime' => null,
+                    'name' => 'Arcada',
+                    'icon' => '/img/icons/Arcada.svg',
+                    'href' => 'https://www.arcada.fi/en/study-arcada/continuing-education/course-calendar/game-design-and-production',
+                    'position' => 'Student',
+                    'responsibilities' => null,
+                    'achievements' => null,
+                    'description' => 'Game Design and production',
+                ],
             ],
             'feedbacks' =>
             [
