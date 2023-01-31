@@ -4,18 +4,20 @@
 #footerLinks {
     margin-top: -0.1rem;
 }
-#footerContacts .linkIcon {
+.linkIcon.dimmedIcon {
     filter: brightness(70%);
 }
-#footerContacts .linkIcon:hover,
-#footerContacts .linkIcon:active,
-#footerContacts .linkIcon:focus,
-#footerContacts a:hover .linkIcon,
-#footerContacts a:active .linkIcon,
-#footerContacts a:focus .linkIcon {
-    filter: brightness(125%);
+.linkIcon.dimmedIcon:hover,
+.linkIcon.dimmedIcon:active,
+.linkIcon.dimmedIcon:focus {
+    filter: brightness(100%);
 }
-#footerContacts a {
+.linkIcon.dimmedIcon.colorInversion:hover,
+.linkIcon.dimmedIcon.colorInversion:active,
+.linkIcon.dimmedIcon.colorInversion:focus {
+    filter: brightness(100%) invert(100%);
+}
+a.noOutline {
     outline: none;
 }
 #footerContacts {
@@ -64,9 +66,9 @@ back-to-top {
     cursor: pointer;
     margin: 0 3rem 0 3rem;
 }
-#footerContacts a:hover,
-#footerContacts a:focus,
-#footerContacts a:active {
+a.noOutline:hover,
+a.noOutline:focus,
+a.noOutline:active {
     border-color: transparent;
 }
 html-templates {

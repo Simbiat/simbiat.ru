@@ -1,0 +1,6 @@
+<div class="sidebar_block_header">Follow & Discuss</div>
+<div class="sidebar_block_content middle">
+    {% for link in externalLinks %}
+        <a href="{{ link.url }}" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="linkIcon dimmedIcon{% if link.type == 'Steam' %} colorInversion{% endif %}"></a>
+    {% endfor %}
+</div>

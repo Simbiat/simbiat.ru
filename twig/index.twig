@@ -64,23 +64,7 @@
                 {% endif %}
             </main>
             <aside id="sidebar" aria-label="Sidebar">
-                <side-hide><input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" data-tooltip="Close sidebar" type="image" src="/img/close.svg"></side-hide>
-                    {% if http_error != 'database' and http_error != 'maintenance' %}
-                        <section id="loginForm">
-                            {{ include('common/layout/noscript.twig') }}
-                            {{ include('common/layout/signinup.twig') }}
-                        </section>
-                    {% else %}
-                        <section id="sidebar_no_db">
-                            {% if http_error == 'database' %}
-                                <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
-                                <p class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
-                            {% else %}
-                                <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.svg">
-                                <p class="warning">Database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
-                            {% endif %}
-                        </section>
-                    {% endif %}
+                {{ include('common/layout/sidebar.twig') }}
             </aside>
             <footer>
                 {{ include('common/layout/footer.twig') }}

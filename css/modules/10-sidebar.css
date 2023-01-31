@@ -114,3 +114,36 @@ password-requirements {
 #rememberme_div {
     display: flex;
 }
+
+.sidebar_block {
+    display: grid;
+    align-items: start;
+    justify-items: stretch;
+    margin-top: 1rem;
+    grid-template-areas:
+        'block_header'
+        'block_content';
+    grid-template-columns: 100%;
+    background-color: var(--color-article);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+}
+.sidebar_block_header {
+    grid-area: block_header;
+    background-color: var(--color-block);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    padding-right: .25rem;
+    padding-left: .25rem;
+    border-bottom: var(--border-light) calc(var(--border-width)/2) solid;
+    text-align: center;
+    font-weight: bold;
+}
+.sidebar_block_content {
+    grid-area: block_content;
+    text-align: center;
+    vertical-align: middle;
+    margin: 0.25rem auto 0 auto;
+}
