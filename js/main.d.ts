@@ -461,8 +461,10 @@ declare class Timer extends HTMLElement {
 declare class Tooltip extends HTMLElement {
     private x;
     private y;
+    private width;
+    private height;
     constructor();
-    private onMouseMove;
+    private onPointerMove;
     private onFocus;
     private tooltipCursor;
     private update;

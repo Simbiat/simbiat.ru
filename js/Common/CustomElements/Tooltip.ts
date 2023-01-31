@@ -2,6 +2,8 @@ class Tooltip extends HTMLElement
 {
     private x = 0;
     private y = 0;
+    private width = 0;
+    private height = 0;
 
     public constructor()
     {
@@ -18,7 +20,7 @@ class Tooltip extends HTMLElement
             item.setAttribute('tabindex', '0');
         });
         //Handle tooltip positioning for mouse hover
-        document.addEventListener('mousemove', this.onMouseMove.bind(this));
+        document.addEventListener('pointermove', this.onPointerMove.bind(this));
         //Handle tooltip positioning for focus
         document.querySelectorAll('[data-tooltip]:not([data-tooltip=""])').forEach((item) => {
             item.addEventListener('focus', this.onFocus.bind(this));
@@ -29,11 +31,13 @@ class Tooltip extends HTMLElement
         });
     }
     
-    private onMouseMove(event: MouseEvent): void
+    private onPointerMove(event: PointerEvent): void
     {
         this.update(event.target as HTMLElement);
-        this.x = event.clientX;
-        this.y = event.clientY;
+        this.width = Math.max(event.width, 10);
+        this.height = Math.max(event.height, 10);
+        this.x = event.clientX + this.width;
+        this.y = event.clientY - this.height;
         //Get block dimensions
         this.tooltipCursor();
     }
@@ -42,7 +46,7 @@ class Tooltip extends HTMLElement
     {
         this.update(event.target as HTMLElement);
         const coordinates = (event.target as HTMLElement).getBoundingClientRect();
-        this.x = coordinates.x;
+        this.x = coordinates.x + this.width;
         this.y = coordinates.y - (this.offsetHeight * 1.5);
         this.tooltipCursor();
     }
@@ -56,11 +60,11 @@ class Tooltip extends HTMLElement
         if (this.x + this.offsetWidth > window.innerWidth) {
             this.x = window.innerWidth - (this.offsetWidth * 1.5);
         }
-        if (this.x < 0) {
-            this.x = 0;
+        if (this.x - this.width < 0) {
+            this.x = this.width;
         }
-        if (this.y < 0) {
-            this.y = 0;
+        if (this.y - this.height < 0) {
+            this.y = this.height;
         }
         document.documentElement.style.setProperty('--cursorX', `${this.x}px`);
         document.documentElement.style.setProperty('--cursorY', `${this.y}px`);
