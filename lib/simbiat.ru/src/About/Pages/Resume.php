@@ -295,6 +295,17 @@ class Resume extends Page
                     'description' => 'Creative Foundational certification',
                 ],
                 [
+                    'startTime' => '2022-10-26',
+                    'endTime' => null,
+                    'name' => 'Support from Hel',
+                    'icon' => '/img/icons/SupportFromHel.svg',
+                    'href' => 'https://supportfromhel.fi/',
+                    'position' => 'Founding Member',
+                    'responsibilities' => ['Sharing tech support knowledge with fellow tech supporters and specialists from related fields or those inspiring to become ones.'],
+                    'achievements' => null,
+                    'description' => 'Group for professionals working in customer support to meet, network & learn with industry peers.',
+                ],
+                [
                     'startTime' => '2023-01-02',
                     'endTime' => null,
                     'name' => 'XAMK',
