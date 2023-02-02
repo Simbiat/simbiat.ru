@@ -41,12 +41,12 @@ class RuntimeExtension implements RuntimeExtensionInterface
     
     public function nl2p(string $string): string
     {
-        return (new nl2tag)->nl2p($string);
+        return (new nl2tag)->setPreserveNonBreakingSpace(true)->nl2p($string);
     }
     
     public function changelog(string $string): string
     {
-        return (new nl2tag)->changelog($string);
+        return (new nl2tag)->setPreserveNonBreakingSpace(true)->changelog($string);
     }
     
     public function preg_replace(string $string, string $pattern, string $replace): string
