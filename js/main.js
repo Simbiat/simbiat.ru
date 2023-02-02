@@ -3936,7 +3936,7 @@ function empty(variable) {
         return true;
     }
     if (typeof variable === 'string') {
-        return (/^\s*$/ui).test(variable);
+        return (/^[\s\p{C}]*$/ui).test(variable);
     }
     if (Array.isArray(variable)) {
         return variable.length === 0;
