@@ -39,22 +39,22 @@ const tinySettings = {
         'aligncenter': {
             'classes': 'tiny-align-center',
             'remove': 'none',
-            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignjustify': {
             'classes': 'tiny-align-justify',
             'remove': 'none',
-            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignleft': {
             'classes': 'tiny-align-left',
             'remove': 'none',
-            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignright': {
             'classes': 'tiny-align-right',
             'remove': 'none',
-            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video',
+            'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'forecolor': {
             'attributes': {

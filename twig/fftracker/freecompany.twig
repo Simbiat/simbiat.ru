@@ -21,7 +21,7 @@
     <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{ timeTag(freecompany.dates.formed, "d/m/Y") }} and registered on {{ timeTag(freecompany.dates.registered, "d/m/Y") }} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {{ timeTag(freecompany.dates.updated, "d/m/Y H:i") }}.{% if freecompany.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(freecompany.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
     {% if freecompany.slogan %}
         <p>{% if freecompany.dates.deleted %}Had{% else %}has{% endif %} the following slogan:</p>
-        <blockquote>{{ sanitize(freecompany.slogan) }}</blockquote>
+        <blockquote class="w100pc">{{ sanitize(freecompany.slogan) }}</blockquote>
     {% endif %}
     <p>
         Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>, leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grandCompany }}"
@@ -52,7 +52,7 @@
     </p>
     {% if freecompany.location.estate.message %}
         <p>{% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} this message on its plot placard:</p>
-        <blockquote>{{ sanitize(freecompany.location.estate.message) }}</blockquote>
+        <blockquote class="w100pc">{{ sanitize(freecompany.location.estate.message) }}</blockquote>
     {% endif %}
     {% if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
