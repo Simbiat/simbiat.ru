@@ -20,3 +20,47 @@ figure.image figcaption {
     text-align: center;
     font-style: italic;
 }
+
+/*When aligning left or right, we need to limit width of the block and also align using the margin. Text-align is reset, because otherwise it is applied to text inside the block*/
+blockquote.tiny-align-right {
+    text-align: unset;
+    margin-left: calc(50%);
+    margin-right: .5rem;
+    width: calc(50% - 0.5rem);
+}
+blockquote.tiny-align-left {
+    text-align:   unset;
+    margin-right: calc(50%);
+    margin-left:  .5rem;
+    width: calc(50% - 0.5rem);
+}
+/*For center and justify alignment, we essentially use logic from w100pc override*/
+blockquote.tiny-align-center,
+blockquote.tiny-align-justify {
+    text-align: unset;
+    width: calc(100% - 1rem);
+}
+img.w25pc.tiny-align-right {
+    margin-left: calc(75%);
+    margin-right: 0;
+}
+img.w50pc.tiny-align-right {
+    margin-left: calc(50%);
+    margin-right: 0;
+}
+img.w75pc.tiny-align-right {
+    margin-left: calc(25%);
+    margin-right: 0;
+}
+img.w25pc.tiny-align-left {
+    margin-right: calc(75%);
+    margin-left: 0;
+}
+img.w50pc.tiny-align-left {
+    margin-right: calc(50%);
+    margin-left: 0;
+}
+img.w75pc.tiny-align-left {
+    margin-right: calc(25%);
+    margin-left: 0;
+}
