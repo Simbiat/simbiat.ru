@@ -22,6 +22,8 @@ abstract class Page
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = '';
+    #Page's banner. Defaults to website's banner
+    protected string $ogimage = '';
     #Cache age, in case we prefer the generated page to be cached
     protected int $cacheAge = 0;
     #Time of last data modification (defaults to current time on initialization)
@@ -128,6 +130,7 @@ abstract class Page
         $page['title'] = $this->title;
         $page['h1'] = $this->h1;
         $page['ogdesc'] = $this->ogdesc;
+        $page['ogimage'] = $this->ogimage;
         $page['cacheAge'] = $this->cacheAge;
         $page['cacheStrat'] = $this->cacheStrat;
         if (!empty($this->h2push)) {

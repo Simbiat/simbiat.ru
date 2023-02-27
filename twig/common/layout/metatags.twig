@@ -17,7 +17,7 @@
 <!-- Google Meta -->
 <meta itemprop="name" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
 <meta itemprop="description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
-<meta itemprop="image" content="{{ ogimage|default(domain ~ '/img/favicons/ogimage.png') }}">
+<meta itemprop="image" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/img/favicons/ogimage.png' }}{% endif %}">
 
 <meta name="X-CSRF-Token" content="{{ session_data.CSRF }}" />
 <!-- Custom meta tag to indicate whether Save-Data header was received -->

@@ -96,6 +96,9 @@ class Thread extends Page
         #Set ogimage
         if (!empty($outputArray['ogimage'])) {
             $outputArray = array_merge($outputArray, Images::ogImage($outputArray['ogimage']));
+            if (!empty($outputArray['ogimage'])) {
+                $this->ogimage = $outputArray['ogimage'];
+            }
         }
         #Set ogtype
         $outputArray['ogtype'] = 'article';
