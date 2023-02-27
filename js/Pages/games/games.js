@@ -1,5 +1,6 @@
 export class Games {
     button = null;
+    canvas = null;
     jsPath = null;
     constructor() {
         const wrapper = document.querySelector('game-canvas');
@@ -16,17 +17,24 @@ export class Games {
                 });
             }
             const gmDiv = wrapper.querySelector('#gm4html5_div_id');
-            if ((gmDiv?.hasAttribute('data-js')) === true) {
-                this.jsPath = gmDiv.getAttribute('data-js');
+            if (gmDiv) {
+                this.canvas = gmDiv.querySelector('#canvas');
+                if (gmDiv.hasAttribute('data-js')) {
+                    this.jsPath = gmDiv.getAttribute('data-js');
+                }
             }
         }
     }
     startGame() {
-        if (!empty(this.jsPath)) {
+        if (empty(this.jsPath)) {
+            addSnackbar(`No GameMaker JavaScript file provided.`, 'failure');
+        }
+        else if (this.canvas) {
             const tag = document.createElement('script');
             tag.type = 'text/javascript';
             tag.src = String(this.jsPath);
             tag.onload = () => {
+                this.canvas?.classList.remove('hidden');
                 GameMaker_Init();
             };
             tag.onerror = () => {
@@ -35,7 +43,7 @@ export class Games {
             document.head.appendChild(tag);
         }
         else {
-            addSnackbar(`No GameMaker JavaScript file provided.`, 'failure');
+            addSnackbar(`No GameMaker canvas provided.`, 'failure');
         }
     }
 }
