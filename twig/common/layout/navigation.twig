@@ -64,6 +64,17 @@
     </li>
     <li class="navElement">
         <div class="navLine">
+            <details class="navCat" {% if serviceName == 'games' %}open{% endif %}>
+                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Games" data-tooltip="Games" src="/img/navigation/gamepad.svg"><span itemprop="name">Games</span></summary>
+                <ul>
+                    <li{% if subServiceName == 'jiangshi' %} class="current"{% endif %}><a class="navItem" href="/games/jiangshi/" target="_self" itemprop="url"><span itemprop="name">Jiangshi</span></a></li>
+                    <li{% if subServiceName == 'dden' %} class="current"{% endif %}><a class="navItem" href="/games/dden/" target="_self" itemprop="url"><span itemprop="name">Dangerous Dave: Endless Nightmare</span></a></li>
+                </ul>
+            </details>
+        </div>
+    </li>
+    <li class="navElement">
+        <div class="navLine">
             <details class="navCat" {% if serviceName == 'simplepages' %}open{% endif %}>
                 <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="Simple Pages" src="/img/navigation/simplepages.svg"><span itemprop="name">Simple Pages</span></summary>
                 <ul>

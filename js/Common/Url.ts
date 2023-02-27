@@ -97,6 +97,8 @@ function router(): void
             } else if (path[1] === 'threads') {
                 void import('/js/Pages/talks/threads.js').then((module) => { new module.Threads(); });
             }
+        } else if (path[0] === 'games') {
+            void import('/js/Pages/games/games.js').then((module) => { new module.Games(); });
         }
     }
 }

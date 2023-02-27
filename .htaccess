@@ -128,6 +128,9 @@ Header set NEL: '{"report_to":"default","max_age":31536000,"include_subdomains":
 <If "%{THE_REQUEST} =~ m#^GET /(uc/avatars|talks/sections|talks/edit/sections|talks/threads)/?.*#">
     Header set content-security-policy "upgrade-insecure-requests; default-src 'self'; child-src 'self'; connect-src 'self'; font-src 'self'; frame-src 'self'; img-src 'self' blob:; manifest-src 'self'; media-src 'self'; object-src 'none'; prefetch-src 'self'; script-src 'report-sample' 'self'; script-src-elem 'report-sample' 'self'; script-src-attr 'none'; style-src 'report-sample' 'self'; style-src-elem 'report-sample' 'self'; style-src-attr 'none'; worker-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; navigate-to https:; report-to https://simbiat.report-uri.com/r/d/csp/enforce; report-uri https://simbiat.report-uri.com/r/d/csp/enforce;" "expr=%{HTTP:CONTENT-SECURITY-POLICY} == '' && %{CONTENT_TYPE} =~ m#text/html#i"
 </If>
+<If "%{THE_REQUEST} =~ m#^GET /games/?.*#">
+    Header set content-security-policy "upgrade-insecure-requests; default-src 'self'; child-src 'self'; connect-src 'self'; font-src 'self'; frame-src 'self'; img-src 'self' https://img2.finalfantasyxiv.com; manifest-src 'self'; media-src 'self' data:; object-src 'none'; prefetch-src 'self'; script-src 'report-sample' 'self'; script-src-elem 'report-sample' 'self'; script-src-attr 'none'; style-src 'report-sample' 'self'; style-src-elem 'report-sample' 'self'; style-src-attr 'none'; worker-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; navigate-to https:; report-to https://simbiat.report-uri.com/r/d/csp/enforce; report-uri https://simbiat.report-uri.com/r/d/csp/enforce;" "expr=%{HTTP:CONTENT-SECURITY-POLICY} == '' && %{CONTENT_TYPE} =~ m#text/html#i"
+ </If>
 ##############################
 # Cache control headers based on content type
 ##############################
@@ -329,6 +332,10 @@ RewriteRule ^(.*)$  css/min.css.map [END]
 RewriteCond %{REQUEST_URI} "(^|/)js/tinymce/.*" [NC]
 RewriteRule (^|/)js/tinymce/(.*)$  composer/vendor/tinymce/tinymce/$2 [END]
 
+#Rewrite for GameMaker
+RewriteCond %{REQUEST_URI} "(^|/)games/.*/html5games/.*" [NC]
+RewriteRule (^|/)games/.*/html5games/(.*)$  html5games/$2 [END]
+
 #Redirect everything to index.php
 #If not from /js folder
 RewriteCond %{REQUEST_FILENAME} !(^|/)js/.*\.(js|ts|jsx|tsx) [NC]
@@ -338,6 +345,8 @@ RewriteCond %{REQUEST_FILENAME} !(^|/)css/modules/.*\.css [NC]
 RewriteCond %{REQUEST_FILENAME} !(^|/)css/tinymce\.css(\.map)? [NC]
 #If not from /static/ folder
 RewriteCond %{REQUEST_FILENAME} !(^|/)static/.* [NC]
+#If not from /games folder
+RewriteCond %{REQUEST_FILENAME} !(^|/)html5games/.* [NC]
 #Or not PHPMyAdmin
 #_intellij_phpdebug_validator.php is ONLY for test environment!
 RewriteCond %{REQUEST_FILENAME} !(^|/)(dbhelper/.*) [NC]

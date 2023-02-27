@@ -269,14 +269,10 @@
     } })); })); }, cs = (e, t) => { const n = is(e, t); ds(e, t, n); }, us = (e, t) => { if (gs(e, t)) {
         const n = ss(e.getBlockElements());
         as(n, t);
-    } }, ms = e => e.hasAttribute(rs), fs = (e, t) => xe(e.getTransparentElements(), t), gs = (e, t) => To(t) && fs(e, t.nodeName), ps = (e, t) => gs(e, t) && ms(t), hs = (e, t) => 1 === t.type && fs(e, t.name) && v(t.attr(rs)), bs = Ct().browser, vs = e => Q(e, Ft), ys = (e, t) => e.children && j(e.children, t), Cs = (e, t = {}) => { let n = 0; const o = {}, r = mn(e), s = Cn(r), a = t.maxLoadTime || 5e3, i = i => new Promise(((l, d) => { let c; const u = Tt._addCacheSuffix(i), m = (e => we(o, e).getOrThunk((() => ({ id: "mce-u" + n++, passed: [], failed: [], count: 0 }))))(u); o[u] = m, m.count++; const f = (e, t) => { V(e, D), m.status = t, m.passed = [], m.failed = [], c && (c.onload = null, c.onerror = null, c = null); }, g = () => f(m.passed, 2), p = () => f(m.failed, 3), h = () => { var t; t = h, (() => { const t = e.styleSheets; let n = t.length; for (; n--;) {
-        const e = t[n].ownerNode;
-        if (e && c && e.id === c.id)
-            return g(), !0;
-    } return !1; })() || (Date.now() - v < a ? setTimeout(t) : p()); }; if (l && m.passed.push(l), d && m.failed.push(d), 1 === m.status)
-        return; if (2 === m.status)
-        return void g(); if (3 === m.status)
-        return void p(); m.status = 1; const b = cn("link", s.dom); qt(b, { rel: "stylesheet", type: "text/css", id: m.id }); const v = Date.now(); var y; t.contentCssCors && Vt(b, "crossOrigin", "anonymous"), t.referrerPolicy && Vt(b, "referrerpolicy", t.referrerPolicy), c = b.dom, c.onload = h, c.onerror = p, y = b, eo(Fn(r), y), Vt(b, "href", u); })), l = e => { const t = Tt._addCacheSuffix(e); we(o, t).each((e => { 0 == --e.count && (delete o[t], (e => { const t = Fn(r); _o(t, "#" + e).each(oo); })(e.id)); })); }; return { load: i, loadAll: e => Promise.allSettled($(e, (e => i(e).then(N(e))))).then((e => { const t = W(e, (e => "fulfilled" === e.status)); return t.fail.length > 0 ? Promise.reject($(t.fail, (e => e.reason))) : $(t.pass, (e => e.value)); })), unload: l, unloadAll: e => { V(e, (e => { l(e); })); }, _setReferrerPolicy: e => { t.referrerPolicy = e; }, _setContentCssCors: e => { t.contentCssCors = e; } }; }, ws = (() => { const e = new WeakMap; return { forElement: (t, n) => { const o = In(t).dom; return M.from(e.get(o)).getOrThunk((() => { const t = Cs(o, n); return e.set(o, t), t; })); } }; })(), xs = (e, t) => C(e) && (Zr(e, t) || cr(mn(e))), ks = e => (e => "span" === e.nodeName.toLowerCase())(e) && "bookmark" === e.getAttribute("data-mce-type"), Ss = (e, t, n) => { var o; const r = n || t; if (To(t) && ks(t))
+    } }, ms = e => e.hasAttribute(rs), fs = (e, t) => xe(e.getTransparentElements(), t), gs = (e, t) => To(t) && fs(e, t.nodeName), ps = (e, t) => gs(e, t) && ms(t), hs = (e, t) => 1 === t.type && fs(e, t.name) && v(t.attr(rs)), bs = Ct().browser, vs = e => Q(e, Ft), ys = (e, t) => e.children && j(e.children, t), Cs = (e, t = {}) => { let n = 0; const o = {}, r = mn(e), s = Cn(r), a = e => new Promise(((a, i) => { let l; const d = Tt._addCacheSuffix(e), c = (e => we(o, e).getOrThunk((() => ({ id: "mce-u" + n++, passed: [], failed: [], count: 0 }))))(d); o[d] = c, c.count++; const u = (e, t) => { V(e, D), c.status = t, c.passed = [], c.failed = [], l && (l.onload = null, l.onerror = null, l = null); }, m = () => u(c.passed, 2), f = () => u(c.failed, 3); if (a && c.passed.push(a), i && c.failed.push(i), 1 === c.status)
+        return; if (2 === c.status)
+        return void m(); if (3 === c.status)
+        return void f(); c.status = 1; const g = cn("link", s.dom); var p; qt(g, { rel: "stylesheet", type: "text/css", id: c.id }), t.contentCssCors && Vt(g, "crossOrigin", "anonymous"), t.referrerPolicy && Vt(g, "referrerpolicy", t.referrerPolicy), l = g.dom, l.onload = m, l.onerror = f, p = g, eo(Fn(r), p), Vt(g, "href", d); })), i = e => { const t = Tt._addCacheSuffix(e); we(o, t).each((e => { 0 == --e.count && (delete o[t], (e => { const t = Fn(r); _o(t, "#" + e).each(oo); })(e.id)); })); }; return { load: a, loadAll: e => Promise.allSettled($(e, (e => a(e).then(N(e))))).then((e => { const t = W(e, (e => "fulfilled" === e.status)); return t.fail.length > 0 ? Promise.reject($(t.fail, (e => e.reason))) : $(t.pass, (e => e.value)); })), unload: i, unloadAll: e => { V(e, (e => { i(e); })); }, _setReferrerPolicy: e => { t.referrerPolicy = e; }, _setContentCssCors: e => { t.contentCssCors = e; } }; }, ws = (() => { const e = new WeakMap; return { forElement: (t, n) => { const o = In(t).dom; return M.from(e.get(o)).getOrThunk((() => { const t = Cs(o, n); return e.set(o, t), t; })); } }; })(), xs = (e, t) => C(e) && (Zr(e, t) || cr(mn(e))), ks = e => (e => "span" === e.nodeName.toLowerCase())(e) && "bookmark" === e.getAttribute("data-mce-type"), Ss = (e, t, n) => { var o; const r = n || t; if (To(t) && ks(t))
         return t; const s = t.childNodes; for (let t = s.length - 1; t >= 0; t--)
         Ss(e, s[t], r); if (To(t)) {
         const e = t.childNodes;
@@ -3527,7 +3523,7 @@
     } })); }, GA = e => { if (e !== qA) {
         const t = ba.DOM;
         e ? (t.bind(window, "resize", KA), t.bind(window, "scroll", KA)) : (t.unbind(window, "resize", KA), t.unbind(window, "scroll", KA)), qA = e;
-    } }, YA = e => { const t = WA; return WA = K(WA, (t => e !== t)), QA.activeEditor === e && (QA.activeEditor = WA.length > 0 ? WA[0] : null), QA.focusedEditor === e && (QA.focusedEditor = null), t.length !== WA.length; }, XA = "CSS1Compat" !== document.compatMode, QA = { ...vA, baseURI: null, baseURL: null, defaultOptions: {}, documentBaseURL: null, suffix: null, majorVersion: "6", minorVersion: "3.1", releaseDate: "2022-12-06", i18n: Sa, activeEditor: null, focusedEditor: null, setup() { const e = this; let t = "", n = "", o = uy.getDocumentBaseUrl(document.location); /^[^:]+:\/\/\/?[^\/]+\//.test(o) && (o = o.replace(/[\?#].*$/, "").replace(/[\/\\][^\/]+$/, ""), /[\/\\]$/.test(o) || (o += "/")); const r = window.tinymce || window.tinyMCEPreInit; if (r)
+    } }, YA = e => { const t = WA; return WA = K(WA, (t => e !== t)), QA.activeEditor === e && (QA.activeEditor = WA.length > 0 ? WA[0] : null), QA.focusedEditor === e && (QA.focusedEditor = null), t.length !== WA.length; }, XA = "CSS1Compat" !== document.compatMode, QA = { ...vA, baseURI: null, baseURL: null, defaultOptions: {}, documentBaseURL: null, suffix: null, majorVersion: "6", minorVersion: "3.2", releaseDate: "2023-02-22", i18n: Sa, activeEditor: null, focusedEditor: null, setup() { const e = this; let t = "", n = "", o = uy.getDocumentBaseUrl(document.location); /^[^:]+:\/\/\/?[^\/]+\//.test(o) && (o = o.replace(/[\?#].*$/, "").replace(/[\/\\][^\/]+$/, ""), /[\/\\]$/.test(o) || (o += "/")); const r = window.tinymce || window.tinyMCEPreInit; if (r)
             t = r.base || r.baseURL, n = r.suffix;
         else {
             const e = document.getElementsByTagName("script");
@@ -4759,6 +4755,9 @@ function router() {
             else if (path[1] === 'threads') {
                 void import('/js/Pages/talks/threads.js').then((module) => { new module.Threads(); });
             }
+        }
+        else if (path[0] === 'games') {
+            void import('/js/Pages/games/games.js').then((module) => { new module.Games(); });
         }
     }
 }

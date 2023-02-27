@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '7856780792b6a9b67cb6472c8e9e2ae7304db5f5',
+        'reference' => 'cbea2ef3efbe71ee8a0181779437cadc6dc772c8',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -74,9 +74,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.0.6',
-            'version' => '6.0.6.0',
-            'reference' => 'ce5ef5e6776c16af306d38e20674973f072e05ed',
+            'pretty_version' => '6.1.0',
+            'version' => '6.1.0.0',
+            'reference' => 'bcbf10f2e0e158b338c6c5db9e89862313405215',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -94,7 +94,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.0.6',
+                0 => '6.1.0',
             ),
         ),
         'psr/http-client' => array(
@@ -202,7 +202,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '7856780792b6a9b67cb6472c8e9e2ae7304db5f5',
+            'reference' => 'cbea2ef3efbe71ee8a0181779437cadc6dc772c8',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -254,9 +254,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '6.3.1',
-            'version' => '6.3.1.0',
-            'reference' => 'bec6271ca90b2f37db48a955697746c1f58b9358',
+            'pretty_version' => '6.3.2',
+            'version' => '6.3.2.0',
+            'reference' => '6880668bef341a0572a8354768bb1f7f53f7121c',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),

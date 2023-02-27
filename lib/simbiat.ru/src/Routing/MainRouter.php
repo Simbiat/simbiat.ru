@@ -27,6 +27,8 @@ class MainRouter extends Abstracts\Router
         'about', 'fftracker', 'bictracker', 'uc', 'tests',
         #Simple pages
         'simplepages',
+        #Games
+        'games',
         #Feeds
         'sitemap', 'rss', 'atom',
         #Errors
@@ -54,6 +56,8 @@ class MainRouter extends Abstracts\Router
             'tests' => (new Router)->route(array_slice($path, 1)),
             #Simple pages
             'simplepages' => (new \Simbiat\SimplePages\Router)->route(array_slice($path, 1)),
+            #Games
+            'games' => (new \Simbiat\Games\Router)->route(array_slice($path, 1)),
             #Feeds
             'sitemap' => (new Sitemap\Router)->route(array_slice($path, 1)),
             'rss', 'atom' => (new Feeds)->uriParse($path),
