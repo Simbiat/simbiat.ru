@@ -203,6 +203,13 @@ Header set Cache-Control "max-age=31536000,public,immutable" "expr=%{CONTENT_TYP
 # Other
 Header set Cache-Control "max-age=604800,public" "expr=%{CONTENT_TYPE} =~ m#text/x-cross-domain-policy#i"
 
+<If "%{THE_REQUEST} =~ m#^GET /games/.*/html5games/.*#">
+    Header set Cache-Control "max-age=1800,public"
+    Header merge Cache-Control stale-while-revalidate=1800
+    Header merge Cache-Control stale-if-error=1800
+    Header merge Cache-Control no-transform
+</If>
+
 #Add directives to ALL Cache-Control headers (that's why it's separate)
 Header merge Cache-Control stale-while-revalidate=1800
 Header merge Cache-Control stale-if-error=1800
