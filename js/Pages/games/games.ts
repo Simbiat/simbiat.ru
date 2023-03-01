@@ -1,7 +1,6 @@
 export class Games {
-    //window.onload = GameMaker_Init;
     private readonly button: HTMLButtonElement | null = null;
-    private readonly canvas: HTMLCanvasElement | null = null;
+    private readonly wrapper: HTMLDivElement | null = null;
     private readonly jsPath: string | null = null;
     
     public constructor()
@@ -19,11 +18,10 @@ export class Games {
                     }
                 });
             }
-            const gmDiv = wrapper.querySelector('#gm4html5_div_id');
-            if (gmDiv) {
-                this.canvas = gmDiv.querySelector('#canvas');
-                if (gmDiv.hasAttribute('data-js')) {
-                    this.jsPath = gmDiv.getAttribute('data-js');
+            this.wrapper = wrapper.querySelector('#gm4html5_div_id');
+            if (this.wrapper) {
+                if (this.wrapper.hasAttribute('data-js')) {
+                    this.jsPath = this.wrapper.getAttribute('data-js');
                 }
             }
         }
@@ -33,13 +31,18 @@ export class Games {
     {
         if (empty(this.jsPath)) {
             addSnackbar(`No GameMaker JavaScript file provided.`,'failure');
-        } else if (this.canvas) {
+        } else if (this.wrapper) {
+            //Create canvas
+            const canvas = document.createElement('canvas');
+            canvas.id = 'canvas';
+            //Append canvas
+            this.wrapper.appendChild(canvas);
             //Create tag
             const tag = document.createElement('script');
             tag.type = 'text/javascript';
             tag.src = String(this.jsPath);
             tag.onload = (): void => {
-                this.canvas?.classList.remove('hidden');
+                canvas.classList.remove('hidden');
                 // @ts-expect-error: GameMaker files are not integrated into main codebase, so suppressing errors
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 GameMaker_Init();
@@ -49,6 +52,23 @@ export class Games {
             };
             //Append the script
             document.head.appendChild(tag);
+            //Create observer for the canvas size
+            // Create a new MutationObserver
+            const observer = new MutationObserver(() => {
+                // Get the new dimensions of the element
+                const { width, height } = canvas.getBoundingClientRect();
+                
+                // If both dimensions are zero, remove the element
+                if (width === 0 && height === 0) {
+                    window.location.reload();
+                }
+            });
+            // Start observing the element
+            observer.observe(canvas, {
+                'attributes': true,
+                'childList': true,
+                'subtree': true
+            });
         } else {
             addSnackbar(`No GameMaker canvas provided.`,'failure');
         }
