@@ -57,8 +57,7 @@ export class Games {
             const observer = new MutationObserver(() => {
                 // Get the new dimensions of the element
                 const { width, height } = canvas.getBoundingClientRect();
-                
-                // If both dimensions are zero, remove the element
+                // If both dimensions are zero, reload
                 if (width === 0 && height === 0) {
                     window.location.reload();
                 }
