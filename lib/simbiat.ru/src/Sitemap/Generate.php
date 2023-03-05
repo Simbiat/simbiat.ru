@@ -56,7 +56,7 @@ class Generate
                         $content = Twig::getTwig()->render($mapVars['template_override'] ?? 'index.twig', $mapVars);
                         if ($format === 'xml') {
                             #Check if file already exists and if its contents are the same
-                            if (!is_file($filePath.'/'.$fileName) || $index === file_get_contents($filePath.'/'.$fileName)) {
+                            if (!is_file($filePath.'/'.$fileName) || $index === file_get_contents($filePath.'/'.$fileName) || filemtime($filePath.'/'.$fileName) < strtotime('-2 weeks')) {
                                 #Save the file
                                 file_put_contents($filePath.'/'.$fileName, $content);
                                 #Ping Google about file update
@@ -74,7 +74,7 @@ class Generate
                 }
             }
             #Check if index file already exists and if its contents are the same
-            if (!is_file(Common::$sitemap.'xml/index.xml') || $index === file_get_contents(Common::$sitemap.'xml/index.xml')) {
+            if (!is_file(Common::$sitemap.'xml/index.xml') || $index === file_get_contents(Common::$sitemap.'xml/index.xml') || filemtime(Common::$sitemap.'xml/index.xml') < strtotime('-2 weeks')) {
                 file_put_contents(Common::$sitemap.'xml/index.xml', $index);
                 #Ping Google about index update
                 try {

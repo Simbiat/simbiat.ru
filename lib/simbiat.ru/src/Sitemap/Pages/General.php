@@ -51,6 +51,8 @@ class General extends StaticPage
                 ['loc'=>'fftracker/statistics/achievements/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Achievements'],
                 ['loc'=>'fftracker/statistics/timelines/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Timelines'],
                 ['loc'=>'fftracker/statistics/other/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Other'],
+                ['loc'=>'games/dden/', 'changefreq' => 'monthly', 'name'=>'Dangerous Dave: Endless Nightmare'],
+                ['loc'=>'games/jiangshi/', 'changefreq' => 'monthly', 'name'=>'Jiangshi'],
                 ['loc'=>'sitemap/xml/index/', 'name'=>'XML Sitemap'],
                 ['loc'=>'sitemap/html/index/', 'name'=>'HTML Sitemap'],
                 ['loc'=>'sitemap/txt/index/', 'name'=>'TXT Sitemap'],
