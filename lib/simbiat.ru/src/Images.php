@@ -95,6 +95,16 @@ class Images
             #Presume, that this is not something to convert in the first place, which may be normal
             return false;
         }
+        #If we have a GIF, check if it's animated
+        if ($mime === 'image/gif' && self::isGIFAnimated($image)) {
+            #Do not convert animated GIFs
+            return false;
+        }
+        #If we have a PNG, check if it's animated
+        if ($mime === 'image/png' && self::isPNGAnimated($image)) {
+            #Do not convert animated PNGs
+            return false;
+        }
         #Set new name
         $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
         #Create GD object from file
@@ -118,6 +128,56 @@ class Images
         } else {
             return false;
         }
+    }
+    
+    #Taken from https://stackoverflow.com/a/47907134/2992851
+    public static function isGIFAnimated(string $gif): bool
+    {
+        if(!($fh = @fopen($gif, 'rb')))
+            return false;
+        $count = 0;
+        //an animated gif contains multiple "frames", with each frame having a
+        //header made up of:
+        // * a static 4-byte sequence (\x00\x21\xF9\x04)
+        // * 4 variable bytes
+        // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
+    
+        // We read through the file til we reach the end of the file, or we've found
+        // at least 2 frame headers
+        $chunk = false;
+        while(!feof($fh) && $count < 2) {
+            //add the last 20 characters from the previous string, to make sure the searched pattern is not split.
+            $chunk = ($chunk ? substr($chunk, -20) : '') . fread($fh, 1024 * 100); //read 100kb at a time
+            $count += preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
+        }
+        fclose($fh);
+        return $count > 1;
+    }
+    
+    #Taken from https://stackoverflow.com/a/68618296/2992851
+    public static function isPNGAnimated(string $apng): bool
+    {
+        $f = new \SplFileObject($apng, 'rb');
+        $header = $f->fread(8);
+        if ($header !== "\x89PNG\r\n\x1A\n") {
+            return false;
+        }
+        while (!$f->eof()) {
+            $bytes =  $f->fread(4);
+            if (strlen($bytes) < 4) {
+                return false;
+            }
+            $length = unpack('N', $bytes)[1];
+            $chunkName = $f->fread(4);
+            switch ($chunkName) {
+                case 'acTL':
+                    return true;
+                case 'IDAT':
+                    return false;
+            }
+            $f->fseek($length + 4, SEEK_CUR);
+        }
+        return false;
     }
     
     public static function open(string $image, ?string $mime = null): false|\GdImage
@@ -168,7 +228,7 @@ class Images
         if ($info['mime'] !== 'image/png') {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
         } else {
-            list($info['width'], $info['height']) = getimagesize($file);
+            [$info['width'], $info['height']] = getimagesize($file);
         }
         if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width']/$info['height'], 1) !== 1.9) {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
