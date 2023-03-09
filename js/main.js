@@ -3745,12 +3745,13 @@ function qInit(quote) {
 }
 function detailsInit(details) {
     if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
-        details.addEventListener('toggle', (event) => {
-            closeAllDetailsTags(event.target);
-        });
-        details.addEventListener('click', (event) => {
-            resetDetailsTags(event.target);
-        });
+        const summary = details.querySelector('summary');
+        if (summary) {
+            summary.addEventListener('click', (event) => {
+                closeAllDetailsTags(event.target);
+                resetDetailsTags(event.target);
+            });
+        }
     }
 }
 function imgInit(img) {
@@ -3823,12 +3824,16 @@ function getAllDetailsTags() {
     return document.querySelectorAll('details:not(.persistent):not(.spoiler):not(.adult)');
 }
 function closeAllDetailsTags(target) {
-    if (target.open) {
-        getAllDetailsTags().forEach((tag) => {
-            if (tag !== target) {
-                tag.open = false;
-            }
-        });
+    const details = target.parentElement;
+    if (details) {
+        if (details.open) {
+            getAllDetailsTags().
+                forEach((tag) => {
+                if (tag !== details) {
+                    tag.open = false;
+                }
+            });
+        }
     }
 }
 function clickOutsideDetailsTags(initialEvent, details) {
@@ -3840,8 +3845,9 @@ function clickOutsideDetailsTags(initialEvent, details) {
     }
 }
 function resetDetailsTags(target) {
+    const clickedDetails = target.parentElement;
     getAllDetailsTags().forEach((details) => {
-        if (details.open && details !== target && !details.contains(target)) {
+        if (details.open && details !== clickedDetails && !details.contains(clickedDetails)) {
             details.open = false;
         }
         else if (details.classList.contains('popup')) {

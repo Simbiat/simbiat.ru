@@ -158,13 +158,17 @@ function detailsInit(details: HTMLDetailsElement): void
 {
     if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
         //Close all details except currently selected one
-        details.addEventListener('toggle', (event) => {
-            closeAllDetailsTags(event.target as HTMLDetailsElement);
-        });
+        //details.addEventListener('click', (event) => {
+        //    closeAllDetailsTags(event.target as HTMLDetailsElement);
+        //});
         //Attach listener for clicks. Technically we can (and probably should) use 'toggle', but I was not able to achieve consistent behavior with it.
-        details.addEventListener('click', (event) => {
-            resetDetailsTags(event.target as HTMLDetailsElement);
-        });
+        const summary = details.querySelector('summary');
+        if (summary) {
+            summary.addEventListener('click', (event) => {
+                closeAllDetailsTags(event.target as HTMLDetailsElement);
+                resetDetailsTags(event.target as HTMLDetailsElement);
+            });
+        }
     }
 }
 

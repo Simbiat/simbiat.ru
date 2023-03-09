@@ -8,12 +8,16 @@ function getAllDetailsTags(): NodeListOf<HTMLDetailsElement>
 
 function closeAllDetailsTags(target: HTMLDetailsElement): void
     {
-        if (target.open) {
-            getAllDetailsTags().forEach((tag) => {
-            if (tag !== target) {
-                tag.open = false;
+        const details = target.parentElement;
+        if (details) {
+            if ((details as HTMLDetailsElement).open) {
+                getAllDetailsTags().
+                    forEach((tag) => {
+                        if (tag !== details) {
+                            tag.open = false;
+                        }
+                    });
             }
-        });
     }
 }
 
@@ -30,8 +34,9 @@ function clickOutsideDetailsTags(initialEvent: MouseEvent, details: HTMLDetailsE
 
 function resetDetailsTags(target: HTMLDetailsElement): void
 {
+    const clickedDetails = target.parentElement;
     getAllDetailsTags().forEach((details: HTMLDetailsElement) => {
-        if (details.open && details !== target && !details.contains(target)) {
+        if (details.open && details !== clickedDetails && !details.contains(clickedDetails)) {
             details.open = false;
             //If target is a "popup" details, we need to be able to close it when clicking outside it
             //Unfortunately, the only viable way seems to be to start listening for clicks on whole document
