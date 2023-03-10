@@ -14,6 +14,10 @@ class Game extends Page
     protected string $cacheStrat = 'week';
     #Path to game's JS file
     protected string $gameJS = '';
+    #Flag to indicate the game has sound
+    protected bool $hasSound = false;
+    #Flag to indicate the game has music
+    protected bool $hasMusic = false;
 
     #Static pages have all the data in Twig templates, thus we just return empty array
     protected function generate(array $path): array
@@ -27,6 +31,8 @@ class Game extends Page
         }
         $outputArray = [];
         $outputArray['gameJS'] = $this->gameJS.'?'.filemtime($file);
+        $outputArray['hasSound'] = $this->hasSound;
+        $outputArray['hasMusic'] = $this->hasMusic;
         return $outputArray;
     }
 }

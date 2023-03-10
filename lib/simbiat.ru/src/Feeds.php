@@ -51,7 +51,7 @@ class Feeds
                             'uri' => Common::$baseUrl.'/',
                         ]],
                         'icon' => Common::$baseUrl.'/img/favicons/simbiat.png',
-                        'logo' => Common::$baseUrl.'/img/favicons/ogimage.png',
+                        'logo' => Common::$baseUrl.'/img/ogimages/default.png',
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [

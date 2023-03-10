@@ -1,4 +1,13 @@
 <game-canvas>
-    <button id="gameStartButton" class="middle">Start</button>
+    {% if ogimage %}
+        <div id="bannerPlay">
+            {{ include('common/elements/ogimage.twig', {'ogimage': ogimage}, with_context = false) }}
+            <div id="play_overlay">▶️</div>
+        </div>
+    {% endif %}
+    <button id="gameStartButton" class="middle">▶️ Start the game</button>
     <div class="gm4html5_div_class" id="gm4html5_div_id" data-js="{{ gameJS }}"></div>
+    {% if hasSound or hasMusic %}
+        <div class="sound_warning warning">🎵 This game has {% if hasSound %}sound effects{% endif %}{% if hasSound and hasMusic %} and {% endif %}{% if hasMusic %}music{% endif %} 🎵</div>
+    {% endif %}
 </game-canvas>

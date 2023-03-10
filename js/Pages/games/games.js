@@ -1,19 +1,24 @@
 export class Games {
-    button = null;
     wrapper = null;
     jsPath = null;
     constructor() {
         const wrapper = document.querySelector('game-canvas');
         if (wrapper) {
-            this.button = wrapper.querySelector('button');
-            if (this.button) {
-                this.button.addEventListener('click', () => {
+            const button = wrapper.querySelector('button');
+            if (button) {
+                button.addEventListener('click', () => {
                     this.startGame();
                 });
-                this.button.addEventListener('keypress', (event) => {
+                button.addEventListener('keypress', (event) => {
                     if (['Enter', 'NumpadEnter', 'Space'].includes(event.code)) {
                         this.startGame();
                     }
+                });
+            }
+            const overlay = wrapper.querySelector('#play_overlay');
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    this.startGame();
                 });
             }
             this.wrapper = wrapper.querySelector('#gm4html5_div_id');

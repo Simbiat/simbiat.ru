@@ -3,6 +3,10 @@ game-canvas {
     display: block;
     margin-top: 1rem;
 }
+game-canvas .sound_warning {
+    font-size: small;
+    text-align: center;
+}
 #gm4html5_div_id #canvas {
     position: absolute;
     top: 50%!important;
@@ -15,7 +19,6 @@ game-canvas {
 
 #gm4html5_div_id canvas {
     image-rendering: optimizeSpeed;
-    -webkit-interpolation-mode: nearest-neighbor;
     -ms-touch-action: none;
     margin: 0;
     padding: 0;
@@ -62,4 +65,37 @@ div.gm4html5_login_header
 
 #gameStartButton {
     display: block;
+    width: calc(100% - 1rem);
+}
+
+#bannerPlay {
+    position: relative;
+}
+#bannerPlay hide-banner {
+    display: none;
+}
+#bannerPlay og-image img {
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+#bannerPlay #play_overlay {
+    position: absolute;
+    top: 0;
+    left: 0.5rem;
+    width: calc(100% - 1rem);
+    text-align: center;
+    font-size: xxx-large;
+    opacity: 0.5;
+    height: 49%;
+    padding-top: 25%;
+    cursor: pointer;
+    text-shadow: -4px -4px 0 var(--color-interactive), 4px -4px 0 var(--color-interactive), -4px 4px 0 var(--color-interactive), 4px 4px 0 var(--color-interactive);
+}
+#bannerPlay #play_overlay:hover,
+#bannerPlay #play_overlay:active,
+#bannerPlay #play_overlay:focus {
+    opacity: 1;
+}
+#bannerPlay #play_overlay:active {
+    filter: brightness(.7);
 }

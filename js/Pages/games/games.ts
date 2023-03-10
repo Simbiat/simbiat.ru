@@ -1,5 +1,4 @@
 export class Games {
-    private readonly button: HTMLButtonElement | null = null;
     private readonly wrapper: HTMLDivElement | null = null;
     private readonly jsPath: string | null = null;
     
@@ -7,15 +6,21 @@ export class Games {
     {
         const wrapper = document.querySelector('game-canvas');
         if (wrapper) {
-            this.button = wrapper.querySelector('button');
-            if (this.button) {
-                this.button.addEventListener('click', () => {
+            const button = wrapper.querySelector('button');
+            if (button) {
+                button.addEventListener('click', () => {
                     this.startGame();
                 });
-                this.button.addEventListener('keypress', (event) => {
+                button.addEventListener('keypress', (event) => {
                     if (['Enter', 'NumpadEnter', 'Space'].includes(event.code)) {
                         this.startGame();
                     }
+                });
+            }
+            const overlay = wrapper.querySelector('#play_overlay');
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    this.startGame();
                 });
             }
             this.wrapper = wrapper.querySelector('#gm4html5_div_id');

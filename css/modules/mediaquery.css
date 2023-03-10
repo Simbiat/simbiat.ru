@@ -14,7 +14,7 @@ since they show em as most consistent*/
 }
 @media (min-width: 44.599999em) and (max-width: 55.599999em) {
     body {
-        grid-template-columns: 20% calc(80% - var(--grid-gap));
+        grid-template-columns: 20% min(calc(80% - var(--grid-gap)), 100ch);
         grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
         grid-template-areas:
           'header header'
@@ -24,7 +24,7 @@ since they show em as most consistent*/
 }
 @media (min-width: 55.599999em) and (max-width: 62em) {
     body {
-        grid-template-columns: 20% calc(80% - var(--grid-gap));
+        grid-template-columns: 20% min(calc(80% - var(--grid-gap)), 100ch);
         grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3) var(--footer-height);
         grid-template-areas:
           'header header'
@@ -34,7 +34,7 @@ since they show em as most consistent*/
 }
 @media (min-width: 62em) {
     body {
-        grid-template-columns: 20% calc(60% - var(--grid-gap) * 2) 20%;
+        grid-template-columns: 20% min(calc(60% - var(--grid-gap) * 2), 100ch) 20%;
         grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
         grid-template-areas:
           'header header header'
@@ -88,13 +88,12 @@ since they show em as most consistent*/
 }
 @media (max-width: 44.599999em) {
     #content {
-        max-width: 100vw;
+        max-width: min(100vw, 100ch);
     }
 }
 @media (min-width: 44.599999em) {
     #content {
-        max-width: 100ch;
-        width: 100%
+        max-width: min(100vw, 100ch);
     }
 }
 @media (max-width: 55.599999em) {
