@@ -15,27 +15,19 @@
     position: relative;
     overflow-y: auto;
 }
-#navList .navElement:first-child a,
-side-show a {
+#navList .navElement:first-child a {
     width: calc(100% - 0.2rem);
     border: none;
 }
 #navList .navElement.liBread {
     height: auto;
 }
-#navList .navElement:first-child,
-side-show {
+#navList .navElement:first-child {
     height: 2.5rem;
-}
-side-show {
-    border-radius: var(--border-radius);
 }
 #navList .navElement:first-child:hover,
 #navList .navElement:first-child:active,
-#navList .navElement:first-child:focus,
-side-show:hover,
-side-show:active,
-side-show:focus {
+#navList .navElement:first-child:focus {
     background-color: var(--color-article);
 }
 .navIcon {

@@ -26,26 +26,44 @@ class NavHide extends HTMLElement
 
 class SideShow extends HTMLElement
 {
+    private readonly sidebarPopUp: HTMLElement | null = null;
     private readonly sidebar: HTMLElement | null = null;
+    private readonly button: HTMLElement | null = null;
     
     public constructor() {
         super();
-        this.sidebar = document.querySelector('#sidebar');
-        this.addEventListener('click', () => {
-            this.sidebar?.classList.add('shown');
-        });
+        this.button = this.querySelector('input');
+        if (this.id === 'prodLink') {
+            if (this.button) {
+                this.button.addEventListener('click', () => {
+                    window.open(document.location.href.replace('local.simbiat.ru', 'www.simbiat.dev'), '_blank');
+                });
+            }
+        } else if (this.button && this.hasAttribute('data-sidebar')) {
+                this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
+                this.sidebar = document.querySelector(`#${String(this.getAttribute('data-sidebar'))}`);
+                this.button.addEventListener('click', () => {
+                    this.sidebarPopUp?.classList.remove('hidden');
+                    this.sidebar?.classList.remove('hidden');
+                });
+            }
     }
 }
 
 class SideHide extends HTMLElement
 {
-    private readonly sidebar: HTMLElement | null = null;
+    private readonly sidebarPopUp: HTMLElement | null = null;
+    private readonly sidebars: NodeListOf<HTMLElement>;
     
     public constructor() {
         super();
-        this.sidebar = document.querySelector('#sidebar');
+        this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
+        this.sidebars = document.querySelectorAll('.sidebar');
         this.addEventListener('click', () => {
-            this.sidebar?.classList.remove('shown');
+            this.sidebarPopUp?.classList.add('hidden');
+            this.sidebars.forEach((aside) => {
+                aside.classList.add('hidden');
+            });
         });
     }
 }

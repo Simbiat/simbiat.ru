@@ -5,41 +5,11 @@ since they show em as most consistent*/
 /*Adjust body grid*/
 @media (max-width: 44.599999em) {
     body {
-        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
         grid-template-areas:
-            'header header'
-            'content content'
-            'footer footer';
+            'content';
     }
-}
-@media (min-width: 44.599999em) and (max-width: 55.599999em) {
-    body {
-        grid-template-columns: 20% min(calc(80% - var(--grid-gap)), 100ch);
-        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
-        grid-template-areas:
-          'header header'
-          'navigation content'
-          'footer footer';
-    }
-}
-@media (min-width: 55.599999em) and (max-width: 62em) {
-    body {
-        grid-template-columns: 20% min(calc(80% - var(--grid-gap)), 100ch);
-        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3) var(--footer-height);
-        grid-template-areas:
-          'header header'
-          'navigation content'
-          'footer footer';
-    }
-}
-@media (min-width: 62em) {
-    body {
-        grid-template-columns: 20% min(calc(60% - var(--grid-gap) * 2), 100ch) 20%;
-        grid-template-rows: var(--header-height) calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2) var(--footer-height);
-        grid-template-areas:
-          'header header header'
-          'navigation content sidebar'
-          'footer footer footer';
+    footer, header {
+        width: 100vw
     }
 }
 
@@ -52,6 +22,9 @@ since they show em as most consistent*/
 @media (min-width: 44.599999em) {
     .snackbar {
         width: 75vw;
+    }
+    footer, header {
+        width: var(--main-content-width);
     }
 }
 
@@ -70,22 +43,17 @@ since they show em as most consistent*/
 }
 @media (min-height: 20.599999em) and (max-height: 30em) {
     :root {
-        --footer-height: 2.5rem;
+        --footer-height: 3rem;
     }
 }
 @media (min-width: 18.599999rem) and (max-width: 44.599999em) {
     :root {
         --header-height: 2.5rem;
-        --footer-height: 2.5rem;
+        --footer-height: 3rem;
     }
 }
 
 /*Adjust height of #content and #navigation, on widths when we change placement for narrow screens*/
-@media (min-width: 48.599999em) and (max-width: 55.599999em) {
-    #content {
-        height: calc(100vh - var(--footer-height) - var(--header-height) - 6rem - var(--grid-gap)*3);
-    }
-}
 @media (max-width: 44.599999em) {
     #content {
         max-width: min(100vw, 100ch);
@@ -93,26 +61,18 @@ since they show em as most consistent*/
 }
 @media (min-width: 44.599999em) {
     #content {
-        max-width: min(100vw, 100ch);
-    }
-}
-@media (max-width: 55.599999em) {
-    #content, #navigation {
-        height: calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2);
+        width: var(--main-content-width);
     }
 }
 @media (max-width: 44.599999em) {
     #navigation {
         grid-area: none;
-        position: absolute;
-        width: 100vw;
-        /*Using !important to enforce stretching, because otherwise height will be same as for main block*/
-        height: 100vh!important;
-        z-index: 1;
+        z-index: 3;
         display: none;
         background-color: var(--color-body);
         border: none;
         border-radius: 0;
+        padding-top: 5rem;
     }
 }
 
@@ -236,48 +196,18 @@ since they show em as most consistent*/
 /*Adjust some buttons*/
 @media (max-width: 44.599999em) {
     nav-hide {
-        position: absolute;
-        right: 0;
+        position: fixed;
+        left: 0;
         top: 0;
-    }
-}
-@media (max-width: 55.599999em) {
-    side-hide {
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-    side-show, side-hide {
-        display: block;
-    }
-}
-@media (max-height: 20.599999em) {
-    nav-show {
-        left: -1.25rem;
-        top: -1.75rem;
-    }
-}
-@media (max-width: 44.599999em) {
-    nav-show {
-        left: -1.25rem;
-        top: -1.75rem;
     }
 }
 @media (max-width: 44.599999em) {
     nav-show {
         display: block;
-    }
-    side-show {
-        margin-top: 2rem;
     }
 }
 @media (min-width: 44.599999em) {
     nav-show, nav-hide {
-        display: none;
-    }
-}
-@media (min-width: 62em) {
-    side-show, side-hide {
         display: none;
     }
 }

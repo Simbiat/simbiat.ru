@@ -1,9 +1,49 @@
-#loginForm,
-#sidebar_no_db {
-    border-width: var(--border-width);
+#aside_buttons {
+    position: fixed;
+    z-index: 2;
+    right: 0;
+}
+side-show {
     border-radius: var(--border-radius);
-    border-style: solid;
-    border-color: var(--border-color-inset);
+    display: block;
+    width: 3rem;
+    height: 3rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+side-show .navIcon {
+    width: 3rem;
+    height: 3rem;
+    opacity: 0.75;
+}
+side-show .navIcon:hover,
+side-show .navIcon:active,
+side-show .navIcon:focus {
+    background-color: var(--color-block);
+    opacity: 1;
+}
+side-hide {
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+#back-to-top {
+    bottom: 0;
+    position: fixed;
+}
+
+.sidebar {
+    right: 0;
+    width: var(--sidebar-width);
+    display: block;
+    position: fixed;
+    z-index: 3;
+}
+#sidebar_pop_up {
+    top: 0;
+    height: 100vh;
+    background-color: var(--color-body);
 }
 
 #sidebar_no_db img {

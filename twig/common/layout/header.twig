@@ -1,35 +1,8 @@
-{% if http_error == 'database' %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="No database connection" src="/img/errors/database.svg">' %}
-{% elseif http_error == 'maintenance' %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Maintenance" src="/img/errors/maintenance.svg">' %}
-{% elseif http_error == 'twig' %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Twig failure" src="/img/errors/bug3.svg">' %}
-{% elseif http_error == 400 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Do not understand" src="/img/errors/incomprehension.svg">' %}
-{% elseif http_error == 403 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="No access" src="/img/errors/denied.svg">' %}
-{% elseif http_error == 404 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Not found" src="/img/errors/missing.svg">' %}
-{% elseif http_error == 405 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Bad method" src="/img/errors/incomprehension.svg">' %}
-{% elseif http_error == 500 %}
-    {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Internal server error" src="/img/errors/bug.svg">' %}
-{% elseif http_error == 503 %}
-    {% if construction %}
-        {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Under construction" src="/img/errors/construction.svg">' %}
-    {% else %}
-        {% set extraHeaderIcon = '<img loading="lazy" decoding="async" class="linkIcon" alt="Service unavailable" src="/img/errors/bug2.svg">' %}
-    {% endif %}
-{% else %}
-    {% if isPROD == false %}
-        {% set extraHeaderIcon = '<a id="prodLink" href="' ~ url|replace({'https://local.':'https://www.', '.ru':'.dev'}) ~ '" target="_blank"><img class="linkIcon" src="/img/newtab.svg" alt="Open PROD version"></a>' %}
-    {% endif %}
-{% endif %}
 <div id="header_logo">
     <span>Simbiat</span>
     <div id="logoNav"><nav-show><input id="showNav" class="navIcon" alt="Show navigation" data-tooltip="Show navigation" type="image" src="/img/menu.svg"></nav-show><img loading="lazy" decoding="async" alt="logo" id="logoIcon" data-tooltip="Simbiat Software" src="/img/logo.svg"></div>
     <span>Software</span>
 </div>
 <div id="h1div">
-    <h1 id="h1title">{% if cacheReset %}<a href="{{ cacheReset }}" target="_self" data-tooltip="Click to attempt to reset page's cache"><img class="linkIcon" src="/img/refresh.svg" alt="Reset cache">{% endif %}{{ h1|default(title)|default(site_name) }}{% if cacheReset %}</a>{% endif %}</h1><web-share class="hidden"><img loading="lazy" decoding="async" id="shareButton" alt="Share page" data-tooltip="Share page" src="/img/share.svg"></web-share>{{  extraHeaderIcon|raw }}
+    <h1 id="h1title">{% if cacheReset %}<a href="{{ cacheReset }}" target="_self" data-tooltip="Click to attempt to reset page's cache"><img class="linkIcon" src="/img/refresh.svg" alt="Reset cache">{% endif %}{{ h1|default(title)|default(site_name) }}{% if cacheReset %}</a>{% endif %}</h1>
 </div>

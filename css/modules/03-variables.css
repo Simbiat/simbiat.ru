@@ -35,6 +35,8 @@ errors\teapot.twig*/
     /*Sizes*/
     --footer-height: 4.5rem;
     --header-height: 4rem;
+    --sidebar-width: 15rem;
+    --main-content-width: calc(100vw - var(--sidebar-width) - var(--grid-gap));
     --grid-gap: 1rem;
     --showpassword-width: 2.5rem;
 

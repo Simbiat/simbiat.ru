@@ -27,27 +27,11 @@
     text-align: left;
     margin-left: -0.5rem;
 }
-#h1title,
-web-share {
+#h1title {
     display: inline-block;
     font-size: 1rem;
     line-height: 1rem;
     height: 1rem;
-}
-web-share {
-    width: 1rem;
-    margin-bottom: 0.7rem;
-    margin-left: 0.5rem;
-    cursor: pointer;
-    vertical-align: top;
-}
-web-share:hover,
-web-share:focus,
-web-share:active {
-    filter: var(--border-shadow);
-}
-web-share:active {
-    filter: brightness(0.7);
 }
 #h1div {
     width: 100%;
@@ -67,7 +51,13 @@ web-share:active {
     position: relative;
     display: inline-block;
 }
-#logoIcon, nav-show {
+nav-show {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2;
+}
+#logoIcon {
     position: absolute;
 }
 #h1title a {
@@ -77,8 +67,6 @@ web-share:active {
     border: unset;
 }
 #prodLink {
-    width: 1rem;
-    vertical-align: top;
     filter: sepia(1);
 }
 #h1div .linkIcon {

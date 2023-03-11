@@ -48,6 +48,7 @@ abstract class Page
     protected string $jsModule = '';
     #List of images to H2 push
     protected array $h2push = [
+        '/img/close.svg',
         '/img/logo.svg',
 	    '/img/share.svg',
         '/img/navigation/home.svg',
@@ -56,6 +57,8 @@ abstract class Page
         '/img/navigation/bictracker.svg',
         '/img/navigation/about.svg',
         '/img/navigation/simplepages.svg',
+        '/img/navigation/games.svg',
+        '/img/navigation/up.svg',
     ];
 
     public final function __construct()

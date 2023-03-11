@@ -1,24 +1,28 @@
 /*Grid styling*/
-header {
-    grid-area: header;
-}
 #content {
+    margin: 0 auto 0 auto;
     grid-area: content;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 #navigation {
     grid-area: navigation;
-}
-#sidebar {
-    grid-area: sidebar;
+    height: 100vh;
+    width: var(--sidebar-width);
+    z-index: 1;
 }
 footer {
-    grid-area: footer;
     height: var(--footer-height);
 }
 body {
     display: grid;
     gap: var(--grid-gap);
     justify-content: center;
+    align-items: center;
+    grid-template-columns: var(--sidebar-width) var(--main-content-width);
+    grid-template-areas:
+          'navigation content';
 }
 
 /*Main blocks styling*/
@@ -28,16 +32,20 @@ body {
     font-family: var(--font-sans);
     width: 100%;
     height: 100vh;
-    overflow: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
     /*If we do not disable it, Chrome adds an ugly color on clickable elements.
     Not needed, since I adjust :active for them.*/
     -webkit-tap-highlight-color: transparent;
 }
 main {
-    margin: 0 auto 0 auto;
-    overflow: auto;
-    scroll-behavior: smooth;
     border-radius: var(--border-radius);
+    flex: 1;
+}
+main, header, footer {
+    max-width: 100ch;
+    margin: 0 auto 0 auto;
 }
 article {
     background-color: var(--color-article);
@@ -48,8 +56,6 @@ article {
     padding: 0.5rem 0.5rem;
 }
 footer, header {
-    position: fixed;
-    width: 100%;
     text-align: center;
     background-color: var(--color-block);
 }
@@ -75,20 +81,13 @@ footer {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
-#navigation, #sidebar {
-    position: -webkit-sticky;
-    position: sticky;
-}
-main, #navigation, #sidebar {
-    height: calc(100vh - var(--footer-height) - var(--header-height) - var(--grid-gap)*2);
+#navigation {
+    position: fixed;
 }
 
 #navigation {
     left: 0;
     border-width: var(--border-width);
-}
-#sidebar {
-    right: 0;
 }
 
 del, s {

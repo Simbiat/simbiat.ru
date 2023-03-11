@@ -5,14 +5,16 @@ class BackToTop extends HTMLElement
 
     public constructor() {
         super();
-            this.content = document.querySelector('#content');
-            this.BTTs = document.querySelectorAll('back-to-top');
+        this.content = document.querySelector('#content');
+        this.BTTs = document.querySelectorAll('back-to-top');
         if (this.content) {
-            this.content.addEventListener('scroll', this.toggleButtons.bind(this));
+            window.addEventListener('scroll', this.toggleButtons.bind(this), false);
             this.addEventListener('click', () => {
-                if (this.content) {
-                    this.content.scrollTop = 0;
-                }
+                    window.scrollTo({
+                        'behavior': 'smooth',
+                        'left': 0,
+                        'top': 0,
+                    });
             });
         }
     }
@@ -20,7 +22,7 @@ class BackToTop extends HTMLElement
     private toggleButtons(): void
     {
         if (this.content && !empty(this.BTTs)) {
-            if (this.content.scrollTop === 0) {
+            if (window.scrollY <= window.innerHeight/100) {
                 this.BTTs.forEach((item) => {
                     item.classList.add('hidden');
                 });

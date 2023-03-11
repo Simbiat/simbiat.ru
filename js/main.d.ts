@@ -400,11 +400,14 @@ declare class NavHide extends HTMLElement {
     constructor();
 }
 declare class SideShow extends HTMLElement {
+    private readonly sidebarPopUp;
     private readonly sidebar;
+    private readonly button;
     constructor();
 }
 declare class SideHide extends HTMLElement {
-    private readonly sidebar;
+    private readonly sidebarPopUp;
+    private readonly sidebars;
     constructor();
 }
 declare class OGImage extends HTMLElement {
@@ -479,6 +482,7 @@ declare class VerticalTabs extends HTMLElement {
     private updateCurrentTab;
 }
 declare class WebShare extends HTMLElement {
+    private readonly shareData;
     constructor();
     private share;
 }

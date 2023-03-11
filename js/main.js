@@ -4775,17 +4775,19 @@ class BackToTop extends HTMLElement {
         this.content = document.querySelector('#content');
         this.BTTs = document.querySelectorAll('back-to-top');
         if (this.content) {
-            this.content.addEventListener('scroll', this.toggleButtons.bind(this));
+            window.addEventListener('scroll', this.toggleButtons.bind(this), false);
             this.addEventListener('click', () => {
-                if (this.content) {
-                    this.content.scrollTop = 0;
-                }
+                window.scrollTo({
+                    'behavior': 'smooth',
+                    'left': 0,
+                    'top': 0,
+                });
             });
         }
     }
     toggleButtons() {
         if (this.content && !empty(this.BTTs)) {
-            if (this.content.scrollTop === 0) {
+            if (window.scrollY <= window.innerHeight / 100) {
                 this.BTTs.forEach((item) => {
                     item.classList.add('hidden');
                 });
@@ -5338,22 +5340,41 @@ class NavHide extends HTMLElement {
     }
 }
 class SideShow extends HTMLElement {
+    sidebarPopUp = null;
     sidebar = null;
+    button = null;
     constructor() {
         super();
-        this.sidebar = document.querySelector('#sidebar');
-        this.addEventListener('click', () => {
-            this.sidebar?.classList.add('shown');
-        });
+        this.button = this.querySelector('input');
+        if (this.id === 'prodLink') {
+            if (this.button) {
+                this.button.addEventListener('click', () => {
+                    window.open(document.location.href.replace('local.simbiat.ru', 'www.simbiat.dev'), '_blank');
+                });
+            }
+        }
+        else if (this.button && this.hasAttribute('data-sidebar')) {
+            this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
+            this.sidebar = document.querySelector(`#${String(this.getAttribute('data-sidebar'))}`);
+            this.button.addEventListener('click', () => {
+                this.sidebarPopUp?.classList.remove('hidden');
+                this.sidebar?.classList.remove('hidden');
+            });
+        }
     }
 }
 class SideHide extends HTMLElement {
-    sidebar = null;
+    sidebarPopUp = null;
+    sidebars;
     constructor() {
         super();
-        this.sidebar = document.querySelector('#sidebar');
+        this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
+        this.sidebars = document.querySelectorAll('.sidebar');
         this.addEventListener('click', () => {
-            this.sidebar?.classList.remove('shown');
+            this.sidebarPopUp?.classList.add('hidden');
+            this.sidebars.forEach((aside) => {
+                aside.classList.add('hidden');
+            });
         });
     }
 }
@@ -5798,9 +5819,15 @@ class VerticalTabs extends HTMLElement {
     }
 }
 class WebShare extends HTMLElement {
+    shareData;
     constructor() {
         super();
-        if (navigator.canShare()) {
+        this.shareData = {
+            'text': getMeta('og:description') ?? getMeta('description') ?? '',
+            'title': document.title,
+            'url': document.location.href,
+        };
+        if (navigator.canShare(this.shareData)) {
             this.classList.remove('hidden');
             this.addEventListener('click', this.share.bind(this));
         }
@@ -5809,11 +5836,7 @@ class WebShare extends HTMLElement {
         }
     }
     share() {
-        navigator.share({
-            'text': getMeta('og:description') ?? getMeta('description') ?? '',
-            'title': document.title,
-            'url': document.location.href,
-        }).catch(() => {
+        navigator.share(this.shareData).catch(() => {
             addSnackbar('Failed to share link, possibly unsupported feature.', 'failure', 10000);
             this.classList.add('hidden');
         });
