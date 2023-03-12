@@ -1,56 +1,9 @@
 <aside id="aside_buttons">
-    <side-show data-sidebar="loginForm">
-        <input class="navIcon" alt="{% if session_data.userid != 1 %}User profile{% else %}Login{% endif %}" data-tooltip="{% if session_data.userid != 1 %}User profile{% else %}Login{% endif %}" type="image" src="{% if session_data.userid != 1 %}{{ session_data.avatar|default('/img/avatar.svg') }}{% else %}/img/navigation/login.svg{% endif %}">
-    </side-show>
-    <side-show>
-        <web-share class="hidden">
-            <input class="navIcon" alt="Share page" data-tooltip="Share page" type="image" src="/img/share.svg">
-        </web-share>
-    </side-show>
-    {% if isPROD == false %}
-        <side-show id="prodLink">
-            <input class="navIcon" alt="Open PROD version" data-tooltip="Open PROD version" type="image" src="/img/newtab.svg">
-        </side-show>
-    {% endif %}
-    <side-show id="back-to-top">
-        <back-to-top class="hidden" role="button">
-            <input class="navIcon" alt="Back to top" data-tooltip="Back to top" type="image" src="/img/navigation/up.svg">
-        </back-to-top>
-    </side-show>
+    {{ include('common/layout/sidebar/buttons.twig') }}
 </aside>
+<side-hide class="hidden">
+    <input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" data-tooltip="Close sidebar" type="image" src="/img/close.svg">
+</side-hide>
 <aside id="sidebar_pop_up" class="sidebar hidden">
-    <side-hide>
-        <input id="hideSidebarIcon" class="navIcon" alt="Close sidebar" data-tooltip="Close sidebar" type="image" src="/img/close.svg">
-    </side-hide>
 </aside>
-{% if http_error != 'database' and http_error != 'maintenance' %}
-    <aside id="loginForm" class="sidebar hidden" aria-label="Login form">
-        <section>
-            {{ include('common/layout/noscript.twig') }}
-            {{ include('common/layout/sidebar/signinup.twig') }}
-        </section>
-    </aside>
-{% else %}
-    <aside class="sidebar hidden" aria-label="{% if http_error == 'database' %}No database connection{% else %}Maintenance{% endif %}">
-        <section id="sidebar_no_db">
-            {% if http_error == 'database' %}
-                <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
-                <p class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
-            {% else %}
-                <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.svg">
-                <p class="warning">Database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
-            {% endif %}
-        </section>
-    </aside>
-{% endif %}
-<aside class="sidebar hidden" aria-label="Share">
-    {% if serviceName == 'talks' %}
-        {% if subServiceName == 'thread' %}
-            {% if externalLinks|length > 0 %}
-                <section id="threadAltLinks" class="sidebar_block">
-                    {{ include('common/layout/sidebar/altlinks.twig') }}
-                </section>
-            {% endif %}
-        {% endif %}
-    {% endif %}
-</aside>
+{{ include('common/layout/sidebar/sidebars.twig') }}

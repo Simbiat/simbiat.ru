@@ -2,6 +2,14 @@
     position: fixed;
     z-index: 2;
     right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    height: 100vh;
 }
 side-show {
     border-radius: var(--border-radius);
@@ -26,6 +34,7 @@ side-hide {
     position: fixed;
     right: 0;
     top: 0;
+    z-index: 4;
 }
 
 #back-to-top {
@@ -36,21 +45,32 @@ side-hide {
 .sidebar {
     right: 0;
     width: var(--sidebar-width);
-    display: block;
+    display: flex;
     position: fixed;
     z-index: 3;
+    margin-left: var(--sidebar-margin);
+    height: 100vh;
+    top: 0;
+    flex-direction: column;
+    justify-content: center;
 }
 #sidebar_pop_up {
     top: 0;
     height: 100vh;
     background-color: var(--color-body);
+    border-style: solid;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    border-color: var(--border-color-inset);
+    border-right: none;
+    border-bottom: none;
+    border-top: none;
 }
 
-#sidebar_no_db img {
+#no_db_section img {
     width: 3rem;
     height: 3rem;
-    margin: 0.25rem;
-    float: left;
+    margin: .25rem auto;
+    display: block;
 }
 
 /*Center form content*/

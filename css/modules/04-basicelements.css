@@ -1,32 +1,6 @@
-/*Grid styling*/
-#content {
-    margin: 0 auto 0 auto;
-    grid-area: content;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-#navigation {
-    grid-area: navigation;
-    height: 100vh;
-    width: var(--sidebar-width);
-    z-index: 1;
-}
-footer {
-    height: var(--footer-height);
-}
-body {
-    display: grid;
-    gap: var(--grid-gap);
-    justify-content: center;
-    align-items: center;
-    grid-template-columns: var(--sidebar-width) var(--main-content-width);
-    grid-template-areas:
-          'navigation content';
-}
-
 /*Main blocks styling*/
 body {
+    display: block;
     background-color: var(--color-body);
     color: var(--color-text);
     font-family: var(--font-sans);
@@ -39,13 +13,19 @@ body {
     Not needed, since I adjust :active for them.*/
     -webkit-tap-highlight-color: transparent;
 }
+#content {
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
 main {
     border-radius: var(--border-radius);
     flex: 1;
-}
-main, header, footer {
-    max-width: 100ch;
-    margin: 0 auto 0 auto;
+    width: 100vw;
+    max-width: var(--content-width);
 }
 article {
     background-color: var(--color-article);
@@ -58,10 +38,9 @@ article {
 footer, header {
     text-align: center;
     background-color: var(--color-block);
+    width: 100%;
 }
 header {
-    top: 0;
-    height: var(--header-height);
     border-bottom-color: var(--border-light);
     border-bottom-width: var(--border-width);
     border-radius: var(--border-radius);
@@ -69,10 +48,10 @@ header {
     /*Reset common radius*/
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+    margin-bottom: 0.25rem;
+    padding-top: 0.25rem;
 }
 footer {
-    bottom: 0;
-    height: var(--footer-height);
     border-top-color: var(--border-dark);
     border-top-width: var(--border-width);
     border-radius: var(--border-radius);
@@ -80,14 +59,7 @@ footer {
     /*Reset common radius*/
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-}
-#navigation {
-    position: fixed;
-}
-
-#navigation {
-    left: 0;
-    border-width: var(--border-width);
+    margin-top: 0.25rem;
 }
 
 del, s {

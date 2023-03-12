@@ -401,6 +401,7 @@ declare class NavHide extends HTMLElement {
 }
 declare class SideShow extends HTMLElement {
     private readonly sidebarPopUp;
+    private readonly sideHide;
     private readonly sidebar;
     private readonly button;
     constructor();

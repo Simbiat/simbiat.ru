@@ -1,7 +1,17 @@
 #navigation {
+    position: fixed;
+    left: 0;
+    border-width: var(--border-width);
+    height: 100vh;
+    width: var(--sidebar-width);
+    z-index: 1;
+    margin-right: var(--sidebar-margin);
     border-style: solid;
-    border-radius: var(--border-radius);
+    border-radius: 0 var(--border-radius) 0 var(--border-radius);
     border-color: var(--border-color-inset);
+    border-left: none;
+    border-bottom: none;
+    border-top: none;
 }
 
 #navList {

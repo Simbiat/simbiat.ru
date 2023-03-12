@@ -12,6 +12,7 @@
     height: 2rem;
     line-height: 2rem;
     display: inline-block;
+    position: relative;
 }
 #header_logo img {
     margin-bottom: 0.4rem;
@@ -35,7 +36,6 @@
 }
 #h1div {
     width: 100%;
-    height: 1rem;
     margin-top: 0.5rem;
 }
 #h1title {

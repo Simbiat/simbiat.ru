@@ -1,0 +1,31 @@
+{% if http_error != 'database' and http_error != 'maintenance' %}
+    <aside id="loginForm" class="sidebar hidden" aria-label="Login form">
+        <section>
+            {{ include('common/layout/noscript.twig') }}
+            {{ include('common/layout/sidebar/signinup.twig') }}
+        </section>
+    </aside>
+{% else %}
+    <aside id="sidebar_no_db" class="sidebar hidden" aria-label="{% if http_error == 'database' %}No database connection{% else %}Maintenance{% endif %}">
+        <section id="no_db_section">
+            {% if http_error == 'database' %}
+                <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
+                <p class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+            {% else %}
+                <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.svg">
+                <p class="warning">Database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+            {% endif %}
+        </section>
+    </aside>
+{% endif %}
+{% if serviceName == 'talks' %}
+    {% if subServiceName == 'thread' %}
+        {% if externalLinks|length > 0 %}
+            <aside class="sidebar hidden" aria-label="Share">
+                <section id="threadAltLinks" class="sidebar_block">
+                    {{ include('common/layout/sidebar/altlinks.twig') }}
+                </section>
+            </aside>
+        {% endif %}
+    {% endif %}
+{% endif %}

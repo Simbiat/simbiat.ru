@@ -1,136 +1,64 @@
 /*Using em based on experiments from https://zellwk.com/blog/media-query-units/
 and https://medium.com/@barrypeng6/why-should-not-use-rem-unit-in-media-query-5645d0163ce5
 since they show em as most consistent*/
-
-/*Adjust body grid*/
-@media (max-width: 44.599999em) {
-    body {
-        grid-template-areas:
-            'content';
-    }
-    footer, header {
-        width: 100vw
-    }
-}
-
 /*Adjust snackbars*/
-@media (max-width: 44.599999em) {
+@media (max-width: calc(100ch + 15rem + 1rem)) {
     .snackbar {
         width: 90vw;
     }
 }
-@media (min-width: 44.599999em) {
+@media (min-width: calc(100ch + 15rem + 1rem)) {
     .snackbar {
         width: 75vw;
     }
-    footer, header {
-        width: var(--main-content-width);
+    #content {
+        margin-left: calc(var(--sidebar-width) + var(--sidebar-margin));
+        margin-right: auto;
     }
 }
 
-/*Adjust variables*/
-@media (max-height: 20.599999em) {
-    :root {
-        --header-height: 2.5rem;
-        --footer-height: 1.25rem;
-    }
-}
-@media (max-width: 18.599999em) {
-    :root {
-        --header-height: 2.5rem;
-        --footer-height: 1.25rem;
-    }
-}
-@media (min-height: 20.599999em) and (max-height: 30em) {
-    :root {
-        --footer-height: 3rem;
-    }
-}
-@media (min-width: 18.599999rem) and (max-width: 44.599999em) {
-    :root {
-        --header-height: 2.5rem;
-        --footer-height: 3rem;
-    }
-}
-
-/*Adjust height of #content and #navigation, on widths when we change placement for narrow screens*/
-@media (max-width: 44.599999em) {
-    #content {
-        max-width: min(100vw, 100ch);
-    }
-}
-@media (min-width: 44.599999em) {
-    #content {
-        width: var(--main-content-width);
-    }
-}
-@media (max-width: 44.599999em) {
+@media (max-width: calc(100ch + 15rem + 1rem)) {
     #navigation {
-        grid-area: none;
         z-index: 3;
         display: none;
         background-color: var(--color-body);
-        border: none;
-        border-radius: 0;
         padding-top: 5rem;
     }
 }
 
-/*Adjust elements in footer on smaller screens to provide more space for main content*/
-@media (max-height: 30em) {
-    #footerContacts {
-        display: none;
-    }
-}
-@media (max-width: 44.599999em) {
-    #footerContacts {
-        display: none;
-    }
-}
-@media (max-height: 20.599999em) {
-    #footerLinks, #footerCopyright {
-        display: none;
-    }
-}
-@media (max-width: 18.599999em) {
-    #footerLinks, #footerCopyright {
-        display: none;
-    }
-}
-@media (max-height: 20.599999em) {
-    #leftBTT {
-        position: absolute;
-        top: -0.25rem;
-        left: 25%;
-    }
-    #rightBTT {
-        position: absolute;
-        top: -0.25rem;
-        right: 25%;
-    }
-}
-@media (max-width: 18.599999em) {
-    #leftBTT {
-        position: absolute;
-        top: -0.25rem;
+/*Adjust some buttons*/
+@media (max-width: calc(100ch + 15rem + 1rem)) {
+    nav-hide {
+        position: fixed;
         left: 0;
-    }
-    #rightBTT {
-        position: absolute;
-        top: -0.25rem;
-        right: 0;
+        top: 0;
     }
 }
-@media (min-width: 18.599999rem) and (max-width: 44.599999em) {
-    #leftBTT {
-        position: absolute;
-        top: 0;
-        left: 0;
+@media (max-width: calc(100ch + 15rem + 1rem)) {
+    nav-show {
+        display: block;
     }
-    #rightBTT {
-        position: absolute;
-        top: 0;
-        right: 0;
+}
+@media (min-width: calc(100ch + 15rem + 1rem)) {
+    nav-show, nav-hide {
+        display: none;
+    }
+}
+
+/*Adjust sidebar*/
+@media (max-width: 62em) {
+    #sidebar {
+        display: none;
+        margin: auto;
+        background-color: var(--color-body);
+        height: 100vh;
+        width: 100vw;
+        z-index: 2;
+    }
+}
+@media (max-width: 62em) {
+    #radio_signinup br {
+        display: none;
     }
 }
 
@@ -170,8 +98,9 @@ since they show em as most consistent*/
     }
     #header_logo img {
         display: inline-block;
+        position: absolute;
         left: 1rem;
-        /*position: absolute;*/
+        top: -2rem;
     }
     #header_logo span {
         display: none;
@@ -190,42 +119,5 @@ since they show em as most consistent*/
     #header_logo img, #header_logo span {
         display: inline-block;
         position: relative;
-    }
-}
-
-/*Adjust some buttons*/
-@media (max-width: 44.599999em) {
-    nav-hide {
-        position: fixed;
-        left: 0;
-        top: 0;
-    }
-}
-@media (max-width: 44.599999em) {
-    nav-show {
-        display: block;
-    }
-}
-@media (min-width: 44.599999em) {
-    nav-show, nav-hide {
-        display: none;
-    }
-}
-
-/*Adjust sidebar*/
-@media (max-width: 62em) {
-    #sidebar {
-        grid-area: unset;
-        display: none;
-        margin: auto;
-        background-color: var(--color-body);
-        height: 100vh;
-        width: 100vw;
-        z-index: 2;
-    }
-}
-@media (max-width: 62em) {
-    #radio_signinup br {
-        display: none;
     }
 }

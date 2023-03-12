@@ -5341,11 +5341,13 @@ class NavHide extends HTMLElement {
 }
 class SideShow extends HTMLElement {
     sidebarPopUp = null;
+    sideHide = null;
     sidebar = null;
     button = null;
     constructor() {
         super();
         this.button = this.querySelector('input');
+        this.sideHide = document.querySelector('side-hide');
         if (this.id === 'prodLink') {
             if (this.button) {
                 this.button.addEventListener('click', () => {
@@ -5353,12 +5355,13 @@ class SideShow extends HTMLElement {
                 });
             }
         }
-        else if (this.button && this.hasAttribute('data-sidebar')) {
+        else if (this.button && this.sideHide && this.hasAttribute('data-sidebar')) {
             this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
             this.sidebar = document.querySelector(`#${String(this.getAttribute('data-sidebar'))}`);
             this.button.addEventListener('click', () => {
                 this.sidebarPopUp?.classList.remove('hidden');
                 this.sidebar?.classList.remove('hidden');
+                this.sideHide?.classList.remove('hidden');
             });
         }
     }
@@ -5375,6 +5378,7 @@ class SideHide extends HTMLElement {
             this.sidebars.forEach((aside) => {
                 aside.classList.add('hidden');
             });
+            this.classList.add('hidden');
         });
     }
 }
