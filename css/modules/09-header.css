@@ -40,8 +40,6 @@
 }
 #h1title {
     max-width: calc(100% - 0.5rem - 4rem);
-    overflow: hidden;
-    text-overflow: ellipsis;
     margin: 0;
     height: 1.1rem;
     letter-spacing: 0.1rem;
