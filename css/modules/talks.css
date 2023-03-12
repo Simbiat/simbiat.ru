@@ -425,6 +425,7 @@ og-image hide-banner {
 
 post-form {
     display: block;
+    margin-top: 1rem;
 }
 #postForm_submit {
     width: 98%

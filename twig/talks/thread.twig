@@ -17,6 +17,11 @@
     {% for post in posts.entities %}
         {% set post = post|merge({'noname': true, 'allowReplyTo': true}) %}
         {{ include('common/elements/post.twig', post) }}
+        {% if loop.index == 1 and externalLinks|length > 0 %}
+            <aside id="alt_sources" class="sidebar_block">
+                {{ include('common/layout/sidebar/altlinks.twig') }}
+            </aside>
+        {% endif %}
     {% endfor %}
 {% endif %}
 {% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
