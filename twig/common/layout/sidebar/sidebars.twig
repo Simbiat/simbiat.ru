@@ -18,14 +18,3 @@
         </section>
     </aside>
 {% endif %}
-{% if serviceName == 'talks' %}
-    {% if subServiceName == 'thread' %}
-        {% if externalLinks|length > 0 %}
-            <aside class="sidebar hidden" aria-label="Share">
-                <section id="threadAltLinks" class="sidebar_block">
-                    {{ include('common/layout/sidebar/altlinks.twig') }}
-                </section>
-            </aside>
-        {% endif %}
-    {% endif %}
-{% endif %}
