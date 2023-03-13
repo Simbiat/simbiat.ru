@@ -22,9 +22,7 @@ a.noOutline {
 }
 #footerContacts {
     display: block;
-    position: fixed;
-    bottom: 3rem;
-    margin: auto 0;
+    margin-bottom: 3rem;
 }
 #footerSitemap {
     display: inline-block;

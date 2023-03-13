@@ -22,7 +22,6 @@ since they show em as most consistent*/
         z-index: 3;
         display: none;
         background-color: var(--color-body);
-        padding-top: 5rem;
     }
 }
 

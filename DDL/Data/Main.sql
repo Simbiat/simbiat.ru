@@ -426,3 +426,9 @@ INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 're
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveThreads', 'Can move threads to different sections');
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('movePosts', 'Can move posts to different threads');
 INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'moveThreads'), ('1', 'movePosts');
+UPDATE `talks__sections` SET `createdby` = '4' WHERE `talks__sections`.`sectionid` = 6;
+UPDATE `talks__sections` SET `updatedby` = '4' WHERE `talks__sections`.`sectionid` = 6;
+ALTER TABLE `uc__users` ADD `blog` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT 'ID of the personal blog' AFTER `website`, ADD `knowledgebase` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT 'ID of the personal knowledgebase' AFTER `blog`;
+ALTER TABLE `uc__users` ADD CONSTRAINT `blog_to_sesctions` FOREIGN KEY (`blog`) REFERENCES `talks__sections`(`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `uc__users` ADD CONSTRAINT `kb_to_sections` FOREIGN KEY (`knowledgebase`) REFERENCES `talks__sections`(`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE;
+UPDATE `uc__users` SET `blog` = '6' WHERE `uc__users`.`userid` = 4;

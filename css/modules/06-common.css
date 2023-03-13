@@ -270,6 +270,9 @@ footer address a .linkIcon {
 .block {
     display: block;
 }
+.flex {
+    display: flex!important;
+}
 
 /*Width in percents*/
 .w100pc {

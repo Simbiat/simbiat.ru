@@ -6,7 +6,7 @@ class NavShow extends HTMLElement
         super();
         this.navDiv = document.querySelector('#navigation');
         this.addEventListener('click', () => {
-            this.navDiv?.classList.add('shown');
+            this.navDiv?.classList.add('flex');
         });
     }
 }
@@ -19,7 +19,7 @@ class NavHide extends HTMLElement
         super();
         this.navDiv = document.querySelector('#navigation');
         this.addEventListener('click', () => {
-            this.navDiv?.classList.remove('shown');
+            this.navDiv?.classList.remove('flex');
         });
     }
 }

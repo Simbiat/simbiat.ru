@@ -12,18 +12,22 @@
     border-left: none;
     border-bottom: none;
     border-top: none;
+    display: flex;
+    flex-direction: column;
 }
 
 #navList {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 5rem 0 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
     position: relative;
     overflow-y: auto;
+    width: 100%;
+    flex: 1;
 }
 #navList .navElement:first-child a {
     width: calc(100% - 0.2rem);
