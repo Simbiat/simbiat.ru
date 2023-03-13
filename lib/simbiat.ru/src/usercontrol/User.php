@@ -704,12 +704,23 @@ class User extends Entity
     }
     
     #Similar to getPosts(), but only gets posts, that are the first posts in threads
-    public function getTalksStarters(): array
+    public function getTalksStarters(bool $onlyWithBanner = false): array
     {
         #Can't think of a good way to get this in 1 query, thus first getting the latest threads
         $threads = $this->getThreads();
         #Now we get post details
         if (!empty($threads)) {
+            #Keep only items with ogimage
+            if ($onlyWithBanner) {
+                foreach ($threads as $key=>$thread) {
+                    if (empty($thread['ogimage'])) {
+                        unset($threads[$key]);
+                    }
+                }
+                if (empty($threads)) {
+                    return [];
+                }
+            }
             #Convert regular 0, 1, ... n IDs to real thread IDs for later use
             $threads = ArrayHelpers::DigitToKey($threads, 'id');
             #Get post IDs

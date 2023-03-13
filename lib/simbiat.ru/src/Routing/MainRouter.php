@@ -73,7 +73,7 @@ class MainRouter extends Abstracts\Router
     {
         $outputArray = ['h1' => 'Home', 'serviceName' => 'landing',];
         $user = new User(Talks::userIDs['Owner']);
-        $outputArray['posts'] = $user->getTalksStarters();
+        $outputArray['posts'] = $user->getTalksStarters(true);
         return $outputArray;
     }
 
