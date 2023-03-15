@@ -2,7 +2,5 @@
 <project version="4">
   <component name="TypeScriptCompiler">
     <option name="recompileOnChanges" value="true" />
-    <option name="typeScriptServiceDirectory" value="$PROJECT_DIR$/../node/node_modules/typescript" />
-    <option name="versionType" value="SERVICE_DIRECTORY" />
   </component>
 </project>
