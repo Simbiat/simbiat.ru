@@ -3,27 +3,103 @@ declare(strict_types=1);
 namespace Simbiat\About\Pages;
 
 use Simbiat\Abstracts\Page;
+use Simbiat\Config\Talks;
+use Simbiat\usercontrol\User;
 
-class Resume extends Page
+class Homepage extends Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href' => '/about/resume', 'name' => 'Resume']
+        ['href' => '/', 'name' => 'Home']
     ];
     #Sub service name
-    protected string $subServiceName = 'resume';
+    protected string $subServiceName = 'homepage';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = 'Resume';
+    protected string $title = '';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $h1 = 'Resume';
+    protected string $h1 = 'Home';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Resume';
-    #Flag to indicate this is a static page
-    protected bool $static = true;
+    protected string $ogdesc = 'Homepage of Simbiat Software';
+    #List of images to H2 push
+    protected array $h2push = [
+        '/img/logo.svg',
+        '/img/share.svg',
+        '/img/navigation/home.svg',
+        '/img/navigation/talks.svg',
+        '/img/navigation/skills.svg',
+        '/img/navigation/experience.svg',
+        '/img/navigation/projects.svg',
+        '/img/navigation/testimonials.svg',
+        '/img/navigation/contacts.svg',
+        '/img/download.svg',
+        '/img/ogimages/jiangshi.png',
+        '/img/ogimages/dden.png',
+        '/img/ogimages/bictracker.png',
+        '/img/ogimages/fftracker.png',
+    ];
 
     protected function generate(array $path): array
     {
-        return ['timeline' =>
+        $outputArray = ['h1' => 'Home', 'serviceName' => 'homepage', 'yearsOfExperience' => (intval(date('Y')) - 2009)];
+        $user = new User(Talks::userIDs['Owner']);
+        $outputArray['posts'] = $user->getTalksStarters(true);
+        #Limit number of posts
+        $outputArray['posts'] = array_slice($outputArray['posts'], 0, 6);
+        #Feedback
+        $outputArray['feedbacks'] =
+            [
+                [
+                    'href' => '/static/resume/Smartly/20211126.jpg',
+                    'alt' => 'Feedback from Tatu Virtanen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/tatuvirtanen/" target="_blank">Tatu Virtanen</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220216.jpg',
+                    'alt' => 'Feedback from Toivo Vaje',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/toivovaje/" target="_blank">Toivo Vaje</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220218.jpg',
+                    'alt' => 'Feedback from Jarno Marin',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jarnomarin/" target="_blank">Jarno Marin</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220303.jpg',
+                    'alt' => 'Feedback from Marcella Armilla',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220304.jpg',
+                    'alt' => 'Feedback from Ayberk Yerlikaya',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/ayberkyrlky/" target="_blank">Ayberk Yerlikaya</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220404.jpg',
+                    'alt' => 'Feedback from Augustine Lee',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/augustinelee12/" target="_blank">Augustine Lee</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220413.jpg',
+                    'alt' => 'Feedback from Xavier Budan',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/xavierbudan/" target="_blank">Xavier Budan</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220429.jpg',
+                    'alt' => 'Feedback from Jana Christoviciute',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jana-christoviciute-05ba268b/" target="_blank">Jana Christoviciute</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220513_1.jpg',
+                    'alt' => 'Feedback from Marcella Armilla',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220513_2.jpg',
+                    'alt' => 'Feedback from Magalí Gomez',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/magali-gomez/" target="_blank">Magalí Gomez</a>',
+                ],
+            ];
+        $outputArray['timeline'] =
             [
                 [
                     'startTime' => '1989-05-12 02:00:00',
@@ -327,60 +403,142 @@ class Resume extends Page
                     'achievements' => null,
                     'description' => 'Game Design and Production',
                 ],
-            ],
-            'feedbacks' =>
+            ];
+        $outputArray['contacts'] =
             [
                 [
-                    'href' => '/static/resume/Smartly/20211126.jpg',
-                    'alt' => 'Feedback from Tatu Virtanen',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/tatuvirtanen/" target="_blank">Tatu Virtanen</a>',
+                    'url' => 'https://discord.com/users/851693133040975882/',
+                    'img' => '/img/social/discord.svg',
+                    'name' => 'Discord',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220216.jpg',
-                    'alt' => 'Feedback from Toivo Vaje',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/toivovaje/" target="_blank">Toivo Vaje</a>',
+                    'url' => 'mailto:simbiat@outlook.com',
+                    'img' => '/img/social/email.svg',
+                    'name' => 'Email',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220218.jpg',
-                    'alt' => 'Feedback from Jarno Marin',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jarnomarin/" target="_blank">Jarno Marin</a>',
+                    'url' => 'https://facebook.com/SimbiatSoftware/',
+                    'img' => '/img/social/facebook.svg',
+                    'name' => 'Facebook',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220303.jpg',
-                    'alt' => 'Feedback from Marcella Armilla',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>',
+                    'url' => 'https://facebook.com/Simbiat19/',
+                    'img' => '/img/social/facebook.svg',
+                    'name' => 'Facebook (Personal)',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220304.jpg',
-                    'alt' => 'Feedback from Ayberk Yerlikaya',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/ayberkyrlky/" target="_blank">Ayberk Yerlikaya</a>',
+                    'url' => 'https://github.com/Simbiat',
+                    'img' => '/img/social/github.svg',
+                    'name' => 'GitHub',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220404.jpg',
-                    'alt' => 'Feedback from Augustine Lee',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/augustinelee12/" target="_blank">Augustine Lee</a>',
+                    'url' => 'https://habr.com/ru/users/Simbiat/',
+                    'img' => '/img/social/habr.svg',
+                    'name' => 'Habr',
+                    'hidden' => true,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220413.jpg',
-                    'alt' => 'Feedback from Xavier Budan',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/xavierbudan/" target="_blank">Xavier Budan</a>',
+                    'url' => 'https://www.instagram.com/simbiat19/',
+                    'img' => '/img/social/instagram.svg',
+                    'name' => 'Instagram',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220429.jpg',
-                    'alt' => 'Feedback from Jana Christoviciute',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jana-christoviciute-05ba268b/" target="_blank">Jana Christoviciute</a>',
+                    'url' => 'https://kitsu.io/users/Simbiat',
+                    'img' => '/img/social/kitsu.svg',
+                    'name' => 'Kitsu',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220513_1.jpg',
-                    'alt' => 'Feedback from Marcella Armilla',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>',
+                    'url' => 'https://www.linkedin.com/in/simbiat19/',
+                    'img' => '/img/social/linkedin.svg',
+                    'name' => 'LinkedIn',
+                    'hidden' => false,
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220513_2.jpg',
-                    'alt' => 'Feedback from Magalí Gomez',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/magali-gomez/" target="_blank">Magalí Gomez</a>',
+                    'url' => 'https://pinterest.com/simbiat19/',
+                    'img' => '/img/social/pinterest.svg',
+                    'name' => 'Pinterest',
+                    'hidden' => true,
                 ],
-            ],
-        ];
+                [
+                    'url' => 'https://www.reddit.com/user/Simbiat19',
+                    'img' => '/img/social/reddit.svg',
+                    'name' => 'Reddit',
+                    'hidden' => true,
+                ],
+                [
+                    'url' => 'skype:akuma199?chat',
+                    'img' => '/img/social/skype.svg',
+                    'name' => 'Skype',
+                    'hidden' => true,
+                ],
+                [
+                    'url' => 'https://www.snapchat.com/add/simbiat199',
+                    'img' => '/img/social/snapchat.svg',
+                    'name' => 'Snapchat',
+                    'hidden' => true,
+                ],
+                [
+                    'url' => 'https://stackoverflow.com/users/2992851/',
+                    'img' => '/img/social/stackoverflow.svg',
+                    'name' => 'Stack Overflow',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'https://steamcommunity.com/id/Simbiat19',
+                    'img' => '/img/social/steam.svg',
+                    'name' => 'Steam',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'tg://resolve?domain=SimbiatSoftware',
+                    'img' => '/img/social/telegram.svg',
+                    'name' => 'Telegram',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'https://www.twitch.tv/simbiat19',
+                    'img' => '/img/social/twitch.svg',
+                    'name' => 'Twitch',
+                    'hidden' => true,
+                ],
+                [
+                    'url' => 'https://twitter.com/simbiat199',
+                    'img' => '/img/social/twitter.svg',
+                    'name' => 'Twitter',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'https://invite.viber.com/?g2=AQBZepIl4sHyyE27AMP%2FJhSvTIhySSA5KWMcV5NczjT2EbanY0ZoNSndR3g0eJdk',
+                    'img' => '/img/social/viber.svg',
+                    'name' => 'Viber',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'https://vk.com/simbiat19',
+                    'img' => '/img/social/VK.svg',
+                    'name' => 'VKontakte',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'https://wa.me/79057305159',
+                    'img' => '/img/social/whatsapp.svg',
+                    'name' => 'WhatsApp',
+                    'hidden' => false,
+                ],
+                [
+                    'url' => 'https://www.youtube.com/@simbiat',
+                    'img' => '/img/social/youtube.svg',
+                    'name' => 'Youtube',
+                    'hidden' => false,
+                ],
+            ];
+        return $outputArray;
     }
 }

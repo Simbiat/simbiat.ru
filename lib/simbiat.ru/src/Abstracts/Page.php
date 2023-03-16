@@ -7,6 +7,7 @@ use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\HTMLCut;
 use Simbiat\HTTP20\Headers;
+use Simbiat\Images;
 
 abstract class Page
 {
@@ -22,7 +23,7 @@ abstract class Page
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = '';
-    #Page's banner. Defaults to website's banner
+    #Page's banner. Defaults to website's banner. Needs to be inside /img directory and start with /
     protected string $ogimage = '';
     #Cache age, in case we prefer the generated page to be cached
     protected int $cacheAge = 0;
@@ -46,9 +47,8 @@ abstract class Page
     protected array $requiredPermission = [];
     #Link to JS module for preload
     protected string $jsModule = '';
-    #List of images to H2 push
+    #Static list of images to H2 push, which are common for the page type
     protected array $h2push = [
-        '/img/close.svg',
         '/img/logo.svg',
 	    '/img/share.svg',
         '/img/navigation/home.svg',
@@ -58,8 +58,9 @@ abstract class Page
         '/img/navigation/about.svg',
         '/img/navigation/simplepages.svg',
         '/img/navigation/games.svg',
-        '/img/navigation/up.svg',
     ];
+    #List of images to H2 push, which are dependent on data grabbed by the page during generation
+    protected array $h2pushExtra = [];
 
     public final function __construct()
     {
@@ -133,10 +134,13 @@ abstract class Page
         $page['title'] = $this->title;
         $page['h1'] = $this->h1;
         $page['ogdesc'] = $this->ogdesc;
-        $page['ogimage'] = $this->ogimage;
+        if (!empty($this->ogimage) && empty($page['ogimage'])) {
+            $page = array_merge($page, Images::ogImage($this->ogimage, true));
+        }
         $page['cacheAge'] = $this->cacheAge;
         $page['cacheStrat'] = $this->cacheStrat;
-        if (!empty($this->h2push)) {
+        if (!empty($this->h2push) || !empty($this->h2pushExtra)) {
+            $this->h2push = array_merge($this->h2push, $this->h2pushExtra);
             #Prepare set of images to push
             foreach ($this->h2push as $key=>$image) {
                 $this->h2push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];

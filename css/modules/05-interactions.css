@@ -726,7 +726,7 @@ tool-tip {
     max-width: 100vw;
     overflow-wrap: break-word;
     display: none;
-    position: absolute;
+    position: fixed;
     left: var(--cursorX);
     top: var(--cursorY);
 }

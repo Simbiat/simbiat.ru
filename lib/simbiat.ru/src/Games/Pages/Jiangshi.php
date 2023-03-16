@@ -19,7 +19,7 @@ class Jiangshi extends Game
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Jiangshi, the jumping vampire. Paint the world with human blood while striving to the top of the world.';
     #Page's banner. Defaults to website's banner
-    protected string $ogimage = '/img/ogimages/jiangshi.png';
+    protected string $ogimage = '/ogimages/jiangshi.png';
     #Path to game's JS file
     protected string $gameJS = '/html5games/Jiangshi/Jiangshi.js';
     #Flag to indicate the game has sound

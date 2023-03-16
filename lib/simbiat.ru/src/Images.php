@@ -211,16 +211,23 @@ class Images
     }
     
     #Function to generate data for og:image using provided file ID
-    public static function ogImage(string $fileId): array
+    public static function ogImage(string $fileId, bool $isPath = false): array
     {
-        $hashTree = substr($fileId, 0, 2).'/'.substr($fileId, 2, 2).'/'.substr($fileId, 4, 2).'/';
-        #Use glob to get real file path. We could simplify this by taking the extension from DB and using is_file,
-        #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-        $file = glob(Common::$uploadedImg.'/'.$hashTree.$fileId.'.*');
-        if (empty($file)) {
-            return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+        if ($isPath) {
+            $file = Common::$imgDir.$fileId;
+            if (!is_file($file)) {
+                return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+            }
         } else {
-            $file = $file[0];
+            $hashTree = substr($fileId, 0, 2).'/'.substr($fileId, 2, 2).'/'.substr($fileId, 4, 2).'/';
+            #Use glob to get real file path. We could simplify this by taking the extension from DB and using is_file,
+            #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
+            $file = glob(Common::$uploadedImg.'/'.$hashTree.$fileId.'.*');
+            if (empty($file)) {
+                return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+            } else {
+                $file = $file[0];
+            }
         }
         #Using array_merge to suppress PHPStorm's complaints about array keys
         $info = array_merge(pathinfo($file));
@@ -233,6 +240,10 @@ class Images
         if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width']/$info['height'], 1) !== 1.9) {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
         }
-        return ['ogimage' => '/img/uploaded/'.$hashTree.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
+        if ($isPath) {
+            return ['ogimage' => '/img'.$fileId, 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
+        } else {
+            return ['ogimage' => '/img/uploaded/'.$hashTree.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
+        }
     }
 }

@@ -28,11 +28,7 @@ class General extends StaticPage
             'sitemap_links' => [
                 ['loc'=>'', 'name'=>'Home Page'],
                 ['loc'=>'simplepages/devicedetector/', 'name'=>'Device Detector'],
-                ['loc'=>'about/me/', 'name'=>'About me'],
-                ['loc'=>'about/website/', 'name'=>'About website'],
                 ['loc'=>'about/tech/', 'name'=>'Technology used'],
-                ['loc'=>'about/resume/', 'name'=>'Resume'],
-                ['loc'=>'about/contacts/', 'name'=>'Contacts'],
                 ['loc'=>'about/tos/', 'name'=>'Terms of Service'],
                 ['loc'=>'about/privacy/', 'name'=>'Privacy Policy'],
                 ['loc'=>'about/security/', 'name'=>'Security Policy'],

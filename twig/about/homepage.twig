@@ -1,0 +1,240 @@
+<section id="home" class="homePage">
+    <img loading="lazy" decoding="async" class="aboutMe float_left galleryZoom" id="me" src="/static/resume/photo_square.jpg" alt="Me">
+    <div>
+        <p id="hiThere">Hi, there!</p>
+        <p>My name is Dmitry, nice to meet you!</p>
+        <p>I'm an experienced tech support analyst, who recently started dabbling in game design and development.</p>
+        <p>On this website you can learn more about my skills and try out some of the projects I've done. Or you can just <a href="https://www.linkedin.com/in/simbiat19/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/social/linkedin.svg" alt="LinkedIn">hire</a> me.</p>
+    </div>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Skills" data-tooltip="Skills" src="/img/navigation/skills.svg">
+    <h2 id="skills" class="homePage blockTitle">Skills</h2>
+</div>
+<section class="homePage">
+    <h3>Core competencies</h3>
+    <ol class="medalsList">
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>Technical Support</li>
+                <li>Incident Management</li>
+                <li>Problem Management</li>
+                <li>Quality Assurance</li>
+                <li>Product Ownership</li>
+                <li>Change Control</li>
+                <li>Automation</li>
+                <li>Storytelling</li>
+                <li>Creativity</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>Web Development</li>
+                <li>Fullstack Development</li>
+                <li>Business Analysis</li>
+                <li>Project Management</li>
+                <li>Risk Management</li>
+                <li>Disaster Recovery </li>
+                <li>Security</li>
+                <li>Customer Success</li>
+                <li>Communication</li>
+                <li>Coaching</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>Leadership</li>
+                <li>Software Architecture</li>
+                <li>UI/UX Design</li>
+                <li>Graphics Editing</li>
+                <li>Video Editing</li>
+            </ul>
+        </li>
+    </ol>
+    <h3>Languages</h3>
+    <ol class="medalsList">
+        <li>
+            <ul class="zeroMargin tagList">
+                <li><img loading="lazy" decoding="async" class="linkIcon" src="/img/flags/United-Kingdom.svg" alt="English">English</li>
+                <li><img loading="lazy" decoding="async" class="linkIcon" src="/img/flags/Russia.svg" alt="Russian">Russian</li>
+                <li>PHP</li>
+                <li>SQL</li>
+                <li>JavaScript</li>
+                <li>TypeScript</li>
+                <li>HTML5</li>
+                <li>CSS3</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>VBScript</li>
+                <li>VBA</li>
+                <li>VB.NET</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>Windows CLI</li>
+                <li>PowerShell</li>
+                <li>Python</li>
+                <li>C#</li>
+                <li>C++</li>
+                <li><img loading="lazy" decoding="async" class="linkIcon" src="/img/flags/Germany.svg" alt="German">German</li>
+                <li><img loading="lazy" decoding="async" class="linkIcon" src="/img/flags/Finland.svg" alt="Finnish">Finnish</li>
+            </ul>
+        </li>
+    </ol>
+    <h3>Tech tools and concepts</h3>
+    <ol class="medalsList">
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>MS Excel</li>
+                <li>MS Outlook</li>
+                <li>MS Word</li>
+                <li>MS PowerPoint</li>
+                <li>PHPStorm</li>
+                <li>MySQL/MariaDB</li>
+                <li>ServiceNow</li>
+                <li>REST</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>Adobe Photoshop</li>
+                <li>Adobe Premiere</li>
+                <li>Oracle</li>
+                <li>MS SQL</li>
+                <li>Windows</li>
+                <li>Windows Server</li>
+                <li>Jira</li>
+                <li>Confluence</li>
+                <li>Data Architecture</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="zeroMargin tagList">
+                <li>GameMaker</li>
+                <li>Apache HTTPD</li>
+                <li>LiteSpeed</li>
+                <li>Microservices</li>
+                <li>Agile</li>
+                <li>SharePoint</li>
+            </ul>
+        </li>
+    </ol>
+    <p>More on <a href="https://app.pluralsight.com/profile/Simbiat" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/icons/Pluralsight.svg" alt="PluralSight">PluralSight</a>.</p>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Experience" data-tooltip="Experience" src="/img/navigation/experience.svg">
+    <h2 id="experience" class="homePage blockTitle">Experience</h2>
+</div>
+<section class="homePage">
+    <p>{{ yearsOfExperience }}+ years of work experience is nothing to sniff at, and potentially a lot to read about. I tried to compact it into a nice timeline, but am hiding it in case you are not ready to scroll a lot.</p>
+    <details>
+        <summary class="middle">I am ready, show it to me!</summary>
+        {{ timeline(timeline, brLimit=6) }}
+    </details>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Projects" data-tooltip="Projects" src="/img/navigation/projects.svg">
+    <h2 id="projects" class="homePage blockTitle">Projects</h2>
+</div>
+<section class="homePage">
+    <h3>Games</h3>
+    <div class="homePage showcase">
+        <a href="/games/jiangshi/" class="homePage banner noNewTabIcon">
+            <img loading="lazy" decoding="async" alt="Jiangshi" src="/img/ogimages/jiangshi.png">
+            <div>Jiangshi</div>
+        </a>
+        <a href="/games/dden/" class="homePage banner noNewTabIcon">
+            <img loading="lazy" decoding="async" alt="Dangerous Dave: Endless Nightmare" src="/img/ogimages/dden.png">
+            <div>Dangerous Dave: Endless Nightmare</div>
+        </a>
+    </div>
+    <h3>PHP</h3>
+    <div class="homePage showcase">
+        <a href="/fftracker/" class="homePage banner noNewTabIcon">
+            <img loading="lazy" decoding="async" alt="Final Fantasy XIV Tracker" src="/img/ogimages/fftracker.png">
+            <div>Final Fantasy XIV Tracker</div>
+        </a>
+        <a href="/bictracker/" class="homePage banner noNewTabIcon">
+            <img loading="lazy" decoding="async" alt="BIC Tracker" src="/img/ogimages/bictracker.png">
+            <div>BIC Tracker</div>
+        </a>
+    </div>
+    <br>
+    <details>
+        <summary class="rightSummary"><h3 class="homePage" id="otherProjects">Others</h3></summary>
+        <div class="homePage showcase">
+            <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" class="homePage banner noNewTabIcon">
+                <img loading="lazy" decoding="async" alt="Aqua Chronica" src="/img/ogimages/aquachronica.png">
+                <div>Aqua Chronica</div>
+            </a>
+            <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" class="homePage banner noNewTabIcon">
+                <img loading="lazy" decoding="async" alt="Welcome to My Crib" src="/img/ogimages/mycrib.png">
+                <div>Welcome to My Crib</div>
+            </a>
+            <a href="/simplepages/devicedetector/" class="homePage banner noNewTabIcon">
+                <img loading="lazy" decoding="async" alt="Device Detector Icons" src="/img/ogimages/devicedetector.png">
+                <div>Device Detector Icons</div>
+            </a>
+            <a href="https://github.com/Simbiat" class="homePage banner noNewTabIcon">
+                <img loading="lazy" decoding="async" alt="GitHub" src="/img/ogimages/github.png">
+                <div>GitHub</div>
+            </a>
+            <a href="https://codepen.io/Simbiat" class="homePage banner noNewTabIcon">
+                <img loading="lazy" decoding="async" alt="Codepen" src="/img/ogimages/codepen.png">
+                <div>Codepen</div>
+            </a>
+        </div>
+    </details>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Testimonials" data-tooltip="Testimonials" src="/img/navigation/testimonials.svg">
+    <h2 id="testimonials" class="homePage blockTitle">Testimonials</h2>
+</div>
+<section class="homePage">
+    <div>
+        {{ include('common/elements/carousel.twig', {'images': feedbacks}, true) }}
+    </div>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Blogs" data-tooltip="Blogs" src="/img/navigation/talks.svg">
+    <h2 id="latestBlogs" class="homePage blockTitle">Blogs</h2>
+</div>
+<section class="homePage">
+    <div class="homePage showcase">
+        {% for post in posts %}
+            <a href="/talks/threads/{{ post.threadid }}" class="homePage banner noNewTabIcon">
+                <img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage }}">
+                <div>{{ post.name }}</div>
+            </a>
+        {% endfor %}
+    </div>
+    <a id="landing_read_more" href="/talks/sections/6">Read more blogs</a>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Downloads" data-tooltip="Downloads" src="/img/download.svg">
+    <h2 id="downloads" class="homePage blockTitle">Downloads</h2>
+</div>
+<section class="homePage">
+    <p>My resume can be also be downloaded as <a href="/static/resume/Resume.pdf" download><img loading="lazy" decoding="async" class="linkIcon" src="/img/icons/PDF.svg" alt="PDF">PDF</a> of <a href="/static/resume/Resume.docx" download><img loading="lazy" decoding="async" class="linkIcon" src="/img/icons/DOCX.svg" alt="DOCX">DOCX</a>.</p>
+</section>
+
+<div class="homePage hWrapper">
+    <img loading="lazy" decoding="async" class="navIcon" alt="Contacts" data-tooltip="Contacts" src="/img/navigation/contacts.svg">
+    <h2 id="contacts" class="homePage blockTitle">Contacts</h2>
+</div>
+<section class="homePage" id="contactsList">
+    {% for contact in contacts %}
+        {% if not contact.hidden %}
+            <a href="{{ contact.url }}" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon" src="{{ contact.img }}" alt="{{ contact.name }}"></a>
+        {% endif %}
+    {% endfor %}
+</section>

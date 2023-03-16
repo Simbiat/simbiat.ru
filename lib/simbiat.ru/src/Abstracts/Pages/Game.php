@@ -33,6 +33,9 @@ class Game extends Page
         $outputArray['gameJS'] = $this->gameJS.'?'.filemtime($file);
         $outputArray['hasSound'] = $this->hasSound;
         $outputArray['hasMusic'] = $this->hasMusic;
+        if (!empty($this->ogimage)) {
+            $this->h2pushExtra[] = '/img'.$this->ogimage;
+        }
         return $outputArray;
     }
 }

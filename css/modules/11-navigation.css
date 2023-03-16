@@ -1,10 +1,10 @@
 #navigation {
     position: fixed;
     left: 0;
-    border-width: var(--border-width);
     height: 100vh;
     width: var(--sidebar-width);
     z-index: 1;
+    border-width: var(--border-width);
     margin-right: var(--sidebar-margin);
     border-style: solid;
     border-radius: 0 var(--border-radius) 0 var(--border-radius);
@@ -26,6 +26,7 @@
     height: 100%;
     position: relative;
     overflow-y: auto;
+    overflow-x: hidden;
     width: 100%;
     flex: 1;
 }

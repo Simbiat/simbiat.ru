@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Routing;
 
 use Simbiat\About;
+use Simbiat\About\Pages\Homepage;
 use Simbiat\Abstracts;
 use Simbiat\bictracker;
 use Simbiat\Config\Talks;
@@ -63,18 +64,15 @@ class MainRouter extends Abstracts\Router
             'rss', 'atom' => (new Feeds)->uriParse($path),
             #Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
-            '' => $this->landing(),
+            '' => $this->homepage(),
             default => $this->error(['404']),
         };
     }
 
     #Temporary function for landing page
-    private function landing(): array
+    private function homepage(): array
     {
-        $outputArray = ['h1' => 'Home', 'serviceName' => 'landing',];
-        $user = new User(Talks::userIDs['Owner']);
-        $outputArray['posts'] = $user->getTalksStarters(true);
-        return $outputArray;
+        return (new Homepage)->get([]);
     }
 
     #Function to help route error pages on frontend

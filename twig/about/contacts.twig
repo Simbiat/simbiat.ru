@@ -1,8 +1,0 @@
-<p>If required or desired you can try contacting or following me using the social media below. My level of activity varies depending on the platform, though, thus keep in mind potential delays in answer.</p>
-<ul>
-    {% for contact in contacts %}
-        {% if not contact.hidden %}
-            <li><a href="{{ contact.url }}" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="{{ contact.img }}" alt="{{ contact.name }}">{{ contact.name }}</a></li>
-        {% endif %}
-    {% endfor %}
-</ul>

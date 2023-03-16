@@ -20,6 +20,7 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: center;
+    position: relative;
 }
 main {
     border-radius: var(--border-radius);

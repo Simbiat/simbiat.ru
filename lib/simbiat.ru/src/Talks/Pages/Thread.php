@@ -98,6 +98,8 @@ class Thread extends Page
             $outputArray = array_merge($outputArray, Images::ogImage($outputArray['ogimage']));
             if (!empty($outputArray['ogimage'])) {
                 $this->ogimage = $outputArray['ogimage'];
+                #Add to h2push
+                $this->h2pushExtra[] = $this->ogimage;
             }
         }
         #Set ogtype

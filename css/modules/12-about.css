@@ -11,5 +11,111 @@
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
+    margin: 1rem;
     filter: var(--border-shadow);
+}
+#hiThere {
+    font-weight: bolder;
+    font-size: xx-large;
+    padding: 1rem;
+}
+
+.homePage.blockTitle {
+    margin-top: 5rem;
+}
+
+.homePage.showcase {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+section#home {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+section.homePage {
+    background-color: var(--color-article);
+    border-width: var(--border-width);
+    border-radius: var(--border-radius);
+    border-style: solid;
+    border-color: var(--border-color-inset);
+    padding: 0.5rem 0.5rem;
+}
+
+.homePage.hWrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+}
+.homePage.hWrapper img {
+    margin-top: 5rem;
+    margin-bottom: 1.25rem;
+}
+
+@counter-style medals-list {
+    system: fixed;
+    symbols: 🥇 🥈 🥇;
+    suffix: ' ';
+}
+.medalsList {
+    list-style-type: medals-list;
+}
+
+.homePage.banner {
+    display: block;
+    width: 40%;
+    margin: 0.25rem;
+    border-style: solid!important;
+    border-width: var(--border-width)!important;
+    border-radius: var(--border-radius)!important;
+    border-color: var(--border-color-outset)!important;
+    position: relative;
+}
+.homePage.banner:hover,
+.homePage.banner:focus,
+.homePage.banner:active {
+    border-color: var(--color-interactive)!important;
+}
+.homePage.banner img {
+    width: 100%;
+    border-radius: var(--border-radius);
+}
+.homePage.banner div {
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .75);
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+    padding: 0.1rem;
+    width: calc(100% - 2 * var(--border-width) - 0.1rem);
+}
+
+.homePage#otherProjects {
+    display: inline;
+    color: var(--color-text);
+}
+
+.homePage#contactsList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+.homePage#contactsList .linkIcon {
+    width: 2rem;
+    height: 2rem;
+    filter: brightness(0.75);
+}
+.homePage#contactsList .linkIcon:hover,
+.homePage#contactsList .linkIcon:focus,
+.homePage#contactsList .linkIcon:active {
+    filter: brightness(1);
 }
