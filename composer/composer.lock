@@ -643,16 +643,16 @@
         },
         {
             "name": "matomo/device-detector",
-            "version": "6.1.0",
+            "version": "6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/device-detector.git",
-                "reference": "bcbf10f2e0e158b338c6c5db9e89862313405215"
+                "reference": "a549e24350ff63e15dc691b6b21b73909b4fa9bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/bcbf10f2e0e158b338c6c5db9e89862313405215",
-                "reference": "bcbf10f2e0e158b338c6c5db9e89862313405215",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/a549e24350ff63e15dc691b6b21b73909b4fa9bd",
+                "reference": "a549e24350ff63e15dc691b6b21b73909b4fa9bd",
                 "shasum": ""
             },
             "require": {
@@ -708,7 +708,7 @@
                 "source": "https://github.com/matomo-org/matomo",
                 "wiki": "https://dev.matomo.org/"
             },
-            "time": "2023-02-22T10:17:31+00:00"
+            "time": "2023-03-16T08:19:16+00:00"
         },
         {
             "name": "mustangostang/spyc",
@@ -1553,16 +1553,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "6.3.2",
+            "version": "6.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "6880668bef341a0572a8354768bb1f7f53f7121c"
+                "reference": "488a05ddf56e844e593a3fb7da68aa5fb41f01ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/6880668bef341a0572a8354768bb1f7f53f7121c",
-                "reference": "6880668bef341a0572a8354768bb1f7f53f7121c",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/488a05ddf56e844e593a3fb7da68aa5fb41f01ac",
+                "reference": "488a05ddf56e844e593a3fb7da68aa5fb41f01ac",
                 "shasum": ""
             },
             "type": "component",
@@ -1606,9 +1606,9 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/6.3.2"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/6.4.0"
             },
-            "time": "2023-02-22T07:52:19+00:00"
+            "time": "2023-03-16T00:43:05+00:00"
         },
         {
             "name": "twig/twig",

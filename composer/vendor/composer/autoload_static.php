@@ -463,6 +463,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/../lib/database/src/Database/Pool.php',
         'Simbiat\\Errors' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Errors.php',
         'Simbiat\\Feeds' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Feeds.php',
+        'Simbiat\\Games\\Pages\\Anti' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Games/Pages/Anti.php',
         'Simbiat\\Games\\Pages\\DDEN' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Games/Pages/DDEN.php',
         'Simbiat\\Games\\Pages\\Jiangshi' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Games/Pages/Jiangshi.php',
         'Simbiat\\Games\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Games/Router.php',

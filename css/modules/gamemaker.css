@@ -8,7 +8,7 @@ game-canvas .sound_warning {
     text-align: center;
 }
 #gm4html5_div_id #canvas {
-    position: absolute;
+    position: fixed;
     top: 50%!important;
     left: 50%!important;
     bottom: -50%!important;

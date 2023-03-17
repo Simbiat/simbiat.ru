@@ -309,6 +309,7 @@ return array(
     'Simbiat\\Database\\Pool' => $baseDir . '/../lib/database/src/Database/Pool.php',
     'Simbiat\\Errors' => $baseDir . '/../lib/simbiat.ru/src/Errors.php',
     'Simbiat\\Feeds' => $baseDir . '/../lib/simbiat.ru/src/Feeds.php',
+    'Simbiat\\Games\\Pages\\Anti' => $baseDir . '/../lib/simbiat.ru/src/Games/Pages/Anti.php',
     'Simbiat\\Games\\Pages\\DDEN' => $baseDir . '/../lib/simbiat.ru/src/Games/Pages/DDEN.php',
     'Simbiat\\Games\\Pages\\Jiangshi' => $baseDir . '/../lib/simbiat.ru/src/Games/Pages/Jiangshi.php',
     'Simbiat\\Games\\Router' => $baseDir . '/../lib/simbiat.ru/src/Games/Router.php',

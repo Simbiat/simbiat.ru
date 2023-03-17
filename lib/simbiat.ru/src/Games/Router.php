@@ -11,7 +11,7 @@ use Simbiat\Talks\Pages\User;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['jiangshi', 'dden'];
+    protected array $subRoutes = ['jiangshi', 'dden', 'anti'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
         ['href'=>'/games/', 'name'=>'Games']
@@ -27,6 +27,7 @@ class Router extends \Simbiat\Abstracts\Router
         return match($path[0]) {
             'jiangshi' => (new Pages\Jiangshi)->get(array_slice($path, 1)),
             'dden' => (new Pages\DDEN)->get(array_slice($path, 1)),
+            'anti' => (new Pages\Anti)->get(array_slice($path, 1)),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
         };
     }
