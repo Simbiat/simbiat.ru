@@ -49,7 +49,7 @@ class General extends StaticPage
                 ['loc'=>'fftracker/statistics/other/', 'changefreq' => 'weekly', 'name'=>'FFXIV: Other'],
                 ['loc'=>'games/dden/', 'changefreq' => 'monthly', 'name'=>'Dangerous Dave: Endless Nightmare'],
                 ['loc'=>'games/jiangshi/', 'changefreq' => 'monthly', 'name'=>'Jiangshi'],
-                ['loc'=>'games/anti/', 'changefreq' => 'monthly', 'name'=>'AntI'],
+                ['loc'=>'games/radicalresonance/', 'changefreq' => 'monthly', 'name'=>'Radical Resonance'],
                 ['loc'=>'sitemap/xml/index/', 'name'=>'XML Sitemap'],
                 ['loc'=>'sitemap/html/index/', 'name'=>'HTML Sitemap'],
                 ['loc'=>'sitemap/txt/index/', 'name'=>'TXT Sitemap'],

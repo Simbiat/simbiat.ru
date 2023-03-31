@@ -250,6 +250,10 @@ RewriteRule ^ https://www.simbiat.dev/%{REQUEST_URI} [R=301,L]
 RewriteCond %{REQUEST_URI} (^|/)about/(website|me|resume|contacts) [NC]
 RewriteRule ^ https://www.simbiat.dev/ [R=301,NC,L]
 
+#Redirect AntI page
+RewriteCond %{REQUEST_URI} (^|/)games/anti/? [NC]
+RewriteRule ^ https://www.simbiat.dev/games/radicalresonance/ [R=301,NC,L]
+
 #Redirect bic links to bictracker
 RewriteCond %{REQUEST_URI} (^|/)bic/.* [NC]
 RewriteCond %{REQUEST_URI} !bictracker.* [NC]
