@@ -17,9 +17,9 @@ class RadicalResonance extends Game
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Radical Resonance';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Music vs AI';
+    protected string $ogdesc = 'Music will prevail';
     #Page's banner. Defaults to website's banner
-    protected string $ogimage = '';
+    protected string $ogimage = '/ogimages/RadicalResonance.png';
     #Path to game's JS file
     protected string $gameJS = '/html5games/RadicalResonance/Radical Resonance.js';
     #Flag to indicate the game has sound
