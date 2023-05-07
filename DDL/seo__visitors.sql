@@ -7,7 +7,7 @@ CREATE TABLE `seo__visitors`
     `last`   TIMESTAMP       DEFAULT CURRENT_TIMESTAMP() NOT NULL ON UPDATE CURRENT_TIMESTAMP() COMMENT 'Time of last visit',
     `views`  BIGINT UNSIGNED DEFAULT 1                   NOT NULL COMMENT 'Number of viewed pages',
     PRIMARY KEY (`ip`, `os`, `client`)
-) COMMENT 'Views statistics per user';
+) COMMENT 'Views statistics per user' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `client` ON `seo__visitors` (`client`);
 

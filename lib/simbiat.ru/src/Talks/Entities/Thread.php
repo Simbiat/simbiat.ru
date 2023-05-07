@@ -371,6 +371,18 @@ class Thread extends Entity
         if (is_null($parent->id)) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parentid'].'` does not exist'];
         }
+        #Check if posting to Knowledgebase and have proper permission, unless created by the poster
+        if ($parent->type === 'Knowledgebase' && !in_array('createKnowledge', $_SESSION['permissions']) && $parent->owned === false) {
+            return ['http_error' => 403, 'reason' => 'No `createKnowledge` permission to post in Knowledgebase section `'.$parent->name.'`'];
+        }
+        #Check if posting to Blog and have proper permission, unless created by the poster
+        if ($parent->type === 'Blog' && $parent->owned === false) {
+            return ['http_error' => 403, 'reason' => 'Cannot post in not owned Blog section'];
+        }
+        #Check if posting to Changelog and have proper permission, unless created by the poster
+        if ($parent->type === 'Changelog' && $parent->owned === false) {
+            return ['http_error' => 403, 'reason' => 'Cannot post in not owned Changelog section'];
+        }
         #Check if parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'])) {
             return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed section `'.$parent->name.'`'];

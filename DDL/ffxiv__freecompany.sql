@@ -40,7 +40,7 @@ CREATE TABLE `ffxiv__freecompany`
     CONSTRAINT `estateid` FOREIGN KEY (`estateid`) REFERENCES `ffxiv__estate` (`estateid`) ON UPDATE SET NULL ON DELETE SET NULL,
     CONSTRAINT `grandcompanyid` FOREIGN KEY (`grandcompanyid`) REFERENCES `ffxiv__grandcompany` (`gcId`) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT `serverid_fc` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Free Companies found on Lodestone';
+) COMMENT 'Free Companies found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `activeid` ON `ffxiv__freecompany` (`activeid`);
 

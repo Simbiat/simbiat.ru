@@ -11,7 +11,7 @@ CREATE TABLE `ffxiv__linkshell`
     `deleted`     DATE                                            NULL COMMENT 'Date when Linkshell was marked as deleted',
     `communityid` VARCHAR(40)                                     NULL COMMENT 'Community ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/community_finder/communityid/)',
     CONSTRAINT `serverid_ls` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Linkshells (both crossworld and not) found on Lodestone';
+) COMMENT 'Linkshells (both crossworld and not) found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `communityid` ON `ffxiv__linkshell` (`communityid`);
 

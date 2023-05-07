@@ -5,7 +5,7 @@ CREATE TABLE `uc__emails`
     `subscribed` TINYINT(1) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Flag indicating, that this mail should receive notifications',
     `activation` TEXT                          NULL COMMENT 'Encrypted activation code',
     CONSTRAINT `email_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-);
+) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `subscribed` ON `uc__emails` (`subscribed` DESC);
 

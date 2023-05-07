@@ -7,6 +7,6 @@ CREATE TABLE `cron__errors`
     PRIMARY KEY (`task`, `arguments`),
     CONSTRAINT `errors_to_arguments` FOREIGN KEY (`arguments`) REFERENCES `cron__schedule` (`arguments`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `errors_to_tasks` FOREIGN KEY (`task`) REFERENCES `cron__tasks` (`task`) ON UPDATE CASCADE ON DELETE CASCADE
-);
+) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `time` ON `cron__errors` (`time`);

@@ -432,3 +432,12 @@ ALTER TABLE `uc__users` ADD `blog` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT 'I
 ALTER TABLE `uc__users` ADD CONSTRAINT `blog_to_sesctions` FOREIGN KEY (`blog`) REFERENCES `talks__sections`(`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `uc__users` ADD CONSTRAINT `kb_to_sections` FOREIGN KEY (`knowledgebase`) REFERENCES `talks__sections`(`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE;
 UPDATE `uc__users` SET `blog` = '6' WHERE `uc__users`.`userid` = 4;
+ALTER TABLE `uc__users` ADD `changelog` INT(10) UNSIGNED NULL DEFAULT NULL COMMENT 'ID of the personal changelog' AFTER `knowledgebase`;
+ALTER TABLE `uc__users` ADD CONSTRAINT `changelog_to_sesctions` FOREIGN KEY (`changelog`) REFERENCES `talks__sections`(`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE;
+UPDATE `uc__users` SET `changelog` = '7' WHERE `uc__users`.`userid` = 4;
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveSections', 'Can move and order sections');
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'moveSections');
+INSERT INTO `talks__sections` (`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `system`, `closed`, `private`, `created`, `createdby`, `updated`, `updatedby`, `icon`) VALUES ('8', 'simbiat.dev', 'Help articles related to the simbiat.dev website', '4', '0', '6', '1', NULL, '0', current_timestamp(), '2', current_timestamp(), '4', 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac');
+UPDATE `uc__users` SET `knowledgebase` = '8' WHERE `uc__users`.`userid` = 4;
+UPDATE `talks__sections` SET `sequence` = '99' WHERE `talks__sections`.`sectionid` IN (6, 7, 8);
+UPDATE `talks__sections` SET `description` = 'Personal blog of simbiat.dev\'s owner' WHERE `talks__sections`.`sectionid` = 6;

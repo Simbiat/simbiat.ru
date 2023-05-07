@@ -6,7 +6,7 @@ CREATE TABLE `ffxiv__character_achievement`
     PRIMARY KEY (`characterid`, `achievementid`),
     CONSTRAINT `char_ach_ach` FOREIGN KEY (`achievementid`) REFERENCES `ffxiv__achievement` (`achievementid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `char_ach_char` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Achievements linked to known characters';
+) COMMENT 'Achievements linked to known characters' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `ach` ON `ffxiv__character_achievement` (`achievementid`);
 

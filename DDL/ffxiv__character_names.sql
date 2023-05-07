@@ -4,4 +4,4 @@ CREATE TABLE `ffxiv__character_names`
     `name`        VARCHAR(50)  NOT NULL COMMENT 'Character''s previous name',
     PRIMARY KEY (`characterid`, `name`),
     CONSTRAINT `char_names_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Past names used by characters';
+) COMMENT 'Past names used by characters' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

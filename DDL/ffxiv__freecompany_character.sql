@@ -8,4 +8,4 @@ CREATE TABLE `ffxiv__freecompany_character`
     CONSTRAINT `fc_char_rank` FOREIGN KEY (`rankid`) REFERENCES `ffxiv__freecompany_rank` (`rankid`) ON UPDATE SET NULL ON DELETE SET NULL,
     CONSTRAINT `fc_xchar_fc` FOREIGN KEY (`freecompanyid`) REFERENCES `ffxiv__freecompany` (`freecompanyid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `fc_xchar_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Characters linked to Free Companies, past and present';
+) COMMENT 'Characters linked to Free Companies, past and present' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

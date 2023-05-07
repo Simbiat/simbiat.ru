@@ -17,6 +17,7 @@ class Section extends Entity
     protected string $idFormat = '/^top|\d+$/mi';
     public string $name = '';
     public string $type = 'Category';
+    public string $inheritedType = 'Category';
     public bool $system = true;
     public bool $private = false;
     public ?int $closed = null;
@@ -26,6 +27,8 @@ class Section extends Entity
     public int $updatedBy = 1;
     public string $icon = '/img/talks/category.svg';
     public string $description = '';
+    #Flag indicating that section is owned by the current user
+    public bool $owned = false;
     #List of parents for the section
     public array $parents = [];
     #ID of direct parent
@@ -54,6 +57,7 @@ class Section extends Entity
                 'icon' => '/img/talks/category.svg',
                 'parents' => [],
                 'threads' => [],
+                'owned' => false,
             ];
             #Get children
             $data['children'] = (new Sections(where: '`talks__sections`.`parentid` IS NULL'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()')))->listEntities($page);
@@ -65,10 +69,39 @@ class Section extends Entity
             }
             $data = $data['entities'][0];
             #Get parents
+            $inheritedOwnership = false;
             if (empty($data['parentid'])) {
                 $data['parents'] = [];
+                $data['inheritedType'] = match ($this->id) {
+                    '1' => 'Blog',
+                    '2' => 'Forum',
+                    '3' => 'Changelog',
+                    '4' => 'Knowledgebase',
+                    '5' => 'Support',
+                    default => $data['detailedType'],
+                };
             } else {
                 $data['parents'] = $this->getParents(intval($data['parentid']));
+                foreach (array_reverse($data['parents']) as $parent) {
+                    if ($parent['createdby'] === $_SESSION['userid']) {
+                        $inheritedOwnership = true;
+                        break;
+                    }
+                }
+                $data['inheritedType'] = match ($data['parents'][0]['sectionid']) {
+                    1 => 'Blog',
+                    2 => 'Forum',
+                    3 => 'Changelog',
+                    4 => 'Knowledgebase',
+                    5 => 'Support',
+                    default => $data['detailedType'],
+                };
+                //echo $data['inheritedType']; exit;
+            }
+            if ($inheritedOwnership || $data['createdby'] === $_SESSION['userid']) {
+                $data['owned'] = true;
+            } else {
+                $data['owned'] = false;
             }
             #Get children
             $where = '';
@@ -146,9 +179,10 @@ class Section extends Entity
     {
         $this->name = $fromDB['name'];
         $this->type = $fromDB['detailedType'] ?? $fromDB['type'] ?? 'Category';
+        $this->inheritedType = $fromDB['inheritedType'] ?? 'Category';
         $this->system = boolval($fromDB['system']);
         $this->private = boolval($fromDB['private']);
-        //$this->closed = ($this->id === 'top' ? time() : ($fromDB['closed'] !== null ? strtotime($fromDB['closed']) : null));
+        $this->owned = $fromDB['owned'];
         $this->closed = $fromDB['closed'] !== null ? strtotime($fromDB['closed']) : null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
         $this->createdBy = $fromDB['createdby'] ?? Talks::userIDs['Deleted user'];
@@ -166,7 +200,7 @@ class Section extends Entity
     {
         $parents = [];
         #Get parent of the current ID
-        $parents[] = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$id, 'int']]);
+        $parents[] = HomePage::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid`, `createdby` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$id, 'int']]);
         if (empty($parents)) {
             return [];
         }
@@ -237,10 +271,6 @@ class Section extends Entity
     
     public function add(): array
     {
-        #Check permission
-        if (!in_array('addSections', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
-        }
         #Sanitize data
         $data = $_POST['newsection'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -275,6 +305,35 @@ class Section extends Entity
                     ],
                 ]
             );
+            #Link the section to user, if it's required
+            if (!empty($data['linkType'])) {
+                switch($data['linkType']) {
+                    case 2:
+                        HomePage::$dbController->query('UPDATE `uc__users` SET `blog`=:sectionid WHERE `userid`=:userid;',
+                            [
+                                ':userid' => [$_SESSION['userid'], 'int'],
+                                ':sectionid' => [$newID, 'int'],
+                            ]
+                        );
+                        break;
+                    case 4:
+                        HomePage::$dbController->query('UPDATE `uc__users` SET `changelog`=:sectionid WHERE `userid`=:userid;',
+                            [
+                                ':userid' => [$_SESSION['userid'], 'int'],
+                                ':sectionid' => [$newID, 'int'],
+                            ]
+                        );
+                        break;
+                    case 6:
+                        HomePage::$dbController->query('UPDATE `uc__users` SET `knowledgebase`=:sectionid WHERE `userid`=:userid;',
+                            [
+                                ':userid' => [$_SESSION['userid'], 'int'],
+                                ':sectionid' => [$newID, 'int'],
+                            ]
+                        );
+                        break;
+                }
+            }
             return ['response' => true, 'location' => '/talks/sections/'.$newID];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -284,15 +343,18 @@ class Section extends Entity
     
     public function edit(): array
     {
-        #Check permission
-        if (!in_array('editSections', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
-        }
         #Sanitize data
         $data = $_POST['cursection'] ?? [];
         $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;
+        }
+        #Check if we are changing to category
+        if ($data['type'] === 1) {
+            #Check if we have any threads in it
+            if (HomePage::$dbController->check('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid LIMIT 1;', [':sectionid' => [$this->id, 'int']])) {
+                return ['http_error' => 400, 'reason' => 'Can\'t change section type to `Category`, because it has threads in it'];
+            }
         }
         try {
             $queries = [];
@@ -337,7 +399,7 @@ class Section extends Entity
         }
     }
     
-    private function sanitizeInput(array &$data): bool|array
+    private function sanitizeInput(array &$data, bool $edit = false): bool|array
     {
         if (empty($data)) {
             return ['http_error' => 400, 'reason' => 'No form data provided'];
@@ -375,6 +437,75 @@ class Section extends Entity
         if (is_null($parent->id)) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parentid'].'` does not exist'];
         }
+        #Check permission
+        if ($edit) {
+            if (!$this->owned && !in_array('editSections', $_SESSION['permissions'])) {
+                return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+            }
+        } else {
+            #Check permission
+            if (!$parent->owned && !in_array('addSections', $_SESSION['permissions'])) {
+                return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
+            }
+        }
+        #Check that type is allowed in current section
+        $allowedTypes = Section::getSectionTypes($parent->inheritedType);
+        if (!in_array($data['type'], array_column($allowedTypes, 'value'))) {
+            return ['http_error' => 400, 'reason' => 'Can\'t create this type in current section'];
+        }
+        #Check if section is being created in appropriate parent
+        switch($data['type']) {
+            case 2:
+                #Do not allow creation of blogs outside of root Blog section
+                if ($data['parentid'] !== 1) {
+                    return ['http_error' => 400, 'reason' => 'Blogs can only be created inside root `Blogs` section'];
+                }
+                #Empty $this->name implies creation of new section
+                if (empty($this->name)) {
+                    if (!empty($_SESSION['sections']['blog'])) {
+                        return ['http_error' => 400, 'reason' => 'User already has a personal blog'];
+                    } else {
+                        $data['linkType'] = 2;
+                    }
+                }
+                break;
+            case 3:
+                if ($data['parentid'] !== 2 && $parent->inheritedType !== 'Forum') {
+                    return ['http_error' => 400, 'reason' => 'Forums can only be created inside root `Forums` section or its subsections'];
+                }
+                break;
+            case 4:
+                if ($data['parentid'] !== 3 && $parent->inheritedType !== 'Changelog') {
+                    return ['http_error' => 400, 'reason' => 'Changelogs can only be created inside root `Changelogs` section or its subsections'];
+                }
+                #Empty $this->name implies creation of new section
+                if (empty($this->name) && $data['parentid'] === 3) {
+                    if (!empty($_SESSION['sections']['changelog'])) {
+                        return ['http_error' => 400, 'reason' => 'User already has a personal changelog'];
+                    } else {
+                        $data['linkType'] = 4;
+                    }
+                }
+                break;
+            case 5:
+                if ($data['parentid'] !== 5 && $parent->inheritedType !== 'Support') {
+                    return ['http_error' => 400, 'reason' => 'Support sections can only be created inside root `Support` section or its subsections'];
+                }
+                break;
+            case 6:
+                if ($data['parentid'] !== 4 && $parent->inheritedType !== 'Knowledgebase') {
+                    return ['http_error' => 400, 'reason' => 'Knowledgebases can only be created inside root `Knowledgebases` section or its subsections'];
+                }
+                #Empty $this->name implies creation of new section
+                if (empty($this->name) && $data['parentid'] === 4) {
+                    if (!empty($_SESSION['sections']['knowledgebase'])) {
+                        return ['http_error' => 400, 'reason' => 'User already has a personal knowledgebase'];
+                    } else {
+                        $data['linkType'] = 6;
+                    }
+                }
+                break;
+        }
         #Check if parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'])) {
             return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create subsection in closed section `'.$parent->name.'`'];
@@ -411,13 +542,13 @@ class Section extends Entity
     
     public function delete(): array
     {
-        #Check permission
-        if (!in_array('removeSections', $_SESSION['permissions'])) {
-            return ['http_error' => 403, 'reason' => 'No `removeSections` permission'];
-        }
         #Deletion is critical, so ensure, that we get the actual data, even if this function is somehow called outside of API
         if (!$this->attempted) {
             $this->get();
+        }
+        #Check permission
+        if (!$this->owned && !in_array('removeSections', $_SESSION['permissions'])) {
+            return ['http_error' => 403, 'reason' => 'No `removeSections` permission'];
         }
         if (is_null($this->id)) {
             return ['http_error' => 404, 'reason' => 'Section not found'];
@@ -446,8 +577,31 @@ class Section extends Entity
         }
     }
     
-    public static function getSectionTypes(): array
+    public static function getSectionTypes(string|int $type = ''): array
     {
-        return HomePage::$dbController->selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid` ORDER BY `typeid`;');
+        $where = '';
+        switch(strtolower($type)) {
+            case 'blog':
+            case '2':
+                $where = ' WHERE `talks__types`.`type`=\'Blog\'';
+                break;
+            case 'forum':
+            case '3':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Forum\')';
+                break;
+            case 'changelog':
+            case '4':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Changelog\')';
+                break;
+            case 'support':
+            case '5':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Support\')';
+                break;
+            case 'knowledgebase':
+            case '6':
+                $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Knowledgebase\')';
+                break;
+        }
+        return HomePage::$dbController->selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/img/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid`'.$where.' ORDER BY `typeid`;');
     }
 }

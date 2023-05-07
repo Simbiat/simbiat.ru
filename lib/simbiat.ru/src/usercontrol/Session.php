@@ -230,6 +230,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['permissions'] = $user->permissions;
                     $data['activated'] = $user->activated;
                     $data['avatar'] = $user->currentAvatar;
+                    $data['sections'] = $user->sections;
                 } else {
                     $data['userid'] = Talks::userIDs['Unknown user'];
                     $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);

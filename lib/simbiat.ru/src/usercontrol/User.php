@@ -43,6 +43,12 @@ class User extends Entity
         'id' => null,
         'name' => null,
     ];
+    #Personal sections
+    public array $sections = [
+        'blog' => null,
+        'changelog' => null,
+        'knowledgebase' => null,
+    ];
     #FF Token
     public ?string $ff_token = null;
     #Sex
@@ -73,7 +79,7 @@ class User extends Entity
     protected function getFromDB(): array
     {
         
-        $dbData =  HomePage::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
+        $dbData =  HomePage::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` WHERE `userid`=:userid', ['userid'=>[$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
         }
@@ -108,8 +114,15 @@ class User extends Entity
         #Populate parent details
         $this->parent['id'] = $fromDB['parentid'];
         $this->parent['name'] = $fromDB['parentname'];
+        #Pupulate personal sections
+        $this->sections = [
+            'blog' => empty($fromDB['blog']) ? null : $fromDB['blog'],
+            'changelog' => empty($fromDB['changelog']) ? null : $fromDB['changelog'],
+            'knowledgebase' => empty($fromDB['knowledgebase']) ? null : $fromDB['knowledgebase'],
+        ];
         #Cleanup the array
-        unset($fromDB['parentid'], $fromDB['parentname'], $fromDB['firstname'], $fromDB['lastname'], $fromDB['middlename'], $fromDB['fathername'], $fromDB['prefix'], $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday']);
+        unset($fromDB['parentid'], $fromDB['parentname'], $fromDB['firstname'], $fromDB['lastname'], $fromDB['middlename'], $fromDB['fathername'], $fromDB['prefix'],
+                $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday'], $fromDB['blog'], $fromDB['changelog'], $fromDB['knowledgebase']);
         #Populate the rest properties
         $this->arrayToProperties($fromDB);
     }

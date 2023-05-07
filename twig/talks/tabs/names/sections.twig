@@ -1,12 +1,28 @@
+{# Check if user does not have a blog created and we are in a blog root section #}
+{% if id == 1 and not session_data.sections.blog %}
+    <tab-name class="nav_tab">Start blog</tab-name>
+{% endif %}
+{# Check if user does not have a changelog created and we are in a changelog root section #}
+{% if id == 3 and not session_data.sections.changelog %}
+    <tab-name class="nav_tab">Start changelog</tab-name>
+{% endif %}
+{# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
+{% if id == 4 and not session_data.sections.knowledgebase %}
+    <tab-name class="nav_tab">Start knowledgebase</tab-name>
+{% endif %}
 {% if type != 'Category' and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
-    <tab-name class="nav_tab">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</tab-name>
+    {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
+        <tab-name class="nav_tab">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</tab-name>
+    {% endif %}
 {% endif %}
-{% if 'addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
-    <tab-name class="nav_tab">Add subsection</tab-name>
+{% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
+    {% if inheritedType != 'Blog' and (owned or ('addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions))) %}
+        <tab-name class="nav_tab">Add subsection</tab-name>
+    {% endif %}
 {% endif %}
-{% if 'editSections' in session_data.permissions %}
+{% if owned or 'editSections' in session_data.permissions %}
     <tab-name class="nav_tab">Edit</tab-name>
 {% endif %}
-{% if 'removeSections' in session_data.permissions and not system %}
+{% if (owned or 'removeSections' in session_data.permissions) and not system %}
     <tab-name class="nav_tab danger">Delete</tab-name>
 {% endif %}

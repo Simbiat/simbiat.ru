@@ -5,4 +5,4 @@ CREATE TABLE `ffxiv__clan`
     `race`   VARCHAR(15)         NOT NULL COMMENT 'Race name',
     `raceid` TINYINT(2) UNSIGNED NOT NULL COMMENT 'Race ID based on filters taken from Lodestone',
     CONSTRAINT `clan` UNIQUE (`clan`, `race`)
-) COMMENT 'Clans/races as per lore';
+) COMMENT 'Clans/races as per lore' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

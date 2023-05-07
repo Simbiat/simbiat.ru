@@ -14,7 +14,7 @@ CREATE TABLE `ffxiv__pvpteam`
     `crest_part_2` VARCHAR(100)                                    NULL COMMENT 'Link to 2nd part of the crest (frame)',
     `crest_part_3` VARCHAR(100)                                    NULL COMMENT 'Link to 3rd part of the crest (emblem)',
     CONSTRAINT `pvp_dcid` FOREIGN KEY (`datacenterid`) REFERENCES `ffxiv__server` (`serverid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'PvP Teams found on Lodestone';
+) COMMENT 'PvP Teams found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `communityid` ON `ffxiv__pvpteam` (`communityid`);
 

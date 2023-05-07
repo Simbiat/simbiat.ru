@@ -4,7 +4,6 @@ namespace Simbiat\Talks\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
-use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
 
 class Section extends Page
@@ -96,11 +95,11 @@ class Section extends Page
         #Set flag indicating that we are in edit mode
         $outputArray['editMode'] = $this->editMode;
         #Get section types
-        if (in_array('addSections', $_SESSION['permissions'])) {
-            $outputArray['section_types'] = \Simbiat\Talks\Entities\Section::getSectionTypes();
+        if ($outputArray['owned'] || in_array('addSections', $_SESSION['permissions'])) {
+            $outputArray['section_types'] = \Simbiat\Talks\Entities\Section::getSectionTypes($outputArray['inheritedType']);
         }
         #Get stuff for threads
-        if (in_array('canPost', $_SESSION['permissions'])) {
+        if ($outputArray['owned'] || in_array('canPost', $_SESSION['permissions'])) {
             $outputArray['thread_languages'] = \Simbiat\Talks\Entities\Thread::getLanguages();
             $outputArray['thread_link_types'] = \Simbiat\Talks\Entities\Thread::getAltLinkTypes();
         }

@@ -6,4 +6,4 @@ CREATE TABLE `ffxiv__character_clans`
     PRIMARY KEY (`characterid`, `genderid`, `clanid`),
     CONSTRAINT `char_clan_clan` FOREIGN KEY (`clanid`) REFERENCES `ffxiv__clan` (`clanid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `char_clan_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Past clans used by characters';
+) COMMENT 'Past clans used by characters' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

@@ -5,4 +5,4 @@ CREATE TABLE `talks__types`
     `description` VARCHAR(100) NULL COMMENT 'Description of the type',
     `icon`        VARCHAR(128) NULL COMMENT 'Name of the default icon file',
     CONSTRAINT `section_type_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`) ON UPDATE CASCADE
-) COMMENT 'Types of forums';
+) COMMENT 'Types of forums' `PAGE_COMPRESSED` = 'ON';

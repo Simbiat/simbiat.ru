@@ -6,4 +6,4 @@ CREATE TABLE `talks__alt_links`
     PRIMARY KEY (`threadid`, `type`),
     CONSTRAINT `alt_link_to_thread` FOREIGN KEY (`threadid`) REFERENCES `talks__threads` (`threadid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `alt_link_to_type` FOREIGN KEY (`type`) REFERENCES `talks__alt_link_types` (`type`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Alternative representation of the threads on other websites';
+) COMMENT 'Alternative representation of the threads on other websites' `PAGE_COMPRESSED` = 'ON';

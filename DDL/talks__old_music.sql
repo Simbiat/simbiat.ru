@@ -11,6 +11,6 @@ CREATE TABLE `talks__old_music`
     CONSTRAINT `fileid` UNIQUE (`fileid`),
     CONSTRAINT `hash` UNIQUE (`hash`),
     CONSTRAINT `file_to_post` FOREIGN KEY (`postid`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE
-) COMMENT 'List of file attachments';
+) COMMENT 'List of file attachments' `PAGE_COMPRESSED` = 'ON';
 
 CREATE INDEX `mime` ON `talks__old_music` (`mime`);

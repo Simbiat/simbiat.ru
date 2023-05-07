@@ -57,6 +57,7 @@
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sendgrid/php-http-client" />
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sendgrid/sendgrid" />
       <excludeFolder url="file://$MODULE_DIR$/composer/vendor/starkbank/ecdsa" />
+      <excludeFolder url="file://$MODULE_DIR$/data/cache/twig" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

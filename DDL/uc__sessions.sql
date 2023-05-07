@@ -12,7 +12,7 @@ CREATE TABLE `uc__sessions`
     `data`      TEXT                                            NULL COMMENT 'Session''s data. Not meant for sensitive information.',
     CONSTRAINT `session_to_cookie` FOREIGN KEY (`cookieid`) REFERENCES `uc__cookies` (`cookieid`) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT `session_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-);
+) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `bot` ON `uc__sessions` (`bot`);
 

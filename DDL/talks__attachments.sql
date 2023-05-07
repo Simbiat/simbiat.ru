@@ -6,4 +6,4 @@ CREATE TABLE `talks__attachments`
     PRIMARY KEY (`postid`, `fileid`),
     CONSTRAINT `attachment_to_file` FOREIGN KEY (`fileid`) REFERENCES `sys__files` (`fileid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `attachment_to_post` FOREIGN KEY (`postid`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE ON DELETE CASCADE
-);
+) `PAGE_COMPRESSED` = 'ON';

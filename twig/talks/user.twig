@@ -5,7 +5,7 @@
 {% endif %}
 {% if fftracker.characters %}
     <section>
-        <div class="middle">Linked characters:</div>
+        <div class="middle">Linked FFXIV characters:</div>
         <div class="searchResults">
             {% for character in fftracker.characters %}
                     {{ include('common/elements/entitycard.twig', character) }}

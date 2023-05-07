@@ -1,0 +1,41 @@
+<form role="form" id="editSectionForm" name="editSectionForm" autocomplete="off" class="middle">
+    <input form="editSectionForm" type="hidden" name="verb" value="edit" required>
+    <input form="editSectionForm" type="hidden" name="curSection[sectionid]" id="curSection_id" value="{{ sectionid }}" required>
+    <div class="float_label_div">
+        <input form="editSectionForm" type="text" aria-required="true" required name="curSection[name]" id="cur_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64" value="{{ name }}">
+        <label for="cur_section_name">Name</label>
+    </div>
+    {% if 'moveSections' in session_data.permissions %}
+        <div class="float_label_div">
+            <input form="editSectionForm" type="number" inputmode="decimal" min="1" value="{{ parentID }}" step="1" aria-required="true" required name="curSection[parentid]" id="cur_section_parent" placeholder="Parent ID">
+            <label for="cur_section_parent" data-tooltip="ID of parent section.<br>Change it to move the section.">Parent ID</label>
+        </div>
+        <div class="float_label_div">
+            <input form="editSectionForm" type="number" inputmode="decimal" min="0" max="99" value="{{ sequence|default('0') }}" step="1" class="number_spinner" aria-required="false" name="curSection[order]" id="cur_section_sequence" placeholder="Order">
+            <label for="cur_section_sequence">Order</label>
+        </div>
+    {% endif %}
+    <span class="radio_and_label">
+        <input form="editSectionForm" id="cur_section_private" class="section_private" name="curSection[private]" type="checkbox"{% if private %} checked{% endif %}>
+        <label for="cur_section_private" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+    </span>
+    <span class="radio_and_label">
+        <input form="editSectionForm" id="cur_section_closed" class="section_closed" name="curSection[closed]" type="checkbox"{% if closed %} checked{% endif %}>
+        <label for="cur_section_closed" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+    </span>
+    <br>
+    <div class="float_label_div w100pc">
+        <textarea id="cur_section_description" form="editSectionForm" name="curSection[description]" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">{{ description }}</textarea>
+        <label for="cur_section_description">Description</label>
+    </div>
+    <br>
+    {{ include('common/elements/selectcustom.twig', {'formName': 'editSectionForm', 'placeholder': 'Type', 'inputName': 'curSection[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+    {{ include('common/elements/imageupload.twig', {'formName': 'editSectionForm', 'placeholder': 'Custom icon', 'inputName': 'curSection[icon]', 'previewClasses': 'middle section_icon', 'required': false, 'imageUrl': icon}, with_context = false) }}
+    <div class="radio_and_label">
+        <input form="editSectionForm" id="cur_section_clear_icon" name="curSection[clearicon]" type="checkbox">
+        <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section, replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
+    </div>
+    <br>
+    <input role="button" form="editSectionForm" type="submit" name="curSection[submit]" id="editSection_submit" formaction="/api/talks/sections/" formmethod="post" formtarget="_self" value="Update">
+    <img id="editSection_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating section...">
+</form>
