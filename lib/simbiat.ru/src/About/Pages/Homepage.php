@@ -525,12 +525,6 @@ class Homepage extends Page
                     'hidden' => false,
                 ],
                 [
-                    'url' => 'https://wa.me/79057305159',
-                    'img' => '/img/social/whatsapp.svg',
-                    'name' => 'WhatsApp',
-                    'hidden' => false,
-                ],
-                [
                     'url' => 'https://www.youtube.com/@simbiat',
                     'img' => '/img/social/youtube.svg',
                     'name' => 'Youtube',
