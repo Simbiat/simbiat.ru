@@ -75,12 +75,14 @@
         {% if character.grandCompany.name %}
             <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grandCompany.rank }}" class="linkIcon" src="/img/fftracker/grandcompany/{{ character.grandCompany.gcrankid }}.webp"><i>{{ character.grandCompany.rank }}</i> in <i>{{ character.grandCompany.name }}</i> Grand company.</p>
         {% endif %}
-        <p>
-            Last interview was conducted on {{ timeTag(character.dates.updated, "d/m/Y H:i") }}.
-            {% if character.biography %}
-                This is what adventurer had to say during it:
-            {% endif %}
-        </p>
+        {% if not character.dates.deleted %}
+            <p>
+                Last interview was conducted on {{ timeTag(character.dates.updated, "d/m/Y H:i") }}.
+                {% if character.biography %}
+                    This is what adventurer had to say during it:
+                {% endif %}
+            </p>
+        {% endif %}
         {% if character.biography %}
             <blockquote class="w100pc">{{ sanitize(character.biography) }}</blockquote>
         {% endif %}
