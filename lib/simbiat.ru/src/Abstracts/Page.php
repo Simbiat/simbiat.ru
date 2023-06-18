@@ -57,7 +57,7 @@ abstract class Page
         '/img/navigation/bictracker.svg',
         '/img/navigation/about.svg',
         '/img/navigation/simplepages.svg',
-        '/img/navigation/games.svg',
+        '/img/navigation/gamepad.svg',
     ];
     #List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2pushExtra = [];

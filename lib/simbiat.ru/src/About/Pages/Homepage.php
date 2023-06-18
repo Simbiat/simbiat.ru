@@ -21,19 +21,10 @@ class Homepage extends Page
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Homepage of Simbiat Software';
     #List of images to H2 push
-    protected array $h2push = [
-        '/img/logo.svg',
-        '/img/share.svg',
-        '/img/navigation/home.svg',
-        '/img/navigation/talks.svg',
-        '/img/navigation/skills.svg',
-        '/img/navigation/experience.svg',
-        '/img/navigation/projects.svg',
-        '/img/navigation/testimonials.svg',
-        '/img/navigation/contacts.svg',
-        '/img/download.svg',
+    protected array $h2pushExtra = [
         '/img/ogimages/jiangshi.png',
         '/img/ogimages/dden.png',
+        '/img/ogimages/RadicalResonance.png',
         '/img/ogimages/bictracker.png',
         '/img/ogimages/fftracker.png',
     ];
