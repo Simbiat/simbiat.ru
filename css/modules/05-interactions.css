@@ -739,8 +739,8 @@ tool-tip[data-tooltip] {
 /*Snackbar notifications*/
 snack-bar {
     visibility: hidden;
-    position: absolute;
-    bottom: var(--footer-height);
+    position: fixed;
+    bottom: 1rem;
     width: 100%;
     margin: 0 auto;
 }
