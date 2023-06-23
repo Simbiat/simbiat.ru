@@ -27,6 +27,7 @@ class SnackbarClose extends HTMLElement
         this.snack.classList.add('fadeOut');
         //Actual removal
         this.snack.addEventListener('animationend', () => {
+            this.snack.close();
             if ((this.snackbar?.contains(this.snack)) === true) {
                 this.snackbar.removeChild(this.snack);
             }

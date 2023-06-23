@@ -738,11 +738,12 @@ tool-tip[data-tooltip] {
 
 /*Snackbar notifications*/
 snack-bar {
-    visibility: hidden;
     position: fixed;
     bottom: 1rem;
     width: 100%;
     margin: 0 auto;
+    /*Required for new dialog windows to be visible*/
+    z-index: 99;
 }
 .snackbar {
     border-radius: var(--border-radius);
@@ -752,7 +753,7 @@ snack-bar {
     background-color: var(--color-block);
     color: var(--color-text);
     text-align: center;
-    visibility: visible;
+    /*visibility: visible;*/
     display: flex;
     position: relative;
     padding: 0.25rem;

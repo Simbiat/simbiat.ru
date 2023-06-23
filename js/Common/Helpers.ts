@@ -21,8 +21,7 @@ function addSnackbar(text: string, color = '', milliseconds = 3000): void
             }
             //Add element to parent
             snacks.appendChild(snack);
-            //Add animation class
-            snack.classList.add('fadeIn');
+            snack.show();
         }
     }
 }
