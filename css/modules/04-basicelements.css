@@ -298,8 +298,8 @@ dialog {
     border-radius: var(--border-radius);
     border-color: var(--border-color-outset);
     border-style: solid;
-    width: 50vw;
-    height: 50vh;
+    color: inherit;
+    padding: 0;
 }
 dialog::backdrop {
     background-color: hsla(256, 20%, 10%, 0.75);

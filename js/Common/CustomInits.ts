@@ -200,6 +200,20 @@ function imgInit(img: HTMLImageElement): void
     }
 }
 
+function dialogInit(dialog: HTMLDialogElement): void
+{
+    if (dialog.classList.contains('modal')) {
+        dialog.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target) {
+                if (target === dialog) {
+                    dialog.close();
+                }
+            }
+        });
+    }
+}
+
 //Function to apply custom initializers from observer
 function customizeNewElements(newNode: Node): void
 {

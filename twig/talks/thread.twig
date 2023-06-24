@@ -19,7 +19,7 @@
         {{ include('common/elements/post.twig', post) }}
         {% if loop.index == 1 and externalLinks|length > 0 %}
             <aside id="alt_sources" class="sidebar_block">
-                {{ include('common/layout/sidebar/altlinks.twig') }}
+                {{ include('talks/altlinks.twig') }}
             </aside>
         {% endif %}
     {% endfor %}

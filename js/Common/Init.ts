@@ -68,6 +68,13 @@ function init(): void
             qInit(quote);
         });
     }
+    //Handle dialog closure when clicking outside dialog content
+    const dialogs = document.querySelectorAll('dialog');
+    if (!empty(dialogs)) {
+        dialogs.forEach((dialog) => {
+            dialogInit(dialog);
+        });
+    }
     //Add images to gallery
     const images = document.querySelectorAll('img');
     if (!empty(images)) {

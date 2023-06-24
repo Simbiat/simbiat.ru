@@ -3852,6 +3852,18 @@ function imgInit(img) {
         }
     }
 }
+function dialogInit(dialog) {
+    if (dialog.classList.contains('modal')) {
+        dialog.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target) {
+                if (target === dialog) {
+                    dialog.close();
+                }
+            }
+        });
+    }
+}
 function customizeNewElements(newNode) {
     if (newNode.nodeType === 1) {
         const nodeName = newNode.nodeName.toLowerCase();
@@ -4148,6 +4160,12 @@ function init() {
     if (!empty(quotes)) {
         quotes.forEach((quote) => {
             qInit(quote);
+        });
+    }
+    const dialogs = document.querySelectorAll('dialog');
+    if (!empty(dialogs)) {
+        dialogs.forEach((dialog) => {
+            dialogInit(dialog);
         });
     }
     const images = document.querySelectorAll('img');
@@ -5419,7 +5437,6 @@ class NavHide extends HTMLElement {
     }
 }
 class SideShow extends HTMLElement {
-    sidebarPopUp = null;
     sideHide = null;
     sidebar = null;
     button = null;
@@ -5435,30 +5452,23 @@ class SideShow extends HTMLElement {
             }
         }
         else if (this.button && this.sideHide && this.hasAttribute('data-sidebar')) {
-            this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
             this.sidebar = document.querySelector(`#${String(this.getAttribute('data-sidebar'))}`);
             this.button.addEventListener('click', () => {
-                this.sidebarPopUp?.classList.remove('hidden');
-                this.sidebar?.classList.remove('hidden');
-                this.sideHide?.classList.remove('hidden');
+                this.sidebar?.showModal();
             });
         }
     }
 }
 class SideHide extends HTMLElement {
-    sidebarPopUp = null;
-    sidebars;
+    sidebar = null;
     constructor() {
         super();
-        this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
-        this.sidebars = document.querySelectorAll('.sidebar');
-        this.addEventListener('click', () => {
-            this.sidebarPopUp?.classList.add('hidden');
-            this.sidebars.forEach((aside) => {
-                aside.classList.add('hidden');
+        if (this.parentElement) {
+            this.sidebar = this.parentElement.parentElement;
+            this.addEventListener('click', () => {
+                this.sidebar?.close();
             });
-            this.classList.add('hidden');
-        });
+        }
     }
 }
 class OGImage extends HTMLElement {

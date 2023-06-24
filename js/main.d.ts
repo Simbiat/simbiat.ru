@@ -18,6 +18,7 @@ declare function blockquoteInit(quote: HTMLElement): void;
 declare function qInit(quote: HTMLQuoteElement): void;
 declare function detailsInit(details: HTMLDetailsElement): void;
 declare function imgInit(img: HTMLImageElement): void;
+declare function dialogInit(dialog: HTMLDialogElement): void;
 declare function customizeNewElements(newNode: Node): void;
 declare function getAllDetailsTags(): NodeListOf<HTMLDetailsElement>;
 declare function closeAllDetailsTags(target: HTMLDetailsElement): void;
@@ -400,15 +401,13 @@ declare class NavHide extends HTMLElement {
     constructor();
 }
 declare class SideShow extends HTMLElement {
-    private readonly sidebarPopUp;
     private readonly sideHide;
     private readonly sidebar;
     private readonly button;
     constructor();
 }
 declare class SideHide extends HTMLElement {
-    private readonly sidebarPopUp;
-    private readonly sidebars;
+    private readonly sidebar;
     constructor();
 }
 declare class OGImage extends HTMLElement {

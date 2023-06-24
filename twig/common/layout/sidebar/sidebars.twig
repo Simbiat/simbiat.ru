@@ -1,20 +1,30 @@
 {% if http_error != 'database' and http_error != 'maintenance' %}
-    <aside id="loginForm" class="sidebar hidden" aria-label="Login form">
-        <section>
-            {{ include('common/layout/noscript.twig') }}
-            {{ include('common/layout/sidebar/signinup.twig') }}
-        </section>
-    </aside>
+    <dialog id="loginForm" class="sidebar modal" aria-label="Login form">
+        <aside>
+            <side-hide>
+                <input id="hideSidebarIcon" class="navIcon" alt="Close" data-tooltip="Close" type="image" src="/img/close.svg">
+            </side-hide>
+            <section>
+                {{ include('common/layout/noscript.twig') }}
+                {{ include('common/layout/sidebar/signinup.twig') }}
+            </section>
+        </aside>
+    </dialog>
 {% else %}
-    <aside id="sidebar_no_db" class="sidebar hidden" aria-label="{% if http_error == 'database' %}No database connection{% else %}Maintenance{% endif %}">
-        <section id="no_db_section">
-            {% if http_error == 'database' %}
-                <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
-                <p class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
-            {% else %}
-                <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.svg">
-                <p class="warning">Database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
-            {% endif %}
-        </section>
-    </aside>
+    <dialog id="sidebar_no_db" class="sidebar modal" aria-label="{% if http_error == 'database' %}No database connection{% else %}Maintenance{% endif %}">
+        <aside>
+            <side-hide>
+                <input id="hideSidebarIcon" class="navIcon" alt="Close" data-tooltip="Close" type="image" src="/img/close.svg">
+            </side-hide>
+            <section id="no_db_section">
+                {% if http_error == 'database' %}
+                    <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
+                    <p class="warning">Database is currently unavailable, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+                {% else %}
+                    <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.svg">
+                    <p class="warning">Database is currently under maintenance, and you are seeing a static or cached page, that is not dependent on it. Sidebar elements suppressed.</p>
+                {% endif %}
+            </section>
+        </aside>
+    </dialog>
 {% endif %}

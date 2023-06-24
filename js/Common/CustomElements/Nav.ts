@@ -26,9 +26,8 @@ class NavHide extends HTMLElement
 
 class SideShow extends HTMLElement
 {
-    private readonly sidebarPopUp: HTMLElement | null = null;
     private readonly sideHide: HTMLElement | null = null;
-    private readonly sidebar: HTMLElement | null = null;
+    private readonly sidebar: HTMLDialogElement | null = null;
     private readonly button: HTMLElement | null = null;
     
     public constructor() {
@@ -42,12 +41,9 @@ class SideShow extends HTMLElement
                 });
             }
         } else if (this.button && this.sideHide && this.hasAttribute('data-sidebar')) {
-                this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
                 this.sidebar = document.querySelector(`#${String(this.getAttribute('data-sidebar'))}`);
                 this.button.addEventListener('click', () => {
-                    this.sidebarPopUp?.classList.remove('hidden');
-                    this.sidebar?.classList.remove('hidden');
-                    this.sideHide?.classList.remove('hidden');
+                    this.sidebar?.showModal();
                 });
             }
     }
@@ -55,19 +51,15 @@ class SideShow extends HTMLElement
 
 class SideHide extends HTMLElement
 {
-    private readonly sidebarPopUp: HTMLElement | null = null;
-    private readonly sidebars: NodeListOf<HTMLElement>;
+    private readonly sidebar: HTMLDialogElement | null = null;
     
     public constructor() {
         super();
-        this.sidebarPopUp = document.querySelector('#sidebar_pop_up');
-        this.sidebars = document.querySelectorAll('.sidebar');
-        this.addEventListener('click', () => {
-            this.sidebarPopUp?.classList.add('hidden');
-            this.sidebars.forEach((aside) => {
-                aside.classList.add('hidden');
+        if (this.parentElement) {
+            this.sidebar = this.parentElement.parentElement as HTMLDialogElement;
+            this.addEventListener('click', () => {
+                this.sidebar?.close();
             });
-            this.classList.add('hidden');
-        });
+        }
     }
 }

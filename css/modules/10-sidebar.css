@@ -31,9 +31,9 @@ side-show .navIcon:focus {
     opacity: 1;
 }
 side-hide {
-    position: fixed;
+    position: absolute;
     right: 0;
-    top: 0;
+    top: 0.25rem;
     z-index: 4;
 }
 
@@ -42,28 +42,12 @@ side-hide {
     position: fixed;
 }
 
-.sidebar {
-    right: 0;
-    width: var(--sidebar-width);
+.sidebar aside {
     display: flex;
-    position: fixed;
-    z-index: 3;
-    margin-left: var(--sidebar-margin);
-    height: 100vh;
-    top: 0;
     flex-direction: column;
     justify-content: center;
-}
-#sidebar_pop_up {
-    top: 0;
-    height: 100vh;
-    background-color: var(--color-body);
-    border-style: solid;
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    border-color: var(--border-color-inset);
-    border-right: none;
-    border-bottom: none;
-    border-top: none;
+    height: inherit;
+    padding: 2rem;
 }
 
 #no_db_section img {
@@ -88,6 +72,7 @@ password-requirements {
     10 looks the lowest number that makes placeholders more or less readable.
     Longer than 65 characters is unnecessary, since we limit username at 64. 65 is used since with 64 there is a higher chance of truncation*/
     width: clamp(calc(10ch + var(--showpassword-width)), calc(20ch + var(--showpassword-width)), calc(65ch + var(--showpassword-width)));
+    display: block;
 }
 
 /*Override global highlights since form is present on all pages by default*/
