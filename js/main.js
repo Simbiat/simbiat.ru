@@ -4918,7 +4918,7 @@ class Gallery extends HTMLElement {
         else {
             this._current = value;
         }
-        if (this.images.length > 1 || this.classList.contains('hidden')) {
+        if (this.images.length > 1 || !this.parentElement.open) {
             this.open();
         }
     }
@@ -4966,7 +4966,9 @@ class Gallery extends HTMLElement {
                 if (this.galleryCurrent) {
                     this.galleryCurrent.innerText = (this.current + 1).toString();
                 }
-                this.classList.remove('hidden');
+                if (!this.parentElement.open) {
+                    this.parentElement.showModal();
+                }
                 this.history();
                 this.focus();
             }
@@ -4974,7 +4976,7 @@ class Gallery extends HTMLElement {
     }
     close() {
         this.tabIndex = -1;
-        this.classList.add('hidden');
+        this.parentElement.close();
         this.history();
         document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0].focus();
     }
@@ -5013,13 +5015,13 @@ class Gallery extends HTMLElement {
         const newIndex = (this.current + 1).toString();
         let newUrl;
         let newTitle;
-        if (this.classList.contains('hidden')) {
-            newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
-            newUrl = document.location.href.replace(url.hash, '');
-        }
-        else {
+        if (this.parentElement.open) {
             newTitle = `${document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>')}, Image ${newIndex}`;
             newUrl = document.location.href.replace(/(?<beforeDies>[^#]+)(?<afterDies>(?<gallery>#gallery=\d+)|$)/ui, `$<beforeDies>#gallery=${newIndex}`);
+        }
+        else {
+            newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
+            newUrl = document.location.href.replace(url.hash, '');
         }
         if (url !== new URL(newUrl)) {
             updateHistory(newUrl, newTitle);

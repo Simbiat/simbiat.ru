@@ -27,7 +27,7 @@ class Gallery extends HTMLElement
         } else {
             this._current = value;
         }
-        if (this.images.length > 1 || this.classList.contains('hidden')) {
+        if (this.images.length > 1 || !(this.parentElement as HTMLDialogElement).open) {
             this.open();
         }
     }
@@ -78,7 +78,9 @@ class Gallery extends HTMLElement
                 if (this.galleryTotal) { this.galleryTotal.innerText = this.images.length.toString(); }
                 if (this.galleryCurrent) { this.galleryCurrent.innerText = (this.current + 1).toString(); }
                 //Show overlay
-                this.classList.remove('hidden');
+                if (!(this.parentElement as HTMLDialogElement).open) {
+                    (this.parentElement as HTMLDialogElement).showModal();
+                }
                 //Update URL
                 this.history();
                 this.focus();
@@ -90,7 +92,7 @@ class Gallery extends HTMLElement
     {
         this.tabIndex = -1;
         //Hide overlay
-        this.classList.add('hidden');
+        (this.parentElement as HTMLDialogElement).close();
         //Update URL
         this.history();
         //Focus on 1st focusable element to help with keyboard navigation. If not done, focus may stay on close button.
@@ -136,12 +138,12 @@ class Gallery extends HTMLElement
         const newIndex = (this.current + 1).toString();
         let newUrl: string;
         let newTitle: string;
-        if (this.classList.contains('hidden')) {
-            newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
-            newUrl = document.location.href.replace(url.hash, '');
-        } else {
+        if ((this.parentElement as HTMLDialogElement).open) {
             newTitle =`${document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>')}, Image ${newIndex}`;
             newUrl = document.location.href.replace(/(?<beforeDies>[^#]+)(?<afterDies>(?<gallery>#gallery=\d+)|$)/ui, `$<beforeDies>#gallery=${newIndex}`);
+        } else {
+            newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
+            newUrl = document.location.href.replace(url.hash, '');
         }
         //Update only if there is URL change
         if (url !== new URL(newUrl)) {

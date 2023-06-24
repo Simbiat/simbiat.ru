@@ -1,12 +1,6 @@
 gallery-overlay {
-    width: 100vw;
-    height: 100vh;
     background-color: var(--color-body);
-    position: absolute;
-    left: 0;
-    top: 0;
     margin: 0;
-    z-index: 10;
 }
 gallery-close {
     position: absolute;
@@ -22,8 +16,8 @@ gallery-close {
     opacity: 0.90;
     display: grid;
     gap: 0;
-    grid-template-rows: 3rem calc(100vh - 6rem) 3rem;
-    grid-template-columns: 5rem calc(100vw - 10rem) 5rem;
+    grid-template-rows: 3rem calc(100vh - 9rem) 3rem;
+    grid-template-columns: 5rem calc(100vw - 15rem) 5rem;
     grid-template-areas:
         'galleryPrevious galleryNameBlock galleryNext'
         'galleryPrevious galleryImage galleryNext'
@@ -32,7 +26,6 @@ gallery-close {
 gallery-prev,
 gallery-next {
     background-color: var(--color-body);
-    height: 100vh;
     width: 5rem;
     color: var(--color-interactive);
     font-weight: bolder;
@@ -52,15 +45,11 @@ gallery-next {
 }
 gallery-image {
     grid-area: galleryImage;
-    height: calc(100vh - 6rem);
-    width: calc(100vw - 10rem);
     overflow: auto;
     position: relative;
 }
 #galleryCounter, #galleryNameBlock {
     background-color: var(--color-body);
-    height: 3rem;
-    width: calc(100vw - 10rem);
     vertical-align: middle;
     text-align: center;
     line-height: 3rem;
