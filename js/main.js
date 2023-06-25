@@ -3864,12 +3864,25 @@ function dialogInit(dialog) {
         });
     }
 }
+function anchorInit(anchor) {
+    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
+        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+    }
+    else if (!empty(anchor.href)) {
+        const url = new URL(anchor.href);
+        if (!empty(url.hash) && url.origin + url.host + url.pathname === window.location.origin + window.location.host + window.location.pathname) {
+            anchor.addEventListener('click', () => {
+                history.replaceState(document.title, document.title, `${url.hash}`);
+            });
+        }
+    }
+}
 function customizeNewElements(newNode) {
     if (newNode.nodeType === 1) {
         const nodeName = newNode.nodeName.toLowerCase();
         switch (nodeName) {
             case 'a':
-                newTabStyle(newNode);
+                anchorInit(newNode);
                 break;
             case 'blockquote':
                 blockquoteInit(newNode);
@@ -4045,11 +4058,6 @@ function empty(variable) {
     }
     return false;
 }
-function newTabStyle(anchor) {
-    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
-        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
-    }
-}
 function pageRefresh() {
     window.location.href += '?forceReload=true';
     window.location.reload();
@@ -4114,10 +4122,10 @@ function init() {
             textareaInit(textarea);
         });
     }
-    const anchors = document.querySelectorAll('a[target="_blank"]');
+    const anchors = document.querySelectorAll('a');
     if (!empty(anchors)) {
         anchors.forEach((anchor) => {
-            newTabStyle(anchor);
+            anchorInit(anchor);
         });
     }
     const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
@@ -4867,10 +4875,14 @@ function router() {
 class BackToTop extends HTMLElement {
     content;
     BTTs;
+    chkVis = false;
     constructor() {
         super();
         this.content = document.querySelector('#content');
         this.BTTs = document.querySelectorAll('back-to-top');
+        if (typeof this.checkVisibility === 'function') {
+            this.chkVis = true;
+        }
         if (this.content) {
             window.addEventListener('scroll', this.toggleButtons.bind(this), false);
             this.addEventListener('click', () => {
@@ -4893,6 +4905,19 @@ class BackToTop extends HTMLElement {
                 this.BTTs.forEach((item) => {
                     item.classList.remove('hidden');
                 });
+            }
+        }
+        const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+        for (let i = 0; i <= headings.length - 1; i++) {
+            const heading = headings[i];
+            const bottom = heading.getBoundingClientRect().bottom;
+            const top = heading.getBoundingClientRect().top;
+            const height = heading.getBoundingClientRect().height;
+            if (top >= -height * 2 && bottom <= height * 2) {
+                if (!this.chkVis || heading.checkVisibility() === true) {
+                    history.replaceState(document.title, document.title, `#${heading.id}`);
+                    return;
+                }
             }
         }
     }

@@ -125,14 +125,6 @@ function empty(variable: unknown): boolean
     return false;
 }
 
-//Add an icon indicating, that link will open in new tab
-function newTabStyle(anchor: HTMLAnchorElement): void
-{
-    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
-        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
-    }
-}
-
 //Function to force page refresh. Regular reload() often hits cache, thus not properly updating, but without it page may not get reloaded on mobile devices
 function pageRefresh(): void
 {

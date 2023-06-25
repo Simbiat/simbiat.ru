@@ -16,10 +16,10 @@ function init(): void
         });
     }
     //Icons for new tabs
-    const anchors = document.querySelectorAll('a[target="_blank"]');
+    const anchors = document.querySelectorAll('a');
     if (!empty(anchors)) {
         anchors.forEach((anchor) => {
-            newTabStyle(anchor as HTMLAnchorElement);
+            anchorInit(anchor);
         });
     }
     //Allow copying anchor links from Heading

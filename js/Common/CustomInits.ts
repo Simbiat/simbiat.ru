@@ -214,6 +214,23 @@ function dialogInit(dialog: HTMLDialogElement): void
     }
 }
 
+function anchorInit(anchor: HTMLAnchorElement): void
+{
+    //Add an icon indicating, that link will open in new tab
+    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
+        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+        //I am aware of some extensions adding blank anchors, that can break the code
+    } else if (!empty(anchor.href)) {
+        //Logic to update URL if this is a hash link for current page
+        const url = new URL(anchor.href);
+        if (!empty(url.hash) && url.origin + url.host + url.pathname === window.location.origin + window.location.host + window.location.pathname) {
+            anchor.addEventListener('click', () => {
+                history.replaceState(document.title, document.title, `${url.hash}`);
+            });
+        }
+    }
+}
+
 //Function to apply custom initializers from observer
 function customizeNewElements(newNode: Node): void
 {
@@ -221,7 +238,7 @@ function customizeNewElements(newNode: Node): void
         const nodeName = newNode.nodeName.toLowerCase();
         switch(nodeName) {
             case 'a':
-                newTabStyle(newNode as HTMLAnchorElement);
+                anchorInit(newNode as HTMLAnchorElement);
                 break;
             case 'blockquote':
                 blockquoteInit(newNode as HTMLElement);

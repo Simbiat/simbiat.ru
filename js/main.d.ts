@@ -19,6 +19,7 @@ declare function qInit(quote: HTMLQuoteElement): void;
 declare function detailsInit(details: HTMLDetailsElement): void;
 declare function imgInit(img: HTMLImageElement): void;
 declare function dialogInit(dialog: HTMLDialogElement): void;
+declare function anchorInit(anchor: HTMLAnchorElement): void;
 declare function customizeNewElements(newNode: Node): void;
 declare function getAllDetailsTags(): NodeListOf<HTMLDetailsElement>;
 declare function closeAllDetailsTags(target: HTMLDetailsElement): void;
@@ -32,7 +33,6 @@ declare function deleteRow(element: HTMLElement): boolean;
 declare function basename(text: string): string;
 declare function rawurlencode(str: string): string;
 declare function empty(variable: unknown): boolean;
-declare function newTabStyle(anchor: HTMLAnchorElement): void;
 declare function pageRefresh(): void;
 declare function copyQuote(target: HTMLElement): string;
 declare function init(): void;
@@ -310,6 +310,7 @@ declare function router(): void;
 declare class BackToTop extends HTMLElement {
     private readonly content;
     private readonly BTTs;
+    private readonly chkVis;
     constructor();
     private toggleButtons;
 }
