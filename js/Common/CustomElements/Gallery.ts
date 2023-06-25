@@ -136,18 +136,18 @@ class Gallery extends HTMLElement
     {
         const url = new URL(document.location.href);
         const newIndex = (this.current + 1).toString();
-        let newUrl: string;
+        const newUrl = new URL(document.location.href);
         let newTitle: string;
         if ((this.parentElement as HTMLDialogElement).open) {
             newTitle =`${document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>')}, Image ${newIndex}`;
-            newUrl = document.location.href.replace(/(?<beforeDies>[^#]+)(?<afterDies>(?<gallery>#gallery=\d+)|$)/ui, `$<beforeDies>#gallery=${newIndex}`);
+            newUrl.hash = `gallery=${newIndex}`;
         } else {
             newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
-            newUrl = document.location.href.replace(url.hash, '');
+            newUrl.hash = '';
         }
         //Update only if there is URL change
         if (url !== new URL(newUrl)) {
-            updateHistory(newUrl, newTitle);
+            updateHistory(newUrl.href, newTitle);
         }
     }
 }

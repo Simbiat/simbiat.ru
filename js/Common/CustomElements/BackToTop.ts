@@ -38,19 +38,20 @@ class BackToTop extends HTMLElement
             }
         }
         //Update URL hash based on position and available headings
-        const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
-        for (let i = 0; i <= headings.length - 1; i++) {
-            const heading = headings[i] as HTMLHeadingElement;
-            const bottom = heading.getBoundingClientRect().bottom;
-            const top = heading.getBoundingClientRect().top;
-            const height = heading.getBoundingClientRect().height;
-            //console.log(header.getBoundingClientRect().top);
-            if (top >= -height * 2 && bottom <= height * 2) {
-                //@ts-expect-error PHPStorm is not ware of checkVisibility function supported all modern browsers besides Safari (https://caniuse.com/?search=checkvisibility)
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                if (!this.chkVis || heading.checkVisibility() === true) {
-                    history.replaceState(document.title, document.title, `#${heading.id}`);
-                    return;
+        if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+            const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+            for (let i = 0; i <= headings.length - 1; i++) {
+                const heading = headings[i] as HTMLHeadingElement;
+                const bottom = heading.getBoundingClientRect().bottom;
+                const top = heading.getBoundingClientRect().top;
+                const height = heading.getBoundingClientRect().height;
+                if (top >= -height * 2 && bottom <= height * 2) {
+                    //@ts-expect-error PHPStorm is not ware of checkVisibility function supported all modern browsers besides Safari (https://caniuse.com/?search=checkvisibility)
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                    if (!this.chkVis || heading.checkVisibility() === true) {
+                        history.replaceState(document.title, document.title, `#${heading.id}`);
+                        return;
+                    }
                 }
             }
         }

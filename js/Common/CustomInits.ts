@@ -225,7 +225,9 @@ function anchorInit(anchor: HTMLAnchorElement): void
         const url = new URL(anchor.href);
         if (!empty(url.hash) && url.origin + url.host + url.pathname === window.location.origin + window.location.host + window.location.pathname) {
             anchor.addEventListener('click', () => {
-                history.replaceState(document.title, document.title, `${url.hash}`);
+                if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+                    history.replaceState(document.title, document.title, `${url.hash}`);
+                }
             });
         }
     }

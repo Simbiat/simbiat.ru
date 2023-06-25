@@ -3872,7 +3872,9 @@ function anchorInit(anchor) {
         const url = new URL(anchor.href);
         if (!empty(url.hash) && url.origin + url.host + url.pathname === window.location.origin + window.location.host + window.location.pathname) {
             anchor.addEventListener('click', () => {
-                history.replaceState(document.title, document.title, `${url.hash}`);
+                if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+                    history.replaceState(document.title, document.title, `${url.hash}`);
+                }
             });
         }
     }
@@ -4907,16 +4909,18 @@ class BackToTop extends HTMLElement {
                 });
             }
         }
-        const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
-        for (let i = 0; i <= headings.length - 1; i++) {
-            const heading = headings[i];
-            const bottom = heading.getBoundingClientRect().bottom;
-            const top = heading.getBoundingClientRect().top;
-            const height = heading.getBoundingClientRect().height;
-            if (top >= -height * 2 && bottom <= height * 2) {
-                if (!this.chkVis || heading.checkVisibility() === true) {
-                    history.replaceState(document.title, document.title, `#${heading.id}`);
-                    return;
+        if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+            const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+            for (let i = 0; i <= headings.length - 1; i++) {
+                const heading = headings[i];
+                const bottom = heading.getBoundingClientRect().bottom;
+                const top = heading.getBoundingClientRect().top;
+                const height = heading.getBoundingClientRect().height;
+                if (top >= -height * 2 && bottom <= height * 2) {
+                    if (!this.chkVis || heading.checkVisibility() === true) {
+                        history.replaceState(document.title, document.title, `#${heading.id}`);
+                        return;
+                    }
                 }
             }
         }
@@ -5038,18 +5042,18 @@ class Gallery extends HTMLElement {
     history() {
         const url = new URL(document.location.href);
         const newIndex = (this.current + 1).toString();
-        let newUrl;
+        const newUrl = new URL(document.location.href);
         let newTitle;
         if (this.parentElement.open) {
             newTitle = `${document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>')}, Image ${newIndex}`;
-            newUrl = document.location.href.replace(/(?<beforeDies>[^#]+)(?<afterDies>(?<gallery>#gallery=\d+)|$)/ui, `$<beforeDies>#gallery=${newIndex}`);
+            newUrl.hash = `gallery=${newIndex}`;
         }
         else {
             newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
-            newUrl = document.location.href.replace(url.hash, '');
+            newUrl.hash = '';
         }
         if (url !== new URL(newUrl)) {
-            updateHistory(newUrl, newTitle);
+            updateHistory(newUrl.href, newTitle);
         }
     }
 }
