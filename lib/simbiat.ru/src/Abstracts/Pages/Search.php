@@ -3,9 +3,9 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\Config\Common;
 use Simbiat\HomePage;
 use Simbiat\HTTP20\Headers;
+use Simbiat\Sanitization;
 
 class Search extends Page
 {
@@ -98,6 +98,7 @@ class Search extends Page
         if (empty($term)) {
             return true;
         }
+        $term = Sanitization::removeNonPrintable($term, true);
         $decodedSearch = preg_replace($this->regexSearch, '', $term);
         #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future
         $decodedSearch = preg_replace('/:/', '', $decodedSearch);

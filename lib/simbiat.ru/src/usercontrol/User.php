@@ -10,6 +10,7 @@ use Simbiat\Curl;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Images;
+use Simbiat\Sanitization;
 use Simbiat\Security;
 use Simbiat\Talks\Entities\Post;
 use Simbiat\Talks\Search\Posts;
@@ -280,6 +281,7 @@ class User extends Entity
 
     public function changeUsername(string $newName): array
     {
+        $newName = Sanitization::removeNonPrintable($newName, true);
         #Check if new name is valid
         if (empty($newName) && $this->bannedName($newName) || $this->usedName($newName)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
@@ -322,7 +324,8 @@ class User extends Entity
         $log = [];
         #Queries for names
         foreach (['firstname', 'lastname', 'middlename', 'fathername', 'prefix', 'suffix'] as $field) {
-            if (isset($_POST['details']['name'][$field]) && $this->name[$field] !== $_POST['details']['name'][$field]) {
+            $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', true);
+            if ($this->name[$field] !== $_POST['details']['name'][$field]) {
                 $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
                 /** @noinspection SqlResolve */
                 $queries[] = [
@@ -352,7 +355,8 @@ class User extends Entity
             ];
         }
         #Query for timezone
-        if (isset($_POST['details']['timezone']) && $this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list())) {
+        $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', true);
+        if ($this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list())) {
             $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
             $queries[] = [
                 'UPDATE `uc__users` SET `timezone`=:timezone WHERE `userid`=:userid;',
@@ -392,7 +396,7 @@ class User extends Entity
         }
         #Query for website
         if (isset($_POST['details']['website'])) {
-            if (preg_match('/https?:\/\/(www\.)?[-a-zA-Z\d@:%._+~#=]{1,256}\.[a-zA-Z\d()]{1,6}\b([-a-zA-Z\d()@:%_+.~#?&\/=]*)/ui', $_POST['details']['website']) !== 1 || mb_strlen($_POST['details']['website']) > 255) {
+            if (filter_var($_POST['details']['website'], FILTER_VALIDATE_URL) === false || strtolower(strval(parse_url($_POST['details']['website'], PHP_URL_SCHEME))) !== 'https' || mb_strlen($_POST['details']['website']) > 255) {
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {
@@ -411,7 +415,8 @@ class User extends Entity
         }
         #Queries for other fields
         foreach (['country', 'city', 'about'] as $field) {
-            if (isset($_POST['details'][$field]) && $this->$field !== $_POST['details'][$field]) {
+            $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', true);
+            if ($this->$field !== $_POST['details'][$field]) {
                 $log[$field] = ['old' => $this->$field, 'new' => $_POST['details'][$field]];
                 /** @noinspection SqlResolve */
                 $queries[] = [

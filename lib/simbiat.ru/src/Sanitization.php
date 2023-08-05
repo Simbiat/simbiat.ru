@@ -60,6 +60,26 @@ class Sanitization
         }
     }
     
+    #Remove controls characters from strings with $fullList controlling whether newlines and tabs should be kept (false will keep them)
+    public static function removeNonPrintable(string|array $string, bool $fullList = false): string|array
+    {
+        if ($fullList) {
+            return preg_replace('/[[:cntrl:]]/iu', '', $string);
+        } else {
+            return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
+        }
+    }
+    
+    #Remove controls characters from strings in an array with $fullList controlling whether newlines and tabs should be kept (false will keep them)
+    public static function carefulArraySanitization(array &$array, $fullList = false): void
+    {
+        foreach($array as &$item) {
+            if (is_string($item)) {
+                $item = self::removeNonPrintable($item, $fullList);
+            }
+        }
+    }
+    
     #Function to convert checkbox values to boolean.
     #Using reference to "simulate" isset()/empty() behaviour (as per https://stackoverflow.com/questions/55060/php-function-argument-error-suppression-empty-isset-emulation)
     #Thus also suppressing respective inspection.

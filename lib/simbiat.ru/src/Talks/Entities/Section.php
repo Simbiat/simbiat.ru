@@ -427,7 +427,8 @@ class Section extends Entity
         #If time was set, convert to UTC
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         #Strip tags from description, since we do not allow HTML here
-        $data['description'] = strip_tags($data['description'] ?? '');
+        $data['name'] = Sanitization::removeNonPrintable($data['name'], true);
+        $data['description'] = Sanitization::removeNonPrintable(strip_tags($data['description'] ?? ''), true);
         #Check if name is empty or whitespaces
         if (preg_match('/^\s*$/ui', $data['name']) === 1) {
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];

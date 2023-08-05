@@ -50,7 +50,9 @@ class HomePage
         }
         #Get all POST and GET keys to lower case
         $_POST = array_change_key_case($_POST);
+        Sanitization::carefulArraySanitization($_POST);
         $_GET = array_change_key_case($_GET);
+        Sanitization::carefulArraySanitization($_GET);
         $this->init();
     }
 
@@ -78,6 +80,7 @@ class HomePage
                 Headers::multiPartFormParse();
                 if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
                     $_POST = array_change_key_case(self::$headers::$_PUT ?: self::$headers::$_DELETE ?: self::$headers::$_PATCH ?: []);
+                    Sanitization::carefulArraySanitization($_POST);
                 }
                 #Set canonical URL
                 $this->canonical();

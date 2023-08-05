@@ -4,15 +4,13 @@ namespace Simbiat;
 
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 class Security
 {
 
     #Static sanitizer config for a little bit performance
-    public static ?HtmlSanitizerConfig $sanitizerConfig = null;
-
+    
     #Function to hash password. Used mostly as a wrapper in case of future changes
     public static function passHash(string $password): string
     {

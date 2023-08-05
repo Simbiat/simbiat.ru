@@ -363,6 +363,7 @@ class Thread extends Entity
         #If time was set, convert to UTC
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         #Check if name is empty or whitespaces
+        $data['name'] = Sanitization::removeNonPrintable($data['name'], true);
         if (preg_match('/^\s*$/ui', $data['name']) === 1) {
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
