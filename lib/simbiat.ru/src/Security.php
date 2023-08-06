@@ -2,6 +2,10 @@
 declare(strict_types=1);
 namespace Simbiat;
 
+use DeviceDetector\ClientHints;
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\AbstractParser;
+use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
@@ -194,5 +198,61 @@ class Security
             Errors::error_log($exception);
             return false;
         }
+    }
+    
+    #Get Bot name, OS and Browser for user agent
+    public static function getUA(): array
+    {
+        #Check if User Agent is present
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+            #Something is fishy, so let's 418 this
+            return ['unsupported' => true];
+        }
+        #Force full versions
+        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
+        #Initialize device detector
+        $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT'], ClientHints::factory($_SERVER)));
+        $dd->parse();
+        #Get bot name
+        $bot = $dd->getBot();
+        if ($bot !== NULL) {
+            #Do not waste resources on bots
+            return ['bot' => substr($bot['name'], 0, 64), 'os' => NULL, 'client' => NULL, 'unsupported' => false];
+        }
+        #Get OS
+        $os = $dd->getOs();
+        #Concat OS and version
+        $os = trim(($os['name'] ?? '').' '.($os['version'] ?? ''));
+        #Force OS to be NULL, if it's empty
+        if (empty($os)) {
+            $os = NULL;
+        }
+        #Get client
+        $client = $dd->getClient();
+        #Check if client is supported
+        if (preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/ui', $client['name'] ?? '') === 1 ||
+            (!empty($client['version']) && (
+                #Safari started supporting Sec-Fetch from 16.4
+                (preg_match('/^(Safari).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '16.4', 'lt')) ||
+                #Similar for Chrome and Edge, but full support started from 80
+                (preg_match('/^(Chrome).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '80.0', 'lt')) ||
+                (preg_match('/^(Edge).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '80.0', 'lt')) ||
+                #Version 90 for Firefox
+                (preg_match('/^(Firefox).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '90.0', 'lt')) ||
+                #Version 67 for Opera
+                (preg_match('/^(Opera).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '67.0', 'lt'))
+            ))
+        ) {
+            $unsupported = true;
+        } else {
+            $unsupported = false;
+        }
+        #Concat client and version
+        $client = trim(($client['name'] ?? '').' '.($client['version'] ?? ''));
+        #Force client to be NULL, if it's empty
+        if (empty($client)) {
+            $client = NULL;
+        }
+        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported];
     }
 }

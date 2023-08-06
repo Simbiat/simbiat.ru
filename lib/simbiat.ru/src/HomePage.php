@@ -89,8 +89,6 @@ class HomePage
                     #Remove page (since we ignore page=1 in canonical)
                     Headers::redirect(preg_replace('/\\?page=-?\d+/ui', '', HomePage::$canonical));
                 }
-                #Send common headers
-                Headers::secFetch();
                 #Process requests to file or cache
                 $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
                 if ($fileResult === 200) {
@@ -128,12 +126,23 @@ class HomePage
                                 $_SESSION['CSRF'] = Security::genToken();
                             }
                             #Show that client is unsupported
-                            if (!empty($_SESSION['UA']['client']) && preg_match('/^(Internet Explorer|Opera Mini|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/i', $_SESSION['UA']['client']) === 1) {
-                                self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'], 'http_error' => 418];
+                            if (isset($_SESSION['UA']['unsupported']) && $_SESSION['UA']['unsupported'] === true) {
+                                self::$http_error = ['unsupported' => true, 'client' => $_SESSION['UA']['client'] ?? 'unknown', 'http_error' => 418];
                             #Check if banned IP
                             } elseif (!empty($_SESSION['bannedIP'])) {
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                             }
+                            #Handle Sec-Fetch. Use strict mode by default, unless we determined a known bot (they may not have Sec-Fetch headers)
+                            Headers::secFetch(['same-origin', 'same-site', 'none'], strict: empty($_SESSION['UA']['bot']));
+                        } else {
+                            $ua = Security::getUA();
+                            #Show that client is unsupported
+                            if ($ua['unsupported'] === true) {
+                                self::$http_error = ['unsupported' => true, 'client' => $ua['client'], 'http_error' => 418];
+                                #Check if banned IP
+                            }
+                            #Handle Sec-Fetch. Use strict mode by default, unless we determined a known bot (they may not have Sec-Fetch headers)
+                            Headers::secFetch(['same-origin', 'same-site', 'none'], strict: empty($ua['bot']));
                         }
                         #Check if we have cached the results already
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);

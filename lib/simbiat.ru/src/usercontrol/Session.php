@@ -2,10 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat\usercontrol;
 
-use DeviceDetector\ClientHints;
-use DeviceDetector\DeviceDetector;
-use DeviceDetector\Parser\AbstractParser;
-use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use ipinfo\ipinfo\IPinfo;
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
@@ -170,7 +166,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         if (empty($data['UA'])) {
             #Add UserAgent data
             #This is done to make the data readily available as soon as session is created and somewhat improve performance
-            $data['UA'] = $this->getUA();
+            $data['UA'] = Security::getUA();
         }
         if (empty($data['IP'])) {
             #Add IP data
@@ -294,43 +290,6 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         } else {
             return null;
         }
-    }
-
-    #Get Bot name, OS and Browser for user agent
-    private function getUA(): ?array
-    {
-        #Check if User Agent is present
-        if (empty($_SERVER['HTTP_USER_AGENT'])) {
-            return NULL;
-        }
-        #Force full versions
-        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
-        #Initialize device detector
-        $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT'], ClientHints::factory($_SERVER)));
-        $dd->parse();
-        #Get bot name
-        $bot = $dd->getBot();
-        if ($bot !== NULL) {
-            #Do not waste resources on bots
-            return ['bot' => substr($bot['name'], 0, 64), 'os' => NULL, 'client' => NULL];
-        }
-        #Get OS
-        $os = $dd->getOs();
-        #Concat OS and version
-        $os = trim(($os['name'] ?? '').' '.($os['version'] ?? ''));
-        #Force OS to be NULL, if it's empty
-        if (empty($os)) {
-            $os = NULL;
-        }
-        #Get client
-        $client = $dd->getClient();
-        #Concat client and version
-        $client = trim(($client['name'] ?? '').' '.($client['version'] ?? ''));
-        #Force client to be NULL, if it's empty
-        if (empty($client)) {
-            $client = NULL;
-        }
-        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT']];
     }
 
     private function cookieLogin(): array
