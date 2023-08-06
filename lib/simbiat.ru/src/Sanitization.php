@@ -50,14 +50,44 @@ class Sanitization
         if ($head) {
             $config = $config->allowAttribute('property', 'meta');
         }
-        $sanitizer = new HtmlSanitizer($config);
+        #TinyMCE adds <br> inside <code> and <samp>, which should not happen. As such we need to clear those.
+        $string = self::removeBRs($string);
         #Remove excessive new lines
         $string = preg_replace('/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi', '', preg_replace('/(\s*<br \/>\s*){5,}/mi', '<br>', $string));
+        #Run the sanitizer
+        $sanitizer = new HtmlSanitizer($config);
         if ($head) {
-            return $sanitizer->sanitizeFor('head', $string);
+            $string = $sanitizer->sanitizeFor('head', $string);
         } else {
-            return $sanitizer->sanitize($string);
+            $string = $sanitizer->sanitize($string);
         }
+        return $string;
+    }
+    
+    public static function removeBRs(string $string): string
+    {
+        $html = new \DOMDocument(encoding: 'UTF-8');
+        #mb_convert_encoding is done as per workaround for UTF-8 loss/corruption on load from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
+        #LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
+        $html->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOBLANKS | LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
+        $html->preserveWhiteSpace = false;
+        $html->formatOutput = false;
+        $html->normalizeDocument();
+        #Get elements
+        $xpath = new \DOMXPath($html);
+        $elements = $xpath->query('//code | //samp');
+        #Replace <br> tags with new line
+        foreach ($elements as $element) {
+            $brElements = $element->getElementsByTagName('br');
+            while ($brElements->length > 0) {
+                $newlineTextNode = $html->createTextNode("\n");
+                $brElement = $brElements->item(0);
+                $brElement->parentNode->replaceChild($newlineTextNode, $brElement);
+            }
+        }
+        #Get the cleaned HTML
+        $cleanedHtml = $html->saveHTML();
+        return preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
     }
     
     #Remove controls characters from strings with $fullList controlling whether newlines and tabs should be kept (false will keep them)
