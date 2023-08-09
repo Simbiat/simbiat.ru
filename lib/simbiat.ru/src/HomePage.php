@@ -133,7 +133,7 @@ class HomePage
                                 self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                             }
                             #Handle Sec-Fetch. Use strict mode by default, unless we determined a known bot (they may not have Sec-Fetch headers)
-                            Headers::secFetch(['same-origin', 'same-site', 'none'], strict: empty($_SESSION['UA']['bot']));
+                            Headers::secFetch(strict: empty($_SESSION['UA']['bot']));
                         } else {
                             $ua = Security::getUA();
                             #Show that client is unsupported
@@ -142,7 +142,7 @@ class HomePage
                                 #Check if banned IP
                             }
                             #Handle Sec-Fetch. Use strict mode by default, unless we determined a known bot (they may not have Sec-Fetch headers)
-                            Headers::secFetch(['same-origin', 'same-site', 'none'], strict: empty($ua['bot']));
+                            Headers::secFetch(strict: empty($ua['bot']));
                         }
                         #Check if we have cached the results already
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
