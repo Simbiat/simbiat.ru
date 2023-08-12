@@ -4,6 +4,7 @@ namespace Simbiat\Abstracts;
 
 use Simbiat\Config\Common;
 use Simbiat\HTTP20\Headers;
+use Simbiat\Images;
 
 abstract class Router
 {
@@ -17,6 +18,8 @@ abstract class Router
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = '';
+    #Banner for all pages under the router. Defaults to website's banner. Needs to be inside /img directory and start with /
+    protected string $ogimage = '';
     #Service name
     protected string $serviceName = '';
     #If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
@@ -76,6 +79,10 @@ abstract class Router
         #Set service name if available
         if (!empty($this->serviceName)) {
             $pageData['serviceName'] = $this->serviceName;
+        }
+        #Set custom ogimage if available
+        if (!empty($this->ogimage) && empty($pageData['ogimage'])) {
+            $pageData = array_merge($pageData, Images::ogImage($this->ogimage, true));
         }
         return $pageData;
     }

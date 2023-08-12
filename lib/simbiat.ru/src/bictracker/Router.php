@@ -13,6 +13,7 @@ class Router extends \Simbiat\Abstracts\Router
     protected string $title = 'БИК Трекер';
     protected string $h1 = 'БИК Трекер';
     protected string $ogdesc = 'Трекер БИК предоставляемых Центральным Банком Российской Федерации';
+    protected string $ogimage = '/ogimages/bictracker.png';
     protected string $serviceName = 'bictracker';
 
     #This is actual page generation based on further details of the $path

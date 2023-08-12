@@ -13,6 +13,7 @@ class Router extends \Simbiat\Abstracts\Router
     protected string $title = 'Final Fantasy XIV Tracker';
     protected string $h1 = 'Final Fantasy XIV Tracker';
     protected string $ogdesc = 'Tracker for Final Fantasy XIV entities and respective statistics';
+    protected string $ogimage = '/ogimages/fftracker.png';
     protected string $serviceName = 'fftracker';
 
     #This is actual page generation based on further details of the $path
