@@ -501,7 +501,7 @@ input[type=radio]+label:active::before {
     filter: var(--border-shadow);
 }
 input[type=checkbox]:checked+label::before {
-    content: '🗹';
+    content: '☑';
 }
 input[type=checkbox]:not(:checked)+label::before {
     content: '☐';
@@ -510,7 +510,7 @@ input[type=radio]:checked+label::before {
     content: '⦿';
 }
 input[type=radio]:not(:checked)+label::before {
-    content: '⭘';
+    content: '◯';
 }
 
 /*Style disabled elements*/
