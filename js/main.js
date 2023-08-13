@@ -5472,7 +5472,7 @@ class SideShow extends HTMLElement {
         if (this.id === 'prodLink') {
             if (this.button) {
                 this.button.addEventListener('click', () => {
-                    window.open(document.location.href.replace('local.simbiat.ru', 'www.simbiat.dev'), '_blank');
+                    window.open(document.location.href.replace('local.simbiat.dev', 'www.simbiat.dev'), '_blank');
                 });
             }
         }
