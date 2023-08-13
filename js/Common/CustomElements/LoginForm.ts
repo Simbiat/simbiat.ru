@@ -1,9 +1,9 @@
 class LoginForm extends HTMLElement
 {
     //Regex for username. This is NOT JS Regex, thus it has doubled slashes.
-    private readonly userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`{|}~\\- ]{1,64}$';
+    private readonly userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
     //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
-    private readonly emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`{|}~-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
+    private readonly emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`\\{\\|\\}~\\-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
     private readonly loginForm: HTMLFormElement | null = null;
     //Sub-elements
     private readonly existUser: HTMLInputElement | null = null;
