@@ -8,7 +8,6 @@ class BackToTop extends HTMLElement
         super();
         this.content = document.querySelector('#content');
         this.BTTs = document.querySelectorAll('back-to-top');
-        //@ts-expect-error PHPStorm is not ware of checkVisibility function supported all modern browsers besides Safari (https://caniuse.com/?search=checkvisibility)
         if (typeof this.checkVisibility === 'function') {
             this.chkVis = true;
         }
@@ -46,9 +45,7 @@ class BackToTop extends HTMLElement
                 const top = heading.getBoundingClientRect().top;
                 const height = heading.getBoundingClientRect().height;
                 if (top >= -height * 2 && bottom <= height * 2) {
-                    //@ts-expect-error PHPStorm is not ware of checkVisibility function supported all modern browsers besides Safari (https://caniuse.com/?search=checkvisibility)
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                    if (!this.chkVis || heading.checkVisibility() === true) {
+                    if (!this.chkVis || heading.checkVisibility()) {
                         history.replaceState(document.title, document.title, `#${heading.id}`);
                         return;
                     }

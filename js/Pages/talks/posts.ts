@@ -38,7 +38,8 @@ export class Posts
                         }
                     }
                     addSnackbar('Post updated. Reloading...', 'success');
-                    pageRefresh();
+                    //pageRefresh();
+                    window.location.href = data.location;
                 } else {
                     addSnackbar(data.reason, 'failure', 10000);
                     buttonToggle(button as HTMLInputElement);

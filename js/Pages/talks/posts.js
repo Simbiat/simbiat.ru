@@ -28,7 +28,7 @@ export class Posts {
                         }
                     }
                     addSnackbar('Post updated. Reloading...', 'success');
-                    pageRefresh();
+                    window.location.href = data.location;
                 }
                 else {
                     addSnackbar(data.reason, 'failure', 10000);

@@ -4224,7 +4224,6 @@ function init() {
         'subtree': true
     });
     cleanGET();
-    hashCheck();
     router();
 }
 document.addEventListener('DOMContentLoaded', init);
@@ -4912,7 +4911,7 @@ class BackToTop extends HTMLElement {
                 const top = heading.getBoundingClientRect().top;
                 const height = heading.getBoundingClientRect().height;
                 if (top >= -height * 2 && bottom <= height * 2) {
-                    if (!this.chkVis || heading.checkVisibility() === true) {
+                    if (!this.chkVis || heading.checkVisibility()) {
                         history.replaceState(document.title, document.title, `#${heading.id}`);
                         return;
                     }
