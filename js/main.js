@@ -4061,8 +4061,9 @@ function empty(variable) {
     return false;
 }
 function pageRefresh() {
-    window.location.href += '?forceReload=true';
-    window.location.reload();
+    const url = new URL(document.location.href);
+    url.searchParams.set('forceReload', String(Date.now()));
+    window.location.replace(url.toString());
 }
 function copyQuote(target) {
     let node;
@@ -4769,15 +4770,9 @@ function saveTinyMCE(id, textareaOnly = false) {
 }
 function cleanGET() {
     const url = new URL(document.location.href);
-    const params = new URLSearchParams(url.search);
-    params.delete('cacheReset');
-    params.delete('forceReload');
-    if (params.toString() === '') {
-        window.history.replaceState(document.title, document.title, location.pathname + location.hash);
-    }
-    else {
-        window.history.replaceState(document.title, document.title, `?${params.toString()}${location.hash}`);
-    }
+    url.searchParams.delete('cacheReset');
+    url.searchParams.delete('forceReload');
+    window.history.replaceState(document.title, document.title, url.toString());
 }
 function hashCheck() {
     const url = new URL(document.location.href);

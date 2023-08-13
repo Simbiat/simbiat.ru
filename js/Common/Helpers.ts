@@ -125,11 +125,12 @@ function empty(variable: unknown): boolean
     return false;
 }
 
-//Function to force page refresh. Regular reload() often hits cache, thus not properly updating, but without it page may not get reloaded on mobile devices
+//Function to force page refresh. Regular reload() often hits cache, thus not properly updating
 function pageRefresh(): void
 {
-    window.location.href += '?forceReload=true';
-    window.location.reload();
+    const url = new URL(document.location.href);
+    url.searchParams.set('forceReload', String(Date.now()));
+    window.location.replace(url.toString());
 }
 
 //Copy the text of q tag or respective block
