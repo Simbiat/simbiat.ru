@@ -1,3 +1,11 @@
+.post_text h1,
+.post_text h2,
+.post_text h3,
+.post_text h4,
+.post_text h5,
+.post_text h6 {
+    display: inline-block;
+}
 .section_icon {
     width: 2rem;
     height: 2rem;
