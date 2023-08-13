@@ -44,6 +44,14 @@ class Thread extends Entity
     public array $tags = [];
     #List of external links
     public array $externalLinks = [];
+    #Flag indicating if we are getting data for a post, and can skip some details
+    private bool $forPost = false;
+    
+    public function setForPost(bool $forPost): self
+    {
+        $this->forPost = $forPost;
+        return $this;
+    }
     
     protected function getFromDB(): array
     {
@@ -57,18 +65,20 @@ class Thread extends Entity
             $data = $data['entities'][0];
         }
         #Get section details
-        $data['section'] = (new Section($data['sectionid']))->getArray();
-        #Get posts
-        $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'],], '`talks__posts`.`threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC'))->listEntities($page);
-        #Get like value, for each post, if current user has appropriate permission
-        $postObject = new Post();
-        foreach ($data['posts']['entities'] as &$post) {
-            $post['liked'] = $postObject->setId($post['id'])->isLiked();
+        $data['section'] = (new Section($data['sectionid']))->setForThread(true)->getArray();
+        if (!$this->forPost) {
+            #Get posts
+            $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'],], '`talks__posts`.`threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC'))->listEntities($page);
+            #Get like value, for each post, if current user has appropriate permission
+            $postObject = new Post();
+            foreach ($data['posts']['entities'] as &$post) {
+                $post['liked'] = $postObject->setId($post['id'])->isLiked();
+            }
+            #Get tags
+            $data['tags'] = HomePage::$dbController->selectColumn('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
+            #Get external links
+            $data['links'] = HomePage::$dbController->selectAll('SELECT `url`, `talks__alt_links`.`type`, `icon` FROM `talks__alt_links` INNER JOIN `talks__alt_link_types` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
         }
-        #Get tags
-        $data['tags'] = HomePage::$dbController->selectColumn('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
-        #Get external links
-        $data['links'] = HomePage::$dbController->selectAll('SELECT `url`, `talks__alt_links`.`type`, `icon` FROM `talks__alt_links` INNER JOIN `talks__alt_link_types` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
         return $data;
     }
     
@@ -93,11 +103,13 @@ class Thread extends Entity
         $this->parents = array_merge($fromDB['section']['parents'], [['sectionid' => $fromDB['section']['id'], 'name' => $fromDB['section']['name'], 'type' => $fromDB['section']['type'], 'parentid' => $fromDB['section']['parents'][0]['sectionid']]]);
         $this->parent = $fromDB['section'];
         $this->parentID = intval($fromDB['section']['id']);
-        $this->posts = $fromDB['posts'];
         $this->language = $fromDB['language'];
-        $this->tags = $fromDB['tags'];
-        $this->externalLinks = ArrayHelpers::DigitToKey($fromDB['links'], 'type');
         $this->lastPage = $fromDB['posts']['pages'];
+        if (!$this->forPost) {
+            $this->posts = $fromDB['posts'];
+            $this->tags = $fromDB['tags'];
+            $this->externalLinks = ArrayHelpers::DigitToKey($fromDB['links'], 'type');
+        }
     }
     
     public static function getLanguages(): array
@@ -368,7 +380,7 @@ class Thread extends Entity
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
         #Check if parent exists
-        $parent = (new Section($data['parentid']))->get();
+        $parent = (new Section($data['parentid']))->setForThread(true)->get();
         if (is_null($parent->id)) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parentid'].'` does not exist'];
         }

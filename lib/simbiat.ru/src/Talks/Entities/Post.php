@@ -35,6 +35,8 @@ class Post extends Entity
     public int $likes = 0;
     public int $dislikes = 0;
     public ?int $liked = null;
+    #Number of the page to which the post belongs (at the time of access)
+    public int $page = 1;
     
     protected function getFromDB(): array
     {
@@ -57,7 +59,8 @@ class Post extends Entity
             $data['replyto'] = [];
         }
         $data['liked'] = $this->isLiked();
-        $data['thread'] = (new Thread($data['threadid']))->getArray();
+        $data['thread'] = (new Thread($data['threadid']))->setForPost(true)->getArray();
+        $data['page'] = $this->getPage($data['threadid']);
         return $data;
     }
     
@@ -84,6 +87,25 @@ class Post extends Entity
         $this->likes = intval($fromDB['likes']);
         $this->dislikes = intval($fromDB['dislikes']);
         $this->liked = $fromDB['liked'];
+        $this->page = $fromDB['page'];
+    }
+    
+    private function getPage(int $thread): int
+    {
+        $posts = [];
+        try {
+            #Regular list does not fit due to pagination and due to excessive data, so using custom query to get all posts
+            $posts = HomePage::$dbController->selectColumn('SELECT `postid` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':threadid' => [$thread, 'int']]);
+        } catch (\Throwable) {
+            #Do nothing
+        }
+        if (empty($posts)) {
+            return 1;
+        }
+        #Get ordinal number of the post
+        $number = array_search($this->id, $posts);
+        #Get page
+        return intval(ceil(($number + 1) / 50));
     }
     
     #Get post's history, only if respective permission is available. Text is retrieved only for specific version, if it exists
@@ -326,7 +348,7 @@ class Post extends Entity
             HomePage::$dbController->query($queries);
             #Add text to history
             $this->addHistory($data['text']);
-            return ['response' => true];
+            return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to update post'];
@@ -371,7 +393,7 @@ class Post extends Entity
             }
         }
         #Attempt to get the thread
-        $parent = (new Thread($data['threadid']))->get();
+        $parent = (new Thread($data['threadid']))->setForPost(true)->get();
         if (is_null($parent->id)) {
             return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parentid'].'` does not exist'];
         }

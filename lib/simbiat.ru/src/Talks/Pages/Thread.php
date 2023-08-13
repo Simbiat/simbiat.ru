@@ -11,7 +11,7 @@ class Thread extends Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/talks/threads/', 'name'=>'Threads']
+        ['href'=>'/talks/sections/', 'name'=>'Sections']
     ];
     #Sub service name
     protected string $subServiceName = 'thread';
@@ -73,9 +73,7 @@ class Thread extends Page
         if ($outputArray['type'] === 'Changelog' && is_numeric($outputArray['name'])) {
             $outputArray['name'] = date('Y.m.d', intval($outputArray['name']));
         }
-        #Reset crumbs (we do not have "threads" list)
-        $this->breadCrumb = [];
-        #Add parents if we have any
+        #Add parents to breadcrumbs if we have any
         foreach ($outputArray['parents'] as $parent) {
             $this->breadCrumb[] = ['href' => '/talks/sections/'.$parent['sectionid'], 'name' => $parent['name']];
         }

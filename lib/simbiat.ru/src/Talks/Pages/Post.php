@@ -4,12 +4,13 @@ namespace Simbiat\Talks\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
+use Simbiat\Tests\Tests;
 
 class Post extends Page
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/talks/posts/', 'name'=>'Posts']
+        ['href'=>'/talks/sections/', 'name'=>'Sections']
     ];
     #Sub service name
     protected string $subServiceName = 'post';
@@ -93,14 +94,12 @@ class Post extends Page
                 }
             }
         }
-        #Reset crumbs (we do not have "posts" list)
-        $this->breadCrumb = [];
-        #Add parents
+        #Add parents to breadcrumbs
         foreach ($outputArray['parents'] as $parent) {
             $this->breadCrumb[] = ['href' => '/talks/sections/'.$parent['sectionid'], 'name' => $parent['name']];
         }
         #Add thread
-        $this->breadCrumb[] = ['href' => '/talks/threads/'.$outputArray['threadid'], 'name' => $outputArray['name']];
+        $this->breadCrumb[] = ['href' => '/talks/threads/'.$outputArray['threadid'].'/'.($outputArray['page'] > 1 ? '?page='.$outputArray['page'] : '').'#post_'.$id, 'name' => $outputArray['name']];
         #Add current page
         $this->breadCrumb[] = ['href' => '/talks/posts/'.$id, 'name' => '#'.$id];
         if ($this->editMode) {
