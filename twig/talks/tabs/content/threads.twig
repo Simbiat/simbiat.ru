@@ -50,7 +50,7 @@
                 </div>
                 <details>
                     <summary>Alternative links</summary>
-                    <p>If the content being posted is available on one of the supported website, you can add a link to it below.</p>
+                    <p>If the content being posted is available on any of the supported websites, you can add links to them below. Links will be shown below the first post in the thread.</p>
                     {% for altlink in thread_link_types %}
                         <span class="float_label_div">
                             <input form="editThreadForm" type="url" aria-required="false" name="curThread[altlinks][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" value="{{ externalLinks[altlink.type].url }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
