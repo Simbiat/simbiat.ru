@@ -70,7 +70,7 @@ class Thread extends Entity
             #Get pagination data
             try {
                 #Regular list does not fit due to pagination and due to excessive data, so using custom query to get all posts
-                $data['posts']['pages'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$this->id, 'int']]);
+                $data['posts']['pages'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$this->id, 'int']]);
             } catch (\Throwable) {
                 $data['posts']['pages'] = 1;
             }
