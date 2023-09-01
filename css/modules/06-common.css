@@ -260,6 +260,9 @@ footer address a .linkIcon {
 .inline {
     display: inline;
 }
+.inline-block {
+    display: inline-block;
+}
 
 .middle {
     text-align: center;
