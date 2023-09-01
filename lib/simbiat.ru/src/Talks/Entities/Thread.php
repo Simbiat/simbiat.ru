@@ -65,8 +65,16 @@ class Thread extends Entity
             $data = $data['entities'][0];
         }
         #Get section details
-        $data['section'] = (new Section($data['sectionid']))->setForThread(true)->getArray();
-        if (!$this->forPost) {
+        $data['section'] = (new Section($data['sectionid']))->setForThread(true)->getArray();#Get posts
+        if ($this->forPost) {
+            #Get pagination data
+            try {
+                #Regular list does not fit due to pagination and due to excessive data, so using custom query to get all posts
+                $data['posts']['pages'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$this->id, 'int']]);
+            } catch (\Throwable) {
+                $data['posts']['pages'] = 1;
+            }
+        } else {
             #Get posts
             $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'],], '`talks__posts`.`threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC'))->listEntities($page);
             #Get like value, for each post, if current user has appropriate permission
