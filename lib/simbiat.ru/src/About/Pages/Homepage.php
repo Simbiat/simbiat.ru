@@ -314,12 +314,15 @@ class Homepage extends Page
                     'href' => 'https://www.smartly.io/',
                     'position' => 'Tier 3 Technical Support Engineer',
                     'responsibilities' => [
-                        'Ensured best-in-class technical support and distinguished customer service with lots of debugging.',
-                        'Analyzed, reproduced, prioritized, documented, and assisted in fixing issues, including platform bugs.',
+                        'Ensured best-in-class technical support and distinguished customer service with lots of analysis and debugging.',
                         'Kept product documentation up to date.',
                         'Assisted and trained teammates.',
                     ],
-                    'achievements' => '<a href="/static/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>',
+                    'achievements' => [
+                        'Drove implementation of Support Handbook, internal collection of manuals and guidelines for customer support.',
+                        'Participated in leadership training',
+                        '<a href="/static/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>'
+                    ],
                     'description' => null,
                 ],
                 [
@@ -385,11 +388,13 @@ class Homepage extends Page
                     'href' => 'https://www.signanthealth.com/',
                     'position' => 'R&D Support Engineer',
                     'responsibilities' => [
-                        'Investigate and resolve infrastructure and application incidents.',
-                        'Manage and triage incidents and service requests.',
-                        'Determine root cause of issues.',
+                        'Investigate, manage, and triage application incidents and service requests.',
                     ],
-                    'achievements' => null,
+                    'achievements' => [
+                        'Submitted almost a hundred suggestions for product improvement.',
+                        'Helped with several de-escalations of issues with sponsors.',
+                        'Wrote multiple knowledgebase articles.',
+                    ],
                     'description' => null,
                 ],
             ];
