@@ -301,7 +301,7 @@ class Section extends Entity
                 'INSERT INTO `talks__sections`(`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `closed`, `private`, `created`, `createdby`, `updatedby`, `icon`) VALUES (NULL,:name,:description,:parentid,:sequence,:type,:closed,:private,:time,:userid,:userid,:icon);',
                 [
                     ':name' => trim($data['name']),
-                    ':description' => trim($data['name']),
+                    ':description' => trim($data['description']),
                     ':parentid' => [
                         (empty($data['parentid']) ? null : $data['parentid']),
                         (empty($data['parentid']) ? 'null' : 'int')
@@ -382,7 +382,7 @@ class Section extends Entity
                 [
                     ':sectionid' => [$this->id, 'int'],
                     ':name' => trim($data['name']),
-                    ':description' => trim($data['name']),
+                    ':description' => trim($data['description']),
                     ':parentid' => [
                         (empty($data['parentid']) ? null : $data['parentid']),
                         (empty($data['parentid']) ? 'null' : 'int')
