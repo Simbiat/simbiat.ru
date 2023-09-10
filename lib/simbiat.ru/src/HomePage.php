@@ -134,7 +134,6 @@ class HomePage
                             }
                             #Handle Sec-Fetch. Use strict mode if request is not from known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                             Headers::secFetch(strict: (empty($_SESSION['UA']['bot']) && $_SESSION['UA']['browser']));
-                            #Headers::secFetch(strict: false);
                         } else {
                             $ua = Security::getUA();
                             #Show that client is unsupported
@@ -144,7 +143,6 @@ class HomePage
                             }
                             #Handle Sec-Fetch. Use strict mode if request is not from known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                             Headers::secFetch(strict: (empty($ua['bot']) && $ua['browser']));
-                            #Headers::secFetch(strict: false);
                         }
                         #Check if we have cached the results already
                         HomePage::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
