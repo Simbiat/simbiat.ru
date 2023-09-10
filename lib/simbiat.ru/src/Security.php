@@ -206,7 +206,7 @@ class Security
         #Check if User Agent is present
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
             #Something is fishy, so let's 418 this
-            return ['unsupported' => true];
+            return ['unsupported' => true, 'browser' => false];
         }
         #Force full versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
@@ -217,7 +217,7 @@ class Security
         $bot = $dd->getBot();
         if ($bot !== NULL) {
             #Do not waste resources on bots
-            return ['bot' => substr($bot['name'], 0, 64), 'os' => NULL, 'client' => NULL, 'unsupported' => false];
+            return ['bot' => substr($bot['name'], 0, 64), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false];
         }
         #Get OS
         $os = $dd->getOs();
@@ -228,6 +228,7 @@ class Security
             $os = NULL;
         }
         #Get client
+        $browser = $dd->isBrowser();
         $client = $dd->getClient();
         #Check if client is supported
         if (preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/ui', $client['name'] ?? '') === 1 ||
@@ -253,6 +254,6 @@ class Security
         if (empty($client)) {
             $client = NULL;
         }
-        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported];
+        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
     }
 }
