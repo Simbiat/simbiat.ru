@@ -37,6 +37,10 @@ export class Games {
         if (empty(this.jsPath)) {
             addSnackbar(`No GameMaker JavaScript file provided.`,'failure');
         } else if (this.wrapper) {
+            //Check if we already have the canvas running
+            if (document.getElementById('canvas')) {
+                return;
+            }
             //Create canvas
             const canvas = document.createElement('canvas');
             canvas.id = 'canvas';
@@ -51,6 +55,8 @@ export class Games {
                 // @ts-expect-error: GameMaker files are not integrated into main codebase, so suppressing errors
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 GameMaker_Init();
+                document.querySelector('#play_overlay')?.classList.add('hidden');
+                document.querySelector('#gameStartButton')?.classList.add('hidden');
             };
             tag.onerror = (): void => {
                 addSnackbar(`Failed to load \`${String(this.jsPath)}\` script.`, 'failure');

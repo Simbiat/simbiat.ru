@@ -34,6 +34,9 @@ export class Games {
             addSnackbar(`No GameMaker JavaScript file provided.`, 'failure');
         }
         else if (this.wrapper) {
+            if (document.getElementById('canvas')) {
+                return;
+            }
             const canvas = document.createElement('canvas');
             canvas.id = 'canvas';
             this.wrapper.appendChild(canvas);
@@ -43,6 +46,8 @@ export class Games {
             tag.onload = () => {
                 canvas.classList.remove('hidden');
                 GameMaker_Init();
+                document.querySelector('#play_overlay')?.classList.add('hidden');
+                document.querySelector('#gameStartButton')?.classList.add('hidden');
             };
             tag.onerror = () => {
                 addSnackbar(`Failed to load \`${String(this.jsPath)}\` script.`, 'failure');
