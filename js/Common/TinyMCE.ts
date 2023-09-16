@@ -367,18 +367,15 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
                 const tinyInstance = tinymce.get(id);
                 if (tinyInstance !== null) {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                    tinyInstance.on('input', () => {
-                        //We want the dump to textarea to be done on every change for maximum transparency and to avoid extra calls to TinyMCE from outside
-                        tinyMCEtoTextarea(textarea as HTMLTextAreaElement, tinyInstance);
-                    });
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                     tinyInstance.on('OpenWindow', () => {
                         tinyMCEHideInputs();
                     });
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                    tinyInstance.on('CloseWindow', () => {
-                        //This is an attempt to ensure we have up-to-date data after modifying source code
-                        tinyMCEtoTextarea(textarea as HTMLTextAreaElement, tinyInstance);
+                    ['CloseWindow', 'input', 'paste', 'cut', 'reset'].forEach((eventType: string) => {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                        tinyInstance.on(eventType, () => {
+                            //This is an attempt to ensure we have up-to-date data after modifying source code
+                            tinyMCEtoTextarea(textarea as HTMLTextAreaElement, tinyInstance);
+                        });
                     });
                 }
             });
