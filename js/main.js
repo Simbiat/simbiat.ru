@@ -4738,7 +4738,27 @@ function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
                     tinyInstance.on('OpenWindow', () => {
                         tinyMCEHideInputs();
                     });
-                    ['CloseWindow', 'input', 'paste', 'cut', 'reset'].forEach((eventType) => {
+                    [
+                        'CloseWindow',
+                        'FormatApply',
+                        'FormatRemove',
+                        'ObjectResized',
+                        'NewBlock',
+                        'Undo',
+                        'Redo',
+                        'SetAttrib',
+                        'NewRow',
+                        'NewCell',
+                        'TableModified',
+                        'Change',
+                        'RestoreDraft',
+                        'CommentChange',
+                        'ListMutation',
+                        'input',
+                        'paste',
+                        'cut',
+                        'reset'
+                    ].forEach((eventType) => {
                         tinyInstance.on(eventType, () => {
                             tinyMCEtoTextarea(textarea, tinyInstance);
                         });

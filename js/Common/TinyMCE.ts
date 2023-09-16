@@ -370,7 +370,30 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
                     tinyInstance.on('OpenWindow', () => {
                         tinyMCEHideInputs();
                     });
-                    ['CloseWindow', 'input', 'paste', 'cut', 'reset'].forEach((eventType: string) => {
+                    [
+                        //Editor events
+                        'CloseWindow',
+                        'FormatApply',
+                        'FormatRemove',
+                        'ObjectResized',
+                        'NewBlock',
+                        'Undo',
+                        'Redo',
+                        'SetAttrib',
+                        'NewRow',
+                        'NewCell',
+                        'TableModified',
+                        'Change',
+                        //Plugins' events
+                        'RestoreDraft',
+                        'CommentChange',
+                        'ListMutation',
+                        //Browser events
+                        'input',
+                        'paste',
+                        'cut',
+                        'reset'
+                    ].forEach((eventType: string) => {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                         tinyInstance.on(eventType, () => {
                             //This is an attempt to ensure we have up-to-date data after modifying source code
