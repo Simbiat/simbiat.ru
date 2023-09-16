@@ -164,19 +164,22 @@ class Section extends Entity
                     $where .= '(`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:userid) AND ';
                     $bindings[':userid'] = [$_SESSION['userid'], 'int'];
                 }
-                $where .= '(`sectionid`=:sectionid OR `sectionid` IN (SELECT `sectionid` FROM `talks__sections` WHERE `parentid`=:sectionid))';
                 foreach ($data['children']['entities'] as &$category) {
                     $bindings[':sectionid'] = [$category['sectionid'], 'int'];
-                    #Get threads' IDs
-                    $threads = HomePage::$dbController->selectColumn('SELECT `threadid` FROM `talks__threads` WHERE '.$where.';', $bindings);
-                    $threadCount = count($threads);
-                    $category['threads'] = $threadCount;
-                    #Get count of posts in those threads
-                    if ($threadCount > 0) {
-                        $category['posts'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `talks__posts` WHERE `threadid` IN ('.implode(',', $threads).')'.(in_array('viewScheduled', $_SESSION['permissions']) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';');
-                    } else {
-                        $category['posts'] = 0;
-                    }
+                    list('thread_count' => $category['threads'], 'post_count' => $category['posts']) = HomePage::$dbController->selectRow(
+                        'WITH RECURSIVE `SectionHierarchy` AS (
+                                    SELECT `sectionid`, `parentid`
+                                    FROM `talks__sections`
+                                    WHERE `sectionid` = :sectionid
+                                    UNION ALL
+                                    SELECT `s`.`sectionid`, `s`.`parentid`
+                                    FROM `talks__sections` `s`
+                                    INNER JOIN `SectionHierarchy` `sh` ON `s`.`parentid` = `sh`.`sectionid`
+                                )
+                                SELECT
+                                    (SELECT COUNT(`threadid`) FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' WHERE '.$where).') AS `thread_count`,
+                                    (SELECT COUNT(`postid`) FROM `talks__posts` `p` WHERE `p`.`threadid` IN (SELECT `threadid` FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`))'.(empty($where) ? '' : ' WHERE '.$where).') AS `post_count`;',
+                        $bindings);
                 }
             }
             #Count posts
@@ -189,7 +192,6 @@ class Section extends Entity
         return $data;
     }
     
-    /** @noinspection DuplicatedCode */
     protected function process(array $fromDB): void
     {
         $this->name = $fromDB['name'];
