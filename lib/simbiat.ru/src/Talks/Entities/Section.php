@@ -158,11 +158,14 @@ class Section extends Entity
                 $where = '';
                 $bindings = [];
                 if (!in_array('viewScheduled', $_SESSION['permissions'])) {
-                    $where .= '`talks__threads`.`created`<=CURRENT_TIMESTAMP() AND ';
+                    $where .= '`t`.`created`<=CURRENT_TIMESTAMP() AND ';
                 }
                 if (!in_array('viewPrivate', $_SESSION['permissions'])) {
-                    $where .= '(`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:userid) AND ';
+                    $where .= '(`t`.`private`=0 OR `t`.`createdby`=:userid) AND ';
                     $bindings[':userid'] = [$_SESSION['userid'], 'int'];
+                }
+                if (!empty($where)) {
+                    $where = preg_replace('/( AND $)/ui', '', $where);
                 }
                 foreach ($data['children']['entities'] as &$category) {
                     $bindings[':sectionid'] = [$category['sectionid'], 'int'];
@@ -177,8 +180,8 @@ class Section extends Entity
                                     INNER JOIN `SectionHierarchy` `sh` ON `s`.`parentid` = `sh`.`sectionid`
                                 )
                                 SELECT
-                                    (SELECT COUNT(`threadid`) FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' WHERE '.$where).') AS `thread_count`,
-                                    (SELECT COUNT(`postid`) FROM `talks__posts` `p` WHERE `p`.`threadid` IN (SELECT `threadid` FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`))'.(empty($where) ? '' : ' WHERE '.$where).') AS `post_count`;',
+                                    (SELECT COUNT(`threadid`) FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' AND '.$where).') AS `thread_count`,
+                                    (SELECT COUNT(`postid`) FROM `talks__posts` `p` WHERE `p`.`threadid` IN (SELECT `threadid` FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' AND '.$where).')) AS `post_count`;',
                         $bindings);
                 }
             }
