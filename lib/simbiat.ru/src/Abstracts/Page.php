@@ -218,7 +218,28 @@ abstract class Page
     #Function to set og:desc
     protected final function setOgDesc(string $string): void
     {
-        $newDesc = strip_tags(HTMLCut::Cut($string, 160, 1));
+        #Remove <details> to avoid spoilers and generally complex items
+        $string = '<html>'.$string.'</html>';
+        /** @noinspection DuplicatedCode */
+        $html = new \DOMDocument(encoding: 'UTF-8');
+        #mb_convert_encoding is done as per workaround for UTF-8 loss/corruption on load from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
+        #LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
+        $html->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOBLANKS | LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
+        $html->preserveWhiteSpace = false;
+        $html->formatOutput = false;
+        $html->normalizeDocument();
+        #Get elements
+        $xpath = new \DOMXPath($html);
+        $elements = $xpath->query('//details');
+        #Actually remove the elements
+        foreach ($elements as $element) {
+            $element->parentNode->removeChild($element);
+        }
+        #Get the cleaned HTML
+        $cleanedHtml = $html->saveHTML();
+        #Strip the excessive HTML tags, if we added them
+        $cleanedHtml = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
+        $newDesc = strip_tags(HTMLCut::Cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
         #Update description only if it's not empty
         if (preg_match('/^\s*$/ui', $newDesc) === 0) {
             $this->ogdesc = $newDesc;
