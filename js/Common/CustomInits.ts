@@ -216,20 +216,23 @@ function dialogInit(dialog: HTMLDialogElement): void
 
 function anchorInit(anchor: HTMLAnchorElement): void
 {
+    //Turn current URL into URL object or use window's location, if we are missing URL in anchor (should not normally happen)
+    const currentURL = new URL(anchor.href ?? window.location.href);
+    //Add `target="_blank"` if link is not from the current domain
+    if (currentURL.host !== window.location.host) {
+        anchor.target = '_blank';
+    }
     //Add an icon indicating, that link will open in new tab
     if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
         anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
-        //I am aware of some extensions adding blank anchors, that can break the code
-    } else if (!empty(anchor.href)) {
+        //I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
+    } else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
         //Logic to update URL if this is a hash link for current page
-        const url = new URL(anchor.href);
-        if (!empty(url.hash) && url.origin + url.host + url.pathname === window.location.origin + window.location.host + window.location.pathname) {
-            anchor.addEventListener('click', () => {
-                if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
-                    history.replaceState(document.title, document.title, `${url.hash}`);
-                }
-            });
-        }
+        anchor.addEventListener('click', () => {
+            if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+                history.replaceState(document.title, document.title, `${currentURL.hash}`);
+            }
+        });
     }
 }
 

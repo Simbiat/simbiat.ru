@@ -3866,18 +3866,19 @@ function dialogInit(dialog) {
     }
 }
 function anchorInit(anchor) {
+    const currentURL = new URL(anchor.href ?? window.location.href);
+    if (currentURL.host !== window.location.host) {
+        anchor.target = '_blank';
+    }
     if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
         anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
     }
-    else if (!empty(anchor.href)) {
-        const url = new URL(anchor.href);
-        if (!empty(url.hash) && url.origin + url.host + url.pathname === window.location.origin + window.location.host + window.location.pathname) {
-            anchor.addEventListener('click', () => {
-                if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
-                    history.replaceState(document.title, document.title, `${url.hash}`);
-                }
-            });
-        }
+    else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
+        anchor.addEventListener('click', () => {
+            if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+                history.replaceState(document.title, document.title, `${currentURL.hash}`);
+            }
+        });
     }
 }
 function customizeNewElements(newNode) {
