@@ -121,7 +121,7 @@ class Bic extends Entity
             }
         }
         #Count banks, that are serviced by this one
-        $fromDB['serviceFor'] = HomePage::$dbController->Count('SELECT COUNT(*) FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
+        $fromDB['serviceFor'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
         #Get list of banks, that used same BIC
         $fromDB['sameBIC'] = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $fromDB['BIC'], ':BIC' => $fromDB['BIC']]);
         #Get list of banks on same address
