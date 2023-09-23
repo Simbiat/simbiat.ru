@@ -6,19 +6,15 @@ use Simbiat\Config\Common;
 
 class Caching
 {
-    private string $cacheDir = '';
-
-    public function __construct(string $cacheDir = '')
+    public function __construct(private string $cacheDir = '')
     {
-        if (empty($cacheDir)) {
+        if (empty($this->cacheDir)) {
             $this->cacheDir = Common::$htmlCache;
         } else {
-            if (!is_dir($cacheDir)) {
-                @mkdir($cacheDir, recursive: true);
-                if (preg_match('/.*\/$/i', $cacheDir) !== 1) {
-                    $this->cacheDir = $cacheDir.'/';
-                } else {
-                    $this->cacheDir = $cacheDir;
+            if (!is_dir($this->cacheDir)) {
+                @mkdir($this->cacheDir, recursive: true);
+                if (preg_match('/.*\/$/i', $this->cacheDir) !== 1) {
+                    $this->cacheDir .= '/';
                 }
             }
         }
