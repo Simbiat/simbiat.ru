@@ -37,8 +37,8 @@
                 <br>
                 <div class="float_label_div">
                     <select form="editThreadForm" id="curThread_language" name="curThread[language]">
-                        {% for language in thread_languages %}
-                            <option value="{{ language.value }}"{% if language.value == 'en' %} selected{% endif %}>{{ language.name }}{% if language.value == 'en' %} (Default){% endif %}</option>
+                        {% for thread_language in thread_languages %}
+                            <option value="{{ thread_language.value }}"{% if thread_language.value == language %} selected{% endif %}>{{ thread_language.name }}{% if thread_language.value == 'en' %} (Default){% endif %}</option>
                         {% endfor %}
                     </select>
                     <label for="curThread_language" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>

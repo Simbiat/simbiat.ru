@@ -447,7 +447,7 @@ class Thread extends Entity
             $data['language'] = 'en';
         } else {
             $languages = $this->getLanguages();
-            if (!in_array($data['language'], array_column($languages, 'name'))) {
+            if (!in_array($data['language'], array_column($languages, 'value'))) {
                 $data['language'] = 'en';
             }
         }
