@@ -45,9 +45,7 @@ class HomePage
         } else {
             self::$CLI = false;
         }
-        if (is_null(self::$dataCache)) {
-            self::$dataCache = new Caching();
-        }
+        self::$dataCache ??= new Caching();
         #Get all POST and GET keys to lower case
         $_POST = array_change_key_case($_POST);
         Sanitization::carefulArraySanitization($_POST);
