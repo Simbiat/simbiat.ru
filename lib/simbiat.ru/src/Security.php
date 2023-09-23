@@ -8,7 +8,6 @@ use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use Simbiat\Config\Common;
 use Simbiat\Config\Talks;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 class Security
 {
@@ -16,13 +15,13 @@ class Security
     #Static sanitizer config for a little bit performance
     
     #Function to hash password. Used mostly as a wrapper in case of future changes
-    public static function passHash(string $password): string
+    public static function passHash(#[\SensitiveParameter] string $password): string
     {
         return password_hash($password, PASSWORD_ARGON2ID, Config\Security::$argonSettings);
     }
 
     #Function to encrypt stuff
-    public static function encrypt(string $data): string
+    public static function encrypt(#[\SensitiveParameter] string $data): string
     {
         if (empty($data)) {
             return '';

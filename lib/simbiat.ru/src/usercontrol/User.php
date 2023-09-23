@@ -587,7 +587,7 @@ class User extends Entity
     }
 
     #Function to validate password
-    public function passValid(string $password, string $hash): bool
+    public function passValid(#[\SensitiveParameter] string $password, #[\SensitiveParameter] string $hash): bool
     {
         if (empty($this->id)) {
             return false;
@@ -618,7 +618,7 @@ class User extends Entity
     }
 
     #Function to change the password
-    public function passChange(string $password): bool
+    public function passChange(#[\SensitiveParameter] string $password): bool
     {
         if (empty($this->id)) {
             return false;
