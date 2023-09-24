@@ -4,4 +4,4 @@ CREATE TABLE `ffxiv__linkshell_names`
     `name`        VARCHAR(50) NOT NULL COMMENT 'Previous Linkshell name',
     PRIMARY KEY (`linkshellid`, `name`),
     CONSTRAINT `ls_names_id` FOREIGN KEY (`linkshellid`) REFERENCES `ffxiv__linkshell` (`linkshellid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Past names of linkshells' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Past names of linkshells' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

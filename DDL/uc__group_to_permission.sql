@@ -5,4 +5,4 @@ CREATE TABLE `uc__group_to_permission`
     PRIMARY KEY (`groupid`, `permission`),
     CONSTRAINT `permission_to_group` FOREIGN KEY (`groupid`) REFERENCES `uc__groups` (`groupid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `permission_to_permission_group` FOREIGN KEY (`permission`) REFERENCES `uc__permissions` (`permission`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'List of permissions assigned to user groups' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'List of permissions assigned to user groups' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';

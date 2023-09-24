@@ -21,7 +21,7 @@ CREATE TABLE `talks__threads`
     CONSTRAINT `thread_lastpost_by` FOREIGN KEY (`lastpostby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
     CONSTRAINT `thread_to_forum` FOREIGN KEY (`sectionid`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE,
     CONSTRAINT `thread_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) COMMENT 'List of threads' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'List of threads' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';
 
 CREATE INDEX `closed_desc` ON `talks__threads` (`closed` DESC);
 

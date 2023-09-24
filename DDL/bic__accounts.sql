@@ -11,4 +11,4 @@ CREATE TABLE `bic__accounts`
     CONSTRAINT `account_to_bic` FOREIGN KEY (`BIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `account_to_cbr` FOREIGN KEY (`AccountCBRBIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `account_to_type` FOREIGN KEY (`RegulationAccountType`) REFERENCES `bic__acc_type` (`RegulationAccountType`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Список счетов' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Список счетов' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

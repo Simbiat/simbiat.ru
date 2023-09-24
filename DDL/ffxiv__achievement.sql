@@ -16,7 +16,7 @@ CREATE TABLE `ffxiv__achievement`
     `dbid`          VARCHAR(11)                           NULL COMMENT 'ID of achievement in Lodestone database (https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/dbid/)',
     CONSTRAINT `dbid` UNIQUE (`dbid`),
     CONSTRAINT `itemid` UNIQUE (`itemid`)
-) COMMENT 'Achievements found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Achievements found on Lodestone' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE FULLTEXT INDEX `howto` ON `ffxiv__achievement` (`howto`);
 

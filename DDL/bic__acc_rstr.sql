@@ -8,6 +8,6 @@ CREATE TABLE `bic__acc_rstr`
     CONSTRAINT `acc_to_acc` FOREIGN KEY (`Account`) REFERENCES `bic__accounts` (`Account`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `acc_to_cbr` FOREIGN KEY (`SuccessorBIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `acc_to_rstr` FOREIGN KEY (`AccRstr`) REFERENCES `bic__rstr` (`Rstr`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Список ограничений наложенных на счета' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Список ограничений наложенных на счета' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `AccRstrDate` ON `bic__acc_rstr` (`AccRstrDate` DESC);

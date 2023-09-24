@@ -5,4 +5,4 @@ CREATE TABLE `ffxiv__grandcompany_rank`
     `gc_rank`  VARCHAR(50)         NOT NULL COMMENT 'Rank name',
     CONSTRAINT `gc_rank` UNIQUE (`gc_rank`),
     CONSTRAINT `gcRank_to_gc` FOREIGN KEY (`gcId`) REFERENCES `ffxiv__grandcompany` (`gcId`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Grand Companies'' ranks' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Grand Companies'' ranks' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

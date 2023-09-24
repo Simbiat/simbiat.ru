@@ -5,4 +5,4 @@ CREATE TABLE `uc__user_to_permission`
     PRIMARY KEY (`userid`, `permission`),
     CONSTRAINT `permission_to_permission_user` FOREIGN KEY (`permission`) REFERENCES `uc__permissions` (`permission`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `permission_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Permissions assigned to users directly' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'Permissions assigned to users directly' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';

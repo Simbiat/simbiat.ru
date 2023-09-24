@@ -4,4 +4,4 @@ CREATE TABLE `uc__groups`
     `groupname`   VARCHAR(25) NOT NULL COMMENT 'Human-ready group name',
     `description` TEXT        NOT NULL COMMENT 'Description of the group',
     CONSTRAINT `groupname` UNIQUE (`groupname`)
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

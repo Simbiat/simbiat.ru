@@ -4,4 +4,4 @@ CREATE TABLE `sys__languages`
     `name` VARCHAR(100) NOT NULL COMMENT 'Human-readable name',
     CONSTRAINT `name` UNIQUE (`name`),
     CONSTRAINT `tag` UNIQUE (`tag`)
-) COMMENT 'List of language tags' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'List of language tags' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';

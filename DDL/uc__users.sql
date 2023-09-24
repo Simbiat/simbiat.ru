@@ -34,7 +34,7 @@ CREATE TABLE `uc__users`
     CONSTRAINT `changelog_to_sesctions` FOREIGN KEY (`changelog`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT `kb_to_sections` FOREIGN KEY (`knowledgebase`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT `parent_to_user` FOREIGN KEY (`parentid`) REFERENCES `uc__users` (`userid`) ON UPDATE SET NULL ON DELETE SET NULL
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `birthday` ON `uc__users` (`birthday`);
 

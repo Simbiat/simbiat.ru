@@ -9,7 +9,7 @@ CREATE TABLE `sys__logs`
     `extra`     TEXT                                  NULL COMMENT 'Any extra information available for the entry',
     CONSTRAINT `audit_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `log_type` FOREIGN KEY (`type`) REFERENCES `sys__log_types` (`typeid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Table storing logs' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Table storing logs' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `audit_userid` ON `sys__logs` (`userid`);
 

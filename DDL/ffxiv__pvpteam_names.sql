@@ -4,4 +4,4 @@ CREATE TABLE `ffxiv__pvpteam_names`
     `name`      VARCHAR(50) NOT NULL COMMENT 'Previous PvP Team name',
     PRIMARY KEY (`pvpteamid`, `name`),
     CONSTRAINT `pvp_name_id` FOREIGN KEY (`pvpteamid`) REFERENCES `ffxiv__pvpteam` (`pvpteamid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Past names of PvP teams' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Past names of PvP teams' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

@@ -18,7 +18,7 @@ CREATE TABLE `cron__schedule`
     `lasterror`   TIMESTAMP                                       NULL COMMENT 'Time of the last error',
     PRIMARY KEY (`task`, `arguments`),
     CONSTRAINT `schedule_to_task` FOREIGN KEY (`task`) REFERENCES `cron__tasks` (`task`) ON UPDATE CASCADE ON DELETE CASCADE
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `arguments` ON `cron__schedule` (`arguments`);
 

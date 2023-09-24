@@ -7,6 +7,6 @@ CREATE TABLE `bic__bic_rstr`
     PRIMARY KEY (`BIC`, `Rstr`, `RstrDate`),
     CONSTRAINT `rstr_to_bic` FOREIGN KEY (`BIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `rstr_to_rstr` FOREIGN KEY (`Rstr`) REFERENCES `bic__rstr` (`Rstr`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Список ограничений наложенных на участника' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Список ограничений наложенных на участника' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `RstrDate` ON `bic__bic_rstr` (`RstrDate` DESC);

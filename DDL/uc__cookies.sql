@@ -7,6 +7,6 @@ CREATE TABLE `uc__cookies`
     `ip`        VARCHAR(45)                              NULL COMMENT 'Last IP, that used the cookie',
     `useragent` TEXT                                     NULL COMMENT 'Last UserAgent of the client, from which the cookie was used',
     CONSTRAINT `cookie_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `time` ON `uc__cookies` (`time` DESC);

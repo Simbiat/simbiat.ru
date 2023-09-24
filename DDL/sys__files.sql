@@ -8,7 +8,7 @@ CREATE TABLE `sys__files`
     `size`      BIGINT UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Size of the file in bytes',
     `added`     TIMESTAMP       DEFAULT CURRENT_TIMESTAMP() NOT NULL COMMENT 'When file was added',
     CONSTRAINT `file_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) COMMENT 'List of file attachments' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'List of file attachments' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';
 
 CREATE INDEX `added` ON `sys__files` (`added`);
 

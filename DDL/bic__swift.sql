@@ -7,7 +7,7 @@ CREATE TABLE `bic__swift`
     `DateOut`      DATE                                            NULL COMMENT 'Дата удаления кода',
     PRIMARY KEY (`BIC`, `SWBIC`),
     CONSTRAINT `bic_swift` FOREIGN KEY (`BIC`) REFERENCES `bic__list` (`BIC`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Коды SWIFT' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Коды SWIFT' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `DateOut` ON `bic__swift` (`DateOut` DESC);
 

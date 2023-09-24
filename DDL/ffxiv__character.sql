@@ -59,7 +59,7 @@ CREATE TABLE `ffxiv__character`
     CONSTRAINT `serverid` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT `titleid` FOREIGN KEY (`titleid`) REFERENCES `ffxiv__achievement` (`achievementid`) ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT `userid` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE SET NULL
-) COMMENT 'Characters found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Characters found on Lodestone' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE FULLTEXT INDEX `biography` ON `ffxiv__character` (`biography`);
 

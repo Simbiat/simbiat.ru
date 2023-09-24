@@ -6,6 +6,6 @@ CREATE TABLE `talks__posts_history`
     `text`   LONGTEXT                                 NOT NULL COMMENT 'Text of the post',
     CONSTRAINT `history_to_post` FOREIGN KEY (`postid`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `history_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) COMMENT 'Posts'' history' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'Posts'' history' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';
 
 CREATE INDEX `time` ON `talks__posts_history` (`time` DESC);

@@ -8,4 +8,4 @@ CREATE TABLE `ffxiv__estate`
     `size`     TINYINT(1) UNSIGNED           NOT NULL COMMENT 'Size of the house, where 1 is for small, 2 is for medium and 3 is for large',
     CONSTRAINT `address` UNIQUE (`area`, `ward`, `plot`),
     CONSTRAINT `estate_cityid` FOREIGN KEY (`cityid`) REFERENCES `ffxiv__city` (`cityid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'List of estates' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'List of estates' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

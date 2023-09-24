@@ -19,7 +19,7 @@ CREATE TABLE `talks__sections`
     CONSTRAINT `forum_to_type` FOREIGN KEY (`type`) REFERENCES `talks__types` (`typeid`) ON UPDATE CASCADE,
     CONSTRAINT `forum_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
     CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'List of forums' `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'List of forums' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';
 
 CREATE FULLTEXT INDEX `description` ON `talks__sections` (`description`);
 
