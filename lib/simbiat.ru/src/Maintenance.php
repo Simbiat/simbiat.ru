@@ -38,7 +38,7 @@ class Maintenance
     {
         #Get existing cookies, that need to be cleaned
         try {
-            $items = HomePage::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 MONTH)');
+            $items = HomePage::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH)');
         } catch (\Throwable) {
             $items = [];
         }
@@ -83,9 +83,9 @@ class Maintenance
     {
         $queries = [];
         #Clean audit logs
-        $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
+        $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 YEAR)';
         #Clean Cron errors
-        $queries[] = 'DELETE FROM `cron__errors` WHERE `time`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)';
+        $queries[] = 'DELETE FROM `cron__errors` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 YEAR)';
         try {
             $result = HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
@@ -100,9 +100,9 @@ class Maintenance
     {
         $queries = [];
         #Remove pages that have not been viewed in 2 years
-        $queries[] = 'DELETE FROM `seo__pageviews` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
+        $queries[] = 'DELETE FROM `seo__pageviews` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
         #Remove visitors who have not come in 2 years
-        $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 2 YEAR)';
+        $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
             $result = HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {

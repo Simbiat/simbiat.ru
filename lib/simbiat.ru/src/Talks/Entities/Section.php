@@ -259,7 +259,7 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
         }
         try {
-            HomePage::$dbController->query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'time' : 'null')], ':sectionid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':sectionid' => [$this->id, 'int']]);
             return ['response' => true];
         } catch (\Throwable) {
             return ['response' => false];
@@ -315,12 +315,12 @@ class Section extends Entity
                     ':type' => [$data['type'], 'int'],
                     ':closed' => [
                         ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'time' : 'null')
+                        ($data['closed'] ? 'datetime' : 'null')
                     ],
                     ':private' => [$data['private'], 'bool'],
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
-                        'time'
+                        'datetime'
                     ],
                     ':userid' => [$_SESSION['userid'], 'int'],
                     ':icon' => [
@@ -396,7 +396,7 @@ class Section extends Entity
                     ':type' => [$data['type'], 'int'],
                     ':closed' => [
                         ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'time' : 'null')
+                        ($data['closed'] ? 'datetime' : 'null')
                     ],
                     ':private' => [$data['private'], 'bool'],
                     ':userid' => [$_SESSION['userid'], 'int'],

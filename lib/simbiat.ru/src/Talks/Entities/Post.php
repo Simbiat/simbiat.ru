@@ -113,7 +113,7 @@ class Post extends Entity
     {
         try {
             if (in_array('viewPostsHistory', $_SESSION['permissions'])) {
-                $data = HomePage::$dbController->selectPair('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `postid`=:postid ORDER BY `time` DESC;', [':postid' => [$this->id, 'int'], ':time' => [$time, 'time']]);
+                $data = HomePage::$dbController->selectPair('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `postid`=:postid ORDER BY `time` DESC;', [':postid' => [$this->id, 'int'], ':time' => [$time, 'datetime']]);
             } else {
                 $data = [];
             }
@@ -205,7 +205,7 @@ class Post extends Entity
                     ],
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
-                        'time'
+                        'datetime'
                     ],
                     ':userid' => [$_SESSION['userid'], 'int'],
                     ':text' => $data['text'],
@@ -216,7 +216,7 @@ class Post extends Entity
                 [
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
-                        'time'
+                        'datetime'
                     ],
                     ':threadid' => [$data['threadid'], 'int'],
                     ':userid' => [$_SESSION['userid'], 'int'],

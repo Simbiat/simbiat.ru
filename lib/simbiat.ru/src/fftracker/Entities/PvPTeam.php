@@ -102,7 +102,7 @@ class PvPTeam extends Entity
             $crest = $this->CrestMerge($this->lodestone['crest']);
             #Main query to insert or update a PvP Team
             $queries[] = [
-                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), UTC_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=UTC_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`), `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
+                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`), `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
                 [
                     ':pvpteamid'=>$this->id,
                     ':datacenter'=>$this->lodestone['dataCenter'],
@@ -167,7 +167,7 @@ class PvPTeam extends Entity
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`, `pvp_matches`
                             )
                             VALUES (
-                                :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, UTC_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
+                                :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
                             )',
                             [
                                 ':characterid'=>$member,

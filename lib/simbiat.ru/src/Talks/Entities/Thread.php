@@ -160,7 +160,7 @@ class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `closeOthersThreads` permission'];
         }
         try {
-            HomePage::$dbController->query('UPDATE `talks__threads` SET `closed`=:closed WHERE `threadid`=:threadid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'time' : 'null')], ':threadid' => [$this->id, 'int']]);
+            HomePage::$dbController->query('UPDATE `talks__threads` SET `closed`=:closed WHERE `threadid`=:threadid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':threadid' => [$this->id, 'int']]);
             return ['response' => true];
         } catch (\Throwable) {
             return ['response' => false];
@@ -208,7 +208,7 @@ class Thread extends Entity
                     ':language' => $data['language'],
                     ':closed' => [
                         ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'time' : 'null')
+                        ($data['closed'] ? 'datetime' : 'null')
                     ],
                     ':pinned' => [
                         (is_null($data['pinned']) ? null : $data['pinned']),
@@ -220,7 +220,7 @@ class Thread extends Entity
                     ],
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
-                        'time'
+                        'datetime'
                     ],
                     ':userid' => [$_SESSION['userid'], 'int'],
                     ':ogimage' => [
@@ -296,7 +296,7 @@ class Thread extends Entity
                     ':language' => $data['language'],
                     ':closed' => [
                         ($data['closed'] ? 'now' : null),
-                        ($data['closed'] ? 'time' : 'null')
+                        ($data['closed'] ? 'datetime' : 'null')
                     ],
                     ':pinned' => [
                         (is_null($data['pinned']) ? null : $data['pinned']),

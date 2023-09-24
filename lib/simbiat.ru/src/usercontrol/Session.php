@@ -44,7 +44,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = HomePage::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = HomePage::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
         } catch (\Throwable) {
             $data = '';
         }
@@ -116,7 +116,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         #Write session data
         $queries[] = [
-            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=UTC_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data;',
+            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data;',
             [
                 ':id' => $id,
                 #Whether cookie is associated with this session
@@ -369,7 +369,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime): false|int
     {
         try {
-            if (HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(UTC_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
+            if (HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
                 return HomePage::$dbController->getResult();
             } else {
                 return false;
@@ -410,7 +410,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return HomePage::$dbController->query('UPDATE `uc__sessions` SET `time`= UTC_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+            return HomePage::$dbController->query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
         } catch (\Throwable) {
             return false;
         }

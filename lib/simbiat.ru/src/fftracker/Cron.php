@@ -51,7 +51,7 @@ class Cron
         try {
             $dbCon = HomePage::$dbController;
             $entities = $dbCon->selectAll('
-                    SELECT `type`, `id`, IF(`userid` IS NOT NULL, IF(`updated`<=DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY), 1, 0), 0) as `priority` FROM (
+                    SELECT `type`, `id`, IF(`userid` IS NOT NULL, IF(`updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, 0), 0) as `priority` FROM (
                         SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted`, `userid` FROM `ffxiv__character`
                         UNION ALL
                         SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted`, (SELECT `userid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__character` ON `ffxiv__freecompany_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__freecompany`
