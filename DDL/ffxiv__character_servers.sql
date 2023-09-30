@@ -5,4 +5,4 @@ CREATE TABLE `ffxiv__character_servers`
     PRIMARY KEY (`characterid`, `serverid`),
     CONSTRAINT `char_serv_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `char_serv_serv` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Past servers used by characters' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+) COMMENT 'Past servers used by characters' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;

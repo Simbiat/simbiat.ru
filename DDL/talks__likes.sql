@@ -6,4 +6,4 @@ CREATE TABLE `talks__likes`
     PRIMARY KEY (`postid`, `userid`),
     CONSTRAINT `likes_to_post` FOREIGN KEY (`postid`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `likes_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Table for (dis)likes of posts' ENGINE = `InnoDB` `PAGE_COMPRESSED` = 'ON';
+) COMMENT 'Table for (dis)likes of posts' `PAGE_COMPRESSED` = 'ON';
