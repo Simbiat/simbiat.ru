@@ -23,14 +23,7 @@ class Curl
         CURLOPT_TIMEOUT => 30,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_MAXREDIRS => 3,
-        CURLOPT_HTTPHEADER => [
-            'Content-type: text/html; charset=utf-8',
-            'Accept-Language: en',
-            #Sec-Fetch-* headers
-            #Using `none` because we are requesting data from backend, so technically not a cross-site request
-            'Sec-Fetch-Site: none',
-            'Sec-Fetch-Mode: cors',
-        ],
+        CURLOPT_HTTPHEADER => [],
         CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.200',
         CURLOPT_ENCODING => '',
         CURLOPT_SSL_VERIFYPEER => true,
@@ -40,6 +33,14 @@ class Curl
         #These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
         #CURLOPT_SSL_FALSESTART => true,
         #CURLOPT_TCP_FASTOPEN => true,
+    ];
+    private static array $headers = [
+        'Content-type: text/html; charset=utf-8',
+        'Accept-Language: en',
+        #Sec-Fetch-* headers
+        #Using `none` because we are requesting data from backend, so technically not a cross-site request
+        'Sec-Fetch-Site: none',
+        'Sec-Fetch-Mode: cors',
     ];
     #cURL Handle is static to allow reuse of single instance, if possible and needed
     public static \CurlHandle|null|false $curlHandle = null;
@@ -56,7 +57,10 @@ class Curl
             self::$curlHandle = curl_init();
             if (self::$curlHandle !== false) {
                 if(!curl_setopt_array(self::$curlHandle, $this->CURL_OPTIONS)) {
-                    self::$curlHandle = false;
+                    #Set default headers
+                    if (!curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers)) {
+                        self::$curlHandle = false;
+                    }
                 }
             }
         }
@@ -122,7 +126,66 @@ class Curl
             ];
         }
     }
-
+    
+    public function post(string $link, mixed $payload): bool
+    {
+        if (!self::$curlHandle instanceof \CurlHandle) {
+            return false;
+        }
+        curl_setopt(self::$curlHandle, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
+        #Get response
+        $response = curl_exec(self::$curlHandle);
+        $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
+        if ($response === false || !in_array($httpCode, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226])) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public function postJson(string $link, mixed $payload): bool
+    {
+        if (!self::$curlHandle instanceof \CurlHandle) {
+            return false;
+        }
+        $this->removeHeader('Content-type: text/html; charset=utf-8');
+        $this->addHeader('Content-Type: application/json');
+        $result = self::post($link, $payload);
+        $this->removeHeader('Content-Type: application/json');
+        $this->addHeader('Content-type: text/html; charset=utf-8');
+        return $result;
+    }
+    
+    public function addHeader(string $header): self
+    {
+        #Check if header is already present
+        if (!in_array(strtolower($header), array_map('strtolower', self::$headers))) {
+            #Add it, if not
+            self::$headers = array_merge(self::$headers, [$header]);
+            curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
+        }
+        return $this;
+    }
+    
+    public function removeHeader(string $header): self
+    {
+        #Check if header is already present
+        $key = array_search(strtolower($header), array_map('strtolower', self::$headers));
+        if ($key !== false) {
+            #Remove it, if yes
+            unset(self::$headers[$key]);
+            curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
+        }
+        return $this;
+    }
+    
+    public function changeSetting(int $option, mixed $value): self
+    {
+        curl_setopt(self::$curlHandle, $option, $value);
+        return $this;
+    }
+    
     public function ifExists($remoteFile): bool
     {
         if (!self::$curlHandle instanceof \CurlHandle) {

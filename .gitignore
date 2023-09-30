@@ -148,3 +148,4 @@ dist
 /error*.log
 # Folder with some legacy code, that may still be useful
 /!oldcode/
+/backup.php
