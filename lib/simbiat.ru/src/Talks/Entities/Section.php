@@ -333,7 +333,7 @@ class Section extends Entity
             if (!empty($data['linkType'])) {
                 switch($data['linkType']) {
                     case 2:
-                        HomePage::$dbController->query('UPDATE `uc__users` SET `blog`=:sectionid WHERE `userid`=:userid;',
+                        HomePage::$dbController->query('INSERT INTO `uc__user_to_section` (`userid`, `blog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `blog`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -341,7 +341,7 @@ class Section extends Entity
                         );
                         break;
                     case 4:
-                        HomePage::$dbController->query('UPDATE `uc__users` SET `changelog`=:sectionid WHERE `userid`=:userid;',
+                        HomePage::$dbController->query('INSERT INTO `uc__user_to_section` (`userid`, `changelog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `changelog`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -349,7 +349,7 @@ class Section extends Entity
                         );
                         break;
                     case 6:
-                        HomePage::$dbController->query('UPDATE `uc__users` SET `knowledgebase`=:sectionid WHERE `userid`=:userid;',
+                        HomePage::$dbController->query('INSERT INTO `uc__user_to_section` (`userid`, `knowledgebase`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `knowledgebase`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
