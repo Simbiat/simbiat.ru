@@ -40,6 +40,9 @@ function headingInit(heading: HTMLHeadingElement): void
         //Get ID index, in case it's already used
         let index = 1;
         let altId = id;
+        if (empty(altId)) {
+            altId = 'heading';
+        }
         //Check if altID exists
         while (document.querySelector(`#${altId}`)) {
             //Increase index

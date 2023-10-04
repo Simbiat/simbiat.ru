@@ -3753,6 +3753,9 @@ function headingInit(heading) {
             replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`);
         let index = 1;
         let altId = id;
+        if (empty(altId)) {
+            altId = 'heading';
+        }
         while (document.querySelector(`#${altId}`)) {
             index += 1;
             altId = `${id}_${index}`;
