@@ -3866,7 +3866,10 @@ function dialogInit(dialog) {
     }
 }
 function anchorInit(anchor) {
-    const currentURL = new URL(anchor.href ?? window.location.href);
+    if (empty(anchor.href)) {
+        anchor.href = window.location.href;
+    }
+    const currentURL = new URL(anchor.href);
     if (currentURL.host !== window.location.host) {
         anchor.target = '_blank';
     }

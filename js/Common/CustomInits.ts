@@ -217,7 +217,10 @@ function dialogInit(dialog: HTMLDialogElement): void
 function anchorInit(anchor: HTMLAnchorElement): void
 {
     //Turn current URL into URL object or use window's location, if we are missing URL in anchor (should not normally happen)
-    const currentURL = new URL(anchor.href ?? window.location.href);
+    if (empty(anchor.href)) {
+        anchor.href = window.location.href;
+    }
+    const currentURL = new URL(anchor.href);
     //Add `target="_blank"` if link is not from the current domain
     if (currentURL.host !== window.location.host) {
         anchor.target = '_blank';
