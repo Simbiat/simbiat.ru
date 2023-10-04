@@ -3748,15 +3748,15 @@ function textareaInit(textarea) {
 }
 function headingInit(heading) {
     if (!heading.hasAttribute('id')) {
-        const id = String(heading.textContent).replaceAll(/\s/gmu, '_').
+        let id = String(heading.textContent).replaceAll(/\s/gmu, '_').
             replaceAll(/[^a-zA-Z0-9_-]/gmu, '').
             replaceAll(/^\d+/gmu, '').
             replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`);
+        if (empty(id)) {
+            id = 'heading';
+        }
         let index = 1;
         let altId = id;
-        if (empty(altId)) {
-            altId = 'heading';
-        }
         while (document.querySelector(`#${altId}`)) {
             index += 1;
             altId = `${id}_${index}`;
