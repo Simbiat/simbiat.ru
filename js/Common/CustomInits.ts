@@ -37,7 +37,9 @@ function headingInit(heading: HTMLHeadingElement): void
         let id = String(heading.textContent).replaceAll(/\s/gmu, '_').
                                                 replaceAll(/[^a-zA-Z0-9_-]/gmu, '').
                                                 replaceAll(/^\d+/gmu, '').
-                                                replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`);
+                                                replaceAll(/_{2,}/gmu, '_').
+                                                replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`).
+                                                replaceAll(/^_+$/gmu, '');
         if (empty(id)) {
             id = 'heading';
         }
