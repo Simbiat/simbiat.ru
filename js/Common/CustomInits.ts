@@ -34,8 +34,9 @@ function headingInit(heading: HTMLHeadingElement): void
     //Add ID attribute to header tags, if it's missing (needed for unique anchor links)
     if (!heading.hasAttribute('id')) {
         //Get initial ID
-        const id = String(heading.textContent).replaceAll(/\s/gmu, `_`).
-                                                replaceAll(/[^\p{L}\p{N}_-]/gmu, ``).
+        const id = String(heading.textContent).replaceAll(/\s/gmu, '_').
+                                                replaceAll(/[^a-zA-Z0-9_-]/gmu, '').
+                                                replaceAll(/^\d+/gmu, '').
                                                 replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`);
         //Get ID index, in case it's already used
         let index = 1;
