@@ -11,3 +11,4 @@ Disallow: /lib/
 Disallow: /twig/
 Disallow: /dbhelper/
 Disallow: /sitemap/html/
+Disallow: /api/
