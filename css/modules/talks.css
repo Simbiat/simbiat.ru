@@ -462,3 +462,7 @@ textarea.tinymce {
 post-form textarea {
     display: none;
 }
+
+#alt_sources {
+    margin: .5rem .5rem 1rem;
+}
