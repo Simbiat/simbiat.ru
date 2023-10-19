@@ -638,16 +638,16 @@
         },
         {
             "name": "matomo/device-detector",
-            "version": "6.1.5",
+            "version": "6.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/device-detector.git",
-                "reference": "40ca2990dba2c1719e5c62168e822e0b86c167d4"
+                "reference": "5cbea85106e561c7138d03603eb6e05128480409"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/40ca2990dba2c1719e5c62168e822e0b86c167d4",
-                "reference": "40ca2990dba2c1719e5c62168e822e0b86c167d4",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/5cbea85106e561c7138d03603eb6e05128480409",
+                "reference": "5cbea85106e561c7138d03603eb6e05128480409",
                 "shasum": ""
             },
             "require": {
@@ -703,7 +703,7 @@
                 "source": "https://github.com/matomo-org/matomo",
                 "wiki": "https://dev.matomo.org/"
             },
-            "time": "2023-08-17T16:17:41+00:00"
+            "time": "2023-10-02T10:01:54+00:00"
         },
         {
             "name": "mustangostang/spyc",
@@ -757,16 +757,16 @@
         },
         {
             "name": "psr/http-client",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-client.git",
-                "reference": "0955afe48220520692d2d09f7ab7e0f93ffd6a31"
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/0955afe48220520692d2d09f7ab7e0f93ffd6a31",
-                "reference": "0955afe48220520692d2d09f7ab7e0f93ffd6a31",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
                 "shasum": ""
             },
             "require": {
@@ -803,9 +803,9 @@
                 "psr-18"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-client/tree/1.0.2"
+                "source": "https://github.com/php-fig/http-client"
             },
-            "time": "2023-04-10T20:12:12+00:00"
+            "time": "2023-09-23T14:17:50+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -1548,16 +1548,16 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "6.7.0",
+            "version": "6.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "02e194ec4d37aab8335332f8ac3e8d2292ba2d47"
+                "reference": "b1ddb5ec9b0c7f5d542429a044bd303648d2d647"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/02e194ec4d37aab8335332f8ac3e8d2292ba2d47",
-                "reference": "02e194ec4d37aab8335332f8ac3e8d2292ba2d47",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/b1ddb5ec9b0c7f5d542429a044bd303648d2d647",
+                "reference": "b1ddb5ec9b0c7f5d542429a044bd303648d2d647",
                 "shasum": ""
             },
             "type": "component",
@@ -1601,9 +1601,9 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/6.7.0"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/6.7.1"
             },
-            "time": "2023-08-30T11:10:35+00:00"
+            "time": "2023-10-19T03:04:57+00:00"
         },
         {
             "name": "twig/twig",
@@ -1702,5 +1702,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
