@@ -55,11 +55,11 @@ class Sessions extends Page
                 #Get client
                 $outputArray[$type][$key]['client'] = $dd->getClient();
                 #Set OS and client icon if they exist
-                if (is_file(Common::$imgDir.'/devicedetector/os/'.$outputArray[$type][$key]['os']['name'].'.webp')) {
-                    $outputArray[$type][$key]['os']['icon'] = '/img/devicedetector/os/'.$outputArray[$type][$key]['os']['name'].'.webp';
+                if (is_file(Common::$imgDir.'/devicedetector/client/os/'.$outputArray[$type][$key]['os']['name'].'.webp')) {
+                    $outputArray[$type][$key]['os']['icon'] = '/img/devicedetector/client/os/'.$outputArray[$type][$key]['os']['name'].'.webp';
                 }
-                if (is_file(Common::$imgDir.'/devicedetector/'.$outputArray[$type][$key]['client']['type'].'/'.$outputArray[$type][$key]['client']['name'].'.webp')) {
-                    $outputArray[$type][$key]['client']['icon'] = '/img/devicedetector/'.$outputArray[$type][$key]['client']['type'].'/'.$outputArray[$type][$key]['client']['name'].'.webp';
+                if (is_file(Common::$imgDir.'/devicedetector/client/'.$outputArray[$type][$key]['client']['type'].'/'.$outputArray[$type][$key]['client']['name'].'.webp')) {
+                    $outputArray[$type][$key]['client']['icon'] = '/img/devicedetector/client/'.$outputArray[$type][$key]['client']['type'].'/'.$outputArray[$type][$key]['client']['name'].'.webp';
                 }
                 #Set country icon, if flag exists
                 if (!empty($item['country']) && is_file(Common::$imgDir.'/flags/'.$item['country'].'.svg')) {

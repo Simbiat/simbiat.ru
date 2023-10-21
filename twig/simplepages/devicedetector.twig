@@ -1,13 +1,21 @@
 <section class="bottomMargin">
     {% if not path %}
         <ul>
+            <li><a href="/simplepages/devicedetector/bottype/">{{ files.bottype.name }}</a>: {{ files.bottype.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/bot/">{{ files.bot.name }}</a>: {{ files.bot.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/clienttype/">{{ files.clienttype.name }}</a>: {{ files.clienttype.count }} icons</li>
             <li><a href="/simplepages/devicedetector/os/">{{ files.os.name }}</a>: {{ files.os.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/osfamily/">{{ files.osfamily.name }}</a>: {{ files.osfamily.count }} icons</li>
             <li><a href="/simplepages/devicedetector/browser/">{{ files.browser.name }}</a>: {{ files.browser.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/browserengine/">{{ files.browserengine.name }}</a>: {{ files.browserengine.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/browserfamily/">{{ files.browserfamily.name }}</a>: {{ files.browserfamily.count }} icons</li>
             <li><a href="/simplepages/devicedetector/app/">{{ files.app.name }}</a>: {{ files.app.count }} icons</li>
             <li><a href="/simplepages/devicedetector/library/">{{ files.library.name }}</a>: {{ files.library.count }} icons</li>
             <li><a href="/simplepages/devicedetector/feedreader/">{{ files.feedreader.name }}</a>: {{ files.feedreader.count }} icons</li>
             <li><a href="/simplepages/devicedetector/pim/">{{ files.pim.name }}</a>: {{ files.pim.count }} icons</li>
             <li><a href="/simplepages/devicedetector/mediaplayer/">{{ files.mediaplayer.name }}</a>: {{ files.mediaplayer.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/devicetype/">{{ files.devicetype.name }}</a>: {{ files.devicetype.count }} icons</li>
+            <li><a href="/simplepages/devicedetector/brand/">{{ files.brand.name }}</a>: {{ files.brand.count }} icons</li>
         </ul>
     {% endif %}
 </section>

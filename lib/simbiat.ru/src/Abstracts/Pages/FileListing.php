@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
-use Simbiat\HomePage;
 use Simbiat\Config\Common;
 use Simbiat\SafeFileName;
 use Simbiat\HTTP20\Headers;
@@ -142,13 +141,15 @@ class FileListing extends StaticPage
     
     private function getDirs(string $path, bool $countOnly = false): array
     {
-        $iterator = new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS);
+        $iterator = new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function($cur) {
+            return $cur->isDir();
+        });
         #Prepare array
         $result = [];
         $result['dirs'] = [];
         if (!$countOnly) {
             foreach ($iterator as $key=>$file) {
-                if ($file->isDir() && !in_array($key, $this->exclude)) {
+                if (!in_array($key, $this->exclude)) {
                     $fileDetails = [
                         'dirname' => $key,
                         #Path relative to working directory
@@ -168,9 +169,13 @@ class FileListing extends StaticPage
     protected function getFiles(string $path, bool $countOnly = false): array
     {
         if ($this->recursive) {
-            $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
+            $iterator = new \CallbackFilterIterator(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST), function($cur) {
+                return $cur->isFile();
+            });
         } else {
-            $iterator = new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS);
+            $iterator = new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function($cur) {
+                return $cur->isFile();
+            });
         }
         #Prepare array
         $result = [];
@@ -178,7 +183,7 @@ class FileListing extends StaticPage
         if (!$countOnly) {
             $id = 1;
             foreach ($iterator as $key=>$file) {
-                if ($file->isFile() && !in_array($key, $this->exclude) && (empty($this->searchFor) || mb_stripos($key, $this->searchFor) !== false)) {
+                if (!in_array($key, $this->exclude) && (empty($this->searchFor) || mb_stripos($key, $this->searchFor) !== false)) {
                     if ($id >= (($this->page - 1) * $this->listItems + 1) && $id <= ($this->page  * $this->listItems)) {
                         $fileDetails = [
                             'filename' => $key,
