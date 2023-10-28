@@ -46,6 +46,7 @@ class DeviceDetector extends FileListing
             'MTK  Nucleus' => 'MTK / Nucleus',
             'Perl RESTClient' => 'Perl REST::Client',
             'HTTP Tiny' => 'HTTP:Tiny',
+            'ＡＵＸ' => 'AUX',
             default => $fileDetails['basename'],
         };
         $fileDetails['icon'] = $fileDetails['path'].'/'.$fileDetails['filename'];
