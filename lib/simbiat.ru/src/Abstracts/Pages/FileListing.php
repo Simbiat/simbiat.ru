@@ -144,6 +144,9 @@ class FileListing extends StaticPage
         $iterator = new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function($cur) {
             return $cur->isDir();
         });
+        #Order results
+        $iterator = iterator_to_array($iterator);
+        ksort($iterator, SORT_NATURAL);
         #Prepare array
         $result = [];
         $result['dirs'] = [];
@@ -177,6 +180,9 @@ class FileListing extends StaticPage
                 return $cur->isFile();
             });
         }
+        #Order results
+        $iterator = iterator_to_array($iterator);
+        ksort($iterator, SORT_NATURAL);
         #Prepare array
         $result = [];
         $result['files'] = [];
