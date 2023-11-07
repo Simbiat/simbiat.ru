@@ -89,6 +89,16 @@ class Homepage extends Page
                     'alt' => 'Feedback from Magalí Gomez',
                     'caption' => 'Feedback from <a href="https://www.linkedin.com/in/magali-gomez/" target="_blank">Magalí Gomez</a>',
                 ],
+                [
+                    'href' => '/static/resume/Signant/20231103_1.png',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                ],
+                [
+                    'href' => '/static/resume/Signant/20231103_2.png',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                ],
             ];
         $outputArray['timeline'] =
             [
