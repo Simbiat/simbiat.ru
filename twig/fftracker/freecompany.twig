@@ -7,7 +7,7 @@
                 src="/img/fftracker/default-crests/OrderOfTheTwinAdder.webp"
             {% elseif freecompany.grandCompany == 'Immortal Flames' %}
                 src="/img/fftracker/default-crests/ImmortalFlames.webp"
-            {% elseif freecompany.grandCompany == 'Maelstrom' %}
+            {% else %}
                 src="/img/fftracker/default-crests/Maelstrom.webp"
             {% endif %}
         {% endif %}
@@ -24,7 +24,7 @@
         <blockquote class="w100pc">{{ sanitize(freecompany.slogan) }}</blockquote>
     {% endif %}
     <p>
-        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>, leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grandCompany }}"
+        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>{% if freecompany.grandCompany %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grandCompany }}"
         {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
             src="/img/fftracker/cities/2.webp"
         {% elseif freecompany.grandCompany == 'Immortal Flames' %}
@@ -32,7 +32,7 @@
         {% elseif freecompany.grandCompany == 'Maelstrom' %}
             src="/img/fftracker/cities/4.webp"
         {% endif %}
-        >{% endif %}<i>{{ freecompany.grandCompany }}</i>.
+        >{% endif %}<i>{{ freecompany.grandCompany }}</i>{% endif %}.
         {% if freecompany.location.estate.ward %}
             {% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} a
             {% if freecompany.location.estate.size == 1 %}
