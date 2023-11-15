@@ -6,7 +6,7 @@ CREATE TABLE `ffxiv__freecompany_ranking`
     `monthly`       SMALLINT(3) UNSIGNED DEFAULT 500                 NOT NULL COMMENT 'Monthly ranking as reported by Lodestone',
     `members`       SMALLINT(3) UNSIGNED DEFAULT 1                   NOT NULL COMMENT 'Number of registered members at the date of rank update',
     PRIMARY KEY (`freecompanyid`, `date`),
-    CONSTRAINT `fc_ranking_id` FOREIGN KEY (`freecompanyid`) REFERENCES `ffxiv__freecompany` (`freecompanyid`)
+    CONSTRAINT `fc_ranking_id` FOREIGN KEY (`freecompanyid`) REFERENCES `ffxiv__freecompany` (`freecompanyid`) ON UPDATE CASCADE ON DELETE CASCADE
 ) COMMENT 'Companies'' weekly and monthly rankings linked to members count' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 
 CREATE INDEX `date` ON `ffxiv__freecompany_ranking` (`date` DESC);

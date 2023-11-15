@@ -6,7 +6,7 @@ CREATE TABLE `ffxiv__linkshell_character`
     `current`     TINYINT(1) UNSIGNED DEFAULT 0                   NOT NULL COMMENT 'Whether character is currently in the group',
     PRIMARY KEY (`linkshellid`, `characterid`),
     CONSTRAINT `link_char_char` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT `link_char_link` FOREIGN KEY (`linkshellid`) REFERENCES `ffxiv__linkshell` (`linkshellid`),
+    CONSTRAINT `link_char_link` FOREIGN KEY (`linkshellid`) REFERENCES `ffxiv__linkshell` (`linkshellid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `ls_rank2` FOREIGN KEY (`rankid`) REFERENCES `ffxiv__linkshell_rank` (`lsrankid`) ON UPDATE CASCADE ON DELETE CASCADE
 ) COMMENT 'Characters linked to linkshells, past and present' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
 

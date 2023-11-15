@@ -7,5 +7,5 @@ CREATE TABLE `ffxiv__pvpteam_character`
     PRIMARY KEY (`characterid`, `pvpteamid`),
     CONSTRAINT `pvp_char_rank` FOREIGN KEY (`rankid`) REFERENCES `ffxiv__pvpteam_rank` (`pvprankid`) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT `pvp_xchar_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT `pvp_xchar_pvp` FOREIGN KEY (`pvpteamid`) REFERENCES `ffxiv__pvpteam` (`pvpteamid`)
+    CONSTRAINT `pvp_xchar_pvp` FOREIGN KEY (`pvpteamid`) REFERENCES `ffxiv__pvpteam` (`pvpteamid`) ON UPDATE CASCADE ON DELETE CASCADE
 ) COMMENT 'Characters linked to PvP teams, past and present' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
