@@ -40,44 +40,19 @@ class Homepage extends Page
         $outputArray['feedbacks'] =
             [
                 [
-                    'href' => '/static/resume/Smartly/20211126.jpg',
-                    'alt' => 'Feedback from Tatu Virtanen',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/tatuvirtanen/" target="_blank">Tatu Virtanen</a>',
+                    'href' => '/static/resume/Signant/20231117.jpg',
+                    'alt' => 'Feedback from Jaakko Anttonen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jaakko/" target="_blank">Jaakko Anttonen</a>',
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220216.jpg',
-                    'alt' => 'Feedback from Toivo Vaje',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/toivovaje/" target="_blank">Toivo Vaje</a>',
+                    'href' => '/static/resume/Signant/20231103_1.png',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
                 ],
                 [
-                    'href' => '/static/resume/Smartly/20220218.jpg',
-                    'alt' => 'Feedback from Jarno Marin',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jarnomarin/" target="_blank">Jarno Marin</a>',
-                ],
-                [
-                    'href' => '/static/resume/Smartly/20220303.jpg',
-                    'alt' => 'Feedback from Marcella Armilla',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>',
-                ],
-                [
-                    'href' => '/static/resume/Smartly/20220304.jpg',
-                    'alt' => 'Feedback from Ayberk Yerlikaya',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/ayberkyrlky/" target="_blank">Ayberk Yerlikaya</a>',
-                ],
-                [
-                    'href' => '/static/resume/Smartly/20220404.jpg',
-                    'alt' => 'Feedback from Augustine Lee',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/augustinelee12/" target="_blank">Augustine Lee</a>',
-                ],
-                [
-                    'href' => '/static/resume/Smartly/20220413.jpg',
-                    'alt' => 'Feedback from Xavier Budan',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/xavierbudan/" target="_blank">Xavier Budan</a>',
-                ],
-                [
-                    'href' => '/static/resume/Smartly/20220429.jpg',
-                    'alt' => 'Feedback from Jana Christoviciute',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jana-christoviciute-05ba268b/" target="_blank">Jana Christoviciute</a>',
+                    'href' => '/static/resume/Signant/20231103_2.png',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
                 ],
                 [
                     'href' => '/static/resume/Smartly/20220513_1.jpg',
@@ -90,14 +65,44 @@ class Homepage extends Page
                     'caption' => 'Feedback from <a href="https://www.linkedin.com/in/magali-gomez/" target="_blank">Magalí Gomez</a>',
                 ],
                 [
-                    'href' => '/static/resume/Signant/20231103_1.png',
-                    'alt' => 'Feedback from Mika Nuutilainen',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                    'href' => '/static/resume/Smartly/20220429.jpg',
+                    'alt' => 'Feedback from Jana Christoviciute',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jana-christoviciute-05ba268b/" target="_blank">Jana Christoviciute</a>',
                 ],
                 [
-                    'href' => '/static/resume/Signant/20231103_2.png',
-                    'alt' => 'Feedback from Mika Nuutilainen',
-                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                    'href' => '/static/resume/Smartly/20220413.jpg',
+                    'alt' => 'Feedback from Xavier Budan',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/xavierbudan/" target="_blank">Xavier Budan</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220404.jpg',
+                    'alt' => 'Feedback from Augustine Lee',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/augustinelee12/" target="_blank">Augustine Lee</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220304.jpg',
+                    'alt' => 'Feedback from Ayberk Yerlikaya',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/ayberkyrlky/" target="_blank">Ayberk Yerlikaya</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220303.jpg',
+                    'alt' => 'Feedback from Marcella Armilla',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220218.jpg',
+                    'alt' => 'Feedback from Jarno Marin',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jarnomarin/" target="_blank">Jarno Marin</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20220216.jpg',
+                    'alt' => 'Feedback from Toivo Vaje',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/toivovaje/" target="_blank">Toivo Vaje</a>',
+                ],
+                [
+                    'href' => '/static/resume/Smartly/20211126.jpg',
+                    'alt' => 'Feedback from Tatu Virtanen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/tatuvirtanen/" target="_blank">Tatu Virtanen</a>',
                 ],
             ];
         $outputArray['timeline'] =
