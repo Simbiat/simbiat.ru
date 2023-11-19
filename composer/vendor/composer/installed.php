@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '04db2061d962c92289d83e89a27bf79a28eb7ae9',
+        'reference' => '2f75fc351609540a8edc2e390759a3e30938ed98',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -74,9 +74,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.1.6',
-            'version' => '6.1.6.0',
-            'reference' => '5cbea85106e561c7138d03603eb6e05128480409',
+            'pretty_version' => '6.2.0',
+            'version' => '6.2.0.0',
+            'reference' => '3577abbfea71eaf88d4cd432274428c39601754f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -94,7 +94,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.1.6',
+                0 => '6.2.0',
             ),
         ),
         'psr/http-client' => array(
@@ -202,7 +202,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '04db2061d962c92289d83e89a27bf79a28eb7ae9',
+            'reference' => '2f75fc351609540a8edc2e390759a3e30938ed98',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -218,8 +218,8 @@
             'dev_requirement' => false,
         ),
         'symfony/deprecation-contracts' => array(
-            'pretty_version' => 'v3.3.0',
-            'version' => '3.3.0.0',
+            'pretty_version' => 'v3.4.0',
+            'version' => '3.4.0.0',
             'reference' => '7c3aff79d10325257a001fcf92d991f24fc967cf',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
@@ -227,9 +227,9 @@
             'dev_requirement' => false,
         ),
         'symfony/html-sanitizer' => array(
-            'pretty_version' => 'v6.3.4',
-            'version' => '6.3.4.0',
-            'reference' => '947492c7351d6b01a7b38e515c98fb1107dc357d',
+            'pretty_version' => 'v6.3.7',
+            'version' => '6.3.7.0',
+            'reference' => '45e5a24b63d394fa6472c595df448aecfd1e1ea5',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/html-sanitizer',
             'aliases' => array(),
@@ -254,9 +254,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '6.7.1',
-            'version' => '6.7.1.0',
-            'reference' => 'b1ddb5ec9b0c7f5d542429a044bd303648d2d647',
+            'pretty_version' => '6.7.3',
+            'version' => '6.7.3.0',
+            'reference' => '2a1344eb95eb8ed512f4ad56986bfc230c8c74c7',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),
