@@ -33,6 +33,9 @@
         "ext-gd": "*",
         "ext-brotli": "*"
     },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    },
     "autoload":  {
         "classmap": [
             "../lib/AccountKeying/src",

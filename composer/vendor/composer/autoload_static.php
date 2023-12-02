@@ -14,6 +14,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         '79f66bc0a1900f77abe4a9a299057a0a' => __DIR__ . '/..' . '/starkbank/ecdsa/src/ellipticcurve.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -27,6 +28,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\HtmlSanitizer\\' => 32,
@@ -73,6 +75,10 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Twig\\' => 
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
+        ),
+        'Symfony\\Polyfill\\Php80\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -137,8 +143,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -159,6 +165,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
     );
 
     public static $classMap = array (
+        'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'BaseSendGridClientInterface' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/BaseSendGridClientInterface.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'DeviceDetector\\Cache\\CacheInterface' => __DIR__ . '/..' . '/matomo/device-detector/Cache/CacheInterface.php',
@@ -376,6 +383,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Masterminds\\HTML5\\Serializer\\OutputRules' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/OutputRules.php',
         'Masterminds\\HTML5\\Serializer\\RulesInterface' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/RulesInterface.php',
         'Masterminds\\HTML5\\Serializer\\Traverser' => __DIR__ . '/..' . '/masterminds/html5/src/HTML5/Serializer/Traverser.php',
+        'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Psr\\Http\\Client\\ClientExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientExceptionInterface.php',
         'Psr\\Http\\Client\\ClientInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientInterface.php',
         'Psr\\Http\\Client\\NetworkExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/NetworkExceptionInterface.php',
@@ -620,6 +628,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\usercontrol\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Router.php',
         'Simbiat\\usercontrol\\Session' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/Session.php',
         'Simbiat\\usercontrol\\User' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/usercontrol/User.php',
+        'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Symfony\\Component\\HtmlSanitizer\\HtmlSanitizer' => __DIR__ . '/..' . '/symfony/html-sanitizer/HtmlSanitizer.php',
         'Symfony\\Component\\HtmlSanitizer\\HtmlSanitizerConfig' => __DIR__ . '/..' . '/symfony/html-sanitizer/HtmlSanitizerConfig.php',
         'Symfony\\Component\\HtmlSanitizer\\HtmlSanitizerInterface' => __DIR__ . '/..' . '/symfony/html-sanitizer/HtmlSanitizerInterface.php',
@@ -639,6 +648,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Symfony\\Component\\HtmlSanitizer\\Visitor\\Node\\TextNode' => __DIR__ . '/..' . '/symfony/html-sanitizer/Visitor/Node/TextNode.php',
         'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
+        'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
+        'Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
         'Twig\\Cache\\CacheInterface' => __DIR__ . '/..' . '/twig/twig/src/Cache/CacheInterface.php',
         'Twig\\Cache\\FilesystemCache' => __DIR__ . '/..' . '/twig/twig/src/Cache/FilesystemCache.php',
         'Twig\\Cache\\NullCache' => __DIR__ . '/..' . '/twig/twig/src/Cache/NullCache.php',
@@ -816,6 +827,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Twig\\Util\\DeprecationCollector' => __DIR__ . '/..' . '/twig/twig/src/Util/DeprecationCollector.php',
         'Twig\\Util\\TemplateDirIterator' => __DIR__ . '/..' . '/twig/twig/src/Util/TemplateDirIterator.php',
         'TwilioEmail' => __DIR__ . '/..' . '/sendgrid/sendgrid/lib/TwilioEmail.php',
+        'UnhandledMatchError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
+        'ValueError' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
         'ipinfo\\ipinfo\\Details' => __DIR__ . '/..' . '/ipinfo/ipinfo/src/Details.php',
         'ipinfo\\ipinfo\\IPinfo' => __DIR__ . '/..' . '/ipinfo/ipinfo/src/IPinfo.php',
         'ipinfo\\ipinfo\\IPinfoException' => __DIR__ . '/..' . '/ipinfo/ipinfo/src/IPinfoException.php',
