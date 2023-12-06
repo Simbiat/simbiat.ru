@@ -39,6 +39,7 @@
       <path value="$PROJECT_DIR$/composer/vendor/sendgrid/php-http-client" />
       <path value="$PROJECT_DIR$/composer/vendor/sendgrid/sendgrid" />
       <path value="$PROJECT_DIR$/composer/vendor/starkbank/ecdsa" />
+      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-php80" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
