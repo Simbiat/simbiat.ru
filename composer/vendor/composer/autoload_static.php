@@ -143,8 +143,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
