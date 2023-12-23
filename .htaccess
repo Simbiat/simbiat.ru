@@ -10,6 +10,7 @@ Header always unset P3P
 Header always unset Pragma
 Header always unset Public-Key-Pins
 Header always unset Public-Key-Pins-Report-Only
+Header always unset Server
 Header always unset Via
 Header always unset X-AspNet-Version
 Header always unset X-AspNetMvc-version
@@ -26,6 +27,7 @@ Header unset P3P
 Header unset Pragma
 Header unset Public-Key-Pins
 Header unset Public-Key-Pins-Report-Only
+Header unset Server
 Header unset Via
 Header unset X-AspNet-Version
 Header unset X-AspNetMvc-version
