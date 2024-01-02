@@ -55,7 +55,7 @@ class Achievement extends Entity
         $Lodestone = (new Lodestone);
         #Get characters
         $altChars = HomePage::$dbController->selectColumn(
-            'SELECT `characterid` FROM `ffxiv__character_achievement` WHERE `achievementid`=:ach ORDER BY `time` DESC;',
+            'SELECT `characterid` FROM `ffxiv__character_achievement` WHERE `achievementid`=:ach ORDER BY `time` DESC LIMIT 50;',
             [
                 ':ach' => $this->id,
             ]
