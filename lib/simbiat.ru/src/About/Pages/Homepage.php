@@ -398,7 +398,7 @@ class Homepage extends Page
                 [
                     'startTime' => '2023-10-09',
                     'endTime' => '2024-01-26',
-                    'name' => 'Smartly.io',
+                    'name' => 'Security Journey',
                     'icon' => '/img/icons/SecurityJourney.svg',
                     'href' => 'https://www.securityjourney.com/',
                     'position' => 'Student',
