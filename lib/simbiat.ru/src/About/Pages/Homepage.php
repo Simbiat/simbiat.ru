@@ -396,6 +396,17 @@ class Homepage extends Page
                     'description' => 'Game Design and Production',
                 ],
                 [
+                    'startTime' => '2023-10-09',
+                    'endTime' => '2024-01-26',
+                    'name' => 'Smartly.io',
+                    'icon' => '/img/icons/SecurityJourney.svg',
+                    'href' => 'https://www.securityjourney.com/',
+                    'position' => 'Student',
+                    'responsibilities' => null,
+                    'achievements' => '<a href="/static/resume/SecurityJourney.pdf" target="_blank"><img loading="lazy" decoding="async" src="/img/certificate.svg" alt="20 certificates" class="linkIcon">20 certificates</a>',
+                    'description' => '19 Green Belts and Threat Modeling',
+                ],
+                [
                     'startTime' => '2023-04-24',
                     'endTime' => null,
                     'name' => 'Signant Health',
