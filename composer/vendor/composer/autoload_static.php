@@ -523,6 +523,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\SimplePages\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/SimplePages/Router.php',
         'Simbiat\\Sitemap\\Generate' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Generate.php',
         'Simbiat\\Sitemap\\Pages\\Countables' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Pages/Countables.php',
+        'Simbiat\\Sitemap\\Pages\\FFTracker' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Pages/FFTracker.php',
         'Simbiat\\Sitemap\\Pages\\General' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Pages/General.php',
         'Simbiat\\Sitemap\\Pages\\Index' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Pages/Index.php',
         'Simbiat\\Sitemap\\Router' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/Sitemap/Router.php',

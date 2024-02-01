@@ -12,7 +12,7 @@ class Index extends Page
     protected int $cacheAge = 1440;
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/sitemap/html/index/', 'name'=>'Index']
+        ['href'=>'/sitemap/index.xml', 'name'=>'Index']
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';
@@ -24,49 +24,45 @@ class Index extends Page
     protected string $ogdesc = 'Sitemap Index';
     #Max elements per sitemap page
     protected int $maxElements = 50000;
+    #Flag indicating main index file (index.xml)
+    protected bool $mainIndex = true;
+    #Query for countables
+    protected string $query = '
+                    SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()
+                    UNION ALL
+                    SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].')
+                    UNION ALL
+                    SELECT \'bics\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
+                ';
 
     protected function generate(array $path): array
     {
         if ($this->maxElements > 50000 || $this->maxElements < 10) {
             $this->maxElements = 50000;
         }
-        if ($path[0] === 'txt' || $path[0] === 'xml') {
-            $this->h2push = [];
-        }
+        $this->h2push = [];
         #Sitemap for general links (non-countable)
-        $links = [
-            ['loc'=>'general'.(($path[0] === 'txt' || $path[0] === 'xml') ? '.'.$path[0] : ''), 'name'=>'General links'],
-        ];
+        if ($this->mainIndex) {
+            $links = [
+                ['loc' => 'general.xml', 'name' => 'General links'],
+            ];
+        } else {
+            $links = [];
+        }
         #Get countable links
         try {
-            $counts = HomePage::$dbController->selectAll('
-                SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()
-                UNION ALL
-                SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].')
-                UNION ALL
-                SELECT \'bics\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
-                UNION ALL
-                SELECT \'characters\' AS `link`, \'FFXIV Characters\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__character`
-                UNION ALL
-                SELECT \'freecompanies\' AS `link`, \'FFXIV Free Companies\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__freecompany`
-                UNION ALL
-                SELECT \'linkshells\' AS `link`, \'FFXIV Linkshells\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__linkshell`
-                UNION ALL
-                SELECT \'pvpteams\' AS `link`, \'FFXIV PvP Teams\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__pvpteam`
-                UNION ALL
-                SELECT \'achievements\' AS `link`, \'FFXIV Achievements\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__achievement`
-            ');
+            $counts = HomePage::$dbController->selectAll($this->query);
         } catch (\Throwable) {
             $counts = [];
         }
         #Generate links
         foreach ($counts as $linkType) {
             if ($linkType['count'] <= $this->maxElements) {
-                $links[] = ['loc'=>$linkType['link'].(($path[0] === 'txt' || $path[0] === 'xml') ? '.'.$path[0] : ''), 'name'=>$linkType['name']];
+                $links[] = ['loc' => $linkType['link'].'.xml', 'name'=>$linkType['name']];
             } else {
-                $pages = intval(ceil($linkType['count']/$this->maxElements));
+                $pages = (int)ceil($linkType['count'] / $this->maxElements);
                 for ($page = 1; $page <= $pages; $page++) {
-                    $links[] = ['loc'=>$linkType['link'].'/'.$page.(($path[0] === 'txt' || $path[0] === 'xml') ? '.'.$path[0] : ''), 'name'=>$linkType['name'].', Page '.$page];
+                    $links[] = ['loc' => $linkType['link'].'/'.$page.'.xml', 'name'=>$linkType['name'].', Page '.$page];
                 }
             }
         }

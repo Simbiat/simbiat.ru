@@ -7,51 +7,40 @@ use Simbiat\HTTP20\Headers;
 class Router extends \Simbiat\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['xml', 'html', 'txt'];
+    protected array $subRoutes = ['index', 'fftracker',
+        'general', 'bics', 'threads', 'users',
+        'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements',
+    ];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/sitemap/html/', 'name'=>'Sitemap']
+        ['href'=>'/sitemap/', 'name'=>'Sitemap']
     ];
     protected string $title = 'Sitemap';
     protected string $h1 = 'Sitemap';
     protected string $ogdesc = 'Sitemap';
     protected string $serviceName = 'sitemap';
+    #If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
+    protected string $redirectMain = '/sitemap/index';
 
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
-        #Check if format was provided in URL
-        if (in_array($path[0], ['xml', 'txt', 'html'])) {
-            $format = $path[0];
-        }
-        if (empty($format)) {
-            $format = 'html';
-        }
         #Send 406 if format is not acceptable
-        match ($format) {
-            'html' =>Headers::notAccept(),
-            'txt' => Headers::notAccept(['text/plain']),
-            'xml' => Headers::notAccept(['application/xml']),
-        };
-        #Send content type header if we have XML or text
-        if ($format === 'txt') {
-            @header('Content-Type: text/plain; charset=utf-8');
-        } elseif ($format === 'xml') {
-            @header('Content-Type: application/xml; charset=utf-8');
-        }
+        Headers::notAccept(['application/xml']);
+        #Send content type header
+        @header('Content-Type: application/xml; charset=utf-8');
         #Ensure path is set, even though it's empty
-        if (empty($path[1])) {
-            $path[1] = '';
+        if (empty($path[0])) {
+            $path[0] = 'index';
         }
-        $result = match($path[1]) {
+        $result = match($path[0]) {
             'general' => (new Pages\General)->get($path),
-            'bics', 'characters', 'freecompanies', 'linkshells', 'pvpteams', 'achievements', 'threads', 'users' => (new Pages\Countables)->get($path),
-            default => (new Pages\Index)->get($path),
+            'bics', 'ffxiv_characters', 'ffxiv_freecompanies', 'ffxiv_linkshells', 'ffxiv_pvpteams', 'ffxiv_achievements', 'threads', 'users' => (new Pages\Countables)->get($path),
+            'fftracker' => (new Pages\FFTracker)->get($path),
+            'index' => (new Pages\Index)->get($path),
         };
-        $result['format'] = $format;
-        if ($format === 'txt' || $format === 'xml') {
-            $result['template_override'] = 'common/pages/sitemap.twig';
-        }
+        $result['format'] = 'xml';
+        $result['template_override'] = 'common/pages/sitemap.twig';
         return $result;
     }
 }

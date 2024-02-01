@@ -8,7 +8,7 @@ class General extends StaticPage
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/sitemap/html/general', 'name'=>'Static pages']
+        ['href'=>'/sitemap/general.xml', 'name'=>'Static pages']
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';
@@ -21,9 +21,7 @@ class General extends StaticPage
 
     protected function generate(array $path): array
     {
-        if ($path[0] === 'txt' || $path[0] === 'xml') {
-            $this->h2push = [];
-        }
+        $this->h2push = [];
         return [
             'sitemap_links' => [
                 ['loc'=>'', 'name'=>'Home Page'],
@@ -50,9 +48,6 @@ class General extends StaticPage
                 ['loc'=>'games/dden/', 'changefreq' => 'monthly', 'name'=>'Dangerous Dave: Endless Nightmare'],
                 ['loc'=>'games/jiangshi/', 'changefreq' => 'monthly', 'name'=>'Jiangshi'],
                 ['loc'=>'games/radicalresonance/', 'changefreq' => 'monthly', 'name'=>'Radical Resonance'],
-                ['loc'=>'sitemap/xml/index/', 'name'=>'XML Sitemap'],
-                ['loc'=>'sitemap/html/index/', 'name'=>'HTML Sitemap'],
-                ['loc'=>'sitemap/txt/index/', 'name'=>'TXT Sitemap'],
             ],
         ];
     }

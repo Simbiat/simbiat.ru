@@ -248,6 +248,10 @@ RewriteRule ^ https://www.simbiat.dev/%{REQUEST_URI} [R=301,L]
 RewriteCond %{HTTP_HOST} ^simbiat\.dev$ [NC]
 RewriteRule ^ https://www.simbiat.dev/%{REQUEST_URI} [R=301,L]
 
+#Force no trailing slashes
+RewriteCond %{REQUEST_URI} (^|/)(.*)(/+)$ [NC]
+RewriteRule (^|/)(.*)(/+)$ https://%{HTTP_HOST}/$2 [R=301,NC,L]
+
 #Redirect old pages from "About" section
 RewriteCond %{REQUEST_URI} (^|/)about/(website|me|resume|contacts) [NC]
 RewriteRule ^ https://www.simbiat.dev/ [R=301,NC,L]
@@ -314,7 +318,7 @@ RewriteCond %{REQUEST_FILENAME} "((^|/)img/.*)" [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule .* img/noimage.svg [QSA,END]
 
-#Reqrite security.txt
+#Rewrite security.txt
 RewriteCond %{REQUEST_URI} "(^|/)\.well-known/security.txt" [NC]
 RewriteRule ^ index.php [QSA,L]
 
@@ -329,14 +333,21 @@ RewriteRule ^(.*)$  static/$1 [END]
 
 #Direct /sitemap.xml to the actual index file. This is an attempt to force Google Search recognize the sitemaps
 RewriteCond %{REQUEST_URI} "(^|/)sitemap\.xml$" [NC]
-RewriteRule (^|/)sitemap\.xml$ data/sitemap/xml/index.xml [QSA,END]
-#Direct XML and TXT sitemaps to respective files, if they exist
-RewriteCond %{REQUEST_URI} "(^|/)sitemap/(txt|xml)(.*)$" [NC]
-RewriteCond %{DOCUMENT_ROOT}%1data/sitemap/%2/%3 -f
-RewriteRule (^|/)sitemap/(txt|xml)/(.+)$ data/sitemap/$2/$3 [QSA,END]
+RewriteRule (^|/)sitemap\.xml$ data/sitemap/index.xml [QSA,END]
+#Redirect old /sitemap/xml/ links to just /sitemap/
+RewriteCond %{REQUEST_URI} "(^|/)sitemap/xml.*$" [NC]
+RewriteRule (^|/)sitemap/xml(.+)$ https://%{HTTP_HOST}/sitemap$2 [R=301,NC,L]
+#Direct sitemaps to respective files, if they exist
+RewriteCond %{REQUEST_URI} "(^|/)sitemap/(.*)$" [NC]
+RewriteCond %{DOCUMENT_ROOT}%1data/sitemap/%2 -f
+RewriteRule (^|/)sitemap/(.*)$ data/sitemap/$2 [QSA,END]
+#Same without trailing .xml
+RewriteCond %{REQUEST_URI} "(^|/)sitemap/(.*)$" [NC]
+RewriteCond %{DOCUMENT_ROOT}%1data/sitemap/%2.xml -f
+RewriteRule (^|/)sitemap/(.*)$ data/sitemap/$2.xml [QSA,END]
 #If XML or TXT sitemap does not have a file name after the format - redirect to index
-RewriteCond %{REQUEST_URI} "(^|/)sitemap/(txt|xml)/?$" [NC]
-RewriteRule (^|/)sitemap/(txt|xml)/?$ https://%{HTTP_HOST}/sitemap/$2/index.$2 [R=301,NC,L]
+RewriteCond %{REQUEST_URI} "(^|/)sitemap/xml/?$" [NC]
+RewriteRule (^|/)sitemap/(txt|xml)/?$ https://%{HTTP_HOST}/sitemap/xml/index.xml [R=301,NC,L]
 
 #Rewrite JS, CSS and their map
 RewriteCond %{REQUEST_FILENAME} "(^|/)js/.*\.\d{10,}\.js(\.map)?" [NC]

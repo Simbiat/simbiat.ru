@@ -2,7 +2,8 @@
 
 # Allow crawling of all content
 User-agent: *
-Sitemap: https://www.simbiat.dev/sitemap.xml
+Sitemap: https://www.simbiat.dev/sitemap/index.xml
+Sitemap: https://www.simbiat.dev/sitemap/fftracker.xml
 # Forbid some folders
 Disallow: /cgi-bin/
 Disallow: /data/
@@ -10,5 +11,4 @@ Disallow: /composer/
 Disallow: /lib/
 Disallow: /twig/
 Disallow: /dbhelper/
-Disallow: /sitemap/html/
 Disallow: /api/

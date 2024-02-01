@@ -364,6 +364,7 @@ return array(
     'Simbiat\\SimplePages\\Router' => $baseDir . '/../lib/simbiat.ru/src/SimplePages/Router.php',
     'Simbiat\\Sitemap\\Generate' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Generate.php',
     'Simbiat\\Sitemap\\Pages\\Countables' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/Countables.php',
+    'Simbiat\\Sitemap\\Pages\\FFTracker' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/FFTracker.php',
     'Simbiat\\Sitemap\\Pages\\General' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/General.php',
     'Simbiat\\Sitemap\\Pages\\Index' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Pages/Index.php',
     'Simbiat\\Sitemap\\Router' => $baseDir . '/../lib/simbiat.ru/src/Sitemap/Router.php',

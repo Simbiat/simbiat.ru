@@ -25,7 +25,7 @@ abstract class Router
     #If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
     protected string $redirectMain = '';
 
-    public final function __construct()
+    final public function __construct()
     {
         #Check that subclass has set appropriate properties
         foreach (['subRoutes', 'breadCrumb'] as $property) {
@@ -36,35 +36,32 @@ abstract class Router
     }
 
     #This is general routing check for supported page
-    public final function route(array $path): array
+    final public function route(array $path): array
     {
         #Start data
         $pageData = [];
         #Main page of the segment is called
         if (empty($path)) {
             #If no path is provided, but we want to show specific page, instead of a stub - redirect
-            if (!empty($this->redirectMain) && preg_match('/^\/.+\/$/iu', $this->redirectMain) === 1) {
-                Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Common::$http_host) === 1 ? 'www.' : '').Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
+            if (!empty($this->redirectMain) && preg_match('/^\/.+?$/u', $this->redirectMain) === 1) {
+                Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Common::$http_host) === 1 ? 'www.' : '').Common::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
             }
             $pageData['breadcrumbs'] = $this->breadCrumb;
-        } else {
-            #Check if supported path
-            if (in_array($path[0], $this->subRoutes)) {
-                #Generate page
-                $pageData = $this->pageGen($path);
-                #Update breadcrumbs
-                if (!empty($pageData['breadcrumbs'])) {
-                    $pageData['breadcrumbs'] = array_merge($this->breadCrumb, $pageData['breadcrumbs']);
-                } else {
-                    $pageData['breadcrumbs'] = $this->breadCrumb;
-                }
+        } elseif (in_array($path[0], $this->subRoutes, true)) {
+            #Generate page
+            $pageData = $this->pageGen($path);
+            #Update breadcrumbs
+            if (!empty($pageData['breadcrumbs'])) {
+                $pageData['breadcrumbs'] = array_merge($this->breadCrumb, $pageData['breadcrumbs']);
             } else {
-                #Not existent endpoint
                 $pageData['breadcrumbs'] = $this->breadCrumb;
-                $pageData['reason'] = 'Unsupported route';
-                $pageData['http_error'] = 404;
-                Headers::clientReturn($pageData['http_error'], false);
             }
+        } else {
+            #Not existent endpoint
+            $pageData['breadcrumbs'] = $this->breadCrumb;
+            $pageData['reason'] = 'Unsupported route';
+            $pageData['http_error'] = 404;
+            Headers::clientReturn($pageData['http_error'], false);
         }
         #Inherit title, H1 and description, if page does not have them and router does
         if (empty($pageData['title']) && !empty($this->title)) {

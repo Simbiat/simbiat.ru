@@ -10,77 +10,79 @@ use Simbiat\HomePage;
 
 class Generate
 {
-    #Generate sitemap files (TXT and XML) with CRON
+    private array $index_files = ['index', 'fftracker'];
+    
+    #Generate sitemap files (XML) with CRON
     public function generate(): bool
     {
         try {
-            #Remove old text files
-            array_map('unlink', glob( Common::$sitemap.'txt/*.txt'));
-            array_map('unlink', glob( Common::$sitemap.'txt/*/*.txt'));
             #Set method, since router requires it
             HomePage::$method = 'GET';
             #Cache router
             $router = (new Router);
-            #Generate text index file
-            $twigVars = $router->route(['txt']);
-            $index = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
-            #Write text file
-            file_put_contents(Common::$sitemap.'txt/index.txt', $index);
-            $links = explode("\n", $index);
-            $xmlFiles = array_merge(glob( Common::$sitemap.'xml/*.xml'), glob( Common::$sitemap.'xml/*/*.xml'));
+            #Generate index files
+            $index = [];
+            $links = [];
+            foreach ($this->index_files as $index_file) {
+                $twigVars = $router->route([$index_file]);
+                $index[$index_file] = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
+                $DomDocument = new \DOMDocument();
+                $DomDocument->preserveWhiteSpace = false;
+                $DomDocument->loadXML($index[$index_file]);
+                $DomNodeList = $DomDocument->getElementsByTagName('loc');
+                foreach($DomNodeList as $url) {
+                    $links[] = $url->nodeValue;
+                }
+            }
+            $xmlFiles = array_merge(glob( Common::$sitemap.'*.xml'), glob( Common::$sitemap.'*/*.xml'), glob( Common::$sitemap.'*/*/*.xml'));
             #Remove XML files, which are no longer exist as per new index
             foreach ($xmlFiles as $file) {
-                if (preg_match('/^.*xml\/index\.xml$/ui', $file) === 0 && !in_array(Common::$baseUrl.'/sitemap/'.str_replace(Common::$sitemap, '', str_replace('xml', 'txt', $file)), $links)) {
+                if (!in_array(basename($file, '.xml'), $this->index_files, true) && !in_array(str_replace('.xml', '',Common::$baseUrl.'/sitemap/'.str_replace(Common::$sitemap, '', $file)), $links, true)) {
                     @unlink($file);
                 }
             }
-            #Write XML index
-            $twigVars = $router->route(['xml']);
-            $index = Twig::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
             $curl = (new Curl);
             #Generate sitemaps for each link in index
             foreach ($links as $link) {
                 if (!empty($link)) {
                     #Get path to use for router function (without format)
-                    $path = explode('/', trim(str_replace('.txt', '', str_replace(Common::$baseUrl.'/sitemap/txt/', '', $link)), '/'));
-                    foreach (['xml', 'txt'] as $format) {
-                        #Get filepath and filename
-                        $filePath = rtrim(Common::$sitemap.$format.'/'.implode('/', array_slice($path, 0, -1)), '/');
-                        $fileName = implode('/', array_slice($path, -1)).'.'.$format;
-                        #Create folder if it does not exist
-                        if (!is_dir($filePath)) {
-                            @mkdir($filePath);
-                        }
-                        #Generate and write file
-                        $mapVars = $router->route(array_merge([$format], $path));
-                        $content = Twig::getTwig()->render($mapVars['template_override'] ?? 'index.twig', $mapVars);
-                        if ($format === 'xml') {
-                            #Check if file already exists and if its contents are the same
-                            if (!is_file($filePath.'/'.$fileName) || $index === file_get_contents($filePath.'/'.$fileName) || filemtime($filePath.'/'.$fileName) < strtotime('-2 weeks')) {
-                                #Save the file
-                                file_put_contents($filePath.'/'.$fileName, $content);
-                                #Ping Google about file update
-                                try {
-                                    $curl->getPage('https://www.google.com/ping?sitemap='.urlencode(str_replace('txt', 'xml', $link)));
-                                } catch (\Throwable) {
-                                    #Do nothing, it's not critical
-                                }
-                            }
-                        } else {
-                            #For text, we just save the file
-                            file_put_contents($filePath.'/'.$fileName, $content);
+                    $path = explode('/', trim(str_replace(Common::$baseUrl.'/sitemap/', '', $link), '/'));
+                    #Strip trailing .xml extension
+                    $path[array_key_last($path)] = str_replace('.xml', '', $path[array_key_last($path)]);
+                    #Get filepath and filename
+                    $filePath = rtrim(Common::$sitemap.implode('/', array_slice($path, 0, -1)), '/');
+                    $fileName = implode('/', array_slice($path, -1));
+                    #Create folder if it does not exist
+                    if (!@mkdir($filePath) && !is_dir($filePath)) {
+                        throw new \RuntimeException(sprintf('Directory `%s` was not created', $filePath));
+                    }
+                    #Generate and write file
+                    $mapVars = $router->route(array_merge($path));
+                    $content = Twig::getTwig()->render($mapVars['template_override'] ?? 'index.twig', $mapVars);
+                    #Check if file already exists and if its contents are the same
+                    if (!is_file($filePath.'/'.$fileName) || $content !== file_get_contents($filePath.'/'.$fileName) || filemtime($filePath.'/'.$fileName) < strtotime('-2 weeks')) {
+                        #Save the file
+                        file_put_contents($filePath.'/'.$fileName.'.xml', $content);
+                        #Ping Google about file update
+                        try {
+                            $curl->getPage('https://www.google.com/ping?sitemap='.urlencode($link));
+                        } catch (\Throwable) {
+                            #Do nothing, it's not critical
                         }
                     }
                 }
             }
-            #Check if index file already exists and if its contents are the same
-            if (!is_file(Common::$sitemap.'xml/index.xml') || $index === file_get_contents(Common::$sitemap.'xml/index.xml') || filemtime(Common::$sitemap.'xml/index.xml') < strtotime('-2 weeks')) {
-                file_put_contents(Common::$sitemap.'xml/index.xml', $index);
-                #Ping Google about index update
-                try {
-                    $curl->getPage('https://www.google.com/ping?sitemap='.urlencode(Common::$baseUrl.'/sitemap.xml'));
-                } catch (\Throwable) {
-                    #Do nothing, it's not critical
+            #Write XML index
+            foreach ($this->index_files as $index_file) {
+                #Check if index file already exists and if its contents are the same
+                if (!is_file(Common::$sitemap.$index_file.'.xml') || $index[$index_file] !== file_get_contents(Common::$sitemap.$index_file.'.xml') || filemtime(Common::$sitemap.$index_file.'.xml') < strtotime('-2 weeks')) {
+                    file_put_contents(Common::$sitemap.$index_file.'.xml', $index[$index_file]);
+                    #Ping Google about index update
+                    try {
+                        $curl->getPage('https://www.google.com/ping?sitemap='.urlencode(Common::$baseUrl.'/sitemap/'.$index_file.'.xml'));
+                    } catch (\Throwable) {
+                        #Do nothing, it's not critical
+                    }
                 }
             }
             return true;

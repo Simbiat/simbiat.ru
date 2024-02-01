@@ -12,7 +12,7 @@ class Countables extends Page
     protected int $cacheAge = 1440;
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/sitemap/html/', 'name'=>'Sitemap: ']
+        ['href'=>'/sitemap/', 'name'=>'Sitemap: ']
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';
@@ -30,21 +30,16 @@ class Countables extends Page
         if ($this->maxElements > 50000 || $this->maxElements < 10) {
             $this->maxElements = 50000;
         }
-        $format = $path[0];
-        #Slice the path
-        $path = array_slice($path, 1);
-        if ($format === 'txt' || $format === 'xml') {
-            $this->h2push = [];
-            #Remove potential file extension at the end of path
-            if (!empty($path[1])) {
-                $path[1] = preg_replace('/\.'.$format.'$/ui', '', $path[1]);
-            }
+        $this->h2push = [];
+        #Remove potential file extension at the end of path
+        if (!empty($path[1])) {
+            $path[1] = preg_replace('/\.xml$/ui', '', $path[1]);
         }
         #Get page
         if (empty($path[1]) || !is_numeric($path[1]) || $path[1] < 1) {
             $path[1] = 1;
         } else {
-            $path[1] = intval($path[1]);
+            $path[1] = (int)$path[1];
         }
         #Update link of breadcrumb
         $this->breadCrumb[0]['href'] .= $path[0].'/';
@@ -54,35 +49,35 @@ class Countables extends Page
         switch($path[0]) {
             case 'bics':
                 $this->breadCrumb[0]['name'] = 'Russian Banks';
-                $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list`'.($format === 'html' ? ' ORDER BY `NameP`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`, \'/\') AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` LIMIT '.$start.', '.$this->maxElements;
                 break;
-            case 'characters':
+            case 'ffxiv_characters':
                 $this->breadCrumb[0]['name'] = 'FFXIV Characters';
-                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` LIMIT '.$start.', '.$this->maxElements;
                 break;
-            case 'freecompanies':
+            case 'ffxiv_freecompanies':
                 $this->breadCrumb[0]['name'] = 'FFXIV Free Companies';
-                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `freecompanyid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` LIMIT '.$start.', '.$this->maxElements;
                 break;
-            case 'linkshells':
+            case 'ffxiv_linkshells':
                 $this->breadCrumb[0]['name'] = 'FFXIV Linkshells';
-                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `linkshellid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` LIMIT '.$start.', '.$this->maxElements;
                 break;
-            case 'pvpteams':
+            case 'ffxiv_pvpteams':
                 $this->breadCrumb[0]['name'] = 'FFXIV PvP Teams';
-                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvpteamid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvpteamid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam` LIMIT '.$start.', '.$this->maxElements;
                 break;
-            case 'achievements':
+            case 'ffxiv_achievements':
                 $this->breadCrumb[0]['name'] = 'FFXIV Achievements';
-                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement`'.($format === 'html' ? ' FORCE INDEX (`name_order`) ORDER BY `name`' : '').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievementid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'threads':
                 $this->breadCrumb[0]['name'] = 'Forums Threads';
-                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads`'.($format === 'html' ? ' FORCE INDEX (`name_sort`) WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP() ORDER BY `name`' : ' WHERE `private`=0').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`, \'/\') AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP() ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'users':
                 $this->breadCrumb[0]['name'] = 'Users';
-                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` FROM `uc__users`'.($format === 'html' ? ' FORCE INDEX (`username_unique`) WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].') ORDER BY `name`' : ' WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].')').' LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/users/\', `userid`, \'/\') AS `loc`, `updated` AS `lastmod`, `username` as `name` FROM `uc__users` WHERE `userid` NOT IN ('.Talks::userIDs['Unknown user'].', '.Talks::userIDs['System user'].', '.Talks::userIDs['Deleted user'].') ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb
