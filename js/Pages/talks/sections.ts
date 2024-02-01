@@ -83,7 +83,7 @@ export class Sections
         }
         buttonToggle(checkbox);
         const sectionId = checkbox.getAttribute('data-section') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/mark${verb}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/mark${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === true) {
                 if (checkbox.checked) {
@@ -114,7 +114,7 @@ export class Sections
         }
         buttonToggle(checkbox);
         const sectionId = checkbox.getAttribute('data-section') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/${verb}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === true) {
                 if (checkbox.checked) {
@@ -145,7 +145,7 @@ export class Sections
             const sectionId = orderInput.getAttribute('data-section') ?? '';
             const formData = new FormData();
             formData.append('order', newValue);
-            void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/order/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/order`, formData, 'json', 'PATCH', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     orderInput.setAttribute('data-initial', newValue);
@@ -214,7 +214,7 @@ export class Sections
             //Add timezone
             formData.append('newSection[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/sections/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     addSnackbar('Section created. Reloading...', 'success');
@@ -242,7 +242,7 @@ export class Sections
                 formData.append('curSection[icon]', 'false');
             }
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[sectionid]') ?? '0')}/edit/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[sectionid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     addSnackbar('Section updated. Reloading...', 'success');
@@ -262,7 +262,7 @@ export class Sections
                 const id = this.deleteSectionButton.getAttribute('data-section') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deleteSectionButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/sections/${id}/delete/`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                    void ajax(`${location.protocol}//${location.host}/api/talks/sections/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
                         const data = response as ajaxJSONResponse;
                         if (data.data === true) {
                             addSnackbar('Section removed. Redirecting to parent...', 'success');
@@ -296,7 +296,7 @@ export class Sections
             //Add timezone
             formData.append('newThread[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/threads/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     if (this.addThreadForm) {
@@ -330,7 +330,7 @@ export class Sections
         }
         buttonToggle(checkbox);
         const threadId = checkbox.getAttribute('data-thread') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/mark${verb}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/mark${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === true) {
                 if (checkbox.checked) {
@@ -361,7 +361,7 @@ export class Sections
         }
         buttonToggle(checkbox);
         const threadId = checkbox.getAttribute('data-thread') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/${verb}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === true) {
                 if (checkbox.checked) {

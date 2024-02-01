@@ -42,7 +42,7 @@ export class EditAvatars {
             const formData = new FormData(this.form);
             const button = this.form.querySelector('#avatar_submit');
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add/`, formData, 'json', 'POST', 60000, true).
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', 60000, true).
                 then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -64,7 +64,7 @@ export class EditAvatars {
         if (li) {
             const formData = new FormData();
             formData.append('avatar', li.id);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, formData, 'json', 'PATCH', 60000, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     this.refresh(data.location);
@@ -142,7 +142,7 @@ export class EditAvatars {
         if (li) {
             const formData = new FormData();
             formData.append('avatar', li.id);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete/`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, formData, 'json', 'DELETE', 60000, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     li.remove();

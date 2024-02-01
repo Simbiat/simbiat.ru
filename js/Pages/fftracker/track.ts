@@ -36,7 +36,7 @@ export class ffTrack
             if (this.idInput) {
                 const button = document.querySelector('#ff_track_submit');
                 buttonToggle(button as HTMLInputElement);
-                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}/`, null, 'json', 'POST', 60000, true).
+                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}`, null, 'json', 'POST', 60000, true).
                     then((response) => {
                         const data = response as ajaxJSONResponse;
                         if (data.data === true) {

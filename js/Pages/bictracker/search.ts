@@ -25,7 +25,7 @@ export class bicRefresh
         } else {
             this.refreshButton.classList.add('spin');
             window.setTimeout(() => {
-                void ajax(`${location.protocol}//${location.host}/api/bictracker/dbupdate/`, null, 'json', 'PUT', 300000).then((response) => {
+                void ajax(`${location.protocol}//${location.host}/api/bictracker/dbupdate`, null, 'json', 'PUT', 300000).then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (this.refreshButton) {
                         if (data.data === true) {

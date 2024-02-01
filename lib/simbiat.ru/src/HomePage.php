@@ -201,8 +201,10 @@ class HomePage
         ], encoding_type: PHP_QUERY_RFC3986);
         #Trim the excessive question mark, in case no query was attached
         self::$canonical = rtrim(self::$canonical, '?');
+        #Trim trailing slashes if any
+        self::$canonical = rtrim(self::$canonical, '/');
         #Set canonical link, that may be used in the future
-        self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config\Common::$http_host) === 1 ? 'www.' : '').Config\Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
+        self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config\Common::$http_host) === 1 ? 'www.' : '').Config\Common::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
         #Update list with dynamic values
         Config\Common::$links = array_merge(Config\Common::$links, [
             ['rel' => 'canonical', 'href' => self::$canonical],

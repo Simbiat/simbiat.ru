@@ -19,7 +19,7 @@ export class RemoveProfile {
                 const formData = new FormData();
                 formData.append('hard', (this.checkbox.checked ? 'true' : 'false'));
                 buttonToggle(this.button);
-                void ajax(`${location.protocol}//${location.host}/api/uc/remove/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+                void ajax(`${location.protocol}//${location.host}/api/uc/remove`, formData, 'json', 'PATCH', 60000, true).then((response) => {
                     const data = response;
                     if (data.data === true) {
                         addSnackbar('Sad to see you go 😭', 'success', 10000);

@@ -50,7 +50,7 @@ class LoginForm extends HTMLElement
             formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             const button = this.loginForm.querySelector('#signinup_submit');
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     if (formData.get('signinup[type]') === 'remind') {

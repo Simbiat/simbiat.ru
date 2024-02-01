@@ -40,7 +40,7 @@ class Likedis extends HTMLElement
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.postId}/${action}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.postId}/${action}`, null, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === 0) {
                 this.updateCounts(data.data);

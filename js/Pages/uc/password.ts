@@ -18,7 +18,7 @@ export class PasswordChange
             //Get form data
             const formData = new FormData(this.form);
             buttonToggle(this.button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/password/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/password`, formData, 'json', 'PATCH', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     addSnackbar('Password changed', 'success');

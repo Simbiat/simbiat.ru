@@ -55,7 +55,7 @@ export class EditSessions {
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete/`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete`, formData, 'json', 'DELETE', 60000, true).then((response) => {
             const data = response;
             if (data.data === true) {
                 deleteRow(button);

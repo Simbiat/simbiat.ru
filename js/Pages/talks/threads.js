@@ -48,7 +48,7 @@ export class Threads {
             const formData = new FormData(this.addPostForm);
             formData.append('postForm[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/talks/posts/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     if (this.addPostForm) {
@@ -72,7 +72,7 @@ export class Threads {
                 const id = this.deleteThreadButton.getAttribute('data-thread') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deleteThreadButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete/`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                    void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Thread removed. Redirecting to parent...', 'success');
@@ -95,7 +95,7 @@ export class Threads {
             const verb = this.closeThreadButton.value.toLowerCase();
             if (!empty(id)) {
                 buttonToggle(this.closeThreadButton);
-                void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}/`, null, 'json', 'PATCH', 60000, true).then((response) => {
+                void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
                     const data = response;
                     if (data.data === true) {
                         if (verb === 'close') {
@@ -128,7 +128,7 @@ export class Threads {
                 formData.append('curThread[ogimage]', 'false');
             }
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     addSnackbar('Thread updated. Reloading...', 'success');

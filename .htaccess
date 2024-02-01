@@ -249,8 +249,8 @@ RewriteCond %{HTTP_HOST} ^simbiat\.dev$ [NC]
 RewriteRule ^ https://www.simbiat.dev/%{REQUEST_URI} [R=308,L]
 
 #Force no trailing slashes
-RewriteCond %{REQUEST_URI} (^|/)(.*)(/+)$ [NC]
-RewriteRule (^|/)(.*)(/+)$ https://%{HTTP_HOST}/$2 [R=308,NC,L]
+RewriteCond %{REQUEST_URI} (.*)(/+)$ [NC]
+RewriteRule (.*)(/+)$ $1 [R=308,NC,L]
 
 #Redirect old pages from "About" section
 RewriteCond %{REQUEST_URI} (^|/)about/(website|me|resume|contacts) [NC]

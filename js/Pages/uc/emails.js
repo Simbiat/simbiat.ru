@@ -36,7 +36,7 @@ export class Emails {
             }
             const email = String(formData.get('email'));
             buttonToggle(this.submit);
-            void ajax(`${location.protocol}//${location.host}/api/uc/emails/add/`, formData, 'json', 'POST', 60000, true).
+            void ajax(`${location.protocol}//${location.host}/api/uc/emails/add`, formData, 'json', 'POST', 60000, true).
                 then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -107,7 +107,7 @@ export class Emails {
         const email = button.getAttribute('data-email') ?? '';
         formData.set('email', email);
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/emails/delete/`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/delete`, formData, 'json', 'DELETE', 60000, true).then((response) => {
             const data = response;
             if (data.data === true) {
                 deleteRow(button);
@@ -167,7 +167,7 @@ export class Emails {
         const formData = new FormData();
         formData.set('verb', verb);
         formData.set('email', email);
-        void ajax(`${location.protocol}//${location.host}/api/uc/emails/${verb}/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/${verb}`, formData, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response;
             if (data.data === true) {
                 if (checkbox.checked) {
@@ -191,7 +191,7 @@ export class Emails {
         formData.set('verb', 'activate');
         formData.set('email', email);
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/emails/activate/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/activate`, formData, 'json', 'PATCH', 60000, true).then((response) => {
             const data = response;
             if (data.data === true) {
                 addSnackbar(`Activation email sent to ${email}`, 'success');

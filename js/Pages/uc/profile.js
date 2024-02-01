@@ -47,7 +47,7 @@ export class EditProfile {
     profile(auto = false) {
         if (this.profileForm) {
             const formData = new FormData(this.profileForm);
-            void ajax(`${location.protocol}//${location.host}/api/uc/profile/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/profile`, formData, 'json', 'PATCH', 60000, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     this.profileFormData = JSON.stringify([...formData.entries()]);
@@ -94,7 +94,7 @@ export class EditProfile {
         if (this.usernameForm && this.usernameSubmit) {
             const formData = new FormData(this.usernameForm);
             buttonToggle(this.usernameSubmit);
-            void ajax(`${location.protocol}//${location.host}/api/uc/username/`, formData, 'json', 'PATCH', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/username`, formData, 'json', 'PATCH', 60000, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     this.usernameField.setAttribute('data-original', this.usernameField.value);

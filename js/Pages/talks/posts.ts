@@ -27,7 +27,7 @@ export class Posts
             //Get form data
             const formData = new FormData(this.postForm);
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit/`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     //Notify TinyMCE, that data was saved
@@ -55,7 +55,7 @@ export class Posts
                 const id = this.deletePostButton.getAttribute('data-post') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deletePostButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete/`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                    void ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
                         const data = response as ajaxJSONResponse;
                         if (data.data === true) {
                             addSnackbar('Post removed. Redirecting to thread...', 'success');
