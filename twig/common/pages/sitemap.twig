@@ -1,6 +1,7 @@
 {% if index %}
 <?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.w3.org/1999/xhtml https://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd">
+{# Do not change xmlns schemas to HTTPS, since Google does not like that #}
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.w3.org/1999/xhtml https://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd">
 {% for entity in sitemap_links %}
     <sitemap>
         <loc>{{ domain }}/sitemap/{{ entity.loc }}</loc>
@@ -9,7 +10,8 @@
 </sitemapindex>
 {% else %}
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.w3.org/1999/xhtml https://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd">
+{# Do not change xmlns schemas to HTTPS, since Google does not like that #}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xhtml="http://www.w3.org/1999/xhtml" xsi:schemaLocation="https://www.sitemaps.org/schemas/sitemap/0.9 https://www.w3.org/1999/xhtml https://www.w3.org/2002/08/xhtml/xhtml1-strict.xsd">
 {% for entity in sitemap_links %}
     <url>
         <loc>{{ domain }}/{{ entity.loc }}</loc>
