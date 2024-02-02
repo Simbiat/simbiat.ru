@@ -13,7 +13,7 @@ CREATE TABLE `bic__list`
     `PrntBIC`    INT(9) UNSIGNED                                                             NULL COMMENT 'БИК головной организации',
     `CntrCd`     VARCHAR(2) COLLATE utf8mb4_uca1400_nopad_ai_ci                              NULL COMMENT 'Код страны',
     `RegN`       VARCHAR(9) COLLATE utf8mb4_uca1400_nopad_ai_ci                              NULL COMMENT 'Регистрационный порядковый номер',
-    `Ind`        VARCHAR(6) COLLATE utf8mb4_uca1400_nopad_ai_ci                              NULL COMMENT 'Индекс',
+    `Ind`        VARCHAR(16) COLLATE utf8mb4_uca1400_nopad_ai_ci                             NULL COMMENT 'Индекс',
     `Rgn`        VARCHAR(2) COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT '00'                 NOT NULL COMMENT 'Код территории',
     `Tnp`        VARCHAR(5) COLLATE utf8mb4_uca1400_nopad_ai_ci                              NULL COMMENT 'Тип населённого пункта',
     `Nnp`        VARCHAR(25) COLLATE utf8mb4_uca1400_nopad_ai_ci                             NULL COMMENT 'Наименование населённого пункта',
