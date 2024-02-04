@@ -16,7 +16,7 @@
         <p>
             You are a linked member of this free company. Press this button to force update the data.
         </p>
-        <input class="refresh" id="ff_refresh" alt="Update free company" data-tooltip="Update free company" type="image" data-link="/api/fftracker/freecompanies/{{ freecompany.id }}/update/" src="/img/refresh.svg">
+        <input class="refresh" id="ff_refresh" alt="Update free company" data-tooltip="Update free company" type="image" data-link="/api/fftracker/freecompanies/{{ freecompany.id }}/update" src="/img/refresh.svg">
     {% endif %}
     <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{ timeTag(freecompany.dates.formed, "d/m/Y") }} and registered on {{ timeTag(freecompany.dates.registered, "d/m/Y") }} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {{ timeTag(freecompany.dates.updated, "d/m/Y H:i") }}.{% if freecompany.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(freecompany.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
     {% if freecompany.slogan %}

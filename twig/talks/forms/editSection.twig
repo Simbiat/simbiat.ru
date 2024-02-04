@@ -36,6 +36,6 @@
         <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section, replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
     </div>
     <br>
-    <input role="button" form="editSectionForm" type="submit" name="curSection[submit]" id="editSection_submit" formaction="/api/talks/sections/" formmethod="post" formtarget="_self" value="Update">
+    <input role="button" form="editSectionForm" type="submit" name="curSection[submit]" id="editSection_submit" formaction="/api/talks/sections" formmethod="post" formtarget="_self" value="Update">
     <img id="editSection_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating section...">
 </form>

@@ -45,7 +45,7 @@
             <p>
                 You own this character. Press this button to force update the data.
             </p>
-            <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update/" src="/img/refresh.svg">
+            <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update" src="/img/refresh.svg">
         {% endif %}
         <p><b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} is a {{ adjective }} {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}.{% endif %}</p>
         <p>

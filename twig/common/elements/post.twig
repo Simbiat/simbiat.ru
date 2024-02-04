@@ -27,7 +27,7 @@
             {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
                 {{ sanitize(preg_replace(htmlCut(changelog(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
             {% else %}
-                {{ sanitize(preg_replace(htmlCut(nl2p(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '/">…</a>$1')) }}
+                {{ sanitize(preg_replace(htmlCut(nl2p(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
             {% endif %}
         </section>
     {% else %}
@@ -61,17 +61,17 @@
             {% if post.locked %}
                 {% if owned %}
                     {% if 'editLocked' in session_data.permissions and 'editOwnPosts' in session_data.permissions %}
-                        <a class="button" href="/talks/edit/posts/{{ post.id }}/" data-tooltip="Edit">✏</a>
+                        <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
                     {% endif %}
                     <span data-tooltip="Locked post">🔒</span>
                 {% else %}
                     {% if 'editLocked' in session_data.permissions and 'editOthersPosts' in session_data.permissions %}
-                        <a class="button" href="/talks/edit/posts/{{ post.id }}/" data-tooltip="Edit">✏</a><span data-tooltip="Locked post">🔒</span>
+                        <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a><span data-tooltip="Locked post">🔒</span>
                     {% endif %}
                 {% endif %}
             {% else %}
                 {% if (owned and 'editOwnPosts' in session_data.permissions) or (not owned and 'editOthersPosts' in session_data.permissions) %}
-                    <a class="button" href="/talks/edit/posts/{{ post.id }}/" data-tooltip="Edit">✏</a>
+                    <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
                 {% endif %}
             {% endif %}
             {% if post.private %}<span data-tooltip="Private post">🚷</span>{% endif %}

@@ -19,7 +19,7 @@
     {% set url = 'talks/threads' %}
 {% endif %}
 {# Actual card #}
-<a class="entityCard{% if userid and session_data.userid == userid %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}/{{ prettyURL(name) }}/" data-tooltip="{{ name }}">
+<a class="entityCard{% if userid and session_data.userid == userid %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{{ name }}">
     <span class="entityIcon">
         {% if type == 'bic' %}
             {% if DateOut %}

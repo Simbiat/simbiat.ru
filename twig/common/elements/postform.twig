@@ -25,7 +25,7 @@
         {% if not newThread %}
             <br>
             <div id="postForm_submit_wrapper">
-                <input role="button" form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="submit" name="postForm[submit]" id="postForm_submit" formaction="/api/talks/posts/" formmethod="post" formtarget="_self" value="{% if verb == 'add' %}Reply{% else %}Update{% endif %}">
+                <input role="button" form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="submit" name="postForm[submit]" id="postForm_submit" formaction="/api/talks/posts" formmethod="post" formtarget="_self" value="{% if verb == 'add' %}Reply{% else %}Update{% endif %}">
             </div>
             <img id="postForm_spinner" class="hidden spinner" src="/img/spinner.svg" alt="{% if verb == 'add' %}Posting{% else %}Updating{% endif %}...">
         {% endif %}

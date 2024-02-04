@@ -11,6 +11,6 @@
         <input form="addMailForm" type="email" spellcheck="false" aria-required="false" name="email" id="addMail" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="320" pattern="^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
         <label for="addMail">Email</label>
     </div>
-    <input role="button" form="addMailForm" type="submit" name="addMail[submit]" id="addMail_submit" formaction="/api/uc/emails/add/" formmethod="post" formtarget="_self" value="Add">
+    <input role="button" form="addMailForm" type="submit" name="addMail[submit]" id="addMail_submit" formaction="/api/uc/emails/add" formmethod="post" formtarget="_self" value="Add">
     <img id="addMail_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Adding email...">
 </form>

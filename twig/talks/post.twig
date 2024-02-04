@@ -11,7 +11,7 @@
                 {% if selected %}
                     <li class="selected">{{ timeTag(version, "d/m/Y H:i") }}</li>
                 {% else %}
-                    <li><a href="/talks/edit/posts/{{ post.id }}/{{ version }}/">{{ timeTag(version, "d/m/Y H:i") }}</a></li>
+                    <li><a href="/talks/edit/posts/{{ post.id }}/{{ version }}">{{ timeTag(version, "d/m/Y H:i") }}</a></li>
                 {% endif %}
             {% endfor %}
         </ol>

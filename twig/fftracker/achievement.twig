@@ -10,7 +10,7 @@
             <li><i class="gold">"{{ achievement.rewards.title }}"</i> title</li>
         {% endif %}
         {% if achievement.rewards.item.name %}
-            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
+            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
         {% endif %}
     </ul>
     {% if achievement.howto %}

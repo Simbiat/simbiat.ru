@@ -69,14 +69,14 @@
                 {% for account in bicdetails.accounts %}
                     {% if not account.DateOut %}
                         <tr>
-                            <td class="success">{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}/">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td><td>-</td>
+                            <td class="success">{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td><td>-</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
                 {% for account in bicdetails.accounts %}
                     {% if account.DateOut %}
                         <tr>
-                            <td>{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}/">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td><td>{{ timeTag(account.DateOut, "d/m/Y", "failure") }}</td>
+                            <td>{{ account.Account }}</td><td>{{ account.AccountType }}</td><td>{{ account.CK|default('-') }}</td><td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td><td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}{{ tooltip("Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК") }}{% endif %}{% else %}-{% endif %}</td><td>{{ timeTag(account.DateOut, "d/m/Y", "failure") }}</td>
                         </tr>
                     {% endif %}
                 {% endfor %}
