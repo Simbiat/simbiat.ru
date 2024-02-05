@@ -317,6 +317,10 @@ RewriteRule .* img/fftracker/default-crests/pvp.webp [QSA,END]
 RewriteCond %{REQUEST_FILENAME} "((^|/)img/.*)" [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule .* img/noimage.svg [QSA,END]
+#Also handle potential images from outside img folder (for example static folder)
+RewriteCond %{REQUEST_FILENAME} "((^|/).*)\.(png|jpg|svg|jpeg|webp|bmp|avif|gif|ico)" [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* img/noimage.svg [QSA,END]
 
 #Rewrite security.txt
 RewriteCond %{REQUEST_URI} "(^|/)\.well-known/security.txt" [NC]
