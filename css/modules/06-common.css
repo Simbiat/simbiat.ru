@@ -95,9 +95,11 @@ footer address a .linkIcon {
     border-style: solid;
     border-color: transparent;
     border-width: var(--border-width);
-    float: right;
     cursor: pointer!important;
     margin-right: 0.25em;
+    position: absolute;
+    right: -0.25rem;
+    top: -0.25rem;
 }
 .copyQuote:hover,
 .copyQuote:focus,
