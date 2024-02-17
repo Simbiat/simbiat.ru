@@ -3,18 +3,19 @@
   "version": "1.0.0",
   "description": "simbiat.dev NPM packages used mainly in development",
   "dependencies": {
-    "corepack": "^0.19.0",
-    "npm": "^9.8.1"
+    "corepack": "*",
+    "npm": "*",
+    "simbiat.dev": "file:"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
-    "clean-css": "^5.3.2",
-    "clean-css-cli": "^5.6.2",
-    "eslint": "^8.46.0",
-    "npm-check-updates": "^16.10.17",
-    "terser": "^5.19.2",
-    "typescript": "^5.1.6"
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
+    "clean-css": "*",
+    "clean-css-cli": "*",
+    "eslint": "*",
+    "npm-check-updates": "*",
+    "terser": "*",
+    "typescript": "*"
   },
   "author": "Dmitry Kustov <simbiat@outlook.com>"
 }
