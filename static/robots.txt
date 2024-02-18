@@ -12,3 +12,4 @@ Disallow: /lib/
 Disallow: /twig/
 Disallow: /dbhelper/
 Disallow: /api/
+Disallow: /uc/
