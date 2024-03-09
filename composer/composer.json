@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "matomo/device-detector": "^6",
         "twig/twig": "^3",
         "symfony/html-sanitizer": "^6",
@@ -60,7 +60,7 @@
         "sort-packages": true,
         "store-auths": true,
         "platform": {
-            "php": "8.2"
+            "php": "8.3"
         },
         "data-dir": "../data/composer",
         "cache-dir": "../data/cache/composer",
