@@ -249,8 +249,15 @@ RewriteCond %{HTTP_HOST} ^simbiat\.dev$ [NC]
 RewriteRule ^ https://www.simbiat.dev/%{REQUEST_URI} [R=308,L]
 
 #Force no trailing slashes
+RewriteCond %{REQUEST_METHOD} !^(POST|PUT|DELETE|PATCH)$
 RewriteCond %{REQUEST_URI} (.*)(/+)$ [NC]
 RewriteRule (^|/)(.*)(/+)$ https://%{HTTP_HOST}/$2 [R=308,NC,L]
+#For methods that can change state we want only internal rewrites. Normally redirects should work fine (as per spec),
+#but with LiteSpeed, at least POSTs with file uploads that get redirect hang. Since Apache handles this nicely, looks to
+#be Litespeed's bug, so ticket 265747 was created
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE|PATCH)$
+RewriteCond %{REQUEST_URI} (.*)(/+)$ [NC]
+RewriteRule (^|/)(.*)(/+)$ https://%{HTTP_HOST}/$2 [NC,L]
 
 #Redirect old pages from "About" section
 RewriteCond %{REQUEST_URI} (^|/)about/(website|me|resume|contacts) [NC]
