@@ -156,7 +156,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             #Get final path based on hash
             $finalPath = FFTracker::$crests.substr($hash, 0, 2).'/'.substr($hash, 2, 2).'/';
             #Check if path exists and create it recursively, if not
-            if (!mkdir($finalPath, recursive: true) && !is_dir($finalPath)) {
+            if (!is_dir($finalPath) && !mkdir($finalPath, recursive: true) && !is_dir($finalPath)) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $finalPath));
             }
             #Check if image already exists - skip and return early, if it does
@@ -170,14 +170,14 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                         #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
                         $subDir = mb_substr(basename($image), 0, 3);
                         $concurrentDirectory = FFTracker::$crestsComponents.'backgrounds/'.$subDir;
-                        if (!mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
+                        if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
                             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
                         }
                     } elseif ($key === 2) {
                         #If it's emblem, we need to check if subdirectory exists and create it, and create it, if it does not
                         $subDir = mb_substr(basename($image), 0, 3);
                         $concurrentDirectory = FFTracker::$crestsComponents.'emblems/'.$subDir;
-                        if (!mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
+                        if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
                             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
                         }
                     } else {
