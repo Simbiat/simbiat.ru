@@ -39,12 +39,9 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Check if we have not updated before
         try {
-            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
             if ($this::entityType === 'achievement') {
-                /** @noinspection SqlResolve */
                 $updated = HomePage::$dbController->selectRow('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
             } else {
-                /** @noinspection SqlResolve */
                 $updated = HomePage::$dbController->selectRow('SELECT `updated`, `deleted` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
             }
         } catch (\Throwable $e) {
@@ -67,12 +64,10 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             if (!isset($updated['deleted'])) {
                 return $this->delete();
-            } else {
-                return true;
             }
-        } else {
-            unset($this->lodestone['404']);
+            return true;
         }
+        unset($this->lodestone['404']);
         if (empty($this->lodestone['name'])) {
             return 'No name found for ID `'.$this->id.'`';
         }
@@ -90,14 +85,11 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Check if any character currently registered in a group is linked to the user
         try {
-            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
-            /** @noinspection SqlResolve */
             $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '_character` LEFT JOIN `ffxiv__character` ON `ffxiv__' . $this::entityType . '_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `' . $this::entityType . 'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
             if($check) {
                 return ['http_error' => 403, 'reason' => 'Group not linked to user'];
-            } else {
-                return $this->update();
             }
+            return $this->update();
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
@@ -112,8 +104,6 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             return 400;
         }
         try {
-            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
-            /** @noinspection SqlResolve */
             $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
@@ -122,19 +112,17 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if ($check === true) {
             #Entity already registered
             return 409;
-        } else {
-            #Try to get data from Lodestone
-            $this->lodestone = $this->getFromLodestone();
-            if (!is_array($this->lodestone)) {
-                return 503;
-            }
-            if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
-                return 404;
-            } else {
-                unset($this->lodestone['404']);
-            }
-            return $this->updateDB(true);
         }
+        #Try to get data from Lodestone
+        $this->lodestone = $this->getFromLodestone();
+        if (!is_array($this->lodestone)) {
+            return 503;
+        }
+        if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
+            return 404;
+        }
+        unset($this->lodestone['404']);
+        return $this->updateDB(true);
     }
 
     #Function to update the entity
@@ -150,7 +138,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 if (!$details['registered']) {
                     #Priority is higher, since they are missing a lot of data.
                     try {
-                        $cron->add('ffUpdateEntity', [strval($member), 'character'], priority: 2, message: 'Updating character with ID '.$member);
+                        $cron->add('ffUpdateEntity', [(string)$member, 'character'], priority: 2, message: 'Updating character with ID '.$member);
                     } catch (\Throwable) {
                         #Do nothing, not considered critical
                     }
@@ -167,10 +155,9 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             $hash = hash('sha3-256', ($images[0] ? basename($images[0]) : '').($images[1] ? basename($images[1]) : '').($images[2] ? basename($images[2]) : ''));
             #Get final path based on hash
             $finalPath = FFTracker::$crests.substr($hash, 0, 2).'/'.substr($hash, 2, 2).'/';
-            #Check if path exists
-            if (!is_dir($finalPath)) {
-                #Create it recursively
-                @mkdir($finalPath, recursive: true);
+            #Check if path exists and create it recursively, if not
+            if (!mkdir($finalPath, recursive: true) && !is_dir($finalPath)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $finalPath));
             }
             #Check if image already exists - skip and return early, if it does
             if (is_file($finalPath.$hash.'.webp')) {
@@ -182,8 +169,16 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                     if ($key === 0) {
                         #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
                         $subDir = mb_substr(basename($image), 0, 3);
-                        if (!is_dir(FFTracker::$crestsComponents.'backgrounds/'.$subDir)) {
-                            @mkdir(FFTracker::$crestsComponents.'backgrounds/'.$subDir);
+                        $concurrentDirectory = FFTracker::$crestsComponents.'backgrounds/'.$subDir;
+                        if (!mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
+                            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+                        }
+                    } elseif ($key === 2) {
+                        #If it's emblem, we need to check if subdirectory exists and create it, and create it, if it does not
+                        $subDir = mb_substr(basename($image), 0, 3);
+                        $concurrentDirectory = FFTracker::$crestsComponents.'emblems/'.$subDir;
+                        if (!mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
+                            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
                         }
                     } else {
                         $subDir = '';
@@ -191,14 +186,27 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                     $cachedImage = match($key) {
                         0 => FFTracker::$crestsComponents.'backgrounds/'.$subDir.'/'.basename($image),
                         1 => FFTracker::$crestsComponents.'frames/'.basename($image),
-                        2 => FFTracker::$crestsComponents.'emblems/'.basename($image),
+                        2 => FFTracker::$crestsComponents.'emblems/'.$subDir.'/'.basename($image),
                     };
                     if (is_file($cachedImage)) {
                         $images[$key] = $cachedImage;
-                    } else {
-                        #Attempt to download the image to "cache" it
-                        if (Images::download($image, $cachedImage, false)) {
-                            $images[$key] = $cachedImage;
+                    } elseif (Images::download($image, $cachedImage, false)) {
+                        $images[$key] = $cachedImage;
+                        #If it's an emblem, check that other emblem variants are downloaded as well
+                        if ($key === 2) {
+                            $emblemIndex = (int)preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', basename($image));
+                            for ($i = 0; $i <= 7; $i++) {
+                                if ($i !== $emblemIndex) {
+                                    $emblemFile = FFTracker::$crestsComponents.'emblems/'.$subDir.'/'.preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$i.'$3', basename($image));
+                                    if (!is_file($emblemFile)) {
+                                        try {
+                                            Images::download(preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$i.'$3', $image), $emblemFile, false);
+                                        } catch (\Throwable) {
+                                            #Do nothing, not critical
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 } else {
@@ -207,11 +215,10 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             }
             $gd = Images::merge($images);
             #Save the file
-            if (imagewebp($gd, $finalPath.$hash.'.webp', IMG_WEBP_LOSSLESS)) {
+            if ($gd !== null && imagewebp($gd, $finalPath.$hash.'.webp', IMG_WEBP_LOSSLESS)) {
                 return $hash;
-            } else {
-                return null;
             }
+            return null;
         } catch (\Throwable $e) {
             if ($debug) {
                 Errors::error_log($e, debug: $this->debug);
