@@ -48,7 +48,7 @@ class MainRouter extends Abstracts\Router
             $path[array_key_last($path)] = str_replace('.xml', '', $path[array_key_last($path)]);
         }
         return match($path[0]) {
-            'api' => array_merge(['template_override' => 'api.twig'], (new Api)->route(array_slice($path, 1))),
+            'api' => array_merge(['template_override' => 'common/pages/api.twig'], (new Api)->route(array_slice($path, 1))),
             #Forum/Articles
             'talks' => (new \Simbiat\Talks\Router())->route(array_slice($path, 1)),
             #Pages routing

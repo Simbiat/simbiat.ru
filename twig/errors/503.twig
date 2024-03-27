@@ -1,3 +1,13 @@
-<blockquote class="w100pc" data-author="Server">Page is unavailable. Possibly a bug or some kind of issue.</blockquote>
-{% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
-<img loading="lazy" decoding="async" alt="503 Service unavailable" src="/img/errors/bug2.gif">
+{% if reason == 'Failed to connect to database' %}
+    <p>{{ reason }}.</p>
+    <code data-description="Requested page">{{ url }}</code>
+    <img loading="lazy" decoding="async" alt="No database connection" src="/img/errors/database.svg">
+{% elseif reason == 'Site is under maintenance and temporary unavailable' %}
+    <p>{{ reason }}.</p>
+    <code data-description="Requested page">{{ url }}</code>
+    <img loading="lazy" decoding="async" alt="Maintenance" src="/img/errors/maintenance.gif">
+{% else %}
+    <blockquote class="w100pc" data-author="Server">Page is unavailable. Possibly a bug or some kind of issue.</blockquote>
+    {% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
+    <img loading="lazy" decoding="async" alt="503 Service unavailable" src="/img/errors/bug2.gif">
+{% endif %}

@@ -38,17 +38,22 @@ abstract class Api
     #List of allowed origins, if we want to limit them
     protected array $allowedOrigins = [];
 
+    public static function headers(): void
+    {
+        #Send headers
+        @header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+        @header('Allow: GET, HEAD, OPTIONS');
+        @header('Content-Type: application/json; charset=utf-8');
+    }
+    
     #This is general routing check for supported node
-    public final function route(array $path): array
+    final public function route(array $path): array
     {
         if ($this->topLevel) {
-            #Send headers
-            @header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-            @header('Allow: GET, HEAD, OPTIONS');
-            @header('Content-Type: application/json; charset=utf-8');
+            self::headers();
         }
         #Check if proper endpoint
-        if (!empty($this->subRoutes) && (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes)))) {
+        if (!empty($this->subRoutes) && (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes, true)))) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)];
         #Check that user is authenticated
         } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
@@ -130,22 +135,28 @@ abstract class Api
             if (!empty($data['about'])) {
                 $result['json_ready']['about'] = $data['about'];
             }
-            $result['json_ready'] = json_encode($result['json_ready'], JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
+            try {
+                $result['json_ready'] = json_encode($result['json_ready'], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
+            } catch (\JsonException) {
+                $result['json_ready'] = '{
+    "status": 500,
+    "reason": "Failed to generate JSON output"
+}';
+            }
             return $result;
-        } else {
-            return $data;
         }
+        return $data;
     }
 
     #Method to filter output fields
-    protected final function fieldFilter(array &$array): void
+    final protected function fieldFilter(array &$array): void
     {
         $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
         if (!empty($fields)) {
             $filter = explode(',', $fields);
             if (!empty($filter)) {
                 foreach ($array as $field => $value) {
-                    if (!in_array($field, $filter)) {
+                    if (!in_array($field, $filter, true)) {
                         unset($array[$field]);
                     }
                 }
@@ -154,7 +165,7 @@ abstract class Api
     }
 
     #Check that method used is allowed
-    protected final function methodCheck(): bool
+    final protected function methodCheck(): bool
     {
         #Generate list of allowed methods
         $allowedMethods = array_keys(array_merge(['HEAD' => '', 'OPTIONS' => '', 'GET' => ''], $this->methods));
@@ -162,15 +173,14 @@ abstract class Api
         @header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
         @header('Allow: '.implode(', ', $allowedMethods));
         #Check if allowed method is used
-        if (in_array(HomePage::$method, $allowedMethods)) {
+        if (in_array(HomePage::$method, $allowedMethods, true)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     #Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to $_SESSION
-    protected final function antiCSRF(array $allowOrigins = []): bool
+    final protected function antiCSRF(array $allowOrigins = []): bool
     {
         #Get CSRF token
         $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
@@ -192,15 +202,14 @@ abstract class Api
                             #Check if origin is present
                             (!empty($origin) &&
                                 #Check if it's a valid origin and is allowed
-                                (preg_match('/'. Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins))
+                                (preg_match('/'. Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins, true))
                             )
                         )
                     ) {
                         #All checks passed
                         return true;
-                    } else {
-                        $reason = 'Bad origin';
                     }
+                    $reason = 'Bad origin';
                 } else {
                     $reason = 'Different hashes';
                 }
@@ -250,21 +259,20 @@ abstract class Api
             #Override $path[1] with `verb` from POST, if it was provided
             $path[1] = $_POST['verb'] ?? $path[1] ?? '';
             #Override based on method only if method is not HEAD, OPTIONS or GET and if respective method has a verb set for it
-            if (!in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET']) && !empty($this->methods[HomePage::$method])) {
+            if (!empty($this->methods[HomePage::$method]) && !in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])) {
                 if (is_string($this->methods[HomePage::$method])) {
                     $path[1] = $this->methods[ HomePage::$method ];
                 #If we have an array of possible verbs for method, check that proper verb is provided
                 } elseif (is_array($this->methods[HomePage::$method])) {
                     if (empty($path[1])) {
                         return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple AIP verbs, none provided']);
-                    } else {
-                        if (!in_array($path[1], $this->methods[ HomePage::$method ])) {
-                            return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
-                        }
+                    }
+                    if (!in_array($path[1], $this->methods[ HomePage::$method ], true)) {
+                        return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
                     }
                 }
             }
-            if (!empty($path[1]) && !in_array($path[1], array_keys($this->verbs))) {
+            if (!empty($path[1]) && !array_key_exists($path[1], $this->verbs)) {
                 return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);
             }
             if (!empty(HomePage::$http_error) && !$this->static) {

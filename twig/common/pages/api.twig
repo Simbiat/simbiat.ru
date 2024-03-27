@@ -1,1 +1,8 @@
-{{ json_ready|raw }}
+{% if json_ready %}
+    {{ json_ready|raw }}
+{% else %}
+{
+    "status": {{ http_error }},
+    "reason": "{% if reason %}{% if reason == 'Teapot' %}Unsupported client{% else %}{{ reason }}{% endif %}{% else %}Unknown{% endif %}"
+}
+{% endif %}

@@ -14,32 +14,32 @@
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
-      <path value="$PROJECT_DIR$/composer/vendor/mustangostang/spyc" />
-      <path value="$PROJECT_DIR$/composer/vendor/matomo/device-detector" />
-      <path value="$PROJECT_DIR$/composer/vendor/twig/twig" />
-      <path value="$PROJECT_DIR$/composer/vendor/composer" />
+      <path value="$PROJECT_DIR$/composer/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/composer/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/composer/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/composer/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/composer/vendor/ipinfo/ipinfo" />
+      <path value="$PROJECT_DIR$/composer/vendor/sabre/cache" />
+      <path value="$PROJECT_DIR$/composer/vendor/symfony/html-sanitizer" />
+      <path value="$PROJECT_DIR$/composer/vendor/league/uri-interfaces" />
+      <path value="$PROJECT_DIR$/composer/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/composer/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/composer/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/composer/vendor/league/uri" />
       <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-ctype" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-mbstring" />
-      <path value="$PROJECT_DIR$/composer/vendor/ralouphie/getallheaders" />
       <path value="$PROJECT_DIR$/composer/vendor/psr/http-message" />
       <path value="$PROJECT_DIR$/composer/vendor/psr/simple-cache" />
-      <path value="$PROJECT_DIR$/composer/vendor/ipinfo/ipinfo" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/deprecation-contracts" />
-      <path value="$PROJECT_DIR$/composer/vendor/sabre/cache" />
-      <path value="$PROJECT_DIR$/composer/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/composer/vendor/psr/http-client" />
-      <path value="$PROJECT_DIR$/composer/vendor/psr/http-factory" />
-      <path value="$PROJECT_DIR$/composer/vendor/guzzlehttp/guzzle" />
-      <path value="$PROJECT_DIR$/composer/vendor/guzzlehttp/promises" />
-      <path value="$PROJECT_DIR$/composer/vendor/league/uri" />
-      <path value="$PROJECT_DIR$/composer/vendor/league/uri-interfaces" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/html-sanitizer" />
-      <path value="$PROJECT_DIR$/composer/vendor/masterminds/html5" />
+      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/composer/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/composer/vendor/matomo/device-detector" />
+      <path value="$PROJECT_DIR$/composer/vendor/composer" />
+      <path value="$PROJECT_DIR$/composer/vendor/twig/twig" />
+      <path value="$PROJECT_DIR$/composer/vendor/mustangostang/spyc" />
+      <path value="$PROJECT_DIR$/composer/vendor/sendgrid/sendgrid" />
+      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/composer/vendor/starkbank/ecdsa" />
       <path value="$PROJECT_DIR$/composer/vendor/tinymce/tinymce" />
       <path value="$PROJECT_DIR$/composer/vendor/sendgrid/php-http-client" />
-      <path value="$PROJECT_DIR$/composer/vendor/sendgrid/sendgrid" />
-      <path value="$PROJECT_DIR$/composer/vendor/starkbank/ecdsa" />
-      <path value="$PROJECT_DIR$/composer/vendor/symfony/polyfill-php80" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />
