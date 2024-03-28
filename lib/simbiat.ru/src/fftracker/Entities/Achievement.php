@@ -12,7 +12,7 @@ use Simbiat\Lodestone;
 class Achievement extends Entity
 {
     #Custom properties
-    protected const entityType = 'achievement';
+    protected const string entityType = 'achievement';
     public int $updated;
     public int $registered;
     public ?string $category = null;
@@ -38,10 +38,8 @@ class Achievement extends Entity
         #Get last characters with this achievement
         $data['characters'] = HomePage::$dbController->selectAll('SELECT * FROM (SELECT \'character\' AS `type`, `ffxiv__character`.`characterid` AS `id`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`characterid` = `ffxiv__character_achievement`.`characterid` WHERE `ffxiv__character_achievement`.`achievementid` = :id ORDER BY `ffxiv__character_achievement`.`time` DESC LIMIT 50) t ORDER BY `name`', [':id'=>$this->id]);
         #Register for an update if old enough or category or howto or dbid are empty. Also check that this is not a bot.
-        if (empty($_SESSION['UA']['bot'])) {
-            if ((empty($data['category']) || empty($data['subcategory']) || empty($data['howto']) || empty($data['dbid']) || (time() - strtotime($data['updated'])) >= 31536000) && !empty($data['characters'])) {
-                (new Cron)->add('ffUpdateEntity', [$this->id, 'achievement'], priority: 2, message: 'Updating achievement with ID ' . $this->id);
-            }
+        if (empty($_SESSION['UA']['bot']) && !empty($data['characters']) && (empty($data['category']) || empty($data['subcategory']) || empty($data['howto']) || empty($data['dbid']) || (time() - strtotime($data['updated'])) >= 31536000)) {
+            (new Cron)->add('ffUpdateEntity', [$this->id, 'achievement'], priority: 2, message: 'Updating achievement with ID ' . $this->id);
         }
         return $data;
     }
@@ -65,7 +63,7 @@ class Achievement extends Entity
         }
         #Iterrate list
         foreach ($altChars as $char) {
-            $data = $Lodestone->getCharacterAchievements($char, intval($this->id))->getResult();
+            $data = $Lodestone->getCharacterAchievements($char, (int)$this->id)->getResult();
             if (!empty($data['characters'][$char]['achievements'][$this->id]) && is_array($data['characters'][$char]['achievements'][$this->id])) {
                 #Update character ID
                 #Try to get achievement ID as seen in Lodestone database (play guide)
@@ -104,7 +102,7 @@ class Achievement extends Entity
         $this->howto = $fromDB['howto'];
         $this->dbid = $fromDB['dbid'];
         $this->rewards = [
-            'points' => intval($fromDB['points']),
+            'points' => (int)$fromDB['points'],
             'title' => $fromDB['title'],
             'item' => [
                 'name' => $fromDB['item'],
@@ -113,7 +111,7 @@ class Achievement extends Entity
             ],
         ];
         $this->characters = [
-            'total' => intval($fromDB['count']),
+            'total' => (int)$fromDB['count'],
             'last' => $fromDB['characters'],
         ];
     }
@@ -126,7 +124,7 @@ class Achievement extends Entity
             $bindings = [];
             $bindings[':achievementid'] = $this->id;
             $bindings[':name'] = $this->lodestone['name'];
-            $bindings[':icon'] = str_replace('https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', '', $this->lodestone['icon']);
+            $bindings[':icon'] = str_replace(['https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', 'https://lds-img.finalfantasyxiv.com/itemicon/'], '', $this->lodestone['icon']);
             #Download icon
             $webp = Images::download($this->lodestone['icon'], FFTracker::$icons.$bindings[':icon']);
             if ($webp) {
@@ -153,7 +151,7 @@ class Achievement extends Entity
             if (empty($this->lodestone['item']['icon'])) {
                 $bindings[':itemicon'] = [NULL, 'null'];
             } else {
-                $bindings[':itemicon'] = str_replace('https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', '', $this->lodestone['item']['icon']);
+                $bindings[':itemicon'] = str_replace(['https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', 'https://lds-img.finalfantasyxiv.com/itemicon/'], '', $this->lodestone['item']['icon']);
                 #Download icon
                 $webp = Images::download($this->lodestone['item']['icon'], FFTracker::$icons.$bindings[':itemicon']);
                 if ($webp) {
@@ -183,7 +181,7 @@ class Achievement extends Entity
     #To be called from API to allow update only for owned character
     public function updateFromApi(): bool|string
     {
-        return $this::update();
+        return $this->update();
     }
 
     #Function to update the entity

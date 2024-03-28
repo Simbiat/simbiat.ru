@@ -5,6 +5,6 @@ namespace Simbiat\fftracker\Entities;
 class CrossworldLinkshell extends Linkshell
 {
     #Custom properties
-    protected const crossworld = true;
+    protected const bool crossworld = true;
     protected string $idFormat = '/^[a-z0-9]{40}$/m';
 }

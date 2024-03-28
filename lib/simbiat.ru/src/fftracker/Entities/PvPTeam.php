@@ -11,7 +11,7 @@ use Simbiat\Lodestone;
 class PvPTeam extends Entity
 {
     #Custom properties
-    protected const entityType = 'pvpteam';
+    protected const string entityType = 'pvpteam';
     protected string $idFormat = '/^[a-z\d]{40}$/m';
     public array $dates = [];
     public ?string $community = null;
@@ -39,10 +39,8 @@ class PvPTeam extends Entity
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server'], $data['crest_part_1'], $data['crest_part_2'], $data['crest_part_3']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
-        if (empty($_SESSION['UA']['bot'])) {
-            if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-                (new Cron)->add('ffUpdateEntity', [$this->id, 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->id);
-            }
+        if (empty($_SESSION['UA']['bot']) && empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
+            (new Cron)->add('ffUpdateEntity', [$this->id, 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->id);
         }
         return $data;
     }
@@ -52,20 +50,17 @@ class PvPTeam extends Entity
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getPvPTeam($this->id)->getResult();
         if (empty($data['pvpteams'][$this->id]['dataCenter']) || empty($data['pvpteams'][$this->id]['members'])) {
-            if (!empty($data['pvpteams'][$this->id]['members']) && $data['pvpteams'][$this->id]['members'] == 404) {
+            if (!empty($data['pvpteams'][$this->id]['members']) && (int)$data['pvpteams'][$this->id]['members'] === 404) {
                 return ['404' => true];
-            } else {
-                if (empty($Lodestone->getLastError())) {
-                    return 'Failed to get any data for PvP Team '.$this->id;
-                } else {
-                    return 'Failed to get all necessary data for PvP Team '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
-                }
             }
-        } else {
-            if (empty($data['pvpteams'][$this->id]['crest'][2]) && !empty($data['pvpteams'][$this->id]['crest'][1])) {
-                $data['pvpteams'][$this->id]['crest'][2] = $data['pvpteams'][$this->id]['crest'][1];
-                $data['pvpteams'][$this->id]['crest'][1] = null;
+            if (empty($Lodestone->getLastError())) {
+                return 'Failed to get any data for PvP Team '.$this->id;
             }
+            return 'Failed to get all necessary data for PvP Team '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
+        }
+        if (empty($data['pvpteams'][$this->id]['crest'][2]) && !empty($data['pvpteams'][$this->id]['crest'][1])) {
+            $data['pvpteams'][$this->id]['crest'][2] = $data['pvpteams'][$this->id]['crest'][1];
+            $data['pvpteams'][$this->id]['crest'][1] = null;
         }
         $data = $data['pvpteams'][$this->id];
         $data['id'] = $this->id;
@@ -90,7 +85,7 @@ class PvPTeam extends Entity
         $this->oldNames = $fromDB['oldnames'];
         $this->members = $fromDB['members'];
         foreach ($this->members as $key=>$member) {
-            $this->members[$key]['matches'] = intval($member['matches']);
+            $this->members[$key]['matches'] = (int)$member['matches'];
         }
     }
 

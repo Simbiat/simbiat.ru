@@ -13,7 +13,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     protected const entityType = 'character';
     public string $name = '';
 
-    protected null|array|string $lodestone = null;
+    protected null|array $lodestone = null;
 
     #Function to get initial data from DB
     /**
@@ -55,10 +55,11 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Try to get data from Lodestone, if not already taken
         if (!is_array($this->lodestone)) {
-            $this->lodestone = $this->getFromLodestone();
-        }
-        if (!is_array($this->lodestone)) {
-            return $this->lodestone;
+            $tempLodestone = $this->getFromLodestone();
+            if (!is_array($tempLodestone)) {
+                return $tempLodestone;
+            }
+            $this->lodestone = $tempLodestone;
         }
         #If we got 404, mark as deleted, unless already marked
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
@@ -114,10 +115,11 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             return 409;
         }
         #Try to get data from Lodestone
-        $this->lodestone = $this->getFromLodestone();
-        if (!is_array($this->lodestone)) {
+        $tempLodestone = $this->getFromLodestone();
+        if (!is_array($tempLodestone)) {
             return 503;
         }
+        $this->lodestone = $tempLodestone;
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             return 404;
         }

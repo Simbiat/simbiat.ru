@@ -67,10 +67,8 @@ class Character extends Entity
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
-        if (empty($_SESSION['UA']['bot'])) {
-            if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-                (new Cron)->add('ffUpdateEntity', [$this->id, 'character'], priority: 1, message: 'Updating character with ID ' . $this->id);
-            }
+        if (empty($_SESSION['UA']['bot']) && empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
+            (new Cron)->add('ffUpdateEntity', [$this->id, 'character'], priority: 1, message: 'Updating character with ID ' . $this->id);
         }
         return $data;
     }
@@ -80,15 +78,13 @@ class Character extends Entity
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getCharacter($this->id)->getCharacterJobs($this->id)->getCharacterAchievements($this->id, false, 0, false, false, true)->getResult();
         if (empty($data['characters'][$this->id]['server'])) {
-            if (!empty($data['characters'][$this->id]) && $data['characters'][$this->id] == 404) {
+            if (!empty($data['characters'][$this->id]) && (int)$data['characters'][$this->id] === 404) {
                 return ['404' => true];
-            } else {
-                if (empty($Lodestone->getLastError())) {
-                    return 'Failed to get any data for Character '.$this->id;
-                } else {
-                    return 'Failed to get all necessary data for Character '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
-                }
             }
+            if (empty($Lodestone->getLastError())) {
+                return 'Failed to get any data for Character '.$this->id;
+            }
+            return 'Failed to get all necessary data for Character '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
         }
         $data = $data['characters'][$this->id];
         $data['id'] = $this->id;
@@ -107,14 +103,14 @@ class Character extends Entity
             'deleted' => (empty($fromDB['deleted']) ? null : strtotime($fromDB['deleted'])),
         ];
         $this->biology = [
-            'gender' => intval($fromDB['genderid']),
+            'gender' => (int)$fromDB['genderid'],
             'race' => $fromDB['race'],
             'clan' => $fromDB['clan'],
             'nameday' => $fromDB['nameday'],
             'guardian' => $fromDB['guardian'],
             'guardianid' => $fromDB['guardianid'],
             'incarnations' => $fromDB['incarnations'],
-            'oldNames' => intval($fromDB['oldNames']),
+            'oldNames' => (int)$fromDB['oldNames'],
             'killedby' => $fromDB['killedby'],
         ];
         $this->location = [
@@ -137,14 +133,14 @@ class Character extends Entity
             'gcId' => $fromDB['gcId'],
             'gcrankid' => $fromDB['gcrankid'],
         ];
-        $this->pvp = intval($fromDB['pvp_matches']);
+        $this->pvp = (int)$fromDB['pvp_matches'];
         $this->groups = $fromDB['groups'];
         $this->owned = [
             'id' => $fromDB['userid'],
             'name' => $fromDB['username']
         ];
         foreach ($this->groups as $key=>$group) {
-            $this->groups[$key]['current'] = boolval($group['current']);
+            $this->groups[$key]['current'] = (bool)$group['current'];
         }
         $this->achievements = $fromDB['achievements'];
         foreach ($this->achievements as $key=>$achievement) {
@@ -161,7 +157,7 @@ class Character extends Entity
         );
         $this->jobs = $fromDB;
         foreach ($this->jobs as $key=>$job) {
-            $this->jobs[$key] = intval($job);
+            $this->jobs[$key] = (int)$job;
         }
     }
 
@@ -205,6 +201,9 @@ class Character extends Entity
             }
             #Reduce number of <br>s in biography
             $this->lodestone['bio'] = Sanitization::sanitizeHTML($this->lodestone['bio'] ?? '');
+            if (($this->lodestone['bio'] === '-')) {
+                $this->lodestone['bio'] = null;
+            }
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `ffxiv__character`(
@@ -222,8 +221,8 @@ class Character extends Entity
                     ':manual'=>[$manual, 'bool'],
                     ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg'], '', $this->lodestone['avatar']),
                     ':biography'=>[
-                        (($this->lodestone['bio'] == '-') ? NULL : $this->lodestone['bio']),
-                        (empty($this->lodestone['bio']) ? 'null' : (($this->lodestone['bio'] == '-') ? 'null' : 'string')),
+                        (empty($this->lodestone['bio']) ? NULL : $this->lodestone['bio']),
+                        (empty($this->lodestone['bio']) ? 'null' : 'string'),
                     ],
                     ':title'=>(empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
                     ':clan'=>$this->lodestone['clan'],
@@ -240,14 +239,13 @@ class Character extends Entity
                     #Remove spaces from the job name
                     $jobNoSpace = preg_replace('/\s*/', '', $job);
                     #Check if column exists in order to avoid errors. Checking that level is not empty to not waste time on updating zeros
-                    if (HomePage::$dbController->checkColumn('ffxiv__character', $jobNoSpace) && !empty($level['level'])) {
+                    if (!empty($level['level']) && HomePage::$dbController->checkColumn('ffxiv__character', $jobNoSpace)) {
                         #Update level
-                        /** @noinspection SqlResolve */
                         $queries[] = [
                             'UPDATE `ffxiv__character` SET `'.$jobNoSpace.'`=:level WHERE `characterid`=:characterid;',
                             [
                                 ':characterid' => $this->id,
-                                ':level' => [intval($level['level']), 'int'],
+                                ':level' => [(int)$level['level'], 'int'],
                             ],
                         ];
                     }
@@ -312,7 +310,7 @@ class Character extends Entity
                         [
                             ':achievementid'=>$achievementid,
                             ':name'=>$item['name'],
-                            ':icon'=>str_replace("https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/", "", $item['icon']),
+                            ':icon'=>str_replace(['https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', 'https://lds-img.finalfantasyxiv.com/itemicon/'], "", $item['icon']),
                             ':points'=>$item['points'],
                         ],
                     ];
@@ -328,22 +326,18 @@ class Character extends Entity
             }
             HomePage::$dbController->query($queries);
             #Register Free Company update if change was detected
-            if (!empty($this->lodestone['freeCompany']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid'=>$this->id, ':fcID'=>$this->lodestone['freeCompany']['id']]) === false) {
-                if ((new FreeCompany($this->lodestone['freeCompany']['id']))->update() !== true) {
-                    (new Cron)->add('ffUpdateEntity', [$this->lodestone['freeCompany']['id'], 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->lodestone['freeCompany']['id']);
-                }
+            if (!empty($this->lodestone['freeCompany']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid' => $this->id, ':fcID' => $this->lodestone['freeCompany']['id']]) === false && (new FreeCompany($this->lodestone['freeCompany']['id']))->update() !== true) {
+                (new Cron)->add('ffUpdateEntity', [$this->lodestone['freeCompany']['id'], 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->lodestone['freeCompany']['id']);
             }
             #Register PvP Team update if change was detected
-            if (!empty($this->lodestone['pvp']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `characterid`=:characterid AND `pvpteamid`=:pvpID;', [':characterid'=>$this->id, ':pvpID'=>$this->lodestone['pvp']['id']]) === false) {
-                if ((new PvPTeam($this->lodestone['pvp']['id']))->update() !== true) {
-                    (new Cron)->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->lodestone['pvp']['id']);
-                }
+            if (!empty($this->lodestone['pvp']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `characterid`=:characterid AND `pvpteamid`=:pvpID;', [':characterid' => $this->id, ':pvpID' => $this->lodestone['pvp']['id']]) === false && (new PvPTeam($this->lodestone['pvp']['id']))->update() !== true) {
+                (new Cron)->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->lodestone['pvp']['id']);
             }
             #Check if character is linked to a user
             $character = HomePage::$dbController->selectRow('SELECT `characterid`, `userid` FROM `ffxiv__character` WHERE `characterid`=:id;', [':id' => $this->id]);
             if ($character['userid']) {
                 #Download avatar
-                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], intval($this->id));
+                (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], (int)$this->id);
             }
             return true;
         } catch(\Exception $e) {
@@ -404,9 +398,8 @@ class Character extends Entity
                 #Something went wrong with getting data
                 if (!empty($this->lodestone['404'])) {
                     return ['http_error' => 400, 'reason' => 'No character found with id `'.$this->id.'`'];
-                } else {
-                    return ['http_error' => 500, 'reason' => 'Failed to get fresh data for character with id `'.$this->id.'`'];
                 }
+                return ['http_error' => 500, 'reason' => 'Failed to get fresh data for character with id `'.$this->id.'`'];
             }
             #Check if biography is set
             if (empty($this->lodestone['bio'])) {
@@ -443,14 +436,11 @@ class Character extends Entity
         }
         #Check if any character currently registered in a group is linked to the user
         try {
-            #Suppressing SQL inspection, because PHPStorm does not expand $this:: constants
-            /** @noinspection SqlResolve */
             $check = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
             if(!$check) {
                 return ['http_error' => 403, 'reason' => 'Character not linked to user'];
-            } else {
-                return $this->update();
             }
+            return $this->update();
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];

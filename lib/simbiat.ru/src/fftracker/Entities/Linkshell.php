@@ -11,8 +11,8 @@ use Simbiat\Lodestone;
 class Linkshell extends Entity
 {
     #Custom properties
-    protected const entityType = 'linkshell';
-    protected const crossworld = false;
+    protected const string entityType = 'linkshell';
+    protected const bool crossworld = false;
     public array $dates = [];
     public ?string $community = null;
     public ?string $server = null;
@@ -61,13 +61,11 @@ class Linkshell extends Entity
         if (empty($data['linkshells'][$this->id]['server']) || (!empty($data['linkshells'][$this->id]['members']) && count($data['linkshells'][$this->id]['members']) < intval($data['linkshells'][$this->id]['memberscount'])) || (empty($data['linkshells'][$this->id]['members']) && intval($data['linkshells'][$this->id]['memberscount']) > 0)) {
             if (!empty($data['linkshells'][$this->id]['members']) && $data['linkshells'][$this->id]['members'] == 404) {
                 return ['404' => true];
-            } else {
-                if (empty($Lodestone->getLastError())) {
-                    return 'Failed to get any data for '.($this::crossworld ? 'Crossworld ' : '').'Linkshell '.$this->id;
-                } else {
-                    return 'Failed to get all necessary data for '.($this::crossworld ? 'Crossworld ' : '').'Linkshell '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
-                }
             }
+            if (empty($Lodestone->getLastError())) {
+                return 'Failed to get any data for '.($this::crossworld ? 'Crossworld ' : '').'Linkshell '.$this->id;
+            }
+            return 'Failed to get all necessary data for '.($this::crossworld ? 'Crossworld ' : '').'Linkshell '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
         }
         $data = $data['linkshells'][$this->id];
         $data['id'] = $this->id;
