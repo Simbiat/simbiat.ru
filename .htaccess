@@ -317,6 +317,11 @@ RewriteCond %{REQUEST_FILENAME} "((^|/)img/fftracker/merged-crests/.*)" [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule .* img/fftracker/default-crests/pvp.webp [QSA,END]
 
+#Handle non existent FFXIV job icons
+RewriteCond %{REQUEST_FILENAME} "((^|/)img/fftracker/jobs/.*)" [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .* img/fftracker/jobs/None.webp [QSA,END]
+
 #Handle images, that do not exist
 RewriteCond %{REQUEST_FILENAME} "((^|/)img/.*)" [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
