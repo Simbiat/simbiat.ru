@@ -305,3 +305,17 @@ footer address a .linkIcon {
     padding: 0.1rem;
     border-width: var(--border-width);
 }
+ul.flexList,
+ol.flexList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+}
+ul.flexList li,
+ol.flexList li {
+    list-style: none;
+    margin: 0 1rem 0 0;
+}

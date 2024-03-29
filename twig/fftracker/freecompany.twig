@@ -56,7 +56,7 @@
     {% endif %}
     {% if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
-        <ul>
+        <ul class="flexList">
             {% for focus, value in freecompany.focus %}
                 {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/img/fftracker/focus/{{ focus }}.webp">{{ focus }}</li>{% endif %}
             {% endfor %}
@@ -67,7 +67,7 @@
         {% if freecompany.recruiting == 1 %}
             <p>Is recruiting{% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
             {% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}
-                <ul>
+                <ul class="flexList">
                     {% for seeking, value in freecompany.seeking %}
                         {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/img/fftracker/roles/{{ seeking }}.webp">{{ seeking }}</li>{% endif %}
                     {% endfor %}
