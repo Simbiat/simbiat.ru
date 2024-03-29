@@ -24,8 +24,8 @@ class Statistics
         #Sanitize cachePath
         if (empty($cachePath)) {
             #Create path if missing
-            if (!is_dir(FFTracker::$statistics)) {
-                mkdir(FFTracker::$statistics);
+            if (!is_dir(FFTracker::$statistics) && !mkdir(FFTracker::$statistics) && !is_dir(FFTracker::$statistics)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', FFTracker::$statistics));
             }
             $cachePath = FFTracker::$statistics.$type.'.json';
         }
@@ -219,7 +219,7 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['ranking']['monthly'])) {
                     $data['freecompany']['ranking']['monthly'] = $json['freecompany']['ranking']['monthly'];
                 } else {
-                    $data['freecompany']['ranking']['monthly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `ffxiv__freecompany`.`name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`monthly`)*100 AS `ratio` FROM `ffxiv__freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `ffxiv__freecompany_ranking` `sub`)) `tempresult` INNER JOIN `ffxiv__freecompany` ON `ffxiv__freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
+                    $data['freecompany']['ranking']['monthly'] = Entity::cleanCrestResults($dbCon->SelectAll('SELECT `tempresult`.*, `ffxiv__freecompany`.`name`, `ffxiv__freecompany`.`crest_part_1`, `ffxiv__freecompany`.`crest_part_2`, `ffxiv__freecompany`.`crest_part_3`, `ffxiv__freecompany`.`grandcompanyid`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`monthly`)*100 AS `ratio` FROM `ffxiv__freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `ffxiv__freecompany_ranking` `sub`)) `tempresult` INNER JOIN `ffxiv__freecompany` ON `ffxiv__freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC'));
                     if (count($data['freecompany']['ranking']['monthly']) > 1) {
                         $data['freecompany']['ranking']['monthly'] = ArrayHelpers::topAndBottom($data['freecompany']['ranking']['monthly'], 20);
                     } else {
@@ -230,7 +230,7 @@ class Statistics
                 if (!$nocache && !empty($json['freecompany']['ranking']['weekly'])) {
                     $data['freecompany']['ranking']['weekly'] = $json['freecompany']['ranking']['weekly'];
                 } else {
-                    $data['freecompany']['ranking']['weekly'] = $dbCon->SelectAll('SELECT `tempresult`.*, `ffxiv__freecompany`.`name`, COALESCE(`ffxiv__freecompany`.`crest`, `ffxiv__freecompany`.`grandcompanyid`) AS `icon`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`weekly`)*100 AS `ratio` FROM `ffxiv__freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `ffxiv__freecompany_ranking` `sub`)) `tempresult` INNER JOIN `ffxiv__freecompany` ON `ffxiv__freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC');
+                    $data['freecompany']['ranking']['weekly'] = Entity::cleanCrestResults($dbCon->SelectAll('SELECT `tempresult`.*, `ffxiv__freecompany`.`name`, `ffxiv__freecompany`.`crest_part_1`, `ffxiv__freecompany`.`crest_part_2`, `ffxiv__freecompany`.`crest_part_3`, `ffxiv__freecompany`.`grandcompanyid`, \'freecompany\' AS `type` FROM (SELECT `main`.`freecompanyid` AS `id`, 1/(`members`*`weekly`)*100 AS `ratio` FROM `ffxiv__freecompany_ranking` `main` WHERE `main`.`date` = (SELECT MAX(`sub`.`date`) FROM `ffxiv__freecompany_ranking` `sub`)) `tempresult` INNER JOIN `ffxiv__freecompany` ON `ffxiv__freecompany`.`freecompanyid` = `tempresult`.`id` ORDER BY `ratio` DESC'));
                     if (count($data['freecompany']['ranking']['weekly']) > 1) {
                         $data['freecompany']['ranking']['weekly'] = ArrayHelpers::topAndBottom($data['freecompany']['ranking']['weekly'], 20);
                     } else {
@@ -274,7 +274,7 @@ class Statistics
                     $data['cities']['gc_characters'] = $dbCon->SelectAll('SELECT `ffxiv__city`.`city`, `ffxiv__grandcompany`.`gcName` AS `value`, COUNT(`ffxiv__character`.`characterid`) AS `count` FROM `ffxiv__character` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid`=`ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` WHERE `ffxiv__character`.`deleted` IS NULL AND `ffxiv__grandcompany`.`gcName` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_characters'] as $key=>$company) {
-                        $data['cities']['gc_characters'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
+                        $data['cities']['gc_characters'][$key]['color'] = $Lodestone->colorGC((string)$company['value']);
                     }
                     $data['cities']['gc_characters'] = ArrayHelpers::splitByKey($data['cities']['gc_characters'], 'city', [], []);
                 }
@@ -285,7 +285,7 @@ class Statistics
                     $data['cities']['gc_fc'] = $dbCon->SelectAll('SELECT `ffxiv__city`.`city`, `ffxiv__grandcompany`.`gcName` AS `value`, COUNT(`ffxiv__freecompany`.`freecompanyid`) AS `count` FROM `ffxiv__freecompany` LEFT JOIN `ffxiv__estate` ON `ffxiv__freecompany`.`estateid`=`ffxiv__estate`.`estateid` LEFT JOIN `ffxiv__city` ON `ffxiv__estate`.`cityid`=`ffxiv__city`.`cityid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__freecompany`.`grandcompanyid`=`ffxiv__grandcompany`.`gcId` WHERE `ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL AND `ffxiv__grandcompany`.`gcName` IS NOT NULL GROUP BY `city`, `value` ORDER BY `count` DESC');
                     #Add colors to companies
                     foreach ($data['cities']['gc_fc'] as $key=>$company) {
-                        $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
+                        $data['cities']['gc_fc'][$key]['color'] = $Lodestone->colorGC((string)$company['value']);
                     }
                     $data['cities']['gc_fc'] = ArrayHelpers::splitByKey($data['cities']['gc_fc'], 'city', [], []);
                 }
@@ -298,14 +298,14 @@ class Statistics
                     $data['grand_companies']['population'] = $dbCon->countUnique('ffxiv__character', 'gcrankid', '`ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`gcrankid` IS NOT NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__character`.`genderid`, `ffxiv__grandcompany_rank`.`gcId`', 'DESC', 0, ['`ffxiv__character`.`genderid`']);
                     #Add colors to companies
                     foreach ($data['grand_companies']['population'] as $key=>$company) {
-                        $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
+                        $data['grand_companies']['population'][$key]['color'] = $Lodestone->colorGC((string)$company['value']);
                     }
                     #Split companies by gender
                     $data['grand_companies']['population'] = ArrayHelpers::splitByKey($data['grand_companies']['population'], 'genderid', ['female', 'male'], [0, 1]);
                     $data['grand_companies']['population']['free_company'] = $dbCon->countUnique('ffxiv__freecompany', 'grandcompanyid', '`ffxiv__freecompany`.`deleted` IS NULL', 'ffxiv__grandcompany_rank', 'INNER', 'gcrankid', '`ffxiv__grandcompany_rank`.`gcId`');
                     #Add colors to cities
                     foreach ($data['grand_companies']['population']['free_company'] as $key=>$company) {
-                        $data['grand_companies']['population']['free_company'][$key]['color'] = $Lodestone->colorGC(strval($company['value']));
+                        $data['grand_companies']['population']['free_company'][$key]['color'] = $Lodestone->colorGC((string)$company['value']);
                     }
                 }
                 #Grand companies ranks
@@ -439,14 +439,14 @@ class Statistics
                 if (!$nocache && !empty($json['bugs']['noMembers'])) {
                     $data['bugs']['noMembers'] = $json['bugs']['noMembers'];
                 } else {
-                    $data['bugs']['noMembers'] = $dbCon->SelectAll(
-                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, COALESCE(`crest`, `grandcompanyid`) AS `icon` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__freecompany_character`)
+                    $data['bugs']['noMembers'] = Entity::cleanCrestResults($dbCon->SelectAll(
+                        'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, `ffxiv__freecompany`.`crest_part_1`, `ffxiv__freecompany`.`crest_part_2`, `ffxiv__freecompany`.`crest_part_3`, `ffxiv__freecompany`.`grandcompanyid` FROM `ffxiv__freecompany` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__freecompany_character`)
                         UNION
-                        SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, NULL AS `icon` FROM `ffxiv__linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `ffxiv__linkshell_character`)
+                        SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworld_linkshell\', \'linkshell\') AS `type`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__linkshell` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `ffxiv__linkshell_character`)
                         UNION
-                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest` AS `icon` FROM `ffxiv__pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__pvpteam_character`)
+                        SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest_part_1`, `crest_part_2`, `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__pvpteam` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__pvpteam_character`)
                         ORDER BY `name`;'
-                    );
+                    ));
                 }
                 break;
             case 'other':
