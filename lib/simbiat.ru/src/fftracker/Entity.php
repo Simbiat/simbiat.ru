@@ -295,7 +295,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                     $results[ $key ]['icon'] = $result['grandcompanyid'];
                 }
             } else {
-                $results[ $key ]['icon'] = null;
+                $results[ $key ]['icon'] = '/img/fftracker/merged-crests/not_found.webp';
             }
             unset($results[ $key ]['crest_part_1'], $results[ $key ]['crest_part_2'], $results[ $key ]['crest_part_3'], $results[ $key ]['grandcompanyid']);
         }
