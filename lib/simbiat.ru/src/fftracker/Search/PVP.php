@@ -34,10 +34,6 @@ class PVP extends Search
     
     protected function postProcess(array $results): array
     {
-        foreach($results as $key=>$result) {
-            $results[$key]['icon'] = Entity::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
-            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3']);
-        }
-        return $results;
+        return Entity::cleanCrestResults($results);
     }
 }

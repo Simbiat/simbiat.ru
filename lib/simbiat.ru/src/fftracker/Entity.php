@@ -285,4 +285,20 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             return false;
         }
     }
+    
+    public static function cleanCrestResults(array $results): array
+    {
+        foreach($results as $key=>$result) {
+            if (isset($result['crest_part_1']) || isset($result['crest_part_2']) || isset($result['crest_part_3'])) {
+                $results[ $key ]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
+                if (isset($result['grandcompanyid']) && str_contains($results[ $key ]['icon'], 'not_found') && in_array($result['grandcompanyid'], [1, 2, 3], true)) {
+                    $results[ $key ]['icon'] = $result['grandcompanyid'];
+                }
+            } else {
+                $results[ $key ]['icon'] = null;
+            }
+            unset($results[ $key ]['crest_part_1'], $results[ $key ]['crest_part_2'], $results[ $key ]['crest_part_3'], $results[ $key ]['grandcompanyid']);
+        }
+        return $results;
+    }
 }

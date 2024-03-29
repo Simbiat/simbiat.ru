@@ -313,11 +313,11 @@ RewriteCond %{DOCUMENT_ROOT}%2img/uploaded/%3 !-f
 RewriteRule .* img/avatar.svg [QSA,END]
 
 #Handle existing merged crests
-RewriteCond %{REQUEST_FILENAME} "((^|/)img/fftracker/merged-crests/(.*))" [NC]
+RewriteCond %{REQUEST_URI} "((^|/)img/fftracker/merged-crests/(.*))" [NC]
 RewriteCond %{DOCUMENT_ROOT}%2data/cache/mergedcrests/%3 -f
 RewriteRule ((^|/)img/fftracker/merged-crests/(.*)) data/cache/mergedcrests/$3 [QSA,END]
 #Handle non existent merged crests
-RewriteCond %{REQUEST_FILENAME} "((^|/)img/fftracker/merged-crests/(.*))" [NC]
+RewriteCond %{REQUEST_URI} "((^|/)img/fftracker/merged-crests/(.*))" [NC]
 RewriteCond %{DOCUMENT_ROOT}%2data/cache/mergedcrests/%3 !-f
 RewriteRule .* img/fftracker/default-crests/pvp.webp [QSA,END]
 
