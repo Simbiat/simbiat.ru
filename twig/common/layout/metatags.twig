@@ -54,12 +54,8 @@
 <meta name="twitter:creator" content="@simbiat199" />
 <meta name="twitter:creator:id" content="3049604752" />
 <meta name="twitter:description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
-{% if favicon %}
-    <meta name="twitter:image" content="{{ domain }}{{ favicon }}" />
-{% else %}
-    <meta name="twitter:image" content="{{ domain }}/img/favicons/simbiat.png" />
-{% endif %}
-<meta name="twitter:image:alt" content="{{ site_name }} logo" />
+<meta name="twitter:image" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/img/ogimages/default.png' }}{% endif %}" />
+<meta name="twitter:image:alt" content="{% if ogimage %}{{ title }}{% else %}Default banner image{% endif %}" />
 
 <!-- MS Tiles -->
 <meta name="application-name" content="{{ site_name }}" />
