@@ -39,10 +39,10 @@
             {% elseif icon == '3' %}
                 <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/default-crests/ImmortalFlames.webp">
             {% else %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.webp">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}">
             {% endif %}
         {% elseif type == 'pvpteam' %}
-            <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/merged-crests/{{ icon|slice(0,2) }}/{{ icon|slice(2,2) }}/{{ icon }}.webp">
+            <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}">
         {% elseif type == 'linkshell' %}
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.webp">
         {% else %}

@@ -39,7 +39,7 @@ abstract class Search
     #List of optional columns for LIKE %% comparison
     protected array $like = [];
 
-    public final function __construct(array $bindings = [], ?string $where = null, ?string $order = null)
+    final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null)
     {
         #Check that subclass has set appropriate properties, except $where, which is ok to inherit
         foreach (['entityType', 'table', 'fields', 'fulltext', 'orderDefault', 'orderList'] as $property) {
@@ -62,7 +62,7 @@ abstract class Search
         }
     }
 
-    public final function search(string $what = '', int $limit = 15): array
+    final public function search(string $what = '', int $limit = 15): array
     {
         try {
             #Count first
@@ -81,7 +81,7 @@ abstract class Search
     }
 
     #Function to generate list of entities or get a proper page number for redirect
-    public final function listEntities(int $page = 1, string $what = ''): int|array
+    final public function listEntities(int $page = 1, string $what = ''): int|array
     {
         #Suggest redirect if page number is less than 1
         if ($page < 1) {
@@ -90,7 +90,7 @@ abstract class Search
         #Count entities first
         $count = $this->countEntities($what);
         #Count pages
-        $pages = intval(ceil($count/$this->listItems));
+        $pages = (int)ceil($count / $this->listItems);
         if ($pages < 1) {
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
@@ -107,7 +107,7 @@ abstract class Search
     }
 
     #Generalized function to count entities
-    protected final function countEntities(string $what = ''): int
+    final protected function countEntities(string $what = ''): int
     {
         try {
             if ($what !== '') {
@@ -135,16 +135,14 @@ abstract class Search
                     }
                     #Get fulltext results
                     return HomePage::$dbController->count($exactlyLike . $this->relevancy() . ' > 0)', array_merge($this->bindings, [':what' => [$what, 'match']]));
-                } else {
-                    if (empty($this->like)) {
-                        return 0;
-                    }
-                    #Search using LIKE
-                    return HomePage::$dbController->count($exactlyLike.$this->like().')', array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
                 }
-            } else {
-                return HomePage::$dbController->count('SELECT COUNT('.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join). (empty($this->where) ? '' : ' WHERE ' . $this->where).';', $this->bindings);
+                if (empty($this->like)) {
+                    return 0;
+                }
+                #Search using LIKE
+                return HomePage::$dbController->count($exactlyLike.$this->like().')', array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
             }
+            return HomePage::$dbController->count('SELECT COUNT('.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join). (empty($this->where) ? '' : ' WHERE ' . $this->where).';', $this->bindings);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return 0;
@@ -152,7 +150,7 @@ abstract class Search
     }
 
     #Generalized function to select entities
-    protected final function selectEntities(string $what = '', int $limit = 100, int $offset = 0, bool $list = false): array
+    final protected function selectEntities(string $what = '', int $limit = 100, int $offset = 0, bool $list = false): array
     {
         try {
             if ($what !== '') {
@@ -168,7 +166,7 @@ abstract class Search
                 $results = [];
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = HomePage::$dbController->selectAll($exactlyLike . $this->exact() . ') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string']]));
+                    $results = $this->postProcess(HomePage::$dbController->selectAll($exactlyLike . $this->exact() . ') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string']])));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -179,37 +177,41 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` , ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'match']]));
-                } else {
-                    if (empty($this->like)) {
-                        return [];
-                    }
-                    #Search using LIKE
-                    return HomePage::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]));
+                    return $this->postProcess(HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` , ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'match']])));
                 }
-            } else {
-                return HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join) . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset.';', $this->bindings);
+                if (empty($this->like)) {
+                    return [];
+                }
+                #Search using LIKE
+                return $this->postProcess(HomePage::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']])));
             }
+            return $this->postProcess(HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join) . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset.';', $this->bindings));
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];
         }
     }
+    
+    #Optional post-processing. Override to apply. Is not meant for removing results.
+    protected function postProcess(array $results): array
+    {
+        return $results;
+    }
 
     #Generate WHERE for direct comparison
-    protected final function exact(): string
+    final protected function exact(): string
     {
         return '`'.implode('` = :what OR `', $this->exact).'` = :what';
     }
 
     #Generate WHERE for %LIKE% comparison
-    protected final function like(): string
+    final protected function like(): string
     {
         return '`'.implode('` LIKE :like OR `', $this->like).'` LIKE :like';
     }
 
     #Helper function to generate relevancy statement
-    protected final function relevancy(): string
+    final protected function relevancy(): string
     {
         $result = '(';
         #Add FULLTEXT comparisons.

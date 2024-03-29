@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Search;
 use Simbiat\Abstracts\Search;
+use Simbiat\fftracker\Entity;
 
 class Companies extends Search
 {
@@ -10,7 +11,7 @@ class Companies extends Search
     #Name of the table to search use
     protected string $table = 'ffxiv__freecompany';
     #List of fields
-    protected string $fields = '`freecompanyid` as `id`, `name`, COALESCE(`crest`, `grandcompanyid`) AS `icon`, `updated`';
+    protected string $fields = '`freecompanyid` as `id`, `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid`, `updated`';
     #Default order (for main page, for example)
     protected string $orderDefault = '`Updated` DESC';
     #Order for list pages
@@ -40,4 +41,16 @@ class Companies extends Search
         'estate_zone',
         'estate_message',
     ];
+    
+    protected function postProcess(array $results): array
+    {
+        foreach($results as $key=>$result) {
+            $results[$key]['icon'] = Entity::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
+            if (str_contains($results[$key]['icon'], 'not_found') && in_array($result['grandcompanyid'], [1, 2, 3], true)) {
+                $results[$key]['icon'] = $result['grandcompanyid'];
+            }
+            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['grandcompanyid']);
+        }
+        return $results;
+    }
 }

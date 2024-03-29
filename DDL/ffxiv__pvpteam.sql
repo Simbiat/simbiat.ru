@@ -9,7 +9,6 @@ CREATE TABLE `ffxiv__pvpteam`
     `updated`      DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When PvP Team was last updated on the tracker',
     `deleted`      DATE                                             NULL COMMENT 'Date when PvP Team was marked as deleted',
     `communityid`  VARCHAR(40) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'Community ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/community_finder/communityid/)',
-    `crest`        CHAR(64) COLLATE utf8mb4_uca1400_nopad_as_ci     NULL COMMENT 'Name (hash) of image representing merged crest for the team (generated on each company update from 1 to 3 images on Lodestone)',
     `crest_part_1` VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 1st part of the crest (background)',
     `crest_part_2` VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 2nd part of the crest (frame)',
     `crest_part_3` VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 3rd part of the crest (emblem)',

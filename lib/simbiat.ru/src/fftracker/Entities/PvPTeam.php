@@ -15,7 +15,7 @@ class PvPTeam extends Entity
     protected string $idFormat = '/^[a-z\d]{40}$/m';
     public array $dates = [];
     public ?string $community = null;
-    public ?string $crest = null;
+    public array $crest = [];
     public string $dataCenter;
     public array $oldNames = [];
     public array $members = [];
@@ -37,7 +37,7 @@ class PvPTeam extends Entity
         #Get members
         $data['members'] = HomePage::$dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__pvpteam_character`.`characterid` AS `id`, `ffxiv__character`.`pvp_matches` AS `matches`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__pvpteam_rank`.`rank`, `ffxiv__pvpteam_rank`.`pvprankid`, `userid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_rank`.`pvprankid`=`ffxiv__pvpteam_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=:id AND `current`=1 ORDER BY `ffxiv__pvpteam_character`.`rankid` , `ffxiv__character`.`name` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server'], $data['crest_part_1'], $data['crest_part_2'], $data['crest_part_3']);
+        unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
             (new Cron)->add('ffUpdateEntity', [$this->id, 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->id);
@@ -80,7 +80,11 @@ class PvPTeam extends Entity
             'deleted' => (empty($fromDB['deleted']) ? null : strtotime($fromDB['deleted'])),
         ];
         $this->community = $fromDB['communityid'];
-        $this->crest = $fromDB['crest'];
+        $this->crest = [
+            0 => $fromDB['crest_part_1'],
+            1 => $fromDB['crest_part_2'],
+            2 => $fromDB['crest_part_3'],
+        ];
         $this->dataCenter = $fromDB['datacenter'];
         $this->oldNames = $fromDB['oldnames'];
         $this->members = $fromDB['members'];
@@ -93,11 +97,11 @@ class PvPTeam extends Entity
     protected function updateDB(bool $manual = false): string|bool
     {
         try {
-            #Attempt to get crest
-            $crest = $this->CrestMerge($this->lodestone['crest']);
+            #Download crest components
+            $this->downloadCrestComponents($this->lodestone['crest']);
             #Main query to insert or update a PvP Team
             $queries[] = [
-                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`), `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
+                'INSERT INTO `ffxiv__pvpteam` (`pvpteamid`, `name`, `manual`, `formed`, `registered`, `updated`, `deleted`, `datacenterid`, `communityid`, `crest_part_1`, `crest_part_2`, `crest_part_3`) VALUES (:pvpteamid, :name, :manual, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), :communityid, :crest_part_1, :crest_part_2, :crest_part_3) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `datacenterid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `datacenter`=:datacenter ORDER BY `serverid` LIMIT 1), `communityid`=:communityid, `crest`=COALESCE(:crest, `crest`), `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3;',
                 [
                     ':pvpteamid'=>$this->id,
                     ':datacenter'=>$this->lodestone['dataCenter'],
@@ -107,10 +111,6 @@ class PvPTeam extends Entity
                     ':communityid'=>[
                         (empty($this->lodestone['communityid']) ? NULL : $this->lodestone['communityid']),
                         (empty($this->lodestone['communityid']) ? 'null' : 'string'),
-                    ],
-                    ':crest'=>[
-                        (empty($crest) ? NULL : $crest),
-                        (empty($crest) ? 'null' : 'string'),
                     ],
                     ':crest_part_1'=>[
                         (empty($this->lodestone['crest'][0]) ? NULL : $this->lodestone['crest'][0]),

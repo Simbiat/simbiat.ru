@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\Config\Common;
+use Simbiat\Config\FFTracker;
 use Simbiat\Config\Talks;
 use Simbiat\Database\Pool;
 use Simbiat\usercontrol\Email;
@@ -17,6 +18,8 @@ class Maintenance
     {
         #Clean HTML cache
         $this->recursiveClean(Common::$htmlCache, 1440, 2048);
+        #Clean merged crests cache
+        $this->recursiveClean(FFtracker::$mergedCrestsCache, 14400);
         #Clean temp directory
         $this->recursiveClean(sys_get_temp_dir(), 4320, 0);
         return true;
@@ -26,7 +29,7 @@ class Maintenance
     public function sessionClean(): bool
     {
         try {
-            return boolval((new Session)->gc(300));
+            return (bool)(new Session)->gc(300);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -117,8 +120,8 @@ class Maintenance
     {
         #Get directory
         $dir = sys_get_temp_dir();
-        if (!is_dir($dir)) {
-            mkdir($dir);
+        if (!is_dir($dir) && !mkdir($dir) && !is_dir($dir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
         #Get free space in percentage
         $percentage = disk_free_space($dir)*100/disk_total_space($dir);
@@ -136,12 +139,10 @@ class Maintenance
                     file_put_contents($dir . '/noSpace.flag', $percentage . '% of space left');
                 }
             }
-        } else {
-            if (is_file($dir.'/noSpace.flag')) {
-                @unlink($dir . '/noSpace.flag');
-                #Send mail
-                (new Email(Common::adminMail))->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
-            }
+        } elseif (is_file($dir.'/noSpace.flag')) {
+            @unlink($dir . '/noSpace.flag');
+            #Send mail
+            (new Email(Common::adminMail))->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
         }
     }
 
@@ -158,12 +159,10 @@ class Maintenance
                 #Generate flag
                 file_put_contents($dir . '/noDB.flag', 'Database is down');
             }
-        } else {
-            if (is_file($dir.'/noDB.flag')) {
-                @unlink($dir . '/noDB.flag');
-                #Send mail
-                (new Email(Common::adminMail))->send('[Resolved]: Database is down', username: 'Simbiat');
-            }
+        } elseif (is_file($dir.'/noDB.flag')) {
+            @unlink($dir . '/noDB.flag');
+            #Send mail
+            (new Email(Common::adminMail))->send('[Resolved]: Database is down', username: 'Simbiat');
         }
     }
 
@@ -171,7 +170,7 @@ class Maintenance
     private function recursiveClean(string $path, int $maxAge = 60, int $maxSize = 1024): void
     {
         #Get current maximum execution time
-        $curMaxTime = intval(ini_get('max_execution_time'));
+        $curMaxTime = (int)ini_get('max_execution_time');
         #Iterration can take a long time, so let it run its course
         set_time_limit(0);
         #Restore execution time
@@ -182,14 +181,14 @@ class Maintenance
             $maxAge = 60 * 60;
         } else {
             #Otherwise, convert into minutes (seconds do not make sense here at all)
-            $maxAge = $maxAge * 60;
+            $maxAge *= 60;
         }
         if ($maxSize < 0) {
             #Consider that the size limit was removed
             $maxSize = 0;
         } else {
             #Otherwise, convert to megabytes (lower than 1 MB does not make sense)
-            $maxSize = $maxSize * 1024 * 1024;
+            $maxSize *= 1024 * 1024;
         }
         #Set list of empty folders (removing within iteration seems to cause fatal error)
         $emptyDirs = [];
@@ -214,28 +213,22 @@ class Maintenance
                             #Remove directory
                             $emptyDirs[] = $file;
                         }
-                    } else {
-                        #Check if file
-                        if (is_file($file)) {
-                            #If we have age restriction, check if the age
-                            $time = filemtime($file);
+                    } elseif (is_file($file)) {
+                        #If we have age restriction, check if the age
+                        $time = filemtime($file);
+                        if ($maxSize > 0) {
+                            $size = filesize($file);
+                        } else {
+                            $size = 0;
+                        }
+                        if ($maxAge > 0 && $time <= $oldest) {
+                            #Add to list of files to delete
+                            $toDelete[] = $file;
                             if ($maxSize > 0) {
-                                $size = filesize($file);
-                            } else {
-                                $size = 0;
+                                $sizeToRemove += $size;
                             }
-                            if ($maxAge > 0 && $time <= $oldest) {
-                                #Add to list of files to delete
-                                $toDelete[] = $file;
-                                if ($maxSize > 0) {
-                                    $sizeToRemove = $sizeToRemove + $size;
-                                }
-                            } else {
-                                #Get date of files to list of fresh cache
-                                if ($maxSize > 0) {
-                                    $fresh[] = ['path' => $file, 'time' => $time, 'size' => $size];
-                                }
-                            }
+                        } elseif ($maxSize > 0) {
+                            $fresh[] = ['path' => $file, 'time' => $time, 'size' => $size];
                         }
                     }
                 }
@@ -250,13 +243,13 @@ class Maintenance
                 #Check if we are already removing enough. If so - skip further checks
                 if ($totalSize - $sizeToRemove >= $maxSize) {
                     #Sort files by time from oldest to newest
-                    usort($fresh, function ($a, $b) {
+                    usort($fresh, static function ($a, $b) {
                         return $a['time'] <=> $b['time'];
                     });
                     #Iterrate list
                     foreach ($fresh as $file) {
                         $toDelete[] = $file['path'];
-                        $sizeToRemove = $sizeToRemove + $file['size'];
+                        $sizeToRemove += $file['size'];
                         #Check if removing this file will be enough and break cycle if it is
                         if ($totalSize - $sizeToRemove < $maxSize) {
                             break;

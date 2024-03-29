@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\Config\FFTracker;
+use Simbiat\fftracker\Entity;
 
 class FreeCompany extends Page
 {
@@ -53,16 +53,10 @@ class FreeCompany extends Page
                 $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/' . $outputArray['freecompany']['community']];
             }
         }
-        #Try to change favicon
-        if (!empty($outputArray['freecompany']['crest'])) {
-            #Get full path
-            $fullPath = substr($outputArray['freecompany']['crest'], 0, 2).'/'.substr($outputArray['freecompany']['crest'], 2, 2).'/'.$outputArray['freecompany']['crest'].'.webp';
-            if (is_file(FFTracker::$crests.$fullPath)) {
-                $outputArray['favicon'] = '/img/fftracker/merged-crests/'.$fullPath;
-            }
-        }
+        #Merge crest and update favicon
+        $outputArray['favicon'] = $outputArray['freecompany']['crest'] = Entity::crestToFavicon($outputArray['freecompany']['crest']);
         #Check if linked to current user
-        if ($_SESSION['userid'] !== 1 && in_array($_SESSION['userid'], array_column($outputArray['freecompany']['members'], 'userid'))) {
+        if ($_SESSION['userid'] !== 1 && in_array($_SESSION['userid'], array_column($outputArray['freecompany']['members'], 'userid'), true)) {
             $outputArray['freecompany']['linked'] = true;
         }
         return $outputArray;

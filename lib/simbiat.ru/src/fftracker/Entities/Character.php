@@ -309,9 +309,9 @@ class Character extends Entity
                         'INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
                         [
                             ':achievementid'=>$achievementid,
-                            ':name'=>$item['name'],
-                            ':icon'=>str_replace(['https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', 'https://lds-img.finalfantasyxiv.com/itemicon/'], "", $item['icon']),
-                            ':points'=>$item['points'],
+                            ':name'=> $item['name'],
+                            ':icon'=> self::removeLodestoneDomain($item['icon']),
+                            ':points'=> $item['points'],
                         ],
                     ];
                     $queries[] = [

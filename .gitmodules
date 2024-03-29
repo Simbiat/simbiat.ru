@@ -46,9 +46,6 @@
 	path = lib/sand-clock
 	url = https://github.com/Simbiat/sand-clock
 	branch = master
-[submodule "img/fftracker/merged-crests"]
-	path = img/fftracker/merged-crests
-	url = https://github.com/Simbiat/FFXIV-Crests
 [submodule "img/fftracker/icons"]
 	path = img/fftracker/icons
 	url = https://github.com/Simbiat/FFXIV-Icons

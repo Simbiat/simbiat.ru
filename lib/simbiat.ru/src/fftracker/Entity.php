@@ -148,84 +148,141 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             }
         }
     }
-
-    #Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
-    protected function CrestMerge(array $images, bool $debug = false): ?string
+    
+    #Function to remove Lodestone domain(s) from image links
+    public static function removeLodestoneDomain(string $url): string
     {
-        try {
-            #Get hash for merged crest based on the images' names
-            $hash = hash('sha3-256', ($images[0] ? basename($images[0]) : '').($images[1] ? basename($images[1]) : '').($images[2] ? basename($images[2]) : ''));
-            #Get final path based on hash
-            $finalPath = FFTracker::$crests.substr($hash, 0, 2).'/'.substr($hash, 2, 2).'/';
-            #Check if path exists and create it recursively, if not
-            if (!is_dir($finalPath) && !mkdir($finalPath, recursive: true) && !is_dir($finalPath)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $finalPath));
-            }
-            #Check if image already exists - skip and return early, if it does
-            if (is_file($finalPath.$hash.'.webp')) {
-                return $hash;
-            }
-            foreach ($images as $key=>$image) {
-                if (!empty($image)) {
-                    #Check if we have already downloaded the component image and use that one to speed up the process
-                    if ($key === 0) {
-                        #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
-                        $subDir = mb_substr(basename($image), 0, 3);
-                        $concurrentDirectory = FFTracker::$crestsComponents.'backgrounds/'.$subDir;
-                        if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
-                            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-                        }
-                    } elseif ($key === 2) {
-                        #If it's emblem, we need to check if subdirectory exists and create it, and create it, if it does not
-                        $subDir = mb_substr(basename($image), 0, 3);
-                        $concurrentDirectory = FFTracker::$crestsComponents.'emblems/'.$subDir;
-                        if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
-                            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-                        }
-                    } else {
-                        $subDir = '';
+        return str_replace([
+            'https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/',
+            'https://lds-img.finalfantasyxiv.com/itemicon/'
+        ], '', $url);
+    }
+    
+    #Function to download crest components from Lodestone
+    protected function downloadCrestComponents(array $images): void
+    {
+        foreach ($images as $key=>$image) {
+            if (!empty($image)) {
+                #Check if we have already downloaded the component image and use that one to speed up the process
+                if ($key === 0) {
+                    #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
+                    $subDir = mb_substr(basename($image), 0, 3);
+                    $concurrentDirectory = FFTracker::$crestsComponents.'backgrounds/'.$subDir;
+                    if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
+                        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
                     }
-                    $cachedImage = match($key) {
-                        0 => FFTracker::$crestsComponents.'backgrounds/'.$subDir.'/'.basename($image),
-                        1 => FFTracker::$crestsComponents.'frames/'.basename($image),
-                        2 => FFTracker::$crestsComponents.'emblems/'.$subDir.'/'.basename($image),
-                    };
-                    if (is_file($cachedImage)) {
-                        $images[$key] = $cachedImage;
-                    } elseif (Images::download($image, $cachedImage, false)) {
-                        $images[$key] = $cachedImage;
-                        #If it's an emblem, check that other emblem variants are downloaded as well
-                        if ($key === 2) {
-                            $emblemIndex = (int)preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', basename($image));
-                            for ($i = 0; $i <= 7; $i++) {
-                                if ($i !== $emblemIndex) {
-                                    $emblemFile = FFTracker::$crestsComponents.'emblems/'.$subDir.'/'.preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$i.'$3', basename($image));
-                                    if (!is_file($emblemFile)) {
-                                        try {
-                                            Images::download(preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$i.'$3', $image), $emblemFile, false);
-                                        } catch (\Throwable) {
-                                            #Do nothing, not critical
-                                        }
+                } elseif ($key === 2) {
+                    #If it's emblem, we need to check if subdirectory exists and create it, and create it, if it does not
+                    $subDir = mb_substr(basename($image), 0, 3);
+                    $concurrentDirectory = FFTracker::$crestsComponents.'emblems/'.$subDir;
+                    if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
+                        throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+                    }
+                } else {
+                    $subDir = '';
+                }
+                $cachedImage = self::crestToLocal($image);
+                if (!empty($cachedImage)) {
+                    #Try downloading the component, if it's not present locally
+                    if (!is_file($cachedImage)) {
+                        Images::download($image, $cachedImage, false);
+                    }
+                    #If it's an emblem, check that other emblem variants are downloaded as well
+                    if ($key === 2) {
+                        $emblemIndex = (int)preg_replace('/(.+_)(\d{2})(_.+\.png)/', '$2', basename($image));
+                        for ($i = 0; $i <= 7; $i++) {
+                            if ($i !== $emblemIndex) {
+                                $emblemFile = FFTracker::$crestsComponents.'emblems/'.$subDir.'/'.preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$i.'$3', basename($image));
+                                if (!is_file($emblemFile)) {
+                                    try {
+                                        Images::download(preg_replace('/(.+_)(\d{2})(_.+\.png)/', '${1}0'.$i.'$3', $image), $emblemFile, false);
+                                    } catch (\Throwable) {
+                                        #Do nothing, not critical
                                     }
                                 }
                             }
                         }
                     }
-                } else {
-                    unset($images[$key]);
                 }
+            }
+        }
+    }
+    
+    public static function crestToFavicon(array $images): ?string
+    {
+        $images = self::sortComponents($images);
+        $mergedFileNames = (empty($images[0]) ? '' : basename($images[0])).(empty($images[1]) ? '' : basename($images[1])).(empty($images[2]) ? '' : basename($images[2]));
+        #Get hash of the merged images based on their names
+        $crestHash = hash('sha3-512', $mergedFileNames);
+        if (!empty($crestHash)) {
+            #Get full path
+            $fullPath = mb_substr($crestHash, 0, 2).'/'.mb_substr($crestHash, 2, 2).'/'.$crestHash.'.webp';
+            #Generate image file, if missing
+            if (!is_file(\Simbiat\Config\FFtracker::$mergedCrestsCache.$fullPath)) {
+                self::CrestMerge($images, \Simbiat\Config\FFtracker::$mergedCrestsCache.$fullPath);
+            }
+            return '/img/fftracker/merged-crests/'.$fullPath;
+        }
+        return '/img/fftracker/merged-crests/not_found.webp';
+    }
+    
+    #Function converts image URL to local path
+    protected static function crestToLocal(string $image): ?string
+    {
+        $filename = basename($image);
+        #Backgrounds
+        if (str_starts_with($filename, 'F00') || str_starts_with($filename, 'B')) {
+            return FFTracker::$crestsComponents.'backgrounds/'.mb_substr($filename, 0, 3).'/'.$filename;
+        }
+        #Frames
+        if (str_starts_with($filename, 'F')) {
+            return FFTracker::$crestsComponents.'frames/'.$filename;
+        }
+        #Emblems
+        if (str_starts_with($filename, 'S')) {
+            return FFTracker::$crestsComponents.'emblems/'.mb_substr($filename, 0, 3).'/'.$filename;
+        }
+        return null;
+    }
+    
+    protected static function sortComponents(array $images): array
+    {
+        $imagesToMerge = [];
+        foreach ($images as $image) {
+            if (!empty($image)) {
+                $cachedImage = self::crestToLocal($image);
+                if (str_contains($cachedImage, 'backgrounds')) {
+                    $imagesToMerge[0] = $cachedImage;
+                } elseif (str_contains($cachedImage, 'frames')) {
+                    $imagesToMerge[1] = $cachedImage;
+                } elseif (str_contains($cachedImage, 'emblems')) {
+                    $imagesToMerge[2] = $cachedImage;
+                }
+            }
+        }
+        return $imagesToMerge;
+    }
+    
+    #Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
+    protected static function CrestMerge(array $images, string $finalPath, bool $debug = false): bool
+    {
+        try {
+            #Don't do anything if empty array
+            if (empty($images)) {
+                return false;
+            }
+            #Check if path exists and create it recursively, if not
+            if (!is_dir(dirname($finalPath)) && !mkdir(dirname($finalPath), recursive: true) && !is_dir(dirname($finalPath))) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $finalPath));
             }
             $gd = Images::merge($images);
             #Save the file
-            if ($gd !== null && imagewebp($gd, $finalPath.$hash.'.webp', IMG_WEBP_LOSSLESS)) {
-                return $hash;
-            }
-            return null;
+            return $gd !== null && imagewebp($gd, $finalPath, IMG_WEBP_LOSSLESS);
         } catch (\Throwable $e) {
             if ($debug) {
-                Errors::error_log($e, debug: $this->debug);
+                Errors::error_log($e, debug: $debug);
             }
-            return null;
+            return false;
         }
     }
 }

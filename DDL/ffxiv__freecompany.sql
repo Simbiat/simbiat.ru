@@ -10,7 +10,6 @@ CREATE TABLE `ffxiv__freecompany`
     `registered`     DATE                DEFAULT CURRENT_TIMESTAMP()  NOT NULL COMMENT 'When Free Company was initially added to tracker',
     `updated`        DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When Free Company was last updated on the tracker',
     `deleted`        DATE                                             NULL COMMENT 'Date when Free Company was marked as deleted',
-    `crest`          CHAR(64) COLLATE utf8mb4_uca1400_nopad_as_ci     NULL COMMENT 'Name (hash) of image representing merged crest for the company (generated on each company update from 1 to 3 images on Lodestone)',
     `crest_part_1`   VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 1st part of the crest (background)',
     `crest_part_2`   VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 2nd part of the crest (frame)',
     `crest_part_3`   VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 3rd part of the crest (emblem)',

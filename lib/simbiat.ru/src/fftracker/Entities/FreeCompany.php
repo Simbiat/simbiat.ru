@@ -15,7 +15,7 @@ class FreeCompany extends Entity
     protected const string entityType = 'freecompany';
     public array $dates = [];
     public ?string $tag = null;
-    public ?string $crest = null;
+    public array $crest = [];
     public int $rank = 0;
     public ?string $slogan = null;
     public bool $recruiting = false;
@@ -49,7 +49,7 @@ class FreeCompany extends Entity
         #History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
         $data['ranks_history'] = HomePage::$dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['manual'], $data['gcId'], $data['estateid'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon'], $data['crest_part_1'], $data['crest_part_2'], $data['crest_part_3']);
+        unset($data['manual'], $data['gcId'], $data['estateid'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
             (new Cron)->add('ffUpdateEntity', [$this->id, 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->id);
@@ -105,7 +105,11 @@ class FreeCompany extends Entity
             ],
         ];
         $this->tag = $fromDB['tag'];
-        $this->crest = $fromDB['crest'];
+        $this->crest = [
+            0 => $fromDB['crest_part_1'],
+            1 => $fromDB['crest_part_2'],
+            2 => $fromDB['crest_part_3'],
+        ];
         $this->rank = (int)$fromDB['rank'];
         $this->slogan = $fromDB['slogan'];
         $this->recruiting = (bool)$fromDB['recruitment'];
@@ -146,18 +150,18 @@ class FreeCompany extends Entity
     protected function updateDB(bool $manual = false): string|bool
     {
         try {
-            #Attempt to get crest
-            $crest = $this->CrestMerge($this->lodestone['crest']);
+            #Download crest components
+            $this->downloadCrestComponents($this->lodestone['crest']);
             if ($this->lodestone['active'] === 'Not specified') {
                 $this->lodestone['active'] = null;
             }
             #Main query to insert or update a Free Company
             $queries[] = [
                 'INSERT INTO `ffxiv__freecompany` (
-                    `freecompanyid`, `name`, `manual`, `serverid`, `formed`, `registered`, `updated`, `deleted`, `grandcompanyid`, `tag`, `crest`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `rank`, `slogan`, `activeid`, `recruitment`, `communityid`, `estate_zone`, `estateid`, `estate_message`, `Role-playing`, `Leveling`, `Casual`, `Hardcore`, `Dungeons`, `Guildhests`, `Trials`, `Raids`, `PvP`, `Tank`, `Healer`, `DPS`, `Crafter`, `Gatherer`
+                    `freecompanyid`, `name`, `manual`, `serverid`, `formed`, `registered`, `updated`, `deleted`, `grandcompanyid`, `tag`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `rank`, `slogan`, `activeid`, `recruitment`, `communityid`, `estate_zone`, `estateid`, `estate_message`, `Role-playing`, `Leveling`, `Casual`, `Hardcore`, `Dungeons`, `Guildhests`, `Trials`, `Raids`, `PvP`, `Tank`, `Healer`, `DPS`, `Crafter`, `Gatherer`
                 )
                 VALUES (
-                    :freecompanyid, :name, :manual, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `gcId` FROM `ffxiv__grandcompany` WHERE `gcName`=:grandCompany), :tag, :crest, :crest_part_1, :crest_part_2, :crest_part_3, :rank, :slogan, (SELECT `activeid` FROM `ffxiv__timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), :recruitment, :communityid, :estate_zone, (SELECT `estateid` FROM `ffxiv__estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), :estate_message, :rolePlaying, :leveling, :casual, :hardcore, :dungeons, :guildhests, :trials, :raids, :pvp, :tank, :healer, :dps, :crafter, :gatherer
+                    :freecompanyid, :name, :manual, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `gcId` FROM `ffxiv__grandcompany` WHERE `gcName`=:grandCompany), :tag, :crest_part_1, :crest_part_2, :crest_part_3, :rank, :slogan, (SELECT `activeid` FROM `ffxiv__timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), :recruitment, :communityid, :estate_zone, (SELECT `estateid` FROM `ffxiv__estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), :estate_message, :rolePlaying, :leveling, :casual, :hardcore, :dungeons, :guildhests, :trials, :raids, :pvp, :tank, :healer, :dps, :crafter, :gatherer
                 )
                 ON DUPLICATE KEY UPDATE
                     `name`=:name, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `grandcompanyid`=(SELECT `gcId` FROM `ffxiv__grandcompany` WHERE `gcName`=:grandCompany), `tag`=:tag, `crest`=COALESCE(:crest, `crest`), `crest_part_1`=:crest_part_1, `crest_part_2`=:crest_part_2, `crest_part_3`=:crest_part_3, `rank`=:rank, `slogan`=:slogan, `activeid`=(SELECT `activeid` FROM `ffxiv__timeactive` WHERE `active`=:active AND `active` IS NOT NULL LIMIT 1), `recruitment`=:recruitment, `communityid`=:communityid, `estate_zone`=:estate_zone, `estateid`=(SELECT `estateid` FROM `ffxiv__estate` WHERE CONCAT(\'Plot \', `plot`, \', \', `ward`, \' Ward, \', `area`, \' (\', CASE WHEN `size` = 1 THEN \'Small\' WHEN `size` = 2 THEN \'Medium\' WHEN `size` = 3 THEN \'Large\' END, \')\')=:estate_address LIMIT 1), `estate_message`=:estate_message, `Role-playing`=:rolePlaying, `Leveling`=:leveling, `Casual`=:casual, `Hardcore`=:hardcore, `Dungeons`=:dungeons, `Guildhests`=:guildhests, `Trials`=:trials, `Raids`=:raids, `PvP`=:pvp, `Tank`=:tank, `Healer`=:healer, `DPS`=:dps, `Crafter`=:crafter, `Gatherer`=:gatherer;',
@@ -169,10 +173,6 @@ class FreeCompany extends Entity
                     ':formed'=>[$this->lodestone['formed'], 'date'],
                     ':grandCompany'=>$this->lodestone['grandCompany'],
                     ':tag'=>$this->lodestone['tag'],
-                    ':crest'=>[
-                        (empty($crest) ? NULL : $crest),
-                        (empty($crest) ? 'null' : 'string'),
-                    ],
                     ':crest_part_1'=>[
                         (empty($this->lodestone['crest'][0]) ? NULL : $this->lodestone['crest'][0]),
                         (empty($this->lodestone['crest'][0]) ? 'null' : 'string'),

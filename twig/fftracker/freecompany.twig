@@ -1,7 +1,7 @@
 <section>
     <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ freecompany.name }}"
         {% if freecompany.crest %}
-            src="/img/fftracker/merged-crests/{{ freecompany.crest|slice(0,2) }}/{{ freecompany.crest|slice(2,2) }}/{{ freecompany.crest }}.webp"
+            src="{{ freecompany.crest }}"
         {% else %}
             {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
                 src="/img/fftracker/default-crests/OrderOfTheTwinAdder.webp"

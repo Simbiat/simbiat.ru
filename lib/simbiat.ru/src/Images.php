@@ -13,25 +13,21 @@ class Images
         $temp = (new Curl)->getFile($from);
         if ($temp === false) {
             return false;
-        } else {
-            #Create directory if missing
-            if (!is_dir(dirname($to))) {
-                #Create it recursively
-                @mkdir(dirname($to), recursive: true);
-            }
-            #Move file
-            rename($temp['server_path'].'/'.$temp['server_name'], $to);
         }
+        #Create directory if missing and create it recursively
+        if (!is_dir(dirname($to)) && !mkdir(dirname($to), recursive: true) && !is_dir(dirname($to))) {
+            return false;
+        }
+        #Move file
+        rename($temp['server_path'].'/'.$temp['server_name'], $to);
         if (is_file($to)) {
             if ($convert) {
                 #Convert to WebP
                 return self::toWebP($to);
-            } else {
-                return $to;
             }
-        } else {
-            return false;
+            return $to;
         }
+        return false;
     }
     
     #Function to merge images
@@ -125,16 +121,16 @@ class Images
                 @unlink($image);
             }
             return $newName;
-        } else {
-            return false;
         }
+        return false;
     }
     
     #Taken from https://stackoverflow.com/a/47907134/2992851
     public static function isGIFAnimated(string $gif): bool
     {
-        if(!($fh = @fopen($gif, 'rb')))
+        if(!($fh = @fopen($gif, 'rb'))) {
             return false;
+        }
         $count = 0;
         //an animated gif contains multiple "frames", with each frame having a
         //header made up of:
@@ -225,25 +221,22 @@ class Images
             $file = glob(Common::$uploadedImg.'/'.$hashTree.$fileId.'.*');
             if (empty($file)) {
                 return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
-            } else {
-                $file = $file[0];
             }
+            $file = $file[0];
         }
         #Using array_merge to suppress PHPStorm's complaints about array keys
         $info = array_merge(pathinfo($file));
         $info['mime'] = mime_content_type($file);
         if ($info['mime'] !== 'image/png') {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
-        } else {
-            [$info['width'], $info['height']] = getimagesize($file);
         }
+        [$info['width'], $info['height']] = getimagesize($file);
         if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width']/$info['height'], 1) !== 1.9) {
             return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
         }
         if ($isPath) {
             return ['ogimage' => '/img'.$fileId, 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
-        } else {
-            return ['ogimage' => '/img/uploaded/'.$hashTree.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
         }
+        return ['ogimage' => '/img/uploaded/'.$hashTree.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
     }
 }

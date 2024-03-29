@@ -68,9 +68,9 @@ class Achievement extends Entity
                 #Update character ID
                 #Try to get achievement ID as seen in Lodestone database (play guide)
                 $data = $Lodestone->searchDatabase('achievement', 0, 0, $data['characters'][$char]['achievements'][$this->id]['name'])->getResult();
-                #Remove counts elements from achievement database
-                unset($data['database']['achievement']['pageCurrent'], $data['database']['achievement']['pageTotal'], $data['database']['achievement']['total']);
                 if (!empty($data['database']['achievement'])) {
+                    #Remove counts elements from achievement database
+                    unset($data['database']['achievement']['pageCurrent'], $data['database']['achievement']['pageTotal'], $data['database']['achievement']['total']);
                     #Flip the array of achievements (if any) to ease searching for the right element
                     $data['database']['achievement'] = array_flip(array_combine(array_keys($data['database']['achievement']), array_column($data['database']['achievement'], 'name')));
                 }
@@ -124,7 +124,7 @@ class Achievement extends Entity
             $bindings = [];
             $bindings[':achievementid'] = $this->id;
             $bindings[':name'] = $this->lodestone['name'];
-            $bindings[':icon'] = str_replace(['https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', 'https://lds-img.finalfantasyxiv.com/itemicon/'], '', $this->lodestone['icon']);
+            $bindings[':icon'] = self::removeLodestoneDomain($this->lodestone['icon']);
             #Download icon
             $webp = Images::download($this->lodestone['icon'], FFTracker::$icons.$bindings[':icon']);
             if ($webp) {
@@ -151,7 +151,7 @@ class Achievement extends Entity
             if (empty($this->lodestone['item']['icon'])) {
                 $bindings[':itemicon'] = [NULL, 'null'];
             } else {
-                $bindings[':itemicon'] = str_replace(['https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/', 'https://lds-img.finalfantasyxiv.com/itemicon/'], '', $this->lodestone['item']['icon']);
+                $bindings[':itemicon'] = self::removeLodestoneDomain($this->lodestone['item']['icon']);
                 #Download icon
                 $webp = Images::download($this->lodestone['item']['icon'], FFTracker::$icons.$bindings[':itemicon']);
                 if ($webp) {
