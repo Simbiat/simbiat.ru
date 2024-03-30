@@ -238,11 +238,11 @@ class Statistics
                     }
                 }
                 #Get most popular crests
-                if (!$nocache && !empty($json['freecompany']['crests'])) {
+                /*if (!$nocache && !empty($json['freecompany']['crests'])) {
                     $data['freecompany']['crests'] = $json['freecompany']['crests'];
                 } else {
                     $data['freecompany']['crests'] = $dbCon->countUnique('ffxiv__freecompany', 'crest', '`ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`crest` IS NOT NULL', '', 'INNER', '', '', 'DESC', 20);
-                }
+                }*/
                 break;
             case 'cities':
                 #Get statistics by city
@@ -498,11 +498,11 @@ class Statistics
                         GROUP BY `type`, `value` ORDER BY `count` DESC
                     ');
                 }
-                if (!$nocache && !empty($json['pvpteam']['crests'])) {
+                /*if (!$nocache && !empty($json['pvpteam']['crests'])) {
                     $data['pvpteam']['crests'] = $json['pvpteam']['crests'];
                 } else {
                     $data['pvpteam']['crests'] = $dbCon->countUnique('ffxiv__pvpteam', 'crest', '`ffxiv__pvpteam`.`deleted` IS NULL AND `ffxiv__pvpteam`.`crest` IS NOT NULL', '', 'INNER', '', '', 'DESC', 20);
-                }
+                }*/
                 break;
         }
         unset($dbCon, $ArrayHelpers, $Lodestone);
