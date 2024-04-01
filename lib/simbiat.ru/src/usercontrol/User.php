@@ -12,14 +12,13 @@ use Simbiat\HomePage;
 use Simbiat\Images;
 use Simbiat\Sanitization;
 use Simbiat\Security;
-use Simbiat\Talks\Entities\Post;
 use Simbiat\Talks\Search\Posts;
 use Simbiat\Talks\Search\Threads;
 
 class User extends Entity
 {
     #Maximum number of unused avatars per user
-    public const avatarLimit = 10;
+    public const int avatarLimit = 10;
     #Entity's properties
     public string $username;
     #Real name
@@ -88,7 +87,7 @@ class User extends Entity
         $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
         #Get permissions
         $dbData['permissions'] = $this->getPermissions();
-        if (in_array($this->id, [Talks::userIDs['Unknown user'], Talks::userIDs['System user'], Talks::userIDs['Deleted user']])) {
+        if (in_array($this->id, [Talks::userIDs['Unknown user'], Talks::userIDs['System user'], Talks::userIDs['Deleted user']], true)) {
             #System users need to be treated as not activated
             $dbData['activated'] = false;
         } else {
@@ -188,7 +187,7 @@ class User extends Entity
             }
             #Check if we are not trying to add an excessive avatar (compare number of non-current avatars to the limit)
             #If we are setting one for a character - ignore this limitation, though, because it is possible that this character is being used as current avatar, which we will need to update
-            if (empty($character) && $counts[0] === self::avatarLimit) {
+            if ($character === null && $counts[0] === self::avatarLimit) {
                 return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
             }
             $upload = (new Curl)->upload($link, true);
@@ -204,31 +203,25 @@ class User extends Entity
                     ':userid' => [$this->id, 'int'],
                     ':fileid' => $upload['hash'],
                     ':character' => [
-                        (empty($character) ? null : $character),
-                        (empty($character) ? 'null' : 'int')
+                        ($character),
+                        ($character === null ? 'null' : 'int')
                     ]
                 ]
             );
             if ($setActive) {
                 return $this->setAvatar($upload['hash']);
-            } else {
-                #If character ID is provided, we may need to set the avatar as active one, even if the setActive flag is false
-                if (!empty($character)) {
-                    #Check if user has active avatar linked to the character
-                    if (HomePage::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
-                        #Set the new one as active
-                        return $this->setAvatar($upload['hash']);
-                    }
-                }
+            }
+            if ($character !== null && HomePage::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
+                #Set the new one as active
+                return $this->setAvatar($upload['hash']);
             }
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to add avatar to library'];
         }
         if (empty($upload['location'])) {
             return ['http_error' => 500, 'reason' => 'No file path determined'];
-        } else {
-            return ['location' => $upload['location'], 'response' => true];
         }
+        return ['location' => $upload['location'], 'response' => true];
     }
     
     public function delAvatar(): array
@@ -243,7 +236,9 @@ class User extends Entity
     
     public function setAvatar(string $fileid = ''): array
     {
-        $fileid = $_POST['avatar'] ?? $fileid ?? '';
+        if (is_string($_POST['avatar']) && $_POST['avatar'] !== '') {
+            $fileid = $_POST['avatar'];
+        }
         #Log the change
         Security::log('Avatar', 'Changed active avatar', $fileid);
         HomePage::$dbController->query([
@@ -281,9 +276,13 @@ class User extends Entity
 
     public function changeUsername(string $newName): array
     {
-        $newName = Sanitization::removeNonPrintable($newName, true);
+        $sanitizedName = Sanitization::removeNonPrintable($newName, true);
+        if (!is_string($sanitizedName)) {
+            return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
+        }
+        $newName = $sanitizedName;
         #Check if new name is valid
-        if (empty($newName) && $this->bannedName($newName) || $this->usedName($newName)) {
+        if (empty($newName) || $this->bannedName($newName) || $this->usedName($newName)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
         }
         #Check if we have current username and get it if we do not
@@ -327,7 +326,6 @@ class User extends Entity
             $_POST['details']['name'][$field] = Sanitization::removeNonPrintable($_POST['details']['name'][$field] ?? '', true);
             if ($this->name[$field] !== $_POST['details']['name'][$field]) {
                 $log[$field] = ['old' => $this->name[$field], 'new' => $_POST['details']['name'][$field]];
-                /** @noinspection SqlResolve */
                 $queries[] = [
                     'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
                     [
@@ -356,7 +354,7 @@ class User extends Entity
         }
         #Query for timezone
         $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', true);
-        if ($this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list())) {
+        if ($this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list(), true)) {
             $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
             $queries[] = [
                 'UPDATE `uc__users` SET `timezone`=:timezone WHERE `userid`=:userid;',
@@ -373,12 +371,10 @@ class User extends Entity
         if (isset($_POST['details']['sex'])) {
             if ($_POST['details']['sex'] === 'null') {
                 $_POST['details']['sex'] = null;
-            } else {
-                if ($_POST['details']['sex'] > 1) {
-                    $_POST['details']['sex'] = 1;
-                } elseif ($_POST['details']['sex'] < 0) {
-                    $_POST['details']['sex'] = 0;
-                }
+            } elseif ($_POST['details']['sex'] > 1) {
+                $_POST['details']['sex'] = 1;
+            } elseif ($_POST['details']['sex'] <= 0) {
+                $_POST['details']['sex'] = 0;
             }
             if ($this->sex !== $_POST['details']['sex']) {
                 $log['sex'] = ['old' => $this->sex, 'new' => $_POST['details']['sex']];
@@ -387,7 +383,7 @@ class User extends Entity
                     [
                         ':userid' => [$this->id, 'int'],
                         ':sex' => [
-                            ($_POST['details']['sex'] === NULL ? NULL : $_POST['details']['sex']),
+                            ($_POST['details']['sex']),
                             ($_POST['details']['sex'] === NULL ? 'null' : 'int'),
                         ],
                     ]
@@ -396,7 +392,7 @@ class User extends Entity
         }
         #Query for website
         if (isset($_POST['details']['website'])) {
-            if (filter_var($_POST['details']['website'], FILTER_VALIDATE_URL) === false || strtolower(strval(parse_url($_POST['details']['website'], PHP_URL_SCHEME))) !== 'https' || mb_strlen($_POST['details']['website']) > 255) {
+            if (filter_var($_POST['details']['website'], FILTER_VALIDATE_URL) === false || mb_strlen($_POST['details']['website']) > 255 || strtolower((string)parse_url($_POST['details']['website'], PHP_URL_SCHEME)) !== 'https') {
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {
@@ -418,7 +414,6 @@ class User extends Entity
             $_POST['details'][$field] = Sanitization::removeNonPrintable($_POST['details'][$field] ?? '', true);
             if ($this->$field !== $_POST['details'][$field]) {
                 $log[$field] = ['old' => $this->$field, 'new' => $_POST['details'][$field]];
-                /** @noinspection SqlResolve */
                 $queries[] = [
                     'UPDATE `uc__users` SET `'.$field.'`=:'.$field.' WHERE `userid`=:userid;',
                     [
@@ -433,12 +428,11 @@ class User extends Entity
         }
         if (empty($queries)) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
-        } else {
-            $result = HomePage::$dbController->query($queries);
-            #Log the change
-            Security::log('User details change', 'Changed details', $log);
-            return ['response' => $result];
         }
+        $result = HomePage::$dbController->query($queries);
+        #Log the change
+        Security::log('User details change', 'Changed details', $log);
+        return ['response' => $result];
     }
 
     #Function to check if username is already used
@@ -473,9 +467,8 @@ class User extends Entity
         if ($_SESSION['userid'] !== 1) {
             if ($afterRegister) {
                 return ['status' => 201, 'response' => true];
-            } else {
-                return ['response' => true];
             }
+            return ['response' => true];
         }
         #Validating data
         if (empty($_POST['signinup']['email'])) {
@@ -488,8 +481,8 @@ class User extends Entity
         }
         #Check if banned
         if (
-            (new Email($_POST['signinup']['email']))->isBanned() ||
-            $this->bannedName($_POST['signinup']['email'])
+            $this->bannedName($_POST['signinup']['email']) ||
+            (new Email($_POST['signinup']['email']))->isBanned()
         ) {
             Security::log('Failed login', 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
@@ -523,7 +516,7 @@ class User extends Entity
         }
         #Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
-        if (!in_array('canLogin', $_SESSION['permissions'])) {
+        if (!in_array('canLogin', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `canLogin` permission'];
         }
         #Add username and userid to session
@@ -541,9 +534,8 @@ class User extends Entity
         }
         if ($afterRegister) {
             return ['status' => 201, 'response' => true];
-        } else {
-            return ['response' => true];
         }
+        return ['response' => true];
     }
 
     #Setting cookie for remembering user
@@ -561,12 +553,12 @@ class User extends Entity
                 #If we can't write to DB for some reason - do not share any data with client
                 return;
             }
-            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Talks::userIDs['Unknown user'], Talks::userIDs['System user'], Talks::userIDs['Deleted user']])) || !empty($this->id))) {
+            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Talks::userIDs['Unknown user'], Talks::userIDs['System user'], Talks::userIDs['Deleted user']], true)) || !empty($this->id))) {
                 HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,
                         ':pass' => hash('sha3-512', $pass),
-                        ':id' => $this->id ?? [$_SESSION['userid'], 'int'],
+                        ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                     ]
                 );
                 #Set cookie ID to session if it's not already linked or if it was linked to other cookie (not sure if that would even be possible)
@@ -579,7 +571,7 @@ class User extends Entity
             #Set options
             $options = ['expires' => gmdate('D, d-M-Y H:i:s', time()+60*60*24*30).' GMT', 'path' => '/', 'domain' => Common::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
             #Set cookie value
-            $value = json_encode(['id' => Security::encrypt($cookieId), 'pass'=> $pass],JSON_INVALID_UTF8_SUBSTITUTE|JSON_UNESCAPED_UNICODE|JSON_PRESERVE_ZERO_FRACTION);
+            $value = json_encode(['id' => Security::encrypt($cookieId), 'pass' => $pass], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
             setcookie('rememberme_'.Common::$http_host, $value, $options);
         } catch (\Throwable) {
             #Do nothing, since not critical
@@ -604,14 +596,13 @@ class User extends Entity
                     $this->resetStrikes();
                 }
                 return true;
-            } else {
-                #Increase strike count
-                HomePage::$dbController->query(
-                    'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
-                    [':userid' => [$this->id, 'string']]);
-                Security::log('Failed login', 'Strike added');
-                return false;
             }
+            #Increase strike count
+            HomePage::$dbController->query(
+                'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
+                [':userid' => [$this->id, 'string']]);
+            Security::log('Failed login', 'Strike added');
+            return false;
         } catch (\Throwable) {
             return false;
         }
@@ -645,7 +636,7 @@ class User extends Entity
         return HomePage::$dbController->query(
             'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
-                ':userid' => [strval($this->id), 'string']
+                ':userid' => [(string)$this->id, 'string']
             ]
         );
     }
@@ -659,7 +650,7 @@ class User extends Entity
         return HomePage::$dbController->query(
             'DELETE FROM `uc__cookies` WHERE `userid`=:userid AND `cookieid`=:cookie;',
             [
-                ':userid' => [strval($this->id), 'string'],
+                ':userid' => [(string)$this->id, 'string'],
                 ':cookie' => $_POST['cookie'],
             ]
         );
@@ -674,7 +665,7 @@ class User extends Entity
         return HomePage::$dbController->query(
             'DELETE FROM `uc__sessions` WHERE `userid`=:userid AND `sessionid`=:session;',
             [
-                ':userid' => [strval($this->id), 'string'],
+                ':userid' => [(string)$this->id, 'string'],
                 ':session' => $_POST['session'],
             ]
         );
@@ -684,10 +675,10 @@ class User extends Entity
     {
         $where = '`talks__threads`.`createdby`=:userid';
         $bindings = [':userid' => [$this->id, 'int'],];
-        if (!in_array('viewScheduled', $_SESSION['permissions'])) {
+        if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()';
         }
-        if (!in_array('viewPrivate', $_SESSION['permissions'])) {
+        if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
@@ -703,21 +694,15 @@ class User extends Entity
     
     public function getPosts(): array
     {
-        $where = '`talks__posts`.`createdby`=:userid';
-        $bindings = [':userid' => [$this->id, 'int'],];
-        if (!in_array('viewScheduled', $_SESSION['permissions'])) {
+        $where = '`talks__posts`.`createdby`=:createdby';
+        $bindings = [':createdby' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int'],];
+        if (!$this->id !== $_SESSION['userid'] && !in_array('viewScheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()';
         }
-        if (!in_array('viewPrivate', $_SESSION['permissions'])) {
-            $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
-            $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
+        if (!$this->id !== $_SESSION['userid'] && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
+            $where .= ' AND `talks__threads`.`private`=0';
         }
         $posts = (new Posts($bindings, $where, '`talks__posts`.`created` DESC'))->listEntities();
-        #Get like value, for each post, if current user has appropriate permission
-        $postObject = new Post();
-        foreach ($posts['entities'] as &$post) {
-            $post['liked'] = $postObject->setId($post['id'])->isLiked();
-        }
         return $posts['entities'];
     }
     
@@ -733,6 +718,13 @@ class User extends Entity
                 foreach ($threads as $key=>$thread) {
                     if (empty($thread['ogimage'])) {
                         unset($threads[$key]);
+                    } else {
+                        $thread['ogimage'] = Images::ogImage($thread['ogimage']);
+                        if (empty($thread['ogimage'])) {
+                            unset($threads[$key]);
+                        } else {
+                            $threads[$key]['ogimage'] = $thread['ogimage'];
+                        }
                     }
                 }
                 if (empty($threads)) {
@@ -748,29 +740,25 @@ class User extends Entity
         }
         #Get posts
         $where = '';
-        $bindings = [];
-        if (!in_array('viewScheduled', $_SESSION['permissions'])) {
+        $bindings = [':userid' => [$_SESSION['userid'], 'int']];
+        if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()';
         }
-        if (!in_array('viewPrivate', $_SESSION['permissions'])) {
+        if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
-        //var_dump($ids, $threads);exit;
         $posts = (new Posts($bindings, '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.$where, '`talks__posts`.`created` DESC'))->listEntities();
         if (!empty($posts['entities'])) {
             #Get like value, for each post, if current user has appropriate permission
-            $postObject = new Post();
             foreach ($posts['entities'] as &$post) {
-                $post['liked'] = $postObject->setId($post['id'])->isLiked();
                 if (!empty($threads[$post['threadid']]['ogimage'])) {
-                    $post = array_merge($post, Images::ogImage($threads[$post['threadid']]['ogimage']));
+                    $post['ogimage'] = $threads[$post['threadid']]['ogimage'];
                 }
             }
             return $posts['entities'];
-        } else {
-            return [];
         }
+        return [];
     }
     
     #Function to log the user out
@@ -799,7 +787,7 @@ class User extends Entity
     public function remove(bool $hard = false): bool
     {
         #Check if we are trying to remove one of the system users and prevent that
-        if (in_array($this->id, Talks::userIDs)) {
+        if (in_array($this->id, Talks::userIDs, true)) {
             return false;
         }
         try {

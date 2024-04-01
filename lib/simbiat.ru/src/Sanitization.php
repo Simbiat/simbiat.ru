@@ -67,9 +67,8 @@ class Sanitization
     {
         if ($fullList) {
             return preg_replace('/[[:cntrl:]]/iu', '', $string);
-        } else {
-            return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
         }
+        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
     }
     
     #Remove controls characters from strings in an array with $fullList controlling whether newlines and tabs should be kept (false will keep them)
@@ -91,34 +90,28 @@ class Sanitization
     {
         if (!isset($checkbox)) {
             return false;
-        } else {
-            if (is_string($checkbox)) {
-                if (strtolower($checkbox) === 'off') {
-                    return false;
-                } else {
-                    return true;
-                }
-            } else {
-                return boolval($checkbox);
-            }
         }
+        if (is_string($checkbox)) {
+            return strtolower($checkbox) !== 'off';
+        }
+        return (bool)$checkbox;
     }
     
     #Function to sanitize time for creating scheduled section/threads/posts
     public static function scheduledTime(string|int|null &$time, ?string &$timezone = null): ?int
     {
-        if (in_array('postScheduled', $_SESSION['permissions'])) {
+        if (in_array('postScheduled', $_SESSION['permissions'], true)) {
             if (empty($time)) {
                 $time = null;
             } else {
-                if (empty($timezone) || !in_array($timezone, timezone_identifiers_list())) {
+                if (empty($timezone) || !in_array($timezone, timezone_identifiers_list(), true)) {
                     $timezone = 'UTC';
                 }
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $curTime = time();
                 #Sections should not be created in the past, so if time is less than current one - correct it
-                if (!in_array('postBacklog', $_SESSION['permissions']) && $time < $curTime) {
+                if ($time < $curTime && !in_array('postBacklog', $_SESSION['permissions'], true)) {
                     $time = $curTime;
                 }
             }

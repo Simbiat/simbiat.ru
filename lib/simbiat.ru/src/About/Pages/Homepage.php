@@ -14,8 +14,6 @@ class Homepage extends Page
     ];
     #Sub service name
     protected string $subServiceName = 'homepage';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $title = '';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Home';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
@@ -31,7 +29,7 @@ class Homepage extends Page
 
     protected function generate(array $path): array
     {
-        $outputArray = ['h1' => 'Home', 'serviceName' => 'homepage', 'yearsOfExperience' => (intval(date('Y')) - 2009)];
+        $outputArray = ['h1' => 'Home', 'serviceName' => 'homepage', 'yearsOfExperience' => ((int)date('Y') - 2009)];
         $user = new User(Talks::userIDs['Owner']);
         $outputArray['posts'] = $user->getTalksStarters(true);
         #Limit number of posts

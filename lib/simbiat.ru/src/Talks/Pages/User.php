@@ -27,7 +27,7 @@ class User extends Page
     protected function generate(array $path): array
     {
         if (empty($path[0])) {
-            Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Common::$http_host) === 1 ? 'www.' : '').Common::$http_host.($_SERVER['SERVER_PORT'] != 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/profile/');
+            Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Common::$http_host) === 1 ? 'www.' : '').Common::$http_host.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/profile/');
         }
         $user = new \Simbiat\usercontrol\User($path[0]);
         $outputArray = [];

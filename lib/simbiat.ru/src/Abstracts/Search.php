@@ -22,6 +22,8 @@ abstract class Search
     protected string $where = '';
     #Optional WHERE clause for SELECT where search term is defined
     protected string $whereSearch = '';
+    #Optional GROUP BY
+    protected string $groupBy = '';
     #Optional bindings, in case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values
     protected array $bindings = [];
     #Count argument. In some cases you may want to count a certain column, instead of using * (default).
@@ -39,7 +41,7 @@ abstract class Search
     #List of optional columns for LIKE %% comparison
     protected array $like = [];
 
-    final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null)
+    final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
     {
         #Check that subclass has set appropriate properties, except $where, which is ok to inherit
         foreach (['entityType', 'table', 'fields', 'fulltext', 'orderDefault', 'orderList'] as $property) {
@@ -59,6 +61,10 @@ abstract class Search
         #Override ORDER BY
         if (!is_null($order)) {
             $this->orderDefault = $this->orderList = $order;
+        }
+        #Override GROUP BY
+        if (!is_null($group)) {
+            $this->groupBy = $group;
         }
     }
 
@@ -123,7 +129,7 @@ abstract class Search
                 $results = 0;
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = HomePage::$dbController->count($exactlyLike . $this->exact() . ')', array_merge($this->bindings, [':what' => [$what, 'string']]));
+                    $results = HomePage::$dbController->count($exactlyLike . $this->exact() . ')' . (empty($this->groupBy) ? '' : ' GROUP BY ' . $this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string']]));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -134,17 +140,20 @@ abstract class Search
                         return 0;
                     }
                     #Get fulltext results
-                    return HomePage::$dbController->count($exactlyLike . $this->relevancy() . ' > 0)', array_merge($this->bindings, [':what' => [$what, 'match']]));
+                    return HomePage::$dbController->count($exactlyLike . $this->relevancy() . ' > 0)' . (empty($this->groupBy) ? '' : ' GROUP BY ' . $this->groupBy), array_merge($this->bindings, [':what' => [$what, 'match']]));
                 }
                 if (empty($this->like)) {
                     return 0;
                 }
                 #Search using LIKE
-                return HomePage::$dbController->count($exactlyLike.$this->like().')', array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
+                return HomePage::$dbController->count($exactlyLike.$this->like().')' . (empty($this->groupBy) ? '' : ' GROUP BY ' . $this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
             }
-            return HomePage::$dbController->count('SELECT COUNT('.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join). (empty($this->where) ? '' : ' WHERE ' . $this->where).';', $this->bindings);
+            return HomePage::$dbController->count('SELECT COUNT('.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join). (empty($this->where) ? '' : ' WHERE ' . $this->where) . (empty($this->groupBy) ? '' : ' GROUP BY ' . $this->groupBy).';', $this->bindings);
         } catch (\Throwable $e) {
             Errors::error_log($e);
+            #var_dump($this->bindings);
+            #var_dump('SELECT COUNT('.$this->countArgument.') FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join). (empty($this->where) ? '' : ' WHERE ' . $this->where) . (empty($this->groupBy) ? '' : ' GROUP BY ' . $this->groupBy).';');
+            #exit;
             return 0;
         }
     }
@@ -161,12 +170,12 @@ abstract class Search
                     $like = false;
                 }
                 #String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
-                $exactlyLike = 'SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` FROM `' . $this->table .'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ');
+                $exactlyLike = 'SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ');
                 #Prepare results array
                 $results = [];
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = $this->postProcess(HomePage::$dbController->selectAll($exactlyLike . $this->exact() . ') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string']])));
+                    $results = $this->postProcess(HomePage::$dbController->selectAll($exactlyLike.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']])));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -177,15 +186,15 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->postProcess(HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` , ' . $this->relevancy() . ' as `relevance` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE ' . (empty($this->where) ? '' : $this->where . ' AND ') . '(' . (empty($this->whereSearch) ? '' : $this->whereSearch . ' OR ') . $this->relevancy() . ' > 0) ORDER BY `relevance` DESC, `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'match']])));
+                    return $this->postProcess(HomePage::$dbController->selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']])));
                 }
                 if (empty($this->like)) {
                     return [];
                 }
                 #Search using LIKE
-                return $this->postProcess(HomePage::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT ' . $limit . ' OFFSET ' . $offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']])));
+                return $this->postProcess(HomePage::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']])));
             }
-            return $this->postProcess(HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join) . (empty($this->where) ? '' : ' WHERE ' . $this->where) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset.';', $this->bindings));
+            return $this->postProcess(HomePage::$dbController->selectAll('SELECT ' . $this->fields . ', \'' . $this->entityType . '\' as `type` FROM `' . $this->table . '`'.(empty($this->join) ? '' : ' '.$this->join) . (empty($this->where) ? '' : ' WHERE ' . $this->where) . (empty($this->groupBy) ? '' : ' GROUP BY ' . $this->groupBy) . ' ORDER BY ' . ($list ? $this->orderList : $this->orderDefault) . ' LIMIT ' . $limit . ' OFFSET ' . $offset.';', $this->bindings));
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];
