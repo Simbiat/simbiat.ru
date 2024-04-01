@@ -178,6 +178,10 @@ class Images
     
     public static function open(string $image, ?string $mime = null): false|\GdImage
     {
+        #Return false if file is missing
+        if (!is_file($image)) {
+            return false;
+        }
         #Get MIME type
         if (empty($mime)) {
             $mime = mime_content_type($image);
