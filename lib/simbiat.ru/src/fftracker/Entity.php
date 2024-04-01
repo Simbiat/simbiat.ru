@@ -166,14 +166,14 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 #Check if we have already downloaded the component image and use that one to speed up the process
                 if ($key === 0) {
                     #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
-                    $subDir = mb_substr(basename($image), 0, 3);
+                    $subDir = strtolower(mb_substr(basename($image), 0, 3));
                     $concurrentDirectory = FFTracker::$crestsComponents.'backgrounds/'.$subDir;
                     if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
                         throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
                     }
                 } elseif ($key === 2) {
                     #If it's emblem, we need to check if subdirectory exists and create it, and create it, if it does not
-                    $subDir = mb_substr(basename($image), 0, 3);
+                    $subDir = strtolower(mb_substr(basename($image), 0, 3));
                     $concurrentDirectory = FFTracker::$crestsComponents.'emblems/'.$subDir;
                     if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
                         throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
@@ -232,7 +232,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         $filename = basename($image);
         #Backgrounds
         if (str_starts_with($filename, 'F00') || str_starts_with($filename, 'B')) {
-            return FFTracker::$crestsComponents.'backgrounds/'.mb_substr($filename, 0, 3).'/'.$filename;
+            return FFTracker::$crestsComponents.'backgrounds/'.strtolower(mb_substr($filename, 0, 3)).'/'.$filename;
         }
         #Frames
         if (str_starts_with($filename, 'F')) {
@@ -240,7 +240,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Emblems
         if (str_starts_with($filename, 'S')) {
-            return FFTracker::$crestsComponents.'emblems/'.mb_substr($filename, 0, 3).'/'.$filename;
+            return FFTracker::$crestsComponents.'emblems/'.strtolower(mb_substr($filename, 0, 3)).'/'.$filename;
         }
         return null;
     }
