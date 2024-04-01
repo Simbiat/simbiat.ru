@@ -24,8 +24,8 @@ class Crests extends FileListing
     protected array $dirs = [
         'background' => ['path' => '/img/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
         'frame' => ['path' => '/img/fftracker/crests-components/frames', 'name' => 'Frames'],
-        'emblem' => ['path' => '/img/fftracker/crests-components/emblems', 'name' => 'Emblems'],
-        'merged' => ['path' => '/img/fftracker/merged-crests', 'name' => 'Merged crests', 'depth' => 1],
+        'emblem' => ['path' => '/img/fftracker/crests-components/emblems', 'name' => 'Emblems', 'depth' => 1],
+        'merged' => ['path' => '/data/cache/mergedcrests', 'name' => 'Merged crests (cached)', 'depth' => 1],
     ];
     #List of prohibited extensions, files with which should be excluded
     protected array $exclude = ['LICENSE', 'README.md', '.git'];
@@ -34,7 +34,7 @@ class Crests extends FileListing
     
     protected function extra(array &$fileDetails): void
     {
-        $fileDetails['icon'] = $fileDetails['path'].'/'.$fileDetails['filename'];
-        $fileDetails['name'] = $fileDetails['key'];
+        $fileDetails['icon'] = str_replace('/data/cache/mergedcrests', '/img/fftracker/merged-crests', $fileDetails['path']).'/'.$fileDetails['filename'];
+        $fileDetails['name'] = (str_contains($fileDetails['path'], 'merged') ? $fileDetails['key'] : $fileDetails['filename']);
     }
 }

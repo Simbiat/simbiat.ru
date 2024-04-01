@@ -6,7 +6,7 @@
             <p>These are not necessarily <b>all</b> of components, let alone their combinations. Only those, identified by the tracker service during its normal work, are listed.</p>
             <ul>
                 <li><a href="/fftracker/crests/frame">{{ files.frame.name }}</a>: {{ files.frame.count }} icons</li>
-                <li><a href="/fftracker/crests/emblem">{{ files.emblem.name }}</a>: {{ files.emblem.count }} icons</li>
+                <li><a href="/fftracker/crests/emblem">{{ files.emblem.name }}</a>: {{ files.emblem.count }} folders</li>
                 <li><a href="/fftracker/crests/background">{{ files.background.name }}</a>: {{ files.background.count }} folders</li>
                 <li><a href="/fftracker/crests/merged">{{ files.merged.name }}</a>: {{ files.merged.count -3 }} folders</li>
             </ul>
@@ -24,6 +24,8 @@
             <ul>
                 {% if files[path].name == 'Backgrounds' %}
                     {% set subDirName = 'background' %}
+                {% elseif files[path].name == 'Emblems' %}
+                    {% set subDirName = 'emblem' %}
                 {% elseif files[path].name == 'Merged crests' %}
                     {% set subDirName = 'merged' %}
                 {% endif %}
