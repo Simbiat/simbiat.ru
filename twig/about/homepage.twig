@@ -217,7 +217,7 @@
     <div class="homePage showcase">
         {% for post in posts %}
             <a href="/talks/threads/{{ post.threadid }}" class="homePage banner noNewTabIcon">
-                <img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage }}">
+                <img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage.ogimage }}">
                 <div>{{ post.name }}</div>
             </a>
         {% endfor %}
