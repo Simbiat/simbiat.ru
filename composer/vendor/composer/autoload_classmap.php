@@ -414,6 +414,7 @@ return array(
     'Simbiat\\fftracker\\Api\\FreeCompany' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Api/FreeCompany.php',
     'Simbiat\\fftracker\\Api\\General' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Api/General.php',
     'Simbiat\\fftracker\\Api\\Linkshell' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Api/Linkshell.php',
+    'Simbiat\\fftracker\\Api\\MergeCrest' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Api/MergeCrest.php',
     'Simbiat\\fftracker\\Api\\PvPTeam' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Api/PvPTeam.php',
     'Simbiat\\fftracker\\Cron' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Cron.php',
     'Simbiat\\fftracker\\Entities\\Achievement' => $baseDir . '/../lib/simbiat.ru/src/fftracker/Entities/Achievement.php',

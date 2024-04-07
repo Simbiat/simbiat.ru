@@ -143,8 +143,8 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -573,6 +573,7 @@ class ComposerStaticInit2f59fc41db9a7c853d25dccb9ce2a2e1
         'Simbiat\\fftracker\\Api\\FreeCompany' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Api/FreeCompany.php',
         'Simbiat\\fftracker\\Api\\General' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Api/General.php',
         'Simbiat\\fftracker\\Api\\Linkshell' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Api/Linkshell.php',
+        'Simbiat\\fftracker\\Api\\MergeCrest' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Api/MergeCrest.php',
         'Simbiat\\fftracker\\Api\\PvPTeam' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Api/PvPTeam.php',
         'Simbiat\\fftracker\\Cron' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Cron.php',
         'Simbiat\\fftracker\\Entities\\Achievement' => __DIR__ . '/../..' . '/../lib/simbiat.ru/src/fftracker/Entities/Achievement.php',
