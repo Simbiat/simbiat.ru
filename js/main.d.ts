@@ -1,6 +1,3 @@
-declare module "composer/vendor/tinymce/tinymce/tinymce.min" {
-    export = e;
-}
 interface ajaxJSONResponse extends JSON {
     status: number;
     data: boolean | number | string;
@@ -35,6 +32,7 @@ declare function rawurlencode(str: string): string;
 declare function empty(variable: unknown): boolean;
 declare function pageRefresh(): void;
 declare function copyQuote(target: HTMLElement): string;
+declare function is_file(url: string): Promise<boolean>;
 declare function init(): void;
 declare function ariaNation(inputElement: HTMLInputElement): void;
 declare function buttonToggle(button: HTMLInputElement, enable?: boolean): void;
@@ -44,6 +42,9 @@ declare function pasteSplit(event: Event): Promise<void>;
 declare function formEnter(event: KeyboardEvent): boolean;
 declare function inputBackSpace(event: Event): void;
 declare function autoNext(event: Event): void;
+declare module "composer/vendor/tinymce/tinymce/tinymce.min" {
+    export = e;
+}
 declare const customColorMap: Record<string, string>;
 declare const tinySettings: {
     automatic_uploads: boolean;

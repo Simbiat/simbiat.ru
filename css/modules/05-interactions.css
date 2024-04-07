@@ -271,7 +271,6 @@ input[type=number].number_spinner {
 }
 input[type=number].number_spinner::-webkit-inner-spin-button,
 input[type=number].number_spinner::-webkit-outer-spin-button {
-    -webkit-appearance: inner-spin-button;
     margin: unset;
 }
 /*Mark fields as required, when they are*/
@@ -721,7 +720,6 @@ tool-tip {
     overflow: hidden;
     text-overflow: clip;
     word-break: keep-all;
-    width: -moz-fit-content;
     width: fit-content;
     max-width: 100vw;
     overflow-wrap: break-word;
@@ -796,7 +794,6 @@ snack-bar {
 /*Style vertical tabs*/
 tab-names {
     min-height: 2rem;
-    width: -moz-fit-content;
     width: fit-content;
     display: block;
     margin-left: calc(var(--border-radius) * 2.25);

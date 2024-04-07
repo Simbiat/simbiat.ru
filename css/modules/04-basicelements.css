@@ -229,8 +229,7 @@ code > .codeDesc {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: -webkit-fill-available;
-    width: -moz-available;
+    width: fit-content;
     height: var(--line-height-base);
 }
 blockquote > .quoteAuthor:after,
@@ -255,8 +254,7 @@ code > .quoteSource {
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: right;
-    width: -webkit-fill-available;
-    width: -moz-available;
+    width: fit-content;
     height: var(--line-height-base);
 }
 blockquote > .quoteSource:before,
@@ -315,7 +313,6 @@ h1, h2, h3, h4, h5, h6 {
     cursor: pointer;
     border-radius: var(--border-radius);
     padding: 0.1rem;
-    width: -moz-fit-content;
     width: fit-content;
 }
 h1:target, h2:target, h3:target, h4:target, h5:target, h6:target {

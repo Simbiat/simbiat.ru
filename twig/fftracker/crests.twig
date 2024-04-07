@@ -2,8 +2,8 @@
     <section class="bottomMargin">
         <details class="persistent" open>
             <summary class="rightSummary aboutSection">About crests' page</summary>
-            <p>This page provides components used by FFXIV for creating crests: backgrounds, frames, emblems, - as well as "merged" crests, where all 3 components were merged into 1 image.</p>
-            <p>These are not necessarily <b>all</b> of components, let alone their combinations. Only those, identified by the tracker service during its normal work, are listed.</p>
+            <p>This page provides components used by FFXIV for creating crests: backgrounds, frames, emblems, - as well as "merged" crests, where all 3 components were merged into 1 image (storage is temporary for these, acting as cache).</p>
+            <p>These are not necessarily <b>all</b> components, let alone their combinations. Only those, identified by the tracker service during its normal work, are listed.</p>
             <ul>
                 <li><a href="/fftracker/crests/frame">{{ files.frame.name }}</a>: {{ files.frame.count }} icons</li>
                 <li><a href="/fftracker/crests/emblem">{{ files.emblem.name }}</a>: {{ files.emblem.count }} folders</li>
@@ -11,6 +11,21 @@
                 <li><a href="/fftracker/crests/merged">{{ files.merged.name }}</a>: {{ files.merged.count -3 }} folders</li>
             </ul>
         </details>
+        <form id="ff_merge_crest">
+            <p>You can merge crests components into 1 image, like what you can see in the folder with merged crests. Add names of the files, that you want to merge into the fields below: they can be seen in the folders' listing. Only emblem is, technically, mandatory, same as in-game, but use only it would not make much sense.</p>
+            <div class="middle">
+                <span class="float_label_div"><input id="crest_emblem" name="crest_emblem" type="text" inputmode="text" required pattern="^S[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_emblem">Emblem</label></span>
+                <span class="float_label_div"><input id="crest_frame" name="crest_frame" type="text" inputmode="text" pattern="^F[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_frame">Frame</label></span>
+                <span class="float_label_div"><input id="crest_background" name="crest_background" type="text" inputmode="text" pattern="^(B[a-fA-F0-9]{2}|F00)_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_background">Background</label></span>
+                <div id="crest_preview" data-tooltip="Crest preview">
+                    <img src="" alt="Background" id="preview_background">
+                    <img src="" alt="Frame" id="preview_frame">
+                    <img src="" alt="Emblem" id="preview_emblem">
+                </div>
+                <input type="submit" value="Merge & Download" form="ff_merge_crest" id="ff_merge_crest_submit">
+                <img loading="lazy" decoding="async" id="fff_merge_crest_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Merging crest...">
+            </div>
+        </form>
     </section>
 {% endif %}
 {% if path %}

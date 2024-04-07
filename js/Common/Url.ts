@@ -57,7 +57,13 @@ function router(): void
         } else if (path[0] === 'fftracker') {
             if (!empty(path[1])) {
                 if (path[1] === 'track') {
-                    void import('/js/Pages/fftracker/track.js').then((module) => { new module.ffTrack(); });
+                    void import('/js/Pages/fftracker/track.js').then((module) => {
+                        new module.ffTrack();
+                    });
+                } else if (path[1] === 'crests') {
+                    void import('/js/Pages/fftracker/crests.js').then((module) => {
+                        new module.ffCrests();
+                    });
                 } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(String(path[1]))) {
                     void import('/js/Pages/fftracker/entity.js').then((module) => { new module.ffEntity(); });
                 }

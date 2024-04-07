@@ -260,6 +260,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 }
             }
         }
+        ksort($imagesToMerge);
         return $imagesToMerge;
     }
     

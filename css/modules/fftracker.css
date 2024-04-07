@@ -18,7 +18,6 @@
 }
 .ff_char_page > section {
     flex-grow: 1;
-    width: -moz-fit-content;
     width: fit-content;
     max-width: 100%;
     flex-basis: 45%;
@@ -64,4 +63,23 @@
     margin: 0.25rem auto;
     display: block;
     cursor: pointer!important;
+}
+#crest_preview {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    margin: 0.5rem auto;
+}
+#crest_preview img {
+    position: absolute;
+    width: 128px;
+    height: 128px;
+    transform: translateX(-50%);
+}
+#crest_preview img[src=''] {
+    display: none;
+}
+#ff_merge_crest_submit {
+    display: block;
+    margin: auto;
 }

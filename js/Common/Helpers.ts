@@ -187,3 +187,21 @@ function copyQuote(target: HTMLElement): string
     });
     return String(node.textContent);
 }
+
+//Check if remote file exists
+async function is_file(url: string): Promise<boolean>
+{
+    return new Promise((resolve, reject) => {
+        fetch(url, { 'method': 'HEAD' }).
+        then((response) => {
+            if (response.ok) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        }).
+        catch((error) => {
+            reject(error);
+        });
+    });
+}

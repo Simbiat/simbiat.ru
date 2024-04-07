@@ -81,6 +81,12 @@ function formInit(form: HTMLFormElement): void
 {
     //Prevent form submit on Enter, if action is empty (otherwise this causes page reload with additional question mark in address
     form.addEventListener('keypress', (event: KeyboardEvent) => { formEnter(event); });
+    //For all elements that can be used inside a form add name, if it's missing. Make it equal to ID.
+    form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea').forEach((item) => {
+        if ((!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
+            item.setAttribute('name', item.id);
+        }
+    });
     //List of input types, that are "textual" by default, thus can be tracked through keypress and paste events. In essence, these are types, that support maxlength attribute
     form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]').forEach((item) => {
         //Somehow backspace can be tracked only on keydown, not keypress
