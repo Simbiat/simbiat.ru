@@ -47,7 +47,7 @@ class FreeCompany extends Entity
         #Get members
         $data['members'] = HomePage::$dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__freecompany_character`.`characterid` AS `id`, `ffxiv__freecompany_rank`.`rankid`, `rankname` AS `rank`, `name`, `ffxiv__character`.`avatar` AS `icon`, `userid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`rankid`=`ffxiv__freecompany_character`.`rankid` AND `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany_character`.`freecompanyid` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`characterid`=`ffxiv__freecompany_character`.`characterid` LEFT JOIN (SELECT `rankid`, COUNT(*) AS `total` FROM `ffxiv__freecompany_character` WHERE `ffxiv__freecompany_character`.`freecompanyid`=:id GROUP BY `rankid`) `ranklist` ON `ranklist`.`rankid` = `ffxiv__freecompany_character`.`rankid` WHERE `ffxiv__freecompany_character`.`freecompanyid`=:id AND `current`=1 ORDER BY `ranklist`.`total`, `ranklist`.`rankid` , `ffxiv__character`.`name`;', [':id'=>$this->id]);
         #History of ranks. Ensuring that we get only the freshest 100 entries sorted from latest to newest
-        $data['ranks_history'] = HomePage::$dbController->selectAll('SELECT * FROM (SELECT `date`, `weekly`, `monthly`, `members` FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100) `lastranks` ORDER BY `date` ', [':id'=>$this->id]);
+        $data['ranks_history'] = HomePage::$dbController->selectAll('SELECT `date`, `weekly`, `monthly`, `members` FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:id ORDER BY `date` DESC LIMIT 100;', [':id'=>$this->id]);
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['gcId'], $data['estateid'], $data['gc_icon'], $data['activeid'], $data['cityid'], $data['left'], $data['top'], $data['cityicon']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
@@ -237,13 +237,15 @@ class FreeCompany extends Entity
             ];
             #Adding ranking
             if (!empty($this->lodestone['members']) && !empty($this->lodestone['weekly_rank']) && !empty($this->lodestone['monthly_rank'])) {
+                #$query ='SELECT * FROM (SELECT 9230690386249378390 AS `freecompanyid`, UTC_DATE() AS `date`, 1 AS `weekly`, 1 AS `monthly`, 1 AS `members` FROM DUAL WHERE 9230690386249378390 NOT IN (SELECT `freecompanyid` FROM (SELECT * FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=9230690386249378390 ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=1 AND `monthly`=1) LIMIT 1) `actualinsert`;';
+                #echo 'INSERT IGNORE INTO `ffxiv__freecompany_ranking` (`freecompanyid`, `date`, `weekly`, `monthly`, `members`) SELECT * FROM (SELECT :freecompanyid AS `freecompanyid`, UTC_DATE() AS `date`, :weekly AS `weekly`, :monthly AS `monthly`, :members AS `members` FROM DUAL WHERE :freecompanyid NOT IN (SELECT `freecompanyid` FROM (SELECT * FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:freecompanyid ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=:weekly AND `monthly`=:monthly) LIMIT 1) `actualinsert`;';
                 $queries[] = [
                     'INSERT IGNORE INTO `ffxiv__freecompany_ranking` (`freecompanyid`, `date`, `weekly`, `monthly`, `members`) SELECT * FROM (SELECT :freecompanyid AS `freecompanyid`, UTC_DATE() AS `date`, :weekly AS `weekly`, :monthly AS `monthly`, :members AS `members` FROM DUAL WHERE :freecompanyid NOT IN (SELECT `freecompanyid` FROM (SELECT * FROM `ffxiv__freecompany_ranking` WHERE `freecompanyid`=:freecompanyid ORDER BY `date` DESC LIMIT 1) `lastrecord` WHERE `weekly`=:weekly AND `monthly`=:monthly) LIMIT 1) `actualinsert`;',
                     [
                         ':freecompanyid' => $this->id,
-                        ':weekly' => $this->lodestone['weekly_rank'],
-                        ':monthly' => $this->lodestone['monthly_rank'],
-                        ':members' => count($this->lodestone['members']),
+                        ':weekly' => [$this->lodestone['weekly_rank'], 'int'],
+                        ':monthly' => [$this->lodestone['monthly_rank'], 'int'],
+                        ':members' => [count($this->lodestone['members']), 'int'],
                     ],
                 ];
             }

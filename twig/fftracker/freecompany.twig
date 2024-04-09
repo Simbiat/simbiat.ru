@@ -83,6 +83,27 @@
             {% endfor %}
         </ul>
     {% endif %}
+    {% if freecompany.ranking|length > 0 %}
+        <details>
+            <summary>Company ranking history</summary>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Weekly</th>
+                    <th>Monthly</th>
+                    <th>Members</th>
+                </tr>
+                {% for rank in freecompany.ranking %}
+                    <tr>
+                        <td>{{ timeTag(rank.date, "d/m/Y") }}</td>
+                        <td>{{ rank.weekly }}</td>
+                        <td>{{ rank.monthly }}</td>
+                        <td>{{ rank.members }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </details>
+    {% endif %}
     {% if freecompany.members|length > 0 %}
         <p>Current members:</p>
         <div class="searchResults">
