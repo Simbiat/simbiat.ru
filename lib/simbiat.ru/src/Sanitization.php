@@ -92,7 +92,7 @@ class Sanitization
             return false;
         }
         if (is_string($checkbox)) {
-            return strtolower($checkbox) !== 'off';
+            return mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
         return (bool)$checkbox;
     }

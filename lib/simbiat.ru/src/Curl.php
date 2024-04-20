@@ -84,7 +84,7 @@ class Curl
         if ($response === false || $httpCode !== 200) {
             return false;
         } else {
-            return substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE));
+            return mb_substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
         }
     }
     
@@ -160,7 +160,7 @@ class Curl
     public function addHeader(string $header): self
     {
         #Check if header is already present
-        if (!in_array(strtolower($header), array_map('strtolower', self::$headers))) {
+        if (!in_array(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers))) {
             #Add it, if not
             self::$headers = array_merge(self::$headers, [$header]);
             curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
@@ -171,7 +171,7 @@ class Curl
     public function removeHeader(string $header): self
     {
         #Check if header is already present
-        $key = array_search(strtolower($header), array_map('strtolower', self::$headers));
+        $key = array_search(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers));
         if ($key !== false) {
             #Remove it, if yes
             unset(self::$headers[$key]);
@@ -282,7 +282,7 @@ class Curl
             #Get extension
             $upload['extension'] = pathinfo($upload['server_path'].'/'.$upload['server_name'], PATHINFO_EXTENSION);
             #Get path for hash-tree structure
-            $upload['hash_tree'] = substr($upload['hash'], 0, 2).'/'.substr($upload['hash'], 2, 2).'/'.substr($upload['hash'], 4, 2).'/';
+            $upload['hash_tree'] = mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
             if (!is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
                 mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true);
             }

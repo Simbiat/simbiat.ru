@@ -392,7 +392,7 @@ class User extends Entity
         }
         #Query for website
         if (isset($_POST['details']['website'])) {
-            if (filter_var($_POST['details']['website'], FILTER_VALIDATE_URL) === false || mb_strlen($_POST['details']['website']) > 255 || strtolower((string)parse_url($_POST['details']['website'], PHP_URL_SCHEME)) !== 'https') {
+            if (filter_var($_POST['details']['website'], FILTER_VALIDATE_URL) === false || mb_strlen($_POST['details']['website'], 'UTF-8') > 255 || mb_strtolower((string)parse_url($_POST['details']['website'], PHP_URL_SCHEME), 'UTF-8') !== 'https') {
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {

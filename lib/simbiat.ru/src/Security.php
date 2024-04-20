@@ -216,7 +216,7 @@ class Security
         $bot = $dd->getBot();
         if ($bot !== NULL) {
             #Do not waste resources on bots
-            return ['bot' => substr($bot['name'], 0, 64), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false];
+            return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false];
         }
         #Get OS
         $os = $dd->getOs();
@@ -233,14 +233,14 @@ class Security
         if (preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser).*/ui', $client['name'] ?? '') === 1 ||
             (!empty($client['version']) && (
                 #Safari started supporting Sec-Fetch from 16.4
-                (preg_match('/^(Safari).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '16.4', 'lt')) ||
+                (preg_match('/^(Safari).*/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '16.4', 'lt')) ||
                 #Similar for Chrome and Edge, but full support started from 80
-                (preg_match('/^(Chrome).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '80.0', 'lt')) ||
-                (preg_match('/^(Edge).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '80.0', 'lt')) ||
+                (preg_match('/^(Chrome).*/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
+                (preg_match('/^(Edge).*/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
                 #Version 90 for Firefox
-                (preg_match('/^(Firefox).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '90.0', 'lt')) ||
+                (preg_match('/^(Firefox).*/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '90.0', 'lt')) ||
                 #Version 67 for Opera
-                (preg_match('/^(Opera).*/ui', $client['name'] ?? '') === 1 && version_compare(strtolower($client['version']), '67.0', 'lt'))
+                (preg_match('/^(Opera).*/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '67.0', 'lt'))
             ))
         ) {
             $unsupported = true;
@@ -253,6 +253,6 @@ class Security
         if (empty($client)) {
             $client = NULL;
         }
-        return ['bot' => NULL, 'os' => ($os !== NULL ? substr($os, 0, 100) : NULL), 'client' => ($client !== NULL ? substr($client, 0, 100) : NULL), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
+        return ['bot' => NULL, 'os' => ($os !== NULL ? mb_substr($os, 0, 100, 'UTF-8') : NULL), 'client' => ($client !== NULL ? mb_substr($client, 0, 100, 'UTF-8') : NULL), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
     }
 }

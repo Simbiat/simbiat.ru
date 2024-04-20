@@ -87,7 +87,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ],
             ];
             #Update page views
-            $page = substr(preg_replace('/^.*:\/\/[^\/]*\//ui', '', HomePage::$canonical), 0, 256);
+            $page = mb_substr(preg_replace('/^.*:\/\/[^\/]*\//ui', '', HomePage::$canonical), 0, 256, 'UTF-8');
             if (empty($page)) {
                 $page = 'index.php';
             }
@@ -98,7 +98,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     ':page' => $page,
                     #Optional referer (if sent from other sources)
                     ':referer' => [
-                        (empty($_SERVER['HTTP_REFERER']) ? '' : substr($_SERVER['HTTP_REFERER'], 0, 256)),
+                        (empty($_SERVER['HTTP_REFERER']) ? '' : mb_substr($_SERVER['HTTP_REFERER'], 0, 256, 'UTF-8')),
                         'string',
                     ],
                     #Data that identify this visit as unique
@@ -142,7 +142,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ],
                 ':userid' => [$data['userid'], 'int'],
                 #What page is being viewed
-                ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : substr($_SERVER['REQUEST_URI'], 0, 256)),
+                ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr($_SERVER['REQUEST_URI'], 0, 256, 'UTF-8')),
                 #Actual session data
                 ':data' => [
                     (empty($data) ? '' : Security::encrypt(serialize($data))),

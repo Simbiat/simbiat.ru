@@ -2,7 +2,6 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/lib/AccountKeying/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/ArrayHelpers/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/Cron/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/FFTracker/src" isTestSource="false" packagePrefix="Simbiat\" />
@@ -15,7 +14,6 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/colloquium/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/cute-bytes/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/database/src" isTestSource="false" packagePrefix="Simbiat\" />
-      <sourceFolder url="file://$MODULE_DIR$/lib/filename-sanitizer/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/lodestone-parser/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/optimize-tables/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/sand-clock/src" isTestSource="false" packagePrefix="Simbiat\" />

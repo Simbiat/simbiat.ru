@@ -24,7 +24,7 @@ class MergeCrest extends Api
         if (preg_match('/^S[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$/u', $_POST['crest_emblem']) !== 1) {
             return ['http_error' => 400, 'reason' => 'Wrong pattern for emblem file name'];
         }
-        if (!is_file(FFTracker::$crestsComponents.'emblems/'.strtolower(mb_substr($_POST['crest_emblem'], 0, 3)).'/'.$_POST['crest_emblem'])) {
+        if (!is_file(FFTracker::$crestsComponents.'emblems/'.mb_strtolower(mb_substr($_POST['crest_emblem'], 0, 3, 'UTF-8'), 'UTF-8').'/'.$_POST['crest_emblem'])) {
             return ['http_error' => 400, 'reason' => 'Emblem file not found'];
         }
         $images[2] = $_POST['crest_emblem'];
@@ -41,7 +41,7 @@ class MergeCrest extends Api
             if (preg_match('/^(B[a-fA-F0-9]{2}|F00)_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$/u', $_POST['crest_background']) !== 1) {
                 return ['http_error' => 400, 'reason' => 'Wrong pattern for background file name'];
             }
-            if (!is_file(FFTracker::$crestsComponents.'backgrounds/'.strtolower(mb_substr($_POST['crest_background'], 0, 3)).'/'.$_POST['crest_background'])) {
+            if (!is_file(FFTracker::$crestsComponents.'backgrounds/'.mb_strtolower(mb_substr($_POST['crest_background'], 0, 3, 'UTF-8'), 'UTF-8').'/'.$_POST['crest_background'])) {
                 return ['http_error' => 400, 'reason' => 'Frame file not found'];
             }
             $images[0] = $_POST['crest_background'];

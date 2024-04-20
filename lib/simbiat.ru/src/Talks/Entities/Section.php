@@ -431,19 +431,19 @@ class Section extends Entity
         $data['closed'] = Sanitization::checkboxToBoolean($data['closed']);
         $data['private'] = Sanitization::checkboxToBoolean($data['private']);
         $data['clearicon'] = Sanitization::checkboxToBoolean($data['clearicon']);
-        $data['icon'] = !(strtolower($data['icon']) === 'false');
-        $data['type'] = intval($data['type']);
-        $data['order'] = intval($data['order']);
+        $data['icon'] = !(mb_strtolower($data['icon'], 'UTF-8') === 'false');
+        $data['type'] = (int)$data['type'];
+        $data['order'] = (int)$data['order'];
         if ($data['order'] < 0) {
             $data['order'] = 0;
         } elseif ($data['order'] > 99) {
             $data['order'] = 99;
         }
-        if (empty($data['parentid']) || strtolower($data['parentid']) === 'top') {
+        if (empty($data['parentid']) || mb_strtolower($data['parentid'], 'UTF-8') === 'top') {
             $data['parentid'] = null;
         } else {
             if (is_numeric($data['parentid'])) {
-                $data['parentid'] = intval($data['parentid']);
+                $data['parentid'] = (int)$data['parentid'];
             } else {
                 return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parentid'].'` is not numeric'];
             }
@@ -605,7 +605,7 @@ class Section extends Entity
     public static function getSectionTypes(string|int $type = ''): array
     {
         $where = '';
-        switch(strtolower($type)) {
+        switch(mb_strtolower($type, 'UTF-8')) {
             case 'blog':
             case '2':
                 $where = ' WHERE `talks__types`.`type`=\'Blog\'';

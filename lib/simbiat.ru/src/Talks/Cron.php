@@ -76,7 +76,7 @@ class Cron
                 } else {
                     $fullPath = Common::$uploaded;
                 }
-                $fullPath .= '/'.substr($file['fileid'], 0, 2).'/'.substr($file['fileid'], 2, 2).'/'.substr($file['fileid'], 4, 2).'/'.$file['fileid'].'.'.$file['extension'];
+                $fullPath .= '/'.mb_substr($file['fileid'], 0, 2, 'UTF-8').'/'.mb_substr($file['fileid'], 2, 2, 'UTF-8').'/'.mb_substr($file['fileid'], 4, 2, 'UTF-8').'/'.$file['fileid'].'.'.$file['extension'];
                 #Log the removal
                 Security::log('File upload', 'Automatically deleted file', $file['fileid'].'.'.$file['extension'], userid: $file['userid']);
                 #Remove from DB

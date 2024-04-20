@@ -355,9 +355,9 @@ class Library
         if (!empty($result)) {
             ksort($result, SORT_NATURAL);
             #Pad BICs with zeros
-            $result['BIC'] = str_pad(strval($result['BIC']), 9, '0', STR_PAD_LEFT);
+            $result['BIC'] = mb_str_pad((string)$result['BIC'], 9, '0', STR_PAD_LEFT, 'UTF-8');
             if ($result['PrntBIC'] !== NULL) {
-                $result['PrntBIC'] = str_pad(strval($result['PrntBIC']), 9, '0', STR_PAD_LEFT);
+                $result['PrntBIC'] = mb_str_pad((string)$result['PrntBIC'], 9, '0', STR_PAD_LEFT, 'UTF-8');
             }
         }
         return $result;
@@ -400,7 +400,7 @@ class Library
         #Pad BICs with zeros
         foreach ($result as $key=>$account) {
             if ($account['AccountCBRBIC'] !== NULL) {
-                $result[$key]['AccountCBRBIC'] = str_pad(strval($account['AccountCBRBIC']), 9, '0', STR_PAD_LEFT);
+                $result[$key]['AccountCBRBIC'] = mb_str_pad((string)$account['AccountCBRBIC'], 9, '0', STR_PAD_LEFT, 'UTF-8');
             }
         }
         return $result;
@@ -418,7 +418,7 @@ class Library
         );
         foreach ($result as $key=>$restriction) {
             if ($restriction['SuccessorBIC'] !== NULL) {
-                $result[$key]['SuccessorBIC'] = str_pad(strval($restriction['SuccessorBIC']), 9, '0', STR_PAD_LEFT);
+                $result[$key]['SuccessorBIC'] = mb_str_pad((string)$restriction['SuccessorBIC'], 9, '0', STR_PAD_LEFT, 'UTF-8');
             }
         }
         return $result;

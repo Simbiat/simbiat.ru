@@ -23,7 +23,7 @@ class Router extends \Simbiat\Abstracts\Router
             'search' => (new Pages\Search)->get(array_slice($path, 1)),
             'track' => (new Pages\Track)->get(array_slice($path, 1)),
             'crests' => (new Pages\Crests)->get(array_slice($path, 1)),
-            'statistics' => (new Pages\Statistics)->get(array_slice($path, 1)),
+            'statistics' => (new Pages\Statistics)->route(array_slice($path, 1)),
             'characters' => (!empty($path[1]) ? (new Pages\Character)->get(array_slice($path, 1)) : (new Pages\Listing)->get($path)),
             'freecompanies' => (!empty($path[1]) ? (new Pages\FreeCompany)->get(array_slice($path, 1)) : (new Pages\Listing)->get($path)),
             'pvpteams' => (!empty($path[1]) ? (new Pages\PvPTeam)->get(array_slice($path, 1)) : (new Pages\Listing)->get($path)),

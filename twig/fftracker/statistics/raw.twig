@@ -1,0 +1,23 @@
+<p>Raw character numbers as of {{ timeTag(ffstats.data.raw.time, "d/m/Y") }} for analysing race, clan, gender, guardian, city and Grand Company spread popularity</p>
+<table>
+    <tr>
+        <th>Count</th>
+        <th>Race</th>
+        <th>Clan</th>
+        <th>Gender</th>
+        <th>Guardian</th>
+        <th>City</th>
+        <th>Grand Company</th>
+    </tr>
+    {% for datapoint in ffstats.data.raw.data %}
+        <tr>
+            <td>{{ datapoint.count }}</td>
+            <td>{{ datapoint.race }}</td>
+            <td>{{ datapoint.clan }}</td>
+            <td>{% if datapoint.genderid == 0 %}♀{% else %}♂{% endif %}</td>
+            <td>{{ datapoint.guardian }}</td>
+            <td>{{ datapoint.city }}</td>
+            <td>{{ datapoint.gcName }}</td>
+        </tr>
+    {% endfor %}
+</table>

@@ -360,7 +360,7 @@ class Thread extends Entity
             $data['pinned'] = null;
         }
         $data['clearogimage'] = Sanitization::checkboxToBoolean($data['clearogimage']);
-        $data['ogimage'] = !(strtolower($data['ogimage']) === 'false');
+        $data['ogimage'] = !(mb_strtolower($data['ogimage'], 'UTF-8') === 'false');
         if (empty($data['parentid'])) {
             return ['http_error' => 400, 'reason' => 'No section ID provided'];
         }

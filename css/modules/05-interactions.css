@@ -795,10 +795,13 @@ snack-bar {
 tab-names {
     min-height: 2rem;
     width: fit-content;
-    display: block;
-    margin-left: calc(var(--border-radius) * 2.25);
-    margin-right: calc(var(--border-radius) * 2.25);
-    margin-bottom: -0.65rem;
+    display: flex;
+    margin-left: calc(var(--border-radius)* 2.25);
+    margin-right: calc(var(--border-radius)* 2.25);
+    margin-bottom: -.65rem;
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-end;
 }
 a.nav_tab,
 tab-name {
@@ -809,9 +812,9 @@ tab-name {
     height: 1.8rem;
     line-height: 1.8rem;
     padding: .1rem .5rem;
-    margin-left: -0.275rem;
+    margin-left: -0.15rem;
     margin-bottom: 0.025rem;
-    display: inline-block;
+    display: block;
     color: var(--color-interactive);
     background-color: var(--color-body);
     font-weight: 700;

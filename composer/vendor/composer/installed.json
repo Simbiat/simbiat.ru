@@ -653,17 +653,17 @@
         },
         {
             "name": "matomo/device-detector",
-            "version": "6.3.0",
-            "version_normalized": "6.3.0.0",
+            "version": "6.3.1",
+            "version_normalized": "6.3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/device-detector.git",
-                "reference": "35efad75b31f2596701834d19f097497909572a4"
+                "reference": "8096093346917ee2477d802ab3b00c4c091c5cee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/35efad75b31f2596701834d19f097497909572a4",
-                "reference": "35efad75b31f2596701834d19f097497909572a4",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/8096093346917ee2477d802ab3b00c4c091c5cee",
+                "reference": "8096093346917ee2477d802ab3b00c4c091c5cee",
                 "shasum": ""
             },
             "require": {
@@ -686,7 +686,7 @@
                 "doctrine/cache": "Can directly be used for caching purpose",
                 "ext-yaml": "Necessary for using the Pecl YAML parser"
             },
-            "time": "2024-02-16T16:26:57+00:00",
+            "time": "2024-04-12T12:16:21+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1053,12 +1053,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "55338196704d6dae11257b34c4f5cdde484dfaa9"
+                "reference": "a6fb2a760c95f45ccb6a412599770061c330c624"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/55338196704d6dae11257b34c4f5cdde484dfaa9",
-                "reference": "55338196704d6dae11257b34c4f5cdde484dfaa9",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a6fb2a760c95f45ccb6a412599770061c330c624",
+                "reference": "a6fb2a760c95f45ccb6a412599770061c330c624",
                 "shasum": ""
             },
             "conflict": {
@@ -1145,9 +1145,10 @@
                 "concrete5/concrete5": "<9.2.8",
                 "concrete5/core": "<8.5.8|>=9,<9.1",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
+                "contao/comments-bundle": ">=2,<4.13.40|>=5.0.0.0-RC1-dev,<5.3.4",
                 "contao/contao": ">=4,<4.4.56|>=4.5,<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4",
                 "contao/core": ">=2,<3.5.39",
-                "contao/core-bundle": ">=3,<3.5.35|>=4,<4.9.42|>=4.10,<4.13.28|>=5,<5.1.10",
+                "contao/core-bundle": "<4.13.40|>=5,<5.3.4",
                 "contao/listing-bundle": ">=4,<4.4.8",
                 "contao/managed-edition": "<=1.5",
                 "corveda/phpsandbox": "<1.3.5",
@@ -1211,7 +1212,7 @@
                 "ezsystems/ezplatform-solr-search-engine": ">=1.7,<1.7.12|>=2,<2.0.2|>=3.3,<3.3.15",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2-dev|>=7,<7.5.31",
-                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.03.5.1",
+                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.06,<=2019.03.5.1",
                 "ezsystems/platform-ui-assets-bundle": ">=4.2,<4.2.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<4.1.1",
@@ -1242,7 +1243,8 @@
                 "friendsofsymfony/oauth2-php": "<1.3",
                 "friendsofsymfony/rest-bundle": ">=1.2,<1.2.2",
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
-                "friendsofsymfony1/symfony1": ">=1.1,<1.5.19",
+                "friendsofsymfony1/swiftmailer": ">=4,<5.4.13|>=6,<6.2.5",
+                "friendsofsymfony1/symfony1": ">=1.1,<1.15.19",
                 "friendsoftypo3/mediace": ">=7.6.2,<7.6.5",
                 "friendsoftypo3/openid": ">=4.5,<4.5.31|>=4.7,<4.7.16|>=6,<6.0.11|>=6.1,<6.1.6",
                 "froala/wysiwyg-editor": "<3.2.7|>=4.0.1,<=4.1.3",
@@ -1363,7 +1365,7 @@
                 "mantisbt/mantisbt": "<2.26.1",
                 "marcwillmann/turn": "<0.3.3",
                 "matyhtf/framework": "<3.0.6",
-                "mautic/core": "<4.3",
+                "mautic/core": "<4.4.12|>=5.0.0.0-alpha,<5.0.4",
                 "mediawiki/core": "<1.36.2",
                 "mediawiki/matomo": "<2.4.3",
                 "mediawiki/semantic-media-wiki": "<4.0.2",
@@ -1507,7 +1509,7 @@
                 "really-simple-plugins/complianz-gdpr": "<6.4.2",
                 "redaxo/source": "<=5.15.1",
                 "remdex/livehelperchat": "<4.29",
-                "reportico-web/reportico": "<=7.1.21",
+                "reportico-web/reportico": "<=8.1",
                 "rhukster/dom-sanitizer": "<1.0.7",
                 "rmccue/requests": ">=1.6,<1.8",
                 "robrichards/xmlseclibs": ">=1,<3.0.4",
@@ -1522,8 +1524,8 @@
                 "serluck/phpwhois": "<=4.2.6",
                 "sfroemken/url_redirect": "<=1.2.1",
                 "sheng/yiicms": "<=1.2",
-                "shopware/core": "<=6.5.7.3",
-                "shopware/platform": "<=6.5.7.3|>=6.5.8,<6.5.8.7-dev",
+                "shopware/core": "<6.5.8.8-dev|>=6.6.0.0-RC1-dev,<6.6.1",
+                "shopware/platform": "<6.5.8.8-dev|>=6.6.0.0-RC1-dev,<6.6.1",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<=5.7.17",
                 "shopware/storefront": "<=6.4.8.1|>=6.5.8,<6.5.8.7-dev",
@@ -1578,7 +1580,7 @@
                 "sumocoders/framework-user-bundle": "<1.4",
                 "superbig/craft-audit": "<3.0.2",
                 "swag/paypal": "<5.4.4",
-                "swiftmailer/swiftmailer": ">=4,<5.4.5",
+                "swiftmailer/swiftmailer": ">=4,<6.2.5",
                 "swiftyedit/swiftyedit": "<1.2",
                 "sylius/admin-bundle": ">=1,<1.0.17|>=1.1,<1.1.9|>=1.2,<1.2.2",
                 "sylius/grid": ">=1,<1.1.19|>=1.2,<1.2.18|>=1.3,<1.3.13|>=1.4,<1.4.5|>=1.5,<1.5.1",
@@ -1628,7 +1630,7 @@
                 "t3s/content-consent": "<1.0.3|>=2,<2.0.2",
                 "tastyigniter/tastyigniter": "<3.3",
                 "tcg/voyager": "<=1.4",
-                "tecnickcom/tcpdf": "<6.2.22",
+                "tecnickcom/tcpdf": "<=6.7.4",
                 "terminal42/contao-tablelookupwizard": "<3.3.5",
                 "thelia/backoffice-default-template": ">=2.1,<2.1.2",
                 "thelia/thelia": ">=2.1,<2.1.3",
@@ -1636,6 +1638,7 @@
                 "thinkcmf/thinkcmf": "<=5.1.7",
                 "thorsten/phpmyfaq": "<3.2.2",
                 "tikiwiki/tiki-manager": "<=17.1",
+                "timber/timber": ">=0.16.6,<1.23.1|>=1.24,<1.24.1|>=2,<2.1",
                 "tinymce/tinymce": "<7",
                 "tinymighty/wiki-seo": "<1.2.2",
                 "titon/framework": "<9.9.99",
@@ -1689,6 +1692,7 @@
                 "wikimedia/parsoid": "<0.12.2",
                 "willdurand/js-translation-bundle": "<2.1.1",
                 "winter/wn-backend-module": "<1.2.4",
+                "winter/wn-dusk-plugin": "<2.1",
                 "winter/wn-system-module": "<1.2.4",
                 "wintercms/winter": "<=1.2.3",
                 "woocommerce/woocommerce": "<6.6",
@@ -1754,7 +1758,7 @@
                 "zfr/zfr-oauth2-server-module": "<0.1.2",
                 "zoujingli/thinkadmin": "<=6.1.53"
             },
-            "time": "2024-04-03T22:04:54+00:00",
+            "time": "2024-04-19T20:04:33+00:00",
             "default-branch": true,
             "type": "metapackage",
             "notification-url": "https://packagist.org/downloads/",
@@ -1861,17 +1865,17 @@
         },
         {
             "name": "sendgrid/php-http-client",
-            "version": "4.1.0",
-            "version_normalized": "4.1.0.0",
+            "version": "4.1.1",
+            "version_normalized": "4.1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/php-http-client.git",
-                "reference": "84fe926f3d2ac3454f088c9a06ebdc398cc3727e"
+                "reference": "ec09bcfccabeb21d69e245a1e1c0e51f2813fc35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/php-http-client/zipball/84fe926f3d2ac3454f088c9a06ebdc398cc3727e",
-                "reference": "84fe926f3d2ac3454f088c9a06ebdc398cc3727e",
+                "url": "https://api.github.com/repos/sendgrid/php-http-client/zipball/ec09bcfccabeb21d69e245a1e1c0e51f2813fc35",
+                "reference": "ec09bcfccabeb21d69e245a1e1c0e51f2813fc35",
                 "shasum": ""
             },
             "require": {
@@ -1888,7 +1892,7 @@
             "suggest": {
                 "composer/ca-bundle": "Including this library will ensure that a valid CA bundle is available for secure connections"
             },
-            "time": "2023-12-01T05:16:21+00:00",
+            "time": "2023-12-14T08:50:59+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1920,23 +1924,23 @@
                 "sendgrid"
             ],
             "support": {
-                "source": "https://github.com/sendgrid/php-http-client/tree/4.1.0"
+                "source": "https://github.com/sendgrid/php-http-client/tree/4.1.1"
             },
             "install-path": "../sendgrid/php-http-client"
         },
         {
             "name": "sendgrid/sendgrid",
-            "version": "8.1.1",
-            "version_normalized": "8.1.1.0",
+            "version": "8.1.2",
+            "version_normalized": "8.1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/sendgrid-php.git",
-                "reference": "08514e75789f192c034fdcf18efe6d8b1a7c91da"
+                "reference": "6700d2cf50df38915fa2d9a03affbca58c48599f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/08514e75789f192c034fdcf18efe6d8b1a7c91da",
-                "reference": "08514e75789f192c034fdcf18efe6d8b1a7c91da",
+                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/6700d2cf50df38915fa2d9a03affbca58c48599f",
+                "reference": "6700d2cf50df38915fa2d9a03affbca58c48599f",
                 "shasum": ""
             },
             "require": {
@@ -1945,7 +1949,7 @@
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "php": ">=7.3",
-                "sendgrid/php-http-client": "4.1.0",
+                "sendgrid/php-http-client": "~4.1",
                 "starkbank/ecdsa": "0.*"
             },
             "replace": {
@@ -1957,7 +1961,7 @@
                 "squizlabs/php_codesniffer": "3.*",
                 "swaggest/json-diff": "^3.4"
             },
-            "time": "2023-12-06T07:11:08+00:00",
+            "time": "2024-04-18T11:09:09+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1988,7 +1992,7 @@
                 "twilio sendgrid"
             ],
             "support": {
-                "source": "https://github.com/sendgrid/sendgrid-php/tree/8.1.1"
+                "source": "https://github.com/sendgrid/sendgrid-php/tree/8.1.2"
             },
             "install-path": "../sendgrid/sendgrid"
         },
@@ -2430,20 +2434,20 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "7.0.0",
-            "version_normalized": "7.0.0.0",
+            "version": "7.0.1",
+            "version_normalized": "7.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "c011b5164178ac5224e658bf2aed713479fc78ae"
+                "reference": "863759766e2397d1f639c63d006680a9e8ba6233"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/c011b5164178ac5224e658bf2aed713479fc78ae",
-                "reference": "c011b5164178ac5224e658bf2aed713479fc78ae",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/863759766e2397d1f639c63d006680a9e8ba6233",
+                "reference": "863759766e2397d1f639c63d006680a9e8ba6233",
                 "shasum": ""
             },
-            "time": "2024-03-20T05:46:56+00:00",
+            "time": "2024-04-10T07:29:34+00:00",
             "type": "component",
             "extra": {
                 "component": {
@@ -2486,39 +2490,46 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.0"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.1"
             },
             "install-path": "../tinymce/tinymce"
         },
         {
             "name": "twig/twig",
-            "version": "v3.8.0",
-            "version_normalized": "3.8.0.0",
+            "version": "v3.9.3",
+            "version_normalized": "3.9.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "9d15f0ac07f44dc4217883ec6ae02fd555c6f71d"
+                "reference": "a842d75fed59cdbcbd3a3ad7fb9eb768fc350d58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9d15f0ac07f44dc4217883ec6ae02fd555c6f71d",
-                "reference": "9d15f0ac07f44dc4217883ec6ae02fd555c6f71d",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a842d75fed59cdbcbd3a3ad7fb9eb768fc350d58",
+                "reference": "a842d75fed59cdbcbd3a3ad7fb9eb768fc350d58",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
+                "symfony/deprecation-contracts": "^2.5|^3",
                 "symfony/polyfill-ctype": "^1.8",
                 "symfony/polyfill-mbstring": "^1.3",
                 "symfony/polyfill-php80": "^1.22"
             },
             "require-dev": {
                 "psr/container": "^1.0|^2.0",
-                "symfony/phpunit-bridge": "^5.4.9|^6.3|^7.0"
+                "symfony/phpunit-bridge": "^5.4.9|^6.4|^7.0"
             },
-            "time": "2023-11-21T18:54:41+00:00",
+            "time": "2024-04-18T11:59:33+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
+                "files": [
+                    "src/Resources/core.php",
+                    "src/Resources/debug.php",
+                    "src/Resources/escaper.php",
+                    "src/Resources/string_loader.php"
+                ],
                 "psr-4": {
                     "Twig\\": "src/"
                 }
@@ -2551,7 +2562,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.8.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.9.3"
             },
             "funding": [
                 {

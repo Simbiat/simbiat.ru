@@ -1,0 +1,41 @@
+<vertical-tabs class="vertical_tabs_links">
+    <tab-names>
+        <tab-name {% if ffstats.category == 'characters' %}class="active" {% endif %}data-url="/fftracker/statistics/characters/">Characters</tab-name>
+        <tab-name {% if ffstats.category == 'freecompanies' %}class="active" {% endif %}data-url="/fftracker/statistics/freecompanies/">Free companies</tab-name>
+        <tab-name {% if ffstats.category == 'cities' %}class="active" {% endif %}data-url="/fftracker/statistics/cities/">Cities</tab-name>
+        <tab-name {% if ffstats.category == 'grandcompanies' %}class="active" {% endif %}data-url="/fftracker/statistics/grandcompanies/">Grand companies</tab-name>
+        <tab-name {% if ffstats.category == 'servers' %}class="active" {% endif %}data-url="/fftracker/statistics/servers/">Servers</tab-name>
+        <tab-name {% if ffstats.category == 'achievements' %}class="active" {% endif %}data-url="/fftracker/statistics/achievements/">Achievements</tab-name>
+        <tab-name {% if ffstats.category == 'timelines' %}class="active" {% endif %}data-url="/fftracker/statistics/timelines/">Timelines</tab-name>
+        <tab-name {% if ffstats.category == 'bugs' %}class="active" {% endif %}data-url="/fftracker/statistics/bugs/">Bugs</tab-name>
+        <tab-name {% if ffstats.category == 'raw' %}class="active" {% endif %}data-url="/fftracker/statistics/raw/">Raw</tab-name>
+        <tab-name {% if ffstats.category == 'other' %}class="active" {% endif %}data-url="/fftracker/statistics/other/">Other</tab-name>
+    </tab-names>
+</vertical-tabs>
+<section>
+    {% if ffstats.category %}
+        <article class="margin05rem">
+            {% if ffstats.category == 'characters' %}
+                {{ include('fftracker/statistics/characters.twig') }}
+            {% elseif ffstats.category == 'freecompanies' %}
+                {{ include('fftracker/statistics/freecompanies.twig') }}
+            {% elseif ffstats.category == 'cities' %}
+                {{ include('fftracker/statistics/cities.twig') }}
+            {% elseif ffstats.category == 'grandcompanies' %}
+                {{ include('fftracker/statistics/grandcompanies.twig') }}
+            {% elseif ffstats.category == 'servers' %}
+                {{ include('fftracker/statistics/servers.twig') }}
+            {% elseif ffstats.category == 'achievements' %}
+                {{ include('fftracker/statistics/achievements.twig') }}
+            {% elseif ffstats.category == 'timelines' %}
+                {{ include('fftracker/statistics/timelines.twig') }}
+            {% elseif ffstats.category == 'bugs' %}
+                {{ include('fftracker/statistics/bugs.twig') }}
+            {% elseif ffstats.category == 'raw' %}
+                {{ include('fftracker/statistics/raw.twig') }}
+            {% elseif ffstats.category == 'other' %}
+                {{ include('fftracker/statistics/other.twig') }}
+            {% endif %}
+        </article>
+    {% endif %}
+</section>

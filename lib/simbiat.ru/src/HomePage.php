@@ -185,9 +185,9 @@ class HomePage
             Headers::clientReturn(403);
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))));
+        self::$canonical = mb_strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))), 'UTF-8');
         #Remove bad UTF
-        self::$canonical = mb_convert_encoding(self::$canonical, 'UTF-8', 'UTF-8');
+        self::$canonical = mb_scrub(self::$canonical, 'UTF-8');
         #Remove "friendly" portion of the links, but exclude API
         self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Force _ in crossworldlinkshell

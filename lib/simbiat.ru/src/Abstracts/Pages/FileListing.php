@@ -183,7 +183,7 @@ class FileListing extends StaticPage
         if (!$countOnly) {
             $id = 1;
             foreach ($iterator as $key=>$file) {
-                if (!in_array($key, $this->exclude, true) && (empty($this->searchFor) || mb_stripos($key, $this->searchFor) !== false)) {
+                if (!in_array($key, $this->exclude, true) && (empty($this->searchFor) || mb_stripos($key, $this->searchFor, 0, 'UTF-8') !== false)) {
                     if ($id >= (($this->page - 1) * $this->listItems + 1) && $id <= ($this->page  * $this->listItems)) {
                         $fileDetails = [
                             'filename' => $key,

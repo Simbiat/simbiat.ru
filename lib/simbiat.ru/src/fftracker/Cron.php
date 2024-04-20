@@ -19,8 +19,8 @@ class Cron
     public function UpdateStatistics(): bool|string
     {
         try {
-            foreach (['genetics', 'astrology', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
-                (new Statistics)->get($type, '', true);
+            foreach (['raw', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
+                (new Statistics)->update($type);
             }
             return true;
         } catch(\Exception $e) {

@@ -166,14 +166,14 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
                 #Check if we have already downloaded the component image and use that one to speed up the process
                 if ($key === 0) {
                     #If it's background, we need to check if subdirectory exists and create it, and create it, if it does not
-                    $subDir = strtolower(mb_substr(basename($image), 0, 3));
+                    $subDir = mb_strtolower(mb_substr(basename($image), 0, 3, 'UTF-8'), 'UTF-8');
                     $concurrentDirectory = FFTracker::$crestsComponents.'backgrounds/'.$subDir;
                     if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
                         throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
                     }
                 } elseif ($key === 2) {
                     #If it's emblem, we need to check if subdirectory exists and create it, and create it, if it does not
-                    $subDir = strtolower(mb_substr(basename($image), 0, 3));
+                    $subDir = mb_strtolower(mb_substr(basename($image), 0, 3, 'UTF-8'), 'UTF-8');
                     $concurrentDirectory = FFTracker::$crestsComponents.'emblems/'.$subDir;
                     if (!is_dir($concurrentDirectory) && !mkdir($concurrentDirectory) && !is_dir($concurrentDirectory)) {
                         throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
@@ -216,7 +216,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         $crestHash = hash('sha3-512', $mergedFileNames);
         if (!empty($crestHash)) {
             #Get full path
-            $fullPath = mb_substr($crestHash, 0, 2).'/'.mb_substr($crestHash, 2, 2).'/'.$crestHash.'.webp';
+            $fullPath = mb_substr($crestHash, 0, 2, 'UTF-8').'/'.mb_substr($crestHash, 2, 2, 'UTF-8').'/'.$crestHash.'.webp';
             #Generate image file, if missing
             if (!is_file(\Simbiat\Config\FFtracker::$mergedCrestsCache.$fullPath)) {
                 self::CrestMerge($images, \Simbiat\Config\FFtracker::$mergedCrestsCache.$fullPath);
@@ -232,7 +232,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         $filename = basename($image);
         #Backgrounds
         if (str_starts_with($filename, 'F00') || str_starts_with($filename, 'B')) {
-            return FFTracker::$crestsComponents.'backgrounds/'.strtolower(mb_substr($filename, 0, 3)).'/'.$filename;
+            return FFTracker::$crestsComponents.'backgrounds/'.mb_strtolower(mb_substr($filename, 0, 3, 'UTF-8'), 'UTF-8').'/'.$filename;
         }
         #Frames
         if (str_starts_with($filename, 'F')) {
@@ -240,7 +240,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Emblems
         if (str_starts_with($filename, 'S')) {
-            return FFTracker::$crestsComponents.'emblems/'.strtolower(mb_substr($filename, 0, 3)).'/'.$filename;
+            return FFTracker::$crestsComponents.'emblems/'.mb_strtolower(mb_substr($filename, 0, 3, 'UTF-8'), 'UTF-8').'/'.$filename;
         }
         return null;
     }

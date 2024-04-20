@@ -361,6 +361,6 @@ class Bic extends Entity
     #Pad BICs with zeros
     private function padBic(string $bic): string
     {
-        return str_pad($bic, 9, '0', STR_PAD_LEFT);
+        return mb_str_pad($bic, 9, '0', STR_PAD_LEFT, 'UTF-8');
     }
 }

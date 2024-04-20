@@ -143,7 +143,7 @@ class Images
         $chunk = false;
         while(!feof($fh) && $count < 2) {
             //add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            $chunk = ($chunk ? substr($chunk, -20) : '') . fread($fh, 1024 * 100); //read 100kb at a time
+            $chunk = ($chunk ? mb_substr($chunk, -20, 'UTF-8') : '') . fread($fh, 1024 * 100); //read 100kb at a time
             $count += preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
         fclose($fh);
@@ -160,7 +160,7 @@ class Images
         }
         while (!$f->eof()) {
             $bytes =  $f->fread(4);
-            if (strlen($bytes) < 4) {
+            if (mb_strlen($bytes, 'UTF-8') < 4) {
                 return false;
             }
             $length = unpack('N', $bytes)[1];
@@ -219,7 +219,7 @@ class Images
                 return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
             }
         } else {
-            $hashTree = substr($fileId, 0, 2).'/'.substr($fileId, 2, 2).'/'.substr($fileId, 4, 2).'/';
+            $hashTree = mb_substr($fileId, 0, 2, 'UTF-8').'/'.mb_substr($fileId, 2, 2, 'UTF-8').'/'.mb_substr($fileId, 4, 2, 'UTF-8').'/';
             #Use glob to get real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
             $file = glob(Common::$uploadedImg.'/'.$hashTree.$fileId.'.*');
