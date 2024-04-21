@@ -1,21 +1,9 @@
-{#
-<div id="ff_achievements" class="ff_tabcontent">
-    <h2 class="ff_stat_title">Characters with no race/clan ({{statistics.bugs.noclan|length}} total)</h2>
-    <div>
-        <details><summary>Characters' links</summary>
-            {% for row in statistics.bugs.noclan %}
-                {{ include('ffxiv__entity_card.twig', row) }}
-            {%endfor%}
-        </details>
-    </div>
-    <h2 class="ff_stat_title">Groups with no memebers ({{statistics.bugs.nomembers|length}} total)</h2>
-    <div>
-        <details><summary>Groups' links</summary>
-            {% for row in statistics.bugs.nomembers %}
-                {{ include('ffxiv__entity_card.twig', row) }}
-            {%endfor%}
-        </details>
-    </div>
-</div>
-#}
-{{ include('errors/construction.twig') }}
+<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<h2>Characters with no clan</h2>
+{% for character in ffstats.data.bugs.noClan %}
+    {{ include('common/elements/entitycard.twig', character) }}
+{% endfor %}
+<h2>Groups with no members</h2>
+{% for character in ffstats.data.bugs.noMembers %}
+    {{ include('common/elements/entitycard.twig', character) }}
+{% endfor %}

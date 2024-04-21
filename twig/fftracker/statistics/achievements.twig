@@ -1,25 +1,42 @@
-{#
-<div id="ff_achievements" class="ff_tabcontent">
-    {% for categoryname, category in statistics.other.achievements %}
-        <h2 class="ff_stat_title">Top 20 rarest {{categoryname|raw}} achievements</h2>
-        <div>
-            <details><summary>Achievements' pages</summary>
-                {% for row in category %}
-                    {{ include('ffxiv__entity_card.twig', row) }}
-                {%endfor%}
-            </details>
-        </div>
-        <div id="ff_chart_other_achievement_{{categoryname|replace({' ': '', '&': '', ';': ''})}}" data-type="bar" data-chart="
-            {% for row in category %}
-                {%if loop.first%}[{% set array = ['Achievement','Characters'] %}
-                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},{%endif%}
-                {% set array = [row.name,row.count] %}
-                {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
-                {%if not loop.last%},{%endif%}
-                {%if loop.last%}]{%endif%}
-            {%endfor%}
-        "></div>
-    {%endfor%}
-</div>
-#}
-{{ include('errors/construction.twig') }}
+<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+{% for categoryname, category in ffstats.data.achievements %}
+    <table>
+        <caption><h2>Top 20 rarest "{{ categoryname }}" achievements</h2></caption>
+        <tr>
+            <th>Achievement</th>
+            <th>Earned by</th>
+        </tr>
+        {% for row in category %}
+            <tr>
+                <td>{{ include('common/elements/entitycard.twig', row) }}</td>
+                <td>{{ row.count }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{%endfor%}
+<table>
+    <caption><h2>20 most popular titles</h2></caption>
+    <tr>
+        <th>Title</th>
+        <th>Used by</th>
+    </tr>
+    {% for datapoint in ffstats.data.titles.top %}
+        <tr>
+            <td><a href="/fftracker/achievements/{{ datapoint.achievementid }}">{{ datapoint.title }}</a></td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>20 least popular titles</h2></caption>
+    <tr>
+        <th>Title</th>
+        <th>Used by</th>
+    </tr>
+    {% for datapoint in ffstats.data.titles.bottom %}
+        <tr>
+            <td><a href="/fftracker/achievements/{{ datapoint.achievementid }}">{{ datapoint.title }}</a></td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>

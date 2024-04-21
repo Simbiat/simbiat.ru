@@ -1,4 +1,4 @@
-<p>Raw character numbers as of {{ timeTag(ffstats.data.raw.time, "d/m/Y") }} for analysing race, clan, gender, guardian, city and Grand Company spread popularity</p>
+<p>Raw character numbers as of {{ timeTag(ffstats.data.time, "d/m/Y") }} for analysing race, clan, gender, guardian, city and Grand Company distribution</p>
 <table>
     <tr>
         <th>Count</th>
@@ -9,7 +9,7 @@
         <th>City</th>
         <th>Grand Company</th>
     </tr>
-    {% for datapoint in ffstats.data.raw.data %}
+    {% for datapoint in ffstats.data.raw %}
         <tr>
             <td>{{ datapoint.count }}</td>
             <td>{{ datapoint.race }}</td>

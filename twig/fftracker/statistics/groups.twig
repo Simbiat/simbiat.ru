@@ -1,0 +1,206 @@
+<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<table>
+    <caption><h2>20 most popular estates among companies</h2></caption>
+    <tr>
+        <th>Plot</th>
+        <th>Owned by</th>
+    </tr>
+    {% for estate in ffstats.data.freecompany.estate.top %}
+        <tr>
+            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/img/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a></td>
+            <td>{{ estate.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>20 least popular estates among companies</h2></caption>
+    <tr>
+        <th>Plot</th>
+        <th>Owned by</th>
+    </tr>
+    {% for estate in ffstats.data.freecompany.estate.bottom %}
+        <tr>
+            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/img/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a></td>
+            <td>{{ estate.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Activity time statistics</h2></caption>
+    <tr>
+        <th>Recruiting</th>
+        <th>Always</th>
+        <th>Weekdays</th>
+        <th>Weekends</th>
+    </tr>
+    {% for datapoint in ffstats.data.freecompany.active %}
+        <tr>
+            <td>{% if datapoint.recruiting == 'Recruiting' %}Yes{% else %}No{% endif %}</td>
+            <td>{{ datapoint.Always }}</td>
+            <td>{{ datapoint.Weekdays }}</td>
+            <td>{{ datapoint.Weekends }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Class recruitment popularity among companies</h2></caption>
+    <tr>
+        <th>Class</th>
+        <th>Searched by, %</th>
+    </tr>
+    {% for item, value in ffstats.data.freecompany.jobDemand %}
+        <tr>
+            <td>{{ item }}</td>
+            <td>{{ value }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Activity type popularity among companies</h2></caption>
+    <tr>
+        <th>Activity</th>
+        <th>Searched by, %</th>
+    </tr>
+    {% for item, value in ffstats.data.freecompany.activities %}
+        <tr>
+            <td>{{ item }}</td>
+            <td>{{ value }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Free Companies distribution by residential areas</h2></caption>
+    <tr>
+        <th>Residential Area</th>
+        <th>Free Companies</th>
+    </tr>
+    {% for datapoint in ffstats.data.cities.free_company %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Free Companies to Grand Companies affiliation</h2></caption>
+    <tr>
+        <th>Grand Company</th>
+        <th>Free Companies</th>
+    </tr>
+    {% for datapoint in ffstats.data.gc_companies %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Grand Companies character distribution</h2></caption>
+    <tr>
+        <th>Grand Company</th>
+        <th>Rank</th>
+        <th>Gender</th>
+        <th>Characters</th>
+    </tr>
+    {% for datapoint in ffstats.data.gc_characters %}
+        <tr>
+            <td>{{ datapoint.gcName }}</td>
+            <td>{{ datapoint.gc_rank }}</td>
+            <td>{% if datapoint.genderid == 0 %}♀{% else %}♂{% endif %}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Free Companies distribution by Grand Company and city</h2></caption>
+    <tr>
+        <th>City</th>
+        <th>Grand Company</th>
+        <th>Free Companies</th>
+    </tr>
+    {% for datapoint in ffstats.data.cities.gc_fc %}
+        <tr>
+            <td>{{ datapoint.city }}</td>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>20 most popular crests among Free Companies</h2></caption>
+    <tr>
+        <th>Crest</th>
+        <th>Free Companies</th>
+    </tr>
+    {% for datapoint in ffstats.data.freecompany.crests %}
+        <tr>
+            <td><img loading="lazy" decoding="async" class="ff_crest galleryZoom" alt="Crest used by {{ datapoint.count }} Free Companies" src="{{ datapoint.icon }}"></td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>20 most popular crests among PvP Teams</h2></caption>
+    <tr>
+        <th>Crest</th>
+        <th>PvP Teams</th>
+    </tr>
+    {% for datapoint in ffstats.data.pvpteam.crests %}
+        <tr>
+            <td><img loading="lazy" decoding="async" class="ff_crest galleryZoom" alt="Crest used by {{ datapoint.count }} PvP Teams" src="{{ datapoint.icon }}"></td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Free Companies distribution by server</h2></caption>
+    <tr>
+        <th>Server</th>
+        <th>Free Companies</th>
+    </tr>
+    {% for datapoint in ffstats.data.servers['Free Companies'] %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>PvP Teams distribution by server</h2></caption>
+    <tr>
+        <th>Server</th>
+        <th>PvP Teams</th>
+    </tr>
+    {% for datapoint in ffstats.data.servers.pvpteam %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Linkshell distribution by server</h2></caption>
+    <tr>
+        <th>Server</th>
+        <th>Linkshell</th>
+    </tr>
+    {% for datapoint in ffstats.data.servers['Linkshells'] %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Crossworld Linkshell distribution by server</h2></caption>
+    <tr>
+        <th>Server</th>
+        <th>Crossworld Linkshell</th>
+    </tr>
+    {% for datapoint in ffstats.data.servers['crossworldlinkshell'] %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>

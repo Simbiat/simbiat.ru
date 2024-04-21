@@ -4,6 +4,7 @@ namespace Simbiat\fftracker\Pages\Statistics;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\FFTracker;
+use Simbiat\fftracker\Statistics;
 
 class General extends Page
 {
@@ -36,11 +37,12 @@ class General extends Page
             $outputArray['ffstats']['category'] = $this->jsonToIngest;
             if (is_file(FFTracker::$statistics.$this->jsonToIngest.'.json')) {
                 $outputArray['ffstats']['data'] = json_decode(file_get_contents(FFTracker::$statistics.$this->jsonToIngest.'.json'), flags: JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_BIGINT_AS_STRING | JSON_OBJECT_AS_ARRAY);
-                $this->lastModified(filemtime(FFTracker::$statistics.$this->jsonToIngest.'.json'));
+                $this->lastModified($outputArray['ffstats']['data']['time'] ?? 0);
             } else {
-                return ['http_error' => 404, 'reason' => 'File `'.$this->jsonToIngest.'.json` not found'];
+                (new Statistics)->update($this->jsonToIngest);
+                return ['http_error' => 500, 'reason' => 'File `'.$this->jsonToIngest.'.json` not found'];
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => 'Failed to read `'.$this->jsonToIngest.'.json` file'];
         }
         #Placeholder

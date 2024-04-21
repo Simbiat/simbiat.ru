@@ -19,7 +19,7 @@ class Cron
     public function UpdateStatistics(): bool|string
     {
         try {
-            foreach (['raw', 'characters', 'freecompanies', 'cities', 'grandcompanies', 'servers', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
+            foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
                 (new Statistics)->update($type);
             }
             return true;
@@ -52,15 +52,15 @@ class Cron
             $dbCon = HomePage::$dbController;
             $entities = $dbCon->selectAll('
                     SELECT `type`, `id`, IF(`userid` IS NOT NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, IF(`type`=\'character\' AND `clanid` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 WEEK), 2, 0)) as `priority` FROM (
-                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `deleted`, `clanid`, `userid` FROM `ffxiv__character`
+                        SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, `clanid`, `userid` FROM `ffxiv__character`
                         UNION ALL
-                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, `deleted`, null as `clanid`, (SELECT `userid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__character` ON `ffxiv__freecompany_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__freecompany`
+                        SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `updated`, null as `clanid`, (SELECT `userid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__character` ON `ffxiv__freecompany_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__freecompany`
                         UNION ALL
-                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`, `deleted`, null as `clanid`, (SELECT `userid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__pvpteam`
+                        SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `updated`,  null as `clanid`, (SELECT `userid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__character` ON `ffxiv__pvpteam_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__pvpteam`
                         UNION ALL
-                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted`, null as `clanid`, (SELECT `userid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__linkshell`
+                        SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, null as `clanid`, (SELECT `userid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__linkshell`
                         UNION ALL
-                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted`, null as `clanid`, NULL as `userid` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
+                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, null as `clanid`, NULL as `userid` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
                     ) `allEntities`
                     ORDER BY `priority` DESC, `updated` LIMIT :maxLines',
                 [

@@ -1,45 +1,59 @@
-{#
-<div id="ff_timelines" class="ff_tabcontent">
-    <h2 class="ff_stat_title">Namedays timeline</h2>
-    <div id="ff_chart_character_nameday" data-type="line" data-chart="
-        [{% set array = ['Nameday', 'Characters'] %}{{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},
-        {% for row in statistics.timelines.nameday %}
-            {% set array = [row.value, row.count] %}
-            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
-            {%if not loop.last%},{%endif%}
-        {%endfor%}
-        ]
-    "></div>
-    <h2 class="ff_stat_title">Groups' formation timeline</h2>
-    <div id="ff_chart_other_formed" data-type="line" data-chart="
-        [{% set array = ['Date', 'Free Companies', 'Linkshells', 'PvP Teams'] %}{{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},
-        {% for row in statistics.timelines.formed %}
-            {% set array = [row.value|date('d/m/Y'), row.freecompanies, row.linkshells, row.pvpteams] %}
-            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
-            {%if not loop.last%},{%endif%}
-        {%endfor%}
-        ]
-    "></div>
-    <h2 class="ff_stat_title">Entities' registration timeline</h2>
-    <div id="ff_chart_other_registered" data-type="line" data-chart="
-        [{% set array = ['Date', 'Characters', 'Free Companies', 'Linkshells', 'PvP Teams'] %}{{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},
-        {% for row in statistics.timelines.registered %}
-            {% set array = [row.value|date('d/m/Y'), row.characters, row.freecompanies, row.linkshells, row.pvpteams] %}
-            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
-            {%if not loop.last%},{%endif%}
-        {%endfor%}
-        ]
-    "></div>
-    <h2 class="ff_stat_title">Entities' deletion timeline</h2>
-    <div id="ff_chart_other_deleted" data-type="line" data-chart="
-        [{% set array = ['Date', 'Characters', 'Free Companies', 'Linkshells', 'PvP Teams'] %}{{array|json_encode(constant('JSON_NUMERIC_CHECK'))}},
-        {% for row in statistics.timelines.deleted %}
-            {% set array = [row.value|date('d/m/Y'), row.characters, row.freecompanies, row.linkshells, row.pvpteams] %}
-            {{array|json_encode(constant('JSON_NUMERIC_CHECK'))}}
-            {%if not loop.last%},{%endif%}
-        {%endfor%}
-        ]
-    "></div>
-</div>
-#}
-{{ include('errors/construction.twig') }}
+<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<table>
+    <caption><h2>Nameday popularity</h2></caption>
+    <tr>
+        <th>Nameday</th>
+        <th>Characters</th>
+    </tr>
+    {% for datapoint in ffstats.data.namedays %}
+        <tr>
+            <td>{{ datapoint.value }}</td>
+            <td>{{ datapoint.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<table>
+    <caption><h2>Activity calendar</h2></caption>
+    <tr>
+        <th rowspan="2">Date</th>
+        <th colspan="2">Formed</th>
+        <th colspan="4">Added</th>
+        <th colspan="4">Updated</th>
+        <th colspan="4">Deleted</th>
+    </tr>
+    <tr>
+        <th>Free Companies</th>
+        <th>PvP Teams</th>
+        <th>Free Companies</th>
+        <th>PvP Teams</th>
+        <th>Linkshells</th>
+        <th>Characters</th>
+        <th>Free Companies</th>
+        <th>PvP Teams</th>
+        <th>Linkshells</th>
+        <th>Characters</th>
+        <th>Free Companies</th>
+        <th>PvP Teams</th>
+        <th>Linkshells</th>
+        <th>Characters</th>
+    </tr>
+    {% for datapoint in ffstats.data.timelines %}
+        <tr>
+            <td>{{ timeTag(datapoint.date, "Y.m.d") }}</td>
+            <td>{{ datapoint.free_companies_formed }}</td>
+            <td>{{ datapoint.pvp_teams_formed }}</td>
+            <td>{{ datapoint.free_companies_registered }}</td>
+            <td>{{ datapoint.pvp_teams_registered }}</td>
+            <td>{{ datapoint.linkshells_registered }}</td>
+            <td>{{ datapoint.characters_registered }}</td>
+            <td>{{ datapoint.free_companies_updated }}</td>
+            <td>{{ datapoint.pvp_teams_updated }}</td>
+            <td>{{ datapoint.characters_updated }}</td>
+            <td>{{ datapoint.characters_updated }}</td>
+            <td>{{ datapoint.free_companies_deleted }}</td>
+            <td>{{ datapoint.pvp_teams_deleted }}</td>
+            <td>{{ datapoint.linkshells_deleted }}</td>
+            <td>{{ datapoint.characters_deleted }}</td>
+        </tr>
+    {% endfor %}
+</table>
