@@ -232,14 +232,6 @@ class Statistics
                         SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest_part_1`, `crest_part_2`, `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__pvpteam` as `pvp` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__pvpteam_character` WHERE `pvpteamid`=`pvp`.`pvpteamid` AND `current`=1)
                         ORDER BY `name`;'
                 ));
-                #These may be because of temporary issues on parser or Lodestone side, so schedule them for update
-                $cron = (new Cron);
-                foreach ($data['bugs']['noClan'] as $character) {
-                    $cron->add('ffUpdateEntity', [(string)$character['id'], 'character'], message: 'Updating character with ID '.$character['id']);
-                }
-                foreach ($data['bugs']['noMembers'] as $group) {
-                    $cron->add('ffUpdateEntity', [(string)$group['id'], $group['type']], message: 'Updating group with ID '.$group['id']);
-                }
                 break;
             case 'other':
                 #Communities
@@ -271,6 +263,16 @@ class Statistics
         unset($dbCon, $ArrayHelpers, $Lodestone);
         #Attempt to write to cache
         file_put_contents($cachePath, json_encode(array_merge($json, $data), JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
+        if ($type === 'bugs') {
+            #These may be because of temporary issues on parser or Lodestone side, so schedule them for update
+            $cron = (new Cron);
+            foreach ($data['bugs']['noClan'] as $character) {
+                $cron->add('ffUpdateEntity', [(string)$character['id'], 'character'], message: 'Updating character with ID '.$character['id']);
+            }
+            foreach ($data['bugs']['noMembers'] as $group) {
+                $cron->add('ffUpdateEntity', [(string)$group['id'], $group['type']], message: 'Updating group with ID '.$group['id']);
+            }
+        }
         return $data;
     }
 }
