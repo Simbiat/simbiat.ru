@@ -163,7 +163,7 @@ class PvPTeam extends Entity
                             )
                             VALUES (
                                 :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), :matches
-                            )',
+                            ) ON DUPLICATE KEY UPDATE `deleted`=NULL, `enemyid`=NULL;',
                             [
                                 ':characterid'=>$member,
                                 ':server'=>$details['server'],
@@ -209,7 +209,7 @@ class PvPTeam extends Entity
             ];
             #Update PvP Team
             $queries[] = [
-                'UPDATE `ffxiv__pvpteam` SET `deleted` = UTC_DATE() WHERE `pvpteamid` = :id', [':id'=>$this->id],
+                'UPDATE `ffxiv__pvpteam` SET `deleted` = COALESCE(`deleted`, UTC_DATE()) WHERE `pvpteamid` = :id', [':id'=>$this->id],
             ];
             return HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {

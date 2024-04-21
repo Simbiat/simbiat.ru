@@ -61,7 +61,7 @@ class Cron
                         SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, `deleted`, null as `clanid`, (SELECT `userid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__linkshell`
                         UNION ALL
                         SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, NULL AS `deleted`, null as `clanid`, NULL as `userid` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
-                    ) `allEntities` WHERE `deleted` IS NULL
+                    ) `allEntities`
                     ORDER BY `priority` DESC, `updated` LIMIT :maxLines',
                 [
                     ':maxLines'=>[$limit, 'int'],

@@ -282,12 +282,12 @@ class FreeCompany extends Entity
                     if (!$this->lodestone['members'][$member]['registered']) {
                         #Create basic entry of the character
                         $queries[] = [
-                            'INSERT IGNORE INTO `ffxiv__character`(
+                            'INSERT INTO `ffxiv__character`(
                                 `characterid`, `serverid`, `name`, `registered`, `updated`, `avatar`, `gcrankid`
                             )
                             VALUES (
                                 :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
-                            );',
+                            ) ON DUPLICATE KEY UPDATE `deleted`=NULL, `enemyid`=NULL;',
                             [
                                 ':characterid' => $member,
                                 ':server' => $details['server'],
@@ -332,7 +332,7 @@ class FreeCompany extends Entity
             ];
             #Update Free Company
             $queries[] = [
-                'UPDATE `ffxiv__freecompany` SET `deleted` = UTC_DATE() WHERE `freecompanyid` = :id',
+                'UPDATE `ffxiv__freecompany` SET `deleted` = COALESCE(`deleted`, UTC_DATE()) WHERE `freecompanyid` = :id',
                 [':id' => $this->id],
             ];
             return HomePage::$dbController->query($queries);

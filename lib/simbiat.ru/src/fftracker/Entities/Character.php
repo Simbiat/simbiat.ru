@@ -373,7 +373,7 @@ class Character extends Entity
             ];
             #Update character
             $queries[] = [
-                'UPDATE `ffxiv__character` SET `deleted` = UTC_DATE(), `enemyid` = (SELECT `enemyid` FROM `ffxiv__enemy` ORDER BY RAND() LIMIT 1) WHERE `characterid` = :id',
+                'UPDATE `ffxiv__character` SET `deleted` = COALESCE(`deleted`, UTC_DATE()), `enemyid` = COALESCE(`enemyid`, (SELECT `enemyid` FROM `ffxiv__enemy` ORDER BY RAND() LIMIT 1)) WHERE `characterid` = :id',
                 [':id'=>$this->id],
             ];
             return HomePage::$dbController->query($queries);

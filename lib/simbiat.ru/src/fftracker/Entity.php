@@ -39,17 +39,13 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Check if we have not updated before
         try {
-            if ($this::entityType === 'achievement') {
-                $updated = HomePage::$dbController->selectRow('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
-            } else {
-                $updated = HomePage::$dbController->selectRow('SELECT `updated`, `deleted` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
-            }
+            $updated = HomePage::$dbController->selectValue('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return false;
         }
         #Check if it has not been updated recently (10 minutes, to protect from potential abuse)
-        if (isset($updated['updated']) && (time() - strtotime($updated['updated'])) < 600) {
+        if (isset($updated) && (time() - strtotime($updated)) < 600) {
             #Return entity type
             return true;
         }
@@ -63,10 +59,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #If we got 404, mark as deleted, unless already marked
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
-            if (!isset($updated['deleted'])) {
-                return $this->delete();
-            }
-            return true;
+            return $this->delete();
         }
         unset($this->lodestone['404']);
         if (empty($this->lodestone['name'])) {

@@ -154,7 +154,7 @@ class Linkshell extends Entity
                             )
                             VALUES (
                                 :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
-                            )',
+                            ) ON DUPLICATE KEY UPDATE `deleted`=NULL, `enemyid`=NULL;',
                             [
                                 ':characterid'=>$member,
                                 ':server'=>$details['server'],
@@ -199,7 +199,7 @@ class Linkshell extends Entity
             ];
             #Update linkshell
             $queries[] = [
-                'UPDATE `ffxiv__linkshell` SET `deleted` = UTC_DATE() WHERE `linkshellid` = :id',
+                'UPDATE `ffxiv__linkshell` SET `deleted` = COALESCE(`deleted`, UTC_DATE()) WHERE `linkshellid` = :id',
                 [':id'=>$this->id],
             ];
             return HomePage::$dbController->query($queries);
