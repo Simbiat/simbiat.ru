@@ -208,6 +208,13 @@ function imgInit(img: HTMLImageElement): void
             link.appendChild(clone);
             //Replace original image with link
             img.replaceWith(link);
+        } else if (parent && parent.nodeName.toLowerCase() === 'a') {
+            //Handle existing anchor
+            (parent as HTMLAnchorElement).href = img.src;
+            (parent as HTMLAnchorElement).target = '_blank';
+            parent.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+            parent.classList.add('galleryZoom');
+            img.classList.contains('galleryZoom');
         }
     }
 }

@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '9cec247e2ee73ed86d9240ebfc1f7ee9cbebb867',
+        'reference' => '9a95c1aaf0c9ec34aead6e4812fb892d075398ed',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -169,7 +169,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'a6fb2a760c95f45ccb6a412599770061c330c624',
+            'reference' => '4996f27dd358c25f0613832b3008ea9c1e7e3feb',
             'type' => 'metapackage',
             'install_path' => NULL,
             'aliases' => array(
@@ -213,7 +213,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '9cec247e2ee73ed86d9240ebfc1f7ee9cbebb867',
+            'reference' => '9a95c1aaf0c9ec34aead6e4812fb892d075398ed',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
