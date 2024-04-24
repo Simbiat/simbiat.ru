@@ -38,6 +38,11 @@ class Homepage extends Page
         $outputArray['feedbacks'] =
             [
                 [
+                    'href' => '/static/resume/Signant/20240424.webp',
+                    'alt' => 'Feedback from Jaakko Anttonen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/jaakko/" target="_blank">Jaakko Anttonen</a>',
+                ],
+                [
                     'href' => '/static/resume/Signant/20240205.webp',
                     'alt' => 'Feedback from Alexandru Vacaru',
                     'caption' => 'Feedback from <a href="https://www.linkedin.com/in/alexandru-vacaru-tech/" target="_blank">Alexandru Vacaru</a>',
