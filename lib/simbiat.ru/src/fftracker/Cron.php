@@ -147,141 +147,65 @@ class Cron
     public function registerNew(): bool|string
     {
         $Lodestone = (new Lodestone);
+        $cron = (new \Simbiat\Cron);
         $dbCon = HomePage::$dbController;
-        #Generate list of pages to parse (every hour 256 pages to scan, 2 seconds delay for each?)
-        try {
-            $worlds = $dbCon->selectAll('
-                (
-                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'linkshell\' AS `entity` FROM `ffxiv__server`
-                    CROSS JOIN `ffxiv__orderby`
-                    CROSS JOIN `ffxiv__count_filter`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    WHERE `orderID` IN (1, 2, 3, 4)
-                )
-                UNION ALL
-                (
-                    SELECT `datacenter` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__orderby`
-                    CROSS JOIN `ffxiv__count_filter`
-                    CROSS JOIN (
-                        SELECT UNIQUE(`datacenter`) FROM `ffxiv__server`
-                    ) `dataCenters`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    WHERE `orderID` IN (1, 2, 3, 4)
-                )
-                UNION ALL
-                (
-                    SELECT `server` AS `world`, `orderID` AS `order`, `value` AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `ffxiv__server`
-                    CROSS JOIN `ffxiv__orderby`
-                    CROSS JOIN `ffxiv__count_filter`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    WHERE `orderID` IN (1, 2, 3, 4)
-                )
-                UNION ALL
-                (
-                    SELECT `server` AS `world`, 5 AS `order`, \'\' AS `count`, `page`, `gcId`, \'\' AS `clanid`, \'freecompany\' AS `entity` FROM `ffxiv__server`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 2 AS `page` UNION SELECT 3 AS `page` UNION SELECT 4 AS `page` UNION SELECT 5 AS `page` UNION SELECT 6 AS `page` UNION SELECT 7 AS `page` UNION SELECT 8 AS `page` UNION SELECT 9 AS `page` UNION SELECT 10 AS `page` UNION SELECT 11 AS `page` UNION SELECT 12 AS `page` UNION SELECT 13 AS `page` UNION SELECT 14 AS `page` UNION SELECT 15 AS `page` UNION SELECT 16 AS `page` UNION SELECT 17 AS `page` UNION SELECT 18 AS `page` UNION SELECT 19 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    CROSS JOIN `ffxiv__grandcompany`
-                    WHERE `gcId` <> 0
-                )
-                UNION ALL
-                (
-                    SELECT `server` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, `gcId`, `clanid`, \'character\' AS `entity` FROM `ffxiv__server`
-                    CROSS JOIN `ffxiv__orderby`
-                    CROSS JOIN `ffxiv__grandcompany`
-                    CROSS JOIN `ffxiv__clan`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    WHERE `orderID` IN (1, 2, 5, 6)
-                )
-                UNION ALL
-                (
-                    SELECT `datacenter` AS `world`, `orderID` AS `order`, \'\' AS `count`, `page`, \'\' AS `gcId`, \'\' AS `clanid`, \'pvpteam\' AS `entity` FROM `ffxiv__orderby`
-                    CROSS JOIN (
-                        SELECT UNIQUE(`datacenter`) FROM `ffxiv__server`
-                    ) `dataCenters`
-                    CROSS JOIN (
-                        SELECT 1 AS `page` UNION SELECT 20 AS `page`
-                    ) `pages`
-                    WHERE `orderID` IN (1, 2, 3, 4)
-                )
-                ;
-            ');
-        } catch (\Throwable $e) {
-            return 'Failed to generate pages list: '.$e->getMessage()."\r\n".$e->getTraceAsString();
+        #Try to register new characters
+        $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) FROM `ffxiv__character`;');
+        #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
+        $newMaxId = min($maxId + 100, 4294967295);
+        if ($maxId < $newMaxId) {
+            for ($character = $maxId + 1; $character <= $newMaxId; $character++) {
+                try {
+                    $cron->add('ffUpdateEntity', [$character, 'character'], message: 'Updating character with ID ' . $character);
+                } catch (\Throwable) {
+                    #Do nothing, not critical
+                }
+            }
         }
-        exit;
-
-        $request = 0;
+        return true;
+        #Below generates need to scan a total of 29440 pages (and will probably grow)
+        #Need to figure out a way to process this in a nice way
+        #Generate list of worlds for linkshells
+        $worlds = $dbCon->selectAll(
+                        'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
+                        UNION ALL
+                        SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;'
+        );
         #Loop through the servers
         foreach ($worlds as $world) {
-            #Loop through orders
+            #Loop through order filter
             foreach (['1', '2', '3', '4'] as $order) {
-                #Loop through counts
+                #Loop through number of members filter
                 foreach ([10, 30, 50, 51] as $count) {
-                    #Get linkshells
-                    $Lodestone->searchLinkshell('', $world, $count, $order);
-                    $Lodestone->searchLinkshell('', $world, $count, $order, 20);
-                    #Get free companies
-                    #Loop through Grand Companies
-                    foreach (['1', '2', '3'] as $gc) {
-                        $Lodestone->searchFreeCompany('', $world, $count, gcId: $gc, order: $order);
-                        $Lodestone->searchFreeCompany('', $world, $count, gcId: $gc, order: $order, page: 20);
-                    }
-                }
-            }
-            #Get the newest free companies
-            #Loop through pages
-            for ($page = 1; $page <= 20; $page++) {
-                #Loop through Grand Companies
-                foreach (['1', '2', '3'] as $gc) {
-                    $Lodestone->searchFreeCompany('', $world, $count, gcId: $gc, order: '5', page: $page);
-                }
-            }
-            #Get characters
-            #Loop through orders
-            foreach (['1', '2', '5', '6'] as $order) {
-                #Loop through Grand Companies
-                foreach (['1', '2', '3', '0'] as $gc) {
-                    #Loop through clans
-                    foreach ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] as $clan) {
-                        $Lodestone->searchCharacter('', $world, race_tribe: 'tribe_'.$clan, gcId: $gc, order: $order);
-                        $Lodestone->searchCharacter('', $world, race_tribe: 'tribe_'.$clan, gcId: $gc, order: $order, page: 20);
+                    #Loop through pages
+                    for ($page = 1; $page <= 20; $page++) {
+                        #Get linkshells
+                        $Lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
+                        #Get data
+                        $data = $Lodestone->getResult();
+                        #Reset Lodestone
+                        $Lodestone->setResult([]);
+                        if (!empty($data['linkshells'])) {
+                            #Clean data
+                            unset($data['linkshells']['pageCurrent'], $data['linkshells']['pageTotal'], $data['linkshells']['total']);
+                            #Get IDs
+                            $data = array_keys($data['linkshells']);
+                            #Iterrate through found items
+                            foreach ($data as $linkshell) {
+                                #Check if Linkshell exists in DB
+                                if (!$dbCon->check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
+                                    try {
+                                        $cron->add('ffUpdateEntity', [$linkshell, $world['entity']], message: 'Updating '.$world['entity'].' with ID '.$linkshell);
+                                    } catch (\Throwable) {
+                                        #Do nothing, not critical
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-        #Get list of data centers
-        try {
-            $worlds = $dbCon->selectUnique('SELECT `datacenter` FROM `ffxiv__server`');
-        } catch (\Throwable) {
-            $worlds = [];
-        }
-        #Loop through the servers
-        foreach ($worlds as $world) {
-            #Loop through orders
-            foreach (['1', '2', '3', '4'] as $order) {
-                #Loop through counts
-                foreach ([10, 30, 50, 51] as $count) {
-                    #Get crossworld linkshells
-                    $Lodestone->searchLinkshell('', $world['datacenter'], $count, $order, 1, true);
-                    $Lodestone->searchLinkshell('', $world['datacenter'], $count, $order, 20, true);
-                }
-                #Get PvP Teams
-                $Lodestone->searchPvPTeam('', $world['datacenter'], $order);
-                $Lodestone->searchPvPTeam('', $world['datacenter'], $order, 20);
-            }
-        }
-        $data = $Lodestone->getResult();
-        \Simbiat\Tests\Tests::testDump($data);
         return true;
     }
 }
