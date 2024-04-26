@@ -54,7 +54,8 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             try {
                 $tempLodestone = $this->getFromLodestone();
             } catch (\Throwable $exception) {
-                throw new \RuntimeException('Failed to get '.$this::entityType.' with ID '.$this->id, 0, $exception);
+                Errors::error_log($exception, 'Failed to get '.$this::entityType.' with ID '.$this->id, debug: $this->debug);
+                return $exception->getMessage()."\r\n".$exception->getTraceAsString();
             }
             if (!is_array($tempLodestone)) {
                 return $tempLodestone;
@@ -115,7 +116,8 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         try {
             $tempLodestone = $this->getFromLodestone();
         } catch (\Throwable $exception) {
-            throw new \RuntimeException('Failed to get '.$this::entityType.' with ID '.$this->id, 0, $exception);
+            Errors::error_log($exception, 'Failed to get '.$this::entityType.' with ID '.$this->id, debug: $this->debug);
+            return false;
         }
         if (!is_array($tempLodestone)) {
             return 503;
