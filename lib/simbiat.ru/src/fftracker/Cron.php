@@ -4,6 +4,8 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker;
 
+use Simbiat\Caching;
+use Simbiat\Config\FFTracker;
 use Simbiat\fftracker\Entities\Achievement;
 use Simbiat\fftracker\Entities\Character;
 use Simbiat\fftracker\Entities\CrossworldLinkshell;
@@ -144,67 +146,100 @@ class Cron
     }
 
     #Register new entities (if found)
-    public function registerNew(): bool|string
+    public function registerNewCharacters(): bool|string
     {
-        $Lodestone = (new Lodestone);
-        $cron = (new \Simbiat\Cron);
-        $dbCon = HomePage::$dbController;
-        #Try to register new characters
-        $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) FROM `ffxiv__character`;');
-        #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
-        $newMaxId = min($maxId + 100, 4294967295);
-        if ($maxId < $newMaxId) {
-            for ($character = $maxId + 1; $character <= $newMaxId; $character++) {
-                try {
-                    $cron->add('ffUpdateEntity', [$character, 'character'], message: 'Updating character with ID ' . $character);
-                } catch (\Throwable) {
-                    #Do nothing, not critical
+        try {
+            $cron = (new \Simbiat\Cron);
+            $dbCon = HomePage::$dbController;
+            #Try to register new characters
+            $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) FROM `ffxiv__character`;');
+            #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
+            $newMaxId = min($maxId + 100, 4294967295);
+            if ($maxId < $newMaxId) {
+                for ($character = $maxId + 1; $character <= $newMaxId; $character++) {
+                    $cron->add('ffUpdateEntity', [$character, 'character'], message: 'Updating character with ID '.$character);
                 }
             }
+        } catch (\Throwable $exception) {
+            return $exception->getMessage()."\r\n".$exception->getTraceAsString();
         }
         return true;
-        #Below generates need to scan a total of 29440 pages (and will probably grow)
-        #Need to figure out a way to process this in a nice way
-        #Generate list of worlds for linkshells
-        $worlds = $dbCon->selectAll(
-                        'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
-                        UNION ALL
-                        SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;'
-        );
-        #Loop through the servers
-        foreach ($worlds as $world) {
-            #Loop through order filter
-            foreach (['1', '2', '3', '4'] as $order) {
-                #Loop through number of members filter
-                foreach ([10, 30, 50, 51] as $count) {
-                    #Loop through pages
-                    for ($page = 1; $page <= 20; $page++) {
-                        #Get linkshells
-                        $Lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
-                        #Get data
-                        $data = $Lodestone->getResult();
-                        #Reset Lodestone
-                        $Lodestone->setResult([]);
-                        if (!empty($data['linkshells'])) {
-                            #Clean data
-                            unset($data['linkshells']['pageCurrent'], $data['linkshells']['pageTotal'], $data['linkshells']['total']);
-                            #Get IDs
-                            $data = array_keys($data['linkshells']);
-                            #Iterrate through found items
-                            foreach ($data as $linkshell) {
-                                #Check if Linkshell exists in DB
-                                if (!$dbCon->check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
-                                    try {
-                                        $cron->add('ffUpdateEntity', [$linkshell, $world['entity']], message: 'Updating '.$world['entity'].' with ID '.$linkshell);
-                                    } catch (\Throwable) {
-                                        #Do nothing, not critical
+    }
+    
+    public function registerNewLinkshells(): bool|string
+    {
+        try {
+            $Lodestone = (new Lodestone);
+            $cron = (new \Simbiat\Cron);
+            $dbCon = HomePage::$dbController;
+            #Generate list of worlds for linkshells
+            $worlds = $dbCon->selectAll(
+                            'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
+                            UNION ALL
+                            SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;'
+            );
+            #Get cache
+            $cachePath = FFTracker::$statistics.'linkshellPages.json';
+            $json = (new Caching())->getArrayFromFile($cachePath);
+            #Loop through the servers
+            $pagesParsed = 0;
+            echo 'start: '.time().'<br>';
+            foreach ($worlds as $world) {
+                #Loop through order filter
+                foreach (['1', '2', '3', '4'] as $order) {
+                    #Loop through number of members filter
+                    foreach ([10, 30, 50, 51] as $count) {
+                        #Loop through pages
+                        for ($page = 1; $page <= 20; $page++) {
+                            if (!isset($json[$world['entity']][$world['world']][$order][$count][$page]) ||
+                                #Count of 0 may mean that last attempt failed (rate limit or maintenance)
+                                $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
+                                #Cycle through everything every 5 days. At the time of writing there should be less than 30000 pages, with 500 pages per hourly scan, full cycle finishes in less than 3 days
+                                time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
+                            ) {
+                                $pagesParsed++;
+                                #Get linkshells
+                                $Lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
+                                #Get data
+                                $data = $Lodestone->getResult();
+                                $pageTotal = (int)($data['linkshells']['pageTotal'] ?? 0);
+                                if ($pageTotal === 0) {
+                                    continue 2;
+                                }
+                                #Reset Lodestone
+                                $Lodestone->setResult([]);
+                                if (!empty($data['linkshells'])) {
+                                    #Clean data
+                                    unset($data['linkshells']['pageCurrent'], $data['linkshells']['pageTotal'], $data['linkshells']['total']);
+                                    #Get IDs
+                                    $data = array_keys($data['linkshells']);
+                                    #Iterrate through found items
+                                    foreach ($data as $linkshell) {
+                                        echo 'linkshell: '.$linkshell.'<br>';
+                                        #Check if Linkshell exists in DB
+                                        if (!$dbCon->check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
+                                            $cron->add('ffUpdateEntity', [$linkshell, $world['entity']], message: 'Updating '.$world['entity'].' with ID '.$linkshell);
+                                        }
                                     }
+                                    #Attempt to update cache
+                                    $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => time(), 'count' => count($data)];
+                                    file_put_contents($cachePath, json_encode($json, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
+                                }
+                                if ($pagesParsed === 500) {
+                                    #Do not parse more than 200 pages at a time
+                                    echo 'end: '.time().'<br>';
+                                    return true;
+                                }
+                                if ($page === $pageTotal) {
+                                    continue 2;
                                 }
                             }
                         }
                     }
                 }
             }
+        } catch (\Throwable $exception) {
+            return $exception->getMessage()."\r\n".$exception->getTraceAsString();
         }
         return true;
     }

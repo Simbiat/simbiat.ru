@@ -34,3 +34,11 @@ INSERT IGNORE INTO `cron__schedule` (`task`, `arguments`, `frequency`, `dayofmon
 ('sessionClean', '', 300, NULL, NULL, 9, 'Removing old sessions', 0, NULL, 0, '2018-06-21 18:23:56', '2018-06-21 18:23:56', '2022-10-21 14:25:00', '2022-10-21 14:20:00', '2022-10-21 14:20:00', '2022-10-21 14:15:00'),
 ('sitemap', '', 86400, NULL, NULL, 0, 'Generating sitemap files', 0, NULL, 0, '2022-10-21 13:51:44', '2022-10-21 13:51:44', '2022-10-21 21:00:00', '2022-10-21 14:21:45', '2022-10-21 14:21:47', NULL),
 ('statisticsClean', '', 2592000, NULL, NULL, 0, 'Removing old statistical data', 0, NULL, 0, '2021-12-31 17:46:38', '2021-12-31 17:46:38', '2022-10-27 17:46:38', '2022-10-21 14:31:28', '2022-10-21 14:31:28', NULL);
+
+INSERT IGNORE INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `allowedreturns`, `maxTime`, `description`) VALUES
+('ffNewCharacters', 'registerNewCharacters', '\\Simbiat\\fftracker\\Cron', NULL, NULL, 3600, 'Schedule jobs to add potential new characters'),
+('ffNewLinkshells', 'registerNewLinkshells', '\\Simbiat\\fftracker\\Cron', NULL, NULL, 3600, 'Check for potential new linkshells and schedule jobs for them');
+
+INSERT IGNORE INTO `cron__schedule` (`task`, `arguments`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`) VALUES
+('ffNewCharacters', '', 86400, NULL, NULL, 0, 'Scheduling potential new character', '2024-04-27 12:00:00'),
+('ffNewLinkshells', '', 3600, NULL, NULL, 0, 'Checking for new linkshells', '2022-04-27 01:00:00');
