@@ -51,7 +51,11 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         }
         #Try to get data from Lodestone, if not already taken
         if (!is_array($this->lodestone)) {
-            $tempLodestone = $this->getFromLodestone();
+            try {
+                $tempLodestone = $this->getFromLodestone();
+            } catch (\Throwable $exception) {
+                throw new \RuntimeException('Failed to get '.$this::entityType.' with ID '.$this->id, 0, $exception);
+            }
             if (!is_array($tempLodestone)) {
                 return $tempLodestone;
             }
@@ -108,7 +112,11 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
             return 409;
         }
         #Try to get data from Lodestone
-        $tempLodestone = $this->getFromLodestone();
+        try {
+            $tempLodestone = $this->getFromLodestone();
+        } catch (\Throwable $exception) {
+            throw new \RuntimeException('Failed to get '.$this::entityType.' with ID '.$this->id, 0, $exception);
+        }
         if (!is_array($tempLodestone)) {
             return 503;
         }
