@@ -100,7 +100,7 @@ class Linkshell extends Entity
         try {
             #Main query to insert or update a Linkshell
             $queries[] = [
-                'INSERT INTO `ffxiv__linkshell`(`linkshellid`, `name`, `manual`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :manual, :crossworld, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server LIMIT 1), `communityid`=:communityid;',
+                'INSERT INTO `ffxiv__linkshell`(`linkshellid`, `name`, `manual`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :manual, :crossworld, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1), `communityid`=:communityid;',
                 [
                     ':linkshellid'=>$this->id,
                     ':server'=>$this->lodestone['server'] ?? $this->lodestone['dataCenter'],
