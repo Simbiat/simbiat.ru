@@ -178,7 +178,7 @@ class Statistics
                 #Get achievements statistics
                 $data['achievements'] = $dbCon->SelectAll('SELECT \'achievement\' as `type`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`icon`, `ffxiv__achievement`.`name` AS `name`, `count` FROM (SELECT `ffxiv__character_achievement`.`achievementid`, count(`ffxiv__character_achievement`.`achievementid`) AS `count` from `ffxiv__character_achievement` GROUP BY `ffxiv__character_achievement`.`achievementid` ORDER BY `count`) `tempresult` INNER JOIN `ffxiv__achievement` ON `tempresult`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__achievement`.`category` IS NOT NULL ORDER BY `count`');
                 #Split achievements by categories
-                $data['achievements'] = ArrayHelpers::splitByKey($data['achievements'], 'category', [], []);
+                $data['achievements'] = ArrayHelpers::splitByKey($data['achievements'], 'category');
                 #Get only top 20 for each category
                 foreach ($data['achievements'] as $key=>$category) {
                     $data['achievements'][$key] = array_slice($category, 0, 20);
@@ -232,6 +232,42 @@ class Statistics
                         SELECT `pvpteamid` AS `id`, `name`, \'pvpteam\' AS `type`, `crest_part_1`, `crest_part_2`, `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__pvpteam` as `pvp` WHERE `deleted` IS NULL AND `pvpteamid` NOT IN (SELECT `pvpteamid` FROM `ffxiv__pvpteam_character` WHERE `pvpteamid`=`pvp`.`pvpteamid` AND `current`=1)
                         ORDER BY `name`;'
                 ));
+                #Get entities with duplicate names
+                $duplicateNames = $dbCon->SelectAll(
+                    'SELECT \'character\' AS `type`, `characterid` AS `id`, `name`, `avatar` as `icon`, `userid`, NULL as `crest_part_1`, NULL as `crest_part_2`, NULL as `crest_part_3`, `server`, `datacenter` FROM `ffxiv__character` as `chartable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`chartable`.`serverid` WHERE `deleted` is NULL AND (SELECT COUNT(*) FROM `ffxiv__character` WHERE `ffxiv__character`.`name`=`chartable`.`name` AND `ffxiv__character`.`serverid`=`chartable`.`serverid` AND `deleted` is NULL)>1
+                            UNION ALL
+                            SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `name`, NULL as `icon`, NULL as `userid`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `server`, `datacenter`  FROM `ffxiv__freecompany` as `fctable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`fctable`.`serverid` WHERE `deleted` is NULL AND (SELECT COUNT(*) FROM `ffxiv__freecompany` WHERE `ffxiv__freecompany`.`name`= BINARY `fctable`.`name` AND `ffxiv__freecompany`.`serverid`=`fctable`.`serverid` AND `deleted` is NULL)>1
+                            UNION ALL
+                            SELECT \'pvpteam\' AS `type`, `pvpteamid` AS `id`, `name`, NULL as `icon`, NULL as `userid`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `server`, `datacenter`  FROM `ffxiv__pvpteam` as `pvptable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`pvptable`.`datacenterid` WHERE `deleted` is NULL AND (SELECT COUNT(*) FROM `ffxiv__pvpteam` WHERE `ffxiv__pvpteam`.`name`= BINARY `pvptable`.`name` AND `ffxiv__pvpteam`.`datacenterid`=`pvptable`.`datacenterid` AND `deleted` is NULL)>1
+                            UNION ALL
+                            SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `name`, NULL as `icon`, NULL as `userid`, NULL as `crest_part_1`, NULL as `crest_part_2`, NULL as `crest_part_3`, `server`, `datacenter`  FROM `ffxiv__linkshell` as `lstable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`lstable`.`serverid` WHERE `deleted` is NULL AND (SELECT COUNT(*) FROM `ffxiv__linkshell` WHERE `ffxiv__linkshell`.`name`= BINARY `lstable`.`name` AND `ffxiv__linkshell`.`serverid`=`lstable`.`serverid` AND `deleted` is NULL AND `ffxiv__linkshell`.`crossworld`=`lstable`.`crossworld`)>1;'
+                );
+                #Split by entity type
+                $data['bugs']['duplicateNames'] = ArrayHelpers::splitByKey($duplicateNames, 'type', keepKey: true);
+                foreach ($data['bugs']['duplicateNames'] as $entityType=>$namesData) {
+                    #Split by server/datacenter
+                    $data['bugs']['duplicateNames'][$entityType] = ArrayHelpers::splitByKey($namesData, (in_array($entityType, ['pvpteam', 'crosswordlinkshell']) ? 'datacenter' : 'server'));
+                    foreach ($data['bugs']['duplicateNames'][$entityType] as $server=>$serverData) {
+                        #Split by name
+                        $data['bugs']['duplicateNames'][$entityType][$server] = ArrayHelpers::splitByKey($serverData, 'name', keepKey: true, caseInsensitive: true);
+                        foreach ($data['bugs']['duplicateNames'][$entityType][$server] as $name=>$nameData) {
+                            if (in_array($entityType, ['freecompany', 'pvpteam'])) {
+                                $nameData = Entity::cleanCrestResults($nameData);
+                            }
+                            foreach ($nameData as $key=>$duplicates) {
+                                #Clean up
+                                unset($duplicates['crest_part_1'], $duplicates['crest_part_2'], $duplicates['crest_part_3']);
+                                if (in_array($entityType, ['crossworldlinkshell', 'pvpteam'])) {
+                                    unset($duplicates['server']);
+                                } else {
+                                    unset($duplicates['datacenter']);
+                                }
+                                #Update array
+                                $data['bugs']['duplicateNames'][$entityType][$server][$name][$key] = $duplicates;
+                            }
+                        }
+                    }
+                }
                 break;
             case 'other':
                 #Communities
@@ -271,6 +307,15 @@ class Statistics
             }
             foreach ($data['bugs']['noMembers'] as $group) {
                 $cron->add('ffUpdateEntity', [(string)$group['id'], $group['type']], message: 'Updating group with ID '.$group['id']);
+            }
+            foreach ($data['bugs']['duplicateNames'] as $servers) {
+                foreach ($servers as $server) {
+                    foreach ($server as $names) {
+                        foreach ($names as $duplicate) {
+                            $cron->add('ffUpdateEntity', [(string)$duplicate['id'], $duplicate['type']], message: 'Updating entity with ID '.$duplicate['id']);
+                        }
+                    }
+                }
             }
         }
         return $data;

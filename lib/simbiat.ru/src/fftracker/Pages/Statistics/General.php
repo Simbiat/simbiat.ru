@@ -21,6 +21,7 @@ class General extends Page
     protected string $ogdesc = 'Statistics';
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $requiredPermission = ['viewFF'];
+    protected bool $static = true;
     #Name of JSON file to attempt to ingest
     protected string $jsonToIngest = '';
     
