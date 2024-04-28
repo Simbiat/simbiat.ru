@@ -59,7 +59,7 @@
     </tr>
     {% for affiliation in ffstats.data.characters.groups.participation %}
         <tr>
-            <td>{{ affiliation.value }}</td>
+            <td>{{ affiliation.affiliation }}</td>
             <td>{{ affiliation.count }}</td>
         </tr>
     {% endfor %}
@@ -133,11 +133,13 @@
     <caption><h2>Character distribution by server</h2></caption>
     <tr>
         <th>Server</th>
+        <th>Gender</th>
         <th>Characters</th>
     </tr>
     {% for datapoint in ffstats.data.servers.characters %}
         <tr>
             <td>{{ datapoint.value }}</td>
+            <td>{% if datapoint.genderid == 0 %}♀{% else %}♂{% endif %}</td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}

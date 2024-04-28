@@ -27,8 +27,6 @@ class Statistics
             throw new \RuntimeException(sprintf('Directory "%s" was not created', FFTracker::$statistics));
         }
         $cachePath = FFTracker::$statistics.$type.'.json';
-        #Get cache
-        $json = (new Caching())->getArrayFromFile($cachePath);
         #Get Lodestone object for optimization
         $Lodestone = (new Converters);
         #Get ArrayHelpers object for optimization
@@ -188,37 +186,46 @@ class Statistics
                 break;
             case 'timelines':
                 #Get namedays timeline. Using custom SQL, since need special order by `namedayid`, instead of by `count`
-                $data['namedays'] = $dbCon->SelectAll('SELECT `ffxiv__nameday`.`nameday` AS `value`, COUNT(`ffxiv__character`.`namedayid`) AS `count` FROM `ffxiv__character` INNER JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid`=`ffxiv__nameday`.`namedayid` GROUP BY `ffxiv__nameday`.`namedayid` ORDER BY `ffxiv__nameday`.`namedayid`');
+                $data['namedays'] = $dbCon->SelectAll('SELECT `ffxiv__nameday`.`nameday` AS `value`, COUNT(`ffxiv__character`.`namedayid`) AS `count` FROM `ffxiv__character` INNER JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid`=`ffxiv__nameday`.`namedayid` GROUP BY `ffxiv__nameday`.`namedayid` ORDER BY `count` DESC;');
                 #Timeline of entities formation, updates, etc.
                 $data['timelines'] = $dbCon->SelectAll(
-                    'SELECT
-                                DATE(`updated`) AS `date`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__character\' THEN `registered` END) AS `characters_registered`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__character\' THEN `deleted` END) AS `characters_deleted`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__character\' THEN `updated` END) AS `characters_updated`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__freecompany\' THEN `registered` END) AS `free_companies_registered`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__freecompany\' THEN `deleted` END) AS `free_companies_deleted`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__freecompany\' THEN `updated` END) AS `free_companies_updated`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__freecompany\' THEN `formed` END) AS `free_companies_formed`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__linkshell\' THEN `registered` END) AS `linkshells_registered`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__linkshell\' THEN `deleted` END) AS `linkshells_deleted`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__linkshell\' THEN `updated` END) AS `linkshells_updated`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__linkshell\' THEN `formed` END) AS `linkshells_formed`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__pvpteam\' THEN `registered` END) AS `pvp_teams_registered`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__pvpteam\' THEN `deleted` END) AS `pvp_teams_deleted`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__pvpteam\' THEN `updated` END) AS `pvp_teams_updated`,
-                                COUNT(CASE WHEN `table_name` = \'ffxiv__pvpteam\' THEN `formed` END) AS `pvp_teams_formed`
-                            FROM (
-                                SELECT \'ffxiv__character\' AS `table_name`, `updated`, `registered`, `deleted`, NULL AS `formed` FROM `ffxiv__character`
-                                UNION ALL
-                                SELECT \'ffxiv__freecompany\' AS `table_name`, `updated`, `registered`, `deleted`, `formed` FROM `ffxiv__freecompany`
-                                UNION ALL
-                                SELECT \'ffxiv__linkshell\' AS `table_name`, `updated`, `registered`, `deleted`, `formed` FROM `ffxiv__linkshell`
-                                UNION ALL
-                                SELECT \'ffxiv__pvpteam\' AS `table_name`, `updated`, `registered`, `deleted`, `formed` FROM `ffxiv__pvpteam`
-                            ) AS `all_data`
-                            GROUP BY `date` DESC LIMIT 5000;'
+                    'SELECT * FROM (
+                                SELECT `registered` AS `date`, COUNT(*) AS `count`, \'characters_registered\' as `type` FROM `ffxiv__character` GROUP BY `date`
+                                UNION
+                                SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'characters_deleted\' as `type` FROM `ffxiv__character` WHERE `deleted` IS NOT NULL GROUP BY `date`
+                                UNION
+                                SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'characters_updated\' as `type` FROM `ffxiv__character` GROUP BY `date`
+                                UNION
+                                SELECT `formed` AS `date`, COUNT(*) AS `count`, \'free_companies_formed\' as `type` FROM `ffxiv__freecompany` GROUP BY `date`
+                                UNION
+                                SELECT `registered` AS `date`, COUNT(*) AS `count`, \'free_companies_registered\' as `type` FROM `ffxiv__freecompany` GROUP BY `date`
+                                UNION
+                                SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'free_companies_deleted\' as `type` FROM `ffxiv__freecompany` WHERE `deleted` IS NOT NULL GROUP BY `date`
+                                UNION
+                                SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'free_companies_updated\' as `type` FROM `ffxiv__freecompany` GROUP BY `date`
+                                UNION
+                                SELECT `formed` AS `date`, COUNT(*) AS `count`, \'pvp_teams_formed\' as `type` FROM `ffxiv__pvpteam` WHERE `formed` IS NOT NULL GROUP BY `date`
+                                UNION
+                                SELECT `registered` AS `date`, COUNT(*) AS `count`, \'pvp_teams_registered\' as `type` FROM `ffxiv__pvpteam` GROUP BY `date`
+                                UNION
+                                SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'pvp_teams_deleted\' as `type` FROM `ffxiv__pvpteam` WHERE `deleted` IS NOT NULL GROUP BY `date`
+                                UNION
+                                SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'pvp_teams_updated\' as `type` FROM `ffxiv__pvpteam` GROUP BY `date`
+                                UNION
+                                SELECT `formed` AS `date`, COUNT(*) AS `count`, \'linkshells_formed\' as `type` FROM `ffxiv__linkshell` WHERE `formed` IS NOT NULL GROUP BY `date`
+                                UNION
+                                SELECT `registered` AS `date`, COUNT(*) AS `count`, \'linkshells_registered\' as `type` FROM `ffxiv__linkshell` GROUP BY `date`
+                                UNION
+                                SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'linkshells_deleted\' as `type` FROM `ffxiv__linkshell` WHERE `deleted` IS NOT NULL GROUP BY `date`
+                                UNION
+                                SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'linkshells_updated\' as `type` FROM `ffxiv__linkshell` GROUP BY `date`
+                            ) AS `alldata`'
                 );
+                $data['timelines'] = ArrayHelpers::splitByKey($data['timelines'], 'date');
+                foreach ($data['timelines'] as $date=>$datapoint) {
+                    $data['timelines'][$date] = ArrayHelpers::MultiToSingle(ArrayHelpers::DigitToKey($datapoint, 'type', true), 'count');
+                }
+                krsort($data['timelines']);
                 break;
             case 'bugs':
                 #Characters with no clan/race
@@ -298,7 +305,7 @@ class Statistics
         }
         unset($dbCon, $ArrayHelpers, $Lodestone);
         #Attempt to write to cache
-        file_put_contents($cachePath, json_encode(array_merge($json, $data), JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
+        file_put_contents($cachePath, json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
         if ($type === 'bugs') {
             #These may be because of temporary issues on parser or Lodestone side, so schedule them for update
             $cron = (new Cron);
