@@ -12,9 +12,9 @@ class Library
 {
     private string $fileDate;
     #Base link where we download BIC files
-    const bicDownBase = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
+    const string bicDownBase = 'https://www.cbr.ru/PSystem/payment_system/?UniDbQuery.Posted=True&UniDbQuery.To=';
     #Base link for href attribute
-    const bicBaseHref = 'https://www.cbr.ru';
+    const string bicBaseHref = 'https://www.cbr.ru';
 
     #Function to update library in database
     /**

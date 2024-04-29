@@ -45,7 +45,7 @@ class Curl
     #cURL Handle is static to allow reuse of single instance, if possible and needed
     public static \CurlHandle|null|false $curlHandle = null;
     #Allowed MIME types
-    public const allowedMime = [
+    public const array allowedMime = [
         #For now only images
         'image/avif','image/bmp','image/gif','image/jpeg','image/png','image/webp','image/svg+xml'
     ];

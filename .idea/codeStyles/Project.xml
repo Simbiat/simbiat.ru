@@ -23,6 +23,10 @@
       <option name="CHAINED_CALL_DOT_ON_NEW_LINE" value="false" />
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </JSCodeStyleSettings>
+    <Markdown>
+      <option name="WRAP_TEXT_IF_LONG" value="false" />
+      <option name="WRAP_TEXT_INSIDE_BLOCKQUOTES" value="false" />
+    </Markdown>
     <PHPCodeStyleSettings>
       <option name="ALIGN_PHPDOC_PARAM_NAMES" value="true" />
       <option name="ALIGN_PHPDOC_COMMENTS" value="true" />
@@ -33,12 +37,11 @@
       <option name="LOWER_CASE_BOOLEAN_CONST" value="true" />
       <option name="LOWER_CASE_NULL_CONST" value="true" />
       <option name="ELSE_IF_STYLE" value="COMBINE" />
-      <option name="SPACES_AROUND_VAR_WITHIN_BRACKETS" value="true" />
       <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
       <option name="SPACE_AROUND_ASSIGNMENT_IN_DECLARE" value="true" />
       <option name="PHPDOC_USE_FQCN" value="true" />
     </PHPCodeStyleSettings>
-    <SqlCodeStyleSettings version="6">
+    <SqlCodeStyleSettings version="7">
       <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
       <option name="TYPE_CASE" value="3" />

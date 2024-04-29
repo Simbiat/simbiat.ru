@@ -143,7 +143,7 @@ class Images
         $chunk = false;
         while(!feof($fh) && $count < 2) {
             //add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            $chunk = ($chunk ? mb_substr($chunk, -20, 'UTF-8') : '') . fread($fh, 1024 * 100); //read 100kb at a time
+            $chunk = ($chunk ? mb_substr($chunk, -20, encoding: 'UTF-8') : '').fread($fh, 1024 * 100); //read 100kb at a time
             $count += preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
         fclose($fh);

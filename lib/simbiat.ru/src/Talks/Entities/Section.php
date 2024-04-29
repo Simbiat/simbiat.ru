@@ -13,7 +13,7 @@ use Simbiat\Talks\Search\Threads;
 
 class Section extends Entity
 {
-    protected const entityType = 'section';
+    protected const string entityType = 'section';
     protected string $idFormat = '/^top|\d+$/mi';
     public string $name = '';
     public string $type = 'Category';

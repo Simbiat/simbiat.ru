@@ -1,0 +1,9 @@
+version: "1.0"
+linter: jetbrains/qodana-php:2023.3
+php:
+    version: "8.3"
+raiseLicenseProblems: true
+include:
+    -   name: CheckDependencyLicenses
+    -   name: PhpVulnerablePathsInspection
+    -   name: VulnerableLibrariesGlobal
