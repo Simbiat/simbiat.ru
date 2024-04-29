@@ -1,6 +1,0 @@
-!.gitignore
-!.htaccess
-auth.json
-vendor/
-!vendor/composer
-composer.phar

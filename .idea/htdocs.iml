@@ -19,10 +19,8 @@
       <sourceFolder url="file://$MODULE_DIR$/img/fftracker/icons" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/img/devicedetector" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/img/fftracker/crests-components" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/mustangostang/spyc" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/matomo/device-detector" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/twig/twig" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/composer" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/dbhelper" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
@@ -30,30 +28,34 @@
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/vcs" />
       <excludeFolder url="file://$MODULE_DIR$/twig/cache" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/polyfill-ctype" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/polyfill-mbstring" />
       <excludeFolder url="file://$MODULE_DIR$/DDL" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/ralouphie/getallheaders" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/http-message" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/simple-cache" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/ipinfo/ipinfo" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/deprecation-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sabre/cache" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/guzzlehttp/psr7" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/http-client" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/psr/http-factory" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/guzzlehttp/guzzle" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/guzzlehttp/promises" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/league/uri" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/league/uri-interfaces" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/html-sanitizer" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/masterminds/html5" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/tinymce/tinymce" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sendgrid/php-http-client" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/sendgrid/sendgrid" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/starkbank/ecdsa" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/twig" />
-      <excludeFolder url="file://$MODULE_DIR$/composer/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/guzzle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/promises" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/psr7" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ipinfo/ipinfo" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/masterminds/html5" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/matomo/device-detector" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mustangostang/spyc" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-factory" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ralouphie/getallheaders" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sabre/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sendgrid/php-http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/sendgrid/sendgrid" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/starkbank/ecdsa" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/deprecation-contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/html-sanitizer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-ctype" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/tinymce/tinymce" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

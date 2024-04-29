@@ -147,5 +147,8 @@ dist
 # Error logs
 /error*.log
 # Folder with some legacy code, that may still be useful
-/!oldcode/
 /backup.php
+#Composer
+/vendor/
+!/vendor/composer/
+!/vendor/autoload.php

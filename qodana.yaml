@@ -1,5 +1,5 @@
 version: "1.0"
-bootstrap: cd ./composer&&composer install --ignore-platform-reqs
+bootstrap: composer install --ignore-platform-reqs
 linter: jetbrains/qodana-php:2024.1
 php:
     version: "8.3"

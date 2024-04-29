@@ -3,7 +3,7 @@
         'name' => 'simbiat/simbiat.ru',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '9a95c1aaf0c9ec34aead6e4812fb892d075398ed',
+        'reference' => '1b7af36c7d93e126f5c9944a93836cd82e1190fb',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -169,7 +169,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '4996f27dd358c25f0613832b3008ea9c1e7e3feb',
+            'reference' => 'c9920ef42818bc65373cec1acc26bdee7a487e72',
             'type' => 'metapackage',
             'install_path' => NULL,
             'aliases' => array(
@@ -213,7 +213,7 @@
         'simbiat/simbiat.ru' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '9a95c1aaf0c9ec34aead6e4812fb892d075398ed',
+            'reference' => '1b7af36c7d93e126f5c9944a93836cd82e1190fb',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -238,9 +238,9 @@
             'dev_requirement' => false,
         ),
         'symfony/html-sanitizer' => array(
-            'pretty_version' => 'v6.4.4',
-            'version' => '6.4.4.0',
-            'reference' => '83e1dc8b49345e078cfa21bd4c563dfa99c5ed63',
+            'pretty_version' => 'v6.4.7',
+            'version' => '6.4.7.0',
+            'reference' => '0ff5d77e3160c15db3dbc3515a4f0143e3e4a218',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/html-sanitizer',
             'aliases' => array(),

@@ -1,15 +1,15 @@
 {
     "name": "simbiat/simbiat.ru",
     "description": "Package for simbiat.dev",
-    "prefer-stable" : true,
+    "prefer-stable": true,
     "minimum-stability": "dev",
     "license": "AGPL-3.0-or-later",
     "authors": [
         {
-          "name": "Dmitry Kustov",
-          "email": "simbiat@outlook.com",
-          "homepage": "https://www.simbiat.dev",
-          "role": "Developer"
+            "name": "Dmitry Kustov",
+            "email": "simbiat@outlook.com",
+            "homepage": "https://www.simbiat.dev",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -36,24 +36,24 @@
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
-    "autoload":  {
+    "autoload": {
         "classmap": [
-            "../lib/AccountKeying/src",
-            "../lib/array2table/src",
-            "../lib/ArrayHelpers/src",
-            "../lib/Cron/src",
-            "../lib/cute-bytes/src",
-            "../lib/database/src",
-            "../lib/filename-sanitizer/src",
-            "../lib/HTMLCut/src",
-            "../lib/HTTP20/src",
-            "../lib/lodestone-parser/src",
-            "../lib/optimize-tables/src",
-            "../lib/sand-clock/src",
-            "../lib/nl2tag/src"
+            "./lib/AccountKeying/src",
+            "./lib/array2table/src",
+            "./lib/ArrayHelpers/src",
+            "./lib/Cron/src",
+            "./lib/cute-bytes/src",
+            "./lib/database/src",
+            "./lib/filename-sanitizer/src",
+            "./lib/HTMLCut/src",
+            "./lib/HTTP20/src",
+            "./lib/lodestone-parser/src",
+            "./lib/optimize-tables/src",
+            "./lib/sand-clock/src",
+            "./lib/nl2tag/src"
         ],
         "psr-4": {
-            "Simbiat\\": "../lib/simbiat.ru/src"
+            "Simbiat\\": "./lib/simbiat.ru/src"
         }
     },
     "config": {
@@ -62,8 +62,8 @@
         "platform": {
             "php": "8.3"
         },
-        "data-dir": "../data/composer",
-        "cache-dir": "../data/cache/composer",
+        "data-dir": "./data/composer",
+        "cache-dir": "./data/cache/composer",
         "preferred-install": "source",
         "optimize-autoloader": true,
         "classmap-authoritative": true,
