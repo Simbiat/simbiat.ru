@@ -4,6 +4,9 @@ php:
     version: "8.3"
 raiseLicenseProblems: true
 include:
-    -   name: CheckDependencyLicenses
-    -   name: PhpVulnerablePathsInspection
-    -   name: VulnerableLibrariesGlobal
+  - name: CheckDependencyLicenses
+  - name: PhpVulnerablePathsInspection
+  - name: VulnerableLibrariesGlobal
+  - name: PhpComposerExtensionStubsInspection
+  - name: RegExpSimplifiable
+  - name: PhpUnusedAliasInspection
