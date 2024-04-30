@@ -22,8 +22,11 @@ const tinySettings = {
     'block_unsupported_drop': true,
     'branding': true,
     'browser_spellcheck': true,
-    'color_map': Object.keys(customColorMap).map((key) => { return [key, customColorMap[key]]; }).
-                                                                                                    flat(),
+    'color_map': Object.keys(customColorMap)
+                       .map((key) => {
+                           return [key, customColorMap[key]];
+                       })
+                       .flat(),
     'content_css': '/css/tinymce.css',
     'content_security_policy': "default-src 'self'",
     'contextmenu': 'emoticons link image',
@@ -59,8 +62,10 @@ const tinySettings = {
         'forecolor': {
             'attributes': {
                 // @ts-expect-error: I do not remember where I've taken this code example and what type `value` is supposed to be
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                'class': (value): string => { return `tiny-color-${String(customColorMap[value.value])}`; },
+                'class': (value): string => {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    return `tiny-color-${String(customColorMap[value.value])}`;
+                },
             },
             'inline': 'span',
             'remove': 'none',
@@ -68,48 +73,74 @@ const tinySettings = {
         'hilitecolor': {
             'attributes': {
                 // @ts-expect-error: I do not remember where I've taken this code example and what type `value` is supposed to be
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                'class': (value): string => { return `tiny-bg-color-${String(customColorMap[value.value])}`; },
+                'class': (value): string => {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    return `tiny-bg-color-${String(customColorMap[value.value])}`;
+                },
             },
             'inline': 'span',
             'remove': 'none',
         },
-        'list-circle': { 'classes': 'tiny-list-circle',
+        'list-circle': {
+            'classes': 'tiny-list-circle',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-decimal': { 'classes': 'tiny-list-decimal',
+            'selector': 'ul,ul>li'
+        },
+        'list-decimal': {
+            'classes': 'tiny-list-decimal',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-decimal-leading-zero': { 'classes': 'tiny-list-decimal-leading-zero',
+            'selector': 'ol,ol>li'
+        },
+        'list-decimal-leading-zero': {
+            'classes': 'tiny-list-decimal-leading-zero',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-disc': { 'classes': 'tiny-list-disc',
+            'selector': 'ol,ol>li'
+        },
+        'list-disc': {
+            'classes': 'tiny-list-disc',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-disclosure-closed': { 'classes': 'tiny-list-disclosure-closed',
+            'selector': 'ul,ul>li'
+        },
+        'list-disclosure-closed': {
+            'classes': 'tiny-list-disclosure-closed',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-disclosure-open': { 'classes': 'tiny-list-disclosure-open',
+            'selector': 'ul,ul>li'
+        },
+        'list-disclosure-open': {
+            'classes': 'tiny-list-disclosure-open',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-lower-alpha': { 'classes': 'tiny-list-lower-alpha',
+            'selector': 'ul,ul>li'
+        },
+        'list-lower-alpha': {
+            'classes': 'tiny-list-lower-alpha',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-lower-greek': { 'classes': 'tiny-list-lower-greek',
+            'selector': 'ol,ol>li'
+        },
+        'list-lower-greek': {
+            'classes': 'tiny-list-lower-greek',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-lower-roman': { 'classes': 'tiny-list-lower-roman',
+            'selector': 'ol,ol>li'
+        },
+        'list-lower-roman': {
+            'classes': 'tiny-list-lower-roman',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-square': { 'classes': 'tiny-list-square',
+            'selector': 'ol,ol>li'
+        },
+        'list-square': {
+            'classes': 'tiny-list-square',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-upper-alpha': { 'classes': 'tiny-list-upper-alpha',
+            'selector': 'ul,ul>li'
+        },
+        'list-upper-alpha': {
+            'classes': 'tiny-list-upper-alpha',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-upper-roman': { 'classes': 'tiny-list-upper-roman',
+            'selector': 'ol,ol>li'
+        },
+        'list-upper-roman': {
+            'classes': 'tiny-list-upper-roman',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
+            'selector': 'ol,ol>li'
+        },
         'underline': {
             'classes': 'tiny-underline',
             'inline': 'span',
@@ -135,8 +166,10 @@ const tinySettings = {
     'image_advtab': false,
     'image_caption': false,
     'image_class_list': [
-        { 'title': 'Default',
-            'value': 'w50pc middle block galleryZoom' },
+        {
+            'title': 'Default',
+            'value': 'w50pc middle block galleryZoom'
+        },
         {
             'menu': [
                 {
@@ -179,8 +212,10 @@ const tinySettings = {
             ],
             'title': 'Inline'
         },
-        { 'title': 'Icon',
-            'value': 'linkIcon' }
+        {
+            'title': 'Icon',
+            'value': 'linkIcon'
+        }
     ],
     'image_description': true,
     'image_dimensions': false,
@@ -193,33 +228,52 @@ const tinySettings = {
     'insertdatetime_element': true,
     'invalid_elements': 'acronym,applet,area,aside,base,basefont,bgsound,big,blink,body,button,canvas,center,content,datalist,dialog,dir,embed,fieldset,figure,figcaption,font,footer,form,frame,frameset,head,header,hgroup,html,iframe,input,image,keygen,legend,link,main,map,marquee,menuitem,meter,nav,nobr,noembed,noframes,noscript,object,optgroup,option,param,picture,plaintext,portal,pre,progress,rb,rp,rt,rtc,ruby,script,select,selectmenu,shadow,slot,strike,style,spacer,template,textarea,title,tt,xmp',
     'invalid_styles': 'font-size line-height',
+    'license_key': 'gpl',
     'lineheight_formats': '',
     'link_assume_external_targets': 'https',
     'link_context_toolbar': true,
     'link_default_protocol': 'https',
     'link_target_list': [
-        {'title': 'New window',
-            'value': '_blank'},
-        {'title': 'Current window',
-            'value': '_self'}
+        {
+            'title': 'New window',
+            'value': '_blank'
+        },
+        {
+            'title': 'Current window',
+            'value': '_self'
+        }
     ],
     'link_title': false,
     'lists_indent_on_tab': true,
     'menu': {
-        'edit': { 'items': 'undo redo | cut copy paste pastetext | selectall | searchreplace',
-            'title': 'Edit', },
-        'file': { 'items': 'newdocument restoredraft',
-            'title': 'File', },
-        'format': { 'items': 'underline strikethrough superscript subscript | align | styles',
-            'title': 'Format', },
-        'help': { 'items': 'help wordcount',
-            'title': 'Help', },
-        'insert': { 'items': 'link image codeformat | emoticons charmap hr | insertdatetime',
-            'title': 'Insert', },
-        'table': { 'items': 'inserttable | cell row column | deletetable',
-            'title': 'Table', },
-        'view': { 'items': 'code preview | visualaid visualchars visualblocks | fullscreen',
-            'title': 'View', },
+        'edit': {
+            'items': 'undo redo | cut copy paste pastetext | selectall | searchreplace',
+            'title': 'Edit',
+        },
+        'file': {
+            'items': 'newdocument restoredraft',
+            'title': 'File',
+        },
+        'format': {
+            'items': 'underline strikethrough superscript subscript | align | styles',
+            'title': 'Format',
+        },
+        'help': {
+            'items': 'help wordcount',
+            'title': 'Help',
+        },
+        'insert': {
+            'items': 'link image codeformat | emoticons charmap hr | insertdatetime',
+            'title': 'Insert',
+        },
+        'table': {
+            'items': 'inserttable | cell row column | deletetable',
+            'title': 'Table',
+        },
+        'view': {
+            'items': 'code preview | visualaid visualchars visualblocks | fullscreen',
+            'title': 'View',
+        },
     },
     'menubar': 'file edit view format insert table help',
     'object_resizing': false,
@@ -240,47 +294,79 @@ const tinySettings = {
     'selector': 'textarea.tinymce',
     'skin': 'oxide-dark',
     'style_formats': [
-        {'items': [
-            {'format': 'list-decimal',
-                'title': 'Decimal (default)'},
-            {'format': 'list-decimal-leading-zero',
-                'title': 'Decimal, leading zero'},
-            {'format': 'list-lower-alpha',
-                'title': 'Lower Latin'},
-            {'format': 'list-lower-greek',
-                'title': 'Lower Greek'},
-            {'format': 'list-lower-roman',
-                'title': 'Lower Roman'},
-            {'format': 'list-upper-alpha',
-                'title': 'Upper Latin'},
-            {'format': 'list-upper-roman',
-                'title': 'Upper Roman'},
+        {
+            'items': [
+                {
+                    'format': 'list-decimal',
+                    'title': 'Decimal (default)'
+                },
+                {
+                    'format': 'list-decimal-leading-zero',
+                    'title': 'Decimal, leading zero'
+                },
+                {
+                    'format': 'list-lower-alpha',
+                    'title': 'Lower Latin'
+                },
+                {
+                    'format': 'list-lower-greek',
+                    'title': 'Lower Greek'
+                },
+                {
+                    'format': 'list-lower-roman',
+                    'title': 'Lower Roman'
+                },
+                {
+                    'format': 'list-upper-alpha',
+                    'title': 'Upper Latin'
+                },
+                {
+                    'format': 'list-upper-roman',
+                    'title': 'Upper Roman'
+                },
             ],
-            'title': 'Ordered lists'},
-        {'items': [
-                {'format': 'list-circle',
-                    'title': 'Circle'},
-                {'format': 'list-disc',
-                    'title': 'Disc (default)'},
-                {'format': 'list-disclosure-closed',
-                    'title': 'Disclosure closed'},
-                {'format': 'list-disclosure-open',
-                    'title': 'Disclosure open'},
-                {'format': 'list-square',
-                    'title': 'Square'},
+            'title': 'Ordered lists'
+        },
+        {
+            'items': [
+                {
+                    'format': 'list-circle',
+                    'title': 'Circle'
+                },
+                {
+                    'format': 'list-disc',
+                    'title': 'Disc (default)'
+                },
+                {
+                    'format': 'list-disclosure-closed',
+                    'title': 'Disclosure closed'
+                },
+                {
+                    'format': 'list-disclosure-open',
+                    'title': 'Disclosure open'
+                },
+                {
+                    'format': 'list-square',
+                    'title': 'Square'
+                },
             ],
-            'title': 'Unordered lists'},
+            'title': 'Unordered lists'
+        },
     ],
     'style_formats_autohide': true,
     'table_advtab': false,
     'table_appearance_options': false,
     'table_border_styles': [
-        { 'title': 'Solid',
-            'value': 'solid' },
+        {
+            'title': 'Solid',
+            'value': 'solid'
+        },
     ],
     'table_border_widths': [
-        { 'title': 'default',
-            'value': '0.125rem' },
+        {
+            'title': 'default',
+            'value': '0.125rem'
+        },
     ],
     'table_cell_advtab': false,
     'table_default_attributes': {},
@@ -317,18 +403,21 @@ function tinyMCEHideInputs(): void
             //Get the labels
             const labels = dialog.querySelectorAll('label');
             //Get name of the dialog
-            const titleText = String(title.textContent).toLowerCase();
+            const titleText = String(title.textContent)
+                .toLowerCase();
             if (titleText === 'insert/edit image') {
                 labels.forEach((item) => {
                     //Hide div containing elements for URL source
-                    if (String(item.textContent).toLowerCase() === 'source' && item.parentElement) {
+                    if (String(item.textContent)
+                        .toLowerCase() === 'source' && item.parentElement) {
                         item.parentElement.classList.add('hidden');
                     }
                 });
             } else if (titleText === 'cell properties' || titleText === 'row properties') {
                 labels.forEach((item) => {
                     //Hide div containing elements for width, height and scope
-                    const itemText = String(item.textContent).toLowerCase();
+                    const itemText = String(item.textContent)
+                        .toLowerCase();
                     if ((itemText === 'height' || itemText === 'width' || itemText === 'scope') && item.parentElement) {
                         item.parentElement.classList.add('hidden');
                     }
@@ -349,7 +438,8 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
         settings.selector = `#${id}`;
         if (noMedia) {
             //Remove plugins that allow upload of images
-            settings.plugins = String(settings.plugins).replace('image ', '');
+            settings.plugins = String(settings.plugins)
+                .replace('image ', '');
             settings.images_upload_url = '';
             settings.menu.insert.items = settings.menu.insert.items.replace('image ', '');
         }
@@ -360,48 +450,50 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
             // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
             // As such I am suppressing a bunch of linters' errors here
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-            void tinymce.init(settings).then(() => {
-                // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
-                // As such I am suppressing a bunch of linters' errors here
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
-                const tinyInstance = tinymce.get(id);
-                if (tinyInstance !== null) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                    tinyInstance.on('OpenWindow', () => {
-                        tinyMCEHideInputs();
-                    });
-                    [
-                        //Editor events
-                        'CloseWindow',
-                        'FormatApply',
-                        'FormatRemove',
-                        'ObjectResized',
-                        'NewBlock',
-                        'Undo',
-                        'Redo',
-                        'SetAttrib',
-                        'NewRow',
-                        'NewCell',
-                        'TableModified',
-                        'Change',
-                        //Plugins' events
-                        'RestoreDraft',
-                        'CommentChange',
-                        'ListMutation',
-                        //Browser events
-                        'input',
-                        'paste',
-                        'cut',
-                        'reset'
-                    ].forEach((eventType: string) => {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                        tinyInstance.on(eventType, () => {
-                            //This is an attempt to ensure we have up-to-date data after modifying source code
-                            tinyMCEtoTextarea(textarea as HTMLTextAreaElement, tinyInstance);
+            void tinymce.init(settings)
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                        .then(() => {
+                            // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
+                            // As such I am suppressing a bunch of linters' errors here
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
+                            const tinyInstance = tinymce.get(id);
+                            if (tinyInstance !== null) {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                                tinyInstance.on('OpenWindow', () => {
+                                    tinyMCEHideInputs();
+                                });
+                                [
+                                    //Editor events
+                                    'CloseWindow',
+                                    'FormatApply',
+                                    'FormatRemove',
+                                    'ObjectResized',
+                                    'NewBlock',
+                                    'Undo',
+                                    'Redo',
+                                    'SetAttrib',
+                                    'NewRow',
+                                    'NewCell',
+                                    'TableModified',
+                                    'Change',
+                                    //Plugins' events
+                                    'RestoreDraft',
+                                    'CommentChange',
+                                    'ListMutation',
+                                    //Browser events
+                                    'input',
+                                    'paste',
+                                    'cut',
+                                    'reset'
+                                ].forEach((eventType: string) => {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
+                                    tinyInstance.on(eventType, () => {
+                                        //This is an attempt to ensure we have up-to-date data after modifying source code
+                                        tinyMCEtoTextarea(textarea as HTMLTextAreaElement, tinyInstance);
+                                    });
+                                });
+                            }
                         });
-                    });
-                }
-            });
         });
     }
 }

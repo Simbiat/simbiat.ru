@@ -20,7 +20,6 @@
       <option name="SPACE_AFTER_GENERATOR_MULT" value="false" />
       <option name="VAR_DECLARATION_WRAP" value="2" />
       <option name="OBJECT_LITERAL_WRAP" value="2" />
-      <option name="CHAINED_CALL_DOT_ON_NEW_LINE" value="false" />
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </JSCodeStyleSettings>
     <Markdown>
@@ -39,6 +38,7 @@
       <option name="ELSE_IF_STYLE" value="COMBINE" />
       <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
       <option name="SPACE_AROUND_ASSIGNMENT_IN_DECLARE" value="true" />
+      <option name="FORCE_EMPTY_METHODS_IN_ONE_LINE" value="true" />
       <option name="PHPDOC_USE_FQCN" value="true" />
     </PHPCodeStyleSettings>
     <SqlCodeStyleSettings version="7">
@@ -61,7 +61,6 @@
       <option name="SPACE_AFTER_GENERATOR_MULT" value="false" />
       <option name="VAR_DECLARATION_WRAP" value="2" />
       <option name="OBJECT_LITERAL_WRAP" value="2" />
-      <option name="CHAINED_CALL_DOT_ON_NEW_LINE" value="false" />
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </TypeScriptCodeStyleSettings>
     <codeStyleSettings language="CSS">
@@ -86,6 +85,9 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
+      <option name="CLASS_BRACE_STYLE" value="2" />
+      <option name="METHOD_BRACE_STYLE" value="2" />
+      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="2" />
       <option name="IF_BRACE_FORCE" value="3" />
       <option name="DOWHILE_BRACE_FORCE" value="3" />
@@ -135,6 +137,9 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
+      <option name="CLASS_BRACE_STYLE" value="2" />
+      <option name="METHOD_BRACE_STYLE" value="2" />
+      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="2" />
       <option name="IF_BRACE_FORCE" value="3" />
       <option name="DOWHILE_BRACE_FORCE" value="3" />

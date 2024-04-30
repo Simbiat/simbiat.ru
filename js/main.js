@@ -1,4 +1,761 @@
 "use strict";
+async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
+    let result;
+    const controller = new AbortController();
+    window.setTimeout(() => { controller.abort(); }, timeout);
+    try {
+        const response = await fetch(url, {
+            'body': ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
+            'cache': 'no-cache',
+            'credentials': 'same-origin',
+            'headers': {
+                'X-CSRF-Token': getMeta('X-CSRF-Token') ?? '',
+            },
+            'keepalive': false,
+            method,
+            'mode': 'same-origin',
+            'redirect': 'error',
+            'referrer': window.location.href,
+            'referrerPolicy': 'same-origin',
+            'signal': controller.signal,
+        });
+        if (!response.ok && !skipError) {
+            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', 10000);
+            return false;
+        }
+        if (type === 'json') {
+            result = await response.json();
+        }
+        else if (type === 'blob') {
+            result = await response.blob();
+        }
+        else if (type === 'array') {
+            result = await response.arrayBuffer();
+        }
+        else if (type === 'form') {
+            result = await response.formData();
+        }
+        else {
+            result = await response.text();
+        }
+        return result;
+    }
+    catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', 10000);
+        }
+        else {
+            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', 10000);
+        }
+        return false;
+    }
+}
+function inputInit(input) {
+    ['focus', 'change', 'input',].forEach((eventType) => {
+        input.addEventListener(eventType, () => {
+            ariaNation(input);
+        });
+    });
+    ariaNation(input);
+}
+function textareaInit(textarea) {
+    if (!textarea.hasAttribute('placeholder')) {
+        textarea.setAttribute('placeholder', textarea.value || textarea.type || 'placeholder');
+    }
+    if (textarea.maxLength > 0) {
+        ['change', 'keydown', 'keyup', 'input'].forEach((eventType) => {
+            textarea.addEventListener(eventType, (event) => { countInTextarea(event.target); });
+        });
+        countInTextarea(textarea);
+    }
+    if (textarea.classList.contains('tinymce') && textarea.id) {
+        loadTinyMCE(textarea.id);
+    }
+}
+function headingInit(heading) {
+    if (!heading.hasAttribute('id')) {
+        let id = String(heading.textContent).replaceAll(/\s/gmu, '_').
+            replaceAll(/[^a-zA-Z0-9_-]/gmu, '').
+            replaceAll(/^\d+/gmu, '').
+            replaceAll(/_{2,}/gmu, '_').
+            replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`).
+            replaceAll(/^_+$/gmu, '');
+        if (empty(id)) {
+            id = 'heading';
+        }
+        let index = 1;
+        let altId = id;
+        while (document.querySelector(`#${altId}`)) {
+            index += 1;
+            altId = `${id}_${index}`;
+        }
+        heading.setAttribute('id', altId);
+    }
+    heading.addEventListener('click', (event) => {
+        const selection = window.getSelection();
+        if (selection && selection.type !== 'Range') {
+            const link = `${window.location.href.replaceAll(/(?<beforeDies>^[^#]*)(?<afterDies>#.*)?$/gmu, `$<beforeDies>`)}#${event.target.getAttribute('id') ?? ''}`;
+            navigator.clipboard.writeText(link).then(() => {
+                addSnackbar(`Anchor link for "${event.target.textContent ?? ''}" copied to clipboard`, 'success');
+            }, () => {
+                addSnackbar(`Failed to copy anchor link for "${event.target.textContent ?? ''}"`, 'failure');
+            });
+        }
+    });
+}
+function formInit(form) {
+    form.addEventListener('keypress', (event) => { formEnter(event); });
+    form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea').forEach((item) => {
+        if ((!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
+            item.setAttribute('name', item.id);
+        }
+    });
+    form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]').forEach((item) => {
+        item.addEventListener('keydown', inputBackSpace);
+        if (!empty(item.getAttribute('maxlength'))) {
+            ['input', 'change',].forEach((eventType) => {
+                item.addEventListener(eventType, autoNext);
+            });
+            item.addEventListener('paste', (event) => { void pasteSplit(event); });
+        }
+    });
+}
+function sampInit(samp) {
+    samp.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${samp.innerHTML}`;
+    const description = samp.getAttribute('data-description') ?? '';
+    if (!empty(description)) {
+        samp.innerHTML = `<span class="codeDesc">${description}</span>${samp.innerHTML}`;
+    }
+    const source = samp.getAttribute('data-source') ?? '';
+    if (!empty(source)) {
+        samp.innerHTML = `${samp.innerHTML}<span class="quoteSource">${source}</span>`;
+    }
+    samp.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
+}
+function codeInit(code) {
+    code.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${code.innerHTML}`;
+    const description = code.getAttribute('data-description') ?? '';
+    if (!empty(description)) {
+        code.innerHTML = `<span class="codeDesc">${description}</span>${code.innerHTML}`;
+    }
+    const source = code.getAttribute('data-source') ?? '';
+    if (!empty(source)) {
+        code.innerHTML = `${code.innerHTML}<span class="quoteSource">${source}</span>`;
+    }
+    code.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
+}
+function blockquoteInit(quote) {
+    quote.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${quote.innerHTML}`;
+    const author = quote.getAttribute('data-author') ?? '';
+    if (!empty(author)) {
+        quote.innerHTML = `<span class="quoteAuthor">${author}</span>${quote.innerHTML}`;
+    }
+    const source = quote.getAttribute('data-source') ?? '';
+    if (!empty(source)) {
+        quote.innerHTML = `${quote.innerHTML}<span class="quoteSource">${source}</span>`;
+    }
+    quote.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
+}
+function qInit(quote) {
+    quote.setAttribute('data-tooltip', 'Click to copy quote');
+    quote.addEventListener('click', (event) => { copyQuote(event.target); });
+}
+function detailsInit(details) {
+    if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
+        const summary = details.querySelector('summary');
+        if (summary) {
+            summary.addEventListener('click', (event) => {
+                closeAllDetailsTags(event.target);
+                resetDetailsTags(event.target);
+            });
+        }
+    }
+}
+function imgInit(img) {
+    if (empty(img.alt)) {
+        img.alt = basename(String(img.src));
+    }
+    if (img.classList.contains('galleryZoom')) {
+        const parent = img.parentElement;
+        if (parent && parent.nodeName.toLowerCase() !== 'a') {
+            const link = document.createElement('a');
+            link.href = img.src;
+            link.target = '_blank';
+            link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+            link.classList.add('galleryZoom');
+            const clone = img.cloneNode(true);
+            clone.classList.remove('galleryZoom');
+            link.appendChild(clone);
+            img.replaceWith(link);
+        }
+        else if (parent && parent.nodeName.toLowerCase() === 'a') {
+            parent.href = img.src;
+            parent.target = '_blank';
+            parent.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+            parent.classList.add('galleryZoom');
+            img.classList.contains('galleryZoom');
+        }
+    }
+}
+function dialogInit(dialog) {
+    if (dialog.classList.contains('modal')) {
+        dialog.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target) {
+                if (target === dialog) {
+                    dialog.close();
+                }
+            }
+        });
+    }
+}
+function anchorInit(anchor) {
+    if (empty(anchor.href)) {
+        anchor.href = window.location.href;
+    }
+    const currentURL = new URL(anchor.href);
+    if (currentURL.host !== window.location.host) {
+        anchor.target = '_blank';
+    }
+    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
+        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+    }
+    else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
+        anchor.addEventListener('click', () => {
+            if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+                history.replaceState(document.title, document.title, `${currentURL.hash}`);
+            }
+        });
+    }
+}
+function customizeNewElements(newNode) {
+    if (newNode.nodeType === 1) {
+        const nodeName = newNode.nodeName.toLowerCase();
+        switch (nodeName) {
+            case 'a':
+                anchorInit(newNode);
+                break;
+            case 'blockquote':
+                blockquoteInit(newNode);
+                break;
+            case 'code':
+                codeInit(newNode);
+                break;
+            case 'details':
+                detailsInit(newNode);
+                break;
+            case 'form':
+                formInit(newNode);
+                break;
+            case 'h1':
+            case 'h2':
+            case 'h3':
+            case 'h4':
+            case 'h5':
+            case 'h6':
+                headingInit(newNode);
+                break;
+            case 'img':
+                imgInit(newNode);
+                break;
+            case 'input':
+                inputInit(newNode);
+                break;
+            case 'q':
+                qInit(newNode);
+                break;
+            case 'samp':
+                sampInit(newNode);
+                break;
+            case 'textarea':
+                textareaInit(newNode);
+                break;
+            default:
+                break;
+        }
+    }
+}
+function getAllDetailsTags() {
+    return document.querySelectorAll('details:not(.persistent):not(.spoiler):not(.adult)');
+}
+function closeAllDetailsTags(target) {
+    const details = target.parentElement;
+    if (details) {
+        if (details.open) {
+            getAllDetailsTags().
+                forEach((tag) => {
+                if (tag !== details) {
+                    tag.open = false;
+                }
+            });
+        }
+    }
+}
+function clickOutsideDetailsTags(initialEvent, details) {
+    if (details !== initialEvent.target && !details.contains(initialEvent.target)) {
+        details.open = false;
+        document.removeEventListener('click', (event) => {
+            clickOutsideDetailsTags(event, details);
+        });
+    }
+}
+function resetDetailsTags(target) {
+    const clickedDetails = target.parentElement;
+    getAllDetailsTags().forEach((details) => {
+        if (details.open && details !== clickedDetails && !details.contains(clickedDetails)) {
+            details.open = false;
+        }
+        else if (details.classList.contains('popup')) {
+            document.addEventListener('click', (event) => {
+                clickOutsideDetailsTags(event, details);
+            });
+        }
+    });
+}
+function addSnackbar(text, color = '', milliseconds = 3000) {
+    const snacks = document.querySelector('snack-bar');
+    const template = document.querySelector('#snackbar_template');
+    if (snacks && template) {
+        const newSnack = template.content.cloneNode(true);
+        const snack = newSnack.querySelector('dialog');
+        if (snack !== null) {
+            const textBlock = snack.querySelector('.snack_text');
+            if (textBlock !== null) {
+                textBlock.innerHTML = text;
+            }
+            snack.querySelector('snack-close')?.setAttribute('data-close-in', String(milliseconds));
+            if (color) {
+                snack.classList.add(color);
+            }
+            snacks.appendChild(snack);
+            snack.show();
+        }
+    }
+}
+function getMeta(metaName) {
+    const metas = Array.from(document.querySelectorAll('meta'));
+    const tag = metas.find((obj) => {
+        return obj.name === metaName;
+    });
+    if (tag) {
+        return tag.getAttribute('content');
+    }
+    return null;
+}
+function updateHistory(newUrl, title) {
+    if (document.title !== title) {
+        document.title = title;
+    }
+    if (document.location.href !== newUrl) {
+        window.history.pushState(title, title, newUrl);
+    }
+}
+function submitIntercept(form, callable) {
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        callable();
+        return false;
+    });
+    form.addEventListener('keydown', (event) => {
+        if (event.code === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            callable();
+            return false;
+        }
+        return true;
+    });
+}
+function deleteRow(element) {
+    const table = element.closest('table');
+    const tr = element.closest('tr');
+    if (table && tr) {
+        table.deleteRow(tr.rowIndex);
+        return true;
+    }
+    return false;
+}
+function basename(text) {
+    return text.replace(/^.*\/|\.[^.]*$/gu, '');
+}
+function rawurlencode(str) {
+    const definitelyString = String(str);
+    return encodeURIComponent(definitelyString).
+        replace(/!/ug, '%21').
+        replace(/'/ug, '%27').
+        replace(/\(/ug, '%28').
+        replace(/\)/ug, '%29').
+        replace(/\*/ug, '%2A');
+}
+function empty(variable) {
+    if (typeof variable === 'undefined' || variable === null || variable === false || variable === 0 || variable === 'NaN') {
+        return true;
+    }
+    if (typeof variable === 'string') {
+        return (/^[\s\p{C}]*$/ui).test(variable);
+    }
+    if (Array.isArray(variable)) {
+        return variable.length === 0;
+    }
+    if (variable instanceof NodeList) {
+        return variable.length === 0;
+    }
+    if (variable instanceof HTMLCollection) {
+        return variable.length === 0;
+    }
+    if (typeof variable === 'object') {
+        return JSON.stringify(variable) === '{}';
+    }
+    return false;
+}
+function pageRefresh() {
+    const url = new URL(document.location.href);
+    url.searchParams.set('forceReload', String(Date.now()));
+    window.location.replace(url.toString());
+}
+function copyQuote(target) {
+    let node;
+    if (target.tagName.toLowerCase() === 'q') {
+        node = target;
+    }
+    else {
+        node = target.parentElement;
+    }
+    if (!node) {
+        return '';
+    }
+    const tagName = node.tagName.toLowerCase();
+    let tag;
+    switch (tagName) {
+        case 'samp':
+            tag = 'Sample';
+            break;
+        case 'code':
+            tag = 'Code';
+            break;
+        case 'blockquote':
+        case 'q':
+            tag = 'Quote';
+            break;
+        default:
+            return '';
+    }
+    let quoteText = String(node.textContent);
+    if (tagName === 'blockquote' && node.hasAttribute('data-author')) {
+        const authorMatch = new RegExp(`^(${String(node.getAttribute('data-author'))})`, 'ui');
+        quoteText = quoteText.replace(authorMatch, '');
+    }
+    if ((tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-description')) {
+        const descMatch = new RegExp(`^(${String(node.getAttribute('data-description'))})`, 'ui');
+        quoteText = quoteText.replace(descMatch, '');
+    }
+    if ((tagName === 'blockquote' || tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-source')) {
+        const sourceMatch = new RegExp(`(${String(node.getAttribute('data-source'))})$`, 'ui');
+        quoteText = quoteText.replace(sourceMatch, '');
+    }
+    navigator.clipboard.writeText(quoteText).then(() => {
+        addSnackbar(`${tag} copied to clipboard`, 'success');
+    }, () => {
+        addSnackbar(`Failed to copy ${tag.toLowerCase()}`, 'failure');
+    });
+    return String(node.textContent);
+}
+async function is_file(url) {
+    return new Promise((resolve, reject) => {
+        fetch(url, { 'method': 'HEAD' }).
+            then((response) => {
+            if (response.ok) {
+                resolve(true);
+            }
+            else {
+                resolve(false);
+            }
+        }).
+            catch((error) => {
+            reject(error);
+        });
+    });
+}
+function init() {
+    const inputs = document.querySelectorAll('input');
+    if (!empty(inputs)) {
+        inputs.forEach((input) => {
+            inputInit(input);
+        });
+    }
+    const textAreas = document.querySelectorAll('textarea');
+    if (!empty(textAreas)) {
+        textAreas.forEach((textarea) => {
+            textareaInit(textarea);
+        });
+    }
+    const anchors = document.querySelectorAll('a');
+    if (!empty(anchors)) {
+        anchors.forEach((anchor) => {
+            anchorInit(anchor);
+        });
+    }
+    const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+    if (!empty(headings)) {
+        headings.forEach((heading) => {
+            headingInit(heading);
+        });
+    }
+    const forms = document.querySelectorAll('form');
+    if (!empty(forms)) {
+        forms.forEach((form) => {
+            formInit(form);
+        });
+    }
+    const detailsTags = document.querySelectorAll('details');
+    if (!empty(detailsTags)) {
+        detailsTags.forEach((details) => {
+            detailsInit(details);
+        });
+    }
+    const sampTags = document.querySelectorAll('samp');
+    if (!empty(sampTags)) {
+        sampTags.forEach((samp) => {
+            sampInit(samp);
+        });
+    }
+    const codeTags = document.querySelectorAll('code');
+    if (!empty(codeTags)) {
+        codeTags.forEach((code) => {
+            codeInit(code);
+        });
+    }
+    const blockquotes = document.querySelectorAll('blockquote');
+    if (!empty(blockquotes)) {
+        blockquotes.forEach((blockquote) => {
+            blockquoteInit(blockquote);
+        });
+    }
+    const quotes = document.querySelectorAll('q');
+    if (!empty(quotes)) {
+        quotes.forEach((quote) => {
+            qInit(quote);
+        });
+    }
+    const dialogs = document.querySelectorAll('dialog');
+    if (!empty(dialogs)) {
+        dialogs.forEach((dialog) => {
+            dialogInit(dialog);
+        });
+    }
+    const images = document.querySelectorAll('img');
+    if (!empty(images)) {
+        images.forEach((image) => {
+            imgInit(image);
+        });
+    }
+    customElements.define('nav-show', NavShow);
+    customElements.define('nav-hide', NavHide);
+    customElements.define('side-show', SideShow);
+    customElements.define('side-hide', SideHide);
+    customElements.define('login-form', LoginForm);
+    customElements.define('back-to-top', BackToTop);
+    customElements.define('time-r', Timer);
+    customElements.define('web-share', WebShare);
+    customElements.define('tool-tip', Tooltip);
+    customElements.define('snack-close', SnackbarClose);
+    customElements.define('gallery-overlay', Gallery);
+    customElements.define('gallery-close', GalleryClose);
+    customElements.define('gallery-prev', GalleryPrev);
+    customElements.define('gallery-next', GalleryNext);
+    customElements.define('gallery-image', GalleryImage);
+    customElements.define('image-carousel', CarouselList);
+    customElements.define('og-image', OGImage);
+    customElements.define('password-show', PasswordShow);
+    customElements.define('password-requirements', PasswordRequirements);
+    customElements.define('password-strength', PasswordStrength);
+    customElements.define('like-dis', Likedis);
+    customElements.define('vertical-tabs', VerticalTabs);
+    customElements.define('image-upload', ImageUpload);
+    customElements.define('select-custom', SelectCustom);
+    customElements.define('post-form', PostForm);
+    const newNodesObserver = new MutationObserver((mutations_list) => {
+        mutations_list.forEach((mutation) => {
+            mutation.addedNodes.forEach((added_node) => {
+                customizeNewElements(added_node);
+            });
+        });
+    });
+    newNodesObserver.observe(document, {
+        'attributes': false,
+        'characterData': false,
+        'childList': true,
+        'subtree': true
+    });
+    cleanGET();
+    router();
+}
+document.addEventListener('DOMContentLoaded', init);
+window.addEventListener('hashchange', () => { hashCheck(); });
+function ariaNation(inputElement) {
+    inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
+    if (!inputElement.hasAttribute('placeholder')) {
+        inputElement.setAttribute('placeholder', inputElement.value || inputElement.type || 'placeholder');
+    }
+    if (empty(inputElement.getAttribute('type'))) {
+        inputElement.setAttribute('type', 'text');
+    }
+    let type;
+    if (empty(inputElement.type)) {
+        type = 'text';
+    }
+    else {
+        type = inputElement.type;
+    }
+    if (['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'checkbox', 'radio', 'file',].includes(String(type))) {
+        if (inputElement.required) {
+            inputElement.setAttribute('aria-required', String(true));
+        }
+        else {
+            inputElement.setAttribute('aria-required', String(false));
+        }
+    }
+    if (type === 'checkbox') {
+        inputElement.setAttribute('role', 'checkbox');
+        inputElement.setAttribute('aria-checked', String(inputElement.checked));
+        if (inputElement.indeterminate) {
+            inputElement.setAttribute('aria-checked', 'mixed');
+        }
+    }
+    if (type === 'checkbox') {
+        inputElement.setAttribute('value', inputElement.value);
+    }
+}
+function buttonToggle(button, enable = true) {
+    let spinner;
+    if (button.form) {
+        spinner = button.form.querySelector('.spinner');
+    }
+    if (!spinner) {
+        const buttonParent = button.parentElement;
+        if (buttonParent) {
+            spinner = buttonParent.querySelector('.spinner');
+        }
+    }
+    if (button.disabled) {
+        if (enable) {
+            button.disabled = false;
+        }
+        if (spinner) {
+            spinner.classList.add('hidden');
+        }
+    }
+    else {
+        button.disabled = true;
+        if (spinner) {
+            spinner.classList.remove('hidden');
+        }
+    }
+}
+function countInTextarea(textarea) {
+    if (textarea.labels[0] && textarea.maxLength) {
+        const label = textarea.labels[0];
+        label.setAttribute('data-curlength', `(${textarea.value.length}/${textarea.maxLength}ch)`);
+        label.classList.remove('at_the_limit', 'close_to_limit');
+        if (textarea.value.length >= textarea.maxLength) {
+            label.classList.add('at_the_limit');
+        }
+        else if (((100 * textarea.value.length) / textarea.maxLength) >= 75) {
+            label.classList.add('close_to_limit');
+        }
+    }
+}
+function nextInput(initial, reverse = false) {
+    const form = initial.form;
+    if (form) {
+        let previous;
+        for (const moveTo of form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')) {
+            if (reverse) {
+                if (moveTo === initial) {
+                    if (previous) {
+                        return previous;
+                    }
+                    return null;
+                }
+            }
+            else if (previous && previous === initial) {
+                return moveTo;
+            }
+            previous = moveTo;
+        }
+    }
+    return null;
+}
+async function pasteSplit(event) {
+    const permission = await navigator.permissions.query({ 'name': 'clipboard-read', }).catch(() => {
+    });
+    if (permission && permission.state !== 'denied') {
+        void navigator.clipboard.readText().then((result) => {
+            let buffer = result.toString();
+            let current = event.target;
+            if (current === null) {
+                return;
+            }
+            let maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
+            while (current !== null && maxLength && buffer.length > maxLength) {
+                current.value = buffer.substring(0, maxLength);
+                current.dispatchEvent(new Event('input', {
+                    'bubbles': true,
+                    'cancelable': true,
+                }));
+                if (!current.validity.valid) {
+                    return;
+                }
+                buffer = buffer.substring(maxLength);
+                current = nextInput(current, false);
+                if (current) {
+                    current.focus();
+                    maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
+                }
+            }
+            if (current) {
+                current.value = buffer;
+                current.dispatchEvent(new Event('input', {
+                    'bubbles': true,
+                    'cancelable': true,
+                }));
+            }
+        });
+    }
+}
+function formEnter(event) {
+    if (event.target) {
+        const form = event.target.form;
+        if (form && (event.code === 'Enter' || event.code === 'NumpadEnter') && !form.action) {
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+        }
+    }
+    return true;
+}
+function inputBackSpace(event) {
+    const current = event.target;
+    if (event.code === 'Backspace' && !current.value) {
+        const moveTo = nextInput(current, true);
+        if (moveTo) {
+            moveTo.focus();
+            moveTo.selectionEnd = moveTo.value.length;
+            moveTo.selectionStart = moveTo.value.length;
+        }
+    }
+}
+function autoNext(event) {
+    const current = event.target;
+    const maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
+    if (maxLength && current.value.length === maxLength && current.validity.valid) {
+        const moveTo = nextInput(current, false);
+        if (moveTo) {
+            moveTo.focus();
+        }
+    }
+}
 !function () {
     "use strict";
     var e = function (e) { if (null === e)
@@ -3603,763 +4360,6 @@
         }
         catch (e) { } })(OB);
 }();
-async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = 60000, skipError = false) {
-    let result;
-    const controller = new AbortController();
-    window.setTimeout(() => { controller.abort(); }, timeout);
-    try {
-        const response = await fetch(url, {
-            'body': ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
-            'cache': 'no-cache',
-            'credentials': 'same-origin',
-            'headers': {
-                'X-CSRF-Token': getMeta('X-CSRF-Token') ?? '',
-            },
-            'keepalive': false,
-            method,
-            'mode': 'same-origin',
-            'redirect': 'error',
-            'referrer': window.location.href,
-            'referrerPolicy': 'same-origin',
-            'signal': controller.signal,
-        });
-        if (!response.ok && !skipError) {
-            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', 10000);
-            return false;
-        }
-        if (type === 'json') {
-            result = await response.json();
-        }
-        else if (type === 'blob') {
-            result = await response.blob();
-        }
-        else if (type === 'array') {
-            result = await response.arrayBuffer();
-        }
-        else if (type === 'form') {
-            result = await response.formData();
-        }
-        else {
-            result = await response.text();
-        }
-        return result;
-    }
-    catch (err) {
-        if (err instanceof DOMException && err.name === 'AbortError') {
-            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', 10000);
-        }
-        else {
-            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', 10000);
-        }
-        return false;
-    }
-}
-function inputInit(input) {
-    ['focus', 'change', 'input',].forEach((eventType) => {
-        input.addEventListener(eventType, () => {
-            ariaNation(input);
-        });
-    });
-    ariaNation(input);
-}
-function textareaInit(textarea) {
-    if (!textarea.hasAttribute('placeholder')) {
-        textarea.setAttribute('placeholder', textarea.value || textarea.type || 'placeholder');
-    }
-    if (textarea.maxLength > 0) {
-        ['change', 'keydown', 'keyup', 'input'].forEach((eventType) => {
-            textarea.addEventListener(eventType, (event) => { countInTextarea(event.target); });
-        });
-        countInTextarea(textarea);
-    }
-    if (textarea.classList.contains('tinymce') && textarea.id) {
-        loadTinyMCE(textarea.id);
-    }
-}
-function headingInit(heading) {
-    if (!heading.hasAttribute('id')) {
-        let id = String(heading.textContent).replaceAll(/\s/gmu, '_').
-            replaceAll(/[^a-zA-Z0-9_-]/gmu, '').
-            replaceAll(/^\d+/gmu, '').
-            replaceAll(/_{2,}/gmu, '_').
-            replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`).
-            replaceAll(/^_+$/gmu, '');
-        if (empty(id)) {
-            id = 'heading';
-        }
-        let index = 1;
-        let altId = id;
-        while (document.querySelector(`#${altId}`)) {
-            index += 1;
-            altId = `${id}_${index}`;
-        }
-        heading.setAttribute('id', altId);
-    }
-    heading.addEventListener('click', (event) => {
-        const selection = window.getSelection();
-        if (selection && selection.type !== 'Range') {
-            const link = `${window.location.href.replaceAll(/(?<beforeDies>^[^#]*)(?<afterDies>#.*)?$/gmu, `$<beforeDies>`)}#${event.target.getAttribute('id') ?? ''}`;
-            navigator.clipboard.writeText(link).then(() => {
-                addSnackbar(`Anchor link for "${event.target.textContent ?? ''}" copied to clipboard`, 'success');
-            }, () => {
-                addSnackbar(`Failed to copy anchor link for "${event.target.textContent ?? ''}"`, 'failure');
-            });
-        }
-    });
-}
-function formInit(form) {
-    form.addEventListener('keypress', (event) => { formEnter(event); });
-    form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea').forEach((item) => {
-        if ((!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
-            item.setAttribute('name', item.id);
-        }
-    });
-    form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]').forEach((item) => {
-        item.addEventListener('keydown', inputBackSpace);
-        if (!empty(item.getAttribute('maxlength'))) {
-            ['input', 'change',].forEach((eventType) => {
-                item.addEventListener(eventType, autoNext);
-            });
-            item.addEventListener('paste', (event) => { void pasteSplit(event); });
-        }
-    });
-}
-function sampInit(samp) {
-    samp.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${samp.innerHTML}`;
-    const description = samp.getAttribute('data-description') ?? '';
-    if (!empty(description)) {
-        samp.innerHTML = `<span class="codeDesc">${description}</span>${samp.innerHTML}`;
-    }
-    const source = samp.getAttribute('data-source') ?? '';
-    if (!empty(source)) {
-        samp.innerHTML = `${samp.innerHTML}<span class="quoteSource">${source}</span>`;
-    }
-    samp.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
-}
-function codeInit(code) {
-    code.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${code.innerHTML}`;
-    const description = code.getAttribute('data-description') ?? '';
-    if (!empty(description)) {
-        code.innerHTML = `<span class="codeDesc">${description}</span>${code.innerHTML}`;
-    }
-    const source = code.getAttribute('data-source') ?? '';
-    if (!empty(source)) {
-        code.innerHTML = `${code.innerHTML}<span class="quoteSource">${source}</span>`;
-    }
-    code.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
-}
-function blockquoteInit(quote) {
-    quote.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${quote.innerHTML}`;
-    const author = quote.getAttribute('data-author') ?? '';
-    if (!empty(author)) {
-        quote.innerHTML = `<span class="quoteAuthor">${author}</span>${quote.innerHTML}`;
-    }
-    const source = quote.getAttribute('data-source') ?? '';
-    if (!empty(source)) {
-        quote.innerHTML = `${quote.innerHTML}<span class="quoteSource">${source}</span>`;
-    }
-    quote.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
-}
-function qInit(quote) {
-    quote.setAttribute('data-tooltip', 'Click to copy quote');
-    quote.addEventListener('click', (event) => { copyQuote(event.target); });
-}
-function detailsInit(details) {
-    if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
-        const summary = details.querySelector('summary');
-        if (summary) {
-            summary.addEventListener('click', (event) => {
-                closeAllDetailsTags(event.target);
-                resetDetailsTags(event.target);
-            });
-        }
-    }
-}
-function imgInit(img) {
-    if (empty(img.alt)) {
-        img.alt = basename(String(img.src));
-    }
-    if (img.classList.contains('galleryZoom')) {
-        const parent = img.parentElement;
-        if (parent && parent.nodeName.toLowerCase() !== 'a') {
-            const link = document.createElement('a');
-            link.href = img.src;
-            link.target = '_blank';
-            link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
-            link.classList.add('galleryZoom');
-            const clone = img.cloneNode(true);
-            clone.classList.remove('galleryZoom');
-            link.appendChild(clone);
-            img.replaceWith(link);
-        }
-        else if (parent && parent.nodeName.toLowerCase() === 'a') {
-            parent.href = img.src;
-            parent.target = '_blank';
-            parent.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
-            parent.classList.add('galleryZoom');
-            img.classList.contains('galleryZoom');
-        }
-    }
-}
-function dialogInit(dialog) {
-    if (dialog.classList.contains('modal')) {
-        dialog.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target) {
-                if (target === dialog) {
-                    dialog.close();
-                }
-            }
-        });
-    }
-}
-function anchorInit(anchor) {
-    if (empty(anchor.href)) {
-        anchor.href = window.location.href;
-    }
-    const currentURL = new URL(anchor.href);
-    if (currentURL.host !== window.location.host) {
-        anchor.target = '_blank';
-    }
-    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
-        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
-    }
-    else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
-        anchor.addEventListener('click', () => {
-            if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
-                history.replaceState(document.title, document.title, `${currentURL.hash}`);
-            }
-        });
-    }
-}
-function customizeNewElements(newNode) {
-    if (newNode.nodeType === 1) {
-        const nodeName = newNode.nodeName.toLowerCase();
-        switch (nodeName) {
-            case 'a':
-                anchorInit(newNode);
-                break;
-            case 'blockquote':
-                blockquoteInit(newNode);
-                break;
-            case 'code':
-                codeInit(newNode);
-                break;
-            case 'details':
-                detailsInit(newNode);
-                break;
-            case 'form':
-                formInit(newNode);
-                break;
-            case 'h1':
-            case 'h2':
-            case 'h3':
-            case 'h4':
-            case 'h5':
-            case 'h6':
-                headingInit(newNode);
-                break;
-            case 'img':
-                imgInit(newNode);
-                break;
-            case 'input':
-                inputInit(newNode);
-                break;
-            case 'q':
-                qInit(newNode);
-                break;
-            case 'samp':
-                sampInit(newNode);
-                break;
-            case 'textarea':
-                textareaInit(newNode);
-                break;
-            default:
-                break;
-        }
-    }
-}
-function getAllDetailsTags() {
-    return document.querySelectorAll('details:not(.persistent):not(.spoiler):not(.adult)');
-}
-function closeAllDetailsTags(target) {
-    const details = target.parentElement;
-    if (details) {
-        if (details.open) {
-            getAllDetailsTags().
-                forEach((tag) => {
-                if (tag !== details) {
-                    tag.open = false;
-                }
-            });
-        }
-    }
-}
-function clickOutsideDetailsTags(initialEvent, details) {
-    if (details !== initialEvent.target && !details.contains(initialEvent.target)) {
-        details.open = false;
-        document.removeEventListener('click', (event) => {
-            clickOutsideDetailsTags(event, details);
-        });
-    }
-}
-function resetDetailsTags(target) {
-    const clickedDetails = target.parentElement;
-    getAllDetailsTags().forEach((details) => {
-        if (details.open && details !== clickedDetails && !details.contains(clickedDetails)) {
-            details.open = false;
-        }
-        else if (details.classList.contains('popup')) {
-            document.addEventListener('click', (event) => {
-                clickOutsideDetailsTags(event, details);
-            });
-        }
-    });
-}
-function addSnackbar(text, color = '', milliseconds = 3000) {
-    const snacks = document.querySelector('snack-bar');
-    const template = document.querySelector('#snackbar_template');
-    if (snacks && template) {
-        const newSnack = template.content.cloneNode(true);
-        const snack = newSnack.querySelector('dialog');
-        if (snack !== null) {
-            const textBlock = snack.querySelector('.snack_text');
-            if (textBlock !== null) {
-                textBlock.innerHTML = text;
-            }
-            snack.querySelector('snack-close')?.setAttribute('data-close-in', String(milliseconds));
-            if (color) {
-                snack.classList.add(color);
-            }
-            snacks.appendChild(snack);
-            snack.show();
-        }
-    }
-}
-function getMeta(metaName) {
-    const metas = Array.from(document.querySelectorAll('meta'));
-    const tag = metas.find((obj) => {
-        return obj.name === metaName;
-    });
-    if (tag) {
-        return tag.getAttribute('content');
-    }
-    return null;
-}
-function updateHistory(newUrl, title) {
-    if (document.title !== title) {
-        document.title = title;
-    }
-    if (document.location.href !== newUrl) {
-        window.history.pushState(title, title, newUrl);
-    }
-}
-function submitIntercept(form, callable) {
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        callable();
-        return false;
-    });
-    form.addEventListener('keydown', (event) => {
-        if (event.code === 'Enter') {
-            event.preventDefault();
-            event.stopPropagation();
-            callable();
-            return false;
-        }
-        return true;
-    });
-}
-function deleteRow(element) {
-    const table = element.closest('table');
-    const tr = element.closest('tr');
-    if (table && tr) {
-        table.deleteRow(tr.rowIndex);
-        return true;
-    }
-    return false;
-}
-function basename(text) {
-    return text.replace(/^.*\/|\.[^.]*$/gu, '');
-}
-function rawurlencode(str) {
-    const definitelyString = String(str);
-    return encodeURIComponent(definitelyString).
-        replace(/!/ug, '%21').
-        replace(/'/ug, '%27').
-        replace(/\(/ug, '%28').
-        replace(/\)/ug, '%29').
-        replace(/\*/ug, '%2A');
-}
-function empty(variable) {
-    if (typeof variable === 'undefined' || variable === null || variable === false || variable === 0 || variable === 'NaN') {
-        return true;
-    }
-    if (typeof variable === 'string') {
-        return (/^[\s\p{C}]*$/ui).test(variable);
-    }
-    if (Array.isArray(variable)) {
-        return variable.length === 0;
-    }
-    if (variable instanceof NodeList) {
-        return variable.length === 0;
-    }
-    if (variable instanceof HTMLCollection) {
-        return variable.length === 0;
-    }
-    if (typeof variable === 'object') {
-        return JSON.stringify(variable) === '{}';
-    }
-    return false;
-}
-function pageRefresh() {
-    const url = new URL(document.location.href);
-    url.searchParams.set('forceReload', String(Date.now()));
-    window.location.replace(url.toString());
-}
-function copyQuote(target) {
-    let node;
-    if (target.tagName.toLowerCase() === 'q') {
-        node = target;
-    }
-    else {
-        node = target.parentElement;
-    }
-    if (!node) {
-        return '';
-    }
-    const tagName = node.tagName.toLowerCase();
-    let tag;
-    switch (tagName) {
-        case 'samp':
-            tag = 'Sample';
-            break;
-        case 'code':
-            tag = 'Code';
-            break;
-        case 'blockquote':
-        case 'q':
-            tag = 'Quote';
-            break;
-        default:
-            return '';
-    }
-    let quoteText = String(node.textContent);
-    if (tagName === 'blockquote' && node.hasAttribute('data-author')) {
-        const authorMatch = new RegExp(`^(${String(node.getAttribute('data-author'))})`, 'ui');
-        quoteText = quoteText.replace(authorMatch, '');
-    }
-    if ((tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-description')) {
-        const descMatch = new RegExp(`^(${String(node.getAttribute('data-description'))})`, 'ui');
-        quoteText = quoteText.replace(descMatch, '');
-    }
-    if ((tagName === 'blockquote' || tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-source')) {
-        const sourceMatch = new RegExp(`(${String(node.getAttribute('data-source'))})$`, 'ui');
-        quoteText = quoteText.replace(sourceMatch, '');
-    }
-    navigator.clipboard.writeText(quoteText).then(() => {
-        addSnackbar(`${tag} copied to clipboard`, 'success');
-    }, () => {
-        addSnackbar(`Failed to copy ${tag.toLowerCase()}`, 'failure');
-    });
-    return String(node.textContent);
-}
-async function is_file(url) {
-    return new Promise((resolve, reject) => {
-        fetch(url, { 'method': 'HEAD' }).
-            then((response) => {
-            if (response.ok) {
-                resolve(true);
-            }
-            else {
-                resolve(false);
-            }
-        }).
-            catch((error) => {
-            reject(error);
-        });
-    });
-}
-function init() {
-    const inputs = document.querySelectorAll('input');
-    if (!empty(inputs)) {
-        inputs.forEach((input) => {
-            inputInit(input);
-        });
-    }
-    const textAreas = document.querySelectorAll('textarea');
-    if (!empty(textAreas)) {
-        textAreas.forEach((textarea) => {
-            textareaInit(textarea);
-        });
-    }
-    const anchors = document.querySelectorAll('a');
-    if (!empty(anchors)) {
-        anchors.forEach((anchor) => {
-            anchorInit(anchor);
-        });
-    }
-    const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
-    if (!empty(headings)) {
-        headings.forEach((heading) => {
-            headingInit(heading);
-        });
-    }
-    const forms = document.querySelectorAll('form');
-    if (!empty(forms)) {
-        forms.forEach((form) => {
-            formInit(form);
-        });
-    }
-    const detailsTags = document.querySelectorAll('details');
-    if (!empty(detailsTags)) {
-        detailsTags.forEach((details) => {
-            detailsInit(details);
-        });
-    }
-    const sampTags = document.querySelectorAll('samp');
-    if (!empty(sampTags)) {
-        sampTags.forEach((samp) => {
-            sampInit(samp);
-        });
-    }
-    const codeTags = document.querySelectorAll('code');
-    if (!empty(codeTags)) {
-        codeTags.forEach((code) => {
-            codeInit(code);
-        });
-    }
-    const blockquotes = document.querySelectorAll('blockquote');
-    if (!empty(blockquotes)) {
-        blockquotes.forEach((blockquote) => {
-            blockquoteInit(blockquote);
-        });
-    }
-    const quotes = document.querySelectorAll('q');
-    if (!empty(quotes)) {
-        quotes.forEach((quote) => {
-            qInit(quote);
-        });
-    }
-    const dialogs = document.querySelectorAll('dialog');
-    if (!empty(dialogs)) {
-        dialogs.forEach((dialog) => {
-            dialogInit(dialog);
-        });
-    }
-    const images = document.querySelectorAll('img');
-    if (!empty(images)) {
-        images.forEach((image) => {
-            imgInit(image);
-        });
-    }
-    customElements.define('nav-show', NavShow);
-    customElements.define('nav-hide', NavHide);
-    customElements.define('side-show', SideShow);
-    customElements.define('side-hide', SideHide);
-    customElements.define('login-form', LoginForm);
-    customElements.define('back-to-top', BackToTop);
-    customElements.define('time-r', Timer);
-    customElements.define('web-share', WebShare);
-    customElements.define('tool-tip', Tooltip);
-    customElements.define('snack-close', SnackbarClose);
-    customElements.define('gallery-overlay', Gallery);
-    customElements.define('gallery-close', GalleryClose);
-    customElements.define('gallery-prev', GalleryPrev);
-    customElements.define('gallery-next', GalleryNext);
-    customElements.define('gallery-image', GalleryImage);
-    customElements.define('image-carousel', CarouselList);
-    customElements.define('og-image', OGImage);
-    customElements.define('password-show', PasswordShow);
-    customElements.define('password-requirements', PasswordRequirements);
-    customElements.define('password-strength', PasswordStrength);
-    customElements.define('like-dis', Likedis);
-    customElements.define('vertical-tabs', VerticalTabs);
-    customElements.define('image-upload', ImageUpload);
-    customElements.define('select-custom', SelectCustom);
-    customElements.define('post-form', PostForm);
-    const newNodesObserver = new MutationObserver((mutations_list) => {
-        mutations_list.forEach((mutation) => {
-            mutation.addedNodes.forEach((added_node) => {
-                customizeNewElements(added_node);
-            });
-        });
-    });
-    newNodesObserver.observe(document, {
-        'attributes': false,
-        'characterData': false,
-        'childList': true,
-        'subtree': true
-    });
-    cleanGET();
-    router();
-}
-document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('hashchange', () => { hashCheck(); });
-function ariaNation(inputElement) {
-    inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
-    if (!inputElement.hasAttribute('placeholder')) {
-        inputElement.setAttribute('placeholder', inputElement.value || inputElement.type || 'placeholder');
-    }
-    if (empty(inputElement.getAttribute('type'))) {
-        inputElement.setAttribute('type', 'text');
-    }
-    let type;
-    if (empty(inputElement.type)) {
-        type = 'text';
-    }
-    else {
-        type = inputElement.type;
-    }
-    if (['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'checkbox', 'radio', 'file',].includes(String(type))) {
-        if (inputElement.required) {
-            inputElement.setAttribute('aria-required', String(true));
-        }
-        else {
-            inputElement.setAttribute('aria-required', String(false));
-        }
-    }
-    if (type === 'checkbox') {
-        inputElement.setAttribute('role', 'checkbox');
-        inputElement.setAttribute('aria-checked', String(inputElement.checked));
-        if (inputElement.indeterminate) {
-            inputElement.setAttribute('aria-checked', 'mixed');
-        }
-    }
-    if (type === 'checkbox') {
-        inputElement.setAttribute('value', inputElement.value);
-    }
-}
-function buttonToggle(button, enable = true) {
-    let spinner;
-    if (button.form) {
-        spinner = button.form.querySelector('.spinner');
-    }
-    if (!spinner) {
-        const buttonParent = button.parentElement;
-        if (buttonParent) {
-            spinner = buttonParent.querySelector('.spinner');
-        }
-    }
-    if (button.disabled) {
-        if (enable) {
-            button.disabled = false;
-        }
-        if (spinner) {
-            spinner.classList.add('hidden');
-        }
-    }
-    else {
-        button.disabled = true;
-        if (spinner) {
-            spinner.classList.remove('hidden');
-        }
-    }
-}
-function countInTextarea(textarea) {
-    if (textarea.labels[0] && textarea.maxLength) {
-        const label = textarea.labels[0];
-        label.setAttribute('data-curlength', `(${textarea.value.length}/${textarea.maxLength}ch)`);
-        label.classList.remove('at_the_limit', 'close_to_limit');
-        if (textarea.value.length >= textarea.maxLength) {
-            label.classList.add('at_the_limit');
-        }
-        else if (((100 * textarea.value.length) / textarea.maxLength) >= 75) {
-            label.classList.add('close_to_limit');
-        }
-    }
-}
-function nextInput(initial, reverse = false) {
-    const form = initial.form;
-    if (form) {
-        let previous;
-        for (const moveTo of form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')) {
-            if (reverse) {
-                if (moveTo === initial) {
-                    if (previous) {
-                        return previous;
-                    }
-                    return null;
-                }
-            }
-            else if (previous && previous === initial) {
-                return moveTo;
-            }
-            previous = moveTo;
-        }
-    }
-    return null;
-}
-async function pasteSplit(event) {
-    const permission = await navigator.permissions.query({ 'name': 'clipboard-read', }).catch(() => {
-    });
-    if (permission && permission.state !== 'denied') {
-        void navigator.clipboard.readText().then((result) => {
-            let buffer = result.toString();
-            let current = event.target;
-            if (current === null) {
-                return;
-            }
-            let maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
-            while (current !== null && maxLength && buffer.length > maxLength) {
-                current.value = buffer.substring(0, maxLength);
-                current.dispatchEvent(new Event('input', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-                if (!current.validity.valid) {
-                    return;
-                }
-                buffer = buffer.substring(maxLength);
-                current = nextInput(current, false);
-                if (current) {
-                    current.focus();
-                    maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
-                }
-            }
-            if (current) {
-                current.value = buffer;
-                current.dispatchEvent(new Event('input', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-            }
-        });
-    }
-}
-function formEnter(event) {
-    if (event.target) {
-        const form = event.target.form;
-        if (form && (event.code === 'Enter' || event.code === 'NumpadEnter') && !form.action) {
-            event.stopPropagation();
-            event.preventDefault();
-            return false;
-        }
-    }
-    return true;
-}
-function inputBackSpace(event) {
-    const current = event.target;
-    if (event.code === 'Backspace' && !current.value) {
-        const moveTo = nextInput(current, true);
-        if (moveTo) {
-            moveTo.focus();
-            moveTo.selectionEnd = moveTo.value.length;
-            moveTo.selectionStart = moveTo.value.length;
-        }
-    }
-}
-function autoNext(event) {
-    const current = event.target;
-    const maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
-    if (maxLength && current.value.length === maxLength && current.validity.valid) {
-        const moveTo = nextInput(current, false);
-        if (moveTo) {
-            moveTo.focus();
-        }
-    }
-}
 const customColorMap = {
     '#17141F': 'body',
     '#19424D': 'dark-border',
@@ -4383,8 +4383,11 @@ const tinySettings = {
     'block_unsupported_drop': true,
     'branding': true,
     'browser_spellcheck': true,
-    'color_map': Object.keys(customColorMap).map((key) => { return [key, customColorMap[key]]; }).
-        flat(),
+    'color_map': Object.keys(customColorMap)
+        .map((key) => {
+        return [key, customColorMap[key]];
+    })
+        .flat(),
     'content_css': '/css/tinymce.css',
     'content_security_policy': "default-src 'self'",
     'contextmenu': 'emoticons link image',
@@ -4419,54 +4422,82 @@ const tinySettings = {
         },
         'forecolor': {
             'attributes': {
-                'class': (value) => { return `tiny-color-${String(customColorMap[value.value])}`; },
+                'class': (value) => {
+                    return `tiny-color-${String(customColorMap[value.value])}`;
+                },
             },
             'inline': 'span',
             'remove': 'none',
         },
         'hilitecolor': {
             'attributes': {
-                'class': (value) => { return `tiny-bg-color-${String(customColorMap[value.value])}`; },
+                'class': (value) => {
+                    return `tiny-bg-color-${String(customColorMap[value.value])}`;
+                },
             },
             'inline': 'span',
             'remove': 'none',
         },
-        'list-circle': { 'classes': 'tiny-list-circle',
+        'list-circle': {
+            'classes': 'tiny-list-circle',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-decimal': { 'classes': 'tiny-list-decimal',
+            'selector': 'ul,ul>li'
+        },
+        'list-decimal': {
+            'classes': 'tiny-list-decimal',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-decimal-leading-zero': { 'classes': 'tiny-list-decimal-leading-zero',
+            'selector': 'ol,ol>li'
+        },
+        'list-decimal-leading-zero': {
+            'classes': 'tiny-list-decimal-leading-zero',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-disc': { 'classes': 'tiny-list-disc',
+            'selector': 'ol,ol>li'
+        },
+        'list-disc': {
+            'classes': 'tiny-list-disc',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-disclosure-closed': { 'classes': 'tiny-list-disclosure-closed',
+            'selector': 'ul,ul>li'
+        },
+        'list-disclosure-closed': {
+            'classes': 'tiny-list-disclosure-closed',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-disclosure-open': { 'classes': 'tiny-list-disclosure-open',
+            'selector': 'ul,ul>li'
+        },
+        'list-disclosure-open': {
+            'classes': 'tiny-list-disclosure-open',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-lower-alpha': { 'classes': 'tiny-list-lower-alpha',
+            'selector': 'ul,ul>li'
+        },
+        'list-lower-alpha': {
+            'classes': 'tiny-list-lower-alpha',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-lower-greek': { 'classes': 'tiny-list-lower-greek',
+            'selector': 'ol,ol>li'
+        },
+        'list-lower-greek': {
+            'classes': 'tiny-list-lower-greek',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-lower-roman': { 'classes': 'tiny-list-lower-roman',
+            'selector': 'ol,ol>li'
+        },
+        'list-lower-roman': {
+            'classes': 'tiny-list-lower-roman',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-square': { 'classes': 'tiny-list-square',
+            'selector': 'ol,ol>li'
+        },
+        'list-square': {
+            'classes': 'tiny-list-square',
             'remove': 'none',
-            'selector': 'ul,ul>li' },
-        'list-upper-alpha': { 'classes': 'tiny-list-upper-alpha',
+            'selector': 'ul,ul>li'
+        },
+        'list-upper-alpha': {
+            'classes': 'tiny-list-upper-alpha',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
-        'list-upper-roman': { 'classes': 'tiny-list-upper-roman',
+            'selector': 'ol,ol>li'
+        },
+        'list-upper-roman': {
+            'classes': 'tiny-list-upper-roman',
             'remove': 'none',
-            'selector': 'ol,ol>li' },
+            'selector': 'ol,ol>li'
+        },
         'underline': {
             'classes': 'tiny-underline',
             'inline': 'span',
@@ -4492,8 +4523,10 @@ const tinySettings = {
     'image_advtab': false,
     'image_caption': false,
     'image_class_list': [
-        { 'title': 'Default',
-            'value': 'w50pc middle block galleryZoom' },
+        {
+            'title': 'Default',
+            'value': 'w50pc middle block galleryZoom'
+        },
         {
             'menu': [
                 {
@@ -4536,8 +4569,10 @@ const tinySettings = {
             ],
             'title': 'Inline'
         },
-        { 'title': 'Icon',
-            'value': 'linkIcon' }
+        {
+            'title': 'Icon',
+            'value': 'linkIcon'
+        }
     ],
     'image_description': true,
     'image_dimensions': false,
@@ -4550,33 +4585,52 @@ const tinySettings = {
     'insertdatetime_element': true,
     'invalid_elements': 'acronym,applet,area,aside,base,basefont,bgsound,big,blink,body,button,canvas,center,content,datalist,dialog,dir,embed,fieldset,figure,figcaption,font,footer,form,frame,frameset,head,header,hgroup,html,iframe,input,image,keygen,legend,link,main,map,marquee,menuitem,meter,nav,nobr,noembed,noframes,noscript,object,optgroup,option,param,picture,plaintext,portal,pre,progress,rb,rp,rt,rtc,ruby,script,select,selectmenu,shadow,slot,strike,style,spacer,template,textarea,title,tt,xmp',
     'invalid_styles': 'font-size line-height',
+    'license_key': 'gpl',
     'lineheight_formats': '',
     'link_assume_external_targets': 'https',
     'link_context_toolbar': true,
     'link_default_protocol': 'https',
     'link_target_list': [
-        { 'title': 'New window',
-            'value': '_blank' },
-        { 'title': 'Current window',
-            'value': '_self' }
+        {
+            'title': 'New window',
+            'value': '_blank'
+        },
+        {
+            'title': 'Current window',
+            'value': '_self'
+        }
     ],
     'link_title': false,
     'lists_indent_on_tab': true,
     'menu': {
-        'edit': { 'items': 'undo redo | cut copy paste pastetext | selectall | searchreplace',
-            'title': 'Edit', },
-        'file': { 'items': 'newdocument restoredraft',
-            'title': 'File', },
-        'format': { 'items': 'underline strikethrough superscript subscript | align | styles',
-            'title': 'Format', },
-        'help': { 'items': 'help wordcount',
-            'title': 'Help', },
-        'insert': { 'items': 'link image codeformat | emoticons charmap hr | insertdatetime',
-            'title': 'Insert', },
-        'table': { 'items': 'inserttable | cell row column | deletetable',
-            'title': 'Table', },
-        'view': { 'items': 'code preview | visualaid visualchars visualblocks | fullscreen',
-            'title': 'View', },
+        'edit': {
+            'items': 'undo redo | cut copy paste pastetext | selectall | searchreplace',
+            'title': 'Edit',
+        },
+        'file': {
+            'items': 'newdocument restoredraft',
+            'title': 'File',
+        },
+        'format': {
+            'items': 'underline strikethrough superscript subscript | align | styles',
+            'title': 'Format',
+        },
+        'help': {
+            'items': 'help wordcount',
+            'title': 'Help',
+        },
+        'insert': {
+            'items': 'link image codeformat | emoticons charmap hr | insertdatetime',
+            'title': 'Insert',
+        },
+        'table': {
+            'items': 'inserttable | cell row column | deletetable',
+            'title': 'Table',
+        },
+        'view': {
+            'items': 'code preview | visualaid visualchars visualblocks | fullscreen',
+            'title': 'View',
+        },
     },
     'menubar': 'file edit view format insert table help',
     'object_resizing': false,
@@ -4597,47 +4651,79 @@ const tinySettings = {
     'selector': 'textarea.tinymce',
     'skin': 'oxide-dark',
     'style_formats': [
-        { 'items': [
-                { 'format': 'list-decimal',
-                    'title': 'Decimal (default)' },
-                { 'format': 'list-decimal-leading-zero',
-                    'title': 'Decimal, leading zero' },
-                { 'format': 'list-lower-alpha',
-                    'title': 'Lower Latin' },
-                { 'format': 'list-lower-greek',
-                    'title': 'Lower Greek' },
-                { 'format': 'list-lower-roman',
-                    'title': 'Lower Roman' },
-                { 'format': 'list-upper-alpha',
-                    'title': 'Upper Latin' },
-                { 'format': 'list-upper-roman',
-                    'title': 'Upper Roman' },
+        {
+            'items': [
+                {
+                    'format': 'list-decimal',
+                    'title': 'Decimal (default)'
+                },
+                {
+                    'format': 'list-decimal-leading-zero',
+                    'title': 'Decimal, leading zero'
+                },
+                {
+                    'format': 'list-lower-alpha',
+                    'title': 'Lower Latin'
+                },
+                {
+                    'format': 'list-lower-greek',
+                    'title': 'Lower Greek'
+                },
+                {
+                    'format': 'list-lower-roman',
+                    'title': 'Lower Roman'
+                },
+                {
+                    'format': 'list-upper-alpha',
+                    'title': 'Upper Latin'
+                },
+                {
+                    'format': 'list-upper-roman',
+                    'title': 'Upper Roman'
+                },
             ],
-            'title': 'Ordered lists' },
-        { 'items': [
-                { 'format': 'list-circle',
-                    'title': 'Circle' },
-                { 'format': 'list-disc',
-                    'title': 'Disc (default)' },
-                { 'format': 'list-disclosure-closed',
-                    'title': 'Disclosure closed' },
-                { 'format': 'list-disclosure-open',
-                    'title': 'Disclosure open' },
-                { 'format': 'list-square',
-                    'title': 'Square' },
+            'title': 'Ordered lists'
+        },
+        {
+            'items': [
+                {
+                    'format': 'list-circle',
+                    'title': 'Circle'
+                },
+                {
+                    'format': 'list-disc',
+                    'title': 'Disc (default)'
+                },
+                {
+                    'format': 'list-disclosure-closed',
+                    'title': 'Disclosure closed'
+                },
+                {
+                    'format': 'list-disclosure-open',
+                    'title': 'Disclosure open'
+                },
+                {
+                    'format': 'list-square',
+                    'title': 'Square'
+                },
             ],
-            'title': 'Unordered lists' },
+            'title': 'Unordered lists'
+        },
     ],
     'style_formats_autohide': true,
     'table_advtab': false,
     'table_appearance_options': false,
     'table_border_styles': [
-        { 'title': 'Solid',
-            'value': 'solid' },
+        {
+            'title': 'Solid',
+            'value': 'solid'
+        },
     ],
     'table_border_widths': [
-        { 'title': 'default',
-            'value': '0.125rem' },
+        {
+            'title': 'default',
+            'value': '0.125rem'
+        },
     ],
     'table_cell_advtab': false,
     'table_default_attributes': {},
@@ -4664,17 +4750,20 @@ function tinyMCEHideInputs() {
         const title = dialog.querySelector('div.tox-dialog__title');
         if (title) {
             const labels = dialog.querySelectorAll('label');
-            const titleText = String(title.textContent).toLowerCase();
+            const titleText = String(title.textContent)
+                .toLowerCase();
             if (titleText === 'insert/edit image') {
                 labels.forEach((item) => {
-                    if (String(item.textContent).toLowerCase() === 'source' && item.parentElement) {
+                    if (String(item.textContent)
+                        .toLowerCase() === 'source' && item.parentElement) {
                         item.parentElement.classList.add('hidden');
                     }
                 });
             }
             else if (titleText === 'cell properties' || titleText === 'row properties') {
                 labels.forEach((item) => {
-                    const itemText = String(item.textContent).toLowerCase();
+                    const itemText = String(item.textContent)
+                        .toLowerCase();
                     if ((itemText === 'height' || itemText === 'width' || itemText === 'scope') && item.parentElement) {
                         item.parentElement.classList.add('hidden');
                     }
@@ -4692,7 +4781,8 @@ function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
         const settings = tinySettings;
         settings.selector = `#${id}`;
         if (noMedia) {
-            settings.plugins = String(settings.plugins).replace('image ', '');
+            settings.plugins = String(settings.plugins)
+                .replace('image ', '');
             settings.images_upload_url = '';
             settings.menu.insert.items = settings.menu.insert.items.replace('image ', '');
         }
@@ -4700,7 +4790,8 @@ function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
             settings.autosave_restore_when_empty = false;
         }
         void import('/js/tinymce/tinymce.min.js').then(() => {
-            void tinymce.init(settings).then(() => {
+            void tinymce.init(settings)
+                .then(() => {
                 const tinyInstance = tinymce.get(id);
                 if (tinyInstance !== null) {
                     tinyInstance.on('OpenWindow', () => {

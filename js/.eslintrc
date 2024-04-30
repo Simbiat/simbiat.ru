@@ -107,7 +107,7 @@
         "arrow-spacing": "error",
         "block-spacing": "error",
         "comma-style": ["error", "last"],
-        "dot-location": ["error", "object"],
+        "dot-location": ["error", "property"],
         "eol-last": ["error", "always"],
         "function-call-argument-newline": ["error", "consistent"],
         "generator-star-spacing": ["error", {"before": true, "after": false}],
