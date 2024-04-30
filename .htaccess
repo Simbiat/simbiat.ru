@@ -376,7 +376,7 @@ RewriteRule ^(.*)$  css/min.css.map [END]
 
 #Rewriting for TinyMCE
 RewriteCond %{REQUEST_URI} "(^|/)js/tinymce/.*" [NC]
-RewriteRule (^|/)js/tinymce/(.*)$  composer/vendor/tinymce/tinymce/$2 [END]
+RewriteRule (^|/)js/tinymce/(.*)$  vendor/tinymce/tinymce/$2 [END]
 
 #Rewrite for GameMaker
 RewriteCond %{REQUEST_URI} "(^|/)games/.*/html5games/.*" [NC]
