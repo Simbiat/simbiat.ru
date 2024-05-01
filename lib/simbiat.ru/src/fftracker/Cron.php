@@ -1,9 +1,11 @@
 <?php
 #Functions meant to be called from Cron
 /** @noinspection PhpUnused */
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\fftracker;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Caching;
 use Simbiat\Config\FFTracker;
 use Simbiat\fftracker\Entities\Achievement;
@@ -15,22 +17,35 @@ use Simbiat\fftracker\Entities\PvPTeam;
 use Simbiat\HomePage;
 use Simbiat\Lodestone;
 
+/**
+ * Class handling regular tasks for FFXIV tracker
+ */
 class Cron
 {
-    #Update statistics
+    /**
+     * Update statistics
+     * @return bool|string
+     */
     public function UpdateStatistics(): bool|string
     {
         try {
             foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
-                (new Statistics)->update($type);
+                (new Statistics())->update($type);
             }
             return true;
-        } catch(\Exception $e) {
+        } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
-
-    public function UpdateEntity(string $id, string $type): bool|string
+    
+    /**
+     * Update a FFXIV entity
+     * @param string $id   Entity ID
+     * @param string $type Entity type
+     *
+     * @return bool|string
+     */
+    public function UpdateEntity(string $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
             'character' => (new Character($id))->update(),
@@ -42,8 +57,13 @@ class Cron
             default => false,
         };
     }
-
-    #Function to update old entities
+    
+    /**
+     * Function to update old entities
+     * @param int $limit How many entities to process
+     *
+     * @return bool|string
+     */
     public function UpdateOld(int $limit = 1): bool|string
     {
         #Sanitize entities number
@@ -62,26 +82,29 @@ class Cron
                         UNION ALL
                         SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `updated`, null as `clanid`, (SELECT `userid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` AND `ffxiv__character`.`userid` IS NOT NULL) as `userid` FROM `ffxiv__linkshell`
                         UNION ALL
-                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, null as `clanid`, NULL as `userid` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) FROM `ffxiv__character_achievement`)
+                        SELECT \'achievement\' AS `type`, `achievementid` AS `id`, `updated`, null as `clanid`, NULL as `userid` FROM `ffxiv__achievement` WHERE `achievementid` IN (SELECT DISTINCT(`achievementid`) as `achievementid` FROM `ffxiv__character_achievement`)
                     ) `allEntities`
                     ORDER BY `priority` DESC, `updated` LIMIT :maxLines',
                 [
-                    ':maxLines'=>[$limit, 'int'],
+                    ':maxLines' => [$limit, 'int'],
                 ]
             );
             foreach ($entities as $entity) {
                 $result = $this->UpdateEntity($entity['id'], $entity['type']);
-                if (!in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement'])) {
+                if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement'])) {
                     return $result;
                 }
             }
             return true;
-        } catch(\Exception $e) {
+        } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
-
-    #Function to add missing jobs to table
+    
+    /**
+     * Function to add missing jobs to tracker
+     * @return bool|string
+     */
     public function UpdateJobs(): bool|string
     {
         try {
@@ -100,7 +123,7 @@ class Cron
             $alter = [];
             #Previous job in the list (for AFTER clause)
             $previous = '';
-            foreach ($character['jobs'] as $job=>$details) {
+            foreach ($character['jobs'] as $job => $details) {
                 #Remove spaces from the job name
                 $jobNoSpace = preg_replace('/\s*/', '', $job);
                 #Check if job is present as respective column
@@ -121,18 +144,21 @@ class Cron
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
-
-    #Update list of servers
+    
+    /**
+     * Update list of servers
+     * @return bool|string
+     */
     public function UpdateServers(): bool|string
     {
         try {
-            $Lodestone = (new Lodestone);
+            $Lodestone = (new Lodestone());
             #Get server
             $worlds = $Lodestone->getWorldStatus()->getResult()['worlds'];
             #Prepare queries
             $queries = [];
-            foreach ($worlds as $dataCenter=>$servers) {
-                foreach ($servers as $server=>$status) {
+            foreach ($worlds as $dataCenter => $servers) {
+                foreach ($servers as $server => $status) {
                     $queries[] = [
                         'INSERT IGNORE INTO `ffxiv__server` (`server`, `dataCenter`) VALUES (:server, :dataCenter)',
                         [':server' => $server, ':dataCenter' => $dataCenter],
@@ -144,15 +170,18 @@ class Cron
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
-
-    #Register new entities (if found)
+    
+    /**
+     * Register new characters (if found)
+     * @return bool|string
+     */
     public function registerNewCharacters(): bool|string
     {
         try {
-            $cron = (new \Simbiat\Cron);
+            $cron = (new \Simbiat\Cron());
             $dbCon = HomePage::$dbController;
             #Try to register new characters
-            $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) FROM `ffxiv__character`;');
+            $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $newMaxId = min($maxId + 100, 4294967295);
             if ($maxId < $newMaxId) {
@@ -166,15 +195,19 @@ class Cron
         return true;
     }
     
+    /**
+     * Register any new linkshells found
+     * @return bool|string
+     */
     public function registerNewLinkshells(): bool|string
     {
         try {
-            $Lodestone = (new Lodestone);
-            $cron = (new \Simbiat\Cron);
+            $Lodestone = (new Lodestone());
+            $cron = (new \Simbiat\Cron());
             $dbCon = HomePage::$dbController;
             #Generate list of worlds for linkshells
             $worlds = $dbCon->selectAll(
-                            'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
+                'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
                             UNION ALL
                             SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;'
             );
@@ -222,7 +255,7 @@ class Cron
                                         }
                                     }
                                     #Attempt to update cache
-                                    $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => time(), 'count' => count($data)];
+                                    $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => time(), 'count' => \count($data)];
                                     file_put_contents($cachePath, json_encode($json, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
                                 }
                                 if ($pagesParsed === 500) {

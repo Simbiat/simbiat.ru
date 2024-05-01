@@ -1,3 +1,5 @@
+name: "simbiat.dev"
+baseProfile: "Project Default"
 version: "1.0"
 bootstrap: composer install --ignore-platform-reqs
 linter: jetbrains/qodana-php:2024.1
