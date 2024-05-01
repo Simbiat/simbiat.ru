@@ -41,7 +41,6 @@
         "classmap": [
             "./lib/ArrayHelpers/src",
             "./lib/Cron/src",
-            "./lib/cute-bytes/src",
             "./lib/database/src",
             "./lib/filename-sanitizer/src",
             "./lib/HTMLCut/src",
