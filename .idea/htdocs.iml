@@ -16,6 +16,8 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/array2table/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/filename-sanitizer/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/nl2tag/src" isTestSource="false" packagePrefix="Simbiat\" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/dbhelper" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
@@ -50,6 +52,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/tinymce/tinymce" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/simbiat/accountkeying" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

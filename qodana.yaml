@@ -13,3 +13,5 @@ include:
     -   name: RegExpSimplifiable
     -   name: PhpUnusedAliasInspection
 raiseLicenseProblems: true
+plugins:
+    -   id: com.kalessil.phpStorm.phpInspectionsEA

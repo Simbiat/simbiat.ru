@@ -1,12 +1,14 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Simbiat\usercontrol\Pages;
 
 use Simbiat\Abstracts\Page;
-use Simbiat\array2table;
 use Simbiat\Security;
 use Simbiat\usercontrol\Email;
 
+/**
+ * Page to unsubscribe email addresses from messages
+ */
 class Unsubscribe extends Page
 {
     #Current breadcrumb for navigation
@@ -23,15 +25,20 @@ class Unsubscribe extends Page
     protected string $ogdesc = 'Page used unsubscribing an email from notifications';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
-
-    #This is actual page generation based on further details of the $path
+    
+    /**
+     * Actual page generation based on further details of the $path
+     * @param array $path URL path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         if (empty($_GET['token'])) {
             return ['http_error' => 400, 'reason' => 'No email token provided'];
         }
         $email = Security::decrypt($_GET['token']);
-        if (preg_match(array2table::$eMailRegex, $email) !== 1) {
+        if (preg_match(Security::eMailRegex, $email) !== 1) {
             return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
         }
         $outputArray = [];

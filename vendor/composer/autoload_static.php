@@ -99,6 +99,7 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
         'Simbiat\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib/simbiat.ru/src',
+            1 => __DIR__ . '/..' . '/simbiat/accountkeying/src',
         ),
         'SendGrid\\Stats\\' => 
         array (
@@ -134,8 +135,8 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -147,8 +148,8 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -481,7 +482,7 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
         'Simbiat\\Abstracts\\Pages\\StaticPage' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Abstracts/Pages/StaticPage.php',
         'Simbiat\\Abstracts\\Router' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Abstracts/Router.php',
         'Simbiat\\Abstracts\\Search' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Abstracts/Search.php',
-        'Simbiat\\AccountKeying' => __DIR__ . '/../..' . '/lib/AccountKeying/src/AccountKeying.php',
+        'Simbiat\\AccountKeying' => __DIR__ . '/..' . '/simbiat/accountkeying/src/AccountKeying.php',
         'Simbiat\\ArrayHelpers' => __DIR__ . '/../..' . '/lib/ArrayHelpers/src/ArrayHelpers.php',
         'Simbiat\\Caching' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Caching.php',
         'Simbiat\\Cron' => __DIR__ . '/../..' . '/lib/Cron/src/Cron.php',
@@ -555,7 +556,6 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
         'Simbiat\\Twig\\Extension' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Twig/Extension.php',
         'Simbiat\\Twig\\RuntimeExtension' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Twig/RuntimeExtension.php',
         'Simbiat\\Upload' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/Upload.php',
-        'Simbiat\\array2table' => __DIR__ . '/../..' . '/lib/array2table/src/array2table.php',
         'Simbiat\\bictracker\\Api' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/bictracker/Api.php',
         'Simbiat\\bictracker\\Api\\Bic' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/bictracker/Api/Bic.php',
         'Simbiat\\bictracker\\Api\\DBUpdate' => __DIR__ . '/../..' . '/lib/simbiat.ru/src/bictracker/Api/DBUpdate.php',

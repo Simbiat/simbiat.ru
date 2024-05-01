@@ -11,8 +11,7 @@ use Simbiat\Config\Talks;
 
 class Security
 {
-
-    #Static sanitizer config for a little bit performance
+    public const string eMailRegex = '/^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/';
     
     #Function to hash password. Used mostly as a wrapper in case of future changes
     public static function passHash(#[\SensitiveParameter] string $password): string

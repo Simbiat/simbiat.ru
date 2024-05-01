@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9cb5e51127eac4482719e60ef4a40a8f",
+    "content-hash": "bff813ac01397a07c7b5247844cdd1c9",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -1205,6 +1205,56 @@
             "time": "2024-04-18T11:09:09+00:00"
         },
         {
+            "name": "simbiat/accountkeying",
+            "version": "2.1.3+20240501",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/AccountKeying.git",
+                "reference": "dbbdd1bcdd4441ea0febc75ee1f4830e7c39881d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/AccountKeying/zipball/dbbdd1bcdd4441ea0febc75ee1f4830e7c39881d",
+                "reference": "dbbdd1bcdd4441ea0febc75ee1f4830e7c39881d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Library to do account keying based on logic from Central Bank of Russia.",
+            "homepage": "https://github.com/Simbiat/AccountKeying",
+            "keywords": [
+                "BIC",
+                "Russia",
+                "account",
+                "keying",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/AccountKeying/issues",
+                "source": "https://github.com/Simbiat/AccountKeying"
+            },
+            "time": "2024-05-01T16:36:39+00:00"
+        },
+        {
             "name": "starkbank/ecdsa",
             "version": "0.0.5",
             "source": {
@@ -1768,12 +1818,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "c9920ef42818bc65373cec1acc26bdee7a487e72"
+                "reference": "a6cc84fe50abd91fdbfa06fa0e7b93386aa2193c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c9920ef42818bc65373cec1acc26bdee7a487e72",
-                "reference": "c9920ef42818bc65373cec1acc26bdee7a487e72",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a6cc84fe50abd91fdbfa06fa0e7b93386aa2193c",
+                "reference": "a6cc84fe50abd91fdbfa06fa0e7b93386aa2193c",
                 "shasum": ""
             },
             "conflict": {
@@ -2072,7 +2122,7 @@
                 "laravel/laravel": ">=5.4,<5.4.22",
                 "laravel/socialite": ">=1,<1.0.99|>=2,<2.0.10",
                 "latte/latte": "<2.10.8",
-                "lavalite/cms": "<=9",
+                "lavalite/cms": "<=9|==10.1",
                 "lcobucci/jwt": ">=3.4,<3.4.6|>=4,<4.0.4|>=4.1,<4.1.5",
                 "league/commonmark": "<0.18.3",
                 "league/flysystem": "<1.1.4|>=2,<2.1.1",
@@ -2551,7 +2601,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-26T17:04:41+00:00"
+            "time": "2024-04-30T09:04:31+00:00"
         }
     ],
     "aliases": [],

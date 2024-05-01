@@ -1,11 +1,3 @@
-[submodule "lib/AccountKeying"]
-	path = lib/AccountKeying
-	url = https://github.com/Simbiat/AccountKeying
-	branch = main
-[submodule "lib/array2table"]
-	path = lib/array2table
-	url = https://github.com/Simbiat/array2table
-	branch = master
 [submodule "lib/cute-bytes"]
 	path = lib/cute-bytes
 	url = https://github.com/Simbiat/cute-bytes

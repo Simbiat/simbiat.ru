@@ -20,6 +20,7 @@
         "sendgrid/sendgrid": "^8 ",
         "ipinfo/ipinfo": "^2",
         "tinymce/tinymce": "^7",
+        "simbiat/accountkeying": "^2",
         "ext-zip": "*",
         "ext-iconv": "*",
         "ext-pdo": "*",
@@ -38,8 +39,6 @@
     },
     "autoload": {
         "classmap": [
-            "./lib/AccountKeying/src",
-            "./lib/array2table/src",
             "./lib/ArrayHelpers/src",
             "./lib/Cron/src",
             "./lib/cute-bytes/src",
