@@ -245,6 +245,7 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         if (str_starts_with($filename, 'S')) {
             return FFTracker::$crestsComponents.'emblems/'.mb_strtolower(mb_substr($filename, 0, 3, 'UTF-8'), 'UTF-8').'/'.$filename;
         }
+        Errors::error_log(new \UnexpectedValueException('Unexpected crest component URL `'.$image.'`'));
         return null;
     }
     
@@ -254,12 +255,14 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
         foreach ($images as $image) {
             if (!empty($image)) {
                 $cachedImage = self::crestToLocal($image);
-                if (str_contains($cachedImage, 'backgrounds')) {
-                    $imagesToMerge[0] = $cachedImage;
-                } elseif (str_contains($cachedImage, 'frames')) {
-                    $imagesToMerge[1] = $cachedImage;
-                } elseif (str_contains($cachedImage, 'emblems')) {
-                    $imagesToMerge[2] = $cachedImage;
+                if ($cachedImage !== null) {
+                    if (str_contains($cachedImage, 'backgrounds')) {
+                        $imagesToMerge[0] = $cachedImage;
+                    } elseif (str_contains($cachedImage, 'frames')) {
+                        $imagesToMerge[1] = $cachedImage;
+                    } elseif (str_contains($cachedImage, 'emblems')) {
+                        $imagesToMerge[2] = $cachedImage;
+                    }
                 }
             }
         }
