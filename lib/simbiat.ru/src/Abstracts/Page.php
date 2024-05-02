@@ -179,14 +179,14 @@ abstract class Page
         return $page;
     }
 
-    protected final function lastModified(int|string $time = 0): void
+    protected final function lastModified(int|string|null $time = null): void
     {
         #Convert string to int
         if (is_string($time)) {
             $time = strtotime($time);
         }
         #If time is less than 0, use Last Modified set initially
-        if ($time <= 0) {
+        if ($time === null || $time <= 0) {
             $time = $this->lastModified;
         }
         #Set Last Modified to the time
