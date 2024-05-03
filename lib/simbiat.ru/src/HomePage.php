@@ -249,7 +249,8 @@ class HomePage
                 #Check for maintenance
                 self::$dbUpdate = (bool)self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'');
                 self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
-            } catch (\Throwable) {
+            } catch (\Throwable $exception) {
+                Errors::error_log($exception);
                 self::$dbup = false;
                 return false;
             }
