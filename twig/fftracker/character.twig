@@ -1,36 +1,3 @@
-{% if character.biology.gender == 0 and character.biology.race == 'Miqo\'te' %}
-    {% set adjective = 'sexy' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Miqo\'te' %}
-    {% set adjective = 'haughty' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Lalafell' %}
-    {% set adjective = 'adorable' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Lalafell' %}
-    {% set adjective = 'tiny' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Elezen' %}
-    {% set adjective = 'tall' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Elezen' %}
-    {% set adjective = 'lofty' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Roegadyn' %}
-    {% set adjective = 'bodacious' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Roegadyn' %}
-    {% set adjective = 'bulky' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Hrothgar' %}
-    {% set adjective = 'inconspicious' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Hrothgar' %}
-    {% set adjective = 'hairy' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Hyur' %}
-    {% set adjective = 'flexible' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Hyur' %}
-    {% set adjective = 'handsome' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Au Ra' %}
-    {% set adjective = 'horny' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Au Ra' %}
-    {% set adjective = 'scaly' %}
-{% elseif character.biology.gender == 0 and character.biology.race == 'Viera' %}
-    {% set adjective = 'fast' %}
-{% elseif character.biology.gender == 1 and character.biology.race == 'Viera' %}
-    {% set adjective = 'eared' %}
-{% endif %}
 <section class="ff_char_page">
     <section class="ff_char_block">
         {% if not character.avatarID %}
@@ -47,7 +14,7 @@
             </p>
             <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update" src="/img/refresh.svg">
         {% endif %}
-        <p><b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} is a {{ adjective }} {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}.{% endif %}</p>
+        <p><b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ name }}" src="/img/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} is a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}.{% endif %}</p>
         <p>
             Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="linkIcon" src="/img/fftracker/guardians/{{ character.biology.guardianid }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} <span class="failure">{% if character.biology.killedby %}☠ Killed{% else %}🪦 Died{% endif %} on {{ timeTag(character.dates.deleted, "d/m/Y") }} {% if character.biology.killedby %}by {{ character.biology.killedby }} ☠{% else %}from old age 🪦{% endif %}.</span>{% endif %}
         </p>
