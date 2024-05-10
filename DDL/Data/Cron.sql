@@ -42,3 +42,6 @@ INSERT IGNORE INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `a
 INSERT IGNORE INTO `cron__schedule` (`task`, `arguments`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`) VALUES
 ('ffNewCharacters', '', 86400, NULL, NULL, 0, 'Scheduling potential new character', '2024-04-27 12:00:00'),
 ('ffNewLinkshells', '', 3600, NULL, NULL, 0, 'Checking for new linkshells', '2022-04-27 01:00:00');
+
+UPDATE `cron__tasks` SET `function`='dbOptimize', `object`='\Simbiat\Maintenance', `parameters`=null WHERE `task`='dbMaintenance';
+UPDATE `cron__schedule` SET `arguments`='' WHERE `task`='dbMaintenance';
