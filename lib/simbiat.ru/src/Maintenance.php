@@ -114,6 +114,22 @@ class Maintenance
         }
         return $result;
     }
+    
+    public function dbOptimize(): bool|string
+    {
+        $cron = (new Cron());
+        try {
+            HomePage::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
+            $cron->setSetting('enabled', 0);
+            (new optimizeTables())->setJsonPath('.\/data\/tables.json')->optimize('simbiatr_simbiat', true, true);
+        } catch (\Throwable $e) {
+            return $e->getMessage()."\r\n".$e->getTraceAsString();
+        } finally {
+            HomePage::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
+            $cron->setSetting('enabled', 1);
+        }
+        return true;
+    }
 
     #Function to get available disk space
     public function noSpace(): void
