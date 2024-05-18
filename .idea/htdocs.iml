@@ -9,7 +9,6 @@
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/vcs" />
       <excludeFolder url="file://$MODULE_DIR$/twig/cache" />
-      <excludeFolder url="file://$MODULE_DIR$/DDL" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/twig" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/guzzle" />

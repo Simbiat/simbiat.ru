@@ -18,7 +18,6 @@
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/.github" />
             <excludedPath local="true" path="$PROJECT_DIR$/.idea" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.editorconfig" />
             <excludedPath local="true" path="$PROJECT_DIR$/.gitattributes" />
             <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
             <excludedPath local="true" path="$PROJECT_DIR$/.gitmodules" />
@@ -31,6 +30,7 @@
             <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.lock" />
+            <excludedPath local="true" path="$PROJECT_DIR$/DDL" />
           </excludedPaths>
         </serverdata>
       </paths>
