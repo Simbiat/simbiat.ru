@@ -41,12 +41,12 @@ class Cron
     
     /**
      * Update a FFXIV entity
-     * @param string $id   Entity ID
-     * @param string $type Entity type
+     * @param string|int $id   Entity ID
+     * @param string     $type Entity type
      *
      * @return bool|string
      */
-    public function UpdateEntity(string $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
+    public function UpdateEntity(string|int $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
             'character' => (new Character($id))->update(),

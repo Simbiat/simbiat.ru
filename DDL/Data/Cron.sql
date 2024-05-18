@@ -48,3 +48,4 @@ UPDATE `cron__schedule` SET `arguments`='' WHERE `task`='dbMaintenance';
 
 UPDATE `cron__tasks` SET `system`=1;
 UPDATE `cron__schedule` SET `system`=1 WHERE `task`!='ffUpdateEntity';
+UPDATE `cron__tasks` SET `object` = 'Simbiat\\Maintenance' WHERE `cron__tasks`.`task` = 'dbMaintenance';

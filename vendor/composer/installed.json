@@ -2153,17 +2153,17 @@
         },
         {
             "name": "simbiat/cron",
-            "version": "2.0.0+20240514",
-            "version_normalized": "2.0.0.0",
+            "version": "2.0.1+20240518",
+            "version_normalized": "2.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Simbiat/Cron.git",
-                "reference": "ad260b6ca62cbee880d5673323b3b34bc7879600"
+                "reference": "5c622037a5d7c4267c2091beea1f9eaa0e9e8de3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Simbiat/Cron/zipball/ad260b6ca62cbee880d5673323b3b34bc7879600",
-                "reference": "ad260b6ca62cbee880d5673323b3b34bc7879600",
+                "url": "https://api.github.com/repos/Simbiat/Cron/zipball/5c622037a5d7c4267c2091beea1f9eaa0e9e8de3",
+                "reference": "5c622037a5d7c4267c2091beea1f9eaa0e9e8de3",
                 "shasum": ""
             },
             "require": {
@@ -2171,7 +2171,7 @@
                 "simbiat/database": "^2",
                 "simbiat/sand-clock": "^2.3.3"
             },
-            "time": "2024-05-14T17:58:09+00:00",
+            "time": "2024-05-18T12:09:48+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2360,17 +2360,17 @@
         },
         {
             "name": "simbiat/http20",
-            "version": "2.0.0+20240506",
-            "version_normalized": "2.0.0.0",
+            "version": "2.0.1+20240518",
+            "version_normalized": "2.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Simbiat/HTTP20.git",
-                "reference": "ccc69ff25971a0895a61a0d1e4f3fc751d00ad93"
+                "reference": "5ac2126a5e4d72f7b9c8e148cf70e7dd44b8760f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Simbiat/HTTP20/zipball/ccc69ff25971a0895a61a0d1e4f3fc751d00ad93",
-                "reference": "ccc69ff25971a0895a61a0d1e4f3fc751d00ad93",
+                "url": "https://api.github.com/repos/Simbiat/HTTP20/zipball/5ac2126a5e4d72f7b9c8e148cf70e7dd44b8760f",
+                "reference": "5ac2126a5e4d72f7b9c8e148cf70e7dd44b8760f",
                 "shasum": ""
             },
             "require": {
@@ -2382,7 +2382,7 @@
             "suggest": {
                 "simbiat/filename-sanitizer": "Small class to replace common characters that are restiricted in filenames."
             },
-            "time": "2024-05-06T15:40:23+00:00",
+            "time": "2024-05-18T11:43:15+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
