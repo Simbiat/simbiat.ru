@@ -117,7 +117,7 @@ class Maintenance
     
     public function dbOptimize(): bool|string
     {
-        $cron = (new Cron());
+        $cron = (new Cron\Agent());
         try {
             HomePage::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 0);

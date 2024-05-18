@@ -4,7 +4,7 @@ namespace Simbiat\Abstracts;
 
 use Simbiat\Errors;
 use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 use Simbiat\Security;
 
 abstract class Api
@@ -195,7 +195,7 @@ abstract class Api
                 #Check if they match. hash_equals helps mitigate timing attacks
                 if (hash_equals($_SESSION['CSRF'], $token) === true) {
                     #Check if HTTP Origin is among allowed ones, if we want to restrict them.
-                    #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\HTTP20\headers->security()
+                    #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
                     if (empty($allowOrigins) ||
                         #If origins are limited
                         (

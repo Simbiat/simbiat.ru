@@ -4,7 +4,7 @@ namespace Simbiat\Talks\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\Config\Common;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 
 class Section extends Page
 {

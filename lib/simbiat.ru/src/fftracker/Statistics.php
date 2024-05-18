@@ -6,7 +6,8 @@ namespace Simbiat\fftracker;
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\ArrayHelpers;
 use Simbiat\Config\FFTracker;
-use Simbiat\Cron;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Controller;
 use Simbiat\HomePage;
 use Simbiat\LodestoneModules\Converters;
@@ -423,18 +424,18 @@ class Statistics
     private function scheduleBugs(array $data): void
     {
         #These may be because of temporary issues on parser or Lodestone side, so schedule them for update
-        $cron = (new Cron());
+        $cron = new TaskInstance();
         foreach ($data['bugs']['noClan'] as $character) {
-            $cron->add('ffUpdateEntity', [(string)$character['id'], 'character'], message: 'Updating character with ID '.$character['id']);
+            $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$character['id'], 'character'], 'message' => 'Updating character with ID '.$character['id']])->add();
         }
         foreach ($data['bugs']['noMembers'] as $group) {
-            $cron->add('ffUpdateEntity', [(string)$group['id'], $group['type']], message: 'Updating group with ID '.$group['id']);
+            $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$group['id'], $group['type']], 'message' => 'Updating group with ID '.$group['id']])->add();
         }
         foreach ($data['bugs']['duplicateNames'] as $servers) {
             foreach ($servers as $server) {
                 foreach ($server as $names) {
                     foreach ($names as $duplicate) {
-                        $cron->add('ffUpdateEntity', [(string)$duplicate['id'], $duplicate['type']], message: 'Updating entity with ID '.$duplicate['id']);
+                        $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$duplicate['id'], $duplicate['type']], 'message' => 'Updating entity with ID '.$duplicate['id']])->add();
                     }
                 }
             }

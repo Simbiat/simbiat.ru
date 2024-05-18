@@ -6,7 +6,8 @@ use Simbiat\Config\Common;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\HTMLCut;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
+use Simbiat\http20\Links;
 use Simbiat\Images;
 
 abstract class Page
@@ -145,7 +146,7 @@ abstract class Page
             foreach ($this->h2push as $key=>$image) {
                 $this->h2push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
-            Headers::links($this->h2push);
+            Links::links($this->h2push);
         }
         if (!empty($this->altLinks) || !empty($this->jsModule)) {
             if (!empty($this->jsModule)) {
@@ -153,7 +154,7 @@ abstract class Page
             }
             #Send HTTP header
             if (!HomePage::$staleReturn) {
-                Headers::links($this->altLinks);
+                Links::links($this->altLinks);
             }
             #Add link to HTML
             $page['link_extra'] = $this->altLinks;

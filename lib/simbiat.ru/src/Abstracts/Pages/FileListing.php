@@ -4,7 +4,7 @@ namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Config\Common;
 use Simbiat\SafeFileName;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 
 class FileListing extends StaticPage
 {

@@ -3,8 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Config\Common;
-use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 
 class Listing extends Search
 {

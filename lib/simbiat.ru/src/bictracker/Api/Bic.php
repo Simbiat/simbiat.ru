@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\bictracker\Api;
 
 use Simbiat\Abstracts\Api;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 
 class Bic extends Api
 {

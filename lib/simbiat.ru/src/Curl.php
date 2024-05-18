@@ -4,8 +4,8 @@ namespace Simbiat;
 
 #Class for cUrl related functions. Needed more for settings' uniformity
 use Simbiat\Config\Talks;
-use Simbiat\HTTP20\Common;
-use Simbiat\HTTP20\Sharing;
+use Simbiat\http20\Common;
+use Simbiat\http20\Sharing;
 
 class Curl
 {

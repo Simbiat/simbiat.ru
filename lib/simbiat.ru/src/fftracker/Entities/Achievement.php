@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Config\FFTracker;
-use Simbiat\Cron;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
 use Simbiat\Images;
@@ -39,7 +40,7 @@ class Achievement extends Entity
         $data['characters'] = HomePage::$dbController->selectAll('SELECT * FROM (SELECT \'character\' AS `type`, `ffxiv__character`.`characterid` AS `id`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character`.`characterid` = `ffxiv__character_achievement`.`characterid` WHERE `ffxiv__character_achievement`.`achievementid` = :id ORDER BY `ffxiv__character_achievement`.`time` DESC LIMIT 50) t ORDER BY `name`', [':id'=>$this->id]);
         #Register for an update if old enough or category or howto or dbid are empty. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && !empty($data['characters']) && (empty($data['category']) || empty($data['subcategory']) || empty($data['howto']) || empty($data['dbid']) || (time() - strtotime($data['updated'])) >= 31536000)) {
-            (new Cron)->add('ffUpdateEntity', [$this->id, 'achievement'], priority: 2, message: 'Updating achievement with ID ' . $this->id);
+            (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'achievement'], 'message' => 'Updating achievement with ID '.$this->id, 'priority' => 2])->add();
         }
         return $data;
     }

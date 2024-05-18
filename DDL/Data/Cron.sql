@@ -45,3 +45,6 @@ INSERT IGNORE INTO `cron__schedule` (`task`, `arguments`, `frequency`, `dayofmon
 
 UPDATE `cron__tasks` SET `function`='dbOptimize', `object`='\Simbiat\Maintenance', `parameters`=null WHERE `task`='dbMaintenance';
 UPDATE `cron__schedule` SET `arguments`='' WHERE `task`='dbMaintenance';
+
+UPDATE `cron__tasks` SET `system`=1;
+UPDATE `cron__schedule` SET `system`=1 WHERE `task`!='ffUpdateEntity';

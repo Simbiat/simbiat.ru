@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\Abstracts;
 
 use Simbiat\Config\Common;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 use Simbiat\Images;
 
 abstract class Router

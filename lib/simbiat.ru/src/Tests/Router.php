@@ -4,7 +4,7 @@ namespace Simbiat\Tests;
 
 use Simbiat\Config\Twig;
 use Simbiat\Errors;
-use Simbiat\HTTP20\Common;
+use Simbiat\http20\Common;
 use Simbiat\optimizeTables;
 use Simbiat\usercontrol\Email;
 

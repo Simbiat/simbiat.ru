@@ -3,8 +3,8 @@ declare(strict_types=1);
 namespace Simbiat;
 
 use Simbiat\Config\Common;
-use Simbiat\HTTP20\Atom;
-use Simbiat\HTTP20\RSS;
+use Simbiat\http20\Atom;
+use Simbiat\http20\RSS;
 
 class Feeds
 {

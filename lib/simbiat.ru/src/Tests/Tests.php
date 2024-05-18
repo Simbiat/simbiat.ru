@@ -4,8 +4,8 @@ namespace Simbiat\Tests;
 
 use Simbiat\Config;
 use Simbiat\Curl;
-use Simbiat\HTTP20\Common;
-use Simbiat\HTTP20\Sharing;
+use Simbiat\http20\Common;
+use Simbiat\http20\Sharing;
 
 class Tests
 {

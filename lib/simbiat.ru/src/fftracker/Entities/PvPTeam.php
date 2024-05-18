@@ -2,7 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
-use Simbiat\Cron;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
@@ -40,7 +41,7 @@ class PvPTeam extends Entity
         unset($data['manual'], $data['datacenterid'], $data['serverid'], $data['server']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-            (new Cron)->add('ffUpdateEntity', [$this->id, 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->id);
+            (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->id, 'priority' => 1])->add();
         }
         return $data;
     }

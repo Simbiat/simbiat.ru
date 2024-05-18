@@ -20,7 +20,17 @@
         "sendgrid/sendgrid": "^8 ",
         "ipinfo/ipinfo": "^2",
         "tinymce/tinymce": "^7",
+        "simbiat/database": "^2",
         "simbiat/accountkeying": "^2",
+        "simbiat/sand-clock": "^2",
+        "simbiat/optimize-tables": "^2",
+        "simbiat/filename-sanitizer": "^1",
+        "simbiat/nl2tag": "^1",
+        "simbiat/arrayhelpers": "^2",
+        "simbiat/htmlcut": "^1",
+        "simbiat/http20": "^2",
+        "simbiat/lodestone-parser": "^1",
+        "simbiat/cron": "^2",
         "ext-zip": "*",
         "ext-iconv": "*",
         "ext-pdo": "*",
@@ -38,18 +48,6 @@
         "roave/security-advisories": "dev-latest"
     },
     "autoload": {
-        "classmap": [
-            "./lib/ArrayHelpers/src",
-            "./lib/Cron/src",
-            "./lib/database/src",
-            "./lib/filename-sanitizer/src",
-            "./lib/HTMLCut/src",
-            "./lib/HTTP20/src",
-            "./lib/lodestone-parser/src",
-            "./lib/optimize-tables/src",
-            "./lib/sand-clock/src",
-            "./lib/nl2tag/src"
-        ],
         "psr-4": {
             "Simbiat\\": "./lib/simbiat.ru/src"
         }

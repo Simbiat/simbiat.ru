@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Simbiat\Sitemap;
 
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 
 class Router extends \Simbiat\Abstracts\Router
 {

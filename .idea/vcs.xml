@@ -5,16 +5,5 @@
     <mapping directory="$PROJECT_DIR$/img/devicedetector" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/img/fftracker/crests-components" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/img/fftracker/icons" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/ArrayHelpers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Cron" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/HTMLCut" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/HTTP20" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/cute-bytes" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/database" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/filename-sanitizer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/lodestone-parser" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/nl2tag" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/optimize-tables" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/sand-clock" vcs="Git" />
   </component>
 </project>

@@ -8,6 +8,7 @@ namespace Simbiat\fftracker;
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Caching;
 use Simbiat\Config\FFTracker;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\fftracker\Entities\Achievement;
 use Simbiat\fftracker\Entities\Character;
 use Simbiat\fftracker\Entities\CrossworldLinkshell;
@@ -178,7 +179,7 @@ class Cron
     public function registerNewCharacters(): bool|string
     {
         try {
-            $cron = (new \Simbiat\Cron());
+            $cron = new TaskInstance();
             $dbCon = HomePage::$dbController;
             #Try to register new characters
             $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
@@ -186,7 +187,7 @@ class Cron
             $newMaxId = min($maxId + 100, 4294967295);
             if ($maxId < $newMaxId) {
                 for ($character = $maxId + 1; $character <= $newMaxId; $character++) {
-                    $cron->add('ffUpdateEntity', [$character, 'character'], message: 'Updating character with ID '.$character);
+                    $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$character, 'character'], 'message' => 'Updating character with ID '.$character])->add();
                 }
             }
         } catch (\Throwable $exception) {
@@ -203,7 +204,7 @@ class Cron
     {
         try {
             $Lodestone = (new Lodestone());
-            $cron = (new \Simbiat\Cron());
+            $cron = new TaskInstance();
             $dbCon = HomePage::$dbController;
             #Generate list of worlds for linkshells
             $worlds = $dbCon->selectAll(
@@ -216,7 +217,6 @@ class Cron
             $json = (new Caching())->getArrayFromFile($cachePath);
             #Loop through the servers
             $pagesParsed = 0;
-            echo 'start: '.time().'<br>';
             foreach ($worlds as $world) {
                 #Loop through order filter
                 foreach (['1', '2', '3', '4'] as $order) {
@@ -240,7 +240,7 @@ class Cron
                                     continue 2;
                                 }
                                 #Reset Lodestone
-                                $Lodestone->setResult([]);
+                                $Lodestone->resetResult();
                                 if (!empty($data['linkshells'])) {
                                     #Clean data
                                     unset($data['linkshells']['pageCurrent'], $data['linkshells']['pageTotal'], $data['linkshells']['total']);
@@ -248,10 +248,9 @@ class Cron
                                     $data = array_keys($data['linkshells']);
                                     #Iterrate through found items
                                     foreach ($data as $linkshell) {
-                                        echo 'linkshell: '.$linkshell.'<br>';
                                         #Check if Linkshell exists in DB
                                         if (!$dbCon->check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
-                                            $cron->add('ffUpdateEntity', [$linkshell, $world['entity']], message: 'Updating '.$world['entity'].' with ID '.$linkshell);
+                                            $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
                                         }
                                     }
                                     #Attempt to update cache
@@ -260,7 +259,6 @@ class Cron
                                 }
                                 if ($pagesParsed === 500) {
                                     #Do not parse more than 200 pages at a time
-                                    echo 'end: '.time().'<br>';
                                     return true;
                                 }
                                 if ($page === $pageTotal) {

@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Config\Talks;
-use Simbiat\Cron;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
@@ -68,7 +69,7 @@ class Character extends Entity
         unset($data['manual'], $data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-            (new Cron)->add('ffUpdateEntity', [$this->id, 'character'], priority: 1, message: 'Updating character with ID ' . $this->id);
+            (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'character'], 'message' => 'Updating character with ID '.$this->id, 'priority' => 1])->add();
         }
         return $data;
     }
@@ -327,11 +328,11 @@ class Character extends Entity
             HomePage::$dbController->query($queries);
             #Register Free Company update if change was detected
             if (!empty($this->lodestone['freeCompany']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid' => $this->id, ':fcID' => $this->lodestone['freeCompany']['id']]) === false && (new FreeCompany($this->lodestone['freeCompany']['id']))->update() !== true) {
-                (new Cron)->add('ffUpdateEntity', [$this->lodestone['freeCompany']['id'], 'freecompany'], priority: 1, message: 'Updating free company with ID ' . $this->lodestone['freeCompany']['id']);
+                (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->lodestone['freeCompany']['id'], 'freecompany'], 'message' => 'Updating free company with ID '.$this->lodestone['freeCompany']['id'], 'priority' => 1])->add();
             }
             #Register PvP Team update if change was detected
             if (!empty($this->lodestone['pvp']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `characterid`=:characterid AND `pvpteamid`=:pvpID;', [':characterid' => $this->id, ':pvpID' => $this->lodestone['pvp']['id']]) === false && (new PvPTeam($this->lodestone['pvp']['id']))->update() !== true) {
-                (new Cron)->add('ffUpdateEntity', [$this->lodestone['pvp']['id'], 'pvpteam'], priority: 1, message: 'Updating PvP team with ID ' . $this->lodestone['pvp']['id']);
+                (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->lodestone['pvp']['id'], 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->lodestone['pvp']['id'], 'priority' => 1])->add();
             }
             #Check if character is linked to a user
             $character = HomePage::$dbController->selectRow('SELECT `characterid`, `userid` FROM `ffxiv__character` WHERE `characterid`=:id;', [':id' => $this->id]);

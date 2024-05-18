@@ -1,43 +1,3 @@
-[submodule "lib/cute-bytes"]
-	path = lib/cute-bytes
-	url = https://github.com/Simbiat/cute-bytes
-	branch = master
-[submodule "lib/ArrayHelpers"]
-	path = lib/ArrayHelpers
-	url = https://github.com/Simbiat/ArrayHelpers
-	branch = main
-[submodule "lib/Cron"]
-	path = lib/Cron
-	url = https://github.com/Simbiat/Cron
-	branch = main
-[submodule "lib/database"]
-	path = lib/database
-	url = https://github.com/Simbiat/database
-	branch = master
-[submodule "lib/filename-sanitizer"]
-	path = lib/filename-sanitizer
-	url = https://github.com/Simbiat/filename-sanitizer
-	branch = master
-[submodule "lib/HTMLCut"]
-	path = lib/HTMLCut
-	url = https://github.com/Simbiat/HTMLCut
-	branch = main
-[submodule "lib/HTTP20"]
-	path = lib/HTTP20
-	url = https://github.com/Simbiat/HTTP20
-	branch = main
-[submodule "lib/lodestone-parser"]
-	path = lib/lodestone-parser
-	url = https://github.com/Simbiat/lodestone-parser
-	branch = main
-[submodule "lib/optimize-tables"]
-	path = lib/optimize-tables
-	url = https://github.com/Simbiat/optimize-tables
-	branch = master
-[submodule "lib/sand-clock"]
-	path = lib/sand-clock
-	url = https://github.com/Simbiat/sand-clock
-	branch = master
 [submodule "img/fftracker/icons"]
 	path = img/fftracker/icons
 	url = https://github.com/Simbiat/FFXIV-Icons
@@ -47,6 +7,3 @@
 [submodule "img/fftracker/crests-components"]
 	path = img/fftracker/crests-components
 	url = https://github.com/Simbiat/FFXIV-Crests-Components
-[submodule "lib/nl2tag"]
-	path = lib/nl2tag
-	url = https://github.com/Simbiat/nl2tag

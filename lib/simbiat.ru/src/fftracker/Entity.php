@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace Simbiat\fftracker;
 
 use Simbiat\Config\FFTracker;
-use Simbiat\Cron;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\Errors;
 use Simbiat\HomePage;
 use Simbiat\Images;
@@ -138,12 +139,12 @@ abstract class Entity extends \Simbiat\Abstracts\Entity
     {
         #Cache CRON object
         if (!empty($members)) {
-            $cron = (new Cron);
+            $cron = new TaskInstance();
             foreach ($members as $member => $details) {
                 if (!$details['registered']) {
                     #Priority is higher, since they are missing a lot of data.
                     try {
-                        $cron->add('ffUpdateEntity', [(string)$member, 'character'], priority: 2, message: 'Updating character with ID '.$member);
+                        $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
                     } catch (\Throwable) {
                         #Do nothing, not considered critical
                     }

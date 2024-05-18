@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Api;
 
 use Simbiat\Abstracts\Api;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 
 abstract class General extends Api
 {

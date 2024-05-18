@@ -4,7 +4,7 @@ namespace Simbiat\Abstracts\Pages;
 
 use Simbiat\Abstracts\Page;
 use Simbiat\HomePage;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Headers;
 use Simbiat\Sanitization;
 
 class Search extends Page

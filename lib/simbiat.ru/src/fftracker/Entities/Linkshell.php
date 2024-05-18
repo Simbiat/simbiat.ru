@@ -2,7 +2,8 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
-use Simbiat\Cron;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\TaskInstance;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
@@ -44,10 +45,10 @@ class Linkshell extends Entity
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot'])) {
             if (empty($data['deleted']) && (time() - strtotime($data['updated'])) >= 86400) {
-                if ($data['crossworld'] == '0') {
-                    (new Cron)->add('ffUpdateEntity', [$this->id, 'linkshell'], priority: 1, message: 'Updating linkshell with ID ' . $this->id);
+                if ((int)$data['crossworld'] === 0) {
+                    (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'linkshell'], 'message' => 'Updating linkshell with ID '.$this->id, 'priority' => 1])->add();
                 } else {
-                    (new Cron)->add('ffUpdateEntity', [$this->id, 'crossworldlinkshell'], priority: 1, message: 'Updating crossworldlinkshell with ID ' . $this->id);
+                    (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'crossworldlinkshell'], 'message' => 'Updating crossworld linkshell with ID '.$this->id, 'priority' => 1])->add();
                 }
             }
         }

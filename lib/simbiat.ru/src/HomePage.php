@@ -8,8 +8,9 @@ use Simbiat\Config\Database;
 use Simbiat\Config\Twig;
 use Simbiat\Database\Controller;
 use Simbiat\Database\Pool;
-use Simbiat\HTTP20\Common;
-use Simbiat\HTTP20\Headers;
+use Simbiat\http20\Common;
+use Simbiat\http20\Headers;
+use Simbiat\http20\Links;
 use Simbiat\Routing\MainRouter;
 use Simbiat\usercontrol\Session;
 
@@ -69,7 +70,7 @@ class HomePage
                 #Check space availability
                 $healthCheck->noSpace();
                 #Run cron
-                (new Cron)->process(50);
+                (new Cron\Agent())->process(50);
                 #Ensure we exit no matter what happens with CRON
                 exit;
             }
@@ -111,7 +112,7 @@ class HomePage
                         ['rel' => 'preload', 'href' => '/js/main.min.' . filemtime(Config\Common::$jsDir.'/main.min.js') . '.js', 'as' => 'script'],
                     ]);
                 }
-                Headers::links(Config\Common::$links);
+                Links::links(Config\Common::$links);
                 if ($uri[0] !== 'api') {
                     @header('SourceMap: /js/main.min.' . filemtime(Config\Common::$jsDir.'/main.min.js').'.js.map', false);
                     @header('SourceMap: /css/' . filemtime(Config\Common::$cssDir.'/min.css').'.css.map', false);

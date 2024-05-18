@@ -837,24 +837,24 @@
         },
         {
             "name": "psr/http-factory",
-            "version": "1.0.2",
-            "version_normalized": "1.0.2.0",
+            "version": "1.1.0",
+            "version_normalized": "1.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-factory.git",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35"
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/e616d01114759c4c489f93b099585439f795fe35",
-                "reference": "e616d01114759c4c489f93b099585439f795fe35",
+                "url": "https://api.github.com/repos/php-fig/http-factory/zipball/2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
+                "reference": "2b4765fddfe3b508ac62f829e852b1501d3f6e8a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0.0",
+                "php": ">=7.1",
                 "psr/http-message": "^1.0 || ^2.0"
             },
-            "time": "2023-04-10T20:10:41+00:00",
+            "time": "2024-04-15T12:06:14+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -877,7 +877,7 @@
                     "homepage": "https://www.php-fig.org/"
                 }
             ],
-            "description": "Common interfaces for PSR-7 HTTP message factories",
+            "description": "PSR-17: Common interfaces for PSR-7 HTTP message factories",
             "keywords": [
                 "factory",
                 "http",
@@ -889,7 +889,7 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-factory/tree/1.0.2"
+                "source": "https://github.com/php-fig/http-factory"
             },
             "install-path": "../psr/http-factory"
         },
@@ -1057,12 +1057,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "a6cc84fe50abd91fdbfa06fa0e7b93386aa2193c"
+                "reference": "4a1ce99ead02e286f024fc7d032c7233ac01091b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a6cc84fe50abd91fdbfa06fa0e7b93386aa2193c",
-                "reference": "a6cc84fe50abd91fdbfa06fa0e7b93386aa2193c",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4a1ce99ead02e286f024fc7d032c7233ac01091b",
+                "reference": "4a1ce99ead02e286f024fc7d032c7233ac01091b",
                 "shasum": ""
             },
             "conflict": {
@@ -1135,6 +1135,7 @@
                 "cardgate/magento2": "<2.0.33",
                 "cardgate/woocommerce": "<=3.1.15",
                 "cart2quote/module-quotation": ">=4.1.6,<=4.4.5|>=5,<5.4.4",
+                "cart2quote/module-quotation-encoded": ">=4.1.6,<=4.4.5|>=5,<5.4.4",
                 "cartalyst/sentry": "<=2.1.6",
                 "catfan/medoo": "<1.7.5",
                 "causal/oidc": "<2.1",
@@ -1144,7 +1145,7 @@
                 "chriskacerguis/codeigniter-restserver": "<=2.7.1",
                 "civicrm/civicrm-core": ">=4.2,<4.2.9|>=4.3,<4.3.3",
                 "ckeditor/ckeditor": "<4.24",
-                "cockpit-hq/cockpit": "<=2.6.3|==2.7",
+                "cockpit-hq/cockpit": "<2.7|==2.7",
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
                 "codeigniter/framework": "<3.1.9",
                 "codeigniter4/framework": "<4.4.7",
@@ -1183,10 +1184,10 @@
                 "doctrine/common": "<2.4.3|>=2.5,<2.5.1",
                 "doctrine/dbal": ">=2,<2.0.8|>=2.1,<2.1.2|>=3,<3.1.4",
                 "doctrine/doctrine-bundle": "<1.5.2",
-                "doctrine/doctrine-module": "<=0.7.1",
+                "doctrine/doctrine-module": "<0.7.2",
                 "doctrine/mongodb-odm": "<1.0.2",
                 "doctrine/mongodb-odm-bundle": "<3.0.1",
-                "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
+                "doctrine/orm": ">=1,<1.2.4|>=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<=19",
                 "dompdf/dompdf": "<2.0.4",
                 "doublethreedigital/guest-entries": "<3.1.2",
@@ -1224,7 +1225,7 @@
                 "ezsystems/ezplatform-solr-search-engine": ">=1.7,<1.7.12|>=2,<2.0.2|>=3.3,<3.3.15",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2-dev|>=7,<7.5.31",
-                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.06,<=2019.03.5.1",
+                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.03.5.1",
                 "ezsystems/platform-ui-assets-bundle": ">=4.2,<4.2.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<4.1.1",
@@ -1258,25 +1259,25 @@
                 "frappant/frp-form-answers": "<3.1.2|>=4,<4.0.2",
                 "friendsofsymfony/oauth2-php": "<1.3",
                 "friendsofsymfony/rest-bundle": ">=1.2,<1.2.2",
-                "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
+                "friendsofsymfony/user-bundle": ">=1,<1.3.5",
                 "friendsofsymfony1/swiftmailer": ">=4,<5.4.13|>=6,<6.2.5",
                 "friendsofsymfony1/symfony1": ">=1.1,<1.15.19",
                 "friendsoftypo3/mediace": ">=7.6.2,<7.6.5",
                 "friendsoftypo3/openid": ">=4.5,<4.5.31|>=4.7,<4.7.16|>=6,<6.0.11|>=6.1,<6.1.6",
                 "froala/wysiwyg-editor": "<3.2.7|>=4.0.1,<=4.1.3",
-                "froxlor/froxlor": "<=2.1.1",
+                "froxlor/froxlor": "<2.1.9",
                 "frozennode/administrator": "<=5.0.12",
                 "fuel/core": "<1.8.1",
                 "funadmin/funadmin": "<=3.2|>=3.3.2,<=3.3.3",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
                 "genix/cms": "<=1.1.11",
-                "getgrav/grav": "<1.7.45",
+                "getgrav/grav": "<1.7.46",
                 "getkirby/cms": "<4.1.1",
                 "getkirby/kirby": "<=2.5.12",
                 "getkirby/panel": "<2.5.14",
                 "getkirby/starterkit": "<=3.7.0.2",
                 "gilacms/gila": "<=1.15.4",
-                "gleez/cms": "<=1.2|==2",
+                "gleez/cms": "<=1.3|==2",
                 "globalpayments/php-sdk": "<2",
                 "gogentooss/samlbase": "<1.2.7",
                 "google/protobuf": "<3.15",
@@ -1307,7 +1308,7 @@
                 "idno/known": "<=1.3.1",
                 "ilicmiljan/secure-props": ">=1.2,<1.2.2",
                 "illuminate/auth": "<5.5.10",
-                "illuminate/cookie": ">=4,<=4.0.11|>=4.1,<=4.1.99999|>=4.2,<=4.2.99999|>=5,<=5.0.99999|>=5.1,<=5.1.99999|>=5.2,<=5.2.99999|>=5.3,<=5.3.99999|>=5.4,<=5.4.99999|>=5.5,<=5.5.49|>=5.6,<=5.6.99999|>=5.7,<=5.7.99999|>=5.8,<=5.8.99999|>=6,<6.18.31|>=7,<7.22.4",
+                "illuminate/cookie": ">=4,<=4.0.11|>=4.1,<6.18.31|>=7,<7.22.4",
                 "illuminate/database": "<6.20.26|>=7,<7.30.5|>=8,<8.40",
                 "illuminate/encryption": ">=4,<=4.0.11|>=4.1,<=4.1.31|>=4.2,<=4.2.22|>=5,<=5.0.35|>=5.1,<=5.1.46|>=5.2,<=5.2.45|>=5.3,<=5.3.31|>=5.4,<=5.4.36|>=5.5,<5.5.40|>=5.6,<5.6.15",
                 "illuminate/view": "<6.20.42|>=7,<7.30.6|>=8,<8.75",
@@ -1344,7 +1345,7 @@
                 "kelvinmo/simplexrd": "<3.1.1",
                 "kevinpapst/kimai2": "<1.16.7",
                 "khodakhah/nodcms": "<=3",
-                "kimai/kimai": "<2.13",
+                "kimai/kimai": "<2.16",
                 "kitodo/presentation": "<3.2.3|>=3.3,<3.3.4",
                 "klaviyo/magento2-extension": ">=1,<3",
                 "knplabs/knp-snappy": "<=1.4.2",
@@ -1359,7 +1360,7 @@
                 "laravel/fortify": "<1.11.1",
                 "laravel/framework": "<6.20.44|>=7,<7.30.6|>=8,<8.75",
                 "laravel/laravel": ">=5.4,<5.4.22",
-                "laravel/socialite": ">=1,<1.0.99|>=2,<2.0.10",
+                "laravel/socialite": ">=1,<2.0.10",
                 "latte/latte": "<2.10.8",
                 "lavalite/cms": "<=9|==10.1",
                 "lcobucci/jwt": ">=3.4,<3.4.6|>=4,<4.0.4|>=4.1,<4.1.5",
@@ -1385,7 +1386,7 @@
                 "magneto/core": "<1.9.4.4-dev",
                 "maikuolan/phpmussel": ">=1,<1.6",
                 "mainwp/mainwp": "<=4.4.3.3",
-                "mantisbt/mantisbt": "<2.26.1",
+                "mantisbt/mantisbt": "<2.26.2",
                 "marcwillmann/turn": "<0.3.3",
                 "matyhtf/framework": "<3.0.6",
                 "mautic/core": "<4.4.12|>=5.0.0.0-alpha,<5.0.4",
@@ -1428,8 +1429,8 @@
                 "neos/flow": ">=1,<1.0.4|>=1.1,<1.1.1|>=2,<2.0.1|>=2.3,<2.3.16|>=3,<3.0.12|>=3.1,<3.1.10|>=3.2,<3.2.13|>=3.3,<3.3.13|>=4,<4.0.6",
                 "neos/form": ">=1.2,<4.3.3|>=5,<5.0.9|>=5.1,<5.1.3",
                 "neos/media-browser": "<7.3.19|>=8,<8.0.16|>=8.1,<8.1.11|>=8.2,<8.2.11|>=8.3,<8.3.9",
-                "neos/neos": ">=1.1,<1.1.3|>=1.2,<1.2.13|>=2,<2.0.4|>=2.3,<2.9.99|>=3,<3.0.20|>=3.1,<3.1.18|>=3.2,<3.2.14|>=3.3,<5.3.10|>=7,<7.0.9|>=7.1,<7.1.7|>=7.2,<7.2.6|>=7.3,<7.3.4|>=8,<8.0.2",
-                "neos/swiftmailer": ">=4.1,<4.1.99|>=5.4,<5.4.5",
+                "neos/neos": ">=1.1,<1.1.3|>=1.2,<1.2.13|>=2,<2.0.4|>=2.3,<3.0.20|>=3.1,<3.1.18|>=3.2,<3.2.14|>=3.3,<5.3.10|>=7,<7.0.9|>=7.1,<7.1.7|>=7.2,<7.2.6|>=7.3,<7.3.4|>=8,<8.0.2",
+                "neos/swiftmailer": "<5.4.5",
                 "netgen/tagsbundle": ">=3.4,<3.4.11|>=4,<4.0.15",
                 "nette/application": ">=2,<2.0.19|>=2.1,<2.1.13|>=2.2,<2.2.10|>=2.3,<2.3.14|>=2.4,<2.4.16|>=3,<3.0.6",
                 "nette/nette": ">=2,<2.0.19|>=2.1,<2.1.13",
@@ -1437,6 +1438,7 @@
                 "nonfiction/nterchange": "<4.1.1",
                 "notrinos/notrinos-erp": "<=0.7",
                 "noumo/easyii": "<=0.9",
+                "novaksolutions/infusionsoft-php-sdk": "<1",
                 "nukeviet/nukeviet": "<4.5.02",
                 "nyholm/psr7": "<1.6.1",
                 "nystudio107/craft-seomatic": "<3.4.12",
@@ -1469,6 +1471,7 @@
                 "padraic/humbug_get_contents": "<1.1.2",
                 "pagarme/pagarme-php": "<3",
                 "pagekit/pagekit": "<=1.0.18",
+                "paragonie/ecc": "<2.0.1",
                 "paragonie/random_compat": "<2",
                 "passbolt/passbolt_api": "<4.6.2",
                 "paypal/adaptivepayments-sdk-php": "<=3.9.2",
@@ -1483,6 +1486,7 @@
                 "personnummer/personnummer": "<3.0.2",
                 "phanan/koel": "<5.1.4",
                 "phenx/php-svg-lib": "<0.5.2",
+                "php-censor/php-censor": "<2.0.13|>=2.1,<2.1.5",
                 "php-mod/curl": "<2.3.2",
                 "phpbb/phpbb": "<3.2.10|>=3.3,<3.3.1",
                 "phpems/phpems": ">=6,<=6.1.3",
@@ -1508,7 +1512,7 @@
                 "pimcore/demo": "<10.3",
                 "pimcore/ecommerce-framework-bundle": "<1.0.10",
                 "pimcore/perspective-editor": "<1.5.1",
-                "pimcore/pimcore": "<11.2.3",
+                "pimcore/pimcore": "<11.1.6.5-dev|>=11.2,<11.2.3",
                 "pixelfed/pixelfed": "<0.11.11",
                 "plotly/plotly.js": "<2.25.2",
                 "pocketmine/bedrock-protocol": "<8.0.2",
@@ -1520,7 +1524,7 @@
                 "prestashop/blockwishlist": ">=2,<2.1.1",
                 "prestashop/contactform": ">=1.0.1,<4.3",
                 "prestashop/gamification": "<2.3.2",
-                "prestashop/prestashop": "<8.1.4",
+                "prestashop/prestashop": "<8.1.6",
                 "prestashop/productcomments": "<5.0.2",
                 "prestashop/ps_emailsubscription": "<2.6.1",
                 "prestashop/ps_facetedsearch": "<3.4.1",
@@ -1529,7 +1533,7 @@
                 "processwire/processwire": "<=3.0.210",
                 "propel/propel": ">=2.0.0.0-alpha1,<=2.0.0.0-alpha7",
                 "propel/propel1": ">=1,<=1.7.1",
-                "pterodactyl/panel": "<1.7",
+                "pterodactyl/panel": "<1.11.6",
                 "ptheofan/yii2-statemachine": ">=2.0.0.0-RC1-dev,<=2",
                 "ptrofimov/beanstalk_console": "<1.7.14",
                 "pubnub/pubnub": "<6.1",
@@ -1604,6 +1608,7 @@
                 "socalnick/scn-social-auth": "<1.15.2",
                 "socialiteproviders/steam": "<1.1",
                 "spatie/browsershot": "<3.57.4",
+                "spatie/image-optimizer": "<1.7.3",
                 "spipu/html2pdf": "<5.2.8",
                 "spoon/library": "<1.4.1",
                 "spoonity/tcpdf": "<6.2.22",
@@ -1625,7 +1630,7 @@
                 "sylius/grid-bundle": "<1.10.1",
                 "sylius/paypal-plugin": ">=1,<1.2.4|>=1.3,<1.3.1",
                 "sylius/resource-bundle": ">=1,<1.3.14|>=1.4,<1.4.7|>=1.5,<1.5.2|>=1.6,<1.6.4",
-                "sylius/sylius": "<=1.12.13",
+                "sylius/sylius": "<1.12.16|>=1.13.0.0-alpha1,<1.13.1",
                 "symbiote/silverstripe-multivaluefield": ">=3,<3.0.99",
                 "symbiote/silverstripe-queuedjobs": ">=3,<3.0.2|>=3.1,<3.1.4|>=4,<4.0.7|>=4.1,<4.1.2|>=4.2,<4.2.4|>=4.3,<4.3.3|>=4.4,<4.4.3|>=4.5,<4.5.1|>=4.6,<4.6.4",
                 "symbiote/silverstripe-seed": "<6.0.3",
@@ -1681,18 +1686,18 @@
                 "tinymighty/wiki-seo": "<1.2.2",
                 "titon/framework": "<9.9.99",
                 "tobiasbg/tablepress": "<=2.0.0.0-RC1",
-                "topthink/framework": "<6.0.14",
+                "topthink/framework": "<6.0.17|>=6.1,<6.1.5|>=8,<8.0.4",
                 "topthink/think": "<=6.1.1",
                 "topthink/thinkphp": "<=3.2.3",
                 "torrentpier/torrentpier": "<=2.4.1",
                 "tpwd/ke_search": "<4.0.3|>=4.1,<4.6.6|>=5,<5.0.2",
-                "tribalsystems/zenario": "<=9.4.59197",
+                "tribalsystems/zenario": "<9.5.60602",
                 "truckersmp/phpwhois": "<=4.3.1",
                 "ttskch/pagination-service-provider": "<1",
                 "twig/twig": "<1.44.7|>=2,<2.15.3|>=3,<3.4.3",
                 "typo3/cms": "<9.5.29|>=10,<10.4.35|>=11,<11.5.23|>=12,<12.2",
                 "typo3/cms-backend": "<4.1.14|>=4.2,<4.2.15|>=4.3,<4.3.7|>=4.4,<4.4.4|>=7,<=7.6.50|>=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.13|>=11,<=11.1",
-                "typo3/cms-core": "<=8.7.56|>=9,<=9.5.45|>=10,<=10.4.42|>=11,<=11.5.34|>=12,<=12.4.10|==13",
+                "typo3/cms-core": "<=8.7.56|>=9,<=9.5.47|>=10,<=10.4.44|>=11,<=11.5.36|>=12,<=12.4.14|>=13,<=13.1",
                 "typo3/cms-extbase": "<6.2.24|>=7,<7.6.8|==8.1.1",
                 "typo3/cms-fluid": "<4.3.4|>=4.4,<4.4.1",
                 "typo3/cms-form": ">=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.13|>=11,<=11.1",
@@ -1804,7 +1809,7 @@
                 "zfr/zfr-oauth2-server-module": "<0.1.2",
                 "zoujingli/thinkadmin": "<=6.1.53"
             },
-            "time": "2024-04-30T09:04:31+00:00",
+            "time": "2024-05-18T00:15:00+00:00",
             "default-branch": true,
             "type": "metapackage",
             "notification-url": "https://packagist.org/downloads/",
@@ -2096,6 +2101,539 @@
             "install-path": "../simbiat/accountkeying"
         },
         {
+            "name": "simbiat/arrayhelpers",
+            "version": "2.4.5+20240509",
+            "version_normalized": "2.4.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/ArrayHelpers.git",
+                "reference": "1126777931b2ab738e6fec510258eb9af90dc2bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/ArrayHelpers/zipball/1126777931b2ab738e6fec510258eb9af90dc2bf",
+                "reference": "1126777931b2ab738e6fec510258eb9af90dc2bf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "time": "2024-05-09T08:21:52+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Set of useful functions to work with arrays",
+            "homepage": "https://github.com/Simbiat/ArrayHelpers",
+            "keywords": [
+                "array",
+                "helper",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/ArrayHelpers/issues",
+                "source": "https://github.com/Simbiat/ArrayHelpers"
+            },
+            "install-path": "../simbiat/arrayhelpers"
+        },
+        {
+            "name": "simbiat/cron",
+            "version": "2.0.0+20240514",
+            "version_normalized": "2.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/Cron.git",
+                "reference": "ad260b6ca62cbee880d5673323b3b34bc7879600"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/Cron/zipball/ad260b6ca62cbee880d5673323b3b34bc7879600",
+                "reference": "ad260b6ca62cbee880d5673323b3b34bc7879600",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3",
+                "simbiat/database": "^2",
+                "simbiat/sand-clock": "^2.3.3"
+            },
+            "time": "2024-05-14T17:58:09+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\Cron\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Cron utilizing a database to store tasks.",
+            "homepage": "https://github.com/Simbiat/cron",
+            "keywords": [
+                "cron",
+                "php",
+                "scheduler"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/cron/issues",
+                "source": "https://github.com/Simbiat/cron"
+            },
+            "install-path": "../simbiat/cron"
+        },
+        {
+            "name": "simbiat/database",
+            "version": "2.10.2+20240512",
+            "version_normalized": "2.10.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/database.git",
+                "reference": "a5da33c66d77a6772428324ef9be7b4523abf51a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/database/zipball/a5da33c66d77a6772428324ef9be7b4523abf51a",
+                "reference": "a5da33c66d77a6772428324ef9be7b4523abf51a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*",
+                "php": "^8.3",
+                "simbiat/sand-clock": "*"
+            },
+            "time": "2024-05-12T18:23:12+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\Database\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Set of classes for database pool and helper.",
+            "homepage": "https://github.com/Simbiat/database",
+            "keywords": [
+                "database",
+                "pdo",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/database/issues",
+                "source": "https://github.com/Simbiat/database"
+            },
+            "install-path": "../simbiat/database"
+        },
+        {
+            "name": "simbiat/filename-sanitizer",
+            "version": "1.3.3+20240503",
+            "version_normalized": "1.3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/filename-sanitizer.git",
+                "reference": "676796e65ec34c514c2020cbfc36b66e737d511a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/filename-sanitizer/zipball/676796e65ec34c514c2020cbfc36b66e737d511a",
+                "reference": "676796e65ec34c514c2020cbfc36b66e737d511a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "time": "2024-05-03T12:24:20+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Small class to replace common characters that are restiricted in filenames.",
+            "homepage": "https://github.com/Simbiat/filename-sanitizer",
+            "keywords": [
+                "characters",
+                "safe"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/filename-sanitizer/issues",
+                "source": "https://github.com/Simbiat/filename-sanitizer"
+            },
+            "install-path": "../simbiat/filename-sanitizer"
+        },
+        {
+            "name": "simbiat/htmlcut",
+            "version": "1.2.4+20240505",
+            "version_normalized": "1.2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/HTMLCut.git",
+                "reference": "d79b8bd8a10579efa95d3259bd7575e078174dac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/HTMLCut/zipball/d79b8bd8a10579efa95d3259bd7575e078174dac",
+                "reference": "d79b8bd8a10579efa95d3259bd7575e078174dac",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "time": "2024-05-05T09:00:21+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Class to cut HTML text into something suitable for preview.",
+            "homepage": "https://github.com/Simbiat/htmlcut",
+            "keywords": [
+                "cut",
+                "html",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/htmlcut/issues",
+                "source": "https://github.com/Simbiat/htmlcut"
+            },
+            "install-path": "../simbiat/htmlcut"
+        },
+        {
+            "name": "simbiat/http20",
+            "version": "2.0.0+20240506",
+            "version_normalized": "2.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/HTTP20.git",
+                "reference": "ccc69ff25971a0895a61a0d1e4f3fc751d00ad93"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/HTTP20/zipball/ccc69ff25971a0895a61a0d1e4f3fc751d00ad93",
+                "reference": "ccc69ff25971a0895a61a0d1e4f3fc751d00ad93",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "replace": {
+                "simbiat/prettyurl": "^1.2.0+20210129"
+            },
+            "suggest": {
+                "simbiat/filename-sanitizer": "Small class to replace common characters that are restiricted in filenames."
+            },
+            "time": "2024-05-06T15:40:23+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\http20\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Set of functions that may be universally useful for websites",
+            "homepage": "https://github.com/Simbiat/http20",
+            "keywords": [
+                "Sitemap",
+                "atom",
+                "breadcrumb",
+                "html",
+                "http",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/http20/issues",
+                "source": "https://github.com/Simbiat/http20"
+            },
+            "install-path": "../simbiat/http20"
+        },
+        {
+            "name": "simbiat/lodestone-parser",
+            "version": "1.1.12+20240512",
+            "version_normalized": "1.1.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/lodestone-parser.git",
+                "reference": "e22e981e2bd481b4af64216374398e2279ee61e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/lodestone-parser/zipball/e22e981e2bd481b4af64216374398e2279ee61e3",
+                "reference": "e22e981e2bd481b4af64216374398e2279ee61e3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": "^8.3"
+            },
+            "replace": {
+                "simbiat/lodestone-php": "*"
+            },
+            "time": "2024-05-12T18:57:16+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "FFXIV Lodestone parser in PHP",
+            "homepage": "https://github.com/Simbiat/lodestone-parser",
+            "keywords": [
+                "ffxiv",
+                "lodestone",
+                "parser",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/lodestone-parser/issues",
+                "source": "https://github.com/Simbiat/lodestone-parser"
+            },
+            "install-path": "../simbiat/lodestone-parser"
+        },
+        {
+            "name": "simbiat/nl2tag",
+            "version": "1.3.5+20240504",
+            "version_normalized": "1.3.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/nl2tag.git",
+                "reference": "b15ffb40bcb1e2b78b1a888fce01e78a3138d29e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/nl2tag/zipball/b15ffb40bcb1e2b78b1a888fce01e78a3138d29e",
+                "reference": "b15ffb40bcb1e2b78b1a888fce01e78a3138d29e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "time": "2024-05-04T17:23:03+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Class to convert new lines to different HTML tags",
+            "homepage": "https://github.com/Simbiat/nl2tag",
+            "keywords": [
+                "html",
+                "nl2br",
+                "nl2p",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/nl2tag/issues",
+                "source": "https://github.com/Simbiat/nl2tag"
+            },
+            "install-path": "../simbiat/nl2tag"
+        },
+        {
+            "name": "simbiat/optimize-tables",
+            "version": "2.1.10+20240510",
+            "version_normalized": "2.1.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/optimize-tables.git",
+                "reference": "54719499e5908fc1834de508a17668fc01f5cb52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/optimize-tables/zipball/54719499e5908fc1834de508a17668fc01f5cb52",
+                "reference": "54719499e5908fc1834de508a17668fc01f5cb52",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3",
+                "simbiat/database": "^2"
+            },
+            "time": "2024-05-10T16:30:05+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Library optimize tables in database.",
+            "homepage": "https://github.com/Simbiat/optimize-table",
+            "keywords": [
+                "mysql",
+                "optimize",
+                "pdo",
+                "php",
+                "table"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/optimize-tables/issues",
+                "source": "https://github.com/Simbiat/optimize-tables"
+            },
+            "install-path": "../simbiat/optimize-tables"
+        },
+        {
+            "name": "simbiat/sand-clock",
+            "version": "2.3.3+20240512",
+            "version_normalized": "2.3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Simbiat/sand-clock.git",
+                "reference": "3cc2fe475d9995a25377beac2e1a158ee0862173"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Simbiat/sand-clock/zipball/3cc2fe475d9995a25377beac2e1a158ee0862173",
+                "reference": "3cc2fe475d9995a25377beac2e1a158ee0862173",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "time": "2024-05-12T15:03:16+00:00",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "Simbiat\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Kustov",
+                    "email": "simbiat@outlook.com",
+                    "homepage": "https://www.simbiat.dev",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Collection of functions to present time-related objects",
+            "homepage": "https://github.com/Simbiat/cute-bytes",
+            "keywords": [
+                "clock",
+                "date",
+                "datetime",
+                "sand",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/Simbiat/sand-clock/issues",
+                "source": "https://github.com/Simbiat/sand-clock"
+            },
+            "install-path": "../simbiat/sand-clock"
+        },
+        {
             "name": "starkbank/ecdsa",
             "version": "0.0.5",
             "version_normalized": "0.0.5.0",
@@ -2143,27 +2681,27 @@
         },
         {
             "name": "symfony/deprecation-contracts",
-            "version": "v3.4.0",
-            "version_normalized": "3.4.0.0",
+            "version": "v3.5.0",
+            "version_normalized": "3.5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/deprecation-contracts.git",
-                "reference": "7c3aff79d10325257a001fcf92d991f24fc967cf"
+                "reference": "0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/7c3aff79d10325257a001fcf92d991f24fc967cf",
-                "reference": "7c3aff79d10325257a001fcf92d991f24fc967cf",
+                "url": "https://api.github.com/repos/symfony/deprecation-contracts/zipball/0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1",
+                "reference": "0e0d29ce1f20deffb4ab1b016a7257c4f1e789a1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
             },
-            "time": "2023-05-23T14:45:45+00:00",
+            "time": "2024-04-18T09:32:20+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "3.4-dev"
+                    "dev-main": "3.5-dev"
                 },
                 "thanks": {
                     "name": "symfony/contracts",
@@ -2193,7 +2731,7 @@
             "description": "A generic function and convention to trigger deprecation notices",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.4.0"
+                "source": "https://github.com/symfony/deprecation-contracts/tree/v3.5.0"
             },
             "funding": [
                 {
@@ -2533,20 +3071,20 @@
         },
         {
             "name": "tinymce/tinymce",
-            "version": "7.0.1",
-            "version_normalized": "7.0.1.0",
+            "version": "7.1.0",
+            "version_normalized": "7.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tinymce/tinymce-dist.git",
-                "reference": "863759766e2397d1f639c63d006680a9e8ba6233"
+                "reference": "05a2ae86f455231d1734f2442664b6891ec4d8dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/863759766e2397d1f639c63d006680a9e8ba6233",
-                "reference": "863759766e2397d1f639c63d006680a9e8ba6233",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/05a2ae86f455231d1734f2442664b6891ec4d8dd",
+                "reference": "05a2ae86f455231d1734f2442664b6891ec4d8dd",
                 "shasum": ""
             },
-            "time": "2024-04-10T07:29:34+00:00",
+            "time": "2024-05-08T05:24:56+00:00",
             "type": "component",
             "extra": {
                 "component": {
@@ -2589,23 +3127,23 @@
                 "wysiwyg"
             ],
             "support": {
-                "source": "https://github.com/tinymce/tinymce-dist/tree/7.0.1"
+                "source": "https://github.com/tinymce/tinymce-dist/tree/7.1.0"
             },
             "install-path": "../tinymce/tinymce"
         },
         {
             "name": "twig/twig",
-            "version": "v3.9.3",
-            "version_normalized": "3.9.3.0",
+            "version": "v3.10.3",
+            "version_normalized": "3.10.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "a842d75fed59cdbcbd3a3ad7fb9eb768fc350d58"
+                "reference": "67f29781ffafa520b0bbfbd8384674b42db04572"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a842d75fed59cdbcbd3a3ad7fb9eb768fc350d58",
-                "reference": "a842d75fed59cdbcbd3a3ad7fb9eb768fc350d58",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/67f29781ffafa520b0bbfbd8384674b42db04572",
+                "reference": "67f29781ffafa520b0bbfbd8384674b42db04572",
                 "shasum": ""
             },
             "require": {
@@ -2619,7 +3157,7 @@
                 "psr/container": "^1.0|^2.0",
                 "symfony/phpunit-bridge": "^5.4.9|^6.4|^7.0"
             },
-            "time": "2024-04-18T11:59:33+00:00",
+            "time": "2024-05-16T10:04:27+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2661,7 +3199,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.9.3"
+                "source": "https://github.com/twigphp/Twig/tree/v3.10.3"
             },
             "funding": [
                 {

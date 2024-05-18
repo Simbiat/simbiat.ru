@@ -15,9 +15,13 @@
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/tinymce/tinymce" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/filename-sanitizer" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/optimize-tables" />
       <path value="$PROJECT_DIR$/vendor/matomo/device-detector" />
       <path value="$PROJECT_DIR$/vendor/ipinfo/ipinfo" />
       <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/sand-clock" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/htmlcut" />
       <path value="$PROJECT_DIR$/vendor/sendgrid/php-http-client" />
       <path value="$PROJECT_DIR$/vendor/starkbank/ecdsa" />
       <path value="$PROJECT_DIR$/vendor/sendgrid/sendgrid" />
@@ -37,10 +41,16 @@
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
       <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/accountkeying" />
       <path value="$PROJECT_DIR$/vendor/psr/http-message" />
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
-      <path value="$PROJECT_DIR$/vendor/simbiat/accountkeying" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/nl2tag" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/http20" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/arrayhelpers" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/database" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/lodestone-parser" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/cron" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />
