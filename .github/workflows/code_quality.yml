@@ -5,6 +5,11 @@ on:
   push:
     branches: # Specify your branches here
       - master # The 'main' branch
+    paths:
+      - css/**
+      - js/**
+      - lib/**
+      - twig/**
 
 jobs:
   qodana:
