@@ -46,11 +46,11 @@
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/vendor/simbiat/nl2tag" />
-      <path value="$PROJECT_DIR$/vendor/simbiat/http20" />
-      <path value="$PROJECT_DIR$/vendor/simbiat/arrayhelpers" />
-      <path value="$PROJECT_DIR$/vendor/simbiat/database" />
       <path value="$PROJECT_DIR$/vendor/simbiat/lodestone-parser" />
       <path value="$PROJECT_DIR$/vendor/simbiat/cron" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/database" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/http20" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/arrayhelpers" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />

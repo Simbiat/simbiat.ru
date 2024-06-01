@@ -7,3 +7,6 @@
 [submodule "img/fftracker/crests-components"]
 	path = img/fftracker/crests-components
 	url = https://github.com/Simbiat/FFXIV-Crests-Components
+[submodule "img/fftracker/maps"]
+	path = img/fftracker/maps
+	url = https://github.com/Simbiat/ffxiv-estate-maps
