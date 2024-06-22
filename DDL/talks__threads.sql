@@ -1,36 +1,36 @@
-CREATE TABLE `talks__threads`
-(
-    `threadid`   INT UNSIGNED AUTO_INCREMENT COMMENT 'Thread ID' PRIMARY KEY,
-    `name`       VARCHAR(70) COLLATE utf8mb4_uca1400_nopad_ai_ci                              NOT NULL COMMENT 'Thread name',
-    `sectionid`  INT UNSIGNED                                                                 NOT NULL COMMENT 'Forum ID where the thread is located',
-    `language`   VARCHAR(35) COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT 'en'                 NOT NULL COMMENT 'Main language of the thread',
-    `system`     TINYINT(1) UNSIGNED                             DEFAULT 0                    NOT NULL COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',
-    `pinned`     TINYINT(1) UNSIGNED                             DEFAULT 0                    NOT NULL COMMENT 'Flag to indicate if a thread needs to be shown above others in the list',
-    `closed`     DATETIME(6)                                                                  NULL COMMENT 'Flag to indicate if a thread is closed',
-    `private`    TINYINT(1) UNSIGNED                             DEFAULT 0                    NOT NULL COMMENT 'Flag to indicate if thread is private',
-    `ogimage`    VARCHAR(128) COLLATE utf8mb4_uca1400_nopad_as_ci                             NULL COMMENT 'Optional file ID to be used as og:image',
-    `created`    DATETIME(6)                                     DEFAULT CURRENT_TIMESTAMP(6) NOT NULL COMMENT 'When thread was created',
-    `createdby`  INT UNSIGNED                                    DEFAULT 1                    NOT NULL COMMENT 'User ID of the creator',
-    `updated`    DATETIME(6)                                     DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When thread was updated',
-    `updatedby`  INT UNSIGNED                                    DEFAULT 1                    NOT NULL COMMENT 'User ID of the updater',
-    `lastpost`   DATETIME(6)                                     DEFAULT CURRENT_TIMESTAMP(6) NOT NULL COMMENT 'Time of the last post',
-    `lastpostby` INT UNSIGNED                                    DEFAULT 1                    NOT NULL COMMENT 'ID of the last poster',
-    CONSTRAINT `ogimage_to_fileid` FOREIGN KEY (`ogimage`) REFERENCES `sys__files` (`fileid`),
-    CONSTRAINT `thread_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
-    CONSTRAINT `thread_language` FOREIGN KEY (`language`) REFERENCES `sys__languages` (`tag`),
-    CONSTRAINT `thread_lastpost_by` FOREIGN KEY (`lastpostby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
-    CONSTRAINT `thread_to_forum` FOREIGN KEY (`sectionid`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE,
-    CONSTRAINT `thread_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) COMMENT 'List of threads' `PAGE_COMPRESSED` = 'ON';
-
-CREATE INDEX `closed_desc` ON `talks__threads` (`closed` DESC);
-
-CREATE INDEX `created_desc` ON `talks__threads` (`created` DESC);
-
-CREATE INDEX `lastpost_desc` ON `talks__threads` (`lastpost` DESC);
-
-CREATE FULLTEXT INDEX `name` ON `talks__threads` (`name`);
-
-CREATE INDEX `name_sort` ON `talks__threads` (`name`);
-
-CREATE INDEX `pinned` ON `talks__threads` (`pinned` DESC);
+CREATE TABLE `talks__threads` (
+  `threadid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Thread ID',
+  `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Thread name',
+  `sectionid` int(10) unsigned NOT NULL COMMENT 'Forum ID where the thread is located',
+  `language` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL DEFAULT 'en' COMMENT 'Main language of the thread',
+  `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',
+  `pinned` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag to indicate if a thread needs to be shown above others in the list',
+  `closed` datetime(6) DEFAULT NULL COMMENT 'Flag to indicate if a thread is closed',
+  `private` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag to indicate if thread is private',
+  `ogimage` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Optional file ID to be used as og:image',
+  `created` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When thread was created',
+  `createdby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the creator',
+  `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When thread was updated',
+  `updatedby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the updater',
+  `lastpost` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'Time of the last post',
+  `lastpostby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'ID of the last poster',
+  PRIMARY KEY (`threadid`) USING BTREE,
+  KEY `thread_to_forum` (`sectionid`),
+  KEY `pinned` (`pinned` DESC),
+  KEY `name_sort` (`name`),
+  KEY `created_desc` (`created` DESC),
+  KEY `thread_created_by` (`createdby`),
+  KEY `thread_updated_by` (`updatedby`),
+  KEY `thread_lastpost_by` (`lastpostby`),
+  KEY `lastpost_desc` (`lastpost` DESC),
+  KEY `closed_desc` (`closed` DESC),
+  KEY `ogimage_to_fileid` (`ogimage`),
+  KEY `thread_language` (`language`),
+  FULLTEXT KEY `name` (`name`),
+  CONSTRAINT `ogimage_to_fileid` FOREIGN KEY (`ogimage`) REFERENCES `sys__files` (`fileid`),
+  CONSTRAINT `thread_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
+  CONSTRAINT `thread_language` FOREIGN KEY (`language`) REFERENCES `sys__languages` (`tag`),
+  CONSTRAINT `thread_lastpost_by` FOREIGN KEY (`lastpostby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
+  CONSTRAINT `thread_to_forum` FOREIGN KEY (`sectionid`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE,
+  CONSTRAINT `thread_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=382 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of threads' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

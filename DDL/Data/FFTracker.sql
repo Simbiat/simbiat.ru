@@ -8137,3 +8137,13 @@ INSERT IGNORE INTO `ffxiv__timeactive` (`activeid`, `active`) VALUES
 
 /*New data after initial dump*/
 INSERT INTO `ffxiv__estate`(`cityid`, `area`, `ward`, `plot`, `size`) SELECT `cityid`, `area`, `ward`+20 as `ward`, `plot`, `size` FROM `ffxiv__estate` WHERE `ward` IN (5, 6, 7, 8, 9, 10);
+INSERT INTO `ffxiv__linkshell_rank` (`lsrankid`, `rank`, `icon`) VALUES ('4', 'Invitee', NULL);
+INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
+(82, 'Innocence', 'Shadow'),
+(83, 'Pixie', 'Shadow'),
+(84, 'Titania', 'Shadow'),
+(85, 'Tycoon', 'Shadow'),
+(86, 'Cuchulainn', 'Dynamis'),
+(87, 'Golem', 'Dynamis'),
+(88, 'Kraken', 'Dynamis'),
+(89, 'Rafflesia', 'Dynamis');

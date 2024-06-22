@@ -1,30 +1,31 @@
-CREATE TABLE `talks__sections`
-(
-    `sectionid`   INT UNSIGNED AUTO_INCREMENT COMMENT 'Forum ID' PRIMARY KEY,
-    `name`        VARCHAR(64) COLLATE utf8mb4_uca1400_nopad_ai_ci  NOT NULL COMMENT 'Forum name',
-    `description` VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_ai_ci NULL COMMENT 'Optional description of the forum',
-    `parentid`    INT UNSIGNED                                     NULL COMMENT 'ID of the parent forum',
-    `sequence`    INT(2) UNSIGNED     DEFAULT 0                    NOT NULL COMMENT 'Optional order for sorting. The higher the value, the higher in the list a forum will be. After that name sorting is expected.',
-    `type`        TINYINT UNSIGNED    DEFAULT 1                    NOT NULL COMMENT 'Type of the forum',
-    `system`      TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Flag indicating that forum is system one, thus should not be deleted.',
-    `closed`      DATETIME(6)                                      NULL COMMENT 'Flag indicating if the forum is closed',
-    `private`     TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Flag indicating if forum is private',
-    `created`     DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL COMMENT 'When forum was created',
-    `createdby`   INT UNSIGNED        DEFAULT 1                    NOT NULL COMMENT 'User ID of the creator',
-    `updated`     DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When forum was updated',
-    `updatedby`   INT UNSIGNED        DEFAULT 1                    NOT NULL COMMENT 'User ID of the last updater',
-    `icon`        VARCHAR(128) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Icon override',
-    CONSTRAINT `forum_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
-    CONSTRAINT `forum_to_forum` FOREIGN KEY (`parentid`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT `forum_to_type` FOREIGN KEY (`type`) REFERENCES `talks__types` (`typeid`) ON UPDATE CASCADE,
-    CONSTRAINT `forum_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
-    CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`)
-) COMMENT 'List of forums' `PAGE_COMPRESSED` = 'ON';
-
-CREATE FULLTEXT INDEX `description` ON `talks__sections` (`description`);
-
-CREATE FULLTEXT INDEX `name` ON `talks__sections` (`name`);
-
-CREATE INDEX `name_sort` ON `talks__sections` (`name`);
-
-CREATE INDEX `sequence` ON `talks__sections` (`sequence` DESC);
+CREATE TABLE `talks__sections` (
+  `sectionid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Forum ID',
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Forum name',
+  `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Optional description of the forum',
+  `parentid` int(10) unsigned DEFAULT NULL COMMENT 'ID of the parent forum',
+  `sequence` int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Optional order for sorting. The higher the value, the higher in the list a forum will be. After that name sorting is expected.',
+  `type` tinyint(3) unsigned NOT NULL DEFAULT 1 COMMENT 'Type of the forum',
+  `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that forum is system one, thus should not be deleted.',
+  `closed` datetime(6) DEFAULT NULL COMMENT 'Flag indicating if the forum is closed',
+  `private` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating if forum is private',
+  `created` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When forum was created',
+  `createdby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the creator',
+  `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When forum was updated',
+  `updatedby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the last updater',
+  `icon` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Icon override',
+  PRIMARY KEY (`sectionid`) USING BTREE,
+  KEY `forum_to_forum` (`parentid`),
+  KEY `name_sort` (`name`),
+  KEY `sequence` (`sequence` DESC),
+  KEY `forum_to_type` (`type`),
+  KEY `forum_created_by` (`createdby`),
+  KEY `forum_updated_by` (`updatedby`),
+  KEY `section_to_file` (`icon`),
+  FULLTEXT KEY `name` (`name`),
+  FULLTEXT KEY `description` (`description`),
+  CONSTRAINT `forum_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
+  CONSTRAINT `forum_to_forum` FOREIGN KEY (`parentid`) REFERENCES `talks__sections` (`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `forum_to_type` FOREIGN KEY (`type`) REFERENCES `talks__types` (`typeid`) ON UPDATE CASCADE,
+  CONSTRAINT `forum_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
+  CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

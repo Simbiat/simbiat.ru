@@ -1,23 +1,24 @@
-CREATE TABLE `talks__posts`
-(
-    `postid`    INT UNSIGNED AUTO_INCREMENT COMMENT 'Post ID' PRIMARY KEY,
-    `threadid`  INT UNSIGNED                                     NOT NULL COMMENT 'ID of a thread the post belongs to',
-    `replyto`   INT UNSIGNED                                     NULL COMMENT 'Indicates an ID of a post, that this is a reply to (required to build chains)',
-    `system`    TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Flag indicating that post is system one, thus should not be deleted.',
-    `locked`    TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Flag to indicate if post is locked from editing',
-    `created`   DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL COMMENT 'When post was created',
-    `createdby` INT UNSIGNED        DEFAULT 1                    NOT NULL COMMENT 'User ID of the creator',
-    `updated`   DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When post was updated',
-    `updatedby` INT UNSIGNED        DEFAULT 1                    NOT NULL COMMENT 'User ID of the last updater',
-    `text`      LONGTEXT COLLATE utf8mb4_uca1400_nopad_ai_ci     NOT NULL COMMENT 'Text of the post',
-    CONSTRAINT `post_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
-    CONSTRAINT `post_to_post` FOREIGN KEY (`replyto`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT `post_to_thread` FOREIGN KEY (`threadid`) REFERENCES `talks__threads` (`threadid`) ON UPDATE CASCADE,
-    CONSTRAINT `post_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) COMMENT 'List of all posts' `PAGE_COMPRESSED` = 'ON';
-
-CREATE INDEX `created_asc` ON `talks__posts` (`created`);
-
-CREATE INDEX `created_desc` ON `talks__posts` (`created` DESC);
-
-CREATE FULLTEXT INDEX `text` ON `talks__posts` (`text`);
+CREATE TABLE `talks__posts` (
+  `postid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Post ID',
+  `threadid` int(10) unsigned NOT NULL COMMENT 'ID of a thread the post belongs to',
+  `replyto` int(10) unsigned DEFAULT NULL COMMENT 'Indicates an ID of a post, that this is a reply to (required to build chains)',
+  `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that post is system one, thus should not be deleted.',
+  `locked` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag to indicate if post is locked from editing',
+  `created` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When post was created',
+  `createdby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the creator',
+  `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When post was updated',
+  `updatedby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the last updater',
+  `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Text of the post',
+  PRIMARY KEY (`postid`) USING BTREE,
+  KEY `post_to_thread` (`threadid`),
+  KEY `post_to_post` (`replyto`),
+  KEY `created_desc` (`created` DESC),
+  KEY `created_asc` (`created`),
+  KEY `post_created_by` (`createdby`),
+  KEY `post_updated_by` (`updatedby`),
+  FULLTEXT KEY `text` (`text`),
+  CONSTRAINT `post_created_by` FOREIGN KEY (`createdby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
+  CONSTRAINT `post_to_post` FOREIGN KEY (`replyto`) REFERENCES `talks__posts` (`postid`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `post_to_thread` FOREIGN KEY (`threadid`) REFERENCES `talks__threads` (`threadid`) ON UPDATE CASCADE,
+  CONSTRAINT `post_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=382 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of all posts' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

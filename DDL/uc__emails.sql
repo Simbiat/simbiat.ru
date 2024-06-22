@@ -1,12 +1,10 @@
-CREATE TABLE `uc__emails`
-(
-    `email`      VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Email address' PRIMARY KEY,
-    `userid`     INT UNSIGNED        DEFAULT 1                    NOT NULL COMMENT 'User ID',
-    `subscribed` TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Flag indicating, that this mail should receive notifications',
-    `activation` TEXT                                             NULL COMMENT 'Encrypted activation code',
-    CONSTRAINT `email_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
-
-CREATE INDEX `subscribed` ON `uc__emails` (`subscribed` DESC);
-
-CREATE INDEX `userid` ON `uc__emails` (`userid`);
+CREATE TABLE `uc__emails` (
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Email address',
+  `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',
+  `subscribed` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating, that this mail should receive notifications',
+  `activation` text DEFAULT NULL COMMENT 'Encrypted activation code',
+  PRIMARY KEY (`email`),
+  KEY `subscribed` (`subscribed` DESC),
+  KEY `userid` (`userid`),
+  CONSTRAINT `email_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';

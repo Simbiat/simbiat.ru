@@ -49,3 +49,19 @@ UPDATE `cron__schedule` SET `arguments`='' WHERE `task`='dbMaintenance';
 UPDATE `cron__tasks` SET `system`=1;
 UPDATE `cron__schedule` SET `system`=1 WHERE `task`!='ffUpdateEntity';
 UPDATE `cron__tasks` SET `object` = 'Simbiat\\Maintenance' WHERE `cron__tasks`.`task` = 'dbMaintenance';
+
+UPDATE `cron__settings` SET `value` = '14' WHERE `cron__settings`.`setting` = 'logLife';
+
+UPDATE `cron__schedule` SET `arguments` = '[50]' WHERE `cron__schedule`.`task` = 'ffUpdateOld' AND `cron__schedule`.`arguments` = '[5]' AND `cron__schedule`.`instance` = 1;
+UPDATE `cron__schedule` SET `arguments` = '[50, \"$cronInstance\"]' WHERE `cron__schedule`.`task` = 'ffUpdateOld' AND `cron__schedule`.`arguments` = '[50]' AND `cron__schedule`.`instance` = 1;
+INSERT INTO `cron__schedule`(`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`) SELECT `task`, `arguments`, 2 as `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun` FROM `cron__schedule` WHERE `task`='ffUpdateOld' AND `instance`=1;
+INSERT INTO `cron__schedule`(`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`) SELECT `task`, `arguments`, 3 as `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun` FROM `cron__schedule` WHERE `task`='ffUpdateOld' AND `instance`=1;
+INSERT INTO `cron__schedule`(`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`) SELECT `task`, `arguments`, 4 as `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun` FROM `cron__schedule` WHERE `task`='ffUpdateOld' AND `instance`=1;
+
+UPDATE `cron__schedule` SET `arguments`='[50, "$cronInstance"]' WHERE `task`='ffUpdateOld';
+UPDATE `cron__settings` SET `value` = '4' WHERE `cron__settings`.`setting` = 'maxThreads';
+
+INSERT IGNORE INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `allowedreturns`, `maxTime`, `description`, `system`) VALUES
+('dbForBackup', 'forBackup', '\\Simbiat\\Maintenance', NULL, NULL, 3600, 'Generate DDLs and recommended dump order for current DB structure', 1);
+INSERT IGNORE INTO `cron__schedule` (`task`, `arguments`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`, `system`) VALUES
+('dbForBackup', '', 86400, NULL, NULL, 9, 'Dumping DDLs', '2024-06-21 02:00:00', 1);

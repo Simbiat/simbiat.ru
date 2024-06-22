@@ -1,64 +1,56 @@
-CREATE TABLE `ffxiv__freecompany`
-(
-    `freecompanyid`  VARCHAR(20) COLLATE utf8mb4_uca1400_nopad_as_ci  NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)' PRIMARY KEY,
-    `name`           VARCHAR(50) COLLATE utf8mb4_uca1400_nopad_ai_ci  NOT NULL COMMENT 'Free Company name',
-    `manual`         TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Flag indicating whether entity was added manually',
-    `serverid`       TINYINT(2) UNSIGNED                              NULL COMMENT 'ID of the server Free Company resides on',
-    `grandcompanyid` TINYINT(2) UNSIGNED                              NULL COMMENT 'ID of Grand Company affiliated with the Free Company',
-    `tag`            VARCHAR(10) COLLATE utf8mb4_uca1400_nopad_ai_ci  NULL COMMENT 'Short name of Free Company',
-    `formed`         DATE                DEFAULT CURRENT_TIMESTAMP()  NOT NULL COMMENT 'Free Company formation day as seen on Lodestone',
-    `registered`     DATE                DEFAULT CURRENT_TIMESTAMP()  NOT NULL COMMENT 'When Free Company was initially added to tracker',
-    `updated`        DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When Free Company was last updated on the tracker',
-    `deleted`        DATE                                             NULL COMMENT 'Date when Free Company was marked as deleted',
-    `crest_part_1`   VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 1st part of the crest (background)',
-    `crest_part_2`   VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 2nd part of the crest (frame)',
-    `crest_part_3`   VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Link to 3rd part of the crest (emblem)',
-    `rank`           TINYINT(2) UNSIGNED DEFAULT 1                    NOT NULL COMMENT 'Company level',
-    `slogan`         TEXT COLLATE utf8mb4_uca1400_nopad_ai_ci         NULL COMMENT 'Public message shown on company board as seen on Lodestone',
-    `activeid`       TINYINT(1) UNSIGNED                              NULL COMMENT 'ID of active time as registered on tracker',
-    `recruitment`    TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company is recruiting or not',
-    `communityid`    VARCHAR(40) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'Community ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/community_finder/communityid/)',
-    `estate_zone`    TEXT COLLATE utf8mb4_uca1400_nopad_ai_ci         NULL COMMENT 'Name of estate',
-    `estateid`       SMALLINT UNSIGNED                                NULL COMMENT 'Estate ID as registered by the tracker',
-    `estate_message` TEXT COLLATE utf8mb4_uca1400_nopad_ai_ci         NULL COMMENT 'Greeting on estate board as shown on Lodestone',
-    `Role-playing`   TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in role-playing',
-    `Leveling`       TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in leveling',
-    `Casual`         TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in casual activities',
-    `Hardcore`       TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in hardcore activities',
-    `Dungeons`       TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in dungeons',
-    `Guildhests`     TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in guildhests',
-    `Trials`         TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in trials',
-    `Raids`          TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in raids',
-    `PvP`            TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company participates in PvP',
-    `Tank`           TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company is looking for tanks',
-    `Healer`         TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company is looking for healers',
-    `DPS`            TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company is looking for DPSs',
-    `Crafter`        TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company is looking for crafters',
-    `Gatherer`       TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether company is looking for gatherers',
-    CONSTRAINT `activeid2` FOREIGN KEY (`activeid`) REFERENCES `ffxiv__timeactive` (`activeid`) ON UPDATE SET NULL ON DELETE SET NULL,
-    CONSTRAINT `estateid` FOREIGN KEY (`estateid`) REFERENCES `ffxiv__estate` (`estateid`) ON UPDATE SET NULL ON DELETE SET NULL,
-    CONSTRAINT `grandcompanyid` FOREIGN KEY (`grandcompanyid`) REFERENCES `ffxiv__grandcompany` (`gcId`) ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT `serverid_fc` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON UPDATE CASCADE ON DELETE CASCADE
-) COMMENT 'Free Companies found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
-
-CREATE INDEX `activeid` ON `ffxiv__freecompany` (`activeid`);
-
-CREATE INDEX `communityid` ON `ffxiv__freecompany` (`communityid`);
-
-CREATE INDEX `deleted` ON `ffxiv__freecompany` (`deleted`);
-
-CREATE FULLTEXT INDEX `estate_message` ON `ffxiv__freecompany` (`estate_message`);
-
-CREATE FULLTEXT INDEX `estate_zone` ON `ffxiv__freecompany` (`estate_zone`);
-
-CREATE FULLTEXT INDEX `name` ON `ffxiv__freecompany` (`name`);
-
-CREATE INDEX `name_order` ON `ffxiv__freecompany` (`name`);
-
-CREATE INDEX `registered` ON `ffxiv__freecompany` (`registered`);
-
-CREATE FULLTEXT INDEX `slogan` ON `ffxiv__freecompany` (`slogan`);
-
-CREATE FULLTEXT INDEX `tag` ON `ffxiv__freecompany` (`tag`);
-
-CREATE INDEX `updated` ON `ffxiv__freecompany` (`updated` DESC);
+CREATE TABLE `ffxiv__freecompany` (
+  `freecompanyid` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
+  `name` varchar(50) NOT NULL COMMENT 'Free Company name',
+  `manual` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating whether entity was added manually',
+  `serverid` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of the server Free Company resides on',
+  `grandcompanyid` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of Grand Company affiliated with the Free Company',
+  `tag` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Short name of Free Company',
+  `formed` date NOT NULL DEFAULT current_timestamp() COMMENT 'Free Company formation day as seen on Lodestone',
+  `registered` date NOT NULL DEFAULT current_timestamp() COMMENT 'When Free Company was initially added to tracker',
+  `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When Free Company was last updated on the tracker',
+  `deleted` date DEFAULT NULL COMMENT 'Date when Free Company was marked as deleted',
+  `crest_part_1` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Link to 1st part of the crest (background)',
+  `crest_part_2` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Link to 2nd part of the crest (frame)',
+  `crest_part_3` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Link to 3rd part of the crest (emblem)',
+  `rank` tinyint(2) unsigned NOT NULL DEFAULT 1 COMMENT 'Company level',
+  `slogan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Public message shown on company board as seen on Lodestone',
+  `activeid` tinyint(1) unsigned DEFAULT NULL COMMENT 'ID of active time as registered on tracker',
+  `recruitment` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company is recruiting or not',
+  `communityid` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Community ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/community_finder/communityid/)',
+  `estate_zone` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Name of estate',
+  `estateid` smallint(5) unsigned DEFAULT NULL COMMENT 'Estate ID as registered by the tracker',
+  `estate_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Greeting on estate board as shown on Lodestone',
+  `Role-playing` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in role-playing',
+  `Leveling` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in leveling',
+  `Casual` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in casual activities',
+  `Hardcore` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in hardcore activities',
+  `Dungeons` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in dungeons',
+  `Guildhests` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in guildhests',
+  `Trials` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in trials',
+  `Raids` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in raids',
+  `PvP` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company participates in PvP',
+  `Tank` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company is looking for tanks',
+  `Healer` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company is looking for healers',
+  `DPS` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company is looking for DPSs',
+  `Crafter` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company is looking for crafters',
+  `Gatherer` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether company is looking for gatherers',
+  PRIMARY KEY (`freecompanyid`) USING BTREE,
+  KEY `serverid_fc` (`serverid`),
+  KEY `grandcompanyid` (`grandcompanyid`),
+  KEY `estateid` (`estateid`),
+  KEY `activeid` (`activeid`),
+  KEY `registered` (`registered`),
+  KEY `deleted` (`deleted`),
+  KEY `communityid` (`communityid`),
+  KEY `name_order` (`name`),
+  KEY `updated` (`updated` DESC),
+  FULLTEXT KEY `name` (`name`),
+  FULLTEXT KEY `tag` (`tag`),
+  FULLTEXT KEY `slogan` (`slogan`),
+  FULLTEXT KEY `estate_zone` (`estate_zone`),
+  FULLTEXT KEY `estate_message` (`estate_message`),
+  CONSTRAINT `activeid2` FOREIGN KEY (`activeid`) REFERENCES `ffxiv__timeactive` (`activeid`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `estateid` FOREIGN KEY (`estateid`) REFERENCES `ffxiv__estate` (`estateid`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `grandcompanyid` FOREIGN KEY (`grandcompanyid`) REFERENCES `ffxiv__grandcompany` (`gcId`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `serverid_fc` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Free Companies found on Lodestone' `PAGE_COMPRESSED`='ON';

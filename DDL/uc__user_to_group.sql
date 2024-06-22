@@ -1,8 +1,8 @@
-CREATE TABLE `uc__user_to_group`
-(
-    `userid`  INT UNSIGNED DEFAULT 1 NOT NULL COMMENT 'User ID',
-    `groupid` INT UNSIGNED DEFAULT 2 NOT NULL COMMENT 'Group ID',
-    PRIMARY KEY (`userid`, `groupid`),
-    CONSTRAINT `group_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT `groupid` FOREIGN KEY (`groupid`) REFERENCES `uc__groups` (`groupid`) ON UPDATE CASCADE ON DELETE CASCADE
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+CREATE TABLE `uc__user_to_group` (
+  `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',
+  `groupid` int(10) unsigned NOT NULL DEFAULT 2 COMMENT 'Group ID',
+  PRIMARY KEY (`userid`,`groupid`),
+  KEY `groupid` (`groupid`),
+  CONSTRAINT `group_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `groupid` FOREIGN KEY (`groupid`) REFERENCES `uc__groups` (`groupid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';

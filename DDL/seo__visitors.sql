@@ -1,16 +1,12 @@
-CREATE TABLE `seo__visitors`
-(
-    `ip`     VARCHAR(45) COLLATE utf8mb4_uca1400_nopad_as_ci  NOT NULL COMMENT 'IP of unique visitor',
-    `os`     VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'OS version used by visitor',
-    `client` VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Client version used by visitor',
-    `first`  DATETIME(6)     DEFAULT CURRENT_TIMESTAMP(6)     NOT NULL COMMENT 'Time of first visit',
-    `last`   DATETIME(6)     DEFAULT CURRENT_TIMESTAMP(6)     NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'Time of last visit',
-    `views`  BIGINT UNSIGNED DEFAULT 1                        NOT NULL COMMENT 'Number of viewed pages',
-    PRIMARY KEY (`ip`, `os`, `client`)
-) COMMENT 'Views statistics per user' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
-
-CREATE INDEX `client` ON `seo__visitors` (`client`);
-
-CREATE INDEX `first` ON `seo__visitors` (`first`);
-
-CREATE INDEX `os` ON `seo__visitors` (`os`);
+CREATE TABLE `seo__visitors` (
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'IP of unique visitor',
+  `os` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'OS version used by visitor',
+  `client` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Client version used by visitor',
+  `first` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'Time of first visit',
+  `last` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'Time of last visit',
+  `views` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT 'Number of viewed pages',
+  PRIMARY KEY (`ip`,`os`,`client`) USING BTREE,
+  KEY `first` (`first`),
+  KEY `os` (`os`),
+  KEY `client` (`client`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Views statistics per user' `PAGE_COMPRESSED`='ON';

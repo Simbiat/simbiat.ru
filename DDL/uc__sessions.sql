@@ -1,23 +1,21 @@
-CREATE TABLE `uc__sessions`
-(
-    `sessionid` VARCHAR(256)                                     NOT NULL COMMENT 'Session''s UID' PRIMARY KEY,
-    `cookieid`  VARCHAR(256)                                     NULL COMMENT 'Cookie associated with the session',
-    `time`      DATETIME(6)         DEFAULT CURRENT_TIMESTAMP(6) NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'Last time session was determined active',
-    `userid`    INT UNSIGNED        DEFAULT 1                    NOT NULL COMMENT 'User ID',
-    `bot`       TINYINT(1) UNSIGNED DEFAULT 0                    NOT NULL COMMENT 'Whether session was determined to be a bot',
-    `ip`        VARCHAR(45) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'Session''s IP',
-    `useragent` TEXT COLLATE utf8mb4_uca1400_nopad_ai_ci         NULL COMMENT 'UserAgent used in session',
-    `username`  VARCHAR(64) COLLATE utf8mb4_uca1400_nopad_ai_ci  NULL COMMENT 'Name of either user (if logged in) or bot, if session belongs to one',
-    `page`      VARCHAR(256) COLLATE utf8mb4_uca1400_nopad_ai_ci NULL COMMENT 'Which page is being viewed at the moment',
-    `data`      TEXT                                             NULL COMMENT 'Session''s data. Not meant for sensitive information.',
-    CONSTRAINT `session_to_cookie` FOREIGN KEY (`cookieid`) REFERENCES `uc__cookies` (`cookieid`),
-    CONSTRAINT `session_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE ON DELETE CASCADE
-) `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
-
-CREATE INDEX `bot` ON `uc__sessions` (`bot`);
-
-CREATE INDEX `time` ON `uc__sessions` (`time` DESC);
-
-CREATE INDEX `username` ON `uc__sessions` (`username`);
-
-CREATE INDEX `viewing` ON `uc__sessions` (`page`);
+CREATE TABLE `uc__sessions` (
+  `sessionid` varchar(256) NOT NULL COMMENT 'Session''s UID',
+  `cookieid` varchar(256) DEFAULT NULL COMMENT 'Cookie associated with the session',
+  `time` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'Last time session was determined active',
+  `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',
+  `bot` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Whether session was determined to be a bot',
+  `ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Session''s IP',
+  `useragent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'UserAgent used in session',
+  `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Name of either user (if logged in) or bot, if session belongs to one',
+  `page` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Which page is being viewed at the moment',
+  `data` text DEFAULT NULL COMMENT 'Session''s data. Not meant for sensitive information.',
+  PRIMARY KEY (`sessionid`),
+  KEY `username` (`username`),
+  KEY `bot` (`bot`),
+  KEY `viewing` (`page`),
+  KEY `session_to_user` (`userid`),
+  KEY `time` (`time` DESC),
+  KEY `session_to_cookie` (`cookieid`),
+  CONSTRAINT `session_to_cookie` FOREIGN KEY (`cookieid`) REFERENCES `uc__cookies` (`cookieid`),
+  CONSTRAINT `session_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';

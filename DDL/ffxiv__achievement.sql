@@ -1,27 +1,23 @@
-CREATE TABLE `ffxiv__achievement`
-(
-    `achievementid` SMALLINT UNSIGNED                                NOT NULL COMMENT 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)' PRIMARY KEY,
-    `name`          VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Name of achievement',
-    `registered`    DATE        DEFAULT CURRENT_TIMESTAMP()          NOT NULL COMMENT 'When achievement was initially added to tracker',
-    `updated`       DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6)         NOT NULL ON UPDATE CURRENT_TIMESTAMP(6) COMMENT 'When achievement was last updated on the tracker',
-    `category`      VARCHAR(30) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'Category of the achievement',
-    `subcategory`   VARCHAR(30) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'Subcategory of the achievement',
-    `icon`          VARCHAR(150) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Achievement icon without base URL (https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/)',
-    `howto`         TEXT COLLATE utf8mb4_uca1400_nopad_ai_ci         NULL COMMENT 'Instructions on getting achievements taken from Lodestone',
-    `points`        TINYINT UNSIGNED                                 NULL COMMENT 'Amount of points assigned to character for getting the achievement',
-    `title`         VARCHAR(50) COLLATE utf8mb4_uca1400_nopad_ai_ci  NULL COMMENT 'Optional title rewarded to character',
-    `item`          VARCHAR(100) COLLATE utf8mb4_uca1400_nopad_ai_ci NULL COMMENT 'Optional item rewarded to character',
-    `itemicon`      VARCHAR(150) COLLATE utf8mb4_uca1400_nopad_as_ci NULL COMMENT 'Icon for optional item without base URL (https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/)',
-    `itemid`        VARCHAR(11) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'ID of optional item taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/itemid/)',
-    `dbid`          VARCHAR(11) COLLATE utf8mb4_uca1400_nopad_as_ci  NULL COMMENT 'ID of achievement in Lodestone database (https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/dbid/)',
-    CONSTRAINT `dbid` UNIQUE (`dbid`),
-    CONSTRAINT `itemid` UNIQUE (`itemid`)
-) COMMENT 'Achievements found on Lodestone' `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
-
-CREATE FULLTEXT INDEX `howto` ON `ffxiv__achievement` (`howto`);
-
-CREATE FULLTEXT INDEX `name` ON `ffxiv__achievement` (`name`);
-
-CREATE INDEX `name_order` ON `ffxiv__achievement` (`name`);
-
-CREATE INDEX `updated` ON `ffxiv__achievement` (`updated` DESC);
+CREATE TABLE `ffxiv__achievement` (
+  `achievementid` smallint(5) unsigned NOT NULL COMMENT 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Name of achievement',
+  `registered` date NOT NULL DEFAULT current_timestamp() COMMENT 'When achievement was initially added to tracker',
+  `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When achievement was last updated on the tracker',
+  `category` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Category of the achievement',
+  `subcategory` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Subcategory of the achievement',
+  `icon` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Achievement icon without base URL (https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/)',
+  `howto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Instructions on getting achievements taken from Lodestone',
+  `points` tinyint(3) unsigned DEFAULT NULL COMMENT 'Amount of points assigned to character for getting the achievement',
+  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Optional title rewarded to character',
+  `item` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Optional item rewarded to character',
+  `itemicon` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Icon for optional item without base URL (https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/)',
+  `itemid` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'ID of optional item taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/itemid/)',
+  `dbid` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'ID of achievement in Lodestone database (https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/dbid/)',
+  PRIMARY KEY (`achievementid`),
+  UNIQUE KEY `dbid` (`dbid`),
+  UNIQUE KEY `itemid` (`itemid`),
+  KEY `name_order` (`name`),
+  KEY `updated` (`updated` DESC),
+  FULLTEXT KEY `name` (`name`),
+  FULLTEXT KEY `howto` (`howto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Achievements found on Lodestone' `PAGE_COMPRESSED`='ON';

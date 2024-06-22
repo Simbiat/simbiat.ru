@@ -1,11 +1,11 @@
-CREATE TABLE `cron__tasks`
-(
-    `task`           VARCHAR(100) COLLATE utf8mb4_unicode_nopad_ci  NOT NULL COMMENT 'Function''s internal ID' PRIMARY KEY,
-    `function`       VARCHAR(255) COLLATE utf8mb4_unicode_nopad_ci  NOT NULL COMMENT 'Actual function reference, that will be called by Cron processor',
-    `object`         VARCHAR(255) COLLATE utf8mb4_unicode_nopad_ci  NULL COMMENT 'Optional object',
-    `parameters`     VARCHAR(5000) COLLATE utf8mb4_unicode_nopad_ci NULL COMMENT 'Optional parameters used on initial object creation in JSON string',
-    `allowedreturns` VARCHAR(5000) COLLATE utf8mb4_unicode_nopad_ci NULL COMMENT 'Optional allowed return values to be treated as ''true'' by Cron processor in JSON string',
-    `maxTime`        INT UNSIGNED        DEFAULT 3600               NOT NULL COMMENT 'Maximum time allowed for the task to run. If exceeded, it will be terminated by PHP.',
-    `system`         TINYINT(1) UNSIGNED DEFAULT 0                  NOT NULL COMMENT 'Flag indicating that task is system and can''t be deleted from Cron\Task class',
-    `description`    VARCHAR(1000) COLLATE utf8mb4_unicode_nopad_ci NULL COMMENT 'Description of the task'
-) COLLATE = utf8mb4_unicode_ci `PAGE_COMPRESSED` = 'ON' ROW_FORMAT = DYNAMIC;
+CREATE TABLE `cron__tasks` (
+  `task` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci NOT NULL COMMENT 'Function''s internal ID',
+  `function` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci NOT NULL COMMENT 'Actual function reference, that will be called by Cron processor',
+  `object` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Optional object',
+  `parameters` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Optional parameters used on initial object creation in JSON string',
+  `allowedreturns` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Optional allowed return values to be treated as ''true'' by Cron processor in JSON string',
+  `maxTime` int(10) unsigned NOT NULL DEFAULT 3600 COMMENT 'Maximum time allowed for the task to run. If exceeded, it will be terminated by PHP.',
+  `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that task is system and can''t be deleted from Cron\\Task class',
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Description of the task',
+  PRIMARY KEY (`task`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';
