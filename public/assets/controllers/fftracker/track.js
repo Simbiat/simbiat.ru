@@ -51,7 +51,7 @@ export class ffTrack {
     typeChange() {
         if (this.select && this.idInput) {
             let pattern = '^\\d{1,20}$';
-            if (this.select.value === 'pvpteam' || this.select.value === 'crossworld_linkshell') {
+            if (this.select.value === 'pvpteams' || this.select.value === 'crossworld_linkshells') {
                 pattern = '^[\\da-z]{40}$';
             }
             this.idInput.setAttribute('pattern', pattern);

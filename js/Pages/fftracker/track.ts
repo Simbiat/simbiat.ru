@@ -61,7 +61,7 @@ export class ffTrack
             //Set default value for pattern
             let pattern = '^\\d{1,20}$';
             //Update pattern value
-            if (this.select.value === 'pvpteam' || this.select.value === 'crossworld_linkshell') {
+            if (this.select.value === 'pvpteams' || this.select.value === 'crossworld_linkshells') {
                 pattern = '^[\\da-z]{40}$';
             }
             //Set pattern for the element

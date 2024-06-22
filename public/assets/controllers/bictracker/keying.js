@@ -10,11 +10,15 @@ export class bicKeying {
         this.bicKeySample = document.querySelector('#bic_key_sample');
         this.accKeySample = document.querySelector('#account_key_sample');
         this.spinner = document.querySelector('#bic_spinner');
-    }
-    init() {
         ['change', 'input', 'paste'].forEach((eventType) => {
-            document.querySelector('#bic_key')?.addEventListener(eventType, () => { this.calc(); });
-            document.querySelector('#account_key')?.addEventListener(eventType, () => { this.calc(); });
+            document.querySelector('#bic_key')
+                ?.addEventListener(eventType, () => {
+                this.calc();
+            });
+            document.querySelector('#account_key')
+                ?.addEventListener(eventType, () => {
+                this.calc();
+            });
         });
     }
     calc() {
@@ -42,8 +46,8 @@ export class bicKeying {
             if (this.spinner) {
                 this.spinner.classList.remove('hidden');
             }
-            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying`, formData, 'json', 'POST', 60000, true).
-                then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying`, formData, 'json', 'POST', 60000, true)
+                .then((response) => {
                 const data = response;
                 updateHistory(`${location.protocol}//${location.host}/bictracker/keying/${bicKey}/${accKey}/`, `Ключевание счёта ${accKey}`);
                 if (this.result) {

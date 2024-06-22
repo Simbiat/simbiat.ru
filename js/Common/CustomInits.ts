@@ -83,7 +83,7 @@ function formInit(form: HTMLFormElement): void
     form.addEventListener('keypress', (event: KeyboardEvent) => { formEnter(event); });
     //For all elements that can be used inside a form add name, if it's missing. Make it equal to ID.
     form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea').forEach((item) => {
-        if ((!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
+        if (!item.hasAttribute('data-noname') && (!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
             item.setAttribute('name', item.id);
         }
     });
@@ -107,7 +107,7 @@ function sampInit(samp: HTMLElement): void
     //"When the element does not have a first child, then firstChild is null. The element is still appended to the parent, after the last child."
     //This results in same effect as with appendChild, that the image is inserted at the end, which is not what we want
     //Same is true for codeInit and blockquoteInit
-    samp.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${samp.innerHTML}`;
+    samp.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${samp.innerHTML}`;
     //Add description
     const description = samp.getAttribute('data-description') ?? '';
     if (!empty(description)) {
@@ -125,7 +125,7 @@ function sampInit(samp: HTMLElement): void
 function codeInit(code: HTMLElement): void
 {
     //Add a visual button
-    code.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${code.innerHTML}`;
+    code.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${code.innerHTML}`;
     //Add description
     const description = code.getAttribute('data-description') ?? '';
     if (!empty(description)) {
@@ -143,7 +143,7 @@ function codeInit(code: HTMLElement): void
 function blockquoteInit(quote: HTMLElement): void
 {
     //Add a visual button
-    quote.innerHTML = `<img loading="lazy" decoding="async"  src="/img/copy.svg" alt="Click to copy block" class="copyQuote">${quote.innerHTML}`;
+    quote.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${quote.innerHTML}`;
     //Add author
     const author = quote.getAttribute('data-author') ?? '';
     if (!empty(author)) {
@@ -245,8 +245,8 @@ function anchorInit(anchor: HTMLAnchorElement): void
         anchor.target = '_blank';
     }
     //Add an icon indicating, that link will open in new tab
-    if (anchor.target === '_blank' && !anchor.innerHTML.includes('img/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
-        anchor.innerHTML += '<img class="newTabIcon" src="/img/newtab.svg" alt="Opens in new tab">';
+    if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
+        anchor.innerHTML += '<img class="newTabIcon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
         //I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
     } else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
         //Logic to update URL if this is a hash link for current page

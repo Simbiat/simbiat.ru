@@ -9,7 +9,7 @@ class Tooltip extends HTMLElement
     {
         super();
         //Add data-tooltip attribute for elements, that have title or alt and do not have tooltip either on them or their parent
-        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip])').forEach((item) => {
+        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip]):not(link)').forEach((item) => {
             //Add tooltip only if it's not set on parent element already
             if (item.parentElement?.hasAttribute('data-tooltip') === false) {
                 item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');

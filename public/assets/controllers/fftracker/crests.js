@@ -40,13 +40,13 @@ export class ffCrests {
             this.frameImage.setAttribute('src', '');
             this.emblemImage.setAttribute('src', '');
             if (!empty(background) && this.background.checkValidity()) {
-                this.backgroundImage.setAttribute('src', `/img/fftracker/crests-components/backgrounds/${background.slice(0, 3).toLowerCase()}/${background}`);
+                this.backgroundImage.setAttribute('src', `/assets/images/fftracker/crests-components/backgrounds/${background.slice(0, 3).toLowerCase()}/${background}`);
             }
             if (!empty(frame) && this.frame.checkValidity()) {
-                this.frameImage.setAttribute('src', `/img/fftracker/crests-components/frames/${frame}`);
+                this.frameImage.setAttribute('src', `/assets/images/fftracker/crests-components/frames/${frame}`);
             }
             if (!empty(emblem) && this.emblem.checkValidity()) {
-                this.emblemImage.setAttribute('src', `/img/fftracker/crests-components/emblems/${emblem.slice(0, 3).toLowerCase()}/${emblem}`);
+                this.emblemImage.setAttribute('src', `/assets/images/fftracker/crests-components/emblems/${emblem.slice(0, 3).toLowerCase()}/${emblem}`);
             }
             if (this.preview) {
                 if (empty(this.backgroundImage.getAttribute('src')) && empty(this.frameImage.getAttribute('src')) && empty(this.emblemImage.getAttribute('src'))) {

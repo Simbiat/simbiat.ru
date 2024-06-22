@@ -17,7 +17,7 @@ const tinySettings = {
     'autosave_ask_before_unload': true,
     'autosave_interval': '5s',
     'autosave_restore_when_empty': true,
-    'base_url': '/js/tinymce/',
+    'base_url': '/tinymce/',
     'block_formats': 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6;',
     'block_unsupported_drop': true,
     'branding': true,
@@ -27,7 +27,7 @@ const tinySettings = {
                            return [key, customColorMap[key]];
                        })
                        .flat(),
-    'content_css': '/css/tinymce.css',
+    'content_css': '/assets/styles/tinymce.css',
     'content_security_policy': "default-src 'self'",
     'contextmenu': 'emoticons link image',
     'custom_colors': false,
@@ -446,7 +446,7 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
         if (noRestoreOnEmpty) {
             settings.autosave_restore_when_empty = false;
         }
-        void import('/js/tinymce/tinymce.min.js').then(() => {
+        void import('/tinymce/tinymce.min.js').then(() => {
             // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
             // As such I am suppressing a bunch of linters' errors here
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
@@ -505,7 +505,7 @@ function saveTinyMCE(id: string, textareaOnly = false): void
     }
     const textarea = document.querySelector(`#${id}`);
     if (textarea !== null) {
-        void import('/js/tinymce/tinymce.min.js').then(() => {
+        void import('/tinymce/tinymce.min.js').then(() => {
             // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
             // As such I am suppressing a bunch of linters' errors here
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access

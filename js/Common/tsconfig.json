@@ -21,8 +21,11 @@
         "moduleResolution": "nodenext",
         "baseUrl": ".",
         "paths": {
-            "/js/tinymce/*": [
+            "/tinymce/*": [
                 "../../vendor/tinymce/tinymce/*"
+            ],
+            "/assets/controllers/*": [
+                "/public/assets/controllers/*"
             ],
             "*": [
                 "/js/Pages/*",
@@ -30,11 +33,12 @@
             ]
         },
         "sourceMap": true,
+        "inlineSources": true,
         "rootDir": "../../",
         "sourceRoot": "/",
         "removeComments": true,
-        "outDir": "../",
-        "outFile": "../main.js",
+        "outDir": "../../public/assets/",
+        "outFile": "../../public/assets/app.js",
         "explainFiles": true,
         "listFiles": true,
         //Other settings

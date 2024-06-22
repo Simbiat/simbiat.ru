@@ -49,57 +49,57 @@ function router(): void
         if (path[0] === 'bictracker') {
             if (!empty(path[1])) {
                 if (path[1] === 'keying') {
-                    void import('/js/Pages/bictracker/keying.js').then((module) => { new module.bicKeying(); });
+                    void import('/assets/controllers/bictracker/keying.js').then((module) => { new module.bicKeying(); });
                 } else if (path[1] === 'search') {
-                    void import('/js/Pages/bictracker/search.js').then((module) => { new module.bicRefresh(); });
+                    void import('/assets/controllers/bictracker/search.js').then((module) => { new module.bicRefresh(); });
                 }
             }
         } else if (path[0] === 'fftracker') {
             if (!empty(path[1])) {
                 if (path[1] === 'track') {
-                    void import('/js/Pages/fftracker/track.js').then((module) => {
+                    void import('/assets/controllers/fftracker/track.js').then((module) => {
                         new module.ffTrack();
                     });
                 } else if (path[1] === 'crests') {
-                    void import('/js/Pages/fftracker/crests.js').then((module) => {
+                    void import('/assets/controllers/fftracker/crests.js').then((module) => {
                         new module.ffCrests();
                     });
                 } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(String(path[1]))) {
-                    void import('/js/Pages/fftracker/entity.js').then((module) => { new module.ffEntity(); });
+                    void import('/assets/controllers/fftracker/entity.js').then((module) => { new module.ffEntity(); });
                 }
             }
         } else if (path[0] === 'uc') {
             if (!empty(path[1])) {
                 if (path[1] === 'emails') {
-                    void import('/js/Pages/uc/emails.js').then((module) => { new module.Emails(); });
+                    void import('/assets/controllers/uc/emails.js').then((module) => { new module.Emails(); });
                 } else if (path[1] === 'password') {
-                    void import('/js/Pages/uc/password.js').then((module) => { new module.PasswordChange(); });
+                    void import('/assets/controllers/uc/password.js').then((module) => { new module.PasswordChange(); });
                 } else if (path[1] === 'profile') {
-                    void import('/js/Pages/uc/profile.js').then((module) => { new module.EditProfile(); });
+                    void import('/assets/controllers/uc/profile.js').then((module) => { new module.EditProfile(); });
                 } else if (path[1] === 'avatars') {
-                    void import('/js/Pages/uc/avatars.js').then((module) => { new module.EditAvatars(); });
+                    void import('/assets/controllers/uc/avatars.js').then((module) => { new module.EditAvatars(); });
                 } else if (path[1] === 'sessions') {
-                    void import('/js/Pages/uc/sessions.js').then((module) => { new module.EditSessions(); });
+                    void import('/assets/controllers/uc/sessions.js').then((module) => { new module.EditSessions(); });
                 } else if (path[1] === 'fftracker') {
-                    void import('/js/Pages/uc/fftracker.js').then((module) => { new module.EditFFLinks(); });
+                    void import('/assets/controllers/uc/fftracker.js').then((module) => { new module.EditFFLinks(); });
                 } else if (path[1] === 'removal') {
-                    void import('/js/Pages/uc/removal.js').then((module) => { new module.RemoveProfile(); });
+                    void import('/assets/controllers/uc/removal.js').then((module) => { new module.RemoveProfile(); });
                 }
             }
         } else if (path[0] === 'talks') {
             if (path[1] === 'edit') {
                 if (path[2] === 'sections') {
-                    void import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
+                    void import('/assets/controllers/talks/sections.js').then((module) => { new module.Sections(); });
                 } else if (path[2] === 'posts') {
-                    void import('/js/Pages/talks/posts.js').then((module) => { new module.Posts(); });
+                    void import('/assets/controllers/talks/posts.js').then((module) => { new module.Posts(); });
                 }
             } else if (path[1] === 'sections') {
-                void import('/js/Pages/talks/sections.js').then((module) => { new module.Sections(); });
+                void import('/assets/controllers/talks/sections.js').then((module) => { new module.Sections(); });
             } else if (path[1] === 'threads') {
-                void import('/js/Pages/talks/threads.js').then((module) => { new module.Threads(); });
+                void import('/assets/controllers/talks/threads.js').then((module) => { new module.Threads(); });
             }
         } else if (path[0] === 'games') {
-            void import('/js/Pages/games/games.js').then((module) => { new module.Games(); });
+            void import('/assets/controllers/games/games.js').then((module) => { new module.Games(); });
         }
     }
 }

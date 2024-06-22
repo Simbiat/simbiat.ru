@@ -5,7 +5,6 @@ export declare class bicKeying {
     private readonly accKeySample;
     private readonly spinner;
     constructor();
-    init(): void;
     private calc;
     private static styleBic;
 }

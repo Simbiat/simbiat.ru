@@ -20,9 +20,10 @@
         "target": "ESNext",
         "moduleResolution": "nodenext",
         "sourceMap": true,
+        "inlineSources": true,
         "sourceRoot": "/js/Pages/",
         "removeComments": true,
-        "outDir": "./",
+        "outDir": "../../public/assets/controllers/",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
@@ -30,7 +31,12 @@
         "checkJs": true,
         "composite": true,
         "noErrorTruncation": true,
-        "lib": ["esnext", "dom", "WebWorker", "dom.iterable"]
+        "lib": [
+            "esnext",
+            "dom",
+            "WebWorker",
+            "dom.iterable"
+        ]
     },
     //Include only .ts files in the same dir
     "include": [
@@ -40,6 +46,8 @@
         "*node_modules*"
     ],
     "references": [
-        {"path": "../Common/tsconfig.json"}
+        {
+            "path": "../Common/tsconfig.json"
+        }
     ]
 }
