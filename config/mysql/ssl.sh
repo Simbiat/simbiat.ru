@@ -8,7 +8,7 @@
 #Get current date
 currentDate=$(date +%Y%m%d)
 logsDir=/usr/local/logs
-keysDir=$keysDir
+keysDir=$MARIADB_KEYS_DIR
 
 #Generate CA
 echo Generating CA for $currentDate... >> $logsDir/ssl.log 2>&1
