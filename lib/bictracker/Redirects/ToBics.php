@@ -1,0 +1,17 @@
+<?php
+declare(strict_types = 1);
+namespace Simbiat\bictracker\Redirects;
+
+use Simbiat\Abstracts\Pages\Redirect;
+
+class ToBics extends Redirect
+{
+    #Current breadcrumb for navigation
+    protected array $breadCrumb = [
+        ['href' => '/bictracker/bic', 'name' => 'Legacy']
+    ];
+    #Regex match pattern with / and flags
+    protected string $searchFor = '\/bictracker\/bic\/(.*)';
+    #Regex replace pattern
+    protected string $replaceWith = '/bictracker/bics/$1';
+}
