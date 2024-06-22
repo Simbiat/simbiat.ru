@@ -16,13 +16,15 @@ extension_loaded('dom') || $missingExtensions[] = 'dom';
 extension_loaded('fileinfo') || $missingExtensions[] = 'fileinfo';
 extension_loaded('filter') || $missingExtensions[] = 'filter';
 extension_loaded('gd') || $missingExtensions[] = 'gd';
-extension_loaded('iconv') || $missingExtensions[] = 'iconv';
+extension_loaded('intl') || $missingExtensions[] = 'intl';
 extension_loaded('json') || $missingExtensions[] = 'json';
 extension_loaded('libxml') || $missingExtensions[] = 'libxml';
 extension_loaded('openssl') || $missingExtensions[] = 'openssl';
+extension_loaded('pcre') || $missingExtensions[] = 'pcre';
 extension_loaded('pdo') || $missingExtensions[] = 'pdo';
 extension_loaded('zip') || $missingExtensions[] = 'zip';
 extension_loaded('zlib') || $missingExtensions[] = 'zlib';
+extension_loaded('zstd') || $missingExtensions[] = 'zstd';
 
 if ($missingExtensions) {
     $issues[] = 'Your Composer dependencies require the following PHP extensions to be installed: ' . implode(', ', $missingExtensions) . '.';

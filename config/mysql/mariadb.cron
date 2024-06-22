@@ -1,0 +1,2 @@
+0 6 * * 0 /etc/mysql/conf.d/ssl.sh flush
+0 3 * * * /etc/mysql/conf.d/backup.sh

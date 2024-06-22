@@ -1,0 +1,3 @@
+* * * * * /usr/local/php/config/php-cron.sh
+* * * * * sleep 20 && /usr/local/php/config/php-cron.sh
+* * * * * sleep 40 && /usr/local/php/config/php-cron.sh
