@@ -4,12 +4,13 @@
 declare(strict_types = 1);
 
 #Load composer libraries
-require_once __DIR__.'/vendor/autoload.php';
+require_once dirname(__DIR__).'/vendor/autoload.php';
 
+use Simbiat\Config;
 use Simbiat\HomePage;
 
-#Get config file
-require_once __DIR__.'/config.php';
+#Generate basic settings
+new Config();
 
 #Set error handling
 set_error_handler('\Simbiat\Errors::error_handler');
