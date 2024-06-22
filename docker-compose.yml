@@ -1,0 +1,73 @@
+name: simbiat-dev
+
+# Looks like subnet may change in some cases for no apparent reason, so trying to force it
+networks:
+  webserver:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+services:
+  frankenphp:
+    container_name: frankenphp
+    build: ./config/frankenphp
+    restart: unless-stopped
+    env_file: ./config/frankenphp/caddy.env
+    environment:
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+    networks:
+      - webserver
+    ports:
+      - 80:80 # HTTP
+      - 443:443 # HTTPS
+      - 443:443/udp # HTTP/3
+    volumes:
+      - ./:/app:rw
+      - ./config/frankenphp:/usr/local/php/config:ro
+      - ${CADDY_DATA_DIR}:/data:rw
+      - ${CADDY_CONFIG_DIR}:/config:rw
+    links:
+      - local.simbiat.dev:mysql
+      - local.simbiat.dev:database
+    #We need to register cron task and start cron service before the endpoint
+    command: >
+      /bin/sh -c "cp /usr/local/php/config/php.cron /etc/cron.d/php.cron &&
+                  chmod 0644 /etc/cron.d/php.cron &&
+                  crontab /etc/cron.d/php.cron &&
+                  cron &&
+                  docker-php-entrypoint --config /usr/local/php/config/caddy.json5 --adapter json5"
+
+  local.simbiat.dev:
+    container_name: mariadb
+    build: ./config/mysql
+    restart: unless-stopped
+    env_file: ./config/mysql/mariadb.env
+    environment:
+      WEB_SERVER_TEST: "${WEB_SERVER_TEST}"
+    networks:
+      - webserver
+    ports:
+      - ${MARIADB_PORT}:${MARIADB_PORT}
+    volumes:
+      - ${MARIADB_DATA_DIR}:/var/lib/mysql:rw
+      - ./config/mysql:/etc/mysql/conf.d:ro
+      - ${MARIADB_KEYS_DIR}:/usr/local/keys:rw
+      - ./logs:/usr/local/logs:rw
+      - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
+      - ./DDL:/usr/local/DDL:ro
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--connect", "--innodb_initialized" ]
+      start_period: 120s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    #We want to generate keys automatically, and it is also a good idea to regenerate them on each restart
+    #We also need to register cron tasks and start cron service before the endpoint
+    command: >
+      /bin/sh -c "/etc/mysql/conf.d/ssl.sh &&
+                  cp /etc/mysql/conf.d/mariadb.cron /etc/cron.d/mariadb.cron &&
+                  chmod 0644 /etc/cron.d/mariadb.cron &&
+                  crontab /etc/cron.d/mariadb.cron
+                  cron &&
+                  docker-entrypoint.sh mariadbd"

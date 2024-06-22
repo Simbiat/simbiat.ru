@@ -5,5 +5,5 @@
             <img loading="lazy" decoding="async" alt="Avatar {{ number }}" src="{{ avatar.url }}" class="avatar">
         </label>
     </span>
-    <input id="del_{{ avatar.fileid|default('hash') }}" alt="Delete avatar" type="image" class="delete_avatar{% if avatar and avatar.current %} hidden{% endif %}"{% if avatar and avatar.current %} disabled{% endif %} src="/img/close.svg">
+    <input id="del_{{ avatar.fileid|default('hash') }}" alt="Delete avatar" type="image" class="delete_avatar{% if avatar and avatar.current %} hidden{% endif %}"{% if avatar and avatar.current %} disabled{% endif %} src="/assets/images/close.svg">
 </li>

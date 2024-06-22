@@ -60,7 +60,7 @@
                 </details>
             {% endif %}
             <input role="button" form="editThreadForm" type="submit" name="curThread[submit]" id="editThread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Update">
-            <img id="editThread_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
+            <img id="editThread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
         </form>
     </tab-content>
 {% endif %}
@@ -68,7 +68,7 @@
     <tab-content>
         <p>Pressing below button will {% if closed %}reopen{% else %}close{% endif %} the current thread <b class="warning">{% if closed %}allowing{% else %}preventing{% endif %}</b> users to post in it.</p>
         <input role="button" type="button" id="close_thread" value="{% if closed %}Open{% else %}Close{% endif %}" data-thread="{{ id }}">
-        <img loading="lazy" decoding="async" id="thread_close_spinner" class="hidden spinner" src="/img/spinner.svg" alt="{% if closed %}Reopening{% else %}Closing{% endif %} thread...">
+        <img loading="lazy" decoding="async" id="thread_close_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if closed %}Reopening{% else %}Closing{% endif %} thread...">
     </tab-content>
 {% endif %}
 {% if 'removeThreads' in session_data.permissions %}
@@ -80,7 +80,7 @@
             <p>If thread has a custom banner it will not be removed along with the thread. Instead, it will be removed during routine check for orphaned files, if the banner file is not linked to anything else.</p>
             <p>If deletion is successful you will be redirected to respective parent section.</p>
             <input role="button" type="button" id="delete_thread" value="Delete" data-thread="{{ id }}">
-            <img loading="lazy" decoding="async" id="thread_delete_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Deleting thread...">
+            <img loading="lazy" decoding="async" id="thread_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting thread...">
         {% endif %}
     </tab-content>
 {% endif %}

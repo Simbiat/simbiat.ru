@@ -6,5 +6,5 @@
 <form id="user_removal" class="middle">
     <span class="radio_and_label"><input form="user_removal" id="hard_removal" type="checkbox"><label for="hard_removal">I want it hard</label></span><br>
     <input role="button" form="user_removal" type="submit" name="submit" id="remove_user" formaction="/api/uc/{{ session_data.userid }}/remove" formmethod="post" formtarget="_self" value="Remove me" class="warning">
-    <img loading="lazy" decoding="async" id="removal_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Removing user...">
+    <img loading="lazy" decoding="async" id="removal_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Removing user...">
 </form>

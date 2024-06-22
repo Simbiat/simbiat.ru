@@ -1,5 +1,5 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ achievement.name }}" src="/img/fftracker/icons/{{ achievement.icon }}">
+    <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ achievement.name }}" src="/assets/images/fftracker/icons/{{ achievement.icon }}">
     <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, "d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {{ timeTag(achievement.updated, "d/m/Y") }}{% endif %}.</p>
     <p>By achieving it, one can receive:</p>
     <ul>
@@ -10,7 +10,7 @@
             <li><i class="gold">"{{ achievement.rewards.title }}"</i> title</li>
         {% endif %}
         {% if achievement.rewards.item.name %}
-            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/img/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
+            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
         {% endif %}
     </ul>
     {% if achievement.howto %}

@@ -1,10 +1,10 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ linkshell.name }}" src="/img/fftracker/{% if linkshell.crossworld %}crossworld_{% endif %}linkshell.webp">
+    <img loading="lazy" decoding="async" class="float_left ff_crest" alt="{{ linkshell.name }}" src="/assets/images/fftracker/{% if linkshell.crossworld %}crossworld_{% endif %}linkshell.webp">
     {% if freecompany.linked %}
         <p>
             You are a linked member of this {% if linkshell.crossworld %}crossworld {% endif %}linkshell. Press this button to force update the data.
         </p>
-        <input class="refresh" id="ff_refresh" alt="Update {% if linkshell.crossworld %}crossworld {% endif %}linkshell" data-tooltip="Update {% if linkshell.crossworld %}crossworld {% endif %}linkshell" type="image" data-link="/api/fftracker/{% if linkshell.crossworld %}crossworld{% endif %}linkshells/{{ linkshell.id }}/update" src="/img/refresh.svg">
+        <input class="refresh" id="ff_refresh" alt="Update {% if linkshell.crossworld %}crossworld {% endif %}linkshell" data-tooltip="Update {% if linkshell.crossworld %}crossworld {% endif %}linkshell" type="image" data-link="/api/fftracker/{% if linkshell.crossworld %}crossworld{% endif %}linkshells/{{ linkshell.id }}/update" src="/assets/images/refresh.svg">
     {% endif %}
     <p>{% if linkshell.crossworld %}Crossworld {% endif %}Linkshell <b>"{{ linkshell.name }}"</b> was {% if linkshell.dates.formed %}formed on {{ timeTag(linkshell.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(linkshell.dates.registered, "d/m/Y") }} with ID <i>{{ linkshell.id }}</i>. Last set of interviews conducted on {{ timeTag(linkshell.dates.updated, "d/m/Y H:i") }}.{% if linkshell.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(linkshell.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
     <p>Operate{% if linkshell.dates.deleted %}d{% else %}s{% endif %} on <i>{{ linkshell.dataCenter ?? linkshell.server }}</i>.{% if not linkshell.dates.deleted %}{% if linkshell.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ linkshell.community }}" target="_blank">community</a>.{% endif %}{% endif %}</p>

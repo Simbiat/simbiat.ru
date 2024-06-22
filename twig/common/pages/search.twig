@@ -1,10 +1,10 @@
 {# Set link variable based on type #}
 {% if serviceName == 'bictracker' %}
-    {% set actionURL = '/bictracker/search/' %}
+    {% set actionURL = '/bictracker/search' %}
 {% elseif serviceName == 'fftracker' %}
-        {% set actionURL = '/fftracker/search/' %}
+    {% set actionURL = '/fftracker/search' %}
 {% else %}
-    {% set actionURL = '/search/' %}
+    {% set actionURL = '/search' %}
 {% endif %}
 {# Render the form itself #}
 <section>
@@ -13,14 +13,14 @@
     {% elseif serviceName == 'fftracker' %}
         <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
-    <form role="search" class="searchForm" action="{{ actionURL }}">
+    <form role="search" class="searchForm" action="{{ actionURL }}" method="get">
         <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if searchValue is defined %} value="{{ searchValue }}"{% else %} autofocus{% endif %}><label for="searchField">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
-        <input role="button" type="submit" id="search" value="{% if serviceName == 'bictracker' %}Поиск{% else %}Search{% endif %}">
+        <input role="button" type="submit" id="search_button" data-noname value="{% if serviceName == 'bictracker' %}Поиск{% else %}Search{% endif %}">
     </form>
 </section>
 <section>
     {% if serviceName == 'bictracker' %}
-        <p class="relative">Библиотека обновлена {{ timeTag(bicDate, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/img/refresh.svg"></p>
+        <p class="relative">Библиотека обновлена {{ timeTag(bicDate, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/assets/images/refresh.svg"></p>
     {% endif %}
     {% for type, subResult in searchResult %}
         <p>

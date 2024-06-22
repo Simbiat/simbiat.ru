@@ -1,14 +1,14 @@
 {% if session_data.userid != 1 %}
-    <a id="uc_settings" class="button" href="/uc/profile"><img loading="lazy" decoding="async" class="linkIcon" alt="Settings" src="/img/cog.svg"></a>
+    <a id="uc_settings" class="button" href="/uc/profile"><img loading="lazy" decoding="async" class="linkIcon" alt="Settings" src="/assets/images/cog.svg"></a>
     <div class="middle">Hi, <a href="/talks/users/{{ session_data.userid }}" id="own_profile_link">{{ session_data.username }}</a>!</div>
-    <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebarAvatar" src="{{ session_data.avatar|default('/img/avatar.svg') }}"></div>
+    <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebarAvatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}"></div>
     {% if session_data.activated == false %}
         <div class="warning">Pending <a href="/uc/emails">activation</a>.</div>
     {% endif %}
     <login-form>
         <form role="form" id="signinup" name="signinup" autocomplete="on">
             <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout">
-            <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Logging out...">
+            <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Logging out...">
         </form>
     </login-form>
 {% else %}
@@ -54,7 +54,7 @@
                 <label for="rememberme">Remember me</label>
             </div>
             <input role="button" form="signinup" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Sign in/Join">
-            <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Submitting form...">
+            <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Submitting form...">
         </form>
     </login-form>
 {% endif %}

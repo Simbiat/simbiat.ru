@@ -4,11 +4,11 @@
             src="{{ freecompany.crest }}"
         {% else %}
             {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
-                src="/img/fftracker/default-crests/OrderOfTheTwinAdder.webp"
+                src="/assets/images/fftracker/default-crests/OrderOfTheTwinAdder.webp"
             {% elseif freecompany.grandCompany == 'Immortal Flames' %}
-                src="/img/fftracker/default-crests/ImmortalFlames.webp"
+                src="/assets/images/fftracker/default-crests/ImmortalFlames.webp"
             {% else %}
-                src="/img/fftracker/default-crests/Maelstrom.webp"
+                src="/assets/images/fftracker/default-crests/Maelstrom.webp"
             {% endif %}
         {% endif %}
     >
@@ -16,7 +16,7 @@
         <p>
             You are a linked member of this free company. Press this button to force update the data.
         </p>
-        <input class="refresh" id="ff_refresh" alt="Update free company" data-tooltip="Update free company" type="image" data-link="/api/fftracker/freecompanies/{{ freecompany.id }}/update" src="/img/refresh.svg">
+        <input class="refresh" id="ff_refresh" alt="Update free company" data-tooltip="Update free company" type="image" data-link="/api/fftracker/freecompanies/{{ freecompany.id }}/update" src="/assets/images/refresh.svg">
     {% endif %}
     <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{ timeTag(freecompany.dates.formed, "d/m/Y") }} and registered on {{ timeTag(freecompany.dates.registered, "d/m/Y") }} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {{ timeTag(freecompany.dates.updated, "d/m/Y H:i") }}.{% if freecompany.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(freecompany.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
     {% if freecompany.slogan %}
@@ -26,11 +26,11 @@
     <p>
         Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>{% if freecompany.grandCompany %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grandCompany }}"
         {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
-            src="/img/fftracker/cities/2.webp"
+            src="/assets/images/fftracker/cities/2.webp"
         {% elseif freecompany.grandCompany == 'Immortal Flames' %}
-            src="/img/fftracker/cities/5.webp"
+            src="/assets/images/fftracker/cities/5.webp"
         {% elseif freecompany.grandCompany == 'Maelstrom' %}
-            src="/img/fftracker/cities/4.webp"
+            src="/assets/images/fftracker/cities/4.webp"
         {% endif %}
         >{% endif %}<i>{{ freecompany.grandCompany }}</i>{% endif %}.
         {% if freecompany.location.estate.ward %}
@@ -47,7 +47,7 @@
             {% else %}
                 land
             {% endif %}
-            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/img/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a>.
+            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/assets/images/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a>.
         {% endif %}
     </p>
     {% if freecompany.location.estate.message %}
@@ -58,7 +58,7 @@
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
         <ul class="flexList">
             {% for focus, value in freecompany.focus %}
-                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/img/fftracker/focus/{{ focus }}.webp">{{ focus }}</li>{% endif %}
+                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus }}</li>{% endif %}
             {% endfor %}
         </ul>
     {% endif %}
@@ -69,7 +69,7 @@
             {% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}
                 <ul class="flexList">
                     {% for seeking, value in freecompany.seeking %}
-                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/img/fftracker/roles/{{ seeking }}.webp">{{ seeking }}</li>{% endif %}
+                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking }}</li>{% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}

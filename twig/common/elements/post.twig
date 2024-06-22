@@ -51,7 +51,7 @@
             <span class="likes_count{% if post.liked > 0 %} success{% endif %}">{{ post.likes }}</span>
             <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
             <span class="dislikes_count{% if post.liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
-            <img loading="lazy" decoding="async" class="hidden inline spinner" src="/img/spinner.svg" alt="Registering preference...">
+            <img loading="lazy" decoding="async" class="hidden inline spinner" src="/assets/images/spinner.svg" alt="Registering preference...">
         </like-dis>
         <div class="post_icons">
             {% if allowReplyTo and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}

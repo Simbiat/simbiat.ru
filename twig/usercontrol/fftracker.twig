@@ -4,7 +4,7 @@
     <details{% if characters is empty %} open{% endif %}>
         <summary>Instructions</summary>
         <ol>
-            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank"><img loading="lazy" decoding="async" alt="Lodestone" class="linkIcon" src="/img/icons/lodestone.svg">Lodestone</a></li>
+            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank"><img loading="lazy" decoding="async" alt="Lodestone" class="linkIcon" src="/assets/images/icons/lodestone.svg">Lodestone</a></li>
             <li>Go to the profile of the character you want to link.</li>
             <li>Scroll the page to "Character profile" section and click the edit button.</li>
             <li>Paste this token <code>fftracker:{{ token }}</code> anywhere in the text field and save the changes.</li>
@@ -19,7 +19,7 @@
             <label for="ff_link_id">Character ID</label>
         </div>
         <input type="submit" value="Link" form="ff_link_user" id="ff_link_submit">
-        <img loading="lazy" decoding="async" id="ff_link_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Linking character...">
+        <img loading="lazy" decoding="async" id="ff_link_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Linking character...">
     </form>
 </section>
 {% if characters %}

@@ -2,6 +2,7 @@
     "name": "simbiat/simbiat.ru",
     "description": "Package for simbiat.dev",
     "prefer-stable": true,
+    "version": "1.0.0",
     "minimum-stability": "dev",
     "license": "AGPL-3.0-or-later",
     "authors": [
@@ -20,6 +21,7 @@
         "sendgrid/sendgrid": "^8 ",
         "ipinfo/ipinfo": "^2",
         "tinymce/tinymce": "^7",
+        "vlucas/phpdotenv": "^5",
         "simbiat/database": "^2",
         "simbiat/accountkeying": "^2",
         "simbiat/sand-clock": "^2",
@@ -31,8 +33,9 @@
         "simbiat/http20": "^2",
         "simbiat/lodestone-parser": "^1",
         "simbiat/cron": "^2",
+        "ext-intl": "*",
+        "ext-mbstring": "*",
         "ext-zip": "*",
-        "ext-iconv": "*",
         "ext-pdo": "*",
         "ext-curl": "*",
         "ext-fileinfo": "*",
@@ -42,14 +45,15 @@
         "ext-libxml": "*",
         "ext-openssl": "*",
         "ext-gd": "*",
-        "ext-brotli": "*"
+        "ext-brotli": "*",
+        "ext-zstd": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
-            "Simbiat\\": "./lib/simbiat.ru/src"
+            "Simbiat\\": "./lib"
         }
     },
     "config": {
@@ -58,8 +62,6 @@
         "platform": {
             "php": "8.3"
         },
-        "data-dir": "./data/composer",
-        "cache-dir": "./data/cache/composer",
         "preferred-install": "source",
         "optimize-autoloader": true,
         "classmap-authoritative": true,

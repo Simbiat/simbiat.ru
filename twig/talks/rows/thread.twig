@@ -20,7 +20,7 @@
                 <span class="radio_and_label">
                     <input id="thread_pin_checkbox_{{ thread.id }}" class="thread_pin" data-thread="{{ thread.id }}" type="checkbox"{% if thread.pinned %} checked{% endif %}>
                     <label for="thread_pin_checkbox_{{ thread.id }}"></label>
-                <img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Pinning...">
+                <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Pinning...">
                 </span>
             </td>
         {% endif %}
@@ -29,7 +29,7 @@
                 <span class="radio_and_label">
                     <input id="thread_private_checkbox_{{ thread.id }}" class="thread_private" data-thread="{{ thread.id }}" type="checkbox"{% if thread.private %} checked{% endif %}>
                     <label for="thread_private_checkbox_{{ thread.id }}"></label>
-                <img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Changing privacy...">
+                <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Changing privacy...">
                 </span>
             </td>
         {% endif %}

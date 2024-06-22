@@ -28,7 +28,7 @@
                     <img src="" alt="Emblem" id="preview_emblem">
                 </div>
                 <input type="submit" value="Merge & Download" form="ff_merge_crest" id="ff_merge_crest_submit">
-                <img loading="lazy" decoding="async" id="fff_merge_crest_spinner" class="hidden spinner" src="/img/spinner.svg" alt="Merging crest...">
+                <img loading="lazy" decoding="async" id="fff_merge_crest_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Merging crest...">
             </div>
         </form>
     </section>
@@ -36,7 +36,7 @@
 {% if path %}
     <section>
         {% if files[path].parent %}
-            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/img/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
+            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
         {% endif %}
         {% if files[path].files %}
             {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
@@ -55,7 +55,7 @@
             </ul>
         {% endif %}
         {% if files[path].parent %}
-            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/img/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
+            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
         {% endif %}
     </section>
 {% endif %}

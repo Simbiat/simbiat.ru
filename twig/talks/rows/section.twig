@@ -24,21 +24,21 @@
                 <span class="float_label_div">
                     <input id="section_sequence_{{ section.sectionid|default('sectionid') }}" class="section_sequence number_spinner" type="number" inputmode="decimal" min="0" max="99" step="1" value="{{ section.sequence }}" data-section="{{ section.sectionid|default('sectionid') }}" data-initial="{{ section.sequence }}">
                     <label for="section_sequence_{{ section.sectionid|default('sectionid') }}">&nbsp</label>
-                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Changing order...">
+                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Changing order...">
                 </span>
             </td>
             <td>
                 <span class="radio_and_label">
                     <input id="section_closed_checkbox_{{ section.sectionid|default('sectionid') }}" class="section_closed" data-section="{{ section.sectionid|default('sectionid') }}" type="checkbox"{% if section.closed %} checked{% endif %}>
                     <label for="section_closed_checkbox_{{ section.sectionid|default('sectionid') }}"></label>
-                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Opening/closing section {{ section.sectionid|default('sectionid') }}...">
+                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Opening/closing section {{ section.sectionid|default('sectionid') }}...">
                 </span>
             </td>
             <td>
                 <span class="radio_and_label">
                     <input id="section_private_checkbox_{{ section.sectionid|default('sectionid') }}" class="section_private" data-section="{{ section.sectionid|default('sectionid') }}" type="checkbox"{% if section.private %} checked{% endif %}>
                     <label for="section_private_checkbox_{{ section.sectionid|default('sectionid') }}"></label>
-                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/img/spinner.svg" alt="Making section {{ section.sectionid|default('sectionid') }} public/private...">
+                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Making section {{ section.sectionid|default('sectionid') }} public/private...">
                 </span>
             </td>
         {% endif %}

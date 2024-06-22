@@ -1,0 +1,12 @@
+[submodule "public/assets/images/devicedetector"]
+	path = public/assets/images/devicedetector
+	url = https://github.com/Simbiat/DeviceDetectorIcons
+[submodule "public/assets/images/fftracker/icons"]
+	path = public/assets/images/fftracker/icons
+	url = https://github.com/Simbiat/FFXIV-Icons
+[submodule "public/assets/images/fftracker/crests-components"]
+	path = public/assets/images/fftracker/crests-components
+	url = https://github.com/Simbiat/FFXIV-Crests-Components
+[submodule "public/assets/images/fftracker/maps"]
+	path = public/assets/images/fftracker/maps
+	url = https://github.com/Simbiat/ffxiv-estate-maps

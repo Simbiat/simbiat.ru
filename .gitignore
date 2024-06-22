@@ -136,19 +136,30 @@ dist
 /dbhelper/
 # DDLs for PHP My Admin
 /DDL/pma__*.sql
-# Config file
-/config.php
-# Flag indicating test environment
-/uat.flag
 # Legacy script for doing updates
 /EngineUpdate.php
 # File to store SQL changes yet to be applied to PROD
 /toupdateonprod.sql
-# Error logs
-/error*.log
-# Folder with some legacy code, that may still be useful
-/backup.php
+#Logs
+/logs
 #Composer
 /vendor/
 !/vendor/composer/
 !/vendor/autoload.php
+#Some dev-only config folders
+/config/keys/
+/config/Installers
+#Environment variables should not be included
+/config/frankenphp/caddy.env
+/config/frankenphp/php.env
+/config/mysql/mariadb.env
+#Looks like I need it for the sake of variable port for mysql or docker-compose does not pick it up
+/.env
+#Some security settings for MySQL
+/config/mysql/security.cnf
+#Temporary folder for reference
+/symfony
+#Some test code backups
+/data/backups
+#For some reason composer this .htaccess
+/config/caddy/composer/.htaccess

@@ -7,7 +7,7 @@
     </tr>
     {% for estate in ffstats.data.freecompany.estate.top %}
         <tr>
-            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/img/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a></td>
+            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
             <td>{{ estate.count }}</td>
         </tr>
     {% endfor %}
@@ -20,7 +20,7 @@
     </tr>
     {% for estate in ffstats.data.freecompany.estate.bottom %}
         <tr>
-            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/img/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/img/fftracker/maps/zoom.webp"></a></td>
+            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
             <td>{{ estate.count }}</td>
         </tr>
     {% endfor %}
@@ -166,9 +166,9 @@
     {% endfor %}
 </table>
 <table>
-    <caption><h2>PvP Teams distribution by server</h2></caption>
+    <caption><h2>PvP Teams distribution by data center</h2></caption>
     <tr>
-        <th>Server</th>
+        <th>Data center</th>
         <th>PvP Teams</th>
     </tr>
     {% for datapoint in ffstats.data.servers.pvpteam %}
@@ -192,9 +192,9 @@
     {% endfor %}
 </table>
 <table>
-    <caption><h2>Crossworld Linkshell distribution by server</h2></caption>
+    <caption><h2>Crossworld Linkshell distribution by data center</h2></caption>
     <tr>
-        <th>Server</th>
+        <th>Data center</th>
         <th>Crossworld Linkshell</th>
     </tr>
     {% for datapoint in ffstats.data.servers['crossworldlinkshell'] %}

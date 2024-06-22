@@ -1,9 +1,9 @@
 {% if reason == 'Twig failure' %}
-    <p><img loading="lazy" decoding="async" class="linkIcon" src="/img/tech/twig.svg" alt="Twig">Twig failed to render original page due to some issue.</p>
+    <p><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/tech/twig.svg" alt="Twig">Twig failed to render original page due to some issue.</p>
     <code data-description="Requested page">{{ url }}</code>
-    <img loading="lazy" decoding="async" alt="Twig failure" src="/img/errors/bug3.svg">
+    <img loading="lazy" decoding="async" alt="Twig failure" src="/assets/images/errors/bug3.svg">
 {% else %}
     <blockquote class="w100pc" data-author="Server">Something went wrong, possibly a bug.</blockquote>
     {% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
-    <img loading="lazy" decoding="async" alt="500 Internal server error" src="/img/errors/bug.gif">
+    <img loading="lazy" decoding="async" alt="500 Internal server error" src="/assets/images/errors/bug.gif">
 {% endif %}

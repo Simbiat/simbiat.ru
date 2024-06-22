@@ -1,6 +1,6 @@
 <select-custom>
     <div class="select_wrapper">
-        <img loading="lazy" decoding="async" alt="Icon for " src="/img/noimage.svg" class="select_icon hidden">
+        <img loading="lazy" decoding="async" alt="Icon for " src="/assets/images/noimage.svg" class="select_icon hidden">
         <div class="float_label_div">
             <select form="{{ formName }}" aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} name="{{ inputName }}" id="{{ formName }}_select_{{ inputName }}">
                 {% for item in items %}

@@ -8,8 +8,9 @@
         "clean-css": "*",
         "clean-css-cli": "*",
         "eslint": "*",
-        "terser": "*",
-        "typescript": "*"
+        "typescript": "*",
+        "npm": "*"
     },
-    "author": "Dmitry Kustov <simbiat@outlook.com>"
+    "author": "Dmitry Kustov <simbiat@outlook.com>",
+    "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
