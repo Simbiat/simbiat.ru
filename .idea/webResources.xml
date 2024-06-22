@@ -6,15 +6,14 @@
         <entryData>
           <resourceRoots>
             <path value="file://$PROJECT_DIR$" />
-            <path value="file://$PROJECT_DIR$/img" />
-            <path value="file://$PROJECT_DIR$/js" />
             <path value="file://$PROJECT_DIR$/twig" />
+            <path value="file://$PROJECT_DIR$/js" />
             <path value="file://$PROJECT_DIR$/css" />
-            <path value="file://$PROJECT_DIR$/static" />
-            <path value="file://$PROJECT_DIR$/img/devicedetector" />
-            <path value="file://$PROJECT_DIR$/img/fftracker/crests-components" />
-            <path value="file://$PROJECT_DIR$/img/fftracker/icons" />
-            <path value="file://$PROJECT_DIR$/img/fftracker/maps" />
+            <path value="file://$PROJECT_DIR$/public" />
+            <path value="file://$PROJECT_DIR$/public/assets/images/fftracker/crests-components" />
+            <path value="file://$PROJECT_DIR$/public/assets/images/fftracker/icons" />
+            <path value="file://$PROJECT_DIR$/public/assets/images/devicedetector" />
+            <path value="file://$PROJECT_DIR$/public/assets/images/fftracker/maps" />
           </resourceRoots>
         </entryData>
       </entry>

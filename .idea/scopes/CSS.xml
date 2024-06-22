@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="CSS" pattern="file[htdocs]:css/modules//*" />
+  <scope name="CSS" pattern="file[simbiat.dev]:css//*.css" />
 </component>

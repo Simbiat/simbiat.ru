@@ -2,7 +2,11 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/./lib/simbiat.ru/src" isTestSource="false" packagePrefix="Simbiat\" />
+      <sourceFolder url="file://$MODULE_DIR$/./lib" isTestSource="false" packagePrefix="Simbiat\" />
+      <sourceFolder url="file://$MODULE_DIR$/symfony/demo/src" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/symfony/demo/tests" isTestSource="true" packagePrefix="App\Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/symfony/webapp/src" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/symfony/webapp/tests" isTestSource="true" packagePrefix="App\Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/dbhelper" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
@@ -47,6 +51,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/simbiat/http20" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/simbiat/lodestone-parser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/simbiat/cron" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpoption/phpoption" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/vlucas/phpdotenv" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

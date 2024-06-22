@@ -2,9 +2,9 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/img/devicedetector" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/img/fftracker/crests-components" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/img/fftracker/icons" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/img/fftracker/maps" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/devicedetector" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/crests-components" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/icons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/maps" vcs="Git" />
   </component>
 </project>
