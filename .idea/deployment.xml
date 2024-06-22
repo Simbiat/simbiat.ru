@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="local.simbiat.ru" overwriteAll="false" createEmptyFolders="true" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+  <component name="PublishConfigData" serverName="local.simbiat.ru" overwriteAll="false" createEmptyFolders="true" uploadOnCheckin="2f49962b-eba5-4df8-958e-bb6f81f23f56" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="local.simbiat.ru">
@@ -34,5 +34,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="www.simbiat.dev" />
   </component>
 </project>

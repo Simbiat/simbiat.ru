@@ -2,7 +2,7 @@
 
 #Source environments (required for cron)
 . /etc/mysql/conf.d/mariadb.env
-if [ "$WEB_SERVER_TEST" != "true" ] then
+if [ "$WEB_SERVER_TEST" != "true" ]; then
   currentDate=$(date +%Y.%m.%d)
   logFile=/usr/local/logs/backup-$currentDate.log
   physBackup=/usr/local/backups/physical
