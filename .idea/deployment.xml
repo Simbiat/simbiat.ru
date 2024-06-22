@@ -13,7 +13,7 @@
       <paths name="www.simbiat.dev">
         <serverdata>
           <mappings>
-            <mapping deploy="/htdocs" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/.github" />

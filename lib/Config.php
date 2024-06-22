@@ -64,12 +64,12 @@ final class Config
     {
         $dotenv = Dotenv::createImmutable('/usr/local/php/config', 'php.env');
         $dotenv->load();
-        $dotenv->required('WEB_SERVER_TEST')->isBoolean();
+        $dotenv->required('WEB_SERVER_TEST')->notEmpty();
         #Database settings
         $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_HOST', 'DATABASE_TLS_CA', 'DATABASE_TLS_KEY', 'DATABASE_TLS_CRT', 'SENDGRID_API_KEY'])->notEmpty();
         $dotenv->required('DATABASE_PORT')->isInteger();
         self::$workDir = '/app';
-        self::$PROD = !$_ENV['WEB_SERVER_TEST'];
+        self::$PROD = ($_ENV['WEB_SERVER_TEST'] === 'false');
         self::$http_host = (self::$PROD ? 'www.simbiat.dev' : 'localhost');
         self::$baseUrl = 'https://'.self::$http_host;
         self::$htmlCache = self::$workDir.'/data/cache/html/';
