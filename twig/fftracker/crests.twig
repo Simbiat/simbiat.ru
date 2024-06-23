@@ -46,7 +46,7 @@
                     {% set subDirName = 'background' %}
                 {% elseif files[path].name == 'Emblems' %}
                     {% set subDirName = 'emblem' %}
-                {% elseif files[path].name == 'Merged crests' %}
+                {% elseif files[path].name == 'Merged crests (cached)' %}
                     {% set subDirName = 'merged' %}
                 {% endif %}
                 {% for dir in files[path].dirs %}
