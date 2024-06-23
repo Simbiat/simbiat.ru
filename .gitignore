@@ -159,7 +159,5 @@ dist
 /config/mysql/security.cnf
 #Temporary folder for reference
 /symfony
-#Some test code backups
-/data/backups
 #For some reason composer this .htaccess
 /config/caddy/composer/.htaccess

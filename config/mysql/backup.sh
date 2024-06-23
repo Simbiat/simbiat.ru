@@ -12,8 +12,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   zipSettings="-aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p${BACKUP_PASSWORD}"
 
   echo Cleaning files... >> $logFile 2>&1
-  rm -rf $logicBackup/$currentDate-users.sql.gz >> $logFile 2>&1
-  rm -rf $logicBackup/$currentDate-data.sql.gz >> $logFile 2>&1
+  rm -rf $logicBackup/*.7z >> $logFile 2>&1
   rm -rf $physBackup >> $logFile 2>&1
   echo "Backing up users for $currentDate (logical)..." >> $logFile 2>&1
   mariadb-dump $dumpSetting --system=users 2>> $logFile | 7z a ${zipSettings} -si$currentDate-users.sql $logicBackup/$currentDate-users.7z >> $logFile 2>&1
@@ -27,6 +26,6 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   echo "Preparing backup for $currentDate (physical)..." >> $logFile 2>&1
   mariadb-backup --prepare --target-dir=$physBackup >> $logFile 2>&1
   echo "Zipping backup for $currentDate (physical)..." >> $logFile 2>&1
-  7z a ${zipSettings} $physBackup.7z $physBackup >> $logFile 2>&1
+  7z a ${zipSettings} $logicBackup/$currentDate-physical.7z $physBackup >> $logFile 2>&1
 fi
 exit
