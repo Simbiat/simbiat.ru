@@ -14,8 +14,8 @@ CREATE TABLE `uc__sessions` (
   KEY `bot` (`bot`),
   KEY `viewing` (`page`),
   KEY `session_to_user` (`userid`),
-  KEY `time` (`time` DESC),
   KEY `session_to_cookie` (`cookieid`),
+  KEY `time` (`time` DESC),
   CONSTRAINT `session_to_cookie` FOREIGN KEY (`cookieid`) REFERENCES `uc__cookies` (`cookieid`),
   CONSTRAINT `session_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';
