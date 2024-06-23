@@ -16,15 +16,26 @@
     },
     "apps": {
         "tls": {
+            "certificates": {
+                "automate": [
+                    "simbiat.dev",
+                    "*.simbiat.dev",
+                    "localhost"
+                ]
+            },
             "automation": {
                 "policies": [
                     {
+                        "subjects": [
+                            "*.simbiat.dev"
+                        ],
                         "issuers": [
                             {
                                 "module": "acme",
                                 "email": "simbiat@outlook.com"
                             }
                         ],
+                        "key_type": "rsa4096",
                         "must_staple": true
                     }
                 ]
@@ -43,12 +54,14 @@
                     "read_timeout": "10s",
                     "read_header_timeout": "10s",
                     "write_timeout": "90s",
+                    "strict_sni_host": true,
                     "routes": [
                         {
                             "match": [
                                 {
                                     "host": [
-                                        "{env.WEB_SERVER_HOST}"
+                                        "{env.WEB_SERVER_HOST}",
+                                        "{env.WEB_SERVER_HOST_ALT}"
                                     ]
                                 }
                             ],
