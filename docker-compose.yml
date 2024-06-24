@@ -57,7 +57,7 @@ services:
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
       - ./DDL:/usr/local/DDL:ro
     healthcheck:
-      #`--connect` is removed due to kwown bug
+      #`--connect` is removed due to known bug
       test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade" ]
       start_period: 10s
       interval: 10s
