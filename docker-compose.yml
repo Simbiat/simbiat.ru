@@ -57,17 +57,21 @@ services:
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
       - ./DDL:/usr/local/DDL:ro
     healthcheck:
-      test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--connect", "--innodb_initialized" ]
-      start_period: 120s
+      #`--connect` is removed due to kwown bug
+      test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade" ]
+      start_period: 10s
       interval: 10s
       timeout: 5s
       retries: 3
     #We want to generate keys automatically, and it is also a good idea to regenerate them on each restart
-    #We also need to register cron tasks and start cron service before the endpoint
+    #We need to ensure that buffer pool file exists, too
+    #We need to register cron tasks and start cron service before the endpoint
     command: >
       /bin/sh -c "/etc/mysql/conf.d/ssl.sh &&
+                  touch /var/lib/mysql/ib_buffer_pool &&
+                  chown mysql:mysql /var/lib/mysql/ib_buffer_pool &&
                   cp /etc/mysql/conf.d/mariadb.cron /etc/cron.d/mariadb.cron &&
                   chmod 0644 /etc/cron.d/mariadb.cron &&
-                  crontab /etc/cron.d/mariadb.cron
+                  crontab /etc/cron.d/mariadb.cron &&
                   cron &&
                   docker-entrypoint.sh mariadbd"
