@@ -212,14 +212,14 @@ class Curl
             if (empty(HomePage::$dbController)) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Simbiat\Config::userIDs['System user']);
+            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Config::userIDs['System user']);
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
                     return ['http_error' => 500, 'reason' => 'Failed to download remote file'];
                 }
             } else {
-                $upload = Sharing::upload(Simbiat\Config::$uploaded, exit: false);
+                $upload = Sharing::upload(Config::$uploaded, exit: false);
                 if (!is_array($upload) || empty($upload[0]['server_name'])) {
                     return ['http_error' => $upload, 'reason' => match($upload) {
                         405 => 'Unsupported method',
@@ -267,7 +267,7 @@ class Curl
                 } else {
                     $upload['new_name'] = $upload['server_name'];
                 }
-                $upload['new_path'] = Simbiat\Config::$uploadedImg;
+                $upload['new_path'] = Config::$uploadedImg;
                 $upload['location'] = '/assets/images/uploaded/';
             } else {
                 if ($onlyImages) {
@@ -275,7 +275,7 @@ class Curl
                     return ['http_error' => 415, 'reason' => 'File is not an image'];
                 }
                 $upload['new_name'] = $upload['server_name'];
-                $upload['new_path'] = Simbiat\Config::$uploaded;
+                $upload['new_path'] = Config::$uploaded;
                 $upload['location'] = '/data/uploaded/';
             }
             #Get extension
@@ -302,7 +302,7 @@ class Curl
                 'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],
-                    ':userid' => $_SESSION['userid'] ?? Simbiat\Config::userIDs['System user'],
+                    ':userid' => $_SESSION['userid'] ?? Config::userIDs['System user'],
                     ':filename' => $upload['user_name'],
                     ':extension' => $upload['extension'],
                     ':mime' => $upload['type'],
@@ -310,7 +310,8 @@ class Curl
                 ]
             );
             return $upload;
-        } catch (\Throwable) {
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to upload file'];
         }
     }
