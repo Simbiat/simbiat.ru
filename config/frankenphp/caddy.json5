@@ -19,7 +19,7 @@
             "certificates": {
                 "automate": [
                     "simbiat.dev",
-                    "*.simbiat.dev",
+                    "www.simbiat.dev",
                     "localhost"
                 ]
             },
@@ -27,12 +27,19 @@
                 "policies": [
                     {
                         "subjects": [
-                            "*.simbiat.dev"
+                            "simbiat.dev",
+                            "www.simbiat.dev",
+                            "localhost"
                         ],
                         "issuers": [
                             {
                                 "module": "acme",
-                                "email": "simbiat@outlook.com"
+                                "email": "simbiat@outlook.com",
+                                "acme_timeout": "60s"
+                            },
+                            {
+                                "module": "internal",
+                                "lifetime": "30d"
                             }
                         ],
                         "key_type": "rsa4096",
@@ -56,12 +63,33 @@
                     "write_timeout": "90s",
                     "strict_sni_host": true,
                     "routes": [
+                        //Force WWW if missing
                         {
                             "match": [
                                 {
                                     "host": [
-                                        "{env.WEB_SERVER_HOST}",
-                                        "{env.WEB_SERVER_HOST_ALT}"
+                                        "simbiat.dev"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "static_response",
+                                    "headers": {
+                                        "Location": [
+                                            "https://www.simbiat.dev{http.request.uri}"
+                                        ]
+                                    },
+                                    "status_code": 308
+                                }
+                            ]
+                        },
+                        {
+                            "match": [
+                                {
+                                    "host": [
+                                        "www.simbiat.dev",
+                                        "localhost"
                                     ]
                                 }
                             ],
@@ -124,27 +152,6 @@
                                                     "headers": {
                                                         "Location": [
                                                             "{http.regexp.noTrailSlash.1}"
-                                                        ]
-                                                    },
-                                                    "status_code": 308
-                                                }
-                                            ]
-                                        },
-                                        //Force WWW, if missing
-                                        {
-                                            "match": [
-                                                {
-                                                    "host": [
-                                                        "simbiat.dev"
-                                                    ]
-                                                }
-                                            ],
-                                            "handle": [
-                                                {
-                                                    "handler": "static_response",
-                                                    "headers": {
-                                                        "Location": [
-                                                            "https://www.simbiat.dev{http.request.uri}"
                                                         ]
                                                     },
                                                     "status_code": 308
@@ -18153,7 +18160,8 @@
                                 "match": [
                                     {
                                         "host": [
-                                            "{env.WEB_SERVER_HOST}"
+                                            "www.simbiat.dev",
+                                            "localhost"
                                         ]
                                     }
                                 ],

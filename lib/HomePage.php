@@ -149,8 +149,8 @@ class HomePage
                 #Check if we have cached the results already
                 self::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
                 #Check if there was an internal redirect to custom error page
-                if (!empty($_SERVER['CADDY_HTTP_ERROR_php'])) {
-                    self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR_php']];
+                if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
+                    self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR']];
                 }
                 #Do not do processing if we already encountered a problem
                 if (empty(self::$http_error)) {

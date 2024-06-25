@@ -1,5 +1,5 @@
 # Based on https://frankenphp.dev/docs/docker/
-FROM dunglas/frankenphp:1.2.0-builder-php8.3.8-bookworm AS builder
+FROM dunglas/frankenphp:1.2.1-builder-php8.3.8-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -17,7 +17,7 @@ RUN xcaddy build \
     # Add extra Caddy modules here
     --with github.com/caddyserver/json5-adapter
 
-FROM dunglas/frankenphp:1.2.0-php8.3.8-bookworm AS runner
+FROM dunglas/frankenphp:1.2.1-php8.3.8-bookworm AS runner
 
 # Replace the official binary by the one contained your custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
@@ -38,8 +38,8 @@ RUN install-php-extensions \
 COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
 RUN composer self-update
 
-# Git and unzip are useful for Composer, cron required for crontab
-RUN apt-get -y update&&apt-get -y upgrade&&apt-get -y install git-all unzip cron&&apt-get -y autoremove
+# Git and unzip are useful for Composer, cron required for crontab, libnss3-tools is recommended for Caddy (looks like)
+RUN apt-get -y update&&apt-get -y upgrade&&apt-get -y install git-all unzip cron libnss3-tools&&apt-get -y autoremove
 
 # Use custom caddy config
 CMD ["--config", "/config/config.json5", "--adapter", "json5"]
