@@ -60,7 +60,7 @@
                     ],
                     "read_timeout": "10s",
                     "read_header_timeout": "10s",
-                    "write_timeout": "90s",
+                    "write_timeout": "30m",
                     "strict_sni_host": true,
                     "routes": [
                         //Force WWW if missing
