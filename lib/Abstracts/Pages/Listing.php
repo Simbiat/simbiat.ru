@@ -29,6 +29,7 @@ class Listing extends Search
         $page = intval($_GET['page'] ?? 1);
         #Get search results
         $outputArray = [];
+        $outputArray['numbered'] = $this->types[$this->subServiceName]['numbered'] ?? false;
         $outputArray['searchResult'] = (new $this->types[$this->subServiceName]['class'])->listEntities($page, $this->searchFor);
         #If int is returned, we have a bad page
         if (is_int($outputArray['searchResult'])) {

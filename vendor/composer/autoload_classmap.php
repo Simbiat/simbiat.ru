@@ -503,6 +503,7 @@ return array(
     'Simbiat\\fftracker\\Search\\Companies' => $baseDir . '/lib/fftracker/Search/Companies.php',
     'Simbiat\\fftracker\\Search\\Linkshells' => $baseDir . '/lib/fftracker/Search/Linkshells.php',
     'Simbiat\\fftracker\\Search\\PVP' => $baseDir . '/lib/fftracker/Search/PVP.php',
+    'Simbiat\\fftracker\\Search\\Points' => $baseDir . '/lib/fftracker/Search/Points.php',
     'Simbiat\\fftracker\\Statistics' => $baseDir . '/lib/fftracker/Statistics.php',
     'Simbiat\\http20\\Atom' => $vendorDir . '/simbiat/http20/src/Atom.php',
     'Simbiat\\http20\\Common' => $vendorDir . '/simbiat/http20/src/Common.php',

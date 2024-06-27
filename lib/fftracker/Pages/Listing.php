@@ -25,6 +25,7 @@ class Listing extends \Simbiat\Abstracts\Pages\Listing
         'pvpteams' => ['name' => 'PvP Teams', 'class' => '\Simbiat\fftracker\Search\PVP'],
         'linkshells' => ['name' => 'Linkshells', 'class' => '\Simbiat\fftracker\Search\Linkshells'],
         'achievements' => ['name' => 'Achievements', 'class' => '\Simbiat\fftracker\Search\Achievements'],
+        'points' => ['name' => 'Achievements Leaderboard', 'class' => '\Simbiat\fftracker\Search\Points', 'numbered' => true],
     ];
     #Full title to be used for description metatags when having a search value
     protected string $fullTitle = 'Search for `%s` on Final Fantasy XIV Tracker';

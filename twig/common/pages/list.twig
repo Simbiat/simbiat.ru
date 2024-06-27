@@ -3,8 +3,8 @@
 {% else %}
     <p>Showing {{ searchResult.entities|length }} from total of {{ searchResult.count }}.</p>
 {% endif %}
-<div class="searchResults">
+<{% if numbered %}ol{% else %}div{% endif %} class="searchResults">
     {% for entity in searchResult.entities %}
-        {{ include('common/elements/entitycard.twig', entity) }}
+        {% if numbered %}<li><span class="no-select">{{ loop.index+((pagination.current-1)*100) }}.</span>{% endif %}{{ include('common/elements/entitycard.twig', entity) }}{% if numbered %}</li>{% endif %}
     {% endfor %}
-</div>
+</{% if numbered %}ol{% else %}div{% endif %}>

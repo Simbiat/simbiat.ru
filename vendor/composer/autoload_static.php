@@ -121,10 +121,10 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
             2 => __DIR__ . '/..' . '/simbiat/arrayhelpers/src',
             3 => __DIR__ . '/..' . '/simbiat/filename-sanitizer/src',
             4 => __DIR__ . '/..' . '/simbiat/htmlcut/src',
-            5 => __DIR__ . '/..' . '/simbiat/nl2tag/src',
-            6 => __DIR__ . '/..' . '/simbiat/optimize-tables/src',
-            7 => __DIR__ . '/..' . '/simbiat/sand-clock/src',
-            8 => __DIR__ . '/..' . '/simbiat/lodestone-parser/src',
+            5 => __DIR__ . '/..' . '/simbiat/lodestone-parser/src',
+            6 => __DIR__ . '/..' . '/simbiat/nl2tag/src',
+            7 => __DIR__ . '/..' . '/simbiat/optimize-tables/src',
+            8 => __DIR__ . '/..' . '/simbiat/sand-clock/src',
         ),
         'SendGrid\\Stats\\' => 
         array (
@@ -704,6 +704,7 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
         'Simbiat\\fftracker\\Search\\Companies' => __DIR__ . '/../..' . '/lib/fftracker/Search/Companies.php',
         'Simbiat\\fftracker\\Search\\Linkshells' => __DIR__ . '/../..' . '/lib/fftracker/Search/Linkshells.php',
         'Simbiat\\fftracker\\Search\\PVP' => __DIR__ . '/../..' . '/lib/fftracker/Search/PVP.php',
+        'Simbiat\\fftracker\\Search\\Points' => __DIR__ . '/../..' . '/lib/fftracker/Search/Points.php',
         'Simbiat\\fftracker\\Statistics' => __DIR__ . '/../..' . '/lib/fftracker/Statistics.php',
         'Simbiat\\http20\\Atom' => __DIR__ . '/..' . '/simbiat/http20/src/Atom.php',
         'Simbiat\\http20\\Common' => __DIR__ . '/..' . '/simbiat/http20/src/Common.php',

@@ -44,7 +44,7 @@ abstract class Search
     final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
     {
         #Check that subclass has set appropriate properties, except $where, which is ok to inherit
-        foreach (['entityType', 'table', 'fields', 'fulltext', 'orderDefault', 'orderList'] as $property) {
+        foreach (['entityType', 'table', 'fields', 'orderDefault', 'orderList'] as $property) {
             if(empty($this->{$property})) {
                 throw new \LogicException(get_class($this) . ' must have a non-empty `'.$property.'` property.');
             }

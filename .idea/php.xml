@@ -41,7 +41,6 @@
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/vendor/simbiat/nl2tag" />
-      <path value="$PROJECT_DIR$/vendor/simbiat/lodestone-parser" />
       <path value="$PROJECT_DIR$/vendor/simbiat/cron" />
       <path value="$PROJECT_DIR$/vendor/simbiat/database" />
       <path value="$PROJECT_DIR$/vendor/simbiat/arrayhelpers" />
@@ -300,6 +299,7 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/simbiat/lodestone-parser" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

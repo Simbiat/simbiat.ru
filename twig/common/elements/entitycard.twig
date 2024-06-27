@@ -70,6 +70,9 @@
             <b>{% if detailedType == 'Changelog' and is_numeric(name) %}{{ timeTag(name, "Y.m.d") }}{% else %}{{ name }}{% endif %}</b>
         {% else %}
             {{ name }}
+            {% if (type == 'character') and achievement_points %}
+                <br><img class="ff_achievement_points" loading="lazy" decoding="async" alt="{{ achievement_points }} points" data-tooltip="{{ achievement_points }} points" src="/assets/images/fftracker/Cup.webp">{{ achievement_points }}
+            {% endif %}
         {% endif %}
         {% if userid %}
             <sup>🔗</sup>

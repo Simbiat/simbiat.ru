@@ -909,3 +909,6 @@ select-custom {
     height: 3.5rem;
     margin-right: 0.5rem;
 }
+.no-select {
+    user-select: none;
+}

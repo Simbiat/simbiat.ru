@@ -93,3 +93,7 @@
 .ff_duplicate_names td:nth-child(3) {
     width: 60%;
 }
+.ff_achievement_points {
+    width: 1rem;
+    height: 1rem;
+}
