@@ -121,10 +121,10 @@ class ComposerStaticInit9cb5e51127eac4482719e60ef4a40a8f
             2 => __DIR__ . '/..' . '/simbiat/arrayhelpers/src',
             3 => __DIR__ . '/..' . '/simbiat/filename-sanitizer/src',
             4 => __DIR__ . '/..' . '/simbiat/htmlcut/src',
-            5 => __DIR__ . '/..' . '/simbiat/lodestone-parser/src',
-            6 => __DIR__ . '/..' . '/simbiat/nl2tag/src',
-            7 => __DIR__ . '/..' . '/simbiat/optimize-tables/src',
-            8 => __DIR__ . '/..' . '/simbiat/sand-clock/src',
+            5 => __DIR__ . '/..' . '/simbiat/nl2tag/src',
+            6 => __DIR__ . '/..' . '/simbiat/optimize-tables/src',
+            7 => __DIR__ . '/..' . '/simbiat/sand-clock/src',
+            8 => __DIR__ . '/..' . '/simbiat/lodestone-parser/src',
         ),
         'SendGrid\\Stats\\' => 
         array (

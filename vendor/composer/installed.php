@@ -187,7 +187,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '64eaaecdc0e915ce201f399e4707f83155389e96',
+            'reference' => '27714b56f04815b654c3805502ab77207505ac19',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -292,9 +292,9 @@
             'dev_requirement' => false,
         ),
         'simbiat/lodestone-parser' => array(
-            'pretty_version' => '1.1.14+20240616',
-            'version' => '1.1.14.0',
-            'reference' => '3dcf27f19c499b43547afdd824f7eb4a193b3d08',
+            'pretty_version' => '1.1.15+20240626',
+            'version' => '1.1.15.0',
+            'reference' => '2f1f28c93c59f660c46a1a71d1b96ceefa67d74f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../simbiat/lodestone-parser',
             'aliases' => array(),

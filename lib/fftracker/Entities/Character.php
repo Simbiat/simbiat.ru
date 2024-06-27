@@ -25,6 +25,7 @@ class Character extends Entity
     public array $groups = [];
     public array $jobs = [];
     public array $achievements = [];
+    public int $achievementPoints = 0;
     public array $owned = [];
 
     #Function to get initial data from DB
@@ -45,6 +46,8 @@ class Character extends Entity
         } else {
             $data['username'] = null;
         }
+        #Get jobs
+        $data['jobs'] = HomePage::$dbController->selectAll('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`jobid`=`ffxiv__jobs`.`jobid` WHERE `ffxiv__character_jobs`.`characterid`=:id ORDER BY `name`;', [':id'=>$this->id]);
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
         $data['oldNames'] = HomePage::$dbController->Count('SELECT COUNT(*) FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get previous known incarnations (combination of gender and race/clan)
@@ -145,19 +148,8 @@ class Character extends Entity
         foreach ($this->achievements as $key=>$achievement) {
             $this->achievements[$key]['time'] = (empty($achievement['time']) ? null : strtotime($achievement['time']));
         }
-        #Remove all already processed elements to converts the rest to jobs array
-        unset(
-            $fromDB['characterid'], $fromDB['userid'], $fromDB['username'], $fromDB['name'], $fromDB['avatar'], $fromDB['biography'], $fromDB['genderid'], $fromDB['datacenter'],
-            $fromDB['registered'], $fromDB['updated'],$fromDB['deleted'], $fromDB['clan'], $fromDB['race'], $fromDB['server'], $fromDB['titleIcon'],
-            $fromDB['region'], $fromDB['city'], $fromDB['cityid'], $fromDB['nameday'], $fromDB['guardian'], $fromDB['guardianid'],
-            $fromDB['servers'], $fromDB['incarnations'], $fromDB['title'], $fromDB['titleid'], $fromDB['dbid'], $fromDB['gcId'],
-            $fromDB['gcrankid'], $fromDB['gc_rank'], $fromDB['gcName'], $fromDB['oldNames'], $fromDB['killedby'],
-            $fromDB['groups'], $fromDB['achievements'],  $fromDB['pvp_matches'], $fromDB['enemyid'],  $fromDB['raceid'],
-        );
-        $this->jobs = $fromDB;
-        foreach ($this->jobs as $key=>$job) {
-            $this->jobs[$key] = (int)$job;
-        }
+        $this->achievementPoints = $fromDB['achievement_points'];
+        $this->jobs = $fromDB['jobs'];
     }
 
     #Function to update the entity
@@ -203,16 +195,23 @@ class Character extends Entity
             if (($this->lodestone['bio'] === '-')) {
                 $this->lodestone['bio'] = null;
             }
+            #Get total achievements points. Using foreach for speed
+            $achievementPoints = 0;
+            if (!empty($this->lodestone['achievements']) && is_array($this->lodestone['achievements'])) {
+                foreach ($this->lodestone['achievements'] as $item) {
+                    $achievementPoints += (int)$item['points'];
+                }
+            }
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `ffxiv__character`(
-                    `characterid`, `serverid`, `name`, `manual`, `registered`, `updated`, `deleted`, `enemyid`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `pvp_matches`
+                    `characterid`, `serverid`, `name`, `manual`, `registered`, `updated`, `deleted`, `enemyid`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `pvp_matches`, `achievement_points`
                 )
                 VALUES (
-                    :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, :manual, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0
+                    :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, :manual, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0, :achievementPoints
                 )
                 ON DUPLICATE KEY UPDATE
-                    `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `name`=:name, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `enemyid`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1);',
+                    `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `name`=:name, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `enemyid`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), `achievement_points`=:achievementPoints;',
                 [
                     ':characterid'=>$this->id,
                     ':server'=>$this->lodestone['server'],
@@ -230,24 +229,23 @@ class Character extends Entity
                     ':guardian'=>$this->lodestone['guardian']['name'],
                     ':city'=>$this->lodestone['city']['name'],
                     ':gcRank'=>(empty($this->lodestone['grandCompany']['rank']) ? '' : $this->lodestone['grandCompany']['rank']),
+                    ':achievementPoints' => [$achievementPoints, 'int']
                 ],
             ];
             #Update levels. Doing this in cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
             if (!empty($this->lodestone['jobs'])) {
                 foreach ($this->lodestone['jobs'] as $job=>$level) {
-                    #Remove spaces from the job name
-                    $jobNoSpace = preg_replace('/\s*/', '', $job);
-                    #Check if column exists in order to avoid errors. Checking that level is not empty to not waste time on updating zeros
-                    if (!empty($level['level']) && HomePage::$dbController->checkColumn('ffxiv__character', $jobNoSpace)) {
-                        #Update level
-                        $queries[] = [
-                            'UPDATE `ffxiv__character` SET `'.$jobNoSpace.'`=:level WHERE `characterid`=:characterid;',
-                            [
-                                ':characterid' => $this->id,
-                                ':level' => [(int)$level['level'], 'int'],
-                            ],
-                        ];
-                    }
+                    #Insert job, in case it's missing
+                    $queries[] = ['INSERT IGNORE INTO `ffxiv__jobs` (`name`) VALUES (:job);', [':job' => $job]];
+                    #Update level
+                    $queries[] = [
+                        'INSERT INTO `ffxiv__character_jobs` (`characterid`, `jobid`, `level`, `last_change`) VALUES (:characterid, (SELECT `jobid` FROM `ffxiv__jobs` WHERE `name`=:jobname), :level, CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE `level`=:level, `last_change`=IF(`level`=:level, `last_change`, CURRENT_TIMESTAMP());',
+                        [
+                            ':characterid' => $this->id,
+                            ':jobname' => $job,
+                            ':level' => [(int)$level['level'], 'int'],
+                        ],
+                    ];
                 }
             }
             #Insert server, if it has not been inserted yet. If server is registered at all.
@@ -309,7 +307,7 @@ class Character extends Entity
                         [
                             ':achievementid'=>$achievementid,
                             ':name'=> $item['name'],
-                            ':icon'=> self::removeLodestoneDomain($item['icon']),
+                            ':icon'=> str_replace('.png', '.webp', self::removeLodestoneDomain($item['icon'])),
                             ':points'=> $item['points'],
                         ],
                     ];

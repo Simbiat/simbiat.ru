@@ -106,50 +106,6 @@ class Cron
     }
     
     /**
-     * Function to add missing jobs to tracker
-     * @return bool|string
-     */
-    public function UpdateJobs(): bool|string
-    {
-        try {
-            #Cache controller
-            $dbController = HomePage::$dbController;
-            #Get the freshest character ID
-            $characterId = $dbController->selectValue('SELECT `characterid` FROM `ffxiv__character` WHERE `deleted` IS NULL ORDER BY `updated` DESC LIMIT 1;');
-            #Grab its data from Lodestone
-            $character = (new Character((string)$characterId))->getFromLodestone();
-            if (empty($character['jobs'])) {
-                return 'No jobs retrieved for character '.$characterId;
-            }
-            #Sort alphabetically by keys
-            ksort($character['jobs'], SORT_NATURAL);
-            #Prepare string for ALTER
-            $alter = [];
-            #Previous job in the list (for AFTER clause)
-            $previous = '';
-            foreach ($character['jobs'] as $job => $details) {
-                #Remove spaces from the job name
-                $jobNoSpace = preg_replace('/\s*/', '', $job);
-                #Check if job is present as respective column
-                if (!$dbController->checkColumn('ffxiv__character', $jobNoSpace)) {
-                    #Add respective column definition
-                    $alter[] = 'ADD COLUMN `'.$jobNoSpace.'` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT \'Level of '.$job.' job\' AFTER `'.(empty($previous) ? 'pvp_matches' : $previous).'`';
-                }
-                #Update previous column name
-                $previous = $jobNoSpace;
-            }
-            if (empty($alter)) {
-                #Nothing to add
-                return true;
-            }
-            #Generate and run the query
-            return $dbController->query('ALTER TABLE `ffxiv__character` '.implode(', ', $alter).';');
-        } catch (\Throwable $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
-        }
-    }
-    
-    /**
      * Update list of servers
      * @return bool|string
      */

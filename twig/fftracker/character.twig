@@ -77,17 +77,18 @@
                     {{ include('common/elements/entitycard.twig', entity) }}
                 {% endfor %}
             </div>
+            <div>Total points: {{ character.achievementPoints }}</div>
         </section>
     {% endif %}
     <section class="ff_char_block">
         <h2>Job affinities</h2>
         <table>
-            <thead><tr><th>Job</th><th>Level</th></tr></thead>
-            {% for key, job in character.jobs %}
+            <thead><tr><th>Job</th><th>Level</th><th>Last change</th></tr></thead>
+            {% for job in character.jobs %}
                 {% set sum = job.level + sum ?? 0 %}
-                <tr><td><img loading="lazy" decoding="async" class="linkIcon" alt="{{ job.name }}" src="/assets/images/fftracker/jobs/{{ key }}.webp">{{ job.name }}</td><td>{{ job.level }}</td></tr>
+                <tr><td><img loading="lazy" decoding="async" class="linkIcon" alt="{{ job.name }}" src="/assets/images/fftracker/jobs/{{ job.name }}.webp">{{ job.name }}</td><td>{{ job.level }}</td><td>{{ timeTag(job.last_change, "d/m/Y") }}</td></tr>
                 {% if loop.last %}
-                    <tfoot><tr><td>Total:</td><td>{{ sum }}</td></tr></tfoot>
+                    <tfoot><tr><td>Total:</td><td>{{ sum }}</td><td></td></tr></tfoot>
                 {% endif %}
             {% endfor %}
         </table>

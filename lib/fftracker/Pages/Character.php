@@ -34,10 +34,6 @@ class Character extends Page
         if (empty($outputArray['character']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
-        #Adjust jobs
-        foreach ($outputArray['character']['jobs'] as $job=>$level) {
-            $outputArray['character']['jobs'][$job] = ['name'=>preg_replace('/((?!^)[A-Z])/m', ' $1', $job), 'level'=>$level];
-        }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['character']['dates']['updated']);
         #Continue breadcrumbs

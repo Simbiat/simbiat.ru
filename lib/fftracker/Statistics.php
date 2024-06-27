@@ -110,45 +110,9 @@ class Statistics
     private function getCharacters(array &$data, Controller $dbCon): void
     {
         #Jobs popularity
-        $data['characters']['jobs'] = $dbCon->selectRow(
-            'SELECT
-                                SUM(`Alchemist`) AS `Alchemist`,
-                                SUM(`Armorer`) AS `Armorer`,
-                                SUM(`Astrologian`) AS `Astrologian`,
-                                SUM(`Bard`) AS `Bard`,
-                                SUM(`BlackMage`) AS `Black Mage`,
-                                SUM(`Blacksmith`) AS `Blacksmith`,
-                                SUM(`BlueMage`) AS `Blue Mage`,
-                                SUM(`Botanist`) AS `Botanist`,
-                                SUM(`Carpenter`) AS `Carpenter`,
-                                SUM(`Culinarian`) AS `Culinarian`,
-                                SUM(`Dancer`) AS `Dancer`,
-                                SUM(`DarkKnight`) AS `Dark Knight`,
-                                SUM(`Dragoon`) AS `Dragoon`,
-                                SUM(`Fisher`) AS `Fisher`,
-                                SUM(`Goldsmith`) AS `Goldsmith`,
-                                SUM(`Gunbreaker`) AS `Gunbreaker`,
-                                SUM(`Leatherworker`) AS `Leatherworker`,
-                                SUM(`Machinist`) AS `Machinist`,
-                                SUM(`Miner`) AS `Miner`,
-                                SUM(`Monk`) AS `Monk`,
-                                SUM(`Ninja`) AS `Ninja`,
-                                SUM(`Paladin`) AS `Paladin`,
-                                SUM(`Pictomancer`) AS `Pictomancer`,
-                                SUM(`Reaper`) AS `Reaper`,
-                                SUM(`RedMage`) AS `Red Mage`,
-                                SUM(`Sage`) AS `Sage`,
-                                SUM(`Samurai`) AS `Samurai`,
-                                SUM(`Scholar`) AS `Scholar`,
-                                SUM(`Summoner`) AS `Summoner`,
-                                SUM(`Viper`) AS `Viper`,
-                                SUM(`Warrior`) AS `Warrior`,
-                                SUM(`Weaver`) AS `Weaver`,
-                                SUM(`WhiteMage`) AS `White Mage`
-                            FROM `ffxiv__character`;'
+        $data['characters']['jobs'] = $dbCon->selectPair(
+            'SELECT `name`, SUM(`level`) as `sum` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__jobs`.`jobid`=`ffxiv__character_jobs`.`jobid` GROUP BY `ffxiv__character_jobs`.`jobid` ORDER BY `sum` DESC;'
         );
-        #Sort array
-        arsort($data['characters']['jobs']);
         #Most name changes
         $data['characters']['changes']['name'] = $dbCon->countUnique('ffxiv__character_names', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
         ArrayHelpers::renameColumn($data['characters']['changes']['name'], 'value', 'name');
