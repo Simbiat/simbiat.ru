@@ -257,7 +257,12 @@ class HomePage
                 self::$dbUpdate = (bool)self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'');
                 self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
             } catch (\Throwable $exception) {
-                Errors::error_log($exception);
+                #2002 error code means server is not listening on port
+                #2006 error code means server has gone away
+                #This will happen a lot, in case of database maintenance, during initial boot up or when shutting down. If they happen at this stage, though, logging is practically pointless
+                if (preg_match('/HY000.*\[(2002|2006)]/u', $exception->getMessage()) !== 1) {
+                    Errors::error_log($exception);
+                }
                 self::$dbup = false;
                 return false;
             }
