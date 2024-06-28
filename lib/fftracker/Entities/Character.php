@@ -2,10 +2,12 @@
 declare(strict_types=1);
 namespace Simbiat\fftracker\Entities;
 
+use Simbiat\Config;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
+use Simbiat\Images;
 use Simbiat\Lodestone;
 use Simbiat\Sanitization;
 use Simbiat\Security;
@@ -217,7 +219,7 @@ class Character extends Entity
                     ':server'=>$this->lodestone['server'],
                     ':name'=>$this->lodestone['name'],
                     ':manual'=>[$manual, 'bool'],
-                    ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg'], '', $this->lodestone['avatar']),
+                    ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
                     ':biography'=>[
                         (empty($this->lodestone['bio']) ? NULL : $this->lodestone['bio']),
                         (empty($this->lodestone['bio']) ? 'null' : 'string'),
@@ -302,25 +304,32 @@ class Character extends Entity
             #Achievements
             if (!empty($this->lodestone['achievements']) && is_array($this->lodestone['achievements'])) {
                 foreach ($this->lodestone['achievements'] as $achievementid=>$item) {
-                    $queries[] = [
-                        'INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
-                        [
-                            ':achievementid'=>$achievementid,
-                            ':name'=> $item['name'],
-                            ':icon'=> str_replace('.png', '.webp', self::removeLodestoneDomain($item['icon'])),
-                            ':points'=> $item['points'],
-                        ],
-                    ];
-                    $queries[] = [
-                        'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=UTC_DATE() ON DUPLICATE KEY UPDATE `time`=:time;',
-                        [
-                            ':characterid'=>$this->id,
-                            ':achievementid'=>$achievementid,
-                            ':time'=>[$item['time'], 'datetime'],
-                        ],
-                    ];
+                    $icon = self::removeLodestoneDomain($item['icon']);
+                    #Download icon
+                    $webp = Images::download($item['icon'], Config::$icons.$icon);
+                    if ($webp) {
+                        $icon = str_replace('.png', '.webp', $icon);
+                        $queries[] = [
+                            'INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
+                            [
+                                ':achievementid'=>$achievementid,
+                                ':name'=> $item['name'],
+                                ':icon'=> $icon,
+                                ':points'=> $item['points'],
+                            ],
+                        ];
+                        $queries[] = [
+                            'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=UTC_DATE() ON DUPLICATE KEY UPDATE `time`=:time;',
+                            [
+                                ':characterid'=>$this->id,
+                                ':achievementid'=>$achievementid,
+                                ':time'=>[$item['time'], 'datetime'],
+                            ],
+                        ];
+                    }
                 }
             }
+            #HomePage::$dbController->debug = true;
             HomePage::$dbController->query($queries);
             #Register Free Company update if change was detected
             if (!empty($this->lodestone['freeCompany']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid' => $this->id, ':fcID' => $this->lodestone['freeCompany']['id']]) === false && (new FreeCompany($this->lodestone['freeCompany']['id']))->update() !== true) {
@@ -338,7 +347,8 @@ class Character extends Entity
             }
             return true;
         } catch(\Exception $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+            Errors::error_log($e, 'characterid: '.$this->id);
+            return false;
         }
     }
 
@@ -418,7 +428,7 @@ class Character extends Entity
             ]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar
-            (new User($_SESSION['userid']))->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0_96x96.jpg', $this->id);
+            (new User($_SESSION['userid']))->addAvatar(false, 'https://img2.finalfantasyxiv.com/f/'.$this->avatarID.'c0.jpg', $this->id);
             return ['response' => $result];
         } catch (\Throwable $exception) {
             return ['http_error' => 500, 'reason' => $exception->getMessage()];

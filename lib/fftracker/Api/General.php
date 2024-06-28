@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace Simbiat\fftracker\Api;
 
 use Simbiat\Abstracts\Api;
+use Simbiat\Errors;
 use Simbiat\http20\Headers;
 
 abstract class General extends Api
@@ -43,7 +44,8 @@ abstract class General extends Api
             }
         } catch (\UnexpectedValueException) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         #Check for errors

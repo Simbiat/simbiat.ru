@@ -2578,17 +2578,17 @@
         },
         {
             "name": "simbiat/lodestone-parser",
-            "version": "1.1.15+20240626",
-            "version_normalized": "1.1.15.0",
+            "version": "1.1.16+20240628",
+            "version_normalized": "1.1.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Simbiat/lodestone-parser.git",
-                "reference": "2f1f28c93c59f660c46a1a71d1b96ceefa67d74f"
+                "reference": "32eb00aa0499964a9dc7acd1a0119fac8c1664ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Simbiat/lodestone-parser/zipball/2f1f28c93c59f660c46a1a71d1b96ceefa67d74f",
-                "reference": "2f1f28c93c59f660c46a1a71d1b96ceefa67d74f",
+                "url": "https://api.github.com/repos/Simbiat/lodestone-parser/zipball/32eb00aa0499964a9dc7acd1a0119fac8c1664ab",
+                "reference": "32eb00aa0499964a9dc7acd1a0119fac8c1664ab",
                 "shasum": ""
             },
             "require": {
@@ -2599,7 +2599,7 @@
             "replace": {
                 "simbiat/lodestone-php": "*"
             },
-            "time": "2024-06-26T17:57:20+00:00",
+            "time": "2024-06-28T12:34:26+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {

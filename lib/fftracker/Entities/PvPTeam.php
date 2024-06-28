@@ -169,7 +169,7 @@ class PvPTeam extends Entity
                                 ':characterid'=>$member,
                                 ':server'=>$details['server'],
                                 ':name'=>$details['name'],
-                                ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg'], '', $details['avatar']),
+                                ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0.jpg'], '', $details['avatar']),
                                 ':gcRank'=>(empty($details['grandCompany']['rank']) ? '' : $details['grandCompany']['rank']),
                                 ':matches'=>(empty($details['feasts']) ? 0 : $details['feasts']),
                             ]
@@ -194,7 +194,8 @@ class PvPTeam extends Entity
             }
             return true;
         } catch(\Exception $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+            Errors::error_log($e, 'pvpteamid: '.$this->id);
+            return false;
         }
     }
 

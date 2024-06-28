@@ -4,6 +4,7 @@ namespace Simbiat\fftracker\Entities;
 
 use Simbiat\Config;
 use Simbiat\Cron\TaskInstance;
+use Simbiat\Errors;
 use Simbiat\fftracker\Entity;
 use Simbiat\HomePage;
 use Simbiat\Images;
@@ -174,7 +175,8 @@ class Achievement extends Entity
             }
             return HomePage::$dbController->query('INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `howto`=:howto, `title`=:title, `item`=:item, `itemicon`=:itemicon, `itemid`=:itemid, `dbid`=:dbid ON DUPLICATE KEY UPDATE `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `howto`=:howto, `title`=:title, `item`=:item, `itemicon`=:itemicon, `itemid`=:itemid, `dbid`=:dbid, `updated`=CURRENT_TIMESTAMP()', $bindings);
         } catch(\Exception $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+            Errors::error_log($e, 'achievementid: '.$this->id);
+            return false;
         }
     }
     

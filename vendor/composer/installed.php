@@ -292,9 +292,9 @@
             'dev_requirement' => false,
         ),
         'simbiat/lodestone-parser' => array(
-            'pretty_version' => '1.1.15+20240626',
-            'version' => '1.1.15.0',
-            'reference' => '2f1f28c93c59f660c46a1a71d1b96ceefa67d74f',
+            'pretty_version' => '1.1.16+20240628',
+            'version' => '1.1.16.0',
+            'reference' => '32eb00aa0499964a9dc7acd1a0119fac8c1664ab',
             'type' => 'library',
             'install_path' => __DIR__ . '/../simbiat/lodestone-parser',
             'aliases' => array(),

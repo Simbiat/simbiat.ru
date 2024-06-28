@@ -15,7 +15,7 @@ return array(
     'Simbiat\\http20\\' => array($vendorDir . '/simbiat/http20/src'),
     'Simbiat\\Database\\' => array($vendorDir . '/simbiat/database/src'),
     'Simbiat\\Cron\\' => array($vendorDir . '/simbiat/cron/src'),
-    'Simbiat\\' => array($baseDir . '/lib', $vendorDir . '/simbiat/accountkeying/src', $vendorDir . '/simbiat/arrayhelpers/src', $vendorDir . '/simbiat/filename-sanitizer/src', $vendorDir . '/simbiat/htmlcut/src', $vendorDir . '/simbiat/lodestone-parser/src', $vendorDir . '/simbiat/nl2tag/src', $vendorDir . '/simbiat/optimize-tables/src', $vendorDir . '/simbiat/sand-clock/src'),
+    'Simbiat\\' => array($baseDir . '/lib', $vendorDir . '/simbiat/accountkeying/src', $vendorDir . '/simbiat/arrayhelpers/src', $vendorDir . '/simbiat/filename-sanitizer/src', $vendorDir . '/simbiat/htmlcut/src', $vendorDir . '/simbiat/nl2tag/src', $vendorDir . '/simbiat/optimize-tables/src', $vendorDir . '/simbiat/sand-clock/src', $vendorDir . '/simbiat/lodestone-parser/src'),
     'SendGrid\\Stats\\' => array($vendorDir . '/sendgrid/sendgrid/lib/stats'),
     'SendGrid\\Mail\\' => array($vendorDir . '/sendgrid/sendgrid/lib/mail'),
     'SendGrid\\Helper\\' => array($vendorDir . '/sendgrid/sendgrid/lib/helper'),

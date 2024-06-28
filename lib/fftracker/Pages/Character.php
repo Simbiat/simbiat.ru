@@ -59,7 +59,7 @@ class Character extends Page
             $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/character/' . $id];
         }
         #Set favicon to avatar
-        $outputArray['favicon'] = 'https://img2.finalfantasyxiv.com/f/'.$outputArray['character']['avatarID'].'c0_96x96.jpg';
+        $outputArray['favicon'] = 'https://img2.finalfantasyxiv.com/f/'.$outputArray['character']['avatarID'].'c0.jpg';
         return $outputArray;
     }
 }
