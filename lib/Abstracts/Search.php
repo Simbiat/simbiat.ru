@@ -8,7 +8,7 @@ use Simbiat\HomePage;
 abstract class Search
 {
     #Items to display per page for lists
-    protected int $listItems = 100;
+    public int $listItems = 100;
     #Settings required for subclasses
     #Type of entity to return as static value in results (required for frontend routing)
     protected string $entityType = '';

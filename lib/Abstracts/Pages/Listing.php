@@ -30,7 +30,8 @@ class Listing extends Search
         #Get search results
         $outputArray = [];
         $outputArray['numbered'] = $this->types[$this->subServiceName]['numbered'] ?? false;
-        $outputArray['searchResult'] = (new $this->types[$this->subServiceName]['class'])->listEntities($page, $this->searchFor);
+        $listingType = (new $this->types[$this->subServiceName]['class']);
+        $outputArray['searchResult'] = $listingType->listEntities($page, $this->searchFor);
         #If int is returned, we have a bad page
         if (is_int($outputArray['searchResult'])) {
             #Redirect
@@ -44,7 +45,7 @@ class Listing extends Search
             $this->lastModified($date);
         }
         #Generate pagination data
-        $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchResult']['pages'], 'prefix' => '?search='.rawurlencode($this->searchFor).'&page='];
+        $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['searchResult']['pages'], 'prefix' => '?'.(empty($this->searchFor) ? '' : 'search='.rawurlencode($this->searchFor).'&').'page=', 'per' => $listingType->listItems];
         if (!empty($this->searchFor)) {
             #Update breadcrumbs
             $this->attachCrumb('?search=' . rawurlencode($this->searchFor), sprintf($this->shortTitle, $this->searchFor));

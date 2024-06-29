@@ -98,7 +98,7 @@ class FileListing extends StaticPage
         }
         if ($outputArray['files'][$path]['count'] > $this->listItems) {
             #Generate pagination data
-            $outputArray['pagination'] = ['current' => $this->page, 'total' => $totalPages, 'prefix' => '?page='];
+            $outputArray['pagination'] = ['current' => $this->page, 'total' => $totalPages, 'prefix' => '?page=', 'per' => $this->listItems];
             #Update list of files by slicing
             $outputArray['files'][$path]['files'] = array_slice($outputArray['files'][$path]['files'], ($this->page - 1) * $this->listItems, $this->listItems);
         }
