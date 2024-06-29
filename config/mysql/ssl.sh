@@ -6,7 +6,7 @@
 #These are meant to be used only for internal communication and by admins with access, so self-signed seem valid
 
 #Get current date
-currentDate=$(date +%Y%m%d)
+currentDate=$(date +%Y.%m.%d)
 logFile=/usr/local/logs/ssl-$currentDate.log
 keysDir=/usr/local/keys
 keyPrefix=
