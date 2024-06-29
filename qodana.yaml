@@ -10,8 +10,20 @@ include:
   - name: PhpComposerExtensionStubsInspection
   - name: RegExpSimplifiable
   - name: PhpUnusedAliasInspection
+  - name: All
+    paths:
+      - public/index.php
 raiseLicenseProblems: true
 plugins:
   - id: com.kalessil.phpStorm.phpInspectionsEA
 dependencyIgnores:
-  - name: "tinymce"
+  - name: "tinymce/tinymce"
+exclude:
+  - name: All
+    paths:
+      - public
+      - data
+      - config
+      - DDL
+      - dbhelper
+      - symfony
