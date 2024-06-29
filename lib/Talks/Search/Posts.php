@@ -6,7 +6,7 @@ use Simbiat\Abstracts\Search;
 class Posts extends Search
 {
     #Items to display per page for lists
-    protected int $listItems = 50;
+    public int $listItems = 50;
     #Type of entity to return as static value in results (required for frontend routing)
     protected string $entityType = 'post';
     #Name of the table to search use

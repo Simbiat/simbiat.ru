@@ -6,7 +6,7 @@ use Simbiat\Abstracts\Search;
 class Threads extends Search
 {
     #Items to display per page for lists
-    protected int $listItems = 25;
+    public int $listItems = 25;
     #Type of entity to return as static value in results (required for frontend routing)
     protected string $entityType = 'thread';
     #Name of the table to search use

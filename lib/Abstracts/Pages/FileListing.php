@@ -15,7 +15,7 @@ class FileListing extends StaticPage
     #Depth, when set and more than 0 will mean, that, until folders up to this depth, will be scanned only for other folders and as such allow folder traversal
     protected array $dirs = [];
     #Items to display per page for lists
-    protected int $listItems = 100;
+    public int $listItems = 100;
     #Flag whether to go recursive or not
     protected bool $recursive = false;
     #List of files that should be excluded
