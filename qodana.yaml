@@ -13,3 +13,5 @@ include:
 raiseLicenseProblems: true
 plugins:
   - id: com.kalessil.phpStorm.phpInspectionsEA
+dependencyIgnores:
+  - name: "tinymce"
