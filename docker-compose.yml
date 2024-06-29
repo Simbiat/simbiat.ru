@@ -27,6 +27,9 @@ services:
       - ./config/frankenphp:/usr/local/php/config:ro
       - ${CADDY_DATA_DIR}:/data:rw
       - ${CADDY_CONFIG_DIR}:/config:rw
+    depends_on:
+      local.simbiat.dev:
+        condition: service_healthy
     links:
       - local.simbiat.dev:mysql
       - local.simbiat.dev:database
