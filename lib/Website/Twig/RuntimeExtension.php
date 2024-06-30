@@ -27,7 +27,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
 
     public function pagination(int $current, int $total, string $prefix): string
     {
-        return HTML::pagination($current, $total, prefix: $prefix);
+        return HTML::pagination($current, $total, prefix: $prefix, tooltip: 'data-tooltip');
     }
 
     public function basename(string $string): string
