@@ -355,6 +355,7 @@ return array(
     'Simbiat\\Cron\\Agent' => $baseDir . '/lib/Cron/src/Agent.php',
     'Simbiat\\Cron\\Task' => $baseDir . '/lib/Cron/src/Task.php',
     'Simbiat\\Cron\\TaskInstance' => $baseDir . '/lib/Cron/src/TaskInstance.php',
+    'Simbiat\\CuteBytes' => $baseDir . '/lib/CuteBytes/src/CuteBytes.php',
     'Simbiat\\Database\\Config' => $baseDir . '/lib/Database/src/Config.php',
     'Simbiat\\Database\\Controller' => $baseDir . '/lib/Database/src/Controller.php',
     'Simbiat\\Database\\Pool' => $baseDir . '/lib/Database/src/Pool.php',

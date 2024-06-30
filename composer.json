@@ -45,17 +45,18 @@
             "Simbiat\\": [
                 "./lib/AccountKeying/src",
                 "./lib/ArrayHelpers/src",
-                "./lib/SafeFileName/src",
+                "./lib/CuteBytes/src",
                 "./lib/HTMLCut/src",
                 "./lib/Lodestone/src",
                 "./lib/nl2tag/src",
                 "./lib/optimizeTables/src",
+                "./lib/SafeFileName/src",
                 "./lib/SandClock/src"
             ],
-            "Simbiat\\Website\\": "./lib/Website",
             "Simbiat\\Cron\\": "./lib/Cron/src",
             "Simbiat\\Database\\": "./lib/Database/src",
-            "Simbiat\\http20\\": "./lib/http20/src"
+            "Simbiat\\http20\\": "./lib/http20/src",
+            "Simbiat\\Website\\": "./lib/Website"
         }
     },
     "config": {

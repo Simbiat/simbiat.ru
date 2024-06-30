@@ -43,3 +43,6 @@
 [submodule "lib/http20"]
 	path = lib/http20
 	url = https://github.com/Simbiat/http20
+[submodule "lib/CuteBytes"]
+	path = lib/CuteBytes
+	url = https://github.com/Simbiat/cute-bytes

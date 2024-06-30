@@ -123,12 +123,13 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         array (
             0 => __DIR__ . '/../..' . '/lib/AccountKeying/src',
             1 => __DIR__ . '/../..' . '/lib/ArrayHelpers/src',
-            2 => __DIR__ . '/../..' . '/lib/SafeFileName/src',
+            2 => __DIR__ . '/../..' . '/lib/CuteBytes/src',
             3 => __DIR__ . '/../..' . '/lib/HTMLCut/src',
             4 => __DIR__ . '/../..' . '/lib/Lodestone/src',
             5 => __DIR__ . '/../..' . '/lib/nl2tag/src',
             6 => __DIR__ . '/../..' . '/lib/optimizeTables/src',
-            7 => __DIR__ . '/../..' . '/lib/SandClock/src',
+            7 => __DIR__ . '/../..' . '/lib/SafeFileName/src',
+            8 => __DIR__ . '/../..' . '/lib/SandClock/src',
         ),
         'SendGrid\\Stats\\' => 
         array (
@@ -164,8 +165,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -181,8 +182,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri-interfaces',
-            1 => __DIR__ . '/..' . '/league/uri',
+            0 => __DIR__ . '/..' . '/league/uri',
+            1 => __DIR__ . '/..' . '/league/uri-interfaces',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -560,6 +561,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Cron\\Agent' => __DIR__ . '/../..' . '/lib/Cron/src/Agent.php',
         'Simbiat\\Cron\\Task' => __DIR__ . '/../..' . '/lib/Cron/src/Task.php',
         'Simbiat\\Cron\\TaskInstance' => __DIR__ . '/../..' . '/lib/Cron/src/TaskInstance.php',
+        'Simbiat\\CuteBytes' => __DIR__ . '/../..' . '/lib/CuteBytes/src/CuteBytes.php',
         'Simbiat\\Database\\Config' => __DIR__ . '/../..' . '/lib/Database/src/Config.php',
         'Simbiat\\Database\\Controller' => __DIR__ . '/../..' . '/lib/Database/src/Controller.php',
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/src/Pool.php',
