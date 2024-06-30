@@ -1,0 +1,17 @@
+<?php
+declare(strict_types = 1);
+namespace Simbiat\Website\fftracker\Redirects;
+
+use Simbiat\Website\Abstracts\Pages\Redirect;
+
+class Character extends Redirect
+{
+    #Current breadcrumb for navigation
+    protected array $breadCrumb = [
+        ['href' => '/fftracker/characters', 'name' => 'Characters']
+    ];
+    #Regex match pattern with / and flags
+    protected string $searchFor = '\/fftracker\/character\/(.*)';
+    #Regex replace pattern
+    protected string $replaceWith = '/fftracker/characters/$1';
+}

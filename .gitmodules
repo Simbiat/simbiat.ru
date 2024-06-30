@@ -10,3 +10,36 @@
 [submodule "public/assets/images/fftracker/maps"]
 	path = public/assets/images/fftracker/maps
 	url = https://github.com/Simbiat/ffxiv-estate-maps
+[submodule "lib/AccountKeying"]
+	path = lib/AccountKeying
+	url = https://github.com/Simbiat/AccountKeying
+[submodule "lib/ArrayHelpers"]
+	path = lib/ArrayHelpers
+	url = https://github.com/Simbiat/ArrayHelpers
+[submodule "lib/SafeFileName"]
+	path = lib/SafeFileName
+	url = https://github.com/Simbiat/filename-sanitizer
+[submodule "lib/HTMLCut"]
+	path = lib/HTMLCut
+	url = https://github.com/Simbiat/htmlcut
+[submodule "lib/Lodestone"]
+	path = lib/Lodestone
+	url = https://github.com/Simbiat/lodestone-parser
+[submodule "lib/nl2tag"]
+	path = lib/nl2tag
+	url = https://github.com/Simbiat/nl2tag
+[submodule "lib/optimizeTables"]
+	path = lib/optimizeTables
+	url = https://github.com/Simbiat/optimize-tables
+[submodule "lib/SandClock"]
+	path = lib/SandClock
+	url = https://github.com/Simbiat/sand-clock
+[submodule "lib/Cron"]
+	path = lib/Cron
+	url = https://github.com/Simbiat/cron
+[submodule "lib/Database"]
+	path = lib/Database
+	url = https://github.com/Simbiat/database
+[submodule "lib/http20"]
+	path = lib/http20
+	url = https://github.com/Simbiat/http20

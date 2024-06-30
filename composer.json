@@ -22,17 +22,6 @@
         "ipinfo/ipinfo": "^2",
         "tinymce/tinymce": "^7",
         "vlucas/phpdotenv": "^5",
-        "simbiat/database": "^2",
-        "simbiat/accountkeying": "^2",
-        "simbiat/sand-clock": "^2",
-        "simbiat/optimize-tables": "^2",
-        "simbiat/filename-sanitizer": "^1",
-        "simbiat/nl2tag": "^1",
-        "simbiat/arrayhelpers": "^2",
-        "simbiat/htmlcut": "^1",
-        "simbiat/http20": "^2",
-        "simbiat/lodestone-parser": "^1",
-        "simbiat/cron": "^2",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-zip": "*",
@@ -53,7 +42,20 @@
     },
     "autoload": {
         "psr-4": {
-            "Simbiat\\": "./lib"
+            "Simbiat\\": [
+                "./lib/AccountKeying/src",
+                "./lib/ArrayHelpers/src",
+                "./lib/SafeFileName/src",
+                "./lib/HTMLCut/src",
+                "./lib/Lodestone/src",
+                "./lib/nl2tag/src",
+                "./lib/optimizeTables/src",
+                "./lib/SandClock/src"
+            ],
+            "Simbiat\\Website\\": "./lib/Website",
+            "Simbiat\\Cron\\": "./lib/Cron/src",
+            "Simbiat\\Database\\": "./lib/Database/src",
+            "Simbiat\\http20\\": "./lib/http20/src"
         }
     },
     "config": {

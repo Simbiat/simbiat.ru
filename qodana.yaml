@@ -1,6 +1,6 @@
 version: "1.0"
 bootstrap: composer install --ignore-platform-reqs
-linter: jetbrains/qodana-php:2024.1
+linter: jetbrains/qodana-php
 php:
   version: "8.3"
 include:
@@ -10,10 +10,8 @@ include:
   - name: PhpComposerExtensionStubsInspection
   - name: RegExpSimplifiable
   - name: PhpUnusedAliasInspection
-  - name: All
-    paths:
-      - public/index.php
 raiseLicenseProblems: true
+enablePackageSearch: true
 plugins:
   - id: com.kalessil.phpStorm.phpInspectionsEA
 dependencyIgnores:

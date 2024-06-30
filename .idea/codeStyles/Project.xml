@@ -65,6 +65,9 @@
     <editorconfig>
       <option name="ENABLED" value="false" />
     </editorconfig>
+    <yaml>
+      <option name="AUTOINSERT_SEQUENCE_MARKER" value="false" />
+    </yaml>
     <codeStyleSettings language="CSS">
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
       <indentOptions>

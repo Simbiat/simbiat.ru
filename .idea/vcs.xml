@@ -2,6 +2,17 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/AccountKeying" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/ArrayHelpers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/Cron" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/Database" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/HTMLCut" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/Lodestone" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/SafeFileName" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/SandClock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/http20" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/nl2tag" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/optimizeTables" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/public/assets/images/devicedetector" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/crests-components" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/icons" vcs="Git" />
