@@ -46,7 +46,7 @@ class PvPTeam extends Entity
         return $data;
     }
 
-    public function getFromLodestone(): string|array
+    public function getFromLodestone(bool $allowSleep = false): string|array
     {
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getPvPTeam($this->id)->getResult();
@@ -54,6 +54,14 @@ class PvPTeam extends Entity
             if (!empty($data['pvpteams'][$this->id]['members']) && (int)$data['pvpteams'][$this->id]['members'] === 404) {
                 $this->delete();
                 return ['404' => true];
+            }
+            #Take a pause if we were throttled, and pause is allowed
+            if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
+                if ($allowSleep) {
+                    sleep(300);
+                } else {
+                    return 'Request throttled by Lodestone';
+                }
             }
             if (empty($Lodestone->getLastError())) {
                 return 'Failed to get any data for PvP Team '.$this->id;

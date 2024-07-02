@@ -48,7 +48,7 @@ class Achievement extends Entity
     /**
      * @throws \Exception
      */
-    public function getFromLodestone(): string|array
+    public function getFromLodestone(bool $allowSleep = false): string|array
     {
         #Cache objects
         $Lodestone = (new Lodestone);
@@ -65,6 +65,14 @@ class Achievement extends Entity
         #Iterrate list
         foreach ($altChars as $char) {
             $data = $Lodestone->getCharacterAchievements($char, (int)$this->id)->getResult();
+            #Take a pause if we were throttled, and pause is allowed
+            if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
+                if ($allowSleep) {
+                    sleep(300);
+                } else {
+                    return 'Request throttled by Lodestone';
+                }
+            }
             if (!empty($data['characters'][$char]['achievements'][$this->id]) && is_array($data['characters'][$char]['achievements'][$this->id])) {
                 #Update character ID
                 #Try to get achievement ID as seen in Lodestone database (play guide)

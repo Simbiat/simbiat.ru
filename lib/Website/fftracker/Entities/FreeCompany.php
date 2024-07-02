@@ -58,7 +58,7 @@ class FreeCompany extends Entity
         return $data;
     }
 
-    public function getFromLodestone(): string|array
+    public function getFromLodestone(bool $allowSleep = false): string|array
     {
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getFreeCompany($this->id)->getFreeCompanyMembers($this->id, 0)->getResult();
@@ -66,6 +66,14 @@ class FreeCompany extends Entity
             if (!empty($data['freecompanies'][$this->id]) && (int)$data['freecompanies'][$this->id] === 404) {
                 $this->delete();
                 return ['404' => true];
+            }
+            #Take a pause if we were throttled, and pause is allowed
+            if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
+                if ($allowSleep) {
+                    sleep(300);
+                } else {
+                    return 'Request throttled by Lodestone';
+                }
             }
             if (empty($Lodestone->getLastError())) {
                 return 'Failed to get any data for Free Company '.$this->id;

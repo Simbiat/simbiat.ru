@@ -22,7 +22,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     abstract protected function getFromDB(): array;
 
     #Get entity data from Lodestone
-    abstract public function getFromLodestone(): string|array;
+    abstract public function getFromLodestone(bool $allowSleep = false): string|array;
 
     #Function to do processing
     abstract protected function process(array $fromDB): void;
@@ -52,13 +52,9 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         #Try to get data from Lodestone, if not already taken
         if (!is_array($this->lodestone)) {
             try {
-                $tempLodestone = $this->getFromLodestone();
+                $tempLodestone = $this->getFromLodestone($allowSleep);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception, 'Failed to get '.$this::entityType.' with ID '.$this->id, debug: $this->debug);
-                #Take a pause if we were throttled
-                if ($allowSleep && preg_match('/Lodestone has throttled the request, 429/', $exception->getMessage()) === 1) {
-                    sleep(300);
-                }
                 return $exception->getMessage()."\r\n".$exception->getTraceAsString();
             }
             if (!is_array($tempLodestone)) {
