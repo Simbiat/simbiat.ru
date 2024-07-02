@@ -49,12 +49,12 @@ class Cron
     public function UpdateEntity(string|int $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
-            'character' => (new Character($id))->update(),
-            'freecompany' => (new FreeCompany($id))->update(),
-            'pvpteam' => (new PvPTeam($id))->update(),
-            'linkshell' => (new Linkshell($id))->update(),
-            'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell($id))->update(),
-            'achievement' => (new Achievement($id))->update(),
+            'character' => (new Character($id))->update(true),
+            'freecompany' => (new FreeCompany($id))->update(true),
+            'pvpteam' => (new PvPTeam($id))->update(true),
+            'linkshell' => (new Linkshell($id))->update(true),
+            'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell($id))->update(true),
+            'achievement' => (new Achievement($id))->update(true),
             default => false,
         };
     }
@@ -94,12 +94,7 @@ class Cron
             foreach ($entities as $entity) {
                 $result = $this->UpdateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement'])) {
-                    #Take a pause if we were throttled
-                    if (preg_match('/Lodestone has throttled the request, 429/', $result) !== 1) {
-                        return $result;
-                    }
-                    sleep(300);
-                    continue;
+                    return $result;
                 }
                 #Remove cron task, if it's present
                 (new TaskInstance('ffUpdateEntity', [(string)$entity['id'], $entity['type']]))->delete();

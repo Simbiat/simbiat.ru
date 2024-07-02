@@ -31,7 +31,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     abstract protected function updateDB(): string|bool;
 
     #Update the entity
-    public function update(): string|bool
+    public function update(bool $allowSleep = false): string|bool
     {
         #Check if ID was set
         if ($this->id === null) {
@@ -55,6 +55,10 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
                 $tempLodestone = $this->getFromLodestone();
             } catch (\Throwable $exception) {
                 Errors::error_log($exception, 'Failed to get '.$this::entityType.' with ID '.$this->id, debug: $this->debug);
+                #Take a pause if we were throttled
+                if ($allowSleep && preg_match('/Lodestone has throttled the request, 429/', $exception->getMessage()) === 1) {
+                    sleep(300);
+                }
                 return $exception->getMessage()."\r\n".$exception->getTraceAsString();
             }
             if (!is_array($tempLodestone)) {
