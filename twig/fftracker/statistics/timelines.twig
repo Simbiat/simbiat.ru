@@ -19,6 +19,7 @@
         <th colspan="3">Formed</th>
         <th colspan="4">Added</th>
         <th colspan="4">Deleted</th>
+        <th rowspan="2">Characters Privated</th>
     </tr>
     <tr>
         <th>Free Companies</th>
@@ -47,6 +48,7 @@
             <td>{{ datapoint.pvp_teams_deleted|default(0) }}</td>
             <td>{{ datapoint.linkshells_deleted|default(0) }}</td>
             <td>{{ datapoint.characters_deleted|default(0) }}</td>
+            <td>{{ datapoint.characters_privated|default(0) }}</td>
         </tr>
     {% endfor %}
 </table>

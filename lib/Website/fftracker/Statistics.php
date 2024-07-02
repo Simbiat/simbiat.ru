@@ -250,6 +250,8 @@ class Statistics
                             UNION
                             SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'characters_deleted\' as `type` FROM `ffxiv__character` WHERE `deleted` IS NOT NULL GROUP BY `date`
                             UNION
+                            SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'characters_privated\' as `type` FROM `ffxiv__character` WHERE `privated` IS NOT NULL GROUP BY `date`
+                            UNION
                             SELECT `formed` AS `date`, COUNT(*) AS `count`, \'free_companies_formed\' as `type` FROM `ffxiv__freecompany` GROUP BY `date`
                             UNION
                             SELECT `registered` AS `date`, COUNT(*) AS `count`, \'free_companies_registered\' as `type` FROM `ffxiv__freecompany` GROUP BY `date`

@@ -66,6 +66,10 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             return $this->delete();
         }
+        #Characters can mark their profiles as private on Lodestone since Dawntrail
+        if ($this::entityType === 'character' && isset($this->lodestone['private']) && $this->lodestone['private'] === true) {
+            return $this->markPrivate();
+        }
         unset($this->lodestone['404']);
         if (empty($this->lodestone['name'])) {
             return 'No name found for ID `'.$this->id.'`';
@@ -126,12 +130,19 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             return 404;
         }
+        #Characters can mark their profiles as private on Lodestone since Dawntrail
+        if ($this::entityType === 'character' && isset($this->lodestone['private']) && $this->lodestone['private'] === true) {
+            return 403;
+        }
         unset($this->lodestone['404']);
         return $this->updateDB(true);
     }
 
     #Function to update the entity
     abstract protected function delete(): bool;
+    
+    #Function to update the entity
+    abstract protected function markPrivate(): bool;
 
     #Helper function to add new characters to Cron en masse
     protected function charMassCron(array $members): void

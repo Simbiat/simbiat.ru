@@ -219,4 +219,10 @@ class PvPTeam extends Entity
             return false;
         }
     }
+    
+    #Function to update the entity. Used only by characters
+    protected function markPrivate(): bool
+    {
+        return true;
+    }
 }
