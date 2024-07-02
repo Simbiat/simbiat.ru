@@ -94,7 +94,12 @@ class Cron
             foreach ($entities as $entity) {
                 $result = $this->UpdateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement'])) {
-                    return $result;
+                    #Take a pause if we were throttled
+                    if (preg_match('/Lodestone has throttled the request, 429/', $result) !== 1) {
+                        return $result;
+                    }
+                    sleep(300);
+                    continue;
                 }
                 #Remove cron task, if it's present
                 (new TaskInstance('ffUpdateEntity', [(string)$entity['id'], $entity['type']]))->delete();

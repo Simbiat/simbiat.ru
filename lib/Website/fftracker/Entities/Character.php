@@ -90,11 +90,13 @@ class Character extends Entity
     public function getFromLodestone(): string|array
     {
         $Lodestone = (new Lodestone());
-        $data = $Lodestone->getCharacter($this->id)->getCharacterJobs($this->id)->getCharacterAchievements($this->id, false, 0, false, false, true)->getResult();
+        $data = $Lodestone->getCharacter($this->id)->getCharacterJobs($this->id)->getResult();
+        #Check if the character is private
         if (isset($data['characters'][$this->id]['private']) && $data['characters'][$this->id]['private'] === true) {
             $this->markPrivate();
             return $data['characters'][$this->id];
         }
+        #Check for possible errors
         if (empty($data['characters'][$this->id]['server'])) {
             if (!empty($data['characters'][$this->id]) && (int)$data['characters'][$this->id] === 404) {
                 $this->delete();
@@ -105,6 +107,8 @@ class Character extends Entity
             }
             return 'Failed to get all necessary data for Character '.$this->id.' ('.$Lodestone->getLastError()['url'].'): '.$Lodestone->getLastError()['error'];
         }
+        #Try to get achievements now, that we got basic information, and there were no issues with it.
+        $data = $Lodestone->getCharacterAchievements($this->id, false, 0, false, false, true)->getResult();
         $data = $data['characters'][$this->id];
         $data['id'] = $this->id;
         $data['404'] = false;
