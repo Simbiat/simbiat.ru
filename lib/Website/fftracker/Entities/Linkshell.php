@@ -68,9 +68,8 @@ class Linkshell extends Entity
             if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
                 if ($allowSleep) {
                     sleep(300);
-                } else {
-                    return 'Request throttled by Lodestone';
                 }
+                return 'Request throttled by Lodestone';
             }
             if (empty($Lodestone->getLastError())) {
                 return 'Failed to get any data for '.($this::crossworld ? 'Crossworld ' : '').'Linkshell '.$this->id;

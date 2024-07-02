@@ -69,9 +69,8 @@ class Achievement extends Entity
             if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
                 if ($allowSleep) {
                     sleep(300);
-                } else {
-                    return 'Request throttled by Lodestone';
                 }
+                return 'Request throttled by Lodestone';
             }
             if (!empty($data['characters'][$char]['achievements'][$this->id]) && is_array($data['characters'][$char]['achievements'][$this->id])) {
                 #Update character ID
