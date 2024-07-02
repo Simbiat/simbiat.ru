@@ -17,7 +17,6 @@ use Simbiat\Website\fftracker\Entities\Linkshell;
 use Simbiat\Website\fftracker\Entities\PvPTeam;
 use Simbiat\Website\HomePage;
 use Simbiat\Lodestone;
-use Simbiat\Website\fftracker\Statistics;
 
 /**
  * Class handling regular tasks for FFXIV tracker

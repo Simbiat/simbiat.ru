@@ -40,6 +40,14 @@ class Character extends Entity
     {
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
         $data = HomePage::$dbController->selectRow('SELECT *, `ffxiv__achievement`.`icon` AS `titleIcon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, `ffxiv__enemy`.`name` AS `killedby` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid` = `ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardianid` = `ffxiv__guardian`.`guardianid` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid` = `ffxiv__nameday`.`namedayid` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid` = `ffxiv__city`.`cityid` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`serverid` = `ffxiv__server`.`serverid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid` = `ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`titleid` = `ffxiv__achievement`.`achievementid` LEFT JOIN `ffxiv__enemy` ON `ffxiv__character`.`enemyid` = `ffxiv__enemy`.`enemyid` WHERE `ffxiv__character`.`characterid` = :id;', [':id'=>$this->id]);
+        if (!empty($data['privated'])) {
+            foreach ($data as $key => $value) {
+                if (!in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'privated', 'name'])) {
+                    unset($data[$key]);
+                }
+            }
+            return $data;
+        }
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
@@ -53,7 +61,7 @@ class Character extends Entity
         #Get jobs
         $data['jobs'] = HomePage::$dbController->selectAll('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`jobid`=`ffxiv__jobs`.`jobid` WHERE `ffxiv__character_jobs`.`characterid`=:id ORDER BY `name`;', [':id'=>$this->id]);
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
-        $data['oldNames'] = HomePage::$dbController->Count('SELECT COUNT(*) FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldNames'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get previous known incarnations (combination of gender and race/clan)
         $data['incarnations'] = HomePage::$dbController->selectAll('SELECT `genderid`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clanid` = `ffxiv__clan`.`clanid` WHERE `ffxiv__character_clans`.`characterid`=:id AND (`ffxiv__character_clans`.`clanid`!=:clanid AND `ffxiv__character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id'=>$this->id, ':clanid'=>$data['clanid'], ':genderid'=>$data['genderid']]);
         #Get old servers
@@ -81,10 +89,15 @@ class Character extends Entity
 
     public function getFromLodestone(): string|array
     {
-        $Lodestone = (new Lodestone);
+        $Lodestone = (new Lodestone());
         $data = $Lodestone->getCharacter($this->id)->getCharacterJobs($this->id)->getCharacterAchievements($this->id, false, 0, false, false, true)->getResult();
+        if (isset($data['characters'][$this->id]['private']) && $data['characters'][$this->id]['private'] === true) {
+            $this->markPrivate();
+            return $data['characters'][$this->id];
+        }
         if (empty($data['characters'][$this->id]['server'])) {
             if (!empty($data['characters'][$this->id]) && (int)$data['characters'][$this->id] === 404) {
+                $this->delete();
                 return ['404' => true];
             }
             if (empty($Lodestone->getLastError())) {
@@ -110,51 +123,51 @@ class Character extends Entity
             'deleted' => (empty($fromDB['deleted']) ? null : strtotime($fromDB['deleted'])),
         ];
         $this->biology = [
-            'gender' => (int)$fromDB['genderid'],
-            'race' => $fromDB['race'],
-            'clan' => $fromDB['clan'],
-            'nameday' => $fromDB['nameday'],
-            'guardian' => $fromDB['guardian'],
-            'guardianid' => $fromDB['guardianid'],
-            'incarnations' => $fromDB['incarnations'],
-            'oldNames' => (int)$fromDB['oldNames'],
-            'killedby' => $fromDB['killedby'],
+            'gender' => (int)($fromDB['genderid'] ?? 0),
+            'race' => $fromDB['race'] ?? null,
+            'clan' => $fromDB['clan'] ?? null,
+            'nameday' => $fromDB['nameday'] ?? null,
+            'guardian' => $fromDB['guardian'] ?? null,
+            'guardianid' => $fromDB['guardianid'] ?? null,
+            'incarnations' => $fromDB['incarnations'] ?? null,
+            'oldNames' => (int)($fromDB['oldNames'] ?? 0),
+            'killedby' => $fromDB['killedby'] ?? null,
         ];
         $this->location = [
-            'datacenter' => $fromDB['datacenter'],
-            'server' => $fromDB['server'],
-            'region' => $fromDB['region'],
-            'city' => $fromDB['city'],
-            'cityid' => $fromDB['cityid'],
-            'previousServers' => $fromDB['servers'],
+            'datacenter' => $fromDB['datacenter'] ?? null,
+            'server' => $fromDB['server'] ?? null,
+            'region' => $fromDB['region'] ?? null,
+            'city' => $fromDB['city'] ?? null,
+            'cityid' => $fromDB['cityid'] ?? null,
+            'previousServers' => $fromDB['servers'] ?? [],
         ];
-        $this->biography = $fromDB['biography'];
+        $this->biography = $fromDB['biography'] ?? null;
         $this->title = [
-            'title' => $fromDB['title'],
-            'icon' => $fromDB['titleIcon'],
-            'id' => $fromDB['titleid'],
+            'title' => $fromDB['title'] ?? null,
+            'icon' => $fromDB['titleIcon'] ?? null,
+            'id' => $fromDB['titleid'] ?? null,
         ];
         $this->grandCompany = [
-            'name' => $fromDB['gcName'],
-            'rank' => $fromDB['gc_rank'],
-            'gcId' => $fromDB['gcId'],
-            'gcrankid' => $fromDB['gcrankid'],
+            'name' => $fromDB['gcName'] ?? null,
+            'rank' => $fromDB['gc_rank'] ?? null,
+            'gcId' => $fromDB['gcId'] ?? null,
+            'gcrankid' => $fromDB['gcrankid'] ?? null,
         ];
-        $this->pvp = (int)$fromDB['pvp_matches'];
-        $this->groups = $fromDB['groups'];
+        $this->pvp = (int)($fromDB['pvp_matches'] ?? 0);
+        $this->groups = $fromDB['groups'] ?? [];
         $this->owned = [
-            'id' => $fromDB['userid'],
-            'name' => $fromDB['username']
+            'id' => $fromDB['userid'] ?? null,
+            'name' => $fromDB['username'] ?? null
         ];
-        foreach ($this->groups as $key=>$group) {
+        foreach ($this->groups as $key => $group) {
             $this->groups[$key]['current'] = (bool)$group['current'];
         }
-        $this->achievements = $fromDB['achievements'];
-        foreach ($this->achievements as $key=>$achievement) {
+        $this->achievements = $fromDB['achievements'] ?? [];
+        foreach ($this->achievements as $key => $achievement) {
             $this->achievements[$key]['time'] = (empty($achievement['time']) ? null : strtotime($achievement['time']));
         }
-        $this->achievementPoints = $fromDB['achievement_points'];
-        $this->jobs = $fromDB['jobs'];
+        $this->achievementPoints = $fromDB['achievement_points'] ?? 0;
+        $this->jobs = $fromDB['jobs'] ?? [];
     }
 
     #Function to update the entity
@@ -359,10 +372,42 @@ class Character extends Entity
     protected function markPrivate(): bool
     {
         try {
-            return HomePage::$dbController->query([
-                'UPDATE `ffxiv__character` SET `privated` = COALESCE(`privated`, UTC_DATE()), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :id',
-                [':id' => $this->id],
-            ]);
+            #In some cases we may have server, name and avatar
+            if (!empty($this->lodestone['server']) && !empty($this->lodestone['name']) && !empty($this->lodestone['avatar'])) {
+                $queries = [];
+                $queries[] = [
+                    'UPDATE `ffxiv__character` SET `privated` = COALESCE(`privated`, UTC_DATE()), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :characterid',
+                    [
+                        ':characterid' => $this->id,
+                        ':server' => $this->lodestone['server'],
+                        ':name' => $this->lodestone['name'],
+                        ':avatar' => str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
+                    ],
+                ];
+                #Insert server, if it has not been inserted yet. If server is registered at all.
+                if (HomePage::$dbController->check('SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server;', [':server' => $this->lodestone['server']]) === true) {
+                    $queries[] = [
+                        'INSERT IGNORE INTO `ffxiv__character_servers`(`characterid`, `serverid`) VALUES (:characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server));',
+                        [
+                            ':characterid' => $this->id,
+                            ':server' => $this->lodestone['server'],
+                        ],
+                    ];
+                }
+                #Insert name, if it has not been inserted yet
+                $queries[] = [
+                    'INSERT IGNORE INTO `ffxiv__character_names`(`characterid`, `name`) VALUES (:characterid, :name);',
+                    [
+                        ':characterid' => $this->id,
+                        ':name' => $this->lodestone['name'],
+                    ],
+                ];
+                return HomePage::$dbController->query($queries);
+            }
+            return HomePage::$dbController->query(
+                'UPDATE `ffxiv__character` SET `privated` = COALESCE(`privated`, UTC_DATE()), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :characterid',
+                [':characterid' => $this->id],
+            );
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return false;

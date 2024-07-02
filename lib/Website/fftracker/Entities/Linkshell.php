@@ -61,6 +61,7 @@ class Linkshell extends Entity
         $data = $Lodestone->getLinkshellMembers($this->id, 0)->getResult();
         if (empty($data['linkshells'][$this->id]['server']) || (!empty($data['linkshells'][$this->id]['members']) && count($data['linkshells'][$this->id]['members']) < intval($data['linkshells'][$this->id]['memberscount'])) || (empty($data['linkshells'][$this->id]['members']) && intval($data['linkshells'][$this->id]['memberscount']) > 0)) {
             if (!empty($data['linkshells'][$this->id]['members']) && $data['linkshells'][$this->id]['members'] == 404) {
+                $this->delete();
                 return ['404' => true];
             }
             if (empty($Lodestone->getLastError())) {
@@ -209,11 +210,5 @@ class Linkshell extends Entity
             Errors::error_log($e, debug: $this->debug);
             return false;
         }
-    }
-    
-    #Function to update the entity. Used only by characters
-    protected function markPrivate(): bool
-    {
-        return true;
     }
 }

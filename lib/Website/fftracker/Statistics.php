@@ -287,7 +287,7 @@ class Statistics
     private function getBugs(array &$data, Controller $dbCon): void
     {
         #Characters with no clan/race
-        $data['bugs']['noClan'] = $dbCon->selectAll('SELECT `characterid` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `ffxiv__character` WHERE `clanid` IS NULL AND `deleted` IS NULL ORDER BY `updated`, `name` LIMIT 100;');
+        $data['bugs']['noClan'] = $dbCon->selectAll('SELECT `characterid` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `ffxiv__character` WHERE `clanid` IS NULL AND `deleted` IS NULL AND `privated` IS NULL ORDER BY `updated`, `name` LIMIT 100;');
         #Groups with no members
         $data['bugs']['noMembers'] = Entity::cleanCrestResults($dbCon->selectAll(
             'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany` as `fc` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__freecompany_character` WHERE `freecompanyid`=`fc`.`freecompanyid` AND `current`=1)
@@ -299,7 +299,7 @@ class Statistics
         ));
         #Get entities with duplicate names
         $duplicateNames = $dbCon->selectAll(
-            'SELECT \'character\' AS `type`, `characterid` AS `id`, `name`, `avatar` as `icon`, `userid`, NULL as `crest_part_1`, NULL as `crest_part_2`, NULL as `crest_part_3`, `server`, `datacenter` FROM `ffxiv__character` as `chartable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`chartable`.`serverid` WHERE `deleted` is NULL AND (SELECT COUNT(*) as `count` FROM `ffxiv__character` WHERE `ffxiv__character`.`name`=`chartable`.`name` AND `ffxiv__character`.`serverid`=`chartable`.`serverid` AND `deleted` is NULL)>1
+            'SELECT \'character\' AS `type`, `characterid` AS `id`, `name`, `avatar` as `icon`, `userid`, NULL as `crest_part_1`, NULL as `crest_part_2`, NULL as `crest_part_3`, `server`, `datacenter` FROM `ffxiv__character` as `chartable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`chartable`.`serverid` WHERE `deleted` IS NULL AND `privated` IS NULL AND (SELECT COUNT(*) as `count` FROM `ffxiv__character` WHERE `ffxiv__character`.`name`=`chartable`.`name` AND `ffxiv__character`.`serverid`=`chartable`.`serverid` AND `deleted` is NULL)>1
                             UNION ALL
                             SELECT \'freecompany\' AS `type`, `freecompanyid` AS `id`, `name`, NULL as `icon`, NULL as `userid`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `server`, `datacenter`  FROM `ffxiv__freecompany` as `fctable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`fctable`.`serverid` WHERE `deleted` is NULL AND (SELECT COUNT(*) as `count` FROM `ffxiv__freecompany` WHERE `ffxiv__freecompany`.`name`= BINARY `fctable`.`name` AND `ffxiv__freecompany`.`serverid`=`fctable`.`serverid` AND `deleted` is NULL)>1
                             UNION ALL

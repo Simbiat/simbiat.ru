@@ -52,6 +52,7 @@ class PvPTeam extends Entity
         $data = $Lodestone->getPvPTeam($this->id)->getResult();
         if (empty($data['pvpteams'][$this->id]['dataCenter']) || empty($data['pvpteams'][$this->id]['members'])) {
             if (!empty($data['pvpteams'][$this->id]['members']) && (int)$data['pvpteams'][$this->id]['members'] === 404) {
+                $this->delete();
                 return ['404' => true];
             }
             if (empty($Lodestone->getLastError())) {
@@ -218,11 +219,5 @@ class PvPTeam extends Entity
             Errors::error_log($e, debug: $this->debug);
             return false;
         }
-    }
-    
-    #Function to update the entity. Used only by characters
-    protected function markPrivate(): bool
-    {
-        return true;
     }
 }

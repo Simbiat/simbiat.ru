@@ -185,17 +185,4 @@ class Achievement extends Entity
     {
         return $this->update();
     }
-
-    #Function to update the entity
-    protected function delete(): bool
-    {
-        #Achievements are not supposed to be deleted
-        return true;
-    }
-    
-    #Function to update the entity. Used only by characters
-    protected function markPrivate(): bool
-    {
-        return true;
-    }
 }

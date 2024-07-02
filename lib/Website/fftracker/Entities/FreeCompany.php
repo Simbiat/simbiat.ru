@@ -64,6 +64,7 @@ class FreeCompany extends Entity
         $data = $Lodestone->getFreeCompany($this->id)->getFreeCompanyMembers($this->id, 0)->getResult();
         if (empty($data['freecompanies'][$this->id]['server']) || (empty($data['freecompanies'][$this->id]['members']) && (int)$data['freecompanies'][ $this->id ]['members_count'] > 0) || (!empty($data['freecompanies'][$this->id]['members']) && count($data['freecompanies'][$this->id]['members']) < (int)$data['freecompanies'][ $this->id ]['members_count'])) {
             if (!empty($data['freecompanies'][$this->id]) && (int)$data['freecompanies'][$this->id] === 404) {
+                $this->delete();
                 return ['404' => true];
             }
             if (empty($Lodestone->getLastError())) {
@@ -342,11 +343,5 @@ class FreeCompany extends Entity
             Errors::error_log($e, debug: $this->debug);
             return false;
         }
-    }
-    
-    #Function to update the entity. Used only by characters
-    protected function markPrivate(): bool
-    {
-        return true;
     }
 }

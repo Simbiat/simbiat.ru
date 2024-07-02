@@ -1,6 +1,17 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\fftracker;
+
+use Simbiat\Website\fftracker\Api\Achievement;
+use Simbiat\Website\fftracker\Api\Character;
+use Simbiat\Website\fftracker\Api\CrossworldLinkshell;
+use Simbiat\Website\fftracker\Api\FreeCompany;
+use Simbiat\Website\fftracker\Api\Linkshell;
+use Simbiat\Website\fftracker\Api\MergeCrest;
+use Simbiat\Website\fftracker\Api\PvPTeam;
+
+use function array_slice;
 
 class Api extends \Simbiat\Website\Abstracts\Api
 {
@@ -22,17 +33,17 @@ class Api extends \Simbiat\Website\Abstracts\Api
     protected bool $topLevel = false;
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = false;
-
+    
     protected function genData(array $path): array
     {
-        return match($path[0]){
-            'characters' => (new \Simbiat\Website\fftracker\Api\Character)->getData(array_slice($path, 1)),
-            'freecompanies' => (new \Simbiat\Website\fftracker\Api\FreeCompany)->getData(array_slice($path, 1)),
-            'linkshells' => (new \Simbiat\Website\fftracker\Api\Linkshell)->getData(array_slice($path, 1)),
-            'crossworld_linkshells' => (new \Simbiat\Website\fftracker\Api\CrossworldLinkshell)->getData(array_slice($path, 1)),
-            'pvpteams' => (new \Simbiat\Website\fftracker\Api\PvPTeam)->getData(array_slice($path, 1)),
-            'achievements' => (new \Simbiat\Website\fftracker\Api\Achievement)->getData(array_slice($path, 1)),
-            'merge_crest' => (new \Simbiat\Website\fftracker\Api\MergeCrest)->getData(array_slice($path, 1)),
+        return match($path[0]) {
+            'characters' => (new Character())->getData(array_slice($path, 1)),
+            'freecompanies' => (new FreeCompany())->getData(array_slice($path, 1)),
+            'linkshells' => (new Linkshell())->getData(array_slice($path, 1)),
+            'crossworld_linkshells' => (new CrossworldLinkshell())->getData(array_slice($path, 1)),
+            'pvpteams' => (new PvPTeam())->getData(array_slice($path, 1)),
+            'achievements' => (new Achievement())->getData(array_slice($path, 1)),
+            'merge_crest' => (new MergeCrest())->getData(array_slice($path, 1)),
         };
     }
 }

@@ -7,7 +7,7 @@ use Simbiat\Website\Errors;
 abstract class Entity
 {
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
-    public bool $attempted = false;
+    protected bool $attempted = false;
     #If ID was retrieved, this needs to not be null
     public ?string $id = null;
     #Format for IDs
