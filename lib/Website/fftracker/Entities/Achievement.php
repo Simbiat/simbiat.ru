@@ -183,7 +183,7 @@ class Achievement extends Entity
             return HomePage::$dbController->query('INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `howto`=:howto, `title`=:title, `item`=:item, `itemicon`=:itemicon, `itemid`=:itemid, `dbid`=:dbid ON DUPLICATE KEY UPDATE `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `howto`=:howto, `title`=:title, `item`=:item, `itemicon`=:itemicon, `itemid`=:itemid, `dbid`=:dbid, `updated`=CURRENT_TIMESTAMP()', $bindings);
         } catch(\Exception $e) {
             Errors::error_log($e, 'achievementid: '.$this->id);
-            return false;
+            return $e->getMessage();
         }
     }
     

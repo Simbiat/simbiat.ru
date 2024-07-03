@@ -42,7 +42,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
             $updated = HomePage::$dbController->selectValue('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
-            return false;
+            return $e->getMessage();
         }
         #Check if it has not been updated recently (10 minutes, to protect from potential abuse)
         if (isset($updated) && (time() - strtotime($updated)) < 600) {

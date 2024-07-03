@@ -203,7 +203,7 @@ class PvPTeam extends Entity
             return true;
         } catch(\Exception $e) {
             Errors::error_log($e, 'pvpteamid: '.$this->id);
-            return false;
+            return $e->getMessage();
         }
     }
 
