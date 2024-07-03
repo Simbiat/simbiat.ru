@@ -12,4 +12,4 @@ CREATE TABLE `talks__old_music` (
   KEY `mime` (`mime`),
   KEY `file_to_post` (`postid`),
   CONSTRAINT `file_to_post` FOREIGN KEY (`postid`) REFERENCES `talks__posts` (`postid`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of file attachments' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of file attachments' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

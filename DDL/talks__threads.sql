@@ -33,4 +33,4 @@ CREATE TABLE `talks__threads` (
   CONSTRAINT `thread_lastpost_by` FOREIGN KEY (`lastpostby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
   CONSTRAINT `thread_to_forum` FOREIGN KEY (`sectionid`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE,
   CONSTRAINT `thread_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=621 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of threads' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of threads' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

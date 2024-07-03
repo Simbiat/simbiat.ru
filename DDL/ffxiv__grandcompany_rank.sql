@@ -6,4 +6,4 @@ CREATE TABLE `ffxiv__grandcompany_rank` (
   UNIQUE KEY `gc_rank` (`gc_rank`) USING BTREE,
   KEY `gcRank_to_gc` (`gcId`),
   CONSTRAINT `gcRank_to_gc` FOREIGN KEY (`gcId`) REFERENCES `ffxiv__grandcompany` (`gcId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Grand Companies'' ranks' `PAGE_COMPRESSED`='ON';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Grand Companies'' ranks' `PAGE_COMPRESSED`='ON';

@@ -8147,3 +8147,5 @@ INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
 (87, 'Golem', 'Dynamis'),
 (88, 'Kraken', 'Dynamis'),
 (89, 'Rafflesia', 'Dynamis');
+
+INSERT INTO `ffxiv__jobs`(`name`) VALUES ('Alchemist'), ('Armorer'), ('Astrologian'), ('Bard'), ('Black Mage'), ('Blacksmith'), ('Blue Mage'), ('Botanist'), ('Carpenter'), ('Culinarian'), ('Dancer'), ('Dark Knight'), ('Dragoon'), ('Fisher'), ('Goldsmith'), ('Gunbreaker'), ('Leatherworker'), ('Machinist'), ('Miner'), ('Monk'), ('Ninja'), ('Paladin'), ('Pictomancer'), ('Reaper'), ('Red Mage'), ('Sage'), ('Samurai'), ('Scholar'), ('Summoner'), ('Viper'), ('Warrior'), ('Weaver'), ('White Mage');

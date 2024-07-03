@@ -6,4 +6,4 @@ CREATE TABLE `talks__types` (
   PRIMARY KEY (`typeid`) USING BTREE,
   KEY `section_type_to_file` (`icon`),
   CONSTRAINT `section_type_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='Types of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='Types of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

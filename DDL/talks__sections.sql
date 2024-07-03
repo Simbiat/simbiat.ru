@@ -28,4 +28,4 @@ CREATE TABLE `talks__sections` (
   CONSTRAINT `forum_to_type` FOREIGN KEY (`type`) REFERENCES `talks__types` (`typeid`) ON UPDATE CASCADE,
   CONSTRAINT `forum_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
   CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

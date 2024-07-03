@@ -4,4 +4,4 @@ CREATE TABLE `ffxiv__pvpteam_rank` (
   `icon` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Name of the rank icon file',
   PRIMARY KEY (`pvprankid`),
   KEY `pvprank` (`rank`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Rank names used by PvP teams' `PAGE_COMPRESSED`='ON';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Rank names used by PvP teams' `PAGE_COMPRESSED`='ON';

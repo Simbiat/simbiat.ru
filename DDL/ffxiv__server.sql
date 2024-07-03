@@ -4,4 +4,4 @@ CREATE TABLE `ffxiv__server` (
   `datacenter` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Data center name',
   PRIMARY KEY (`serverid`),
   UNIQUE KEY `server` (`server`,`datacenter`)
-) ENGINE=InnoDB AUTO_INCREMENT=256 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='List of servers/data centers' `PAGE_COMPRESSED`='ON';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='List of servers/data centers' `PAGE_COMPRESSED`='ON';

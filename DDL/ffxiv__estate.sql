@@ -9,4 +9,4 @@ CREATE TABLE `ffxiv__estate` (
   UNIQUE KEY `address` (`area`,`ward`,`plot`) USING BTREE,
   KEY `estate_cityid` (`cityid`),
   CONSTRAINT `estate_cityid` FOREIGN KEY (`cityid`) REFERENCES `ffxiv__city` (`cityid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9031 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='List of estates' `PAGE_COMPRESSED`='ON';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='List of estates' `PAGE_COMPRESSED`='ON';

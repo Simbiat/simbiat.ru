@@ -65,3 +65,8 @@ INSERT IGNORE INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `a
 ('dbForBackup', 'forBackup', '\\Simbiat\\Maintenance', NULL, NULL, 3600, 'Generate DDLs and recommended dump order for current DB structure', 1);
 INSERT IGNORE INTO `cron__schedule` (`task`, `arguments`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`, `nextrun`, `system`) VALUES
 ('dbForBackup', '', 86400, NULL, NULL, 9, 'Dumping DDLs', '2024-06-21 02:00:00', 1);
+
+DELETE FROM `cron__tasks` WHERE `cron__tasks`.`task` = 'ffAddJobs';
+
+UPDATE `cron__tasks` SET `object`=REPLACE(`object`, '\\Simbiat', '\\Simbiat\\Website');
+UPDATE `cron__tasks` SET `object` = '\\Simbiat\\Website\\Maintenance' WHERE `cron__tasks`.`task` = 'dbMaintenance';
