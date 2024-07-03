@@ -5,9 +5,9 @@
 {% elseif reason == 'Site is under maintenance and temporary unavailable' %}
     <p>{{ reason }}.</p>
     <code data-description="Requested page">{{ url }}</code>
-    <img loading="lazy" decoding="async" alt="Maintenance" src="/assets/images/errors/maintenance.gif">
+    <img loading="lazy" decoding="async" alt="Maintenance" src="/assets/images/errors/maintenance.webp">
 {% else %}
     <blockquote class="w100pc" data-author="Server">Page is unavailable. Possibly a bug or some kind of issue.</blockquote>
     {% if reason %}<samp class="failure" data-description="Detailed reason">{{ reason }}</samp>{% endif %}
-    <img loading="lazy" decoding="async" alt="503 Service unavailable" src="/assets/images/errors/bug2.gif">
+    <img loading="lazy" decoding="async" alt="503 Service unavailable" src="/assets/images/errors/bug2.webp">
 {% endif %}
