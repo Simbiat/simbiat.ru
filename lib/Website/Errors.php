@@ -29,7 +29,7 @@ class Errors
         #Determine page link
         $page = self::getPage();
         #Generate message
-        $message = \get_class($error).' Exception:'."\r\n\t".
+        $message = '['.date('c').'] '.\get_class($error).' Exception:'."\r\n\t".
             'Page: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
@@ -79,7 +79,7 @@ class Errors
     {
         file_put_contents(
             Config::$workDir.'/logs/php.log',
-            $type.':'."\r\n\t".
+            '['.date('c').'] '.$type.':'."\r\n\t".
             'Page: '.self::getPage()."\r\n\t".
             'File: '.$file."\r\n\t".
             'Line: '.$line."\r\n\t".
