@@ -375,7 +375,7 @@ class Character extends Entity
             return true;
         } catch(\Exception $e) {
             Errors::error_log($e, 'characterid: '.$this->id);
-            return $e->getMessage();
+            return $e->getMessage()."\n".$e->getTraceAsString();
         }
     }
     

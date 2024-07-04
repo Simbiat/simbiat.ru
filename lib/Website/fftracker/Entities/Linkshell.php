@@ -193,7 +193,7 @@ class Linkshell extends Entity
             return true;
         } catch(\Exception $e) {
             Errors::error_log($e, 'linkshellid: '.$this->id);
-            return $e->getMessage();
+            return $e->getMessage()."\n".$e->getTraceAsString();
         }
     }
 
