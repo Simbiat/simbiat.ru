@@ -34,8 +34,8 @@ class Errors
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
             $error->getMessage()."\r\n\t".
-            $error->getTraceAsString().
-            (empty($extra) ? '' : "\r\n\t".'Extra: '.$extra);
+            $error->getTraceAsString()."\r\n"
+            (empty($extra) ? '' : "\r\n\t".'Extra: '.$extra."\r\n");
         #Write to log
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
@@ -83,7 +83,7 @@ class Errors
             'Page: '.self::getPage()."\r\n\t".
             'File: '.$file."\r\n\t".
             'Line: '.$line."\r\n\t".
-            $message,
+            $message."\r\n",
             FILE_APPEND);
     }
     
