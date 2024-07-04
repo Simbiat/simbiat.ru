@@ -1,9 +1,8 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website;
 
-use Simbiat\Website\Config;
-use Simbiat\Website\Curl;
 
 class Images
 {
@@ -11,22 +10,24 @@ class Images
     public static function download(string $from, string $to, bool $convert = true): string|false
     {
         #Download to temp
-        $temp = (new Curl)->getFile($from);
+        $temp = (new Curl())->getFile($from);
         if ($temp === false) {
             return false;
         }
-        #Create directory if missing and create it recursively
-        if (!is_dir(dirname($to)) && !mkdir(dirname($to), recursive: true) && !is_dir(dirname($to))) {
-            return false;
-        }
-        #Move file
-        rename($temp['server_path'].'/'.$temp['server_name'], $to);
-        if (is_file($to)) {
-            if ($convert) {
-                #Convert to WebP
-                return self::toWebP($to);
+        if (is_file($temp['server_path'].'/'.$temp['server_name'])) {
+            #Create directory if missing and create it recursively
+            if (!is_dir(dirname($to)) && !mkdir(dirname($to), recursive: true) && !is_dir(dirname($to))) {
+                return false;
             }
-            return $to;
+            #Move file
+            rename($temp['server_path'].'/'.$temp['server_name'], $to);
+            if (is_file($to)) {
+                if ($convert) {
+                    #Convert to WebP
+                    return self::toWebP($to);
+                }
+                return $to;
+            }
         }
         return false;
     }
@@ -160,11 +161,16 @@ class Images
             return false;
         }
         while (!$f->eof()) {
-            $bytes =  $f->fread(4);
+            $bytes = $f->fread(4);
             if (strlen($bytes) < 4) {
                 return false;
             }
-            $length = unpack('N', $bytes)[1];
+            $length = unpack('N', $bytes);
+            if ($length) {
+                $length = $length[1];
+            } else {
+                $length = 0;
+            }
             $chunkName = $f->fread(4);
             switch ($chunkName) {
                 case 'acTL':
