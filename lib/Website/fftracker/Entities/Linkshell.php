@@ -104,7 +104,7 @@ class Linkshell extends Entity
     }
 
     #Function to update the entity
-    protected function updateDB(bool $manual = false): string|bool
+    protected function updateDB(bool $manual = false): bool
     {
         try {
             #Main query to insert or update a Linkshell
@@ -193,7 +193,7 @@ class Linkshell extends Entity
             return true;
         } catch(\Exception $e) {
             Errors::error_log($e, 'linkshellid: '.$this->id);
-            return $e->getMessage()."\n".$e->getTraceAsString();
+            return false;
         }
     }
 

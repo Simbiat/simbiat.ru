@@ -36,7 +36,7 @@ class Router extends \Simbiat\Website\Abstracts\Router
                     try {
                         $output = EnvironmentGenerator::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
                     } catch (\Throwable $exception) {
-                        (new Errors)->error_log($exception);
+                        Errors::error_log($exception);
                         $output = 'Twig failure';
                     }
                     Common::zEcho($output, 'live');

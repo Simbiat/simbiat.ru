@@ -1,18 +1,35 @@
 <?php
-declare(strict_types=1);
-namespace Simbiat\Website;
+declare(strict_types = 1);
 
-use Simbiat\Website\HomePage;
+namespace Simbiat\Website;
 
 class Errors
 {
+    public const array phpErrorTypes = [
+        E_ERROR => 'PHP Error',
+        E_WARNING => 'PHP Warning',
+        E_PARSE => 'PHP Parsing Error',
+        E_NOTICE => 'PHP Notice',
+        E_CORE_ERROR => 'PHP Core Error',
+        E_CORE_WARNING => 'PHP Core Warning',
+        E_COMPILE_ERROR => 'PHP Compile Error',
+        E_COMPILE_WARNING => 'PHP Compile Warning',
+        E_USER_ERROR => 'PHP User Error',
+        E_USER_WARNING => 'PHP User Warning',
+        E_USER_NOTICE => 'PHP User Notice',
+        E_STRICT => 'PHP Strict Error',
+        E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
+        E_DEPRECATED => 'PHP Deprecation Notice',
+        E_USER_DEPRECATED => 'PHP User Deprecation Notice',
+    ];
+    
     #Helper function to log errors with identifying the page
-    public static final function error_log(\Throwable $error, string $extra = '', bool $debug = false): void
+    final public static function error_log(\Throwable $error, string $extra = '', bool $debug = false): false
     {
         #Determine page link
         $page = self::getPage();
         #Generate message
-        $message = get_class($error).' Exception:'."\r\n\t".
+        $message = \get_class($error).' Exception:'."\r\n\t".
             'Page: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
@@ -23,37 +40,17 @@ class Errors
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
             exit;
-        } else {
-            error_log($message);
         }
+        file_put_contents(Config::$workDir.'/logs/php-'.date('Y.m.d').'.log', $message, FILE_APPEND);
+        return false;
     }
-
-    public static final function error_handler(int $level, string $message, string $file, int $line): bool
+    
+    final public static function error_handler(int $level, string $message, string $file, int $line): bool
     {
         #Checking if @ was used to suppress error reporting
         if (!(error_reporting() & $level)) {
             return false;
         }
-        #Determine page link
-        $page = self::getPage();
-        #Determine type of error
-        $type = match($level) {
-            E_ERROR => 'PHP Error',
-            E_WARNING => 'PHP Warning',
-            E_PARSE => 'PHP Parsing Error',
-            E_NOTICE => 'PHP Notice',
-            E_CORE_ERROR => 'PHP Core Error',
-            E_CORE_WARNING => 'PHP Core Warning',
-            E_COMPILE_ERROR => 'PHP Compile Error',
-            E_COMPILE_WARNING => 'PHP Compile Warning',
-            E_USER_ERROR => 'PHP User Error',
-            E_USER_WARNING => 'PHP User Warning',
-            E_USER_NOTICE => 'PHP User Notice',
-            E_STRICT => 'PHP Strict Error',
-            E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
-            E_DEPRECATED => 'PHP Deprecation Notice',
-            E_USER_DEPRECATED => 'PHP User Deprecation Notice',
-        };
         #Excluding some warnings from processing
         if (
             #Exclude Twig cache
@@ -63,42 +60,41 @@ class Errors
         ) {
             return false;
         }
-        error_log($type.':'."\r\n\t".
-            'Page: '.$page."\r\n\t".
-            'File: '.$file."\r\n\t".
-            'Line: '.$line."\r\n\t".
-            $message);
+        self::write(self::phpErrorTypes[$level], $file, $line, $message);
         return true;
     }
-
-    public static final function shutdown(): void
+    
+    final public static function shutdown(): void
     {
         #Get error
         $error = error_get_last();
-        if (!empty($error)) {
-            #Log only time and memory exhaustion
-            if ($error['type'] === E_ERROR && preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
-                #Determine page link
-                $page = self::getPage();
-                error_log($error['type'] . ':' . "\r\n\t" .
-                    'Page: ' . $page . "\r\n\t" .
-                    'File: ' . $error['file'] . "\r\n\t" .
-                    'Line: ' . $error['line'] . "\r\n\t" .
-                    $error['message']);
-            }
+        #Log only time and memory exhaustion to avoid duplicates
+        if (!empty($error) && $error['type'] === E_ERROR && preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
+            #Determine page link
+            self::write(self::phpErrorTypes[$error['type']], $error['file'], $error['line'], $error['message']);
         }
     }
-
+    
+    private static function write(string $type, string $file, string|int $line, string $message): void
+    {
+        file_put_contents(
+            Config::$workDir.'/logs/php-'.date('Y.m.d').'.log',
+            $type.':'."\r\n\t".
+            'Page: '.self::getPage()."\r\n\t".
+            'File: '.$file."\r\n\t".
+            'Line: '.$line."\r\n\t".
+            $message,
+            FILE_APPEND);
+    }
+    
     private static function getPage(): string
     {
         if (HomePage::$CLI) {
             $page = 'CLI';
+        } elseif (empty($_SERVER['REQUEST_URI'])) {
+            $page = 'index.php';
         } else {
-            if (empty($_SERVER['REQUEST_URI'])) {
-                $page = 'index.php';
-            } else {
-                $page = $_SERVER['REQUEST_URI'];
-            }
+            $page = $_SERVER['REQUEST_URI'];
         }
         return $page;
     }

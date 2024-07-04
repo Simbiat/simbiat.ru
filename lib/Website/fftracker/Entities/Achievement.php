@@ -31,7 +31,7 @@ class Achievement extends Entity
     protected function getFromDB(): array
     {
         #Get general information
-        $data = HomePage::$dbController->selectRow('SELECT *, (SELECT COUNT(*) FROM `ffxiv__character_achievement` WHERE `ffxiv__character_achievement`.`achievementid` = `ffxiv__achievement`.`achievementid`) as `count` FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`achievementid` = :id', [':id'=>$this->id]);
+        $data = HomePage::$dbController->selectRow('SELECT *, (SELECT COUNT(*) as `count` FROM `ffxiv__character_achievement` WHERE `ffxiv__character_achievement`.`achievementid` = `ffxiv__achievement`.`achievementid`) as `count` FROM `ffxiv__achievement` WHERE `ffxiv__achievement`.`achievementid` = :id', [':id'=>$this->id]);
         #Return empty, if nothing was found
         if (empty($data)) {
             return [];
@@ -125,7 +125,7 @@ class Achievement extends Entity
     }
 
     #Function to update the entity
-    protected function updateDB(): string|bool
+    protected function updateDB(): bool
     {
         try {
             #Prepare bindings for actual update
@@ -183,7 +183,7 @@ class Achievement extends Entity
             return HomePage::$dbController->query('INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `howto`=:howto, `title`=:title, `item`=:item, `itemicon`=:itemicon, `itemid`=:itemid, `dbid`=:dbid ON DUPLICATE KEY UPDATE `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points, `category`=:category, `subcategory`=:subcategory, `howto`=:howto, `title`=:title, `item`=:item, `itemicon`=:itemicon, `itemid`=:itemid, `dbid`=:dbid, `updated`=CURRENT_TIMESTAMP()', $bindings);
         } catch(\Exception $e) {
             Errors::error_log($e, 'achievementid: '.$this->id);
-            return $e->getMessage()."\n".$e->getTraceAsString();
+            return false;
         }
     }
     

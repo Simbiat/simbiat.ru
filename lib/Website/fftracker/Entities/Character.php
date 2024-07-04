@@ -5,7 +5,6 @@ namespace Simbiat\Website\fftracker\Entities;
 use Simbiat\Website\Config;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Website\Errors;
-use Simbiat\Website\fftracker\Entities\PvPTeam;
 use Simbiat\Website\fftracker\Entity;
 use Simbiat\Website\HomePage;
 use Simbiat\Website\Images;
@@ -13,7 +12,6 @@ use Simbiat\Lodestone;
 use Simbiat\Website\Sanitization;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\User;
-use Simbiat\Website\fftracker\Entities\FreeCompany;
 
 class Character extends Entity
 {
@@ -61,7 +59,7 @@ class Character extends Entity
         #Get jobs
         $data['jobs'] = HomePage::$dbController->selectAll('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`jobid`=`ffxiv__jobs`.`jobid` WHERE `ffxiv__character_jobs`.`characterid`=:id ORDER BY `name`;', [':id'=>$this->id]);
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
-        $data['oldNames'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldNames'] = HomePage::$dbController->count('SELECT COUNT(*) as `count` FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get previous known incarnations (combination of gender and race/clan)
         $data['incarnations'] = HomePage::$dbController->selectAll('SELECT `genderid`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clanid` = `ffxiv__clan`.`clanid` WHERE `ffxiv__character_clans`.`characterid`=:id AND (`ffxiv__character_clans`.`clanid`!=:clanid AND `ffxiv__character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id'=>$this->id, ':clanid'=>$data['clanid'], ':genderid'=>$data['genderid']]);
         #Get old servers
@@ -182,7 +180,7 @@ class Character extends Entity
     }
 
     #Function to update the entity
-    protected function updateDB(bool $manual = false): string|bool
+    protected function updateDB(bool $manual = false): bool
     {
         try {
             #If character on Lodestone is not registered in Free Company or PvP Team, add their IDs as NULL for consistency
@@ -375,7 +373,7 @@ class Character extends Entity
             return true;
         } catch(\Exception $e) {
             Errors::error_log($e, 'characterid: '.$this->id);
-            return $e->getMessage()."\n".$e->getTraceAsString();
+            return false;
         }
     }
     

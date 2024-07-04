@@ -28,7 +28,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     abstract protected function process(array $fromDB): void;
 
     #Function to update the entity
-    abstract protected function updateDB(): string|bool;
+    abstract protected function updateDB(): bool;
 
     #Update the entity
     public function update(bool $allowSleep = false): string|bool

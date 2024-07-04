@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Simbiat\Website\fftracker\Entities;
 
-use Simbiat\Cron\Agent;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Website\Errors;
 use Simbiat\Website\fftracker\Entity;
@@ -156,7 +155,7 @@ class FreeCompany extends Entity
     }
 
     #Function to update the entity
-    protected function updateDB(bool $manual = false): string|bool
+    protected function updateDB(bool $manual = false): bool
     {
         try {
             #Download crest components
@@ -326,7 +325,7 @@ class FreeCompany extends Entity
             return true;
         } catch(\Exception $e) {
             Errors::error_log($e, 'freecompanyid: '.$this->id);
-            return $e->getMessage()."\n".$e->getTraceAsString();
+            return false;
         }
     }
 
