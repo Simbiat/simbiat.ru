@@ -330,8 +330,12 @@ class Character extends Entity
             if (!empty($this->lodestone['achievements']) && is_array($this->lodestone['achievements'])) {
                 foreach ($this->lodestone['achievements'] as $achievementid=>$item) {
                     $icon = self::removeLodestoneDomain($item['icon']);
-                    #Download icon
-                    $webp = Images::download($item['icon'], Config::$icons.$icon);
+                    #Download icon, if it's not already present
+                    if (is_file(str_replace('.png', '.webp', Config::$icons.$icon))) {
+                        $webp = true;
+                    } else {
+                        $webp = Images::download($item['icon'], Config::$icons.$icon);
+                    }
                     if ($webp) {
                         $icon = str_replace('.png', '.webp', $icon);
                         $queries[] = [
