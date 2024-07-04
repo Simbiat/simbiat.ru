@@ -41,7 +41,7 @@ class Errors
             echo '<pre>'.$message.'</pre>';
             exit;
         }
-        file_put_contents(Config::$workDir.'/logs/php-'.date('Y.m.d').'.log', $message, FILE_APPEND);
+        file_put_contents(Config::$workDir.'/logs/php.log', $message, FILE_APPEND);
         return false;
     }
     
@@ -78,7 +78,7 @@ class Errors
     private static function write(string $type, string $file, string|int $line, string $message): void
     {
         file_put_contents(
-            Config::$workDir.'/logs/php-'.date('Y.m.d').'.log',
+            Config::$workDir.'/logs/php.log',
             $type.':'."\r\n\t".
             'Page: '.self::getPage()."\r\n\t".
             'File: '.$file."\r\n\t".
