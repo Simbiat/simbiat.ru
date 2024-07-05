@@ -25,7 +25,7 @@
                 "../../vendor/tinymce/tinymce/*"
             ],
             "/assets/controllers/*": [
-                "/public/assets/controllers/*"
+                "../public/assets/controllers/*"
             ],
             "*": [
                 "/js/Pages/*",
@@ -37,8 +37,8 @@
         "rootDir": "../../",
         "sourceRoot": "/",
         "removeComments": true,
-        "outDir": "../../public/assets/",
-        "outFile": "../../public/assets/app.js",
+        "outDir": "../../../public/assets/",
+        "outFile": "../../../public/assets/app.js",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
@@ -54,8 +54,8 @@
         ]
     },
     "files": [
-        "../../vendor/tinymce/tinymce/tinymce.min.js",
-        "../../vendor/tinymce/tinymce/tinymce.d.ts"
+        "../../../vendor/tinymce/tinymce/tinymce.min.js",
+        "../../../vendor/tinymce/tinymce/tinymce.d.ts"
     ],
     //Include only .ts files in the same dir
     "include": [

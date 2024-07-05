@@ -338,6 +338,34 @@
                                                 }
                                             ]
                                         },
+                                        //Old "static" assets
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "name": "oldStatic",
+                                                        "pattern": "/static/(.*)"
+                                                    },
+                                                    "file": {
+                                                        "root": "/app",
+                                                        "split_path": [],
+                                                        "try_files": [
+                                                            "/public/static/{http.regexp.oldStatic.1}",
+                                                            "/public/{http.regexp.oldStatic.1}"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "{http.matchers.file.relative}"
+                                                },
+                                                {
+                                                    "handler": "file_server"
+                                                }
+                                            ]
+                                        },
                                         //Merged crests
                                         {
                                             "match": [
@@ -17983,7 +18011,7 @@
                                                             "handle": [
                                                                 {
                                                                     "handler": "vars",
-                                                                    "root": "/app"
+                                                                    "root": "/app/build"
                                                                 }
                                                             ]
                                                         },

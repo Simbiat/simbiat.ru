@@ -23,7 +23,7 @@
         "inlineSources": true,
         "sourceRoot": "/js/Pages/",
         "removeComments": true,
-        "outDir": "../../public/assets/controllers/",
+        "outDir": "../../../public/assets/controllers/",
         "explainFiles": true,
         "listFiles": true,
         //Other settings

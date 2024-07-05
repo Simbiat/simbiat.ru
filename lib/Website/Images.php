@@ -6,7 +6,7 @@ namespace Simbiat\Website;
 
 class Images
 {
-    #Function to download avatar
+    #Function to download images
     public static function download(string $from, string $to, bool $convert = true): string|false
     {
         #Download to temp

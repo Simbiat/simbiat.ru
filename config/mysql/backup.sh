@@ -7,7 +7,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   logFile=/usr/local/logs/backup-$currentDate.log
   physBackup=/usr/local/backups/physical
   logicBackup=/usr/local/backups
-  tablesOrder=$(cat /usr/local/DDL/00-recommended_table_order.txt)
+  tablesOrder=$(cat /usr/local/build/DDL/00-recommended_table_order.txt)
   dumpSetting="--all-tablespaces --opt --add-drop-database --default-character-set=utf8mb4 --flush-privileges --flush-logs --tz-utc --quote-names --single-transaction --insert-ignore"
   zipSettings="-aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p${BACKUP_PASSWORD}"
 

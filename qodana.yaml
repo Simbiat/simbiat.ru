@@ -22,6 +22,6 @@ exclude:
       - public
       - data
       - config
-      - DDL
-      - dbhelper
+      - build/DDL
+      - build/dbhelper
       - symfony

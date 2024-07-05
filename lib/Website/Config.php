@@ -81,7 +81,7 @@ final class Config
         self::$imgDir = self::$workDir.'/public/assets/images';
         self::$uploaded = self::$workDir.'/data/uploaded';
         self::$uploadedImg = self::$workDir.'/data/uploadedimages';
-        self::$DDLDir = self::$workDir.'/DDL';
+        self::$DDLDir = self::$workDir.'/build/DDL';
         self::$crestsComponents = self::$imgDir.'/fftracker/crests-components/';
         self::$mergedCrestsCache = self::$workDir.'/data/mergedcrests/';
         self::$icons = self::$imgDir.'/fftracker/icons/';

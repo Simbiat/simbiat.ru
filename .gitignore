@@ -120,6 +120,7 @@ fabric.properties
 # Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
 # Useful .gitignore templates: https://github.com/github/gitignore
 node_modules
+/build/node_modules
 dist
 .cache
 
@@ -133,13 +134,11 @@ dist
 #/.idea/
 
 # PHP My Admin folder
-/dbhelper/
+/build/dbhelper/
 # DDLs for PHP My Admin
-/DDL/pma__*.sql
-# Legacy script for doing updates
-/EngineUpdate.php
+/build/DDL/pma__*.sql
 # File to store SQL changes yet to be applied to PROD
-/toupdateonprod.sql
+/build/toupdateonprod.sql
 #Logs
 /logs
 #Composer
