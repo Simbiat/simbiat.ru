@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+/**
+ * Custom PHP error handler
+ */
 class Errors
 {
     public const array phpErrorTypes = [
@@ -23,18 +26,32 @@ class Errors
         E_USER_DEPRECATED => 'PHP User Deprecation Notice',
     ];
     
-    #Helper function to log errors with identifying the page
-    final public static function error_log(\Throwable $error, string $extra = '', bool $debug = false): false
+    /**
+     * Helper function to log errors with identifying the page
+     * @param \Throwable $error Error object
+     * @param mixed      $extra Extra data to store in log
+     * @param bool       $debug If set to `true` will output the error, instead of writing to file
+     *
+     * @return false
+     */
+    final public static function error_log(\Throwable $error, mixed $extra = '', bool $debug = false): false
     {
         #Determine page link
         $page = self::getPage();
+        if (!\is_string($extra)) {
+            try {
+                $extra = json_encode($extra, JSON_THROW_ON_ERROR);
+            } catch (\Exception) {
+                $extra = '';
+            }
+        }
         #Generate message
         $message = '['.date('c').'] '.\get_class($error).' Exception:'."\r\n\t".
             'Page: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
             $error->getMessage()."\r\n\t".
-            $error->getTraceAsString()."\r\n"
+            $error->getTraceAsString()."\r\n".
             (empty($extra) ? '' : "\r\n\t".'Extra: '.$extra."\r\n");
         #Write to log
         if ($debug) {
@@ -45,6 +62,15 @@ class Errors
         return false;
     }
     
+    /**
+     * Actual custom error handler
+     * @param int    $level   Error level
+     * @param string $message Error message
+     * @param string $file    File, where error happened
+     * @param int    $line    Line in file, where error happened
+     *
+     * @return bool
+     */
     final public static function error_handler(int $level, string $message, string $file, int $line): bool
     {
         #Checking if @ was used to suppress error reporting
@@ -64,6 +90,10 @@ class Errors
         return true;
     }
     
+    /**
+     * Custom shutdown function
+     * @return void
+     */
     final public static function shutdown(): void
     {
         #Get error
@@ -75,6 +105,15 @@ class Errors
         }
     }
     
+    /**
+     * Helper to write errors in log
+     * @param string     $type    Error type
+     * @param string     $file    File, where the error happened
+     * @param string|int $line    Line in file, where error happened
+     * @param string     $message Error message
+     *
+     * @return void
+     */
     private static function write(string $type, string $file, string|int $line, string $message): void
     {
         file_put_contents(
@@ -87,6 +126,10 @@ class Errors
             FILE_APPEND);
     }
     
+    /**
+     * Helper to attempt to get URL, which was used, when error occurred
+     * @return string
+     */
     private static function getPage(): string
     {
         if (HomePage::$CLI) {
