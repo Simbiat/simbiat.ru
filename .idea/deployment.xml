@@ -22,14 +22,12 @@
             <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
             <excludedPath local="true" path="$PROJECT_DIR$/.gitmodules" />
             <excludedPath local="true" path="$PROJECT_DIR$/LICENSE" />
-            <excludedPath local="true" path="$PROJECT_DIR$/package-lock.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/qodana.yaml" />
             <excludedPath local="true" path="$PROJECT_DIR$/README.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.lock" />
-            <excludedPath local="true" path="$PROJECT_DIR$/DDL" />
+            <excludedPath local="true" path="$PROJECT_DIR$/build" />
           </excludedPaths>
         </serverdata>
       </paths>
