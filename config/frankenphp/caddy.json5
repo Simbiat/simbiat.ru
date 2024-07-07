@@ -94,13 +94,13 @@
                     "strict_sni_host": true,
                     "routes": [
                         //Crowdsec
-                        {
-                            "handle": [
-                                {
-                                    "handler": "crowdsec"
-                                }
-                            ]
-                        },
+                        //{
+                        //    "handle": [
+                        //        {
+                        //            "handler": "crowdsec"
+                        //        }
+                        //    ]
+                        //},
                         //Coraza WAF
                         {
                             "handle": [
