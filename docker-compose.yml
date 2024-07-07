@@ -11,11 +11,16 @@ networks:
 services:
   frankenphp:
     container_name: frankenphp
-    build: ./config/frankenphp
+    build:
+      context: ./config/frankenphp
+      dockerfile: Dockerfile
+      args:
+        WEB_SERVER_TEST: ${WEB_SERVER_TEST}
     restart: unless-stopped
     env_file: ./config/frankenphp/caddy.env
     environment:
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+      CROWDSEC_API_KEY: ${CROWDSEC_API_KEY}
     networks:
       - webserver
     ports:
@@ -24,10 +29,14 @@ services:
       - 443:443/udp # HTTP/3
     volumes:
       - ./:/app:rw
-      - ./config/frankenphp:/usr/local/php/config:ro
+      - ./config/frankenphp:/usr/local/php/config:rw
       - ${CADDY_DATA_DIR}:/data:rw
       - ${CADDY_CONFIG_DIR}:/config:rw
+    security_opt:
+      - no-new-privileges=true
     depends_on:
+      crowdsec:
+        condition: service_healthy
       local.simbiat.dev:
         condition: service_healthy
     links:
@@ -40,6 +49,34 @@ services:
                   crontab /etc/cron.d/php.cron &&
                   cron &&
                   docker-php-entrypoint --config /usr/local/php/config/caddy.json5 --adapter json5"
+
+  crowdsec:
+    container_name: crowdsec
+    image: crowdsecurity/crowdsec:latest
+    restart: unless-stopped
+    environment:
+      GID: 1000
+      COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist
+      BOUNCER_KEY_CADDY: ${CROWDSEC_API_KEY}
+    networks:
+      - webserver
+    volumes:
+      - ${CROWDSEC_DATA_DIR}:/var/lib/crowdsec/data/:rw
+      - ./config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
+      - ./config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
+      #Required to read syslog. This will be valid only on UNIX
+      - /var/log/:/var/log/:ro
+      #Caddy logs folder is RW, because we're also writing Crowdsec logs here
+      - ./logs:/usr/local/logs/:rw
+    security_opt:
+      - no-new-privileges=true
+    healthcheck:
+      test: [ "CMD", "cscli", "version" ]
+      start_period: 120s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   local.simbiat.dev:
     container_name: mariadb
@@ -59,10 +96,12 @@ services:
       - ./logs:/usr/local/logs:rw
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
       - ./DDL:/usr/local/DDL:ro
+    security_opt:
+      - no-new-privileges=true
     healthcheck:
       #`--connect` is removed due to known bug
       test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade" ]
-      start_period: 10s
+      start_period: 120s
       interval: 10s
       timeout: 5s
       retries: 3

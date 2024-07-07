@@ -1,4 +1,5 @@
 {
+    //Logs settings
     "logging": {
         "logs": {
             "default": {
@@ -8,13 +9,38 @@
                     "roll": true,
                     "roll_size_mb": 10,
                     "roll_keep": 10,
-                    "roll_keep_days": 30
+                    "roll_keep_days": 30,
                 },
-                "level": "WARN"
+                "level": "WARN",
+                "exclude": [
+                    "http.log.access"
+                ]
+            },
+            "access_log": {
+                "writer": {
+                    "filename": "/app/logs/access.log",
+                    "output": "file",
+                    "roll": true,
+                    "roll_size_mb": 10,
+                    "roll_keep": 10,
+                    "roll_keep_days": 30,
+                },
+                "level": "DEBUG",
+                "include": [
+                    "http.log.access"
+                ]
             }
         }
     },
     "apps": {
+        "crowdsec": {
+            "api_key": "${CROWDSEC_API_KEY}",
+            "api_url": "http://crowdsec:8080/",
+            "ticker_interval": "10s",
+            "enable_streaming": true,
+            "enable_hard_fails": false,
+        },
+        //Certificates settings
         "tls": {
             "certificates": {
                 "automate": [
@@ -58,11 +84,34 @@
                         ":80",
                         ":443"
                     ],
+                    //Enable access logs for Crowdsec
+                    "logs": {
+                        "default_logger_name": "access_log"
+                    },
                     "read_timeout": "10s",
                     "read_header_timeout": "10s",
                     "write_timeout": "30m",
                     "strict_sni_host": true,
                     "routes": [
+                        //Crowdsec
+                        {
+                            "handle": [
+                                {
+                                    "handler": "crowdsec"
+                                }
+                            ]
+                        },
+                        Coraza WAF
+                        {
+                            "handle": [
+                                {
+                                    "load_owasp_crs": true,
+                                    "directives": "\r\n\t\tInclude @coraza.conf-recommended\r\n\t\tInclude @crs-setup.conf.example\r\n\t\tInclude @owasp_crs/*.conf\r\n\t\tSecRuleEngine On\r\n\t\t",
+                                    "handler": "waf",
+                                    "include": []
+                                }
+                            ]
+                        },
                         //Force WWW if missing
                         {
                             "match": [

@@ -1,5 +1,5 @@
 # Based on https://frankenphp.dev/docs/docker/
-FROM dunglas/frankenphp:1.2.1-builder-php8.3.8-bookworm AS builder
+FROM dunglas/frankenphp:1.2.1-builder-php8.3.9-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -15,9 +15,11 @@ RUN xcaddy build \
     --with github.com/dunglas/mercure/caddy \
     --with github.com/dunglas/vulcain/caddy \
     # Add extra Caddy modules here
-    --with github.com/caddyserver/json5-adapter
+    --with github.com/caddyserver/json5-adapter \
+    --with github.com/corazawaf/coraza-caddy/v2 \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/http
 
-FROM dunglas/frankenphp:1.2.1-php8.3.8-bookworm AS runner
+FROM dunglas/frankenphp:1.2.1-php8.3.9-bookworm AS runner
 
 # Replace the official binary by the one contained your custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
@@ -38,8 +40,13 @@ RUN install-php-extensions \
 COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
 RUN composer self-update
 
-# Git and unzip are useful for Composer, cron required for crontab, libnss3-tools is recommended for Caddy (looks like)
-RUN apt-get -y update&&apt-get -y upgrade&&apt-get -y install git-all unzip cron libnss3-tools&&apt-get -y autoremove
+# cron required for crontab, libnss3-tools is recommended for Caddy (looks like)
+RUN apt-get -y update&&apt-get -y upgrade&&apt-get -y install cron libnss3-tools&&apt-get -y autoremove
+# Install Git and unzip on test environment (for composer)
+ARG WEB_SERVER_TEST
+RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
+    apt-get install -y unzip git-all; \
+    fi
 
 # Use custom caddy config
 CMD ["--config", "/config/config.json5", "--adapter", "json5"]
