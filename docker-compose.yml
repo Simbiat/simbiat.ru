@@ -20,7 +20,7 @@ services:
     env_file: ./config/frankenphp/caddy.env
     environment:
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}
-      CROWDSEC_API_KEY: ${CROWDSEC_API_KEY}
+      CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
     networks:
       webserver:
         ipv4_address: 172.21.0.13
@@ -59,7 +59,8 @@ services:
     environment:
       GID: 1000
       COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist
-      BOUNCER_KEY_CADDY: ${CROWDSEC_API_KEY}
+      BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
+      BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
     networks:
       webserver:
         ipv4_address: 172.21.0.12
