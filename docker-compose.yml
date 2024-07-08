@@ -22,7 +22,8 @@ services:
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}
       CROWDSEC_API_KEY: ${CROWDSEC_API_KEY}
     networks:
-      - webserver
+      webserver:
+        ipv4_address: 172.21.0.13
     ports:
       - 80:80 # HTTP
       - 443:443 # HTTPS
@@ -51,6 +52,7 @@ services:
                   docker-php-entrypoint --config /usr/local/php/config/caddy.json5 --adapter json5"
 
   crowdsec:
+    #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     container_name: crowdsec
     image: crowdsecurity/crowdsec:latest
     restart: unless-stopped
@@ -59,12 +61,16 @@ services:
       COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist
       BOUNCER_KEY_CADDY: ${CROWDSEC_API_KEY}
     networks:
-      - webserver
+      webserver:
+        ipv4_address: 172.21.0.12
+    ports:
+      - "8080:8080"
     volumes:
       - ${CROWDSEC_DATA_DIR}:/var/lib/crowdsec/data/:rw
-      - ./config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
-      - ./config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
-      - ./config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
+      - ./config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:rw
+      - ./config/crowdsec/acquis.d:/etc/crowdsec/acquis.d/:rw
+      - ./config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:rw
+      - ./config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:rw
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -72,7 +78,7 @@ services:
     security_opt:
       - no-new-privileges=true
     healthcheck:
-      test: [ "CMD", "cscli", "version" ]
+      test: [ "CMD", "cscli", "lapi", "status" ]
       start_period: 120s
       interval: 10s
       timeout: 5s
@@ -86,7 +92,8 @@ services:
     environment:
       WEB_SERVER_TEST: "${WEB_SERVER_TEST}"
     networks:
-      - webserver
+      webserver:
+        ipv4_address: 172.21.0.10
     ports:
       - ${MARIADB_PORT}:${MARIADB_PORT}
     volumes:

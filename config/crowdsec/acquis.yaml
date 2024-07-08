@@ -1,15 +1,1 @@
-filenames:
-  - /usr/local/logs/access.log
-labels:
-  type: caddy
----
-filenames:
-  - /usr/local/logs/mariadb.log
-labels:
-  type: mariadb
----
-filenames:
-  - /var/log/auth.log
-  - /var/log/syslog
-labels:
-  type: syslog
+#Empty file to prevent CrowdSec from forcing its own default one

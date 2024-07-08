@@ -1,0 +1,4 @@
+filenames:
+  - /usr/local/logs/mariadb.log
+labels:
+  type: mariadb

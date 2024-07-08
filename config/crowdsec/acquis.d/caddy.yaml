@@ -1,0 +1,4 @@
+filenames:
+  - /usr/local/logs/access.log
+labels:
+  type: caddy
