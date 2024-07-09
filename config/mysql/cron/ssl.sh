@@ -1,8 +1,4 @@
 #!/bin/sh
-
-#Source environments (required for cron)
-. /etc/mysql/conf.d/mariadb.env
-
 #These are meant to be used only for internal communication and by admins with access, so self-signed seem valid
 
 #Get current date

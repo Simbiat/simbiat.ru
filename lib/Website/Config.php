@@ -63,13 +63,13 @@ final class Config
 
     public function __construct()
     {
-        $dotenv = Dotenv::createImmutable('/usr/local/php/config', 'php.env');
+        self::$workDir = '/app';
+        $dotenv = Dotenv::createImmutable(self::$workDir, '.env');
         $dotenv->load();
         $dotenv->required('WEB_SERVER_TEST')->notEmpty();
         #Database settings
         $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_HOST', 'DATABASE_TLS_CA', 'DATABASE_TLS_KEY', 'DATABASE_TLS_CRT', 'SENDGRID_API_KEY'])->notEmpty();
-        $dotenv->required('DATABASE_PORT')->isInteger();
-        self::$workDir = '/app';
+        $dotenv->required('MARIADB_PORT')->isInteger();
         self::$PROD = ($_ENV['WEB_SERVER_TEST'] === 'false');
         self::$http_host = (self::$PROD ? 'www.simbiat.dev' : 'localhost');
         self::$baseUrl = 'https://'.self::$http_host;

@@ -1,7 +1,5 @@
 #!/bin/sh
 
-#Source environments (required for cron)
-. /etc/mysql/conf.d/mariadb.env
 if [ "$WEB_SERVER_TEST" != "true" ]; then
   currentDate=$(date +%Y.%m.%d)
   logFile=/usr/local/logs/backup-$currentDate.log
@@ -9,7 +7,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   logicBackup=/usr/local/backups
   tablesOrder=$(cat /usr/local/build/DDL/00-recommended_table_order.txt)
   dumpSetting="--all-tablespaces --opt --add-drop-database --default-character-set=utf8mb4 --flush-privileges --flush-logs --tz-utc --quote-names --single-transaction --insert-ignore"
-  zipSettings="-aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p${BACKUP_PASSWORD}"
+  zipSettings="-aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p${MARIADB_BACKUP_PASSWORD}"
 
   echo Cleaning files... >> $logFile 2>&1
   rm -rf $logicBackup/*.7z >> $logFile 2>&1

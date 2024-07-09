@@ -149,10 +149,6 @@ dist
 /config/keys/
 /config/Installers
 #Environment variables should not be included
-/config/frankenphp/caddy.env
-/config/frankenphp/php.env
-/config/mysql/mariadb.env
-#Looks like I need it for the sake of variable port for mysql or docker-compose does not pick it up
 /.env
 #Some security settings for MySQL
 /config/mysql/security.cnf
@@ -161,4 +157,4 @@ dist
 #For some reason composer this .htaccess
 /config/caddy/composer/.htaccess
 #CrowdSec credentials
-/config/crowdsec/online_api_credentials.yaml
+/config/crowdsec/yaml/online_api_credentials.yaml

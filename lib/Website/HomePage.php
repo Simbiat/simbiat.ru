@@ -240,7 +240,7 @@ class HomePage
             try {
                 Pool::openConnection(
                     (new Config)
-                        ->setHost($_ENV['DATABASE_HOST'], (int)$_ENV['DATABASE_PORT'])
+                        ->setHost($_ENV['DATABASE_HOST'], (int)$_ENV['MARIADB_PORT'])
                         ->setUser($_ENV['DATABASE_USER'])
                         ->setPassword($_ENV['DATABASE_PASSWORD'])
                         ->setDB($_ENV['DATABASE_NAME'])
