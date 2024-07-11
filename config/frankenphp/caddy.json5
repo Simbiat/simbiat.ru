@@ -103,10 +103,39 @@
                         },
                         //Coraza WAF
                         {
+                            //PHPMyAdmin gets blocked by WAF without this
+                            //It is fine to disable it, since it's launched from localhost on test only
+                            "match": [
+                                {
+                                    "not": [
+                                        {
+                                            "path": [
+                                                "/dbhelper*"
+                                            ],
+                                            "host": [
+                                                "localhost"
+                                            ],
+                                            "vars": {
+                                                "{env.WEB_SERVER_TEST}": [
+                                                    "true"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
                             "handle": [
                                 {
                                     "load_owasp_crs": true,
-                                    "directives": "\r\n\t\tInclude @coraza.conf-recommended\r\n\t\tInclude @crs-setup.conf.example\r\n\t\tInclude @owasp_crs/*.conf\r\n\t\tSecRuleEngine On\r\n\t\t",
+                                    "directives": "\
+                                        Include @coraza.conf-recommended\n\
+                                        Include /usr/local/php/config/crs-setup.conf\n\
+                                        Include @owasp_crs/*.conf\n\
+                                        # Allow HTML when submitting new posts\n\
+                                        SecRuleUpdateTargetById 941160 \"!ARGS:postForm[text]\"\n\
+                                        SecRuleUpdateTargetById 942100 \"!ARGS:postForm[text]\"\n\
+                                        SecRuleEngine On\n\
+                                    ",
                                     "handler": "waf",
                                     "include": []
                                 }
@@ -190,7 +219,12 @@
                                                             ],
                                                             "host": [
                                                                 "localhost"
-                                                            ]
+                                                            ],
+                                                            "vars": {
+                                                                "{env.WEB_SERVER_TEST}": [
+                                                                    "true"
+                                                                ]
+                                                            }
                                                         }
                                                     ]
                                                 }
@@ -18036,7 +18070,7 @@
                                         }
                                     ]
                                 },
-                                //PHPMyAdmin (allowed only on localhost (in test environment)
+                                //PHPMyAdmin (allowed only on localhost in test environment)
                                 {
                                     "handler": "subroute",
                                     "routes": [
@@ -18048,7 +18082,12 @@
                                                     ],
                                                     "host": [
                                                         "localhost"
-                                                    ]
+                                                    ],
+                                                    "vars": {
+                                                        "{env.WEB_SERVER_TEST}": [
+                                                            "true"
+                                                        ]
+                                                    }
                                                 }
                                             ],
                                             "terminal": true,
@@ -18450,7 +18489,8 @@
                                                     {
                                                         "handler": "php",
                                                         "env": {
-                                                            "CADDY_HTTP_ERROR": "{http.error.status_code}"
+                                                            "CADDY_HTTP_ERROR": "{http.error.status_code}",
+                                                            "CADDY_HTTP_ERROR_MSG": "{http.error.message}"
                                                         },
                                                         "split_path": [
                                                             ".php"
