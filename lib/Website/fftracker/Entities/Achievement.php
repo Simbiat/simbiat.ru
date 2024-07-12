@@ -68,7 +68,7 @@ class Achievement extends Entity
             #Take a pause if we were throttled, and pause is allowed
             if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
                 if ($allowSleep) {
-                    sleep(300);
+                    sleep(60);
                 }
                 return 'Request throttled by Lodestone';
             }
