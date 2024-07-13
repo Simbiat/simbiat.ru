@@ -549,10 +549,6 @@ class User extends Entity
             }
             #Generate cookie password
             $pass = bin2hex(random_bytes(128));
-            file_put_contents(
-                Config::$workDir.'/logs/php.log',
-                '['.date('c').'] before saving to database '.$pass."\t".hash('sha3-512', $pass)."\r\n",
-                FILE_APPEND);
             #Write cookie data to DB
             if (HomePage::$dbController === null) {
                 #If we can't write to DB for some reason - do not share any data with client
@@ -578,10 +574,6 @@ class User extends Entity
             #Set cookie value
             $value = json_encode(['cookieid' => Security::encrypt($cookieId), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
             $result = setcookie('rememberme_'.Config::$http_host, $value, $options);
-            file_put_contents(
-                Config::$workDir.'/logs/php.log',
-                '['.date('c').'] cookie set result: '.$result.' cookie value '.$value."\r\n",
-                FILE_APPEND);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             #Do nothing, since not critical

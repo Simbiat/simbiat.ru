@@ -20,8 +20,16 @@ class Security
     {
         return password_hash($password, PASSWORD_ARGON2ID, Website\Config::$argonSettings);
     }
-
-    #Function to encrypt stuff
+    
+    
+    /**
+     * Function to encrypt stuff.
+     *
+     * **DO NOT use for permanent data storage**
+     * @param string $data
+     *
+     * @return string
+     */
     public static function encrypt(#[\SensitiveParameter] string $data): string
     {
         if (empty($data)) {

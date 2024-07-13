@@ -361,10 +361,6 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     #No cookie found or no password present
                     return [];
                 }
-                file_put_contents(
-                    Config::$workDir.'/logs/php.log',
-                    '['.date('c').'] when checking cookie '.$data['pass']."\t".$savedData['validator']."\r\n",
-                    FILE_APPEND);
                 #Validate cookie password
                 if (!password_verify($data['pass'], $savedData['validator'])) {
                     #Wrong password
