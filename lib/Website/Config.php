@@ -32,8 +32,10 @@ final class Config
     public static string $uploaded = '';
     #Path to uploaded images
     public static string $uploadedImg = '';
-    #FOlder to dump DDLs to
+    #Folder to dump DDLs to
     public static string $DDLDir = '';
+    #GeoIP folder
+    public static string $geoip = '';
     #Set of general LINKs to be sent both in HTML and in HEADER
     public static array $links = [];
     #FFTracker directories
@@ -86,6 +88,7 @@ final class Config
         self::$mergedCrestsCache = self::$workDir.'/data/mergedcrests/';
         self::$icons = self::$imgDir.'/fftracker/icons/';
         self::$statistics = self::$workDir.'/data/ffstatistics/';
+        self::$geoip = self::$workDir.'/data/geoip/';
         #Generate Argon settings
         if (empty(self::$argonSettings)) {
             self::$argonSettings = Security::argonCalc();

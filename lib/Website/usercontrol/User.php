@@ -88,11 +88,11 @@ class User extends Entity
         $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
         #Get permissions
         $dbData['permissions'] = $this->getPermissions();
-        if (in_array($this->id, [\Simbiat\Website\Config::userIDs['Unknown user'], \Simbiat\Website\Config::userIDs['System user'], \Simbiat\Website\Config::userIDs['Deleted user']], true)) {
+        if (in_array($this->id, [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) {
             #System users need to be treated as not activated
             $dbData['activated'] = false;
         } else {
-            $dbData['activated'] = !in_array(\Simbiat\Website\Config::groupsIDs['Unverified'], $dbData['groups'], true);
+            $dbData['activated'] = !in_array(Config::groupsIDs['Unverified'], $dbData['groups'], true);
         }
         $dbData['currentAvatar'] = $this->getAvatar();
         return $dbData;
@@ -503,7 +503,7 @@ class User extends Entity
         #Check if password is set (means that user does exist)
         if (empty($credentials['password'])) {
             Security::log('Failed login', 'No user found');
-            return ['http_error' => 403, 'reason' => 'No user found'];
+            return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
         #Check for strikes
         if ($credentials['strikes'] >= 5) {
@@ -513,7 +513,7 @@ class User extends Entity
         #Check the password
         if ($this->setId($credentials['userid'])->passValid($_POST['signinup']['password'], $credentials['password']) === false) {
             Security::log('Failed login', 'Bad password');
-            return ['http_error' => 403, 'reason' => 'Bad password'];
+            return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
         #Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
@@ -549,16 +549,20 @@ class User extends Entity
             }
             #Generate cookie password
             $pass = bin2hex(random_bytes(128));
+            file_put_contents(
+                Config::$workDir.'/logs/php.log',
+                '['.date('c').'] before saving to database '.$pass."\t".hash('sha3-512', $pass)."\r\n",
+                FILE_APPEND);
             #Write cookie data to DB
             if (HomePage::$dbController === null) {
                 #If we can't write to DB for some reason - do not share any data with client
                 return;
             }
-            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [\Simbiat\Website\Config::userIDs['Unknown user'], \Simbiat\Website\Config::userIDs['System user'], \Simbiat\Website\Config::userIDs['Deleted user']], true)) || !empty($this->id))) {
+            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) || !empty($this->id))) {
                 HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,
-                        ':pass' => hash('sha3-512', $pass),
+                        ':pass' => Security::passHash($pass),
                         ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                     ]
                 );
@@ -570,11 +574,16 @@ class User extends Entity
                 return;
             }
             #Set options
-            $options = ['expires' => gmdate('D, d-M-Y H:i:s', time()+60*60*24*30).' GMT', 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
+            $options = ['expires' => time() + 60 * 60 * 24 * 30, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax'];
             #Set cookie value
-            $value = json_encode(['id' => Security::encrypt($cookieId), 'pass' => $pass], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
-            setcookie('rememberme_'.Config::$http_host, $value, $options);
-        } catch (\Throwable) {
+            $value = json_encode(['cookieid' => Security::encrypt($cookieId), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
+            $result = setcookie('rememberme_'.Config::$http_host, $value, $options);
+            file_put_contents(
+                Config::$workDir.'/logs/php.log',
+                '['.date('c').'] cookie set result: '.$result.' cookie value '.$value."\r\n",
+                FILE_APPEND);
+        } catch (\Throwable $e) {
+            Errors::error_log($e);
             #Do nothing, since not critical
         }
     }
@@ -589,7 +598,7 @@ class User extends Entity
         try {
             if (password_verify($password, $hash)) {
                 #Check if it needs rehashing
-                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, \Simbiat\Website\Config::$argonSettings)) {
+                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, Config::$argonSettings)) {
                     #Rehash password and reset strikes (if any)
                     $this->passChange($password);
                 } else {
@@ -704,6 +713,9 @@ class User extends Entity
             $where .= ' AND `talks__threads`.`private`=0';
         }
         $posts = (new Posts($bindings, $where, '`talks__posts`.`created` DESC'))->listEntities();
+        if (!is_array($posts)) {
+            return [];
+        }
         return $posts['entities'];
     }
     
@@ -750,7 +762,7 @@ class User extends Entity
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
         $posts = (new Posts($bindings, '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.$where, '`talks__posts`.`created` DESC'))->listEntities();
-        if (!empty($posts['entities'])) {
+        if (is_array($posts) && !empty($posts['entities'])) {
             #Get like value, for each post, if current user has appropriate permission
             foreach ($posts['entities'] as &$post) {
                 if (!empty($threads[$post['threadid']]['ogimage'])) {
@@ -768,7 +780,7 @@ class User extends Entity
         Security::log('Logout', 'Logout');
         #Remove rememberme cookie
         #From browser
-        setcookie('rememberme_'.Config::$http_host, '', ['expires' => gmdate('D, d-M-Y H:i:s', time()).' GMT', 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict']);
+        setcookie('rememberme_'.Config::$http_host, '', ['expires' => time() - 3600, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
         #From DB
         try {
             if (HomePage::$dbController !== null && !empty($_SESSION['cookieid'])) {
@@ -792,7 +804,7 @@ class User extends Entity
     public function remove(bool $hard = false): bool
     {
         #Check if we are trying to remove one of the system users and prevent that
-        if (in_array($this->id, \Simbiat\Website\Config::userIDs, true)) {
+        if (in_array($this->id, Config::userIDs, true)) {
             return false;
         }
         try {
@@ -805,39 +817,39 @@ class User extends Entity
                 $queries = [
                     [
                         'UPDATE `talks__sections` SET `createdby`=:deleted WHERE `createdby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__sections` SET `updatedby`=:deleted WHERE `updatedby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `createdby`=:deleted WHERE `createdby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `updatedby`=:deleted WHERE `updatedby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `lastpostby`=:deleted WHERE `lastpostby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__posts` SET `createdby`=:deleted WHERE `createdby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__posts` SET `updatedby`=:deleted WHERE `updatedby`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__posts_history` SET `userid`=:deleted WHERE `userid`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `sys__files` SET `userid`=:deleted WHERE `userid`=:userid;',
-                        [':userid' => [$this->id, 'int'], ':deleted' => [\Simbiat\Website\Config::userIDs['Deleted user'], 'int']]
+                        [':userid' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
                     ],
                     [
                         'DELETE FROM `talks__likes` WHERE `userid`=:userid;',
@@ -859,7 +871,7 @@ class User extends Entity
                         'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, :groupid);',
                         [
                             ':userid' => [$this->id, 'int'],
-                            ':groupid' => [\Simbiat\Website\Config::groupsIDs['Deleted'], 'int'],
+                            ':groupid' => [Config::groupsIDs['Deleted'], 'int'],
                         ]
                     ],
                 ];
@@ -885,7 +897,7 @@ class User extends Entity
             $result = false;
         }
         #Log
-        Security::log('User removal', 'Removal', ['userid' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? \Simbiat\Website\Config::userIDs['Deleted user'] : $this->id));
+        Security::log('User removal', 'Removal', ['userid' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? Config::userIDs['Deleted user'] : $this->id));
         return $result;
     }
 }

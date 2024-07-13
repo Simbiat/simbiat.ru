@@ -215,7 +215,7 @@ class Security
         $dd->parse();
         #Get bot name
         $bot = $dd->getBot();
-        if ($bot !== NULL) {
+        if (is_array($bot)) {
             #Do not waste resources on bots
             return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false];
         }

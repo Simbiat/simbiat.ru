@@ -9,6 +9,21 @@ networks:
         - subnet: 172.21.0.0/16
 
 services:
+  geoip:
+    container_name: geoip
+    build:
+      context: ./config/geoip
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      GEOIPUPDATE_PRESERVE_FILE_TIMES: 1
+      GEOIPUPDATE_FREQUENCY: 24
+      GEOIPUPDATE_ACCOUNT_ID: ${GEOIP_ACCOUNT}
+      GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
+      GEOIPUPDATE_EDITION_IDS: GeoLite2-ASN GeoLite2-City
+    volumes:
+      - ./data/geoip/:/usr/share/GeoIP/:rw
+
   frankenphp:
     container_name: frankenphp
     build:
@@ -23,8 +38,7 @@ services:
       PHP_INI_DIR: /usr/local/php/config
       PHP_INI_SCAN_DIR: /usr/local/php/config
     networks:
-      webserver:
-        ipv4_address: 172.21.0.13
+      - webserver
     ports:
       - 80:80 # HTTP
       - 443:443 # HTTPS
@@ -37,6 +51,8 @@ services:
     security_opt:
       - no-new-privileges=true
     depends_on:
+      geoip:
+        condition: service_started
       crowdsec:
         condition: service_healthy
       local.simbiat.dev:
@@ -46,7 +62,7 @@ services:
       - local.simbiat.dev:database
     #We need to register cron task and start cron service before the endpoint
     command: >
-      /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment
+      /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
                   cp /usr/local/php/config/cron/php.cron /etc/cron.d/php.cron &&
                   chmod 0644 /etc/cron.d/php.cron &&
                   crontab /etc/cron.d/php.cron &&
@@ -64,35 +80,32 @@ services:
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
     networks:
-      webserver:
-        ipv4_address: 172.21.0.12
+      - webserver
     ports:
       - "8080:8080"
     volumes:
-      - ./data/crowdsec:/var/lib/crowdsec/data/:rw
-      - ./config/crowdsec/yaml/acquis.yaml:/etc/crowdsec/acquis.yaml:rw
-      - ./config/crowdsec/yaml/acquis:/etc/crowdsec/acquis.d/:rw
-      - ./config/crowdsec/yaml/config.yaml.local:/etc/crowdsec/config.yaml.local:rw
-      - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:rw
-      - ./config/crowdsec/cron:/usr/local/cron/:ro
+      - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
+      - ./data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
+      - ./data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
+      - ./config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:rw
+      - ./config/crowdsec/acquis/:/etc/crowdsec/acquis.d/:rw
+      - ./config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:rw
+      - ./config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:rw
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
       - ./logs:/usr/local/logs/:rw
     security_opt:
       - no-new-privileges=true
+    depends_on:
+      geoip:
+        condition: service_started
     healthcheck:
       test: [ "CMD", "cscli", "lapi", "status" ]
       start_period: 120s
       interval: 10s
       timeout: 5s
       retries: 3
-    #Register log rotator
-    command: >
-      /bin/sh -c "cp /usr/local/cron/crowdsec.cron /etc/cron.d/crowdsec.cron &&
-                  chmod 0644 /etc/cron.d/crowdsec.cron &&
-                  crontab /etc/cron.d/crowdsec.cron &&
-                  /bin/bash /docker_start.sh"
 
   local.simbiat.dev:
     container_name: mariadb
@@ -112,8 +125,7 @@ services:
       #Password for backups created by CRON job
       MARIADB_BACKUP_PASSWORD: ${WEB_SERVER_TEST}
     networks:
-      webserver:
-        ipv4_address: 172.21.0.10
+      - webserver
     ports:
       - ${MARIADB_PORT}:${MARIADB_PORT}
     volumes:
@@ -136,7 +148,7 @@ services:
     #We need to ensure that buffer pool file exists, too
     #We need to register cron tasks and start cron service before the endpoint
     command: >
-      /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment
+      /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
                   /etc/mysql/conf.d/cron/ssl.sh &&
                   touch /var/lib/mysql/ib_buffer_pool &&
                   chown mysql:mysql /var/lib/mysql/ib_buffer_pool &&

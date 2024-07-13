@@ -19,7 +19,7 @@
         "twig/twig": "^3",
         "symfony/html-sanitizer": "^6",
         "sendgrid/sendgrid": "^8 ",
-        "ipinfo/ipinfo": "^2",
+        "geoip2/geoip2": "^3",
         "tinymce/tinymce": "^7",
         "vlucas/phpdotenv": "^5",
         "ext-intl": "*",
