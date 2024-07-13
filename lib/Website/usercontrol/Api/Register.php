@@ -2,7 +2,9 @@
 declare(strict_types=1);
 namespace Simbiat\Website\usercontrol\Api;
 
+use GeoIp2\Database\Reader;
 use Simbiat\Website\Abstracts\Api;
+use Simbiat\Website\Config;
 use Simbiat\Website\HomePage;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\Email;
@@ -68,16 +70,24 @@ class Register extends Api
         $password = Security::passHash($_POST['signinup']['password']);
         $activation = Security::genToken();
         $ff_token = Security::genToken();
+        #Try to read country and city for IP
+        try {
+            $geoIp = (new Reader(Config::$geoip.'GeoLite2-City.mmdb'))->city($_SESSION['IP']);
+        } catch (\Throwable) {
+            #Do nothing, not critical
+        }
         try {
             $queries = [
                 #Insert to main database
                 [
-                    'INSERT INTO `uc__users`(`username`, `password`, `ff_token`, `timezone`, `country`, `city`) VALUES (:username, :password, :ff_token, :timezone, (SELECT `country` FROM `seo__ips` WHERE `ip`=:ip), (SELECT `city` FROM `seo__ips` WHERE `ip`=:ip))',
+                    'INSERT INTO `uc__users`(`username`, `password`, `ff_token`, `timezone`, `country`, `city`) VALUES (:username, :password, :ff_token, :timezone, :country, :city)',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':password' => $password,
                         ':ff_token' => $ff_token,
                         ':timezone' => $timezone,
+                        ':country' => $geoIp->country->name ?? '',
+                        ':city' => $geoIp->city->name ?? '',
                         ':ip' => $_SESSION['IP'] ?? '',
                     ],
                 ],

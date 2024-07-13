@@ -123,17 +123,6 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $data = unserialize($data, [false]);
         #Prepare empty array
         $queries = [];
-        #Write it to DB
-        if (!empty($data['IP']) && !empty($data['city']) && !empty($data['country'])) {
-            $queries[] = [
-                'INSERT INTO `seo__ips` (`ip`, `country`, `city`) VALUES (:ip, :country, :city) ON DUPLICATE KEY UPDATE `country` = :country, `city` = :city;',
-                [
-                    ':ip' => $data['IP'],
-                    ':country' => $data['country'],
-                    ':city' => $data['city'],
-                ]
-            ];
-        }
         #Try to update client information for cookie
         if (!empty($data['cookieid'])) {
             HomePage::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
@@ -334,18 +323,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         if (empty($ip) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP);
         }
-        if (!empty($ip)) {
-            #Attempt to get country and city
-            try {
-                $cityDbReader = new Reader(Config::$geoip.'GeoLite2-City.mmdb');
-                $record = $cityDbReader->city($ip);
-            } catch (\Throwable) {
-                #Do nothing, this is not critical
-            }
-        }
         $data['IP'] = $ip ?? null;
-        $data['country'] = $record->country->name ?? null;
-        $data['city'] = $record->city->name ?? null;
     }
     
     /**
