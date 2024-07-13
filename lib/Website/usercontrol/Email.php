@@ -197,7 +197,7 @@ class Email extends Entity
             #Log email (no sensitive data is supposed to be sent in any emails)
             Security::log('Email', 'Attempted to send email', ['subject' => $subject, 'to' => $this->id, 'body' => $body]);
             #Create transport
-            $transport = new \SendGrid($_ENV('SENDGRID_API_KEY'), ['verify_ssl' => true,]);
+            $transport = new \SendGrid($_ENV['SENDGRID_API_KEY'], ['verify_ssl' => true,]);
             #Create basic email
             $email = new Mail();
             $email->setFrom(Config::from, Config::siteName);
