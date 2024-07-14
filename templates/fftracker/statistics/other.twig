@@ -1,11 +1,11 @@
 <p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
 <table>
     <caption><h2>Use of communities statistics</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Group type</th>
         <th>Community</th>
         <th>Count</th>
-    </tr>
+    </tr></thead>
     {% for datapoint in ffstats.data.other.communities %}
         <tr>
             <td>{{ datapoint.type }}</td>
@@ -16,10 +16,10 @@
 </table>
 <table>
     <caption><h2>Entities status</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Entity</th>
         <th>Count</th>
-    </tr>
+    </tr></thead>
     {% for datapoint in ffstats.data.other.entities %}
         <tr>
             <td>{{ datapoint.value }}</td>

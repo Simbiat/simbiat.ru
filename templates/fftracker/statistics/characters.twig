@@ -1,10 +1,10 @@
 <p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
 <table>
     <caption><h2>Job popularity</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Job</th>
         <th>Sum of all levels</th>
-    </tr>
+    </tr></thead>
     {% for job, level in ffstats.data.characters.jobs %}
         <tr>
             <td>{{ job }}</td>
@@ -14,10 +14,10 @@
 </table>
 <table>
     <caption><h2>Most name changes</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Changes</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.changes.name %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -27,10 +27,10 @@
 </table>
 <table>
     <caption><h2>Most reincarnations</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Reincarnations</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.changes.clan %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -40,10 +40,10 @@
 </table>
 <table>
     <caption><h2>Most server changes</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Servers</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.changes.server %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -53,10 +53,10 @@
 </table>
 <table>
     <caption><h2>Group affiliation statistics</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Affiliation</th>
         <th>Characters</th>
-    </tr>
+    </tr></thead>
     {% for affiliation in ffstats.data.characters.groups.participation %}
         <tr>
             <td>{{ affiliation.affiliation }}</td>
@@ -66,10 +66,10 @@
 </table>
 <table>
     <caption><h2>Most Free Companies</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Companies</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.groups['Free Companies'] %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -79,10 +79,10 @@
 </table>
 <table>
     <caption><h2>Most PvP Teams</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Teams</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.groups['PvP Teams'] %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -92,10 +92,10 @@
 </table>
 <table>
     <caption><h2>Most Linkshells</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Teams</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.groups['Linkshells'] %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -105,10 +105,10 @@
 </table>
 <table>
     <caption><h2>Most simultaneous Linkshells</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Teams</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.groups['simLinkshells'] %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -118,10 +118,10 @@
 </table>
 <table>
     <caption><h2>Most PvP battles</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Character</th>
         <th>Battles</th>
-    </tr>
+    </tr></thead>
     {% for character in ffstats.data.characters.most_pvp %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
@@ -131,11 +131,11 @@
 </table>
 <table>
     <caption><h2>Character distribution by server</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Server</th>
         <th>Gender</th>
         <th>Characters</th>
-    </tr>
+    </tr></thead>
     {% for datapoint in ffstats.data.servers.characters %}
         <tr>
             <td>{{ datapoint.value }}</td>

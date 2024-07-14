@@ -3,10 +3,10 @@
 {% for categoryname, category in ffstats.data.achievements %}
     <table>
         <caption><h2>Top 20 rarest "{{ categoryname }}" achievements</h2></caption>
-        <tr>
+        <thead><tr>
             <th>Achievement</th>
             <th>Earned by</th>
-        </tr>
+        </tr></thead>
         {% for row in category %}
             <tr>
                 <td>{{ include('common/elements/entitycard.twig', row) }}</td>
@@ -17,10 +17,10 @@
 {%endfor%}
 <table>
     <caption><h2>20 most popular titles</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Title</th>
         <th>Used by</th>
-    </tr>
+    </tr></thead>
     {% for datapoint in ffstats.data.titles.top %}
         <tr>
             <td><a href="/fftracker/achievements/{{ datapoint.achievementid }}">{{ datapoint.title }}</a></td>
@@ -30,10 +30,10 @@
 </table>
 <table>
     <caption><h2>20 least popular titles</h2></caption>
-    <tr>
+    <thead><tr>
         <th>Title</th>
         <th>Used by</th>
-    </tr>
+    </tr></thead>
     {% for datapoint in ffstats.data.titles.bottom %}
         <tr>
             <td><a href="/fftracker/achievements/{{ datapoint.achievementid }}">{{ datapoint.title }}</a></td>
