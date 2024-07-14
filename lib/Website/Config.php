@@ -20,7 +20,7 @@ final class Config
     public static string $http_host = 'www.simbiat.dev';
     public static string $baseUrl = 'https://www.simbiat.dev';
     public static string $htmlCache = '';
-    public static string $securityCache = '';
+    public static string $securitySettings = '';
     public static string $sitemap = '';
     #Path where JS files are stored
     public static string $jsDir = '';
@@ -61,22 +61,22 @@ final class Config
         'Linked to FF' => 6,
     ];
     public static array $argonSettings = [];
-    public static array $aesSettings = [];
 
     public function __construct()
     {
         self::$workDir = '/app';
         $dotenv = Dotenv::createImmutable(self::$workDir, '.env');
         $dotenv->load();
-        $dotenv->required('WEB_SERVER_TEST')->notEmpty();
         #Database settings
-        $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_HOST', 'DATABASE_TLS_CA', 'DATABASE_TLS_KEY', 'DATABASE_TLS_CRT', 'SENDGRID_API_KEY'])->notEmpty();
+        $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_HOST', 'DATABASE_TLS_CA', 'DATABASE_TLS_KEY', 'DATABASE_TLS_CRT'])->notEmpty();
         $dotenv->required('MARIADB_PORT')->isInteger();
+        #Other settings
+        $dotenv->required(['WEB_SERVER_TEST', 'SENDGRID_API_KEY', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
         self::$PROD = ($_ENV['WEB_SERVER_TEST'] === 'false');
         self::$http_host = (self::$PROD ? 'www.simbiat.dev' : 'localhost');
         self::$baseUrl = 'https://'.self::$http_host;
         self::$htmlCache = self::$workDir.'/data/cache/html/';
-        self::$securityCache = self::$workDir.'/data/security';
+        self::$securitySettings = self::$workDir.'/data/security.json';
         self::$sitemap = self::$workDir.'/data/sitemap/';
         self::$jsDir = self::$workDir.'/public/assets';
         self::$cssDir = self::$workDir.'/public/assets/styles/';
@@ -92,10 +92,6 @@ final class Config
         #Generate Argon settings
         if (empty(self::$argonSettings)) {
             self::$argonSettings = Security::argonCalc();
-        }
-        #Load AES settings
-        if (empty(self::$aesSettings)) {
-            self::$aesSettings = Security::genCrypto();
         }
     }
 }

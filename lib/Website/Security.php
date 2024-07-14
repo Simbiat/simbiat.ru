@@ -40,7 +40,7 @@ class Security
         #This is where tag will be written by OpenSSL
         $tag = '';
         #Ecnrypt and als get the tag
-        $encrypted = openssl_encrypt($data, 'AES-256-GCM', hex2bin(Website\Config::$aesSettings['passphrase']), OPENSSL_RAW_DATA, $iv, $tag);
+        $encrypted = openssl_encrypt($data, 'AES-256-GCM', hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), OPENSSL_RAW_DATA, $iv, $tag);
         #Ecnrypt and prepend IV and tag
         return base64_encode($iv.$tag.$encrypted);
     }
@@ -59,7 +59,7 @@ class Security
         $tag = substr($data, 12, 16);
         #Strip them from data
         $data = substr($data, 28);
-        return openssl_decrypt($data, 'AES-256-GCM', hex2bin(Website\Config::$aesSettings['passphrase']), OPENSSL_RAW_DATA, $iv, $tag);
+        return openssl_decrypt($data, 'AES-256-GCM', hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), OPENSSL_RAW_DATA, $iv, $tag);
     }
 
     #Function to generate tokens (for example CSRF)
@@ -81,9 +81,9 @@ class Security
     public static function argonCalc(bool $forceRefresh = false, float $maxTimeSpent = 0.005, string $stringToTest = 'rel@t!velyl0ngte$t5tr1ng'): array
     {
         #Load Argon settings if argon.json exists
-        if (is_file(Website\Config::$securityCache. '/argon.json') && !$forceRefresh) {
+        if (is_file(Website\Config::$securitySettings) && !$forceRefresh) {
             #Read the file
-            $argon = json_decode(file_get_contents(Website\Config::$securityCache. '/argon.json'), true);
+            $argon = json_decode(file_get_contents(Website\Config::$securitySettings), true);
             if (is_array($argon)) {
                 #Update settings, if they are present and comply with minimum requirements
                 if (!isset($argon['memory_cost']) || $argon['memory_cost'] < 1024) {
@@ -97,10 +97,6 @@ class Security
                 }
                 return $argon;
             }
-        }
-        #Create directory if missing
-        if (!is_dir(Config::$securityCache)) {
-            mkdir(Config::$securityCache);
         }
         #Calculate number of available threads
         $threads = self::countCores();
@@ -123,7 +119,7 @@ class Security
         } while (($end - $start) <= $maxTimeSpent);
         $argonSettings = ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory];
         #Write config file
-        file_put_contents(Config::$securityCache.'/argon.json', json_encode($argonSettings, JSON_PRETTY_PRINT));
+        file_put_contents(Config::$securitySettings, json_encode($argonSettings, JSON_PRETTY_PRINT));
         return $argonSettings;
     }
 
@@ -142,26 +138,9 @@ class Security
     }
 
     #Function to generate passphrase for encrypt and decrypt functions
-    public static function genCrypto(bool $forceRefresh = false): array
+    public static function genCrypto(): string
     {
-        if (is_file(Website\Config::$securityCache. '/aes.json') && !$forceRefresh) {
-            $aes = json_decode(file_get_contents(Website\Config::$securityCache.'/aes.json'), true);
-            if (is_array($aes)) {
-                if (isset($aes['passphrase'])) {
-                    return $aes;
-                }
-            }
-        }
-        #Create directory if missing
-        if (!is_dir(Config::$securityCache)) {
-            mkdir(Config::$securityCache);
-        }
-        $passphrase = bin2hex(openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-GCM')));
-        #Using array, in case some other settings will be required in the future
-        $cryptoSettings = ['passphrase' => $passphrase];
-        #Write config file
-        file_put_contents(Config::$securityCache. '/aes.json', json_encode($cryptoSettings, JSON_PRETTY_PRINT));
-        return $cryptoSettings;
+        return $passphrase = bin2hex(openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-GCM')));
     }
 
     #Function to log actions
