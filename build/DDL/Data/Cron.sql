@@ -70,3 +70,6 @@ DELETE FROM `cron__tasks` WHERE `cron__tasks`.`task` = 'ffAddJobs';
 
 UPDATE `cron__tasks` SET `object`=REPLACE(`object`, '\\Simbiat', '\\Simbiat\\Website');
 UPDATE `cron__tasks` SET `object` = '\\Simbiat\\Website\\Maintenance' WHERE `cron__tasks`.`task` = 'dbMaintenance';
+
+INSERT INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `allowedreturns`, `maxTime`, `system`, `description`) VALUES ('argon', 'argon', '\\Simbiat\\Website\\Maintenance', NULL, NULL, '3600', '1', 'Job to recalculate optimal Argon encryption settings');
+INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`) VALUES ('argon', '', '1', '1', '2592000', NULL, NULL, '0', 'Recalculating Argon settings');

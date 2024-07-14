@@ -115,6 +115,15 @@ class Maintenance
         return $result;
     }
     
+    /**
+     * Force regeneration of Argon settings
+     * @return bool
+     */
+    public function argon(): bool
+    {
+        return !empty(Security::argonCalc(true));
+    }
+    
     public function forBackup(): bool|string
     {
         if (!is_dir(Config::$DDLDir) && !mkdir(Config::$DDLDir, recursive: true) && !is_dir(Config::$DDLDir)) {
@@ -146,7 +155,7 @@ class Maintenance
         try {
             HomePage::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 0);
-            (new optimizeTables())->setJsonPath('.\/data\/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
+            (new optimizeTables())->setJsonPath(\Simbiat\Website\Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
         } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         } finally {
