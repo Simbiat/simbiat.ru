@@ -212,7 +212,7 @@ class Post extends Entity
             $this->attach([], $data['inlineFiles']);
             #Get the up-to-date data for the thread, to get the last page for location
             $thread = (new Thread($data['threadid']))->get();
-            return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($thread->lastPage === 1 ? '' : '?page='.$thread->lastPage)];
+            return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($thread->lastPage === 1 ? '' : '?page='.$thread->lastPage).'#post_'.$newID];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to create new post'];
