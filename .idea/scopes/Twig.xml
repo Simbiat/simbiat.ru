@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="Twig" pattern="file[simbiat.dev]:twig//*" />
+  <scope name="Twig" pattern="file[simbiat.dev]:templates//*" />
 </component>

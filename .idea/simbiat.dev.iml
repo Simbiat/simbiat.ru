@@ -19,12 +19,10 @@
       <sourceFolder url="file://$MODULE_DIR$/./lib/nl2tag/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/optimizeTables/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/CuteBytes/src" isTestSource="false" packagePrefix="Simbiat\" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/vcs" />
-      <excludeFolder url="file://$MODULE_DIR$/twig/cache" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/twig" />
       <excludeFolder url="file://$MODULE_DIR$/symfony" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
@@ -52,6 +50,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/geoip2/geoip2" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind-db/reader" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind/web-service-common" />
+      <excludeFolder url="file://$MODULE_DIR$/templates/cache" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
