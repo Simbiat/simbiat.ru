@@ -3,6 +3,9 @@ common:
   log_media: file
   log_level: warning
   log_dir: /usr/local/logs/
+  log_max_size: 10
+  log_max_age: 14
+  log_max_files: 21
 config_paths:
   config_dir: /etc/crowdsec/
   data_dir: /var/lib/crowdsec/data/
