@@ -391,17 +391,6 @@ class Homepage extends Page
                     'description' => 'Group for professionals working in customer support to meet, network & learn with industry peers.',
                 ],
                 [
-                    'startTime' => '2023-01-02',
-                    'endTime' => null,
-                    'name' => 'XAMK',
-                    'icon' => '/assets/images/icons/XAMK.svg',
-                    'href' => 'https://www.xamk.fi/en/open-amk-courses/introduction-to-video-games-creation/',
-                    'position' => 'Student',
-                    'responsibilities' => null,
-                    'achievements' => null,
-                    'description' => 'Introduction to Video Game Creation',
-                ],
-                [
                     'startTime' => '2023-01-24',
                     'endTime' => '2023-05-11',
                     'name' => 'Arcada',
