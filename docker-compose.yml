@@ -106,6 +106,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    #Override image's entrypoint to execute custom command
+    entrypoint: ''
+    command: >
+      /bin/sh -c "printf \"#!/bin/sh\\ncscli hub update&&cscli hub upgrade\">/etc/periodic/daily/crowdsec_update.sh &&
+                  chmod +x /etc/periodic/daily/crowdsec_update.sh &&
+                  /bin/bash /docker_start.sh"
 
   local.simbiat.dev:
     container_name: mariadb
