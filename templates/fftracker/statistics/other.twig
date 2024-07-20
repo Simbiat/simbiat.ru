@@ -27,3 +27,24 @@
         </tr>
     {% endfor %}
 </table>
+<table>
+    <caption><h2>Entities updated last 30 days</h2></caption>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Characters</th>
+        <th>Free Companies</th>
+        <th>PvP Teams</th>
+        <th>Linkshells</th>
+    </tr>
+    </thead>
+    {% for datekey, datapoint in ffstats.data.updates_stats %}
+        <tr>
+            <td>{{ timeTag(datekey, "Y.m.d") }}</td>
+            <td>{{ datapoint.characters|default(0) }}</td>
+            <td>{{ datapoint.free_companies|default(0) }}</td>
+            <td>{{ datapoint.pvp_teams|default(0) }}</td>
+            <td>{{ datapoint.linkshells|default(0) }}</td>
+        </tr>
+    {% endfor %}
+</table>

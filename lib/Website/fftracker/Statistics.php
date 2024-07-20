@@ -10,7 +10,6 @@ use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Controller;
 use Simbiat\Website\HomePage;
 use Simbiat\LodestoneModules\Converters;
-use Simbiat\Website\fftracker\Entity;
 use function in_array;
 
 /**
@@ -386,6 +385,22 @@ class Statistics
                             (SELECT \'Deleted Crossworld Linkshell\' AS `value`, COUNT(*) AS `count` FROM `ffxiv__linkshell` WHERE `deleted` IS NOT NULL AND `crossworld`=1)
                             ORDER BY `count` DESC;
                     ');
+        #Number of updated entities in last 30 days
+        $data['updates_stats'] = $dbCon->selectAll(
+        /** @lang MariaDB */ '(SELECT `registered` AS `date`, COUNT(*) AS `count`, \'characters\' as `type` FROM `ffxiv__character` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+                            UNION
+                            (SELECT `formed` AS `date`, COUNT(*) AS `count`, \'free_companies\' as `type` FROM `ffxiv__freecompany` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+                            UNION
+                            (SELECT `formed` AS `date`, COUNT(*) AS `count`, \'pvp_teams\' as `type` FROM `ffxiv__pvpteam` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+                            UNION
+                            (SELECT `formed` AS `date`, COUNT(*) AS `count`, \'linkshells\' as `type` FROM `ffxiv__linkshell` GROUP BY `date` ORDER BY `date` DESC LIMIT 30);'
+        );
+        $data['updates_stats'] = ArrayHelpers::splitByKey($data['updates_stats'], 'date');
+        foreach ($data['updates_stats'] as $date => $datapoint) {
+            $data['updates_stats'][$date] = ArrayHelpers::MultiToSingle(ArrayHelpers::DigitToKey($datapoint, 'type', true), 'count');
+        }
+        krsort($data['updates_stats']);
+        $data['updates_stats'] = \array_slice($data['updates_stats'], 0, 30);
     }
     
     /**
