@@ -61,7 +61,7 @@ class FreeCompany extends Entity
     {
         $Lodestone = (new Lodestone);
         $data = $Lodestone->getFreeCompany($this->id)->getFreeCompanyMembers($this->id, 0)->getResult();
-        if (empty($data['freecompanies'][$this->id]['server']) || (empty($data['freecompanies'][$this->id]['members']) && (int)$data['freecompanies'][ $this->id ]['members_count'] > 0) || (!empty($data['freecompanies'][$this->id]['members']) && count($data['freecompanies'][$this->id]['members']) < (int)$data['freecompanies'][ $this->id ]['members_count'])) {
+        if (empty($data['freecompanies'][$this->id]['server']) || (empty($data['freecompanies'][$this->id]['members']) && (int)($data['freecompanies'][$this->id]['members_count'] ?? 0) > 0) || (!empty($data['freecompanies'][$this->id]['members']) && count($data['freecompanies'][$this->id]['members']) < (int)($data['freecompanies'][$this->id]['members_count'] ?? 0))) {
             if (!empty($data['freecompanies'][$this->id]) && (int)$data['freecompanies'][$this->id] === 404) {
                 $this->delete();
                 return ['404' => true];
