@@ -59,7 +59,7 @@ class Character extends Entity
         #Get jobs
         $data['jobs'] = HomePage::$dbController->selectAll('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`jobid`=`ffxiv__jobs`.`jobid` WHERE `ffxiv__character_jobs`.`characterid`=:id ORDER BY `name`;', [':id'=>$this->id]);
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
-        $data['oldNames'] = HomePage::$dbController->count('SELECT COUNT(*) as `count` FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldNames'] = HomePage::$dbController->selectColumn('SELECT `name` FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
         #Get previous known incarnations (combination of gender and race/clan)
         $data['incarnations'] = HomePage::$dbController->selectAll('SELECT `genderid`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clanid` = `ffxiv__clan`.`clanid` WHERE `ffxiv__character_clans`.`characterid`=:id AND (`ffxiv__character_clans`.`clanid`!=:clanid AND `ffxiv__character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id'=>$this->id, ':clanid'=>$data['clanid'], ':genderid'=>$data['genderid']]);
         #Get old servers
@@ -139,7 +139,7 @@ class Character extends Entity
             'guardian' => $fromDB['guardian'] ?? null,
             'guardianid' => $fromDB['guardianid'] ?? null,
             'incarnations' => $fromDB['incarnations'] ?? null,
-            'oldNames' => (int)($fromDB['oldNames'] ?? 0),
+            'oldNames' => $fromDB['oldNames'],
             'killedby' => $fromDB['killedby'] ?? null,
         ];
         $this->location = [

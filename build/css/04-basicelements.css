@@ -143,6 +143,9 @@ samp.failure,
 samp.error {
     border-left: calc(var(--border-width) * 3) solid var(--color-failure);
 }
+samp.warning {
+    border-left: calc(var(--border-width) * 3) solid var(--color-warning);
+}
 var {
     font-family: var(--font-mono);
     white-space: pre-wrap;
