@@ -140,7 +140,7 @@ services:
       - ${MARIADB_KEYS_DIR}:/usr/local/keys:rw
       - ./logs:/usr/local/logs:rw
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
-      - ./DDL:/usr/local/DDL:ro
+      - ./build/DDL:/usr/local/DDL:ro
     security_opt:
       - no-new-privileges=true
     healthcheck:
