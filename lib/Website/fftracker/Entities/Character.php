@@ -139,7 +139,7 @@ class Character extends Entity
             'guardian' => $fromDB['guardian'] ?? null,
             'guardianid' => $fromDB['guardianid'] ?? null,
             'incarnations' => $fromDB['incarnations'] ?? null,
-            'oldNames' => $fromDB['oldNames'],
+            'oldNames' => $fromDB['oldNames'] ?? [],
             'killedby' => $fromDB['killedby'] ?? null,
         ];
         $this->location = [
