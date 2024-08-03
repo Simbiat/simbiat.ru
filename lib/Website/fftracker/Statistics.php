@@ -387,13 +387,13 @@ class Statistics
                     ');
         #Number of updated entities in last 30 days
         $data['updates_stats'] = $dbCon->selectAll(
-        /** @lang MariaDB */ '(SELECT `registered` AS `date`, COUNT(*) AS `count`, \'characters\' as `type` FROM `ffxiv__character` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+        /** @lang MariaDB */ '(SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'characters\' as `type` FROM `ffxiv__character` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
                             UNION
-                            (SELECT `formed` AS `date`, COUNT(*) AS `count`, \'free_companies\' as `type` FROM `ffxiv__freecompany` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+                            (SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'free_companies\' as `type` FROM `ffxiv__freecompany` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
                             UNION
-                            (SELECT `formed` AS `date`, COUNT(*) AS `count`, \'pvp_teams\' as `type` FROM `ffxiv__pvpteam` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
+                            (SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'pvp_teams\' as `type` FROM `ffxiv__pvpteam` GROUP BY `date` ORDER BY `date` DESC LIMIT 30)
                             UNION
-                            (SELECT `formed` AS `date`, COUNT(*) AS `count`, \'linkshells\' as `type` FROM `ffxiv__linkshell` GROUP BY `date` ORDER BY `date` DESC LIMIT 30);'
+                            (SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'linkshells\' as `type` FROM `ffxiv__linkshell` GROUP BY `date` ORDER BY `date` DESC LIMIT 30);'
         );
         $data['updates_stats'] = ArrayHelpers::splitByKey($data['updates_stats'], 'date');
         foreach ($data['updates_stats'] as $date => $datapoint) {
