@@ -46,3 +46,9 @@
 [submodule "lib/CuteBytes"]
 	path = lib/CuteBytes
 	url = https://github.com/Simbiat/cute-bytes
+[submodule "lib/array2table"]
+	path = lib/array2table
+	url = https://github.com/Simbiat/array2table
+[submodule "lib/HTMLCache"]
+	path = lib/HTMLCache
+	url = https://github.com/Simbiat/HTMLCache

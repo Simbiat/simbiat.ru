@@ -44,8 +44,10 @@
         "psr-4": {
             "Simbiat\\": [
                 "./lib/AccountKeying/src",
+                "./lib/array2table/src",
                 "./lib/ArrayHelpers/src",
                 "./lib/CuteBytes/src",
+                "./lib/HTMLCache/src",
                 "./lib/HTMLCut/src",
                 "./lib/Lodestone/src",
                 "./lib/nl2tag/src",
