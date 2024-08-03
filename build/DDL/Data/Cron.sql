@@ -73,3 +73,7 @@ UPDATE `cron__tasks` SET `object` = '\\Simbiat\\Website\\Maintenance' WHERE `cro
 
 INSERT INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `allowedreturns`, `maxTime`, `system`, `description`) VALUES ('argon', 'argon', '\\Simbiat\\Website\\Maintenance', NULL, NULL, '3600', '1', 'Job to recalculate optimal Argon encryption settings');
 INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`) VALUES ('argon', '', '1', '1', '2592000', NULL, NULL, '0', 'Recalculating Argon settings');
+
+INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`) VALUES ('ffUpdateOld', '[50, \"$cronInstance\"]', '5', '1', '60', NULL, NULL, '0', 'Updating old FFXIV entities');
+INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`) VALUES ('ffUpdateOld', '[50, \"$cronInstance\"]', '6', '1', '60', NULL, NULL, '0', 'Updating old FFXIV entities');
+UPDATE `cron__settings` SET `value` = '7' WHERE `cron__settings`.`setting` = 'maxThreads';
