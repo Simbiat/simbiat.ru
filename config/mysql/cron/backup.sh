@@ -8,6 +8,13 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   tablesOrder=$(cat /usr/local/build/DDL/00-recommended_table_order.txt)
   dumpSetting="--all-tablespaces --opt --add-drop-database --default-character-set=utf8mb4 --flush-privileges --flush-logs --tz-utc --quote-names --single-transaction --insert-ignore"
   zipSettings="-aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p${MARIADB_BACKUP_PASSWORD}"
+  logicalName="daily"
+  if [ $(date +%u) -eq 1 ]; then
+      logicalName="weekly"
+  fi
+  if [ $(date +%d) -eq 01 ]; then
+        logicalName="monthly"
+    fi
 
   echo Cleaning files... >> $logFile 2>&1
   rm -rf $logicBackup/*.7z >> $logFile 2>&1
@@ -15,7 +22,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   echo "Backing up users for $currentDate (logical)..." >> $logFile 2>&1
   mariadb-dump $dumpSetting --system=users 2>> $logFile | 7z a ${zipSettings} -si$currentDate-users.sql $logicBackup/$currentDate-users.7z >> $logFile 2>&1
   echo "Backing up data for $currentDate (logical)..." >> $logFile 2>&1
-  mariadb-dump $dumpSetting --routines --triggers --databases simbiatr_simbiat --tables $tablesOrder 2>> $logFile | 7z a ${zipSettings} -si$currentDate-data.sql $logicBackup/$currentDate-data.7z >> $logFile 2>&1
+  mariadb-dump $dumpSetting --routines --triggers --databases simbiatr_simbiat --tables $tablesOrder 2>> $logFile | 7z a ${zipSettings} -si$currentDate-${logicalName}.sql $logicBackup/$currentDate-${logicalName}.7z >> $logFile 2>&1
   echo "Backing up full database for $currentDate (physical)..." >> $logFile 2>&1
   mariadb-backup --backup --target-dir=$physBackup --kill-long-queries-timeout=300 --extended-validation --lock-ddl-per-table  >> $logFile 2>&1
   echo Owning for $currentDate... >> $logFile 2>&1
