@@ -443,3 +443,6 @@ UPDATE `talks__sections` SET `sequence` = '99' WHERE `talks__sections`.`sectioni
 UPDATE `talks__sections` SET `description` = 'Personal blog of simbiat.dev\'s owner' WHERE `talks__sections`.`sectionid` = 6;
 
 UPDATE `talks__alt_link_types` SET `icon`=REPLACE(`icon`, '/img/', '/assets/images/');
+
+UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.app' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
+UPDATE `talks__alt_links` SET `url`=REPLACE(`url`, 'kitsu.io', 'kitsu.app');
