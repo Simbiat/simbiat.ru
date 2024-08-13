@@ -144,8 +144,7 @@ services:
     security_opt:
       - no-new-privileges=true
     healthcheck:
-      #`--connect` is removed due to known bug
-      test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade" ]
+      test: [ "CMD", "healthcheck.sh", "--defaults-file=/etc/mysql/conf.d/my.cnf", "--connect", "--innodb_initialized", "--innodb_buffer_pool_loaded", "--mariadbupgrade" ]
       start_period: 120s
       interval: 10s
       timeout: 5s
