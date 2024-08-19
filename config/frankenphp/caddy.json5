@@ -134,6 +134,7 @@
                                         # Allow HTML when submitting new posts\n\
                                         SecRuleUpdateTargetById 941160 \"!ARGS:postForm[text]\"\n\
                                         SecRuleUpdateTargetById 942100 \"!ARGS:postForm[text]\"\n\
+                                        SecRuleUpdateTargetById 942190 \"!ARGS:postForm[text]\"\n\
                                         SecRuleEngine On\n\
                                     ",
                                     "handler": "waf",
