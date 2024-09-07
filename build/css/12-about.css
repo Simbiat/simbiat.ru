@@ -60,7 +60,7 @@ section.homePage {
 
 @counter-style medals-list {
     system: fixed;
-    symbols: 🥇 🥈 🥇;
+    symbols: 🥇 🥈 🥉;
     suffix: ' ';
 }
 .medalsList {
