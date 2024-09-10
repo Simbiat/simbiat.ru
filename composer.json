@@ -44,7 +44,6 @@
         "psr-4": {
             "Simbiat\\": [
                 "./lib/AccountKeying/src",
-                "./lib/array2table/src",
                 "./lib/ArrayHelpers/src",
                 "./lib/CuteBytes/src",
                 "./lib/HTMLCache/src",
@@ -55,6 +54,7 @@
                 "./lib/SafeFileName/src",
                 "./lib/SandClock/src"
             ],
+            "Simbiat\\ArrayToTable\\": "./lib/array2table/src",
             "Simbiat\\Cron\\": "./lib/Cron/src",
             "Simbiat\\Database\\": "./lib/Database/src",
             "Simbiat\\http20\\": "./lib/http20/src",
