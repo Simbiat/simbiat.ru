@@ -429,6 +429,15 @@ class Homepage extends Page
                     ],
                     'description' => null,
                 ],
+                [
+                    'startTime' => '2024-10-07',
+                    'endTime' => null,
+                    'name' => 'Green Sisu',
+                    'icon' => '/assets/images/social/vihreät.svg',
+                    'href' => 'https://www.greensisu.fi/',
+                    'position' => 'Member',
+                    'description' => null,
+                ],
             ];
         $outputArray['contacts'] =
             [
