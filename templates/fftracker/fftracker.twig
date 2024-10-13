@@ -49,6 +49,8 @@
                     {{ include('fftracker/character.twig') }}
                 {% elseif subServiceName == 'linkshell' %}
                     {{ include('fftracker/linkshell.twig') }}
+                {% elseif subServiceName == 'crossworld_linkshell' %}
+                    {{ include('fftracker/linkshell.twig') }}
                 {% elseif subServiceName == 'pvpteam' %}
                     {{ include('fftracker/pvpteam.twig') }}
                 {% elseif subServiceName == 'achievement' %}

@@ -11,7 +11,7 @@ class CrossworldLinkshell extends Linkshell
         ['href' => '/fftracker/linkshells', 'name' => 'Linkshells']
     ];
     #Sub service name
-    protected string $subServiceName = 'linkshell';
+    protected string $subServiceName = 'crossworld_linkshell';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Crossworld Linkshell';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
