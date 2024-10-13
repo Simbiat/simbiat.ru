@@ -11,7 +11,7 @@ class Achievement extends Redirect
         ['href' => '/fftracker/achievements', 'name' => 'Achievements']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/fftracker\/achievement\/(.*)';
+    protected string $searchFor = '\/fftracker\/achievement[^s](.*)';
     #Regex replace pattern
     protected string $replaceWith = '/fftracker/achievements/$1';
 }

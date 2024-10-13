@@ -11,7 +11,7 @@ class CrossworldLinkshell extends Redirect
         ['href' => '/fftracker/crossworld_linkshells', 'name' => 'Crossworld Linkshells']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/fftracker\/crossworld_?linkshell\/(.*)';
+    protected string $searchFor = '\/fftracker\/(crossworldlinkshells|crossworld_?linkshell[^s])(.*)';
     #Regex replace pattern
-    protected string $replaceWith = '/fftracker/crossworld_linkshells/$1';
+    protected string $replaceWith = '/fftracker/crossworld_linkshells$2';
 }
