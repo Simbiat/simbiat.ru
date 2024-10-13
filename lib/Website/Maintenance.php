@@ -127,7 +127,7 @@ class Maintenance
     public function forBackup(): bool|string
     {
         if (!is_dir(Config::$DDLDir) && !mkdir(Config::$DDLDir, recursive: true) && !is_dir(Config::$DDLDir)) {
-            return 'Failed to created DDL directory';
+            return 'Failed to create DDL directory';
         }
         $dumpOrder = '';
         try {
@@ -174,23 +174,25 @@ class Maintenance
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
         #Get free space in percentage
-        $percentage = disk_free_space($dir)*100/disk_total_space($dir);
+        $free = disk_free_space($dir);
+        $total = disk_total_space($dir);
+        $percentage = $free * 100 / $total;
         if (Config::$PROD && $percentage < 5) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noSpace.flag')) {
                 #Clean files
                 $this->filesClean();
                 #Recalculate percentage
-                $percentage = disk_free_space($dir)*100/disk_total_space($dir);
+                $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
                     (new Email(Config::adminMail))->send('[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
                     #Generate flag
-                    file_put_contents($dir . '/noSpace.flag', $percentage . '% of space left');
+                    file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
             }
         } elseif (is_file($dir.'/noSpace.flag')) {
-            @unlink($dir . '/noSpace.flag');
+            @unlink($dir.'/noSpace.flag');
             #Send mail
             (new Email(Config::adminMail))->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
         }
@@ -313,7 +315,8 @@ class Maintenance
                     #Check if file and is old enough
                     if (is_file($file)) {
                         #Remove the file
-                        unlink($file);
+                        /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                        @unlink($file);
                         #Remove parent directory if empty
                         if (!(new \RecursiveDirectoryIterator(dirname($file), \FilesystemIterator::SKIP_DOTS))->valid()) {
                             $emptyDirs[] = $file;
