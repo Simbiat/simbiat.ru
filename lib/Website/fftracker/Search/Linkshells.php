@@ -11,6 +11,8 @@ class Linkshells extends Search
     protected string $table = 'ffxiv__linkshell';
     #List of fields
     protected string $fields = '`linkshellid` as `id`, `name`, `crossworld`, `updated`';
+    #Optional WHERE clause for every SELECT
+    protected string $where = '`crossworld`=0';
     #Default order (for main page, for example)
     protected string $orderDefault = '`Updated` DESC';
     #Order for list pages

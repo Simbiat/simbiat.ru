@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'composer/ca-bundle' => array(
-            'pretty_version' => '1.5.1',
-            'version' => '1.5.1.0',
-            'reference' => '063d9aa8696582f5a41dffbbaf3c81024f0a604a',
+            'pretty_version' => '1.5.2',
+            'version' => '1.5.2.0',
+            'reference' => '48a792895a2b7a6ee65dd5442c299d7b835b6137',
             'type' => 'library',
             'install_path' => __DIR__ . '/./ca-bundle',
             'aliases' => array(),
@@ -65,9 +65,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.3.2',
-            'version' => '6.3.2.0',
-            'reference' => 'fd4042cb6a7f3f985a81aedc075dd59e0b991a51',
+            'pretty_version' => '6.4.1',
+            'version' => '6.4.1.0',
+            'reference' => '0d364e0dd6c177da3c24cd4049178026324fd7ac',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -112,7 +112,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.3.2',
+                0 => '6.4.1',
             ),
         ),
         'psr/http-factory' => array(
@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '883f97eeb8484a500893e4508f60da3086c69ead',
+            'reference' => 'c3c55a0f6643119fa8699577cc83ca6256d98ab5',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -196,9 +196,9 @@
             'dev_requirement' => false,
         ),
         'symfony/html-sanitizer' => array(
-            'pretty_version' => 'v6.4.8',
-            'version' => '6.4.8.0',
-            'reference' => '9de29a710320ee802374e479169c5a82f9ee7854',
+            'pretty_version' => 'v6.4.12',
+            'version' => '6.4.12.0',
+            'reference' => 'b58efe8ed0d8f5bf84913380a2f9da0c242f4200',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/html-sanitizer',
             'aliases' => array(),
@@ -241,9 +241,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.3.0',
-            'version' => '7.3.0.0',
-            'reference' => 'e92ab7adaa3db1752639361ded41a7abb2d28996',
+            'pretty_version' => '7.4.1',
+            'version' => '7.4.1.0',
+            'reference' => 'e4d46be06c8d0d99f542e7199d1283850fb9192c',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),

@@ -680,6 +680,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Website\\fftracker\\Search\\Achievements' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/Achievements.php',
         'Simbiat\\Website\\fftracker\\Search\\Characters' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/Characters.php',
         'Simbiat\\Website\\fftracker\\Search\\Companies' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/Companies.php',
+        'Simbiat\\Website\\fftracker\\Search\\CrossworldLinkshells' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/CrossworldLinkshells.php',
         'Simbiat\\Website\\fftracker\\Search\\Linkshells' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/Linkshells.php',
         'Simbiat\\Website\\fftracker\\Search\\PVP' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/PVP.php',
         'Simbiat\\Website\\fftracker\\Search\\Points' => __DIR__ . '/../..' . '/lib/Website/fftracker/Search/Points.php',

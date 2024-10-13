@@ -474,6 +474,7 @@ return array(
     'Simbiat\\Website\\fftracker\\Search\\Achievements' => $baseDir . '/lib/Website/fftracker/Search/Achievements.php',
     'Simbiat\\Website\\fftracker\\Search\\Characters' => $baseDir . '/lib/Website/fftracker/Search/Characters.php',
     'Simbiat\\Website\\fftracker\\Search\\Companies' => $baseDir . '/lib/Website/fftracker/Search/Companies.php',
+    'Simbiat\\Website\\fftracker\\Search\\CrossworldLinkshells' => $baseDir . '/lib/Website/fftracker/Search/CrossworldLinkshells.php',
     'Simbiat\\Website\\fftracker\\Search\\Linkshells' => $baseDir . '/lib/Website/fftracker/Search/Linkshells.php',
     'Simbiat\\Website\\fftracker\\Search\\PVP' => $baseDir . '/lib/Website/fftracker/Search/PVP.php',
     'Simbiat\\Website\\fftracker\\Search\\Points' => $baseDir . '/lib/Website/fftracker/Search/Points.php',

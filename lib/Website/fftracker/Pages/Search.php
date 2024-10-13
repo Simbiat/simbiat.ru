@@ -4,6 +4,7 @@ namespace Simbiat\Website\fftracker\Pages;
 
 use Simbiat\Website\fftracker\Search\Characters;
 use Simbiat\Website\fftracker\Search\Companies;
+use Simbiat\Website\fftracker\Search\CrossworldLinkshells;
 use Simbiat\Website\fftracker\Search\PVP;
 use Simbiat\Website\fftracker\Search\Linkshells;
 use Simbiat\Website\fftracker\Search\Achievements;
@@ -28,6 +29,7 @@ class Search extends \Simbiat\Website\Abstracts\Pages\Search
         'freecompanies' => ['name' => 'Free Companies', 'class' => Companies::class],
         'pvpteams' => ['name' => 'PvP Teams', 'class' => PVP::class],
         'linkshells' => ['name' => 'Linkshells', 'class' => Linkshells::class],
+        'crossworld_linkshells' => ['name' => 'Crossworld Linkshells', 'class' => CrossworldLinkshells::class],
         'achievements' => ['name' => 'Achievements', 'class' => Achievements::class],
     ];
     #Items to display per page for search results per type

@@ -32,7 +32,7 @@ class Router extends \Simbiat\Website\Abstracts\Router
             'freecompanies' => (!empty($path[1]) ? (new \Simbiat\Website\fftracker\Pages\FreeCompany())->get(array_slice($path, 1)) : (new \Simbiat\Website\fftracker\Pages\Listing())->get($path)),
             'pvpteams' => (!empty($path[1]) ? (new \Simbiat\Website\fftracker\Pages\PvPTeam())->get(array_slice($path, 1)) : (new \Simbiat\Website\fftracker\Pages\Listing())->get($path)),
             'linkshells' => (!empty($path[1]) ? (new \Simbiat\Website\fftracker\Pages\Linkshell())->get(array_slice($path, 1)) : (new \Simbiat\Website\fftracker\Pages\Listing())->get($path)),
-            'crossworld_linkshells', 'crossworldlinkshells' => (!empty($path[1]) ? (new \Simbiat\Website\fftracker\Pages\CrossworldLinkshell())->get(array_slice($path, 1)) : (new \Simbiat\Website\fftracker\Pages\Listing())->get($path)),
+            'crossworld_linkshells' => (!empty($path[1]) ? (new \Simbiat\Website\fftracker\Pages\CrossworldLinkshell())->get(array_slice($path, 1)) : (new \Simbiat\Website\fftracker\Pages\Listing())->get($path)),
             'achievements' => (!empty($path[1]) ? (new \Simbiat\Website\fftracker\Pages\Achievement())->get(array_slice($path, 1)) : (new \Simbiat\Website\fftracker\Pages\Listing())->get($path)),
             'points' => (new \Simbiat\Website\fftracker\Pages\Listing())->get($path),
             #Redirects
@@ -40,7 +40,7 @@ class Router extends \Simbiat\Website\Abstracts\Router
             'freecompany' => (new \Simbiat\Website\fftracker\Redirects\FreeCompany())->get(array_slice($path, 1)),
             'pvpteam' => (new \Simbiat\Website\fftracker\Redirects\PvPTeam())->get(array_slice($path, 1)),
             'linkshell' => (new \Simbiat\Website\fftracker\Redirects\Linkshell())->get(array_slice($path, 1)),
-            'crossworld_linkshell', 'crossworldlinkshell' => (new \Simbiat\Website\fftracker\Redirects\CrossworldLinkshell())->get(array_slice($path, 1)),
+            'crossworld_linkshell', 'crossworldlinkshell', 'crossworldlinkshells' => (new \Simbiat\Website\fftracker\Redirects\CrossworldLinkshell())->get(array_slice($path, 1)),
             'achievement' => (new \Simbiat\Website\fftracker\Redirects\Achievement())->get(array_slice($path, 1)),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
         };

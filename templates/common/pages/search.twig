@@ -38,6 +38,8 @@
                 PvP Teams:
             {% elseif type == 'linkshells' %}
                 Linkshells:
+            {% elseif type == 'crossworld_linkshells' %}
+                Crossworld Linkshells:
             {% endif %}
             {% if subResult.count>subResult.results|length %}
                 {# Set list link #}
@@ -55,6 +57,8 @@
                     {% set listURL = '/fftracker/pvpteams/' %}
                 {% elseif type == 'linkshells' %}
                     {% set listURL = '/fftracker/linkshells/' %}
+                {% elseif type == 'crossworld_linkshells' %}
+                    {% set listURL = '/fftracker/crossworld_linkshells/' %}
                 {% endif %}
                 {# Show link itself #}
                 <a href="{{ listURL }}{% if searchValue %}?search={{ searchValue|url_encode }}{% endif %}">{{ subResult.count }}</a>

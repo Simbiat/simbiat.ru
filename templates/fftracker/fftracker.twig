@@ -13,6 +13,7 @@
                     <li><a href="/fftracker/freecompanies" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
                     <li><a href="/fftracker/pvpteams" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
                     <li><a href="/fftracker/linkshells" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
+                    <li><a href="/fftracker/crossworld_linkshells" target="_self" itemprop="url"><span itemprop="name">Crossworld Linkshells</span></a></li>
                     <li><a href="/fftracker/achievements" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
                 </ul>
                 <p>Use <a href="/fftracker/search" target="_self" itemprop="url"><span itemprop="name">search</span></a> to find something specific or <a href="/fftracker/track" target="_self" itemprop="url"><span itemprop="name">register</span></a> a new entity, if we do not have it.</p>
@@ -37,6 +38,8 @@
                 {% elseif subServiceName == 'pvpteams' %}
                     {{ include('common/pages/list.twig') }}
                 {% elseif subServiceName == 'linkshells' %}
+                    {{ include('common/pages/list.twig') }}
+                {% elseif subServiceName == 'crossworld_linkshells' %}
                     {{ include('common/pages/list.twig') }}
                 {% elseif subServiceName == 'achievements' %}
                     {{ include('common/pages/list.twig') }}
