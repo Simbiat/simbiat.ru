@@ -430,6 +430,15 @@ class Homepage extends Page
                     'description' => null,
                 ],
                 [
+                    'startTime' => '2024-09-12',
+                    'endTime' => null,
+                    'name' => 'Far Far Games',
+                    'icon' => '/assets/images/icons/Far Far Games.webp',
+                    'href' => 'https://farfargames.com/',
+                    'position' => 'Beta-tester',
+                    'description' => 'Beta-testing new game "Bylina" a.k.a "The Epic"',
+                ],
+                [
                     'startTime' => '2024-10-07',
                     'endTime' => null,
                     'name' => 'Green Sisu',
@@ -437,6 +446,15 @@ class Homepage extends Page
                     'href' => 'https://www.greensisu.fi/',
                     'position' => 'Member',
                     'description' => null,
+                ],
+                [
+                    'startTime' => '2024-11-06',
+                    'endTime' => null,
+                    'name' => 'Carillon Games',
+                    'icon' => '/assets/images/icons/Blue Berry.webp',
+                    'href' => 'https://play.google.com/store/apps/details?id=com.carillongames.blueberry',
+                    'position' => 'Beta-tester',
+                    'description' => 'Beta-testing new game "Blue Berry"',
                 ],
             ];
         $outputArray['contacts'] =
