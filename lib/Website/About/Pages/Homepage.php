@@ -1,10 +1,15 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\About\Pages;
 
 use Simbiat\Website\Abstracts\Page;
+use Simbiat\Website\Config;
 use Simbiat\Website\usercontrol\User;
 
+/**
+ * Class for page which is currently used as home page
+ */
 class Homepage extends Page
 {
     #Current breadcrumb for navigation
@@ -25,17 +30,22 @@ class Homepage extends Page
         '/assets/images/ogimages/bictracker.png',
         '/assets/images/ogimages/fftracker.png',
     ];
-
+    
     protected function generate(array $path): array
     {
         $outputArray = ['h1' => 'Home', 'serviceName' => 'homepage', 'yearsOfExperience' => ((int)date('Y') - 2009)];
-        $user = new User(\Simbiat\Website\Config::userIDs['Owner']);
+        $user = new User(Config::userIDs['Owner']);
         $outputArray['posts'] = $user->getTalksStarters(true);
         #Limit number of posts
-        $outputArray['posts'] = array_slice($outputArray['posts'], 0, 6);
+        $outputArray['posts'] = \array_slice($outputArray['posts'], 0, 6);
         #Feedback
         $outputArray['feedbacks'] =
             [
+                [
+                    'href' => '/resume/Signant/20241111.webp',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                ],
                 [
                     'href' => '/resume/Signant/20240604_1.webp',
                     'alt' => 'Feedback from Mika Nuutilainen',
