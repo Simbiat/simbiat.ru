@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\fftracker;
 
 use Simbiat\Website\Config;
@@ -8,28 +9,31 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
 use Simbiat\Website\Images;
 
+use function is_array, sprintf, dirname;
+
 abstract class Entity extends \Simbiat\Website\Abstracts\Entity
 {
     protected const entityType = 'character';
     public string $name = '';
-
+    
     protected null|array $lodestone = null;
-
+    
     #Function to get initial data from DB
+    
     /**
      * @throws \Exception
      */
     abstract protected function getFromDB(): array;
-
+    
     #Get entity data from Lodestone
     abstract public function getFromLodestone(bool $allowSleep = false): string|array;
-
+    
     #Function to do processing
     abstract protected function process(array $fromDB): void;
-
+    
     #Function to update the entity
     abstract protected function updateDB(): bool;
-
+    
     #Update the entity
     public function update(bool $allowSleep = false): string|bool
     {
@@ -39,7 +43,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
         #Check if we have not updated before
         try {
-            $updated = HomePage::$dbController->selectValue('SELECT `updated` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
+            $updated = HomePage::$dbController->selectValue('SELECT `updated` FROM `ffxiv__'.$this::entityType.'` WHERE `'.$this::entityType.'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return $e->getMessage()."\n".$e->getTraceAsString();
@@ -88,8 +92,8 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
         #Check if any character currently registered in a group is linked to the user
         try {
-            $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '_character` LEFT JOIN `ffxiv__character` ON `ffxiv__' . $this::entityType . '_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `' . $this::entityType . 'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
-            if(!$check) {
+            $check = HomePage::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'_character` LEFT JOIN `ffxiv__character` ON `ffxiv__'.$this::entityType.'_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `'.$this::entityType.'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+            if (!$check) {
                 return ['http_error' => 403, 'reason' => 'Group not linked to user'];
             }
             return $this->update();
@@ -98,7 +102,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
             return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
         }
     }
-
+    
     #Register the entity, if it has not been registered already
     public function register(): bool|int
     {
@@ -107,7 +111,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
             return 400;
         }
         try {
-            $check = HomePage::$dbController->check('SELECT `' . $this::entityType . 'id` FROM `ffxiv__' . $this::entityType . '` WHERE `' . $this::entityType . 'id` = :id', [':id' => $this->id]);
+            $check = HomePage::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'` WHERE `'.$this::entityType.'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return 503;
@@ -134,10 +138,15 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         if ($this::entityType === 'character' && isset($this->lodestone['private']) && $this->lodestone['private'] === true) {
             return 403;
         }
+        #At some point empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that
+        #Since they lack some basic information, it's not possible to register them, so treat them as private
+        if (isset($this->lodestone['empty']) && $this->lodestone['empty'] === true && \in_array($this::entityType, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])) {
+            return 403;
+        }
         unset($this->lodestone['404']);
         return $this->updateDB(true);
     }
-
+    
     #Helper function to add new characters to Cron en masse
     protected function charMassCron(array $members): void
     {
@@ -169,7 +178,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     #Function to download crest components from Lodestone
     protected function downloadCrestComponents(array $images): void
     {
-        foreach ($images as $key=>$image) {
+        foreach ($images as $key => $image) {
             if (!empty($image)) {
                 #Check if we have already downloaded the component image and use that one to speed up the process
                 if ($key === 0) {
@@ -300,16 +309,16 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     
     public static function cleanCrestResults(array $results): array
     {
-        foreach($results as $key=>$result) {
+        foreach ($results as $key => $result) {
             if (isset($result['crest_part_1']) || isset($result['crest_part_2']) || isset($result['crest_part_3'])) {
-                $results[ $key ]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
-                if (isset($result['grandcompanyid']) && str_contains($results[ $key ]['icon'], 'not_found') && in_array($result['grandcompanyid'], [1, 2, 3], true)) {
-                    $results[ $key ]['icon'] = $result['grandcompanyid'];
+                $results[$key]['icon'] = self::crestToFavicon([$result['crest_part_1'], $result['crest_part_2'], $result['crest_part_3']]);
+                if (isset($result['grandcompanyid']) && str_contains($results[$key]['icon'], 'not_found') && \in_array($result['grandcompanyid'], [1, 2, 3], true)) {
+                    $results[$key]['icon'] = $result['grandcompanyid'];
                 }
             } else {
-                $results[ $key ]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
+                $results[$key]['icon'] = '/assets/images/fftracker/merged-crests/not_found.webp';
             }
-            unset($results[ $key ]['crest_part_1'], $results[ $key ]['crest_part_2'], $results[ $key ]['crest_part_3'], $results[ $key ]['grandcompanyid']);
+            unset($results[$key]['crest_part_1'], $results[$key]['crest_part_2'], $results[$key]['crest_part_3'], $results[$key]['grandcompanyid']);
         }
         return $results;
     }

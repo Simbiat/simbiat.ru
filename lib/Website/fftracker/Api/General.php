@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\fftracker\Api;
 
 use Simbiat\Website\Abstracts\Api;
@@ -20,7 +21,7 @@ abstract class General extends Api
     protected string $nameForErrors = '';
     #Name for links
     protected string $nameForLinks = '';
-
+    
     protected function genData(array $path): array
     {
         #Reset verb for consistency, if it's not set
@@ -36,10 +37,10 @@ abstract class General extends Api
                 };
             } else {
                 $data = match ($path[1]) {
-                    'update' => (new $this->entityClass)->setId($path[0])->updateFromApi(),
-                    'register' => (new $this->entityClass)->setId($path[0])->register(),
-                    'lodestone' => (new $this->entityClass)->setId($path[0])->getFromLodestone(),
-                    default => (new $this->entityClass)->setId($path[0])->getArray(),
+                    'update' => (new $this->entityClass())->setId($path[0])->updateFromApi(),
+                    'register' => (new $this->entityClass())->setId($path[0])->register(),
+                    'lodestone' => (new $this->entityClass())->setId($path[0])->getFromLodestone(),
+                    default => (new $this->entityClass())->setId($path[0])->getArray(),
                 };
             }
         } catch (\UnexpectedValueException) {
@@ -51,22 +52,30 @@ abstract class General extends Api
         #Check for errors
         if (!empty($data['http_error'])) {
             return $data;
-        } elseif ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
+        }
+        if ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
             return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Lodestone'];
-        } elseif ($data === 400) {
+        }
+        if ($data === 400) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
-        } elseif ($data === 500 || $data === false) {
+        }
+        if ($data === 500 || $data === false) {
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
-        } elseif ($this->nameForLinks === 'character' && isset($data['private']) && $data['private'] === true) {
+        }
+        if ($this->nameForLinks === 'character' && isset($data['private']) && $data['private'] === true) {
             return ['http_error' => 403, 'reason' => 'Character marked as private on Lodestone'];
-        } elseif ($data === 409) {
+        }
+        if ($data === 403 && \in_array($this->nameForLinks, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])) {
+            return ['http_error' => 403, 'reason' => $this->nameForErrors.' has empty page on Lodestone'];
+        }
+        if ($data === 409) {
             return ['http_error' => 409, 'reason' => 'ID `'.$path[0].'` is already registered', 'location' => '/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0]];
-        } elseif ($data !== true && empty($data['id'])) {
+        }
+        if ($data !== true && empty($data['id'])) {
             if ($path[1] === 'lodestone') {
                 return ['http_error' => 500, 'reason' => 'Failed to get '.mb_strtolower($this->nameForErrors, 'UTF-8').' with ID `'.$path[0].'` from Lodestone'];
-            } else {
-                return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Tracker'];
             }
+            return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Tracker'];
         }
         if (!empty($data['dates']['updated'])) {
             Headers::lastModified($data['dates']['updated'], true);
@@ -79,24 +88,24 @@ abstract class General extends Api
         }
         #Link header/tag for API
         $result['alt_links'] = [
-            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/' . $path[0]],
+            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0]],
         ];
         if (empty($data['dates']['deleted'])) {
             if ($path[1] !== 'lodestone') {
-                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/' . $path[0] . '/lodestone'];
+                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0].'/lodestone'];
             }
             if ($path[1] === 'update' || $path[1] === 'register') {
-                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/' . $path[0]];
+                $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0]];
             }
             if ($this->nameForLinks === 'achievement') {
                 if (!empty($data['dbid'])) {
-                    $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/' .$data['dbid']];
+                    $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/'.$data['dbid']];
                 }
                 if (!empty($data['rewards']['item']['id'])) {
-                    $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/' .$data['rewards']['item']['id']];
+                    $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/'.$data['rewards']['item']['id']];
                 }
             } else {
-                $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/' . $this->nameForLinks . '/' . $path[0]];
+                $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/'.$this->nameForLinks.'/'.$path[0]];
             }
         }
         if ($path[1] === 'lodestone') {
