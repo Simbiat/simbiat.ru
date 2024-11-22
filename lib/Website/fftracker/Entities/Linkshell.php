@@ -113,10 +113,9 @@ class Linkshell extends Entity
             #If `empty` flag is set, it means that Lodestone page is empty, so we can't update anything besides name, data center and formed date
             if (isset($this->lodestone['empty']) && $this->lodestone['empty'] === true) {
                 $queries[] = [
-                    'UPDATE `ffxiv__linkshell` SET `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1) WHERE `linkshellid`=:linkshellid',
+                    'UPDATE `ffxiv__linkshell` SET `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL WHERE `linkshellid`=:linkshellid',
                     [
                         ':linkshellid' => $this->id,
-                        ':server' => $this->lodestone['server'] ?? $this->lodestone['dataCenter'],
                         ':name' => $this->lodestone['name'],
                         ':crossworld' => [$this::crossworld, 'bool'],
                         ':formed' => [
