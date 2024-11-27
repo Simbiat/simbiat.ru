@@ -261,18 +261,20 @@ class Character extends Entity
             ];
             #Update levels. Doing this in cycle since columns can vary. This can reduce performance, but so far this is the best idea I have to make it as automated as possible
             if (!empty($this->lodestone['jobs'])) {
-                foreach ($this->lodestone['jobs'] as $job=>$level) {
+                foreach ($this->lodestone['jobs'] as $job => $level) {
                     #Insert job, in case it's missing
                     $queries[] = ['INSERT IGNORE INTO `ffxiv__jobs` (`name`) VALUES (:job);', [':job' => $job]];
-                    #Update level
-                    $queries[] = [
-                        'INSERT INTO `ffxiv__character_jobs` (`characterid`, `jobid`, `level`, `last_change`) VALUES (:characterid, (SELECT `jobid` FROM `ffxiv__jobs` WHERE `name`=:jobname), :level, CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE `level`=:level, `last_change`=IF(`level`=:level, `last_change`, CURRENT_TIMESTAMP());',
-                        [
-                            ':characterid' => $this->id,
-                            ':jobname' => $job,
-                            ':level' => [(int)$level['level'], 'int'],
-                        ],
-                    ];
+                    #Update level, but only if it's more than 0
+                    if ((int)$level['level'] > 0) {
+                        $queries[] = [
+                            'INSERT INTO `ffxiv__character_jobs` (`characterid`, `jobid`, `level`, `last_change`) VALUES (:characterid, (SELECT `jobid` FROM `ffxiv__jobs` WHERE `name`=:jobname), :level, CURRENT_TIMESTAMP()) ON DUPLICATE KEY UPDATE `level`=:level, `last_change`=IF(`level`=:level, `last_change`, CURRENT_TIMESTAMP());',
+                            [
+                                ':characterid' => $this->id,
+                                ':jobname' => $job,
+                                ':level' => [(int)$level['level'], 'int'],
+                            ],
+                        ];
+                    }
                 }
             }
             #Insert server, if it has not been inserted yet. If server is registered at all.
