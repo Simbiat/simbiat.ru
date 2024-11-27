@@ -341,12 +341,14 @@ class Character extends Entity
                         $queries[] = [
                             'INSERT INTO `ffxiv__achievement` SET `achievementid`=:achievementid, `name`=:name, `icon`=:icon, `points`=:points ON DUPLICATE KEY UPDATE `updated`=`updated`, `name`=:name, `icon`=:icon, `points`=:points;',
                             [
-                                ':achievementid'=>$achievementid,
-                                ':name'=> $item['name'],
-                                ':icon'=> $icon,
-                                ':points'=> $item['points'],
+                                ':achievementid' => $achievementid,
+                                ':name' => $item['name'],
+                                ':icon' => $icon,
+                                ':points' => $item['points'],
                             ],
                         ];
+                        #Blocking achievements updates, because the data grew so big, that it seems to be killing the server. This will, at least prevent it from growing further for the time being
+                        /*
                         $queries[] = [
                             'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=UTC_DATE() ON DUPLICATE KEY UPDATE `time`=:time;',
                             [
@@ -355,6 +357,7 @@ class Character extends Entity
                                 ':time'=>[$item['time'], 'datetime'],
                             ],
                         ];
+                        */
                     }
                 }
             }
