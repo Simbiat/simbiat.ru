@@ -459,7 +459,7 @@ class Homepage extends Page
                 ],
                 [
                     'startTime' => '2024-11-06',
-                    'endTime' => null,
+                    'endTime' => '2024-11-27',
                     'name' => 'Carillon Games',
                     'icon' => '/assets/images/icons/Blue Berry.webp',
                     'href' => 'https://play.google.com/store/apps/details?id=com.carillongames.blueberry',
