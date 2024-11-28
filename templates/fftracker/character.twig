@@ -7,7 +7,9 @@
         {% endif %}
     </section>
     <section class="ff_char_block">
-        <samp class="warning regularText">If you own this character account, and do not want to share the data, you can change private settings on <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/account/" target="_blank">Lodestone</a>, and a private flag will be applied on next update, preventing any further updates, hiding all details of the profile and applying <i>noindex</i> tag to the page. Visiting the page every 24 hours can help prioritize the update, but generally it happens within minutes. Once it's applied, you will see appropriate message. Note, that you may need to force-refresh the page (clear browser cache) to see the change. This also does <b>not</b> imply instant removal of the page from Google search results, and link to profile may still be present on groups' pages (same as with Lodestone).</samp>
+        {% if not character.dates.privated %}
+            <samp class="warning regularText">If you own this character account, and do not want to share the data, you can change private settings on <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/account/" target="_blank">Lodestone</a>, and a private flag will be applied on next update, preventing any further updates, hiding all details of the profile and applying <i>noindex</i> tag to the page. Visiting the page every 24 hours can help prioritize the update, but generally it happens within minutes. Once it's applied, you will see appropriate message. Note, that you may need to force-refresh the page (clear browser cache) to see the change. This also does <b>not</b> imply instant removal of the page from Google search results, and link to profile may still be present on groups' pages (same as with Lodestone).</samp>
+        {% endif %}
         <h2>General</h2>
         {% if character.owned.id and session_data.userid == character.owned.id %}
             <p>
