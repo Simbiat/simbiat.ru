@@ -446,3 +446,5 @@ UPDATE `talks__alt_link_types` SET `icon`=REPLACE(`icon`, '/img/', '/assets/imag
 
 UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.app' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
 UPDATE `talks__alt_links` SET `url`=REPLACE(`url`, 'kitsu.io', 'kitsu.app');
+
+UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.(app|io)' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
