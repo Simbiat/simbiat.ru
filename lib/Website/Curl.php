@@ -1,15 +1,10 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Simbiat\Website;
 
 #Class for cUrl related functions. Needed more for settings' uniformity
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
-use Simbiat\Website\Config;
-use Simbiat\Website\Errors;
-use Simbiat\Website\HomePage;
-use Simbiat\Website\Images;
-use Simbiat\Website\Security;
 
 class Curl
 {

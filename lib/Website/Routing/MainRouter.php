@@ -24,7 +24,7 @@ class MainRouter extends \Simbiat\Website\Abstracts\Router
         #Forums, blogs, etc.
         'talks',
         #Pages routing
-        'about', 'fftracker', 'bictracker', 'uc', 'tests', 'bic',
+        'about', 'fftracker', 'bictracker', 'uc', 'bic',
         #Simple pages
         'simplepages',
         #Games

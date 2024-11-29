@@ -13,12 +13,7 @@ use Simbiat\Database\Pool;
 use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
-use Simbiat\Website\Caching;
-use Simbiat\Website\Errors;
-use Simbiat\Website\Maintenance;
 use Simbiat\Website\Routing\MainRouter;
-use Simbiat\Website\Sanitization;
-use Simbiat\Website\Security;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 use Simbiat\Website\usercontrol\Session;
 
@@ -186,7 +181,7 @@ class HomePage
             Headers::clientReturn(403);
         }
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = mb_strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u','$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))), 'UTF-8');
+        self::$canonical = mb_strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))), 'UTF-8');
         #Remove bad UTF
         self::$canonical = mb_scrub(self::$canonical, 'UTF-8');
         #Remove "friendly" portion of the links, but exclude API
@@ -334,7 +329,7 @@ class HomePage
                 @ob_end_clean();
             } else {
                 #Output data
-                Common::zEcho($output, $twigVars['cacheStrat'] ?? 'hour');
+                Common::zEcho($output, $twigVars['cacheStrat'] ?? 'hour', false);
             }
             exit;
         }

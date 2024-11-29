@@ -5,9 +5,12 @@ namespace Simbiat\Website;
 
 #Database settings
 use Dotenv\Dotenv;
-use Simbiat\Website\Security;
 
 #Common settings
+
+/**
+ * Class that holds main settings for the website. Needs to be instantiated early as part of bootstrapping.
+ */
 final class Config
 {
     public static bool $PROD = false;
@@ -61,7 +64,7 @@ final class Config
         'Linked to FF' => 6,
     ];
     public static array $argonSettings = [];
-
+    
     public function __construct()
     {
         self::$workDir = '/app';

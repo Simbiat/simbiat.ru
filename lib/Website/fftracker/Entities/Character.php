@@ -352,7 +352,7 @@ class Character extends Entity
                         #Blocking achievements updates, because the data grew so big, that it seems to be killing the server. This will, at least prevent it from growing further for the time being
                         /*
                         $queries[] = [
-                            'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=UTC_DATE() ON DUPLICATE KEY UPDATE `time`=:time;',
+                            'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
                             [
                                 ':characterid'=>$this->id,
                                 ':achievementid'=>$achievementid,

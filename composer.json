@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^8.3",
+        "php": "^8.4",
         "matomo/device-detector": "^6",
         "twig/twig": "^3",
         "symfony/html-sanitizer": "^6",
@@ -64,9 +64,6 @@
     "config": {
         "sort-packages": true,
         "store-auths": true,
-        "platform": {
-            "php": "8.3"
-        },
         "preferred-install": "source",
         "optimize-autoloader": true,
         "classmap-authoritative": true,

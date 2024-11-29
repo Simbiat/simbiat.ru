@@ -20,7 +20,8 @@
       <sourceFolder url="file://$MODULE_DIR$/./lib/optimizeTables/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/CuteBytes/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/HTMLCache/src" isTestSource="false" packagePrefix="Simbiat\" />
-      <sourceFolder url="file://$MODULE_DIR$/./lib/array2table/src" isTestSource="false" packagePrefix="Simbiat\" />
+      <sourceFolder url="file://$MODULE_DIR$/./lib/array2table/src" isTestSource="false" packagePrefix="Simbiat\ArrayToTable\" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/array2table/src" isTestSource="false" packagePrefix="Simbiat\ArrayToTable\" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
@@ -53,6 +54,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind-db/reader" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind/web-service-common" />
       <excludeFolder url="file://$MODULE_DIR$/templates/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php81" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

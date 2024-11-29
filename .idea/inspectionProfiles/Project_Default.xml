@@ -932,7 +932,9 @@
     <inspection_tool class="PhpToStringMayProduceExceptionInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpToStringReturnInspection" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="PhpTooLongMemberReferenceChainInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
-    <inspection_tool class="PhpTooManyParametersInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PhpTooManyParametersInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="limit" value="10" />
+    </inspection_tool>
     <inspection_tool class="PhpTraditionalSyntaxArrayLiteralInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpTraitUsageOutsideUseInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpTraitUseRuleInsideDifferentClassUseListInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
