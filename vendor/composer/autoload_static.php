@@ -32,6 +32,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\HtmlSanitizer\\' => 32,
+            'Simbiat\\http\\' => 13,
             'Simbiat\\http20\\' => 15,
             'Simbiat\\Website\\' => 16,
             'Simbiat\\Database\\' => 17,
@@ -101,6 +102,10 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Symfony\\Component\\HtmlSanitizer\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/html-sanitizer',
+        ),
+        'Simbiat\\http\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/lib/http/sse/src',
         ),
         'Simbiat\\http20\\' => 
         array (
@@ -723,6 +728,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\http20\\RSS' => __DIR__ . '/../..' . '/lib/http20/src/RSS.php',
         'Simbiat\\http20\\Sharing' => __DIR__ . '/../..' . '/lib/http20/src/Sharing.php',
         'Simbiat\\http20\\Sitemap' => __DIR__ . '/../..' . '/lib/http20/src/Sitemap.php',
+        'Simbiat\\http\\SSE' => __DIR__ . '/../..' . '/lib/http/sse/src/SSE.php',
         'Simbiat\\nl2tag' => __DIR__ . '/../..' . '/lib/nl2tag/src/nl2tag.php',
         'Simbiat\\optimizeTables' => __DIR__ . '/../..' . '/lib/optimizeTables/src/optimizeTables.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',

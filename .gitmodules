@@ -52,3 +52,6 @@
 [submodule "lib/HTMLCache"]
 	path = lib/HTMLCache
 	url = https://github.com/Simbiat/HTMLCache
+[submodule "lib/http/sse"]
+	path = lib/http/sse
+	url = https://github.com/Simbiat/sse

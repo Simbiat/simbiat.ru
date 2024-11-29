@@ -12,6 +12,7 @@ return array(
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'Symfony\\Component\\HtmlSanitizer\\' => array($vendorDir . '/symfony/html-sanitizer'),
+    'Simbiat\\http\\' => array($baseDir . '/lib/http/sse/src'),
     'Simbiat\\http20\\' => array($baseDir . '/lib/http20/src'),
     'Simbiat\\Website\\' => array($baseDir . '/lib/Website'),
     'Simbiat\\Database\\' => array($baseDir . '/lib/Database/src'),

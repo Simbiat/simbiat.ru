@@ -13,6 +13,7 @@
     <mapping directory="$PROJECT_DIR$/lib/SafeFileName" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/SandClock" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/array2table" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/http/sse" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/http20" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/nl2tag" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/optimizeTables" vcs="Git" />

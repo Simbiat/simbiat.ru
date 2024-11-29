@@ -517,6 +517,7 @@ return array(
     'Simbiat\\http20\\RSS' => $baseDir . '/lib/http20/src/RSS.php',
     'Simbiat\\http20\\Sharing' => $baseDir . '/lib/http20/src/Sharing.php',
     'Simbiat\\http20\\Sitemap' => $baseDir . '/lib/http20/src/Sitemap.php',
+    'Simbiat\\http\\SSE' => $baseDir . '/lib/http/sse/src/SSE.php',
     'Simbiat\\nl2tag' => $baseDir . '/lib/nl2tag/src/nl2tag.php',
     'Simbiat\\optimizeTables' => $baseDir . '/lib/optimizeTables/src/optimizeTables.php',
     'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',

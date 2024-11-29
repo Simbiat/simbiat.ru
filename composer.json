@@ -54,6 +54,9 @@
                 "./lib/SafeFileName/src",
                 "./lib/SandClock/src"
             ],
+            "Simbiat\\http\\": [
+                "./lib/http/sse/src"
+            ],
             "Simbiat\\ArrayToTable\\": "./lib/array2table/src",
             "Simbiat\\Cron\\": "./lib/Cron/src",
             "Simbiat\\Database\\": "./lib/Database/src",
