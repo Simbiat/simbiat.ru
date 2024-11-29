@@ -83,6 +83,7 @@ services:
       - webserver
     ports:
       - "8080:8080"
+      - "6060:6060"
     volumes:
       - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
       - ./data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
