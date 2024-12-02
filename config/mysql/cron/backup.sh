@@ -17,12 +17,17 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     fi
 
   echo Cleaning files... >> $logFile 2>&1
+  rm -rf $logicBackup/*.sql >> $logFile 2>&1
   rm -rf $logicBackup/*.7z >> $logFile 2>&1
   rm -rf $physBackup >> $logFile 2>&1
-  echo "Backing up users for $currentDate (logical)..." >> $logFile 2>&1
-  mariadb-dump $dumpSetting --system=users 2>> $logFile | 7z a ${zipSettings} -si$currentDate-users.sql $logicBackup/$currentDate-users.7z >> $logFile 2>&1
+  echo "Backing up users for $currentDate..." >> $logFile 2>&1
+  mariadb-dump $dumpSetting --system=users 2>> $logFile 1>> $logicBackup/$currentDate-users.sql
+  echo "Zipping users for $currentDate..." >> $logFile 2>&1
+  7z a ${zipSettings} $logicBackup/$currentDate-users.7z $logicBackup/$currentDate-users.sql >> $logFile 2>&1
   echo "Backing up data for $currentDate (logical)..." >> $logFile 2>&1
-  mariadb-dump $dumpSetting --routines --triggers --databases simbiatr_simbiat --tables $tablesOrder 2>> $logFile | 7z a ${zipSettings} -si$currentDate-${logicalName}.sql $logicBackup/$currentDate-${logicalName}.7z >> $logFile 2>&1
+  mariadb-dump $dumpSetting --routines --triggers --databases simbiatr_simbiat --tables $tablesOrder 2>> $logFile 1>> $logicBackup/$currentDate-${logicalName}.sql
+  echo "Zipping data for $currentDate (logical)..." >> $logFile 2>&1
+  7z a ${zipSettings} $logicBackup/$currentDate-${logicalName}.7z $logicBackup/$currentDate-${logicalName}.sql >> $logFile 2>&1
   echo "Backing up full database for $currentDate (physical)..." >> $logFile 2>&1
   mariadb-backup --backup --target-dir=$physBackup --kill-long-queries-timeout=300 --extended-validation --lock-ddl-per-table  >> $logFile 2>&1
   echo Owning for $currentDate... >> $logFile 2>&1
