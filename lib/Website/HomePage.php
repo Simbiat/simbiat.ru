@@ -73,7 +73,7 @@ class HomePage
                 #Check space availability
                 $healthCheck->noSpace();
                 #Run cron
-                (new Cron\Agent())->process(50);
+                (new Cron\Agent())->process(200);
                 #Ensure we exit no matter what happens with CRON
                 exit;
             }
