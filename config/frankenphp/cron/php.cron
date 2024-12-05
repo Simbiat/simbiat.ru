@@ -1,4 +1,4 @@
-* * * * * /usr/local/php/config/cron/php-cron.sh
-* * * * * sleep 20 && /usr/local/php/config/cron/php-cron.sh
-* * * * * sleep 40 && /usr/local/php/config/cron/php-cron.sh
+*/5 * * * * /usr/local/php/config/cron/php-cron.sh
+#* * * * * sleep 20 && /usr/local/php/config/cron/php-cron.sh
+#* * * * * sleep 40 && /usr/local/php/config/cron/php-cron.sh
 0 0 * * * /usr/local/php/config/cron/log-rotate.sh
