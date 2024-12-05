@@ -157,7 +157,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
                 if (!$details['registered']) {
                     #Priority is higher, since they are missing a lot of data.
                     try {
-                        $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
+                        #$cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
                     } catch (\Throwable) {
                         #Do nothing, not considered critical
                     }
