@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\fftracker\Entities;
 
 use Simbiat\Website\Config;
@@ -13,6 +14,11 @@ use Simbiat\Website\Sanitization;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\User;
 
+use function is_array;
+
+/**
+ * Class representing a FFXIV character
+ */
 class Character extends Entity
 {
     #Custom properties
@@ -29,18 +35,18 @@ class Character extends Entity
     public array $achievements = [];
     public int $achievementPoints = 0;
     public array $owned = [];
-
-    #Function to get initial data from DB
+    
     /**
+     * Function to get initial data from DB
      * @throws \Exception
      */
     protected function getFromDB(): array
     {
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
-        $data = HomePage::$dbController->selectRow('SELECT *, `ffxiv__achievement`.`icon` AS `titleIcon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, `ffxiv__enemy`.`name` AS `killedby` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid` = `ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardianid` = `ffxiv__guardian`.`guardianid` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid` = `ffxiv__nameday`.`namedayid` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid` = `ffxiv__city`.`cityid` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`serverid` = `ffxiv__server`.`serverid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid` = `ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`titleid` = `ffxiv__achievement`.`achievementid` LEFT JOIN `ffxiv__enemy` ON `ffxiv__character`.`enemyid` = `ffxiv__enemy`.`enemyid` WHERE `ffxiv__character`.`characterid` = :id;', [':id'=>$this->id]);
+        $data = HomePage::$dbController->selectRow('SELECT *, `ffxiv__achievement`.`icon` AS `titleIcon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, `ffxiv__enemy`.`name` AS `killedby` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid` = `ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardianid` = `ffxiv__guardian`.`guardianid` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid` = `ffxiv__nameday`.`namedayid` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid` = `ffxiv__city`.`cityid` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`serverid` = `ffxiv__server`.`serverid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid` = `ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`titleid` = `ffxiv__achievement`.`achievementid` LEFT JOIN `ffxiv__enemy` ON `ffxiv__character`.`enemyid` = `ffxiv__enemy`.`enemyid` WHERE `ffxiv__character`.`characterid` = :id;', [':id' => $this->id]);
         if (!empty($data['privated'])) {
             foreach ($data as $key => $value) {
-                if (!in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'privated', 'name'])) {
+                if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'privated', 'name'])) {
                     unset($data[$key]);
                 }
             }
@@ -57,15 +63,15 @@ class Character extends Entity
             $data['username'] = null;
         }
         #Get jobs
-        $data['jobs'] = HomePage::$dbController->selectAll('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`jobid`=`ffxiv__jobs`.`jobid` WHERE `ffxiv__character_jobs`.`characterid`=:id ORDER BY `name`;', [':id'=>$this->id]);
+        $data['jobs'] = HomePage::$dbController->selectAll('SELECT `name`, `level`, `last_change` FROM `ffxiv__character_jobs` LEFT JOIN `ffxiv__jobs` ON `ffxiv__character_jobs`.`jobid`=`ffxiv__jobs`.`jobid` WHERE `ffxiv__character_jobs`.`characterid`=:id ORDER BY `name`;', [':id' => $this->id]);
         #Get old names. For now returning only the count due to cases of bullying, when the old names are learnt. They are still being collected, though for statistical purposes.
-        $data['oldNames'] = HomePage::$dbController->selectColumn('SELECT `name` FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id'=>$this->id, ':name'=>$data['name']]);
+        $data['oldNames'] = HomePage::$dbController->selectColumn('SELECT `name` FROM `ffxiv__character_names` WHERE `characterid`=:id AND `name`!=:name', [':id' => $this->id, ':name' => $data['name']]);
         #Get previous known incarnations (combination of gender and race/clan)
-        $data['incarnations'] = HomePage::$dbController->selectAll('SELECT `genderid`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clanid` = `ffxiv__clan`.`clanid` WHERE `ffxiv__character_clans`.`characterid`=:id AND (`ffxiv__character_clans`.`clanid`!=:clanid AND `ffxiv__character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id'=>$this->id, ':clanid'=>$data['clanid'], ':genderid'=>$data['genderid']]);
+        $data['incarnations'] = HomePage::$dbController->selectAll('SELECT `genderid`, `ffxiv__clan`.`race`, `ffxiv__clan`.`clan` FROM `ffxiv__character_clans` LEFT JOIN `ffxiv__clan` ON `ffxiv__character_clans`.`clanid` = `ffxiv__clan`.`clanid` WHERE `ffxiv__character_clans`.`characterid`=:id AND (`ffxiv__character_clans`.`clanid`!=:clanid AND `ffxiv__character_clans`.`genderid`!=:genderid) ORDER BY `genderid` , `race` , `clan` ', [':id' => $this->id, ':clanid' => $data['clanid'], ':genderid' => $data['genderid']]);
         #Get old servers
-        $data['servers'] = HomePage::$dbController->selectAll('SELECT `ffxiv__server`.`datacenter`, `ffxiv__server`.`server` FROM `ffxiv__character_servers` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`ffxiv__character_servers`.`serverid` WHERE `ffxiv__character_servers`.`characterid`=:id AND `ffxiv__character_servers`.`serverid` != :serverid ORDER BY `datacenter` , `server` ', [':id'=>$this->id, ':serverid'=>$data['serverid']]);
+        $data['servers'] = HomePage::$dbController->selectAll('SELECT `ffxiv__server`.`datacenter`, `ffxiv__server`.`server` FROM `ffxiv__character_servers` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`ffxiv__character_servers`.`serverid` WHERE `ffxiv__character_servers`.`characterid`=:id AND `ffxiv__character_servers`.`serverid` != :serverid ORDER BY `datacenter` , `server` ', [':id' => $this->id, ':serverid' => $data['serverid']]);
         #Get achievements
-        $data['achievements'] = HomePage::$dbController->selectAll('SELECT \'achievement\' AS `type`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`subcategory`, `ffxiv__achievement`.`name`, `time`, `icon` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character_achievement`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__character_achievement`.`characterid` = :id AND `ffxiv__achievement`.`category` IS NOT NULL AND `ffxiv__achievement`.`achievementid` IS NOT NULL ORDER BY `time` DESC, `name` LIMIT 10', [':id'=>$this->id]);
+        $data['achievements'] = HomePage::$dbController->selectAll('SELECT \'achievement\' AS `type`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`subcategory`, `ffxiv__achievement`.`name`, `time`, `icon` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character_achievement`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__character_achievement`.`characterid` = :id AND `ffxiv__achievement`.`category` IS NOT NULL AND `ffxiv__achievement`.`achievementid` IS NOT NULL ORDER BY `time` DESC, `name` LIMIT 10', [':id' => $this->id]);
         #Get affiliated groups' details
         $data['groups'] = Entity::cleanCrestResults(HomePage::$dbController->selectAll(
             '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, `current`, `ffxiv__freecompany_character`.`rankid`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id)
@@ -74,17 +80,23 @@ class Character extends Entity
             UNION ALL
             (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvpteamid` AS `id`, `ffxiv__pvpteam`.`name` as `name`, `current`, `ffxiv__pvpteam_character`.`rankid`, `ffxiv__pvpteam_rank`.`rank` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rankid`=`ffxiv__pvpteam_rank`.`pvprankid` WHERE `characterid`=:id)
             ORDER BY `current` DESC, `name` ASC;',
-            [':id'=>$this->id]
+            [':id' => $this->id]
         ));
         #Clean up the data from unnecessary (technical) clutter
         unset($data['manual'], $data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && (time() - strtotime($data['updated'])) >= 86400) {
-            #(new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'character'], 'message' => 'Updating character with ID '.$this->id, 'priority' => 1])->add();
+            (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'character'], 'message' => 'Updating character with ID '.$this->id, 'priority' => 1])->add();
         }
         return $data;
     }
-
+    
+    /**
+     * Get character data from Lodestone
+     * @param bool $allowSleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
+     *
+     * @return string|array
+     */
     public function getFromLodestone(bool $allowSleep = false): string|array
     {
         $Lodestone = (new Lodestone());
@@ -119,8 +131,13 @@ class Character extends Entity
         $data['404'] = false;
         return $data;
     }
-
-    #Function to do processing
+    
+    /**
+     * Function to process data from DB
+     * @param array $fromDB
+     *
+     * @return void
+     */
     protected function process(array $fromDB): void
     {
         $this->name = $fromDB['name'];
@@ -178,11 +195,18 @@ class Character extends Entity
         $this->achievementPoints = $fromDB['achievement_points'] ?? 0;
         $this->jobs = $fromDB['jobs'] ?? [];
     }
-
-    #Function to update the entity
+    
+    /**
+     * Function to update the entity
+     * @param bool $manual Flag indicating whether character is being added manually
+     *
+     * @return bool
+     */
     protected function updateDB(bool $manual = false): bool
     {
         try {
+            #Get time of last update for the character if it exists on tracker
+            $updated = HomePage::$dbController->selectValue('SELECT `updated` FROM `ffxiv__character` WHERE `characterid`=:characterid', [':characterid' => $this->id]);
             #If character on Lodestone is not registered in Free Company or PvP Team, add their IDs as NULL for consistency
             if (empty($this->lodestone['freeCompany']['id'])) {
                 $this->lodestone['freeCompany']['id'] = NULL;
@@ -203,7 +227,7 @@ class Character extends Entity
                     [
                         ':fcId' => $this->lodestone['freeCompany']['id'],
                         ':fcName' => $this->lodestone['freeCompany']['name'],
-                        ':server'=>$this->lodestone['server'],
+                        ':server' => $this->lodestone['server'],
                     ],
                 ];
             }
@@ -213,7 +237,7 @@ class Character extends Entity
                     [
                         ':pvpId' => $this->lodestone['pvp']['id'],
                         ':pvpName' => $this->lodestone['pvp']['name'],
-                        ':server'=>$this->lodestone['server'],
+                        ':server' => $this->lodestone['server'],
                     ],
                 ];
             }
@@ -240,22 +264,22 @@ class Character extends Entity
                 ON DUPLICATE KEY UPDATE
                     `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `name`=:name, `updated`=CURRENT_TIMESTAMP(), `privated`=NULL, `deleted`=NULL, `enemyid`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), `achievement_points`=:achievementPoints;',
                 [
-                    ':characterid'=>$this->id,
-                    ':server'=>$this->lodestone['server'],
-                    ':name'=>$this->lodestone['name'],
-                    ':manual'=>[$manual, 'bool'],
-                    ':avatar'=>str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
-                    ':biography'=>[
+                    ':characterid' => $this->id,
+                    ':server' => $this->lodestone['server'],
+                    ':name' => $this->lodestone['name'],
+                    ':manual' => [$manual, 'bool'],
+                    ':avatar' => str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
+                    ':biography' => [
                         (empty($this->lodestone['bio']) ? NULL : $this->lodestone['bio']),
                         (empty($this->lodestone['bio']) ? 'null' : 'string'),
                     ],
-                    ':title'=>(empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
-                    ':clan'=>$this->lodestone['clan'],
-                    ':genderid'=>($this->lodestone['gender']==='male' ? '1' : '0'),
-                    ':nameday'=>$this->lodestone['nameday'],
-                    ':guardian'=>$this->lodestone['guardian']['name'],
-                    ':city'=>$this->lodestone['city']['name'],
-                    ':gcRank'=>(empty($this->lodestone['grandCompany']['rank']) ? '' : $this->lodestone['grandCompany']['rank']),
+                    ':title' => (empty($this->lodestone['title']) ? '' : $this->lodestone['title']),
+                    ':clan' => $this->lodestone['clan'],
+                    ':genderid' => ($this->lodestone['gender'] === 'male' ? '1' : '0'),
+                    ':nameday' => $this->lodestone['nameday'],
+                    ':guardian' => $this->lodestone['guardian']['name'],
+                    ':city' => $this->lodestone['city']['name'],
+                    ':gcRank' => (empty($this->lodestone['grandCompany']['rank']) ? '' : $this->lodestone['grandCompany']['rank']),
                     ':achievementPoints' => [$achievementPoints, 'int']
                 ],
             ];
@@ -277,32 +301,15 @@ class Character extends Entity
                     }
                 }
             }
-            #Insert server, if it has not been inserted yet. If server is registered at all.
-            if (HomePage::$dbController->check('SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server;', [':server' => $this->lodestone['server']]) === true) {
-                $queries[] = [
-                    'INSERT IGNORE INTO `ffxiv__character_servers`(`characterid`, `serverid`) VALUES (:characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server));',
-                    [
-                        ':characterid' => $this->id,
-                        ':server' => $this->lodestone['server'],
-                    ],
-                ];
-            }
-            #Insert name, if it has not been inserted yet
-            $queries[] = [
-                'INSERT IGNORE INTO `ffxiv__character_names`(`characterid`, `name`) VALUES (:characterid, :name);',
-                [
-                    ':characterid'=>$this->id,
-                    ':name'=>$this->lodestone['name'],
-                ],
-            ];
+            $this->insertServerAndName($queries);
             #Insert race, clan and sex combination, if it has not been inserted yet
             if (!empty($this->lodestone['clan'])) {
                 $queries[] = [
                     'INSERT IGNORE INTO `ffxiv__character_clans`(`characterid`, `genderid`, `clanid`) VALUES (:characterid, :genderid, (SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan));',
                     [
-                        ':characterid'=>$this->id,
-                        ':genderid'=>($this->lodestone['gender']==='male' ? '1' : '0'),
-                        ':clan'=>$this->lodestone['clan'],
+                        ':characterid' => $this->id,
+                        ':genderid' => ($this->lodestone['gender'] === 'male' ? '1' : '0'),
+                        ':clan' => $this->lodestone['clan'],
                     ],
                 ];
             }
@@ -310,8 +317,8 @@ class Character extends Entity
             $queries[] = [
                 'UPDATE `ffxiv__freecompany_character` SET `current`=0 WHERE `characterid`=:characterid AND `freecompanyid` '.(empty($this->lodestone['freeCompany']['id']) ? 'IS NOT ' : '!= ').' :fcId;',
                 [
-                    ':characterid'=>$this->id,
-                    ':fcId'=>[
+                    ':characterid' => $this->id,
+                    ':fcId' => [
                         $this->lodestone['freeCompany']['id'],
                         (empty($this->lodestone['freeCompany']['id']) ? 'null' : 'string'),
                     ],
@@ -321,8 +328,8 @@ class Character extends Entity
             $queries[] = [
                 'UPDATE `ffxiv__pvpteam_character` SET `current`=0 WHERE `characterid`=:characterid AND `pvpteamid` '.(empty($this->lodestone['pvp']['id']) ? 'IS NOT ' : '!= ').' :pvpId;',
                 [
-                    ':characterid'=>$this->id,
-                    ':pvpId'=>[
+                    ':characterid' => $this->id,
+                    ':pvpId' => [
                         $this->lodestone['pvp']['id'],
                         (empty($this->lodestone['pvp']['id']) ? 'null' : 'string'),
                     ],
@@ -330,7 +337,7 @@ class Character extends Entity
             ];
             #Achievements
             if (!empty($this->lodestone['achievements']) && is_array($this->lodestone['achievements'])) {
-                foreach ($this->lodestone['achievements'] as $achievementid=>$item) {
+                foreach ($this->lodestone['achievements'] as $achievementid => $item) {
                     $icon = self::removeLodestoneDomain($item['icon']);
                     #Download icon, if it's not already present
                     if (is_file(str_replace('.png', '.webp', Config::$icons.$icon))) {
@@ -349,26 +356,38 @@ class Character extends Entity
                                 ':points' => $item['points'],
                             ],
                         ];
-                        $queries[] = [
-                            'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
-                            [
-                                ':characterid'=>$this->id,
-                                ':achievementid'=>$achievementid,
-                                ':time'=>[$item['time'], 'datetime'],
-                            ],
-                        ];
+                        #If the achievement is new since the last check, or if this is the first time the character is being processed, add and count the achievement
+                        if (!empty($updated)) {
+                            $queries[] = [
+                                'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
+                                [
+                                    ':characterid' => $this->id,
+                                    ':achievementid' => $achievementid,
+                                    ':time' => [$item['time'], 'datetime'],
+                                ],
+                            ];
+                            $queries[] = [
+                                'UPDATE `ffxiv__achievement` SET `earnedby`=`earnedby`+1 WHERE `achievementid`=:achievementid;',
+                                [
+                                    ':achievementid' => $achievementid,
+                                ],
+                            ];
+                        }
                     }
                 }
             }
-            #HomePage::$dbController->debug = true;
             HomePage::$dbController->query($queries);
+            #Clean achievements, unless this is a new character
+            if (!empty($updated)) {
+                $this->cleanAchievements();
+            }
             #Register Free Company update if change was detected
             if (!empty($this->lodestone['freeCompany']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__freecompany_character` WHERE `characterid`=:characterid AND `freecompanyid`=:fcID;', [':characterid' => $this->id, ':fcID' => $this->lodestone['freeCompany']['id']]) === false && (new FreeCompany($this->lodestone['freeCompany']['id']))->update() !== true) {
-                #(new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->lodestone['freeCompany']['id'], 'freecompany'], 'message' => 'Updating free company with ID '.$this->lodestone['freeCompany']['id'], 'priority' => 1])->add();
+                (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->lodestone['freeCompany']['id'], 'freecompany'], 'message' => 'Updating free company with ID '.$this->lodestone['freeCompany']['id'], 'priority' => 1])->add();
             }
             #Register PvP Team update if change was detected
             if (!empty($this->lodestone['pvp']['id']) && HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__pvpteam_character` WHERE `characterid`=:characterid AND `pvpteamid`=:pvpID;', [':characterid' => $this->id, ':pvpID' => $this->lodestone['pvp']['id']]) === false && (new PvPTeam($this->lodestone['pvp']['id']))->update() !== true) {
-                #(new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->lodestone['pvp']['id'], 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->lodestone['pvp']['id'], 'priority' => 1])->add();
+                (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->lodestone['pvp']['id'], 'pvpteam'], 'message' => 'Updating PvP team with ID '.$this->lodestone['pvp']['id'], 'priority' => 1])->add();
             }
             #Check if character is linked to a user
             $character = HomePage::$dbController->selectRow('SELECT `characterid`, `userid` FROM `ffxiv__character` WHERE `characterid`=:id;', [':id' => $this->id]);
@@ -377,13 +396,16 @@ class Character extends Entity
                 (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], (int)$this->id);
             }
             return true;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             Errors::error_log($e, 'characterid: '.$this->id);
             return false;
         }
     }
     
-    #Function to mark character as private
+    /**
+     * Function to mark character as private
+     * @return bool
+     */
     protected function markPrivate(): bool
     {
         try {
@@ -399,24 +421,7 @@ class Character extends Entity
                         ':avatar' => str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
                     ],
                 ];
-                #Insert server, if it has not been inserted yet. If server is registered at all.
-                if (HomePage::$dbController->check('SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server;', [':server' => $this->lodestone['server']]) === true) {
-                    $queries[] = [
-                        'INSERT IGNORE INTO `ffxiv__character_servers`(`characterid`, `serverid`) VALUES (:characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server));',
-                        [
-                            ':characterid' => $this->id,
-                            ':server' => $this->lodestone['server'],
-                        ],
-                    ];
-                }
-                #Insert name, if it has not been inserted yet
-                $queries[] = [
-                    'INSERT IGNORE INTO `ffxiv__character_names`(`characterid`, `name`) VALUES (:characterid, :name);',
-                    [
-                        ':characterid' => $this->id,
-                        ':name' => $this->lodestone['name'],
-                    ],
-                ];
+                $this->insertServerAndName($queries);
                 return HomePage::$dbController->query($queries);
             }
             return HomePage::$dbController->query(
@@ -429,7 +434,38 @@ class Character extends Entity
         }
     }
     
-    #Function to update the entity
+    /**
+     * Extracted function to update server and name of the character
+     * @param array $queries
+     *
+     * @return void
+     */
+    private function insertServerAndName(array &$queries): void
+    {
+        #Insert server, if it has not been inserted yet. If server is registered at all.
+        if (HomePage::$dbController->check('SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server;', [':server' => $this->lodestone['server']]) === true) {
+            $queries[] = [
+                'INSERT IGNORE INTO `ffxiv__character_servers`(`characterid`, `serverid`) VALUES (:characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server));',
+                [
+                    ':characterid' => $this->id,
+                    ':server' => $this->lodestone['server'],
+                ],
+            ];
+        }
+        #Insert name, if it has not been inserted yet
+        $queries[] = [
+            'INSERT IGNORE INTO `ffxiv__character_names`(`characterid`, `name`) VALUES (:characterid, :name);',
+            [
+                ':characterid' => $this->id,
+                ':name' => $this->lodestone['name'],
+            ],
+        ];
+    }
+    
+    /**
+     * Function to update the entity
+     * @return bool
+     */
     protected function delete(): bool
     {
         try {
@@ -438,27 +474,27 @@ class Character extends Entity
             $queries[] = [
                 'UPDATE `ffxiv__freecompany_character` SET `current`=0 WHERE `characterid`=:characterid;',
                 [
-                    ':characterid'=>$this->id,
+                    ':characterid' => $this->id,
                 ],
             ];
             #Remove from PvP Team
             $queries[] = [
                 'UPDATE `ffxiv__pvpteam_character` SET `current`=0 WHERE `characterid`=:characterid;',
                 [
-                    ':characterid'=>$this->id,
+                    ':characterid' => $this->id,
                 ],
             ];
             #Remove from Linkshells
             $queries[] = [
                 'UPDATE `ffxiv__linkshell_character` SET `current`=0 WHERE `characterid`=:characterid;',
                 [
-                    ':characterid'=>$this->id,
+                    ':characterid' => $this->id,
                 ],
             ];
             #Update character
             $queries[] = [
                 'UPDATE `ffxiv__character` SET `deleted` = COALESCE(`deleted`, UTC_DATE()), `enemyid` = COALESCE(`enemyid`, (SELECT `enemyid` FROM `ffxiv__enemy` ORDER BY RAND() LIMIT 1)), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :id',
-                [':id'=>$this->id],
+                [':id' => $this->id],
             ];
             return HomePage::$dbController->query($queries);
         } catch (\Throwable $e) {
@@ -466,8 +502,11 @@ class Character extends Entity
             return false;
         }
     }
-
-    #Link user to character
+    
+    /**
+     * Link user to character
+     * @return array
+     */
     public function linkUser(): array
     {
         try {
@@ -495,13 +534,13 @@ class Character extends Entity
                 return ['http_error' => 424, 'reason' => 'No tracker token found for character with id `'.$this->id.'`'];
             }
             #Check if ID of the current user is the same as the user who has this token
-            if (!HomePage::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid AND `ff_token`=:token;', [':userid'=>$_SESSION['userid'], ':token'=>$token])) {
+            if (!HomePage::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid AND `ff_token`=:token;', [':userid' => $_SESSION['userid'], ':token' => $token])) {
                 return ['http_error' => 403, 'reason' => 'Wrong token or user provided'];
             }
             #Link character to user
             $result = HomePage::$dbController->query([
-                'UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid'=>$_SESSION['userid'], ':characterid'=>$this->id],
-                'INSERT IGNORE INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, '.\Simbiat\Website\Config::groupsIDs['Linked to FF'].');', [':userid'=>$_SESSION['userid']],
+                'UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid' => $_SESSION['userid'], ':characterid' => $this->id],
+                'INSERT IGNORE INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, '.Config::groupsIDs['Linked to FF'].');', [':userid' => $_SESSION['userid']],
             ]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar
@@ -512,24 +551,48 @@ class Character extends Entity
         }
     }
     
-    #To be called from API to allow update only for owned character
-    public function updateFromApi(): bool|array|string
+    /**
+     * Remove unnecessary achievements
+     * @return bool
+     */
+    public function cleanAchievements(): bool
     {
-        if ($_SESSION['userid'] === 1) {
-            return ['http_error' => 403, 'reason' => 'Authentication required'];
-        }
-        #Check if any character currently registered in a group is linked to the user
         try {
-            if (!in_array('refreshAllFF', $_SESSION['permissions'])) {
-                $check = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
-                if (!$check) {
-                    return ['http_error' => 403, 'reason' => 'Character not linked to user'];
-                }
+            #Get list of potential achievements to remove, which is all achievements that besides last 50 and have more than 50 other non-deleted and non-privated characters with it
+            $potential = HomePage::$dbController->selectColumn(
+                'SELECT `achievementid`
+                        FROM (
+                            SELECT * FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid ORDER BY `time` DESC LIMIT 100000 OFFSET 50
+                        ) AS `lastAchievements`
+                        WHERE (
+                            SELECT COUNT(*) AS `count` FROM `ffxiv__character_achievement`
+                            INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
+                            WHERE `achievementid`=`lastAchievements`.`achievementid` AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
+                        )>50;',
+                [':characterid' => $this->id],
+            );
+            #Iterrate over each achievement, and remove them if achievement current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
+            foreach ($potential as $achievement) {
+                HomePage::$dbController->query(
+                    'DELETE FROM `ffxiv__character_achievement`
+                            WHERE `achievementid`=:achievement AND `characterid`=:characterid AND
+                            (
+                                SELECT `count` FROM (
+                                    SELECT COUNT(*) AS `count`, GROUP_CONCAT(`characterid`) AS `ids` FROM (
+                                        SELECT `ffxiv__character_achievement`.`characterid` FROM `ffxiv__character_achievement`
+                                        INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
+                                        WHERE `achievementid`=:achievement AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
+                                        ORDER BY `time` DESC LIMIT 50
+                                    ) AS `latestCharacters`
+                                ) AS `validation`
+                                WHERE `count`=50 AND NOT FIND_IN_SET(:characterid, `ids`)
+                            )=50;',
+                    [':characterid' => $this->id, ':achievement' => $achievement],
+                );
             }
-            return $this->update();
-        } catch (\Throwable $e) {
-            Errors::error_log($e, debug: $this->debug);
-            return ['http_error' => 503, 'reason' => 'Failed to validate linkage'];
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
         }
+        return false;
     }
 }

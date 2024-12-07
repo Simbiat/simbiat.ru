@@ -9,6 +9,9 @@ use Simbiat\Website\fftracker\Entity;
 use Simbiat\Website\HomePage;
 use Simbiat\Lodestone;
 
+/**
+ * Class representing a FFXIV linkshell (chat group)
+ */
 class Linkshell extends Entity
 {
     #Custom properties
@@ -21,9 +24,7 @@ class Linkshell extends Entity
     public array $oldNames = [];
     public array $members = [];
     
-    #Function to get initial data from DB
-    
-    /**
+    /**Function to get initial data from DB
      * @throws \Exception
      */
     protected function getFromDB(): array
@@ -46,14 +47,20 @@ class Linkshell extends Entity
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && (time() - strtotime($data['updated'])) >= 86400) {
             if ((int)$data['crossworld'] === 0) {
-                #(new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'linkshell'], 'message' => 'Updating linkshell with ID '.$this->id, 'priority' => 1])->add();
+                (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'linkshell'], 'message' => 'Updating linkshell with ID '.$this->id, 'priority' => 1])->add();
             } else {
-                #(new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'crossworldlinkshell'], 'message' => 'Updating crossworld linkshell with ID '.$this->id, 'priority' => 1])->add();
+                (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'crossworldlinkshell'], 'message' => 'Updating crossworld linkshell with ID '.$this->id, 'priority' => 1])->add();
             }
         }
         return $data;
     }
     
+    /**
+     * Get linkshell data from Lodestone
+     * @param bool $allowSleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
+     *
+     * @return string|array
+     */
     public function getFromLodestone(bool $allowSleep = false): string|array
     {
         $Lodestone = (new Lodestone());
@@ -86,7 +93,12 @@ class Linkshell extends Entity
         return $data;
     }
     
-    #Function to do processing
+    /**
+     * Function to process data from DB
+     * @param array $fromDB
+     *
+     * @return void
+     */
     protected function process(array $fromDB): void
     {
         $this->name = $fromDB['name'];
@@ -106,7 +118,12 @@ class Linkshell extends Entity
         }
     }
     
-    #Function to update the entity
+    /**
+     * Function to update the entity
+     * @param bool $manual Flag to indicate that linkshel has been added manually
+     *
+     * @return bool
+     */
     protected function updateDB(bool $manual = false): bool
     {
         try {
@@ -216,7 +233,10 @@ class Linkshell extends Entity
         }
     }
     
-    #Function to update the entity
+    /**
+     * Delete linkshell
+     * @return bool
+     */
     protected function delete(): bool
     {
         try {

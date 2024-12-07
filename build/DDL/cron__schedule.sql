@@ -2,6 +2,7 @@ CREATE TABLE `cron__schedule` (
   `task` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci NOT NULL COMMENT 'Task ID',
   `arguments` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci NOT NULL COMMENT 'Optional arguments in JSON string',
   `instance` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'Instance number of the task',
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT 1 COMMENT 'Whether a task instance is enabled and should be run as per schedule',
   `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating whether a task instance is system one and can''t be deleted from Cron\\Schedule class',
   `frequency` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Frequency to run a task in seconds',
   `dayofmonth` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Optional limit to run only on specific days of the month. Expects array of integers in JSON string.',
@@ -24,5 +25,6 @@ CREATE TABLE `cron__schedule` (
   KEY `runby` (`runby`),
   KEY `lastrun` (`lastrun`),
   KEY `arguments` (`arguments`),
+  KEY `enabled` (`enabled`),
   CONSTRAINT `schedule_to_task` FOREIGN KEY (`task`) REFERENCES `cron__tasks` (`task`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';

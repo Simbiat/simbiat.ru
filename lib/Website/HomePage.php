@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website;
 
 use DateTimeInterface;
@@ -17,6 +18,9 @@ use Simbiat\Website\Routing\MainRouter;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 use Simbiat\Website\usercontrol\Session;
 
+/**
+ * Class to generate pages. "HomePage" is a legacy name
+ */
 class HomePage
 {
     #Allow access to canonical value of the host
@@ -39,11 +43,11 @@ class HomePage
     public static ?string $method = null;
     #Array that can contain variables indicating common HTTP errors
     public static ?array $http_error = [];
-
+    
     public function __construct()
     {
         #Cache headers object
-        self::$headers = new Headers;
+        self::$headers = new Headers();
         #Check if we are in CLI
         if (preg_match('/^cli(-server)?$/i', PHP_SAPI) === 1) {
             self::$CLI = true;
@@ -58,8 +62,11 @@ class HomePage
         Sanitization::carefulArraySanitization($_GET);
         $this->init();
     }
-
-    #Initial routing logic
+    
+    /**
+     * Initial routing logic
+     * @return void
+     */
     private function init(): void
     {
         #If not CLI - do redirects and other HTTP-related stuff
@@ -67,13 +74,13 @@ class HomePage
             if (self::$CLI) {
                 #Process Cron
                 $this->dbConnect();
-                $healthCheck = (new Maintenance);
+                $healthCheck = new Maintenance();
                 #Check if DB is down
                 $healthCheck->dbDown();
                 #Check space availability
                 $healthCheck->noSpace();
                 #Run cron
-                (new Cron\Agent())->process(200);
+                (new Cron\Agent())->process(50);
                 #Ensure we exit no matter what happens with CRON
                 exit;
             }
@@ -81,8 +88,8 @@ class HomePage
             self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
             #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
             Headers::multiPartFormParse();
-            if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
-                $_POST = array_change_key_case(self::$headers::$_PUT ?: self::$headers::$_DELETE ?: self::$headers::$_PATCH ?: []);
+            if (\in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
+                $_POST = array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
                 Sanitization::carefulArraySanitization($_POST);
             }
             #Set canonical URL
@@ -105,14 +112,14 @@ class HomePage
                 #Show error page if DB is down
                 if (!self::$dbup) {
                     self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
-                #Show error page if maintenance is running
                 } elseif (self::$dbUpdate) {
+                    #Show error page if maintenance is running
                     self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
                 }
                 if ($uri[0] !== 'api') {
                     Website\Config::$links = array_merge(Website\Config::$links, [
-                        ['rel' => 'stylesheet preload', 'href' => '/assets/styles/' . filemtime(Website\Config::$cssDir.'/app.css') . '.css', 'as' => 'style'],
-                        ['rel' => 'preload', 'href' => '/assets/app.' . filemtime(Website\Config::$jsDir.'/app.js') . '.js', 'as' => 'script'],
+                        ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(Website\Config::$cssDir.'/app.css').'.css', 'as' => 'style'],
+                        ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(Website\Config::$jsDir.'/app.js').'.js', 'as' => 'script'],
                     ]);
                 }
                 Links::links(Website\Config::$links);
@@ -124,7 +131,7 @@ class HomePage
                 }
                 #Try to start session if it's not started yet and DB is up
                 if (self::$dbup && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
-                    session_set_save_handler(new Session, true);
+                    session_set_save_handler(new Session(), true);
                     session_start();
                     #Update CSRF token
                     if ($uri[0] !== 'api') {
@@ -156,7 +163,7 @@ class HomePage
                 }
                 #Do not do processing if we already encountered a problem
                 if (empty(self::$http_error)) {
-                    $vars = (new MainRouter)->route($uri);
+                    $vars = new MainRouter()->route($uri);
                 } else {
                     $vars = self::$http_error;
                 }
@@ -173,7 +180,11 @@ class HomePage
             Errors::error_log($e);
         }
     }
-
+    
+    /**
+     * Generate canonical link
+     * @return void
+     */
     public function canonical(): void
     {
         #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
@@ -194,10 +205,10 @@ class HomePage
         }
         #And also return page or search query, if present
         self::$canonical .= '?'.http_build_query([
-            #Do not add 1st page as query (since it is excessive)
-            'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
-            'search' => $_GET['search'] ?? null,
-        ], encoding_type: PHP_QUERY_RFC3986);
+                #Do not add 1st page as query (since it is excessive)
+                'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
+                'search' => $_GET['search'] ?? null,
+            ], encoding_type: PHP_QUERY_RFC3986);
         #Trim the excessive question mark, in case no query was attached
         self::$canonical = rtrim(self::$canonical, '?');
         #Trim trailing slashes if any
@@ -209,32 +220,41 @@ class HomePage
             ['rel' => 'canonical', 'href' => self::$canonical],
         ]);
     }
-
-    #Function to process some special files
-
+    
+    /**
+     * Function to process some special files
+     * @param string $request
+     *
+     * @return int
+     */
     public function filesRequests(string $request): int
     {
         #Remove query string, if present (that is everything after ?)
         $request = preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
         if (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
             #Send headers, that will identify this as actual file
-            @header('Content-Type: text/plain; charset=utf-8');
-            @header('Content-Disposition: inline; filename="security.txt"');
+            if (headers_sent() === false) {
+                header('Content-Type: text/plain; charset=utf-8');
+                header('Content-Disposition: inline; filename="security.txt"');
+            }
             $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight'))]);
             return 200;
         }
         #Return 0, since we did not hit anything
         return 0;
     }
-
-    #Database connection
+    
+    /**
+     * Database connection
+     * @return bool
+     */
     public function dbConnect(): bool
     {
         #Check in case we accidentally call this for 2nd time
         if (self::$dbup === false) {
             try {
                 Pool::openConnection(
-                    (new Config)
+                    new Config()
                         ->setHost($_ENV['DATABASE_HOST'], (int)$_ENV['MARIADB_PORT'])
                         ->setUser($_ENV['DATABASE_USER'])
                         ->setPassword($_ENV['DATABASE_PASSWORD'])
@@ -254,7 +274,7 @@ class HomePage
                         ->setOption(\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT, true), maxTries: 5);
                 self::$dbup = true;
                 #Cache controller
-                self::$dbController = (new Controller);
+                self::$dbController = new Controller();
                 #Check for maintenance
                 self::$dbUpdate = (bool)self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'');
                 self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
@@ -271,8 +291,14 @@ class HomePage
         }
         return true;
     }
-
-    #Twig processing of the generated page
+    
+    /**
+     * Twig processing of the generated page
+     * @param array $twigVars List of Twig variables
+     * @param bool  $cache    Indicates if this is a cache pass
+     *
+     * @return bool
+     */
     final public function twigProc(array $twigVars = [], bool $cache = false): bool
     {
         if ($cache) {
@@ -290,7 +316,9 @@ class HomePage
                 $output = EnvironmentGenerator::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
                 #Output data
                 Common::zEcho($output, $twigVars['cacheStrat'] ?? 'hour', false);
+                /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_end_flush();
+                /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_flush();
                 flush();
                 if (!empty($twigVars['cache_expires_at']) && ($twigVars['cache_expires_at'] - time()) > 0) {
@@ -326,6 +354,7 @@ class HomePage
                 self::$dataCache->write($twigVars, age: (int)$twigVars['cacheAge']);
             }
             if (self::$staleReturn === true) {
+                /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_end_clean();
             } else {
                 #Output data

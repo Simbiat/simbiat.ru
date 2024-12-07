@@ -77,3 +77,5 @@ INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `freque
 INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`) VALUES ('ffUpdateOld', '[50, \"$cronInstance\"]', '5', '1', '60', NULL, NULL, '0', 'Updating old FFXIV entities');
 INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `frequency`, `dayofmonth`, `dayofweek`, `priority`, `message`) VALUES ('ffUpdateOld', '[50, \"$cronInstance\"]', '6', '1', '60', NULL, NULL, '0', 'Updating old FFXIV entities');
 UPDATE `cron__settings` SET `value` = '7' WHERE `cron__settings`.`setting` = 'maxThreads';
+
+UPDATE `cron__settings` SET `value` = '10' WHERE `cron__settings`.`setting` = 'maxThreads';

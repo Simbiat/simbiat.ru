@@ -61,7 +61,9 @@ class Cron
     
     /**
      * Function to update old entities
-     * @param int $limit How many entities to process
+     *
+     * @param int $limit    How many entities to process
+     * @param int $instance Instance number, that called the function
      *
      * @return bool|string
      */

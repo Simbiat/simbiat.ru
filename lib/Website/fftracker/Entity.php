@@ -11,6 +11,9 @@ use Simbiat\Website\Images;
 
 use function is_array, sprintf, dirname;
 
+/**
+ * Generic class for FFXIV entities
+ */
 abstract class Entity extends \Simbiat\Website\Abstracts\Entity
 {
     protected const entityType = 'character';
@@ -25,16 +28,34 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
      */
     abstract protected function getFromDB(): array;
     
-    #Get entity data from Lodestone
+    /**
+     * Get entity data from Lodestone
+     * @param bool $allowSleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
+     *
+     * @return string|array
+     */
     abstract public function getFromLodestone(bool $allowSleep = false): string|array;
     
-    #Function to do processing
+    /**
+     * Function to do processing
+     * @param array $fromDB
+     *
+     * @return void
+     */
     abstract protected function process(array $fromDB): void;
     
-    #Function to update the entity
+    /**
+     * Function to update the entity in DB
+     * @return bool
+     */
     abstract protected function updateDB(): bool;
     
-    #Update the entity
+    /**
+     * Update the entity
+     * @param bool $allowSleep Flag indicating that entityi is being added manually
+     *
+     * @return string|bool
+     */
     public function update(bool $allowSleep = false): string|bool
     {
         #Check if ID was set
@@ -81,7 +102,10 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         return $this->updateDB();
     }
     
-    #To be called from API to allow update only for owned character
+    /**
+     * To be called from API to allow entity updates
+     * @return bool|array|string
+     */
     public function updateFromApi(): bool|array|string
     {
         if ($_SESSION['userid'] === 1) {
@@ -90,11 +114,20 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         if (empty(array_intersect(['refreshOwnedFF', 'refreshAllFF'], $_SESSION['permissions']))) {
             return ['http_error' => 403, 'reason' => 'No `'.implode('` or `', ['refreshOwnedFF', 'refreshAllFF']).'` permission'];
         }
-        #Check if any character currently registered in a group is linked to the user
         try {
-            $check = HomePage::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'_character` LEFT JOIN `ffxiv__character` ON `ffxiv__'.$this::entityType.'_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `'.$this::entityType.'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
-            if (!$check) {
-                return ['http_error' => 403, 'reason' => 'Group not linked to user'];
+            if ($this::entityType !== 'achievement') {
+                if ($this::entityType === 'character') {
+                    $check = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+                    if (!$check) {
+                        return ['http_error' => 403, 'reason' => 'Character not linked to user'];
+                    }
+                } else {
+                    #Check if any character currently registered in a group is linked to the user
+                    $check = HomePage::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'_character` LEFT JOIN `ffxiv__character` ON `ffxiv__'.$this::entityType.'_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `'.$this::entityType.'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+                    if (!$check) {
+                        return ['http_error' => 403, 'reason' => 'Group not linked to user'];
+                    }
+                }
             }
             return $this->update();
         } catch (\Throwable $e) {
@@ -103,7 +136,10 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
     }
     
-    #Register the entity, if it has not been registered already
+    /**
+     * Register the entity, if it has not been registered already
+     * @return bool|int
+     */
     public function register(): bool|int
     {
         #Check if ID was set
@@ -147,7 +183,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         return $this->updateDB(true);
     }
     
-    #Helper function to add new characters to Cron en masse
+    /**
+     * Helper function to add new characters to Cron en masse
+     * @param array $members
+     *
+     * @return void
+     */
     protected function charMassCron(array $members): void
     {
         #Cache CRON object
@@ -157,7 +198,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
                 if (!$details['registered']) {
                     #Priority is higher, since they are missing a lot of data.
                     try {
-                        #$cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
+                        $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$member, 'character'], 'message' => 'Updating character with ID '.$member, 'priority' => 2])->add();
                     } catch (\Throwable) {
                         #Do nothing, not considered critical
                     }
@@ -166,7 +207,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
     }
     
-    #Function to remove Lodestone domain(s) from image links
+    /**
+     * Function to remove Lodestone domain(s) from image links
+     * @param string $url
+     *
+     * @return string
+     */
     public static function removeLodestoneDomain(string $url): string
     {
         return str_replace([
@@ -175,7 +221,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         ], '', $url);
     }
     
-    #Function to download crest components from Lodestone
+    /**
+     * Function to download crest components from Lodestone
+     * @param array $images
+     *
+     * @return void
+     */
     protected function downloadCrestComponents(array $images): void
     {
         foreach ($images as $key => $image) {
@@ -225,6 +276,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
     }
     
+    /**
+     * Function to turn a group crest into a favicon
+     * @param array $images
+     *
+     * @return string|null
+     */
     public static function crestToFavicon(array $images): ?string
     {
         $images = self::sortComponents($images);
@@ -243,7 +300,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         return '/assets/images/fftracker/merged-crests/not_found.webp';
     }
     
-    #Function converts image URL to local path
+    /**
+     * Function converts image URL to local path
+     * @param string $image
+     *
+     * @return string|null
+     */
     protected static function crestToLocal(string $image): ?string
     {
         $filename = basename($image);
@@ -263,6 +325,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         return null;
     }
     
+    /**
+     * Sort crest components
+     * @param array $images
+     *
+     * @return array
+     */
     protected static function sortComponents(array $images): array
     {
         $imagesToMerge = [];
@@ -284,7 +352,14 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         return $imagesToMerge;
     }
     
-    #Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
+    /**
+     * Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
+     * @param array  $images    Array of crest components
+     * @param string $finalPath Where to save final file
+     * @param bool   $debug     Debug mode to log errors
+     *
+     * @return bool
+     */
     protected static function CrestMerge(array $images, string $finalPath, bool $debug = false): bool
     {
         try {
@@ -307,6 +382,12 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
     }
     
+    /**
+     * Clean component crests to have a proper image, even if they are empty
+     * @param array $results
+     *
+     * @return array
+     */
     public static function cleanCrestResults(array $results): array
     {
         foreach ($results as $key => $result) {

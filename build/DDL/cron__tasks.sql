@@ -5,7 +5,11 @@ CREATE TABLE `cron__tasks` (
   `parameters` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Optional parameters used on initial object creation in JSON string',
   `allowedreturns` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Optional allowed return values to be treated as ''true'' by Cron processor in JSON string',
   `maxTime` int(10) unsigned NOT NULL DEFAULT 3600 COMMENT 'Maximum time allowed for the task to run. If exceeded, it will be terminated by PHP.',
+  `minFrequency` int(10) unsigned NOT NULL DEFAULT 60 COMMENT 'Minimal allowed frequency (in seconds) at which a task instance can run. Does not apply to one-time jobs.',
+  `retry` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Custom number of seconds to reschedule a failed task instance for. 0 disables the functionality.',
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT 1 COMMENT 'Whether a task (and thus all its instances) is enabled and should be run as per schedule',
   `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that task is system and can''t be deleted from Cron\\Task class',
   `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL COMMENT 'Description of the task',
-  PRIMARY KEY (`task`)
+  PRIMARY KEY (`task`),
+  KEY `enabled` (`enabled`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC `PAGE_COMPRESSED`='ON';

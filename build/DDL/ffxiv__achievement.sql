@@ -6,6 +6,7 @@ CREATE TABLE `ffxiv__achievement` (
   `category` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Category of the achievement',
   `subcategory` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Subcategory of the achievement',
   `icon` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Achievement icon without base URL (https://img.finalfantasyxiv.com/lds/pc/global/images/itemicon/)',
+  `earnedby` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Number of characters that has earned the achievement so far',
   `howto` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Instructions on getting achievements taken from Lodestone',
   `points` tinyint(3) unsigned DEFAULT NULL COMMENT 'Amount of points assigned to character for getting the achievement',
   `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Optional title rewarded to character',

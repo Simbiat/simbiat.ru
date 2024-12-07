@@ -8149,3 +8149,5 @@ INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
 (89, 'Rafflesia', 'Dynamis');
 
 INSERT INTO `ffxiv__jobs`(`name`) VALUES ('Alchemist'), ('Armorer'), ('Astrologian'), ('Bard'), ('Black Mage'), ('Blacksmith'), ('Blue Mage'), ('Botanist'), ('Carpenter'), ('Culinarian'), ('Dancer'), ('Dark Knight'), ('Dragoon'), ('Fisher'), ('Goldsmith'), ('Gunbreaker'), ('Leatherworker'), ('Machinist'), ('Miner'), ('Monk'), ('Ninja'), ('Paladin'), ('Pictomancer'), ('Reaper'), ('Red Mage'), ('Sage'), ('Samurai'), ('Scholar'), ('Summoner'), ('Viper'), ('Warrior'), ('Weaver'), ('White Mage');
+
+UPDATE `ffxiv__achievement` SET `earnedby`=(SELECT COUNT(*) FROM `ffxiv__character_achievement` WHERE `ffxiv__character_achievement`.`achievementid`=`ffxiv__achievement`.`achievementid`);
