@@ -7,6 +7,7 @@ require_once dirname(__DIR__).'/bin/Bootstrap.php';
 #Below is meant to be run only once, as part of some upgrade to the system.
 #It is encouraged to code stuff in a way to avoid potential impact in case of running it twice.
 #It is also encouraged to use `echo` or similar function(s) to output stuff to command line for the sake of monitoring.
+#Tp run in use `/usr/local/bin/php -f /app/bin/OneTime.php` on respective container
 
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
