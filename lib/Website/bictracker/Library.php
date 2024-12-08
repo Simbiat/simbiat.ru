@@ -87,6 +87,7 @@ class Library
                 foreach ($elements as $element) {
                     #Flag determining whether we delay or not
                     $delay = false;
+                    $this->queries = [];
                     #Get BIC
                     $bic = $element->getAttribute('BIC');
                     $bics[] = $bic;
