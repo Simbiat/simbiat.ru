@@ -1,9 +1,15 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Abstracts;
 
 use Simbiat\Website\Errors;
 
+use function get_class;
+
+/**
+ * Generic entity class
+ */
 abstract class Entity
 {
     #Flag to indicate whether there was an attempt to get data within this object. Meant to help reduce reuse of same object for different sets of data
@@ -11,39 +17,48 @@ abstract class Entity
     #If ID was retrieved, this needs to not be null
     public ?string $id = null;
     #Format for IDs
-    protected string $idFormat = '/^\d+$/mi';
+    protected string $idFormat = '/^\d+$/m';
     #Debug flag
     protected bool $debug = false;
-
-    public final function __construct(string|int|null $id = null, bool $debug = false)
+    
+    /**
+     * @param string|int|null $id    ID of an entity
+     * @param bool            $debug Flag to enable debug mode
+     */
+    final public function __construct(string|int|null $id = null, bool $debug = false)
     {
         #Set debug flag
         $this->debug = $debug;
         #If ID was provided - set it as well
         if (!empty($id)) {
             $this->setId($id);
-        } else {
-            if (!is_null($id)) {
-                throw new \UnexpectedValueException('ID can\'t be empty.');
-            }
+        } elseif ($id !== null) {
+            throw new \UnexpectedValueException('ID can\'t be empty.');
         }
     }
-
-    #Set ID
+    
+    /**
+     * Set entity ID
+     * @param string|int $id
+     *
+     * @return $this
+     */
     public function setId(string|int $id): self
     {
         #Convert to string for consistency
-        $id = strval($id);
+        $id = (string)$id;
         if (preg_match($this->idFormat, $id) !== 1) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
-        } else {
-            $this->id = $id;
         }
+        $this->id = $id;
         return $this;
     }
-
-    #Update entity properties
-    public final function get(): self
+    
+    /**
+     * Get entity properties
+     * @return $this
+     */
+    final public function get(): self
     {
         #Set flag, that we have tried to get data
         $this->attempted = true;
@@ -67,36 +82,53 @@ abstract class Entity
             if ($this->debug) {
                 die('<pre>'.$error.'</pre>');
             }
-        } finally {
-            return $this;
         }
+        return $this;
     }
-
-    #Function to get initial data from DB
+    
+    /**
+     * Function to get initial data from DB
+     * @return array
+     */
     abstract protected function getFromDB(): array;
-
-    #Function to do processing
+    
+    /**
+     * Function process database data
+     * @param array $fromDB
+     *
+     * @return void
+     */
     abstract protected function process(array $fromDB): void;
-
-    #Convert an array to object properties
-    protected final function arrayToProperties(array $array, array $skip = [], bool $strict = true): void
+    
+    /**
+     * Convert an array to object properties
+     * @param array $array  Array of properties
+     * @param array $skip   Properties to skip
+     * @param bool  $strict Whether property needs to exist
+     *
+     * @return void
+     */
+    final protected function arrayToProperties(array $array, array $skip = [], bool $strict = true): void
     {
         #Iterrate the array
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             #Check that key is string and not in list of keys to skip
-            if (is_string($key) && !in_array($key, $skip)) {
+            if (\is_string($key) && !\in_array($key, $skip, true)) {
                 #Throw an error if a property does not exist, and we use a strict mode
                 if ($strict && property_exists($this, $key) !== true) {
-                    throw new \LogicException(get_class($this) . ' must have declared `'.$key.'` property.');
+                    throw new \LogicException(get_class($this).' must have declared `'.$key.'` property.');
                 }
                 #Set property (or, at least, attempt to)
                 $this->{$key} = $value;
             }
         }
     }
-
-    #Share the data
-    public final function getArray(): array
+    
+    /**
+     * Get the data in an array
+     * @return array
+     */
+    final public function getArray(): array
     {
         #If data was not retrieved yet - attempt to
         if ($this->attempted === false) {
@@ -108,7 +140,7 @@ abstract class Entity
         }
         $array = get_mangled_object_vars($this);
         #Remove private and protected properties
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             if (preg_match('/^\x00/u', $key) === 1) {
                 unset($array[$key]);
             }

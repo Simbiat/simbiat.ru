@@ -3,10 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
-use GeoIp2\Database\Reader;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
-use Simbiat\Website\HomePage;
 use Simbiat\Website\Security;
 
 /**
@@ -46,7 +44,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function open(string $path, string $name): bool
     {
         #If controller was initialized - session is ready
-        return HomePage::$dbController !== null;
+        return Config::$dbController !== null;
     }
     
     /**
@@ -82,7 +80,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = HomePage::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = Config::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
         } catch (\Throwable) {
             $data = '';
         }
@@ -125,7 +123,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $queries = [];
         #Try to update client information for cookie
         if (!empty($data['cookieid'])) {
-            HomePage::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
+            Config::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
                 [
                     ':cookie' => $data['cookieid'],
                     ':ip' => [
@@ -158,7 +156,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ],
             ];
             #Update page views
-            $page = mb_substr(preg_replace('/^.*:\/\/[^\/]*\//u', '', HomePage::$canonical), 0, 256, 'UTF-8');
+            $page = mb_substr(preg_replace('/^.*:\/\/[^\/]*\//u', '', Config::$canonical), 0, 256, 'UTF-8');
             if (empty($page)) {
                 $page = 'index.php';
             }
@@ -222,7 +220,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             ],
         ];
         try {
-            return HomePage::$dbController->query($queries);
+            return Config::$dbController->query($queries);
         } catch (\Throwable $exception) {
             Errors::error_log($exception, $queries);
             return false;
@@ -244,19 +242,19 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Add previous and current pages to attempt to determine if this is a page refresh or a new visit
         $data['newView'] = false;
         if (empty($data['prevPage']) && empty($data['curPage'])) {
-            $data['curPage'] = HomePage::$canonical;
+            $data['curPage'] = Config::$canonical;
             $data['prevPage'] = null;
             $data['newView'] = true;
-        } elseif ($data['curPage'] !== HomePage::$canonical) {
+        } elseif ($data['curPage'] !== Config::$canonical) {
             $data['prevPage'] = $data['curPage'];
-            $data['curPage'] = HomePage::$canonical;
+            $data['curPage'] = Config::$canonical;
             $data['newView'] = true;
         }
         try {
             #Check if IP is banned
             if (!empty($data['IP'])) {
                 try {
-                    $data['bannedIP'] = HomePage::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
+                    $data['bannedIP'] = Config::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
                 } catch (\Throwable) {
                     $data['bannedIP'] = false;
                 }
@@ -352,9 +350,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $data['cookieid'] = Security::decrypt($data['cookieid']);
             $data['pass'] = Security::decrypt($data['pass']);
             #Check DB
-            if (HomePage::$dbController !== null) {
+            if (Config::$dbController !== null) {
                 #Get user data
-                $savedData = HomePage::$dbController->selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
+                $savedData = Config::$dbController->selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
                     [':id' => $data['cookieid']]
                 );
                 if (empty($savedData) || empty($savedData['validator'])) {
@@ -395,7 +393,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function destroy(string $id): bool
     {
         try {
-            return HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
+            return Config::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -418,8 +416,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime): false|int
     {
         try {
-            if (HomePage::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
-                return HomePage::$dbController->getResult();
+            if (Config::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
+                return Config::$dbController->getResult();
             }
             return false;
         } catch (\Throwable $e) {
@@ -458,7 +456,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get ID
         try {
-            $sessionId = HomePage::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
+            $sessionId = Config::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -488,7 +486,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return HomePage::$dbController->query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+            return Config::$dbController->query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

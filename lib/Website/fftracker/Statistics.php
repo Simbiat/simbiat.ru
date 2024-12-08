@@ -8,7 +8,6 @@ use Simbiat\ArrayHelpers;
 use Simbiat\Website\Config;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Controller;
-use Simbiat\Website\HomePage;
 use Simbiat\LodestoneModules\Converters;
 use function in_array;
 
@@ -46,7 +45,7 @@ class Statistics
         #Get ArrayHelpers object for optimization
         $ArrayHelpers = (new ArrayHelpers());
         #Get connection object for slight optimization
-        $dbCon = HomePage::$dbController;
+        $dbCon = Config::$dbController;
         $data['time'] = time();
         switch ($type) {
             case 'raw':

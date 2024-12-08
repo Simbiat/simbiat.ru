@@ -20,7 +20,6 @@ class Errors
         E_USER_ERROR => 'PHP User Error',
         E_USER_WARNING => 'PHP User Warning',
         E_USER_NOTICE => 'PHP User Notice',
-        E_STRICT => 'PHP Strict Error',
         E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
         E_DEPRECATED => 'PHP Deprecation Notice',
         E_USER_DEPRECATED => 'PHP User Deprecation Notice',
@@ -132,7 +131,7 @@ class Errors
      */
     private static function getPage(): string
     {
-        if (HomePage::$CLI) {
+        if (Config::$CLI) {
             $page = 'CLI';
         } elseif (empty($_SERVER['REQUEST_URI'])) {
             $page = 'index.php';

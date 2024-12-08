@@ -1,11 +1,17 @@
 <?php
 declare(strict_types = 1);
+
 namespace Simbiat\Website;
 
 #Class for cUrl related functions. Needed more for settings' uniformity
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
 
+use function in_array;
+
+/**
+ * Common Curl-related functions
+ */
 class Curl
 {
     #cURL options
@@ -26,7 +32,7 @@ class Curl
         CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.200',
         CURLOPT_ENCODING => '',
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2|CURL_SSLVERSION_MAX_TLSv1_3,
+        CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2 | CURL_SSLVERSION_MAX_TLSv1_3,
         CURLOPT_DEFAULT_PROTOCOL => 'https',
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
         #These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
@@ -46,25 +52,27 @@ class Curl
     #Allowed MIME types
     public const array allowedMime = [
         #For now only images
-        'image/avif','image/bmp','image/gif','image/jpeg','image/png','image/webp','image/svg+xml'
+        'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'
     ];
-
-    public final function __construct()
+    
+    final public function __construct()
     {
         #Check if cURL handle already created and create it if not
         if (!self::$curlHandle instanceof \CurlHandle) {
             self::$curlHandle = curl_init();
-            if (self::$curlHandle !== false) {
-                if(!curl_setopt_array(self::$curlHandle, $this->CURL_OPTIONS)) {
-                    #Set default headers
-                    if (!curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers)) {
-                        self::$curlHandle = false;
-                    }
-                }
+            if (self::$curlHandle !== false && !curl_setopt_array(self::$curlHandle, $this->CURL_OPTIONS) && !curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers)) {
+                #Set default headers
+                self::$curlHandle = false;
             }
         }
     }
-
+    
+    /**
+     * Get page content
+     * @param string $link
+     *
+     * @return string|false
+     */
     public function getPage(string $link): string|false
     {
         if (!self::$curlHandle instanceof \CurlHandle) {
@@ -82,11 +90,16 @@ class Curl
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
         if ($response === false || $httpCode !== 200) {
             return false;
-        } else {
-            return mb_substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
         }
+        return mb_substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
     }
     
+    /**
+     * Download a file
+     * @param string $link
+     *
+     * @return array|false
+     */
     public function getFile(string $link): array|false
     {
         #Set temp filepath
@@ -109,23 +122,29 @@ class Curl
         @fclose($fp);
         if ($response === false || $httpCode !== 200) {
             return false;
-        } else {
-            #Rename file to give it a proper extension
-            $mime = mime_content_type($filepath);
-            $newName = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::extToMime) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/ui', '$2', $link));
-            rename($filepath, sys_get_temp_dir().'/'.$newName);
-            $filepath = sys_get_temp_dir().'/'.$newName;
-            return [
-                'server_name' => $newName,
-                'server_path' => sys_get_temp_dir(),
-                'user_name' => preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/ui', '$1$2', basename($link)),
-                'size' => filesize($filepath),
-                'type' => $mime,
-                'hash' => hash_file('sha3-512', $filepath),
-            ];
         }
+        #Rename file to give it a proper extension
+        $mime = mime_content_type($filepath);
+        $newName = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::extToMime, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
+        rename($filepath, sys_get_temp_dir().'/'.$newName);
+        $filepath = sys_get_temp_dir().'/'.$newName;
+        return [
+            'server_name' => $newName,
+            'server_path' => sys_get_temp_dir(),
+            'user_name' => preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$1$2', basename($link)),
+            'size' => filesize($filepath),
+            'type' => $mime,
+            'hash' => hash_file('sha3-512', $filepath),
+        ];
     }
     
+    /**
+     * POST something
+     * @param string $link
+     * @param mixed  $payload
+     *
+     * @return bool
+     */
     public function post(string $link, mixed $payload): bool
     {
         if (!self::$curlHandle instanceof \CurlHandle) {
@@ -136,13 +155,16 @@ class Curl
         #Get response
         $response = curl_exec(self::$curlHandle);
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
-        if ($response === false || !in_array($httpCode, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226])) {
-            return false;
-        } else {
-            return true;
-        }
+        return !($response === false || !in_array($httpCode, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
     }
     
+    /**
+     * POST something as a JSON
+     * @param string $link
+     * @param mixed  $payload
+     *
+     * @return bool
+     */
     public function postJson(string $link, mixed $payload): bool
     {
         if (!self::$curlHandle instanceof \CurlHandle) {
@@ -150,16 +172,22 @@ class Curl
         }
         $this->removeHeader('Content-type: text/html; charset=utf-8');
         $this->addHeader('Content-Type: application/json');
-        $result = self::post($link, $payload);
+        $result = $this->post($link, $payload);
         $this->removeHeader('Content-Type: application/json');
         $this->addHeader('Content-type: text/html; charset=utf-8');
         return $result;
     }
     
+    /**
+     * Add header to CURL
+     * @param string $header
+     *
+     * @return $this
+     */
     public function addHeader(string $header): self
     {
         #Check if header is already present
-        if (!in_array(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers))) {
+        if (!in_array(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true)) {
             #Add it, if not
             self::$headers = array_merge(self::$headers, [$header]);
             curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
@@ -167,10 +195,16 @@ class Curl
         return $this;
     }
     
+    /**
+     * Remove header from CURL
+     * @param string $header
+     *
+     * @return $this
+     */
     public function removeHeader(string $header): self
     {
         #Check if header is already present
-        $key = array_search(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers));
+        $key = array_search(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true);
         if ($key !== false) {
             #Remove it, if yes
             unset(self::$headers[$key]);
@@ -179,12 +213,25 @@ class Curl
         return $this;
     }
     
+    /**
+     * Change CURL settings
+     * @param int   $option Setting to change
+     * @param mixed $value  Value to set
+     *
+     * @return $this
+     */
     public function changeSetting(int $option, mixed $value): self
     {
         curl_setopt(self::$curlHandle, $option, $value);
         return $this;
     }
     
+    /**
+     * Check if remote file exists
+     * @param $remoteFile
+     *
+     * @return bool
+     */
     public function ifExists($remoteFile): bool
     {
         if (!self::$curlHandle instanceof \CurlHandle) {
@@ -197,19 +244,22 @@ class Curl
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
         curl_close(self::$curlHandle);
         #Check code
-        if ($httpCode === 200) {
-            return true;
-        } else {
-            return false;
-        }
+        return $httpCode === 200;
     }
     
-    #Function to process file uploads either through POST/PUT or by using a provided link
+    /**
+     * Function to process file uploads either through POST/PUT or by using a provided link
+     * @param string $link       URL to process, if we are to download remote file
+     * @param bool   $onlyImages Flag to indicate that only images are allowed
+     * @param bool   $toWebp     Whether to convert images to WEBP (if possible)
+     *
+     * @return array
+     */
     public function upload(string $link = '', bool $onlyImages = false, bool $toWebp = true): array
     {
         try {
             #Check DB
-            if (empty(HomePage::$dbController)) {
+            if (empty(Config::$dbController)) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
             Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Config::userIDs['System user']);
@@ -220,8 +270,8 @@ class Curl
                 }
             } else {
                 $upload = Sharing::upload(Config::$uploaded, exit: false);
-                if (!is_array($upload) || empty($upload[0]['server_name'])) {
-                    return ['http_error' => $upload, 'reason' => match($upload) {
+                if (!\is_array($upload) || empty($upload[0]['server_name'])) {
+                    return ['http_error' => $upload, 'reason' => match ($upload) {
                         405 => 'Unsupported method',
                         415 => 'Unsupported file format',
                         501 => 'Uploads are disabled',
@@ -232,20 +282,19 @@ class Curl
                         411 => 'Length required',
                         default => 'Failed to upload the file'.$upload,
                     }];
-                } else {
-                    #If $upload had more than 1 file - remove all except 1st one
-                    if (count($upload) > 1) {
-                        foreach ($upload as $key => $file) {
-                            if ($key !== 0) {
-                                @unlink($file['server_path'].'/'.$file['server_name']);
-                            }
+                }
+                #If $upload had more than 1 file - remove all except 1st one
+                if (\count($upload) > 1) {
+                    foreach ($upload as $key => $file) {
+                        if ($key !== 0) {
+                            @unlink($file['server_path'].'/'.$file['server_name']);
                         }
                     }
-                    $upload = $upload[0];
                 }
+                $upload = $upload[0];
             }
             #Check if file is one of the allowed types
-            if (!in_array($upload['type'], self::allowedMime)) {
+            if (!in_array($upload['type'], self::allowedMime, true)) {
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
             }
@@ -260,9 +309,9 @@ class Curl
                 if ($converted) {
                     $upload['hash'] = hash_file('sha3-512', $converted);
                     $upload['size'] = filesize($converted);
-                    $upload['server_name'] = preg_replace('/(.+)(\..+$)/ui', '$1.webp', $upload['server_name']);
+                    $upload['server_name'] = preg_replace('/(.+)(\..+$)/u', '$1.webp', $upload['server_name']);
                     $upload['new_name'] = $upload['hash'].'.webp';
-                    $upload['user_name'] = preg_replace('/(.+)(\..+$)/ui', '$1.webp', $upload['user_name']);
+                    $upload['user_name'] = preg_replace('/(.+)(\..+$)/u', '$1.webp', $upload['user_name']);
                     $upload['type'] = 'image/webp';
                 } else {
                     $upload['new_name'] = $upload['server_name'];
@@ -288,17 +337,15 @@ class Curl
             #Set file location to return in output
             $upload['location'] .= $upload['hash_tree'].$upload['new_name'];
             #Move to hash-tree directory, only if file is not already present
-            if (!is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
-                if (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']) === false) {
-                    @unlink($upload['server_path'].'/'.$upload['server_name']);
-                    return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
-                }
-            } else {
+            if (is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                 #Remove newly downloaded copy
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
+            } elseif (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']) === false) {
+                @unlink($upload['server_path'].'/'.$upload['server_name']);
+                return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
             }
             #Add to database
-            HomePage::$dbController->query(
+            Config::$dbController->query(
                 'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],

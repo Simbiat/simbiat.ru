@@ -191,8 +191,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         ),
         'League\\Uri\\' => 
         array (
-            0 => __DIR__ . '/..' . '/league/uri',
-            1 => __DIR__ . '/..' . '/league/uri-interfaces',
+            0 => __DIR__ . '/..' . '/league/uri-interfaces',
+            1 => __DIR__ . '/..' . '/league/uri',
         ),
         'GrahamCampbell\\ResultType\\' => 
         array (
@@ -371,6 +371,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'League\\Uri\\IPv4\\ConverterTest' => __DIR__ . '/..' . '/league/uri-interfaces/IPv4/ConverterTest.php',
         'League\\Uri\\IPv4\\GMPCalculator' => __DIR__ . '/..' . '/league/uri-interfaces/IPv4/GMPCalculator.php',
         'League\\Uri\\IPv4\\NativeCalculator' => __DIR__ . '/..' . '/league/uri-interfaces/IPv4/NativeCalculator.php',
+        'League\\Uri\\IPv6\\Converter' => __DIR__ . '/..' . '/league/uri-interfaces/IPv6/Converter.php',
+        'League\\Uri\\IPv6\\ConverterTest' => __DIR__ . '/..' . '/league/uri-interfaces/IPv6/ConverterTest.php',
         'League\\Uri\\Idna\\Converter' => __DIR__ . '/..' . '/league/uri-interfaces/Idna/Converter.php',
         'League\\Uri\\Idna\\ConverterTest' => __DIR__ . '/..' . '/league/uri-interfaces/Idna/ConverterTest.php',
         'League\\Uri\\Idna\\Error' => __DIR__ . '/..' . '/league/uri-interfaces/Idna/Error.php',

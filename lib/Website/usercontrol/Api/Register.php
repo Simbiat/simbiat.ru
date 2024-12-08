@@ -1,43 +1,44 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\usercontrol\Api;
 
 use GeoIp2\Database\Reader;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
-use Simbiat\Website\HomePage;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\Email;
 use Simbiat\Website\usercontrol\User;
 
+/**
+ * Handle user registration
+ */
 class Register extends Api
 {
     #Flag to indicate, that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
-    #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
-    protected array $verbs = [];
-    #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = false;
-    #Flag to indicate need to validate CSRF
-    protected bool $CSRF = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
+    /**
+     *
+     * @param array $path
+     *
+     * @return array
+     */
     protected function genData(array $path): array
     {
         #Validating data
         if (empty($_POST['signinup']['username'])) {
             return ['http_error' => 400, 'reason' => 'No username provided'];
-        } else {
-            $user = new User();
         }
+        $user = new User();
         if (empty($_POST['signinup']['email'])) {
             return ['http_error' => 400, 'reason' => 'No email provided'];
-        } else {
-            $email = (new Email($_POST['signinup']['email']));
         }
+        $email = (new Email($_POST['signinup']['email']));
         if (empty($_POST['signinup']['password'])) {
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
@@ -46,7 +47,7 @@ class Register extends Api
         }
         #Get timezone
         $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
-        if (!in_array($timezone, timezone_identifiers_list())) {
+        if (!\in_array($timezone, timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
         #Check if banned or in use
@@ -59,11 +60,11 @@ class Register extends Api
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
-        if (empty(HomePage::$dbController)) {
+        if (empty(Config::$dbController)) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Check if registration is enabled
-        if (boolval(HomePage::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'')) === false) {
+        if ((bool)Config::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'') === false) {
             return ['http_error' => 503, 'reason' => 'Registration is currently disabled'];
         }
         #Generate password and activation strings
@@ -108,7 +109,7 @@ class Register extends Api
                     ]
                 ],
             ];
-            HomePage::$dbController->query($queries);
+            Config::$dbController->query($queries);
             $email->confirm($_POST['signinup']['username'], $activation);
             return $user->login(true);
         } catch (\Throwable) {

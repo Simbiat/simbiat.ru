@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Abstracts;
 
 use Simbiat\Website\Config;
@@ -10,6 +11,11 @@ use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
 use Simbiat\Website\Images;
 
+use function in_array;
+
+/**
+ * General page class
+ */
 abstract class Page
 {
     #Current breadcrumb for navigation
@@ -62,86 +68,98 @@ abstract class Page
     ];
     #List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2pushExtra = [];
-
-    public final function __construct()
+    
+    final public function __construct()
     {
         #Check that subclass has set appropriate properties
         foreach (['subServiceName', 'breadCrumb'] as $property) {
-            if(empty($this->{$property})) {
-                throw new \LogicException(get_class($this) . ' must have a non-empty `'.$property.'` property.');
+            if (empty($this->{$property})) {
+                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
             }
         }
         #Set last modified data
         $this->lastModified = time();
     }
     
+    /**
+     * Send common headers
+     * @return void
+     */
     public static function headers(): void
     {
         #Send headers
-        @header('X-Dns-Prefetch-Control: off');
-        @header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-        @header('Allow: GET, HEAD, OPTIONS');
-        @header('Content-Type: text/html; charset=utf-8');
-        @header('SourceMap: /assets/'.filemtime(Config::$jsDir.'/app.js').'.js.map', false);
-        @header('SourceMap: /assets/styles/'.filemtime(Config::$cssDir.'/app.css').'.css.map', false);
-        @header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
-        @header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
-        @header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
-        @header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
+        if (!headers_sent()) {
+            header('X-Dns-Prefetch-Control: off');
+            header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+            header('Allow: GET, HEAD, OPTIONS');
+            header('Content-Type: text/html; charset=utf-8');
+            header('SourceMap: /assets/'.filemtime(Config::$jsDir.'/app.js').'.js.map', false);
+            header('SourceMap: /assets/styles/'.filemtime(Config::$cssDir.'/app.css').'.css.map', false);
+            header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
+            header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
+            header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
+            header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
+        }
     }
-
-    public final function get(array $path): array
+    
+    /**
+     * Get the page
+     * @param array $path
+     *
+     * @return array|int[]
+     */
+    final public function get(array $path): array
     {
         #Close session early, if we know, that its data will not be changed (default)
         if (!$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
         #Send page language
-        if (!empty($this->language)) {
-            @header('Content-Language: '.$this->language);
+        if (!empty($this->language) && !headers_sent()) {
+            header('Content-Language: '.$this->language);
         }
         #Check if user has required permission
         if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
             $page = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
-        } else {
+        } elseif (empty(HomePage::$http_error) || $this->static) {
             #Generate the page only if no prior errors detected
-            if (empty(HomePage::$http_error) || $this->static) {
-                #Generate list of allowed methods
-                $allowedMethods = array_unique(array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
-                #Send headers
-                @header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
-                @header('Allow: '.implode(', ', $allowedMethods));
-                #Check if allowed method is used
-                if (!in_array(HomePage::$method, $allowedMethods)) {
-                    $page = ['http_error' => 405];
-                    #Check that user is authenticated
-                } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
-                    $page = ['http_error' => 403, 'reason' => 'Authentication required'];
-                } else {
-                    #Generate the page
-                    try {
-                        $page = $this->generate($path);
-                        #Close session if it's still open. Normally at this point all manipulations have been done.
-                        if (session_status() === PHP_SESSION_ACTIVE) {
-                            session_write_close();
-                        }
-                    } catch (\Throwable $exception) {
-                        if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
-                            $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
-                        } else {
-                            Errors::error_log($exception);
-                            $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
-                        }
-                    }
-                    #Send Last Modified header to potentially allow earlier exit
-                    if (!$this->headerSent) {
-                        $this->lastModified($this->lastModified);
-                    }
-                    $page = array_merge($page, HomePage::$http_error);
-                }
-            } else {
-                $page = HomePage::$http_error;
+            #Generate list of allowed methods
+            $allowedMethods = array_unique(array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
+            #Send headers
+            if (!headers_sent()) {
+                header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
+                header('Allow: '.implode(', ', $allowedMethods));
             }
+            #Check if allowed method is used
+            if (!in_array(HomePage::$method, $allowedMethods, true)) {
+                $page = ['http_error' => 405];
+                #Check that user is authenticated
+            } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
+                $page = ['http_error' => 403, 'reason' => 'Authentication required'];
+            } else {
+                #Generate the page
+                try {
+                    $page = $this->generate($path);
+                    #Close session if it's still open. Normally at this point all manipulations have been done.
+                    if (session_status() === PHP_SESSION_ACTIVE) {
+                        session_write_close();
+                    }
+                } catch (\Throwable $exception) {
+                    if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
+                        $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
+                    } else {
+                        Errors::error_log($exception);
+                        $page = ['http_error' => 500, 'reason' => 'Unknown error occurred'];
+                    }
+                }
+                #Send Last Modified header to potentially allow earlier exit
+                if (!$this->headerSent) {
+                    $this->lastModified($this->lastModified);
+                }
+                $page = array_merge($page, HomePage::$http_error);
+            }
+        } else {
+            $page = HomePage::$http_error;
         }
         #Ensure properties are included
         $page['http_method'] = HomePage::$method;
@@ -158,7 +176,7 @@ abstract class Page
         if (!empty($this->h2push) || !empty($this->h2pushExtra)) {
             $this->h2push = array_merge($this->h2push, $this->h2pushExtra);
             #Prepare set of images to push
-            foreach ($this->h2push as $key=>$image) {
+            foreach ($this->h2push as $key => $image) {
                 $this->h2push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
             Links::links($this->h2push);
@@ -189,16 +207,22 @@ abstract class Page
         $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
         #Generate link for cache reset, if page uses cache
         if ($this->cacheAge > 0 && $this->static === false) {
-            $page['cacheReset'] = parse_url(HomePage::$canonical, PHP_URL_QUERY);
-            $page['cacheReset'] = HomePage::$canonical.(empty($page['cacheReset']) ? '?cacheReset=true' : '&cacheReset=true');
+            $page['cacheReset'] = parse_url(Config::$canonical, PHP_URL_QUERY);
+            $page['cacheReset'] = Config::$canonical.(empty($page['cacheReset']) ? '?cacheReset=true' : '&cacheReset=true');
         }
         return $page;
     }
-
-    protected final function lastModified(int|string|null $time = null): void
+    
+    /**
+     * Generate Last-Modified header
+     * @param int|string|null $time
+     *
+     * @return void
+     */
+    final protected function lastModified(int|string|null $time = null): void
     {
         #Convert string to int
-        if (is_string($time)) {
+        if (\is_string($time)) {
             $time = strtotime($time);
         }
         #If time is less than 0, use Last Modified set initially
@@ -215,8 +239,15 @@ abstract class Page
         $this->headerSent = true;
     }
     
-    #Function to append a breadcrumb, which is based on last crumb currently set
-    protected final function attachCrumb(string $path, string $name, bool $query = false): void
+    /**
+     * Function to append a breadcrumb, which is based on last crumb currently set
+     * @param string $path  Current path node
+     * @param string $name  Current path name
+     * @param bool   $query Whether current path name is an actual node or a GET parameter
+     *
+     * @return void
+     */
+    final protected function attachCrumb(string $path, string $name, bool $query = false): void
     {
         #Add path to breadcrumbs
         $this->breadCrumb[] = [
@@ -225,14 +256,22 @@ abstract class Page
         ];
     }
     
-    #Function to get last breadcrumb's href
-    protected final function getLastCrumb(): string
+    /**
+     * Function to get last breadcrumb's href
+     * @return string
+     */
+    final protected function getLastCrumb(): string
     {
         return $this->breadCrumb[array_key_last($this->breadCrumb)]['href'];
     }
     
-    #Function to set og:desc
-    protected final function setOgDesc(string $string): void
+    /**
+     * Function to set og:desc
+     * @param string $string
+     *
+     * @return void
+     */
+    final protected function setOgDesc(string $string): void
     {
         #Remove <details> to avoid spoilers and generally complex items
         $string = '<html>'.$string.'</html>';
@@ -257,11 +296,16 @@ abstract class Page
         $cleanedHtml = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
         $newDesc = strip_tags(HTMLCut::Cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
         #Update description only if it's not empty
-        if (preg_match('/^\s*$/ui', $newDesc) === 0) {
+        if (preg_match('/^\s*$/u', $newDesc) === 0) {
             $this->ogdesc = $newDesc;
         }
     }
     
-    #Generation of the page data
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     abstract protected function generate(array $path): array;
 }

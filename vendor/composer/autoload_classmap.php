@@ -160,6 +160,8 @@ return array(
     'League\\Uri\\IPv4\\ConverterTest' => $vendorDir . '/league/uri-interfaces/IPv4/ConverterTest.php',
     'League\\Uri\\IPv4\\GMPCalculator' => $vendorDir . '/league/uri-interfaces/IPv4/GMPCalculator.php',
     'League\\Uri\\IPv4\\NativeCalculator' => $vendorDir . '/league/uri-interfaces/IPv4/NativeCalculator.php',
+    'League\\Uri\\IPv6\\Converter' => $vendorDir . '/league/uri-interfaces/IPv6/Converter.php',
+    'League\\Uri\\IPv6\\ConverterTest' => $vendorDir . '/league/uri-interfaces/IPv6/ConverterTest.php',
     'League\\Uri\\Idna\\Converter' => $vendorDir . '/league/uri-interfaces/Idna/Converter.php',
     'League\\Uri\\Idna\\ConverterTest' => $vendorDir . '/league/uri-interfaces/Idna/ConverterTest.php',
     'League\\Uri\\Idna\\Error' => $vendorDir . '/league/uri-interfaces/Idna/Error.php',

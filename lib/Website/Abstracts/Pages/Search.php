@@ -1,12 +1,18 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Abstracts\Pages;
 
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\HomePage;
+use Simbiat\Website\Config;
 use Simbiat\http20\Headers;
 use Simbiat\Website\Sanitization;
 
+use function sprintf;
+
+/**
+ * Search page
+ */
 class Search extends Page
 {
     #Cache age, in case we prefer the generated page to be cached
@@ -23,8 +29,13 @@ class Search extends Page
     protected string $fullTitle = 'Search for `%s`';
     #Search value
     protected string $searchFor = '';
-
-    #Generation of the page data
+    
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         #Check if types are set
@@ -32,7 +43,7 @@ class Search extends Page
         #Check if we got some old link (before GET implementation)
         if (empty($_GET['search']) && !empty($path[0])) {
             #Redirect to proper version using GET value
-            Headers::redirect(preg_replace('/(.*)(?>\/([^\/]+)\/?$)/ui', '$1/?search=$2', HomePage::$canonical),);
+            Headers::redirect(preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', Config::$canonical));
         }
         #Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
@@ -41,7 +52,7 @@ class Search extends Page
         #Get search results
         $outputArray = [];
         foreach ($this->types as $type => $class) {
-            $outputArray['searchResult'][$type] = (new $class['class'])->Search($this->searchFor, $this->searchItems);
+            $outputArray['searchResult'][$type] = new $class['class']()->Search($this->searchFor, $this->searchItems);
         }
         #Get the freshest date
         $date = $this->getDate($outputArray['searchResult']);
@@ -55,15 +66,19 @@ class Search extends Page
             #Set search value, if available
             $outputArray['searchValue'] = $this->searchFor;
             #Set titles
-            $this->h1 = $this->title = sprintf($this->shortTitle, $this->searchFor);
+            $this->title = sprintf($this->shortTitle, $this->searchFor);
+            $this->h1 = $this->title;
             $this->ogdesc = sprintf($this->fullTitle, $this->searchFor);
         }
         #Merge with extra fields and return the result
         return array_merge($outputArray, $this->extras());
     }
-
-    #Check if types are properly set
-    protected final function typesCheck(): void
+    
+    /**
+     * Check if types are properly set
+     * @return void
+     */
+    final protected function typesCheck(): void
     {
         #Bad if array is empty
         if (empty($this->types)) {
@@ -71,13 +86,18 @@ class Search extends Page
         }
         #Check that classes are available
         foreach ($this->types as $type) {
-            if (!is_subclass_of($type['class'], '\Simbiat\Website\Abstracts\Search')) {
-                throw new \RuntimeException('`' . $type['class'] . '` class does not extend `\Simbiat\Abstracts\Search`');
+            if (!is_subclass_of($type['class'], \Simbiat\Website\Abstracts\Search::class)) {
+                throw new \RuntimeException('`'.$type['class'].'` class does not extend `\Simbiat\Website\Abstracts\Search`');
             }
         }
     }
-
-    #Get date from results
+    
+    /**
+     * Get date from results
+     * @param array $results
+     *
+     * @return int|string
+     */
     protected function getDate(array $results): int|string
     {
         #Prepare array of dates
@@ -88,12 +108,16 @@ class Search extends Page
         #Return max value if dates array is not empty or 0 otherwise
         if (empty($dates)) {
             return 0;
-        } else {
-            return max($dates);
         }
+        return max($dates);
     }
-
-    protected final function sanitize(string $term): bool
+    
+    /**
+     * @param string $term
+     *
+     * @return bool
+     */
+    final protected function sanitize(string $term): bool
     {
         if (empty($term)) {
             return true;
@@ -103,7 +127,7 @@ class Search extends Page
         #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future
         $decodedSearch = preg_replace('/:/', '', $decodedSearch);
         #Check if the new value is just the set of operators and if it is - consider bad request
-        if (preg_match('/^[+\-<>~()"*]+$/i', $decodedSearch)) {
+        if (preg_match('/^[+\-<>~()"*]+$/', $decodedSearch)) {
             return false;
         }
         #If value is empty, ensure it's an empty string
@@ -112,8 +136,11 @@ class Search extends Page
         }
         return true;
     }
-
-    #Add any extra fields, if required by overriding this function
+    
+    /**
+     * Add any extra fields, if required by overriding this function
+     * @return array
+     */
     protected function extras(): array
     {
         return [];

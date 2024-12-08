@@ -1,11 +1,15 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\bictracker;
 
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\ArrayHelpers;
-use Simbiat\Website\HomePage;
+use Simbiat\Website\Config;
 
+/**
+ * Class representing a Bank Identification Code (BIC)
+ */
 class Bic extends Entity
 {
     #Custom properties
@@ -65,32 +69,37 @@ class Bic extends Entity
     public int $serviceFor = 0;
     #Old data from DBF files
     public array $DBF = [];
-
+    
+    /**
+     * Get BIC data from DB
+     * @return array
+     */
     protected function getFromDB(): array
     {
-        return HomePage::$dbController->selectRow('SELECT `biclist`.`VKEY`, `VKEYDEL`, `BVKEY`, `FVKEY`, `OLD_NEWNUM`, `EnglName`, `XchType`, `UID`, `CntrCd`, `Adr`, `AT1`, `AT2`, `CKS`, `DATE_CH`, `DateIn`, `DateOut`, `Updated`, `Ind`, `bic__srvcs`.`Description` AS `Srvcs`, `NameP`, `NAMEMAXB`, `NEWKS`, biclist.`BIC`, `PrntBIC`, `SWIFT_NAME`, `Nnp`, `OKPO`, `PERMFO`, `bic__pzn`.`NAME` AS `PtType`, `bic__rclose`.`NAMECLOSE` AS `R_CLOSE`, `RegN`, `bic__reg`.`NAME` AS `Rgn`, `bic__reg`.`CENTER`, `RKC`, `SROK`, `TELEF`, `Tnp`, `PRIM1`, `PRIM2`, `PRIM3` FROM `bic__list` biclist
+        return Config::$dbController->selectRow('SELECT `biclist`.`VKEY`, `VKEYDEL`, `BVKEY`, `FVKEY`, `OLD_NEWNUM`, `EnglName`, `XchType`, `UID`, `CntrCd`, `Adr`, `AT1`, `AT2`, `CKS`, `DATE_CH`, `DateIn`, `DateOut`, `Updated`, `Ind`, `bic__srvcs`.`Description` AS `Srvcs`, `NameP`, `NAMEMAXB`, `NEWKS`, biclist.`BIC`, `PrntBIC`, `SWIFT_NAME`, `Nnp`, `OKPO`, `PERMFO`, `bic__pzn`.`NAME` AS `PtType`, `bic__rclose`.`NAMECLOSE` AS `R_CLOSE`, `RegN`, `bic__reg`.`NAME` AS `Rgn`, `bic__reg`.`CENTER`, `RKC`, `SROK`, `TELEF`, `Tnp`, `PRIM1`, `PRIM2`, `PRIM3` FROM `bic__list` biclist
             LEFT JOIN `bic__reg` ON `bic__reg`.`RGN` = `biclist`.`Rgn`
             LEFT JOIN `bic__pzn` ON `bic__pzn`.`PtType` = `biclist`.`PtType`
             LEFT JOIN `bic__rclose` ON `bic__rclose`.`R_CLOSE` = `biclist`.`R_CLOSE`
             LEFT JOIN `bic__srvcs` ON `bic__srvcs`.`Srvcs` = `biclist`.`Srvcs`
             WHERE biclist.`BIC` = :BIC', [':BIC' => $this->id]);
     }
-    #Function to return current data about the bank
+    
     /**
+     * Function to return current data about the bank
      * @throws \Exception
      */
     protected function process(array $fromDB): void
     {
         #Pad stuff
-        $fromDB['BIC'] = $this->padBic(strval($fromDB['BIC']));
+        $fromDB['BIC'] = $this->padBic((string)$fromDB['BIC']);
         if (!empty($fromDB['PrntBIC'])) {
-            $fromDB['PrntBIC'] = $this->padBic(strval($fromDB['PrntBIC']));
+            $fromDB['PrntBIC'] = $this->padBic((string)$fromDB['PrntBIC']);
         }
         if (!empty($fromDB['RKC'])) {
-            $fromDB['RKC'] = $this->padBic(strval($fromDB['RKC']));
+            $fromDB['RKC'] = $this->padBic((string)$fromDB['RKC']);
         }
         if (!empty($fromDB['OLD_NEWNUM'])) {
-            $fromDB['OLD_NEWNUM'] = $this->padBic(strval($fromDB['OLD_NEWNUM']));
+            $fromDB['OLD_NEWNUM'] = $this->padBic((string)$fromDB['OLD_NEWNUM']);
         }
         #Get authorized branch
         if (!empty($fromDB['PrntBIC'])) {
@@ -100,34 +109,33 @@ class Bic extends Entity
         $fromDB['branches'] = $this->getBranches($fromDB['BIC']);
         $fromDB['branches'] = ArrayHelpers::MultiArrSort($fromDB['branches'], 'name');
         #Get SWIFT codes
-        $fromDB['SWIFTs'] = HomePage::$dbController->selectAll('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id]);
+        $fromDB['SWIFTs'] = Config::$dbController->selectAll('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id]);
         #Get restrictions for BIC
-        $fromDB['restrictions'] = HomePage::$dbController->selectAll('SELECT `bic__bic_rstr`.`Rstr` as `name`, `Description` as `description`, `RstrDate` as `startTime`, `DateOut` as `endTime` FROM `bic__bic_rstr` LEFT JOIN `bic__rstr` ON `bic__bic_rstr`.`Rstr`=`bic__rstr`.`Rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id]);
+        $fromDB['restrictions'] = Config::$dbController->selectAll('SELECT `bic__bic_rstr`.`Rstr` as `name`, `Description` as `description`, `RstrDate` as `startTime`, `DateOut` as `endTime` FROM `bic__bic_rstr` LEFT JOIN `bic__rstr` ON `bic__bic_rstr`.`Rstr`=`bic__rstr`.`Rstr` WHERE `BIC`=:BIC ORDER BY `RstrDate` DESC;', [':BIC' => $this->id]);
         #Get accounts
-        $fromDB['accounts'] = HomePage::$dbController->selectAll(
+        $fromDB['accounts'] = Config::$dbController->selectAll(
             'SELECT `Account`, `bic__acc_type`.`Description` as `AccountType`, `CK`, `DateIn`, `DateOut`, `AccountCBRBIC` FROM `bic__accounts`
                 LEFT JOIN `bic__acc_type` ON `bic__accounts`.`RegulationAccountType`=`bic__acc_type`.`RegulationAccountType` WHERE `bic__accounts`.`BIC`=:BIC',
             [':BIC' => $this->id]
         );
         foreach ($fromDB['accounts'] as $key => $account) {
             #Get restrictions
-            $fromDB['accounts'][$key]['restrictions'] = HomePage::$dbController->selectAll('SELECT `Description` as `Restriction`, `AccRstrDate` as `DateIn`, `DateOut`, `SuccessorBIC` FROM `bic__acc_rstr` LEFT JOIN `bic__rstr` ON `bic__acc_rstr`.`AccRstr`=`bic__rstr`.`Rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']]);
+            $fromDB['accounts'][$key]['restrictions'] = Config::$dbController->selectAll('SELECT `Description` as `Restriction`, `AccRstrDate` as `DateIn`, `DateOut`, `SuccessorBIC` FROM `bic__acc_rstr` LEFT JOIN `bic__rstr` ON `bic__acc_rstr`.`AccRstr`=`bic__rstr`.`Rstr` WHERE `account`=:account ORDER BY `AccRstrDate` DESC;', [':account' => $account['Account']]);
             #Get successor details for restrictions
             foreach ($fromDB['accounts'][$key]['restrictions'] as $keyRstr => $restriction) {
                 if (!empty($restriction['SuccessorBIC'])) {
-                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = HomePage::$dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic(strval($restriction['SuccessorBIC']))]);
-                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->padBic(strval($fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC']));
+                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = Config::$dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `BIC`=:BIC;', [':BIC' => $this->padBic((string)$restriction['SuccessorBIC'])]);
+                    $fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC'] = $this->padBic((string)$fromDB['accounts'][$key]['restrictions'][$keyRstr]['SuccessorBIC']);
                 }
             }
         }
         #Count banks, that are serviced by this one
-        $fromDB['serviceFor'] = HomePage::$dbController->count('SELECT COUNT(*) FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
+        $fromDB['serviceFor'] = Config::$dbController->count('SELECT COUNT(*) AS `count` FROM `bic__accounts` WHERE `AccountCBRBIC`=:BIC', [':BIC' => $this->id]);
         #Get list of banks, that used same BIC
-        $fromDB['sameBIC'] = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $fromDB['BIC'], ':BIC' => $fromDB['BIC']]);
+        $fromDB['sameBIC'] = Config::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `OLD_NEWNUM`=:NEWNUM AND `BIC`<>:BIC;', [':NEWNUM' => $fromDB['OLD_NEWNUM'] ?? $fromDB['BIC'], ':BIC' => $fromDB['BIC']]);
         #Get list of banks on same address
-        $fromDB['sameAddress'] = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;', [':Adr' => $fromDB['Adr'], ':BIC' => $this->id]);
-
-
+        $fromDB['sameAddress'] = Config::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `Adr`=:Adr AND `BIC`<>:BIC;', [':Adr' => $fromDB['Adr'], ':BIC' => $this->id]);
+        
         #Old DBF data processing
         #Get list of phones
         if (!empty($fromDB['TELEF'])) {
@@ -165,23 +173,22 @@ class Bic extends Entity
         if ($fromDB['DBF']['misc']['RKC'] === $fromDB['PrntBIC']) {
             $fromDB['DBF']['misc']['RKC'] = NULL;
         }
-
         #Convert array to properties
         $this->arrayToProperties($fromDB);
     }
-
-    #Function to get list of all predecessors (direct or not)
+    
     /**
+     * Function to get list of all predecessors (direct or not)
      * @throws \Exception
      */
     private function predecessors(string $vkey): array
     {
-        $banks = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `VKEY` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
+        $banks = Config::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `VKEY` FROM `bic__list` WHERE `VKEYDEL` = :BIC ORDER BY `NameP`', [':BIC' => $vkey]);
         if (empty($banks)) {
             $banks = [];
         } else {
-            foreach ($banks as $key=>$bank) {
-                $banks[$key]['id'] = $this->padBic(strval($bank['id']));
+            foreach ($banks as $key => $bank) {
+                $banks[$key]['id'] = $this->padBic((string)$bank['id']);
                 $predecessor = $this->predecessors($bank['VKEY']);
                 if (!empty($predecessor)) {
                     $banks = array_merge($banks, $predecessor);
@@ -190,21 +197,21 @@ class Bic extends Entity
         }
         return $banks;
     }
-
-    #Function to get all successors (each as a chain)
+    
     /**
+     * Function to get all successors (each as a chain)
      * @throws \Exception
      */
     private function successors(string $vkey): array
     {
         #Get initial list
-        $bank = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `VKEY`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC'=>$vkey]);
+        $bank = Config::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `VKEYDEL`, `VKEY`, `DateOut` FROM `bic__list` WHERE `VKEY` = :BIC ORDER BY `NameP`', [':BIC' => $vkey]);
         if (empty($bank)) {
             $bank = [];
         } else {
             #Get successors for each successor
-            foreach ($bank as $key=>$item) {
-                $bank[$key]['id'] = $this->padBic(strval($item['id']));
+            foreach ($bank as $key => $item) {
+                $bank[$key]['id'] = $this->padBic((string)$item['id']);
                 if (!empty($item[0]['VKEYDEL']) && $item[0]['VKEYDEL'] !== $vkey && $bank[0]['VKEYDEL'] !== $bank[0]['VKEY']) {
                     $bank[$key] = array_merge($item, $this->successors($item[0]['id']));
                 }
@@ -212,75 +219,73 @@ class Bic extends Entity
         }
         return $bank;
     }
-
-    #Function to get all RKCs for a bank as a chain
+    
     /**
+     * Function to get all RKCs for a bank as a chain
      * @throws \Exception
      */
     private function rkcChain(string $bic): array
     {
         $banks = [];
         #Get initial list
-        $bank = HomePage::$dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC'=>$bic]);
+        $bank = Config::$dbController->selectRow('SELECT \'bic\' as `type`, `BIC` as `id`, `NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC' => $bic]);
         if (empty($bank)) {
             return $banks;
-        } else {
-            $bank['id'] = $this->padBic(strval($bank['id']));
-            if (!empty($bank['RKC'])) {
-                $bank['RKC'] = $this->padBic(strval($bank['RKC']));
-            }
-            if (!empty($bank['PrntBIC'])) {
-                $bank['PrntBIC'] = $this->padBic(strval($bank['PrntBIC']));
-            }
-            $banks[] = $bank;
-            #Get RKC for RKC
-            if (!empty($bank['RKC']) && $bank['RKC'] !== $bic && $bank['RKC'] !== $bank['id']) {
-                $banks = array_merge($banks, $this->rkcChain($bank['RKC']));
-            }
+        }
+        $bank['id'] = $this->padBic((string)$bank['id']);
+        if (!empty($bank['RKC'])) {
+            $bank['RKC'] = $this->padBic((string)$bank['RKC']);
+        }
+        if (!empty($bank['PrntBIC'])) {
+            $bank['PrntBIC'] = $this->padBic((string)$bank['PrntBIC']);
+        }
+        $banks[] = $bank;
+        #Get RKC for RKC
+        if (!empty($bank['RKC']) && $bank['RKC'] !== $bic && $bank['RKC'] !== $bank['id']) {
+            $banks = array_merge($banks, $this->rkcChain($bank['RKC']));
         }
         return $banks;
     }
-
-    #Function to get authorized branches as a chain
+    
     /**
+     * Function to get authorized branches as a chain
      * @throws \Exception
      */
     private function bicUf(string $bic): array
     {
         $banks = [];
         #Get initial list
-        $bank = HomePage::$dbController->selectRow('SELECT \'bic\' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC'=>$bic]);
+        $bank = Config::$dbController->selectRow('SELECT \'bic\' as `type`,`BIC` as `id`,`NameP` as `name`, `DateOut`, `RKC`, `PrntBIC` FROM `bic__list` WHERE `BIC` = :BIC', [':BIC' => $bic]);
         if (empty($bank)) {
             return $banks;
-        } else {
-            $bank['id'] = $this->padBic(strval($bank['id']));
-            if (!empty($bank['PrntBIC'])) {
-                $bank['PrntBIC'] = $this->padBic(strval($bank['PrntBIC']));
-            }
-            if (!empty($bank['RKC'])) {
-                $bank['RKC'] = $this->padBic(strval($bank['RKC']));
-            }
-            $banks[] = $bank;
-            #Get authorized branch of authorized branch
-            if (!empty($bank['PrntBIC']) && $bank['PrntBIC'] !== $bic && !empty($bank['id']) && $bank['PrntBIC'] !== $bank['id']) {
-                $banks = array_merge($banks, $this->bicUf($bank['PrntBIC']));
-            }
+        }
+        $bank['id'] = $this->padBic((string)$bank['id']);
+        if (!empty($bank['PrntBIC'])) {
+            $bank['PrntBIC'] = $this->padBic((string)$bank['PrntBIC']);
+        }
+        if (!empty($bank['RKC'])) {
+            $bank['RKC'] = $this->padBic((string)$bank['RKC']);
+        }
+        $banks[] = $bank;
+        #Get authorized branch of authorized branch
+        if (!empty($bank['PrntBIC']) && $bank['PrntBIC'] !== $bic && !empty($bank['id']) && $bank['PrntBIC'] !== $bank['id']) {
+            $banks = array_merge($banks, $this->bicUf($bank['PrntBIC']));
         }
         return $banks;
     }
-
-    #Function to get all branches of a bank
+    
     /**
+     * Function to get all branches of a bank
      * @throws \Exception
      */
     private function getBranches(string $bic): array
     {
-        $banks = HomePage::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `BIC`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `PrntBIC` = :BIC ORDER BY `NameP`;', [':BIC'=>$bic]);
+        $banks = Config::$dbController->selectAll('SELECT \'bic\' as `type`, `BIC` as `id`, `BIC`, `NameP` as `name`, `DateOut` FROM `bic__list` WHERE `PrntBIC` = :BIC ORDER BY `NameP`;', [':BIC' => $bic]);
         if (empty($banks)) {
             $banks = [];
         } else {
-            foreach ($banks as $key=>$bank) {
-                $banks[$key]['id'] = $this->padBic(strval($bank['id']));
+            foreach ($banks as $key => $bank) {
+                $banks[$key]['id'] = $this->padBic((string)$bank['id']);
                 $predecessor = $this->getBranches($bank['id']);
                 if (!empty($predecessor)) {
                     $banks = array_merge($banks, $predecessor);
@@ -289,16 +294,19 @@ class Bic extends Entity
         }
         return $banks;
     }
-
-    #Function to format list of phones
+    
+    /**
+     * Function to format list of phones
+     * @param string $phoneString
+     *
+     * @return array
+     */
     private function phoneList(string $phoneString): array
     {
         #Remove empty brackets
-        $phoneString = str_replace('()', '', $phoneString);
         #Remvoe pager notation (obsolete)
-        $phoneString = str_replace('ПЕЙД', '', $phoneString);
         #Update Moscow code
-        $phoneString = str_replace('(095)', '(495)', $phoneString);
+        $phoneString = str_replace(['()', 'ПЕЙД', '(095)'], ['', '', '(495)'], $phoneString);
         #Attempt to get additional number (to be entered after you've dialed-in)
         $dob = explode(',ДОБ.', $phoneString);
         if (empty($dob[1])) {
@@ -344,21 +352,26 @@ class Bic extends Entity
         } else {
             $code = '+7 ('.$code[1].') ';
         }
-        foreach ($phones as $key=>$phone) {
-            if (!preg_match('/\((\d*)\)/', $phone)) {
-                $phone = $code.$phone;
-            } else {
+        foreach ($phones as $key => $phone) {
+            if (preg_match('/\((\d*)\)/', $phone)) {
                 $phone = '+7 '.$phone;
                 if (!preg_match('/\) /', $phone)) {
                     $phone = preg_replace('/\)/', ') ', $phone);
                 }
+            } else {
+                $phone = $code.$phone;
             }
-            $phones[$key] = ['phone'=>$phone,'url'=>preg_replace('/[^\d+]/', '', $phone)];
+            $phones[$key] = ['phone' => $phone, 'url' => preg_replace('/[^\d+]/', '', $phone)];
         }
-        return ['phones'=>$phones,'dob'=>$dobs];
+        return ['phones' => $phones, 'dob' => $dobs];
     }
-
-    #Pad BICs with zeros
+    
+    /**
+     * Pad BICs with zeros
+     * @param string $bic
+     *
+     * @return string
+     */
     private function padBic(string $bic): string
     {
         return mb_str_pad($bic, 9, '0', STR_PAD_LEFT, 'UTF-8');

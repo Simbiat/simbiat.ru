@@ -1,21 +1,27 @@
 <?php
 #Most of the functions are meant to be called from Cron
 /** @noinspection PhpUnused */
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website;
 
 use Simbiat\Cron;
 use Simbiat\Database\Pool;
 use Simbiat\optimizeTables;
-use Simbiat\Website\Config;
-use Simbiat\Website\Errors;
-use Simbiat\Website\HomePage;
 use Simbiat\Website\usercontrol\Email;
 use Simbiat\Website\usercontrol\Session;
 
+use function dirname;
+
+/**
+ * Various function for service maintenance
+ */
 class Maintenance
 {
-    #Files clean
+    /**
+     * Files clean
+     * @return bool
+     */
     public function filesClean(): bool
     {
         #Clean HTML cache
@@ -26,24 +32,30 @@ class Maintenance
         $this->recursiveClean(sys_get_temp_dir(), 4320, 0);
         return true;
     }
-
-    #Clean session data
+    
+    /**
+     * Clean session data
+     * @return bool
+     */
     public function sessionClean(): bool
     {
         try {
-            return (bool)(new Session)->gc(300);
+            return (bool)new Session()->gc(300);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
         }
     }
-
-    #Clean cookies data
+    
+    /**
+     * Clean cookies data
+     * @return bool
+     */
     public function cookiesClean(): bool
     {
         #Get existing cookies, that need to be cleaned
         try {
-            $items = HomePage::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH)');
+            $items = Config::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH)');
         } catch (\Throwable) {
             $items = [];
         }
@@ -55,16 +67,16 @@ class Maintenance
                 $queries[] = [
                     'INSERT INTO `sys__logs`(`userid`, `ip`, `useragent`, `type`, `action`) VALUES (:userid, :ip, :useragent, 2, \'Logged out due to cookie timeout\')',
                     [
-                        ':userid'=>$item['userid'],
-                        ':ip'=>$item['ip'],
-                        ':useragent'=>$item['useragent'],
+                        ':userid' => $item['userid'],
+                        ':ip' => $item['ip'],
+                        ':useragent' => $item['useragent'],
                     ],
                 ];
                 #Actually delete cookie
                 $queries[] = [
                     'DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
                     [
-                        ':id'=>$item['cookieid'],
+                        ':id' => $item['cookieid'],
                     ]
                 ];
             }
@@ -74,7 +86,7 @@ class Maintenance
         $result = true;
         if (!empty($queries)) {
             try {
-                $result = HomePage::$dbController->query($queries);
+                $result = Config::$dbController->query($queries);
             } catch (\Throwable $e) {
                 Errors::error_log($e);
                 $result = false;
@@ -82,23 +94,29 @@ class Maintenance
         }
         return $result;
     }
-
-    #Clean logs
+    
+    /**
+     * Clean logs
+     * @return bool
+     */
     public function logsClean(): bool
     {
         $queries = [];
         #Clean audit logs
         $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 YEAR)';
         try {
-            $result = HomePage::$dbController->query($queries);
+            $result = Config::$dbController->query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             $result = false;
         }
         return $result;
     }
-
-    #Clean statistical data
+    
+    /**
+     * Clean statistical data
+     * @return bool|string
+     */
     public function statisticsClean(): bool|string
     {
         $queries = [];
@@ -107,7 +125,7 @@ class Maintenance
         #Remove visitors who have not come in 2 years
         $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
-            $result = HomePage::$dbController->query($queries);
+            $result = Config::$dbController->query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             $result = false;
@@ -124,6 +142,10 @@ class Maintenance
         return !empty(Security::argonCalc(true));
     }
     
+    /**
+     * Create list of ordered tables for backup generation
+     * @return bool|string
+     */
     public function forBackup(): bool|string
     {
         if (!is_dir(Config::$DDLDir) && !mkdir(Config::$DDLDir, recursive: true) && !is_dir(Config::$DDLDir)) {
@@ -132,12 +154,12 @@ class Maintenance
         $dumpOrder = '';
         try {
             #Get tables in order
-            $tables = HomePage::$dbController->showOrderedTables($_ENV['DATABASE_NAME']);
-            foreach ($tables as $key => $table) {
+            $tables = Config::$dbController->showOrderedTables($_ENV['DATABASE_NAME']);
+            foreach ($tables as $table) {
                 #Get DDL statement
-                HomePage::$dbController->showCreateTable($table['schema'], $table['table']);
+                Config::$dbController->showCreateTable($table['schema'], $table['table']);
                 #Get DDL statement
-                file_put_contents(Config::$DDLDir.'/'.$table['table'].'.sql', trim(HomePage::$dbController->showCreateTable($table['schema'], $table['table'])));
+                file_put_contents(Config::$DDLDir.'/'.$table['table'].'.sql', trim(Config::$dbController->showCreateTable($table['schema'], $table['table'])));
                 #Add item to file with dump order
                 $dumpOrder .= $table['table'].' ';
             }
@@ -149,29 +171,36 @@ class Maintenance
         return true;
     }
     
+    /**
+     * Optimize DB tables
+     * @return bool|string
+     */
     public function dbOptimize(): bool|string
     {
         $cron = (new Cron\Agent());
         try {
-            HomePage::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
+            Config::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 0);
-            (new optimizeTables())->setJsonPath(\Simbiat\Website\Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
+            (new optimizeTables())->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
         } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         } finally {
-            HomePage::$dbController->query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
+            Config::$dbController->query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 1);
         }
         return true;
     }
-
-    #Function to get available disk space
+    
+    /**
+     * Function to get available disk space
+     * @return void
+     */
     public function noSpace(): void
     {
         #Get directory
         $dir = sys_get_temp_dir();
         if (!is_dir($dir) && !mkdir($dir) && !is_dir($dir)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+            throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
         }
         #Get free space in percentage
         $free = disk_free_space($dir);
@@ -197,32 +226,42 @@ class Maintenance
             (new Email(Config::adminMail))->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
         }
     }
-
-    #Function to send alert database going down
+    
+    /**
+     * Function to send alert database going down
+     * @return void
+     */
     public function dbDown(): void
     {
         #Get directory
         $dir = sys_get_temp_dir();
-        if (Config::$PROD && !HomePage::$dbup) {
+        if (Config::$PROD && !Config::$dbup) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
                 (new Email(Config::adminMail))->send('[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
                 #Generate flag
-                file_put_contents($dir . '/noDB.flag', 'Database is down');
+                file_put_contents($dir.'/noDB.flag', 'Database is down');
             }
         } elseif (is_file($dir.'/noDB.flag')) {
-            @unlink($dir . '/noDB.flag');
+            @unlink($dir.'/noDB.flag');
             #Send mail
             (new Email(Config::adminMail))->send('[Resolved]: Database is down', username: 'Simbiat');
         }
     }
-
-    #Clean temp folder
+    
+    /**
+     * Clean temp folder
+     * @param string $path    Path to clean
+     * @param int    $maxAge  Oldest age of a file in minutes
+     * @param int    $maxSize Maximum size to remove
+     *
+     * @return void
+     */
     private function recursiveClean(string $path, int $maxAge = 60, int $maxSize = 1024): void
     {
         #Get current maximum execution time
-        $curMaxTime = (int)ini_get('max_execution_time');
+        $curMaxTime = (int)\ini_get('max_execution_time');
         #Iterration can take a long time, so let it run its course
         set_time_limit(0);
         #Restore execution time
@@ -291,7 +330,7 @@ class Maintenance
             #If we have size limitation and list of fresh items is not empty
             if ($maxSize > 0 && !empty($fresh)) {
                 #Calclate total size
-                $totalSize = array_sum(array_column($fresh,'size')) + $sizeToRemove;
+                $totalSize = array_sum(array_column($fresh, 'size')) + $sizeToRemove;
                 #Check if we are already removing enough. If so - skip further checks
                 if ($totalSize - $sizeToRemove >= $maxSize) {
                     #Sort files by time from oldest to newest

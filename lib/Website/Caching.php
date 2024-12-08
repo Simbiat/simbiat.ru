@@ -1,28 +1,37 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website;
 
-use Simbiat\Website\Config;
-use Simbiat\Website\HomePage;
-
+/**
+ * Class to handle page caching
+ */
 class Caching
 {
+    /**
+     * @param string $cacheDir Directory to use for cache files
+     */
     public function __construct(private string $cacheDir = '')
     {
         if (empty($this->cacheDir)) {
             $this->cacheDir = Config::$htmlCache;
-        } else {
-            if (!is_dir($this->cacheDir)) {
-                @mkdir($this->cacheDir, recursive: true);
-                if (preg_match('/.*\/$/', $this->cacheDir) !== 1) {
-                    $this->cacheDir .= '/';
-                }
+        } elseif (!is_dir($this->cacheDir)) {
+            @mkdir($this->cacheDir, recursive: true);
+            if (preg_match('/\/$/', $this->cacheDir) !== 1) {
+                $this->cacheDir .= '/';
             }
         }
     }
-
-    #Write cache to file
-    public function write(array $data, string $key = '', int $age = 0): bool
+    
+    /**
+     * Write cache to file
+     * @param array|string $data Data to write
+     * @param string       $key  Key to write to
+     * @param int          $age  How long to store in seconds
+     *
+     * @return bool
+     */
+    public function write(array|string $data, string $key = '', int $age = 0): bool
     {
         #JSON encode the value
         try {
@@ -51,7 +60,7 @@ class Caching
                 @mkdir($this->cacheDir.$subDir, recursive: true);
             }
             #Write the file. We do not care much if it fails
-            if (@file_put_contents($this->cacheDir.$subDir.$key. '.json', $data)) {
+            if (@file_put_contents($this->cacheDir.$subDir.$key.'.json', $data)) {
                 @header('X-Server-Cached: true');
                 @header('X-Server-Cache-Hit: false');
                 return true;
@@ -61,14 +70,19 @@ class Caching
         @header('X-Server-Cache-Hit: false');
         return true;
     }
-
-    #Read from cache
+    
+    /**
+     * Read from cache
+     * @param string $key
+     *
+     * @return array
+     */
     public function read(string $key = ''): array
     {
         #Generate key
         $key = $this->key($key);
         #Generate file name
-        $file = $this->cacheDir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key. '.json';
+        $file = $this->cacheDir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
         $data = $this->getArrayFromFile($file);
         if (empty($data)) {
             @header('X-Server-Cached: false');
@@ -88,19 +102,29 @@ class Caching
         unset($data['X-CSRF-Token']);
         return $data;
     }
-
-    #Genereate key
+    
+    /**
+     * Generate key
+     * @param string $key
+     *
+     * @return string
+     */
     public function key(string $key): string
     {
         if (empty($key)) {
-            $key = hash('sha3-512', HomePage::$canonical);
+            $key = hash('sha3-512', Config::$canonical);
         } else {
             $key = hash('sha3-512', $key);
         }
         return $key;
     }
-
-    #Gets JSON decoded array from file
+    
+    /**
+     * Gets JSON decoded array from file
+     * @param string $cachePath
+     *
+     * @return array
+     */
     public function getArrayFromFile(string $cachePath): array
     {
         #Check if cache file exists
@@ -114,7 +138,7 @@ class Caching
                     $json = [];
                 }
                 if ($json !== NULL) {
-                    if (!is_array($json)) {
+                    if (!\is_array($json)) {
                         return [];
                     }
                 } else {

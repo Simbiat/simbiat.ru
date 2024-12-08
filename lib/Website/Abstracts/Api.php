@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Abstracts;
 
 use Simbiat\Website\Errors;
@@ -7,6 +8,11 @@ use Simbiat\Website\HomePage;
 use Simbiat\http20\Headers;
 use Simbiat\Website\Security;
 
+use function in_array, is_array;
+
+/**
+ * Abstract class to handle API stuff
+ */
 abstract class Api
 {
     #Supported edges
@@ -37,16 +43,27 @@ abstract class Api
     protected bool $sessionChange = false;
     #List of allowed origins, if we want to limit them
     protected array $allowedOrigins = [];
-
+    
+    /**
+     * Send API headers
+     * @return void
+     */
     public static function headers(): void
     {
         #Send headers
-        @header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-        @header('Allow: GET, HEAD, OPTIONS');
-        @header('Content-Type: application/json; charset=utf-8');
+        if (!headers_sent()) {
+            header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+            header('Allow: GET, HEAD, OPTIONS');
+            header('Content-Type: application/json; charset=utf-8');
+        }
     }
     
-    #This is general routing check for supported node
+    /**
+     * This is general routing check for supported node
+     * @param array $path
+     *
+     * @return array
+     */
     final public function route(array $path): array
     {
         if ($this->topLevel) {
@@ -55,8 +72,8 @@ abstract class Api
         #Check if proper endpoint
         if (!empty($this->subRoutes) && (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes, true)))) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)];
-        #Check that user is authenticated
         } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
+            #User is not authenticated
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
         } elseif ($this->CSRF && !$this->antiCSRF($this->allowedOrigins)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
@@ -147,8 +164,13 @@ abstract class Api
         }
         return $data;
     }
-
-    #Method to filter output fields
+    
+    /**
+     * Method to filter output fields
+     * @param array $array
+     *
+     * @return void
+     */
     final protected function fieldFilter(array &$array): void
     {
         $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
@@ -163,23 +185,33 @@ abstract class Api
             }
         }
     }
-
-    #Check that method used is allowed
+    
+    /**
+     * Check that method used is allowed
+     * @return bool
+     */
     final protected function methodCheck(): bool
     {
         #Generate list of allowed methods
         $allowedMethods = array_keys(array_merge(['HEAD' => '', 'OPTIONS' => '', 'GET' => ''], $this->methods));
         #Send headers
-        @header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
-        @header('Allow: '.implode(', ', $allowedMethods));
+        if (!headers_sent()) {
+            header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
+            header('Allow: '.implode(', ', $allowedMethods));
+        }
         #Check if allowed method is used
         if (in_array(HomePage::$method, $allowedMethods, true)) {
             return true;
         }
         return false;
     }
-
-    #Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to $_SESSION
+    
+    /**
+     * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before any writes to `$_SESSION`
+     * @param array $allowOrigins
+     *
+     * @return bool
+     */
     final protected function antiCSRF(array $allowOrigins = []): bool
     {
         #Get CSRF token
@@ -197,13 +229,10 @@ abstract class Api
                     #Check if HTTP Origin is among allowed ones, if we want to restrict them.
                     #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
                     if (empty($allowOrigins) ||
-                        #If origins are limited
-                        (
-                            #Check if origin is present
-                            (!empty($origin) &&
-                                #Check if it's a valid origin and is allowed
-                                (preg_match('/'. Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins, true))
-                            )
+                        #If origins are limited check if origin is present
+                        (!empty($origin) &&
+                            #Check if it's a valid origin and is allowed
+                            (preg_match('/'.Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins, true))
                         )
                     ) {
                         #All checks passed
@@ -222,10 +251,10 @@ abstract class Api
         #Log attack details. Suppressing errors, so that values will be turned into NULLs if they are not set
         Security::log('CSRF', 'CSRF attack detected', [
             'reason' => $reason,
-            'page' => @$_SERVER['REQUEST_URI'],
-            'forwarded' => @$_SERVER['HTTP_X_FORWARDED_HOST'],
-            'origin' => @$_SERVER['HTTP_ORIGIN'],
-            'referer' => @$_SERVER['HTTP_REFERER'],
+            'page' => $_SERVER['REQUEST_URI'] ?? null,
+            'forwarded' => $_SERVER['HTTP_X_FORWARDED_HOST'] ?? null,
+            'origin' => $_SERVER['HTTP_ORIGIN'] ?? null,
+            'referer' => $_SERVER['HTTP_REFERER'] ?? null,
         ]);
         #Send 403 error code in header, with option to force close connection
         if (!HomePage::$staleReturn) {
@@ -233,8 +262,13 @@ abstract class Api
         }
         return false;
     }
-
-    #This is a wrapper to allow some common checks
+    
+    /**
+     * This is a wrapper to allow some common checks
+     * @param array $path
+     *
+     * @return array
+     */
     protected function getData(array $path): array
     {
         if ($this->finalNode && !isset($path[0])) {
@@ -260,19 +294,19 @@ abstract class Api
             $path[1] = $_POST['verb'] ?? $path[1] ?? '';
             #Override based on method only if method is not HEAD, OPTIONS or GET and if respective method has a verb set for it
             if (!empty($this->methods[HomePage::$method]) && !in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])) {
-                if (is_string($this->methods[HomePage::$method])) {
-                    $path[1] = $this->methods[ HomePage::$method ];
-                #If we have an array of possible verbs for method, check that proper verb is provided
+                if (\is_string($this->methods[HomePage::$method])) {
+                    $path[1] = $this->methods[HomePage::$method];
+                    #If we have an array of possible verbs for method, check that proper verb is provided
                 } elseif (is_array($this->methods[HomePage::$method])) {
                     if (empty($path[1])) {
                         return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method supports multiple AIP verbs, none provided']);
                     }
-                    if (!in_array($path[1], $this->methods[ HomePage::$method ], true)) {
+                    if (!in_array($path[1], $this->methods[HomePage::$method], true)) {
                         return array_merge($result, ['http_error' => 405, 'reason' => '`'.HomePage::$method.'` method does not support `'.$path[1].'` API verb']);
                     }
                 }
             }
-            if (!empty($path[1]) && !array_key_exists($path[1], $this->verbs)) {
+            if (!empty($path[1]) && !\array_key_exists($path[1], $this->verbs)) {
                 return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);
             }
             if (!empty(HomePage::$http_error) && !$this->static) {
@@ -293,7 +327,12 @@ abstract class Api
         }
         return $result;
     }
-
-    #This is actual page generation based on further details of the $path
+    
+    /**
+     * This is actual API response generation based on further details of the $path
+     * @param array $path
+     *
+     * @return array
+     */
     abstract protected function genData(array $path): array;
 }

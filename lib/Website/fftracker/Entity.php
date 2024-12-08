@@ -6,7 +6,6 @@ namespace Simbiat\Website\fftracker;
 use Simbiat\Website\Config;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Website\Errors;
-use Simbiat\Website\HomePage;
 use Simbiat\Website\Images;
 
 use function is_array, sprintf, dirname;
@@ -64,7 +63,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         }
         #Check if we have not updated before
         try {
-            $updated = HomePage::$dbController->selectValue('SELECT `updated` FROM `ffxiv__'.$this::entityType.'` WHERE `'.$this::entityType.'id` = :id', [':id' => $this->id]);
+            $updated = Config::$dbController->selectValue('SELECT `updated` FROM `ffxiv__'.$this::entityType.'` WHERE `'.$this::entityType.'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return $e->getMessage()."\n".$e->getTraceAsString();
@@ -117,13 +116,13 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
         try {
             if ($this::entityType !== 'achievement') {
                 if ($this::entityType === 'character') {
-                    $check = HomePage::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+                    $check = Config::$dbController->check('SELECT `characterid` FROM `ffxiv__character` WHERE `characterid` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
                     if (!$check) {
                         return ['http_error' => 403, 'reason' => 'Character not linked to user'];
                     }
                 } else {
                     #Check if any character currently registered in a group is linked to the user
-                    $check = HomePage::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'_character` LEFT JOIN `ffxiv__character` ON `ffxiv__'.$this::entityType.'_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `'.$this::entityType.'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
+                    $check = Config::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'_character` LEFT JOIN `ffxiv__character` ON `ffxiv__'.$this::entityType.'_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `'.$this::entityType.'id` = :id AND `userid`=:userid', [':id' => $this->id, ':userid' => $_SESSION['userid']]);
                     if (!$check) {
                         return ['http_error' => 403, 'reason' => 'Group not linked to user'];
                     }
@@ -147,7 +146,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
             return 400;
         }
         try {
-            $check = HomePage::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'` WHERE `'.$this::entityType.'id` = :id', [':id' => $this->id]);
+            $check = Config::$dbController->check('SELECT `'.$this::entityType.'id` FROM `ffxiv__'.$this::entityType.'` WHERE `'.$this::entityType.'id` = :id', [':id' => $this->id]);
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return 503;

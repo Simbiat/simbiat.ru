@@ -1,17 +1,21 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Sitemap\Pages;
 
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\HomePage;
+use Simbiat\Website\Config;
 
+/**
+ * Class for pages that can be counted (that is they have multiple items)
+ */
 class Countables extends Page
 {
     #Cache age, in case we prefer the generated page to be cached
     protected int $cacheAge = 1440;
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/sitemap/', 'name'=>'Sitemap: ']
+        ['href' => '/sitemap/', 'name' => 'Sitemap: ']
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';
@@ -23,7 +27,13 @@ class Countables extends Page
     protected string $ogdesc = 'Sitemap: ';
     #Max elements per sitemap page
     protected int $maxElements = 50000;
-
+    
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         if ($this->maxElements > 50000 || $this->maxElements < 10) {
@@ -43,9 +53,9 @@ class Countables extends Page
         #Update link of breadcrumb
         $this->breadCrumb[0]['href'] .= $path[0].'/';
         #Set starting position for query
-        $start = ($path[1]-1)*$this->maxElements;
+        $start = ($path[1] - 1) * $this->maxElements;
         #Set values based on route
-        switch($path[0]) {
+        switch ($path[0]) {
             case 'bics':
                 $this->breadCrumb[0]['name'] = 'Russian Banks';
                 $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`) AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` LIMIT '.$start.', '.$this->maxElements;
@@ -76,17 +86,19 @@ class Countables extends Page
                 break;
             case 'users':
                 $this->breadCrumb[0]['name'] = 'Users';
-                $query = 'SELECT CONCAT(\'talks/users/\', `userid`) AS `loc`, `updated` AS `lastmod`, `username` as `name` FROM `uc__users` WHERE `userid` NOT IN ('.\Simbiat\Website\Config::userIDs['Unknown user'].', '.\Simbiat\Website\Config::userIDs['System user'].', '.\Simbiat\Website\Config::userIDs['Deleted user'].') ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/users/\', `userid`) AS `loc`, `updated` AS `lastmod`, `username` as `name` FROM `uc__users` WHERE `userid` NOT IN ('.Config::userIDs['Unknown user'].', '.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].') ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb
         $this->breadCrumb[0]['name'] .= ', Page '.$path[1];
         #Update title and description
-        $this->title = $this->h1 = $this->ogdesc = 'Sitemap: '.$this->breadCrumb[0]['name'];
+        $this->ogdesc = 'Sitemap: '.$this->breadCrumb[0]['name'];
+        $this->h1 = $this->ogdesc;
+        $this->title = $this->ogdesc;
         #Get actual links
         if (!empty($query)) {
             try {
-                $links = HomePage::$dbController->selectAll($query);
+                $links = Config::$dbController->selectAll($query);
             } catch (\Throwable) {
                 $links = [];
             }

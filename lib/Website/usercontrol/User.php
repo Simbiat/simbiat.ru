@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\usercontrol;
 
 use Simbiat\Website\Abstracts\Entity;
@@ -7,15 +8,18 @@ use Simbiat\ArrayHelpers;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
 use Simbiat\Website\Errors;
-use Simbiat\Website\HomePage;
 use Simbiat\http20\IRI;
 use Simbiat\Website\Images;
 use Simbiat\Website\Sanitization;
 use Simbiat\Website\Security;
 use Simbiat\Website\Talks\Search\Posts;
 use Simbiat\Website\Talks\Search\Threads;
-use Simbiat\Website\usercontrol\Email;
 
+use function in_array, is_string, is_array;
+
+/**
+ * Main user class
+ */
 class User extends Entity
 {
     #Maximum number of unused avatars per user
@@ -76,16 +80,20 @@ class User extends Entity
     public array $avatars = [];
     #Current avatar
     public ?string $currentAvatar = null;
-
+    
+    /**
+     * Function to get initial data from DB
+     * @return array
+     */
     protected function getFromDB(): array
     {
         
-        $dbData =  HomePage::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`userid`=`uc__user_to_section`.`userid` WHERE `uc__users`.`userid`=:userid', ['userid'=>[$this->id, 'int']]);
+        $dbData = Config::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`userid`=`uc__user_to_section`.`userid` WHERE `uc__users`.`userid`=:userid', ['userid' => [$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
         }
         #Get user's groups
-        $dbData['groups'] = HomePage::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
+        $dbData['groups'] = Config::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
         #Get permissions
         $dbData['permissions'] = $this->getPermissions();
         if (in_array($this->id, [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) {
@@ -97,8 +105,13 @@ class User extends Entity
         $dbData['currentAvatar'] = $this->getAvatar();
         return $dbData;
     }
-
-    #Function to do processing
+    
+    /**
+     * Function process database data
+     * @param array $fromDB
+     *
+     * @return void
+     */
     protected function process(array $fromDB): void
     {
         #Populate names
@@ -123,15 +136,19 @@ class User extends Entity
         ];
         #Cleanup the array
         unset($fromDB['parentid'], $fromDB['parentname'], $fromDB['firstname'], $fromDB['lastname'], $fromDB['middlename'], $fromDB['fathername'], $fromDB['prefix'],
-                $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday'], $fromDB['blog'], $fromDB['changelog'], $fromDB['knowledgebase']);
+            $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday'], $fromDB['blog'], $fromDB['changelog'], $fromDB['knowledgebase']);
         #Populate the rest properties
         $this->arrayToProperties($fromDB);
     }
-
+    
+    /**
+     * Get user permissions
+     * @return array
+     */
     private function getPermissions(): array
     {
         try {
-            return HomePage::$dbController->selectColumn('
+            return Config::$dbController->selectColumn('
                 SELECT * FROM (
                     SELECT `uc__group_to_permission`.`permission` FROM `uc__group_to_permission` LEFT JOIN `uc__groups` ON `uc__group_to_permission`.`groupid`=`uc__groups`.`groupid` LEFT JOIN `uc__permissions` ON `uc__group_to_permission`.`permission`=`uc__permissions`.`permission` LEFT JOIN `uc__user_to_group` ON `uc__group_to_permission`.`groupid`=`uc__user_to_group`.`groupid` WHERE `userid`=:userid
                     UNION ALL
@@ -142,20 +159,28 @@ class User extends Entity
             return [];
         }
     }
+    
+    /**
+     * Get user email addresses
+     * @return array
+     */
     public function getEmails(): array
     {
         try {
-            return HomePage::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
+            return Config::$dbController->selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
     }
     
-    #Get current avatar
+    /**
+     * Get current avatar
+     * @return string
+     */
     public function getAvatar(): string
     {
         try {
-            $avatar = HomePage::$dbController->selectValue('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid' => [$this->id, 'int']]);
+            $avatar = Config::$dbController->selectValue('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid' => [$this->id, 'int']]);
             if (empty($avatar)) {
                 $avatar = '/assets/images/avatar.svg';
             }
@@ -165,16 +190,27 @@ class User extends Entity
         return $avatar;
     }
     
-    #Get all avatars
+    /**
+     * Get all avatars
+     * @return array
+     */
     public function getAvatars(): array
     {
         try {
-            return HomePage::$dbController->selectAll('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `uc__avatars`.`fileid`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid ORDER BY `current` DESC;', [':userid' => [$this->id, 'int']]);
+            return Config::$dbController->selectAll('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `uc__avatars`.`fileid`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid ORDER BY `current` DESC;', [':userid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             return [];
         }
     }
     
+    /**
+     * Add avatar
+     * @param bool     $setActive Make avatar active right away
+     * @param string   $link      Link to avatar
+     * @param int|null $character FFXIV character, if avatar is from one
+     *
+     * @return array
+     */
     public function addAvatar(bool $setActive = false, string $link = '', ?int $character = null): array
     {
         try {
@@ -191,14 +227,14 @@ class User extends Entity
             if ($character === null && $counts[0] === self::avatarLimit) {
                 return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
             }
-            $upload = (new Curl)->upload($link, true);
+            $upload = new Curl()->upload($link, true);
             if (!empty($upload['http_error'])) {
                 return $upload;
             }
             #Log the change
             Security::log('Avatar', 'Added avatar', $upload['hash']);
             #Add to DB
-            HomePage::$dbController->query(
+            Config::$dbController->query(
                 'INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `characterid`, `current`) VALUES (:userid, :fileid, :character, 0);',
                 [
                     ':userid' => [$this->id, 'int'],
@@ -212,7 +248,7 @@ class User extends Entity
             if ($setActive) {
                 return $this->setAvatar($upload['hash']);
             }
-            if ($character !== null && HomePage::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
+            if ($character !== null && Config::$dbController->check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
                 #Set the new one as active
                 return $this->setAvatar($upload['hash']);
             }
@@ -225,16 +261,26 @@ class User extends Entity
         return ['location' => $upload['location'], 'response' => true];
     }
     
+    /**
+     * Remove avatar
+     * @return array
+     */
     public function delAvatar(): array
     {
         $fileid = $_POST['avatar'] ?? '';
         #Log the change
         Security::log('Avatar', 'Deleted avatar', $fileid);
         #Delete the avatar (only allow deletion of those, that are not current)
-        HomePage::$dbController->query('DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid`=:fileid AND `current`=0;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]);
+        Config::$dbController->query('DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid`=:fileid AND `current`=0;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]);
         return ['location' => $this->getAvatar(), 'response' => true];
     }
     
+    /**
+     * Set current avatar
+     * @param string $fileid
+     *
+     * @return array
+     */
     public function setAvatar(string $fileid = ''): array
     {
         if (!empty($_POST['avatar']) && is_string($_POST['avatar'])) {
@@ -242,7 +288,7 @@ class User extends Entity
         }
         #Log the change
         Security::log('Avatar', 'Changed active avatar', $fileid);
-        HomePage::$dbController->query([
+        Config::$dbController->query([
             #Set the chosen avatar as current
             ['UPDATE `uc__avatars` SET `current`=1 WHERE `userid`=:userid AND `fileid`=:fileid;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]],
             #Set the rest as non-current
@@ -250,18 +296,22 @@ class User extends Entity
         ]);
         return ['location' => $this->getAvatar(), 'response' => true];
     }
-
+    
+    /**
+     * Get owned FFXIV entities
+     * @return array
+     */
     public function getFF(): array
     {
         $outputArray = [];
         #Get token
-        $outputArray['token'] = HomePage::$dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
+        $outputArray['token'] = Config::$dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         #Get linked characters
-        $outputArray['characters'] = HomePage::$dbController->selectAll('SELECT \'character\' as `type`, `characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']]);
+        $outputArray['characters'] = Config::$dbController->selectAll('SELECT \'character\' as `type`, `characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']]);
         #Get linked groups
         if (!empty($outputArray['characters'])) {
             foreach ($outputArray['characters'] as $character) {
-                $outputArray['groups'][$character['id']] = \Simbiat\Website\fftracker\Entity::cleanCrestResults(HomePage::$dbController->selectAll(
+                $outputArray['groups'][$character['id']] = \Simbiat\Website\fftracker\Entity::cleanCrestResults(Config::$dbController->selectAll(
                     '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rankid`=1)
@@ -274,7 +324,13 @@ class User extends Entity
         }
         return $outputArray;
     }
-
+    
+    /**
+     * Change username
+     * @param string $newName
+     *
+     * @return array|true[]
+     */
     public function changeUsername(string $newName): array
     {
         $sanitizedName = Sanitization::removeNonPrintable($newName, true);
@@ -294,7 +350,7 @@ class User extends Entity
             return ['response' => true];
         }
         try {
-            $result = HomePage::$dbController->query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
+            $result = Config::$dbController->query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
                 ':userid' => [$this->id, 'int'],
                 ':username' => $newName,
             ]);
@@ -302,16 +358,21 @@ class User extends Entity
                 $_SESSION['username'] = $newName;
             }
             if (session_status() === PHP_SESSION_ACTIVE) {
+                /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @session_regenerate_id(true);
             }
             #Log the change
-            Security::log('User details change', 'Changed name', ['name'=> ['old' => $this->username, 'new' => $newName]]);
+            Security::log('User details change', 'Changed name', ['name' => ['old' => $this->username, 'new' => $newName]]);
             return ['response' => $result];
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];
         }
     }
-
+    
+    /**
+     * Update user profile data
+     * @return array
+     */
     public function updateProfile(): array
     {
         if (empty($_POST['details'])) {
@@ -430,24 +491,34 @@ class User extends Entity
         if (empty($queries)) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
         }
-        $result = HomePage::$dbController->query($queries);
+        $result = Config::$dbController->query($queries);
         #Log the change
         Security::log('User details change', 'Changed details', $log);
         return ['response' => $result];
     }
-
-    #Function to check if username is already used
+    
+    /**
+     * Function to check if username is already used
+     * @param string $name
+     *
+     * @return bool
+     */
     public function usedName(string $name): bool
     {
         #Check against DB table
         try {
-            return HomePage::$dbController->check('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name]);
+            return Config::$dbController->check('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name]);
         } catch (\Throwable) {
             return false;
         }
     }
-
-    #Function to check whether name is banned
+    
+    /**
+     * Function to check whether name is banned
+     * @param string $name
+     *
+     * @return bool
+     */
     public function bannedName(string $name): bool
     {
         #Check format
@@ -456,12 +527,18 @@ class User extends Entity
         }
         #Check against DB table
         try {
-            return HomePage::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
+            return Config::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
         } catch (\Throwable) {
             return false;
         }
     }
-
+    
+    /**
+     * Login to the system
+     * @param bool $afterRegister Flag indicating if login is being done after initial registration
+     *
+     * @return array|true[]
+     */
     public function login(bool $afterRegister = false): array
     {
         #Check if already logged in and return early
@@ -489,12 +566,12 @@ class User extends Entity
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
-        if (empty(HomePage::$dbController)) {
+        if (empty(Config::$dbController)) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get password of the user, while also checking if it exists
         try {
-            $credentials = HomePage::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__emails`.`email`=:mail',
+            $credentials = Config::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__emails`.`email`=:mail',
                 [':mail' => $_POST['signinup']['email']]
             );
         } catch (\Throwable) {
@@ -531,6 +608,7 @@ class User extends Entity
             Security::log('Login', 'Successful login');
         }
         if (session_status() === PHP_SESSION_ACTIVE) {
+            /** @noinspection PhpUsageOfSilenceOperatorInspection */
             @session_regenerate_id(true);
         }
         if ($afterRegister) {
@@ -538,8 +616,13 @@ class User extends Entity
         }
         return ['response' => true];
     }
-
-    #Setting cookie for remembering user
+    
+    /**
+     * Setting cookie for remembering user
+     * @param string $cookieId
+     *
+     * @return void
+     */
     public function rememberMe(string $cookieId = ''): void
     {
         try {
@@ -550,12 +633,12 @@ class User extends Entity
             #Generate cookie password
             $pass = bin2hex(random_bytes(128));
             #Write cookie data to DB
-            if (HomePage::$dbController === null) {
+            if (Config::$dbController === null) {
                 #If we can't write to DB for some reason - do not share any data with client
                 return;
             }
-            if (HomePage::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) || !empty($this->id))) {
-                HomePage::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
+            if (Config::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) || !empty($this->id))) {
+                Config::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
                     [
                         ':cookie' => $cookieId,
                         ':pass' => Security::passHash($pass),
@@ -573,14 +656,20 @@ class User extends Entity
             $options = ['expires' => time() + 60 * 60 * 24 * 30, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax'];
             #Set cookie value
             $value = json_encode(['cookieid' => Security::encrypt($cookieId), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
-            $result = setcookie('rememberme_'.Config::$http_host, $value, $options);
+            setcookie('rememberme_'.Config::$http_host, $value, $options);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             #Do nothing, since not critical
         }
     }
-
-    #Function to validate password
+    
+    /**
+     * Function to validate password
+     * @param string $password
+     * @param string $hash
+     *
+     * @return bool
+     */
     public function passValid(#[\SensitiveParameter] string $password, #[\SensitiveParameter] string $hash): bool
     {
         if (empty($this->id)) {
@@ -600,7 +689,7 @@ class User extends Entity
                 return true;
             }
             #Increase strike count
-            HomePage::$dbController->query(
+            Config::$dbController->query(
                 'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
                 [':userid' => [$this->id, 'string']]);
             Security::log('Failed login', 'Strike added');
@@ -609,14 +698,19 @@ class User extends Entity
             return false;
         }
     }
-
-    #Function to change the password
+    
+    /**
+     * Function to change the password
+     * @param string $password
+     *
+     * @return bool
+     */
     public function passChange(#[\SensitiveParameter] string $password): bool
     {
         if (empty($this->id)) {
             return false;
         }
-        $result = HomePage::$dbController->query(
+        $result = Config::$dbController->query(
             'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
                 ':userid' => [$this->id, 'string'],
@@ -624,18 +718,23 @@ class User extends Entity
             ]
         );
         if (session_status() === PHP_SESSION_ACTIVE) {
+            /** @noinspection PhpUsageOfSilenceOperatorInspection */
             @session_regenerate_id(true);
         }
         Security::log('Password change', 'Attempted to change password', $result);
         return $result;
     }
-
+    
+    /**
+     * Reset number of failed logins
+     * @return bool
+     */
     public function resetStrikes(): bool
     {
         if (empty($this->id)) {
             return false;
         }
-        return HomePage::$dbController->query(
+        return Config::$dbController->query(
             'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
                 ':userid' => [(string)$this->id, 'string']
@@ -643,13 +742,17 @@ class User extends Entity
         );
     }
     
+    /**
+     * Delete cookie
+     * @return bool
+     */
     public function deleteCookie(): bool
     {
         if (empty($this->id) || empty($_POST['cookie'])) {
             return false;
         }
         Security::log('Logout', 'Manually deleted a cookie');
-        return HomePage::$dbController->query(
+        return Config::$dbController->query(
             'DELETE FROM `uc__cookies` WHERE `userid`=:userid AND `cookieid`=:cookie;',
             [
                 ':userid' => [(string)$this->id, 'string'],
@@ -658,13 +761,17 @@ class User extends Entity
         );
     }
     
+    /**
+     * Delete session
+     * @return bool
+     */
     public function deleteSession(): bool
     {
         if (empty($this->id) || empty($_POST['session'])) {
             return false;
         }
         Security::log('Logout', 'Manually deleted a session');
-        return HomePage::$dbController->query(
+        return Config::$dbController->query(
             'DELETE FROM `uc__sessions` WHERE `userid`=:userid AND `sessionid`=:session;',
             [
                 ':userid' => [(string)$this->id, 'string'],
@@ -673,6 +780,10 @@ class User extends Entity
         );
     }
     
+    /**
+     * Get threads created by user
+     * @return array
+     */
     public function getThreads(): array
     {
         $where = '`talks__threads`.`createdby`=:userid';
@@ -686,7 +797,7 @@ class User extends Entity
         }
         $threads = (new Threads($bindings, $where, '`talks__threads`.`created` DESC'))->listEntities();
         #Clean any threads with empty `firstPost` (means thread is either empty or is in progress of creation)
-        foreach ($threads['entities'] as $key=>$thread) {
+        foreach ($threads['entities'] as $key => $thread) {
             if (empty($thread['firstPost'])) {
                 unset($threads['entities'][$key]);
             }
@@ -694,6 +805,10 @@ class User extends Entity
         return $threads['entities'];
     }
     
+    /**
+     * Get posts created by user
+     * @return array
+     */
     public function getPosts(): array
     {
         $where = '`talks__posts`.`createdby`=:createdby';
@@ -711,7 +826,12 @@ class User extends Entity
         return $posts['entities'];
     }
     
-    #Similar to getPosts(), but only gets posts, that are the first posts in threads
+    /**
+     * Similar to getPosts(), but only gets posts, that are the first posts in threads
+     * @param bool $onlyWithBanner
+     *
+     * @return array
+     */
     public function getTalksStarters(bool $onlyWithBanner = false): array
     {
         #Can't think of a good way to get this in 1 query, thus first getting the latest threads
@@ -720,7 +840,7 @@ class User extends Entity
         if (!empty($threads)) {
             #Keep only items with ogimage
             if ($onlyWithBanner) {
-                foreach ($threads as $key=>$thread) {
+                foreach ($threads as $key => $thread) {
                     if (empty($thread['ogimage'])) {
                         unset($threads[$key]);
                     } else {
@@ -766,7 +886,10 @@ class User extends Entity
         return [];
     }
     
-    #Function to log the user out
+    /**
+     * Function to log the user out
+     * @return bool
+     */
     public function logout(): bool
     {
         Security::log('Logout', 'Logout');
@@ -775,8 +898,8 @@ class User extends Entity
         setcookie('rememberme_'.Config::$http_host, '', ['expires' => time() - 3600, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
         #From DB
         try {
-            if (HomePage::$dbController !== null && !empty($_SESSION['cookieid'])) {
-                HomePage::$dbController->query('DELETE FROM `uc__cookies` WHERE `cookieid`=:id', [':id' => $_SESSION['cookieid']]);
+            if (Config::$dbController !== null && !empty($_SESSION['cookieid'])) {
+                Config::$dbController->query('DELETE FROM `uc__cookies` WHERE `cookieid`=:id', [':id' => $_SESSION['cookieid']]);
             }
         } catch (\Throwable) {
             #Do nothing
@@ -791,8 +914,13 @@ class User extends Entity
         return $result;
     }
     
-    #Function to remove the user
-    #In case of errors, we return simple false. I think different error messages may be used by malicious actors here
+    /**
+     * Function to remove the user
+     * In case of errors, we return simple false. I think different error messages may be used by malicious actors here.
+     * @param bool $hard
+     *
+     * @return bool
+     */
     public function remove(bool $hard = false): bool
     {
         #Check if we are trying to remove one of the system users and prevent that
@@ -801,6 +929,7 @@ class User extends Entity
         }
         try {
             #Close session to avoid changing it in any way
+            /** @noinspection PhpUsageOfSilenceOperatorInspection */
             @session_write_close();
             #Check if hard removal or regular one was requested
             if ($hard) {
@@ -878,7 +1007,7 @@ class User extends Entity
                 [':userid' => $this->id]
             ];
             #If queries ran successfully - logout properly
-            if (HomePage::$dbController->query($queries)) {
+            if (Config::$dbController->query($queries)) {
                 $this->logout();
                 $result = true;
             } else {

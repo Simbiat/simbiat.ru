@@ -1,11 +1,15 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\usercontrol\Pages;
 
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\HomePage;
+use Simbiat\Website\Config;
 use Simbiat\Website\usercontrol\Email;
 
+/**
+ * User activation
+ */
 class Activation extends Page
 {
     #Current breadcrumb for navigation
@@ -22,29 +26,34 @@ class Activation extends Page
     protected string $ogdesc = 'Page used for user or email activation';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
-
-    #This is actual page generation based on further details of the $path
+    
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         #Get user ID
-        $userid = $_SESSION['userid'] ?? intval($path[0]) ?? null;
+        $userid = $_SESSION['userid'] ?? (int)$path[0] ?? null;
         #Get activation ID
         $activation = $path[1] ?? null;
         if (empty($userid) || empty($activation)) {
             return ['http_error' => 403];
         }
         #Check if user exists
-        if (!HomePage::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', [':userid' => [$userid, 'int']])) {
+        if (!Config::$dbController->check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', [':userid' => [$userid, 'int']])) {
             #While technically this is closer to 404, we do not want potential abuse to get user IDs, although attack vector here is unlikely
             return ['http_error' => 403];
         }
         $outputArray = [];
         #Check if user requires activation
-        $outputArray['activation'] = HomePage::$dbController->check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]);
+        $outputArray['activation'] = Config::$dbController->check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]);
         #Get list of mails for the user with activation codes
-        $emails = HomePage::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__emails` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
+        $emails = Config::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__emails` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
         #Check if provided activation code fits any of those mails
-        foreach ($emails as $email=>$code) {
+        foreach ($emails as $email => $code) {
             if (password_verify($activation, $code) && (new Email($email))->activate($userid)) {
                 $outputArray = ['activated' => true, 'email' => $email];
                 break;

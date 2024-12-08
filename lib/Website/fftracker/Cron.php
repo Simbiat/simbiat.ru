@@ -15,7 +15,6 @@ use Simbiat\Website\fftracker\Entities\CrossworldLinkshell;
 use Simbiat\Website\fftracker\Entities\FreeCompany;
 use Simbiat\Website\fftracker\Entities\Linkshell;
 use Simbiat\Website\fftracker\Entities\PvPTeam;
-use Simbiat\Website\HomePage;
 use Simbiat\Lodestone;
 
 /**
@@ -74,7 +73,7 @@ class Cron
             $limit = 1;
         }
         try {
-            $dbCon = HomePage::$dbController;
+            $dbCon = Config::$dbController;
             $entities = $dbCon->selectAll('
                     SELECT `type`, `id`, `priority`, `updated` FROM (
                         (SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, IF(`userid` IS NOT NULL AND `deleted` IS NULL AND `privated` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` ORDER BY `priority` DESC, `updated` LIMIT :maxLines OFFSET :offset)
@@ -131,7 +130,7 @@ class Cron
                     ];
                 }
             }
-            return HomePage::$dbController->query($queries);
+            return Config::$dbController->query($queries);
         } catch (\Throwable $e) {
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
@@ -145,7 +144,7 @@ class Cron
     {
         try {
             $cron = new TaskInstance();
-            $dbCon = HomePage::$dbController;
+            $dbCon = Config::$dbController;
             #Try to register new characters
             $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
@@ -170,7 +169,7 @@ class Cron
         try {
             $Lodestone = (new Lodestone());
             $cron = new TaskInstance();
-            $dbCon = HomePage::$dbController;
+            $dbCon = Config::$dbController;
             #Generate list of worlds for linkshells
             $worlds = $dbCon->selectAll(
                 'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`

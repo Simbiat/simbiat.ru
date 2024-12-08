@@ -1,19 +1,28 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Twig;
 
 use Simbiat\Website\Config;
 use Simbiat\Website\HomePage;
-use Simbiat\Website\Twig\RuntimeExtension;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFunction;
 
+/**
+ * Class to implement some extension stuff for Twig
+ */
 class Extension extends AbstractExtension implements GlobalsInterface
 {
+    /**
+     * Returns a list of functions to add to the existing list.
+     *
+     * @return TwigFunction[]
+     */
+    #[\Override]
     public function getFunctions(): array
     {
-        $runtime = new RuntimeExtension;
+        $runtime = new RuntimeExtension();
         return [
             new TwigFunction('genBread', [$runtime, 'genBread'], ['is_safe' => ['html']]),
             new TwigFunction('timeline', [$runtime, 'timeline'], ['is_safe' => ['html']]),
@@ -31,7 +40,10 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('linkTags', [$runtime, 'linkTags'], ['is_safe' => ['html']]),
         ];
     }
-
+    
+    /**
+     * @return array<string, mixed>
+     */
     public function getGlobals(): array
     {
         $defaults = [
@@ -41,10 +53,10 @@ class Extension extends AbstractExtension implements GlobalsInterface
             'maintenance' => 1,
             'registration' => 0,
         ];
-        if (HomePage::$dbup) {
+        if (Config::$dbup) {
             #Update default variables with values from database
             try {
-                $defaults = array_merge($defaults, HomePage::$dbController->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
+                $defaults = array_merge($defaults, Config::$dbController->selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
             } catch (\Throwable) {
                 #Do nothing, retain defaults
             }

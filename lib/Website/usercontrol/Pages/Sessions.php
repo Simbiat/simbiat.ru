@@ -1,17 +1,18 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\usercontrol\Pages;
 
 use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use GeoIp2\Database\Reader;
-use GeoIp2\Exception\AddressNotFoundException;
-use MaxMind\Db\Reader\InvalidDatabaseException;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
-use Simbiat\Website\HomePage;
 
+/**
+ * Page to manage user sessions
+ */
 class Sessions extends Page
 {
     #Current breadcrumb for navigation
@@ -32,17 +33,22 @@ class Sessions extends Page
     protected bool $authenticationNeeded = true;
     #Link to JS module for preload
     protected string $jsModule = 'uc/sessions';
-
-    #This is actual page generation based on further details of the $path
+    
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         $outputArray = [];
         #Get sessions
-        $outputArray['sessions'] = HomePage::$dbController->selectAll('SELECT `time`, `cookieid`, `sessionid`, `uc__sessions`.`ip`, `useragent` FROM `uc__sessions` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
+        $outputArray['sessions'] = Config::$dbController->selectAll('SELECT `time`, `cookieid`, `sessionid`, `uc__sessions`.`ip`, `useragent` FROM `uc__sessions` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
         #Get cookies
-        $outputArray['cookies'] = HomePage::$dbController->selectAll('SELECT `time`, `cookieid`, `uc__cookies`.`ip`, `useragent` FROM `uc__cookies` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
+        $outputArray['cookies'] = Config::$dbController->selectAll('SELECT `time`, `cookieid`, `uc__cookies`.`ip`, `useragent` FROM `uc__cookies` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
         #Get logs
-        $outputArray['logs'] = HomePage::$dbController->selectAll('SELECT `time`, `action`, `sys__logs`.`ip`, `useragent` FROM `sys__logs` WHERE `userid`=:userid AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']]);
+        $outputArray['logs'] = Config::$dbController->selectAll('SELECT `time`, `action`, `sys__logs`.`ip`, `useragent` FROM `sys__logs` WHERE `userid`=:userid AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']]);
         #Create useragent object
         #Force full versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);

@@ -38,18 +38,18 @@
             'dev_requirement' => false,
         ),
         'league/uri' => array(
-            'pretty_version' => '7.4.1',
-            'version' => '7.4.1.0',
-            'reference' => 'bedb6e55eff0c933668addaa7efa1e1f2c417cc4',
+            'pretty_version' => '7.5.1',
+            'version' => '7.5.1.0',
+            'reference' => '81fb5145d2644324614cc532b28efd0215bda430',
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/uri',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'league/uri-interfaces' => array(
-            'pretty_version' => '7.4.1',
-            'version' => '7.4.1.0',
-            'reference' => '8d43ef5c841032c87e2de015972c06f3865ef718',
+            'pretty_version' => '7.5.0',
+            'version' => '7.5.0.0',
+            'reference' => '08cfc6c4f3d811584fb09c37e2849e6a7f9b0742',
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/uri-interfaces',
             'aliases' => array(),
@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '5f2153c997f1ad01915f80dd7c81ebf2b3a75c03',
+            'reference' => 'dcb2bdb48e1d9b0b5b1c333b61f49772aee879ff',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
