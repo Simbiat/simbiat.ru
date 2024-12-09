@@ -22,15 +22,7 @@ try {
         echo '['.date('c').'] Character '.$character.' ('.$current.'/'.$count.'): getting data...'.PHP_EOL;
         #Get list of potential achievements to remove, which is all achievements that besides last 50 and have more than 50 other non-deleted and non-privated characters with it
         $potential = Config::$dbController->selectColumn(
-            'SELECT `achievementid`
-                        FROM (
-                            SELECT * FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid ORDER BY `time` DESC LIMIT 100000 OFFSET 50
-                        ) AS `lastAchievements`
-                        WHERE (
-                            SELECT COUNT(*) AS `count` FROM `ffxiv__character_achievement`
-                            INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
-                            WHERE `achievementid`=`lastAchievements`.`achievementid` AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
-                        )>50;',
+            'SELECT `achievementid` FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid ORDER BY `time` DESC LIMIT 100000 OFFSET 50;',
             [':characterid' => $character],
         );
         #Iterrate over each achievement, and remove them if achievement current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
@@ -38,18 +30,18 @@ try {
         foreach ($potential as $achievement) {
             file_put_contents(Config::$workDir.'/logs/achievements_deletion.sql',
                 'DELETE FROM `ffxiv__character_achievement`
-                            WHERE `achievementid`='.$achievement.' AND `characterid`='.$character.' AND
-                            (
-                                SELECT `count` FROM (
-                                    SELECT COUNT(*) AS `count`, GROUP_CONCAT(`characterid`) AS `ids` FROM (
-                                        SELECT `ffxiv__character_achievement`.`characterid` FROM `ffxiv__character_achievement`
-                                        INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
-                                        WHERE `achievementid`='.$achievement.' AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
-                                        ORDER BY `time` DESC LIMIT 50
-                                    ) AS `latestCharacters`
-                                ) AS `validation`
-                                WHERE `count`=50 AND NOT FIND_IN_SET('.$character.', `ids`)
-                            )=50;',
+WHERE `achievementid`='.$achievement.' AND `characterid`='.$character.' AND
+(
+    SELECT `count` FROM (
+        SELECT COUNT(*) AS `count`, GROUP_CONCAT(`characterid`) AS `ids` FROM (
+            SELECT `ffxiv__character_achievement`.`characterid` FROM `ffxiv__character_achievement`
+            INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
+            WHERE `achievementid`='.$achievement.' AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
+            ORDER BY `time` DESC LIMIT 50
+        ) AS `latestCharacters`
+    ) AS `validation`
+    WHERE `count`=50 AND NOT FIND_IN_SET('.$character.', `ids`)
+)=50;'.PHP_EOL,
                 FILE_APPEND
             );
         }

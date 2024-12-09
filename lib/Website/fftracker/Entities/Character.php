@@ -557,20 +557,12 @@ class Character extends Entity
     public function cleanAchievements(): bool
     {
         try {
-            #Get list of potential achievements to remove, which is all achievements that besides last 50 and have more than 50 other non-deleted and non-privated characters with it
+            #Get list of potential achievements to remove, which is all achievements besides the last 50
             $potential = Config::$dbController->selectColumn(
-                'SELECT `achievementid`
-                        FROM (
-                            SELECT * FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid ORDER BY `time` DESC LIMIT 100000 OFFSET 50
-                        ) AS `lastAchievements`
-                        WHERE (
-                            SELECT COUNT(*) AS `count` FROM `ffxiv__character_achievement`
-                            INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
-                            WHERE `achievementid`=`lastAchievements`.`achievementid` AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
-                        )>50;',
+                'SELECT `achievementid` FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid ORDER BY `time` DESC LIMIT 100000 OFFSET 50;',
                 [':characterid' => $this->id],
             );
-            #Iterrate over each achievement, and remove them if achievement current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
+            #Iterrate over each achievement, and remove them if current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
             foreach ($potential as $achievement) {
                 try {
                     Config::$dbController->query('DELETE FROM `ffxiv__character_achievement`
