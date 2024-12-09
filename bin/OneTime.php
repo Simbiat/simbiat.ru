@@ -51,6 +51,10 @@ WHERE `achievementid`='.$achievement.' AND `characterid`='.$character.' AND
         'OPTIMIZE TABLE `ffxiv__character_achievement`;',
         FILE_APPEND
     );
+    file_put_contents(Config::$workDir.'/logs/achievements_deletion.end',
+        'All queries generated',
+        FILE_APPEND
+    );
     echo '['.date('c').'] Completed'.PHP_EOL;
 } catch (Throwable $exception) {
     #2002 error code means server is not listening on port
