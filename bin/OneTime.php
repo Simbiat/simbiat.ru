@@ -14,11 +14,12 @@ use Simbiat\Website\Errors;
 
 Config::dbConnect();
 try {
+    echo '['.date('c').'] Getting characters...'.PHP_EOL;
     $characters = Config::$dbController->selectColumn('SELECT `characterid` AS `character`, COUNT(*) AS `count` FROM `ffxiv__character_achievement` GROUP BY `characterid` HAVING `count`>50 ORDER BY `count` DESC;');
     $count = count($characters);
     $current = 1;
     foreach ($characters as $character) {
-        echo '['.date('c').'] Character '.$character.' ('.$current.'/'.$count.')'.PHP_EOL;
+        echo '['.date('c').'] Character '.$character.' ('.$current.'/'.$count.'): getting data...'.PHP_EOL;
         #Get list of potential achievements to remove, which is all achievements that besides last 50 and have more than 50 other non-deleted and non-privated characters with it
         $potential = Config::$dbController->selectColumn(
             'SELECT `achievementid`
@@ -33,8 +34,9 @@ try {
             [':characterid' => $character],
         );
         #Iterrate over each achievement, and remove them if achievement current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
+        echo '['.date('c').'] Character '.$character.' ('.$current.'/'.$count.'): writing queries...'.PHP_EOL;
         foreach ($potential as $achievement) {
-            file_put_contents('/app/logs/achievements_deletion.sql',
+            file_put_contents(Config::$workDir.'/logs/achievements_deletion.sql',
                 'DELETE FROM `ffxiv__character_achievement`
                             WHERE `achievementid`='.$achievement.' AND `characterid`='.$character.' AND
                             (
@@ -53,6 +55,11 @@ try {
         }
         $current++;
     }
+    file_put_contents(Config::$workDir.'/logs/achievements_deletion.sql',
+        'OPTIMIZE TABLE `ffxiv__character_achievement`;',
+        FILE_APPEND
+    );
+    echo '['.date('c').'] Completed'.PHP_EOL;
 } catch (Throwable $exception) {
     #2002 error code means server is not listening on port
     #2006 error code means server has gone away
