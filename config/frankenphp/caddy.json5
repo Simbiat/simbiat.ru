@@ -7,7 +7,7 @@
                     "filename": "/app/logs/caddy.log",
                     "output": "file",
                     "roll": true,
-                    "roll_size_mb": 1,
+                    "roll_size_mb": 10,
                     "roll_keep": 21,
                     "roll_keep_days": 14,
                 },
