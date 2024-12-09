@@ -33,25 +33,23 @@ try {
             [':characterid' => $character],
         );
         #Iterrate over each achievement, and remove them if achievement current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
-        $queries = [];
         foreach ($potential as $achievement) {
-            $queries[] = ['DELETE FROM `ffxiv__character_achievement`
-                            WHERE `achievementid`=:achievement AND `characterid`=:characterid AND
+            file_put_contents('/app/logs/achievements_deletion.sql',
+                'DELETE FROM `ffxiv__character_achievement`
+                            WHERE `achievementid`='.$achievement.' AND `characterid`='.$character.' AND
                             (
                                 SELECT `count` FROM (
                                     SELECT COUNT(*) AS `count`, GROUP_CONCAT(`characterid`) AS `ids` FROM (
                                         SELECT `ffxiv__character_achievement`.`characterid` FROM `ffxiv__character_achievement`
                                         INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
-                                        WHERE `achievementid`=:achievement AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
+                                        WHERE `achievementid`='.$achievement.' AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
                                         ORDER BY `time` DESC LIMIT 50
                                     ) AS `latestCharacters`
                                 ) AS `validation`
-                                WHERE `count`=50 AND NOT FIND_IN_SET(:characterid, `ids`)
+                                WHERE `count`=50 AND NOT FIND_IN_SET('.$character.', `ids`)
                             )=50;',
-                [':characterid' => $character, ':achievement' => $achievement]];
-        }
-        if (!empty($queries)) {
-            Config::$dbController->query($queries);
+                FILE_APPEND
+            );
         }
         $current++;
     }

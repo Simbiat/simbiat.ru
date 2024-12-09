@@ -571,9 +571,9 @@ class Character extends Entity
                 [':characterid' => $this->id],
             );
             #Iterrate over each achievement, and remove them if achievement current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
-            $queries = [];
             foreach ($potential as $achievement) {
-                $queries[] = ['DELETE FROM `ffxiv__character_achievement`
+                try {
+                    Config::$dbController->query('DELETE FROM `ffxiv__character_achievement`
                             WHERE `achievementid`=:achievement AND `characterid`=:characterid AND
                             (
                                 SELECT `count` FROM (
@@ -586,14 +586,16 @@ class Character extends Entity
                                 ) AS `validation`
                                 WHERE `count`=50 AND NOT FIND_IN_SET(:characterid, `ids`)
                             )=50;',
-                    [':characterid' => $this->id, ':achievement' => $achievement]];
-            }
-            if (!empty($queries)) {
-                Config::$dbController->query($queries);
+                        [':characterid' => $this->id, ':achievement' => $achievement]
+                    );
+                } catch (\Throwable $exception) {
+                    #We do not want to stop, let it try other records
+                    Errors::error_log($exception);
+                }
             }
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
         }
-        return false;
+        return true;
     }
 }
