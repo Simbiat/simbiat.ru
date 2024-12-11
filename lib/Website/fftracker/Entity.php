@@ -353,12 +353,13 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     
     /**
      * Function to merge 1 to 3 images making up a crest on Lodestone into 1 stored on tracker side
+     *
      * @param array  $images    Array of crest components
      * @param string $finalPath Where to save final file
      * @param bool   $debug     Debug mode to log errors
      *
      * @return bool
-     */
+     **/
     protected static function CrestMerge(array $images, string $finalPath, bool $debug = false): bool
     {
         try {
@@ -367,7 +368,8 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
                 return false;
             }
             #Check if path exists and create it recursively, if not
-            if (!is_dir(dirname($finalPath)) && !mkdir(dirname($finalPath), recursive: true) && !is_dir(dirname($finalPath))) {
+            /* @noinspection PhpUsageOfSilenceOperatorInspection */
+            if (!is_dir(dirname($finalPath)) && !@mkdir(dirname($finalPath), recursive: true) && !is_dir(dirname($finalPath))) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $finalPath));
             }
             $gd = Images::merge($images);
