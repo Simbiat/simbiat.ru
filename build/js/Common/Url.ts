@@ -11,6 +11,46 @@ function cleanGET(): void
     window.history.replaceState(document.title, document.title, url.toString());
 }
 
+//URL decode pasted links and strip some common marketing GET parameters
+async function urlClean(event: Event): Promise<void>
+{
+    // @ts-expect-error: As of time of writing clipboard-read is not supported by Safari and Firefox and TypeScript complains about the value. But it is a valid one for Chrome, thus suppressing the error.
+    const permission = await navigator.permissions.query({ 'name': 'clipboard-read',}).catch(() => {
+                                          //Do nothing, if clipboard reading is not supported, it will fail on next check
+                                      });
+    //Check permission is granted or not
+    if (permission && permission.state !== 'denied') {
+        //Get buffer
+        void navigator.clipboard.readText().then((result) => {
+            event.preventDefault();
+                          const current = event.target;
+                          if (current === null) {
+                              //If somehow we got here - exit early
+                              return;
+                          }
+                          const paramsToDelete = [
+                              'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
+                              'gclid', 'fbclid', 'dclid', 'msclkid', 'yclid', 'ref', 'referrer',
+                              'cid', 'client_id', 'aid', 'src', 'sid', 'bid', 'rid', 'pid', 'adid',
+                              'campaign_id', 'aff_id', 'trackid', 'clickid', 'tracking', 'ref_'
+                          ];
+                          const url = new URL(result.toString());
+                          for (const param of paramsToDelete) {
+                              url.searchParams.delete(param);
+                          }
+                          const cleanedUrl = decodeURI(url.toString());
+                          //Looks like it is required to have a small delay with replacing, or otherwise the original value is still pasted
+                          setTimeout(() => {
+                              (current as HTMLInputElement).value = cleanedUrl;
+                              current.dispatchEvent(new Event('change', {
+                                  'bubbles': true,
+                                  'cancelable': true,
+                              }));
+                          }, 1);
+                      });
+    }
+}
+
 //Special processing for special hash links
 function hashCheck(): void
 {

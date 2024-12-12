@@ -123,59 +123,59 @@ function nextInput(initial: HTMLInputElement, reverse = false): HTMLInputElement
 }
 
 async function pasteSplit(event: Event): Promise<void>
-    {
-        // @ts-expect-error: As of time of writing clipboard-read is not supported by Safari and Firefox and TypeScript complains about the value. But it is a valid one for Chrome, thus suppressing the error.
-        const permission = await navigator.permissions.query({ 'name': 'clipboard-read',}).catch(() => {
-            //Do nothing, if clipboard reading is not supported, it will fail on next check
-        });
-        //Check permission is granted or not
-        if (permission && permission.state !== 'denied') {
+{
+    // @ts-expect-error: As of time of writing clipboard-read is not supported by Safari and Firefox and TypeScript complains about the value. But it is a valid one for Chrome, thus suppressing the error.
+    const permission = await navigator.permissions.query({ 'name': 'clipboard-read',}).catch(() => {
+                                          //Do nothing, if clipboard reading is not supported, it will fail on next check
+                                      });
+    //Check permission is granted or not
+    if (permission && permission.state !== 'denied') {
         //Get buffer
         void navigator.clipboard.readText().then((result) => {
-            let buffer = result.toString();
-            //Get initial element
-            let current = event.target;
-            if (current === null) {
-                //If somehow we got here - exit early
-                return;
-            }
-            //Get initial length attribute
-            let maxLength = parseInt((current as HTMLInputElement).getAttribute('maxlength') ?? '0', 10);
-            //Loop while the buffer is too large
-            while (current !== null && maxLength && buffer.length > maxLength) {
-                //Ensure input value is updated
-                (current as HTMLInputElement).value = buffer.substring(0, maxLength);
-                //Trigger input event to bubble any bound events
-                current.dispatchEvent(new Event('input', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-                //Do not spill over if a field is invalid
-                if (!(current as HTMLInputElement).validity.valid) {
-                    return;
-                }
-                //Update buffer value (not the buffer itself)
-                buffer = buffer.substring(maxLength);
-                //Get next node
-                current = nextInput((current as HTMLInputElement), false);
-                if (current) {
-                    //Focus to provide visual identification of a switch
-                    (current as HTMLInputElement).focus();
-                    //Update maxLength
-                    maxLength = parseInt((current as HTMLInputElement).getAttribute('maxlength') ?? '0', 10);
-                }
-            }
-            //Check if we still have a valid node
-            if (current) {
-                //Dump everything we can from leftovers
-                (current as HTMLInputElement).value = buffer;
-                //Trigger input event to bubble any bound events
-                current.dispatchEvent(new Event('input', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-            }
-        });
+                          let buffer = result.toString();
+                          //Get initial element
+                          let current = event.target;
+                          if (current === null) {
+                              //If somehow we got here - exit early
+                              return;
+                          }
+                          //Get initial length attribute
+                          let maxLength = parseInt((current as HTMLInputElement).getAttribute('maxlength') ?? '0', 10);
+                          //Loop while the buffer is too large
+                          while (current !== null && maxLength && buffer.length > maxLength) {
+                              //Ensure input value is updated
+                              (current as HTMLInputElement).value = buffer.substring(0, maxLength);
+                              //Trigger input event to bubble any bound events
+                              current.dispatchEvent(new Event('input', {
+                                  'bubbles': true,
+                                  'cancelable': true,
+                              }));
+                              //Do not spill over if a field is invalid
+                              if (!(current as HTMLInputElement).validity.valid) {
+                                  return;
+                              }
+                              //Update buffer value (not the buffer itself)
+                              buffer = buffer.substring(maxLength);
+                              //Get next node
+                              current = nextInput((current as HTMLInputElement), false);
+                              if (current) {
+                                  //Focus to provide visual identification of a switch
+                                  (current as HTMLInputElement).focus();
+                                  //Update maxLength
+                                  maxLength = parseInt((current as HTMLInputElement).getAttribute('maxlength') ?? '0', 10);
+                              }
+                          }
+                          //Check if we still have a valid node
+                          if (current) {
+                              //Dump everything we can from leftovers
+                              (current as HTMLInputElement).value = buffer;
+                              //Trigger input event to bubble any bound events
+                              current.dispatchEvent(new Event('input', {
+                                  'bubbles': true,
+                                  'cancelable': true,
+                              }));
+                          }
+                      });
     }
 }
 
@@ -195,8 +195,8 @@ function formEnter(event: KeyboardEvent): boolean
 //Track backspace and focus previous input field, if input is empty, when it's pressed
 function inputBackSpace(event: Event): void
 {
-        const current = event.target as HTMLInputElement;
-        if ((event as KeyboardEvent).code === 'Backspace' && !current.value) {
+    const current = event.target as HTMLInputElement;
+    if ((event as KeyboardEvent).code === 'Backspace' && !current.value) {
         const moveTo = nextInput(current, true);
         if (moveTo) {
             moveTo.focus();
@@ -210,11 +210,11 @@ function inputBackSpace(event: Event): void
 //Focus next field, if current is filled to the brim and valid
 function autoNext(event: Event): void
 {
-        const current = event.target as HTMLInputElement;
-        //Get length attribute
-        const maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
-        //Check it against value length
-        if (maxLength && current.value.length === maxLength && current.validity.valid) {
+    const current = event.target as HTMLInputElement;
+    //Get length attribute
+    const maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
+    //Check it against value length
+    if (maxLength && current.value.length === maxLength && current.validity.valid) {
         const moveTo = nextInput(current, false);
         if (moveTo) {
             moveTo.focus();

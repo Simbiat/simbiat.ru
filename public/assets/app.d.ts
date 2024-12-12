@@ -307,6 +307,7 @@ declare function tinyMCEHideInputs(): void;
 declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: boolean): void;
 declare function saveTinyMCE(id: string, textareaOnly?: boolean): void;
 declare function cleanGET(): void;
+declare function urlClean(event: Event): Promise<void>;
 declare function hashCheck(): void;
 declare function router(): void;
 declare class BackToTop extends HTMLElement {
