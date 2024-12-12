@@ -653,7 +653,7 @@ class User extends Entity
                 return;
             }
             #Set options
-            $options = ['expires' => time() + 60 * 60 * 24 * 30, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax'];
+            $options = ['expires' => time() + 60 * 60 * 24 * 30, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
             #Set cookie value
             $value = json_encode(['cookieid' => Security::encrypt($cookieId), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
             setcookie('rememberme_'.Config::$http_host, $value, $options);
