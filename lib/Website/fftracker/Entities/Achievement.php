@@ -50,27 +50,37 @@ class Achievement extends Entity
     
     /**
      * Get data from Lodestone
+     *
      * @param bool $allowSleep Whether to wait in case Lodestone throttles the request (that is throttle on our side)
      *
      * @return string|array
+     * @throws \Exception
      */
     public function getFromLodestone(bool $allowSleep = false): string|array
     {
-        #Cache objects
+        #Get the data that we have
+        $achievement = $this->getFromDB();
+        #Cache Lodestone
         $Lodestone = new Lodestone();
-        #Get characters
-        $altChars = Config::$dbController->selectColumn(
-            'SELECT `characterid` FROM `ffxiv__character_achievement` WHERE `achievementid`=:ach ORDER BY `time` DESC LIMIT 50;',
-            [
-                ':ach' => $this->id,
-            ]
-        );
-        if (empty($altChars)) {
+        #If we do not have dbid already - try to get one
+        if (empty($achievement['dbid'])) {
+            $achievement['dbid'] = $this->getDBID($achievement['name']);
+        }
+        #Somewhat simpler and faster processing if we have dbid already
+        if (!empty($achievement['dbid'])) {
+            $data = $Lodestone->getAchievementFromDB($achievement['dbid'])->getResult();
+            $data = $data['database']['achievement'][$achievement['dbid']];
+            unset($data['time']);
+            $data['dbid'] = $achievement['dbid'];
+            $data['id'] = $this->id;
+            return $data;
+        }
+        if (empty($achievement['characters'])) {
             return ['404' => true];
         }
         #Iterrate list
-        foreach ($altChars as $char) {
-            $data = $Lodestone->getCharacterAchievements($char, (int)$this->id)->getResult();
+        foreach ($achievement['characters'] as $char) {
+            $data = $Lodestone->getCharacterAchievements($char['id'], (int)$this->id)->getResult();
             #Take a pause if we were throttled, and pause is allowed
             if (!empty($Lodestone->getLastError()['error']) && preg_match('/Lodestone has throttled the request, 429/', $Lodestone->getLastError()['error']) === 1) {
                 if ($allowSleep) {
@@ -78,30 +88,37 @@ class Achievement extends Entity
                 }
                 return 'Request throttled by Lodestone';
             }
-            if (!empty($data['characters'][$char]['achievements'][$this->id]) && \is_array($data['characters'][$char]['achievements'][$this->id])) {
-                #Update character ID
+            if (!empty($data['characters'][$char['id']]['achievements'][$this->id]) && \is_array($data['characters'][$char['id']]['achievements'][$this->id])) {
                 #Try to get achievement ID as seen in Lodestone database (play guide)
-                $data = $Lodestone->searchDatabase('achievement', 0, 0, $data['characters'][$char]['achievements'][$this->id]['name'])->getResult();
-                if (!empty($data['database']['achievement'])) {
-                    #Remove counts elements from achievement database
-                    unset($data['database']['achievement']['pageCurrent'], $data['database']['achievement']['pageTotal'], $data['database']['achievement']['total']);
-                    #Flip the array of achievements (if any) to ease searching for the right element
-                    $data['database']['achievement'] = array_flip(array_combine(array_keys($data['database']['achievement']), array_column($data['database']['achievement'], 'name')));
-                }
-                #Set dbid
-                if (empty($data['database']['achievement'][$data['characters'][$char]['achievements'][$this->id]['name']])) {
-                    $data['characters'][$char]['achievements'][$this->id]['dbid'] = NULL;
-                } else {
-                    $data['characters'][$char]['achievements'][$this->id]['dbid'] = $data['database']['achievement'][$data['characters'][$char]['achievements'][$this->id]['name']];
-                }
+                $data['characters'][$char['id']]['achievements'][$this->id]['dbid'] = $this->getDBID($data['characters'][$char['id']]['achievements'][$this->id]['name']);
                 #Remove time
-                unset($data['characters'][$char]['achievements'][$this->id]['time']);
-                $data = $data['characters'][$char]['achievements'][$this->id];
+                unset($data['characters'][$char['id']]['achievements'][$this->id]['time']);
+                $data = $data['characters'][$char['id']]['achievements'][$this->id];
                 $data['id'] = $this->id;
                 return $data;
             }
         }
         return [];
+    }
+    
+    /**
+     * Helper function to get dbid from Lodestone based on achievement name
+     * @param string $searchFor
+     *
+     * @return string|null
+     */
+    private function getDBID(string $searchFor): string|null
+    {
+        $Lodestone = new Lodestone();
+        $dbSearchResult = $Lodestone->searchDatabase('achievement', 0, 0, $searchFor)->getResult();
+        #Remove counts elements from achievement database
+        unset($dbSearchResult['database']['achievement']['pageCurrent'], $dbSearchResult['database']['achievement']['pageTotal'], $dbSearchResult['database']['achievement']['total']);
+        #Flip the array of achievements (if any) to ease searching for the right element
+        $dbSearchResult['database']['achievement'] = array_flip(array_combine(array_keys($dbSearchResult['database']['achievement']), array_column($dbSearchResult['database']['achievement'], 'name')));
+        if (!empty($dbSearchResult['database']['achievement'][$searchFor])) {
+            return $dbSearchResult['database']['achievement'][$searchFor];
+        }
+        return null;
     }
     
     /**
@@ -185,11 +202,7 @@ class Achievement extends Entity
         } else {
             $bindings[':itemid'] = $this->lodestone['item']['id'];
         }
-        #Eggstreme Hunting is a duplicate name for Legacy achievement (ID 500) and for current one (ID 903).
-        #But current seasonal achievements do not have viewable page in Lodestone Database for some reason.
-        #Yet DBID is found for current achievement due to... Duplicate name. Which results in unique key violation.
-        #Since it's supposed to be "invisible" we enforce DBID to be null for it.
-        if (empty($this->lodestone['dbid']) || $this->id === '903') {
+        if (empty($this->lodestone['dbid'])) {
             $bindings[':dbid'] = [NULL, 'null'];
         } else {
             $bindings[':dbid'] = $this->lodestone['dbid'];

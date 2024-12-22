@@ -40,7 +40,7 @@ class Linkshell extends Entity
         #Get members
         $data['members'] = Config::$dbController->selectAll('SELECT \'character\' AS `type`, `ffxiv__linkshell_character`.`characterid` AS `id`, `ffxiv__character`.`name`, `ffxiv__character`.`avatar` AS `icon`, `ffxiv__linkshell_rank`.`rank`, `ffxiv__linkshell_rank`.`lsrankid`, `userid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_rank`.`lsrankid`=`ffxiv__linkshell_character`.`rankid` LEFT JOIN `ffxiv__character` ON `ffxiv__linkshell_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `ffxiv__linkshell_character`.`linkshellid`=:id AND `current`=1 ORDER BY `ffxiv__linkshell_character`.`rankid` , `ffxiv__character`.`name` ', [':id' => $this->id]);
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['manual'], $data['serverid']);
+        unset($data['serverid']);
         if ($data['crossworld']) {
             unset($data['server']);
         }
@@ -120,11 +120,10 @@ class Linkshell extends Entity
     
     /**
      * Function to update the entity
-     * @param bool $manual Flag to indicate that linkshel has been added manually
      *
      * @return bool
      */
-    protected function updateDB(bool $manual = false): bool
+    protected function updateDB(): bool
     {
         try {
             #If `empty` flag is set, it means that Lodestone page is empty, so we can't update anything besides name, data center and formed date
@@ -144,12 +143,11 @@ class Linkshell extends Entity
             } else {
                 #Main query to insert or update a Linkshell
                 $queries[] = [
-                    'INSERT INTO `ffxiv__linkshell`(`linkshellid`, `name`, `manual`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :manual, :crossworld, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1), `communityid`=:communityid;',
+                    'INSERT INTO `ffxiv__linkshell`(`linkshellid`, `name`, `crossworld`, `formed`, `registered`, `updated`, `deleted`, `serverid`, `communityid`) VALUES (:linkshellid, :name, :crossworld, :formed, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1), :communityid) ON DUPLICATE KEY UPDATE `name`=:name, `formed`=:formed, `updated`=CURRENT_TIMESTAMP(), `deleted`=NULL, `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server OR `datacenter`=:server ORDER BY `serverid` LIMIT 1), `communityid`=:communityid;',
                     [
                         ':linkshellid' => $this->id,
                         ':server' => $this->lodestone['server'] ?? $this->lodestone['dataCenter'],
                         ':name' => $this->lodestone['name'],
-                        ':manual' => [$manual, 'bool'],
                         ':crossworld' => [$this::crossworld, 'bool'],
                         ':formed' => [
                             (empty($this->lodestone['formed']) ? null : $this->lodestone['formed']),
@@ -199,7 +197,7 @@ class Linkshell extends Entity
                         )
                         VALUES (
                             :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), TIMESTAMPADD(SECOND, -3600, CURRENT_TIMESTAMP()), :avatar, `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1)
-                        ) ON DUPLICATE KEY UPDATE `deleted`=NULL, `enemyid`=NULL;',
+                        ) ON DUPLICATE KEY UPDATE `deleted`=NULL;',
                             [
                                 ':characterid' => $member,
                                 ':server' => $details['server'],

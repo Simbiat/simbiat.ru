@@ -51,7 +51,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
     
     /**
      * Update the entity
-     * @param bool $allowSleep Flag indicating that entityi is being added manually
+     * @param bool $allowSleep Flag to allow sleep, in case Lodestone is throttling us
      *
      * @return string|bool
      */
@@ -179,7 +179,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
             return 403;
         }
         unset($this->lodestone['404']);
-        return $this->updateDB(true);
+        return $this->updateDB();
     }
     
     /**

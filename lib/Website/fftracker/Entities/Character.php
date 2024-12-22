@@ -42,7 +42,7 @@ class Character extends Entity
     protected function getFromDB(): array
     {
         #Get general information. Using *, but add name, because otherwise Achievement name overrides Character name, and we do not want that
-        $data = Config::$dbController->selectRow('SELECT *, `ffxiv__achievement`.`icon` AS `titleIcon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated`, `ffxiv__enemy`.`name` AS `killedby` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid` = `ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardianid` = `ffxiv__guardian`.`guardianid` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid` = `ffxiv__nameday`.`namedayid` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid` = `ffxiv__city`.`cityid` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`serverid` = `ffxiv__server`.`serverid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid` = `ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`titleid` = `ffxiv__achievement`.`achievementid` LEFT JOIN `ffxiv__enemy` ON `ffxiv__character`.`enemyid` = `ffxiv__enemy`.`enemyid` WHERE `ffxiv__character`.`characterid` = :id;', [':id' => $this->id]);
+        $data = Config::$dbController->selectRow('SELECT *, `ffxiv__achievement`.`icon` AS `titleIcon`, `ffxiv__character`.`name`, `ffxiv__character`.`registered`, `ffxiv__character`.`updated` FROM `ffxiv__character` LEFT JOIN `ffxiv__clan` ON `ffxiv__character`.`clanid` = `ffxiv__clan`.`clanid` LEFT JOIN `ffxiv__guardian` ON `ffxiv__character`.`guardianid` = `ffxiv__guardian`.`guardianid` LEFT JOIN `ffxiv__nameday` ON `ffxiv__character`.`namedayid` = `ffxiv__nameday`.`namedayid` LEFT JOIN `ffxiv__city` ON `ffxiv__character`.`cityid` = `ffxiv__city`.`cityid` LEFT JOIN `ffxiv__server` ON `ffxiv__character`.`serverid` = `ffxiv__server`.`serverid` LEFT JOIN `ffxiv__grandcompany_rank` ON `ffxiv__character`.`gcrankid` = `ffxiv__grandcompany_rank`.`gcrankid` LEFT JOIN `ffxiv__grandcompany` ON `ffxiv__grandcompany_rank`.`gcId` = `ffxiv__grandcompany`.`gcId` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character`.`titleid` = `ffxiv__achievement`.`achievementid` WHERE `ffxiv__character`.`characterid` = :id;', [':id' => $this->id]);
         if (!empty($data['privated'])) {
             foreach ($data as $key => $value) {
                 if (!\in_array($key, ['avatar', 'registered', 'updated', 'deleted', 'privated', 'name'])) {
@@ -82,7 +82,7 @@ class Character extends Entity
             [':id' => $this->id]
         ));
         #Clean up the data from unnecessary (technical) clutter
-        unset($data['manual'], $data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
+        unset($data['clanid'], $data['namedayid'], $data['achievementid'], $data['category'], $data['subcategory'], $data['howto'], $data['points'], $data['icon'], $data['item'], $data['itemicon'], $data['itemid'], $data['serverid']);
         #In case the entry is old enough (at least 1 day old) and register it for update. Also check that this is not a bot.
         if (empty($_SESSION['UA']['bot']) && (time() - strtotime($data['updated'])) >= 86400) {
             (new TaskInstance())->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$this->id, 'character'], 'message' => 'Updating character with ID '.$this->id, 'priority' => 1])->add();
@@ -156,7 +156,6 @@ class Character extends Entity
             'guardianid' => $fromDB['guardianid'] ?? null,
             'incarnations' => $fromDB['incarnations'] ?? null,
             'oldNames' => $fromDB['oldNames'] ?? [],
-            'killedby' => $fromDB['killedby'] ?? null,
         ];
         $this->location = [
             'datacenter' => $fromDB['datacenter'] ?? null,
@@ -197,11 +196,10 @@ class Character extends Entity
     
     /**
      * Function to update the entity
-     * @param bool $manual Flag indicating whether character is being added manually
      *
      * @return bool
      */
-    protected function updateDB(bool $manual = false): bool
+    protected function updateDB(): bool
     {
         try {
             #Get time of last update for the character if it exists on tracker
@@ -255,18 +253,17 @@ class Character extends Entity
             #Main query to insert or update a character
             $queries[] = [
                 'INSERT INTO `ffxiv__character`(
-                    `characterid`, `serverid`, `name`, `manual`, `registered`, `updated`, `privated`, `deleted`, `enemyid`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `pvp_matches`, `achievement_points`
+                    `characterid`, `serverid`, `name`, `registered`, `updated`, `privated`, `deleted`, `biography`, `titleid`, `avatar`, `clanid`, `genderid`, `namedayid`, `guardianid`, `cityid`, `gcrankid`, `pvp_matches`, `achievement_points`
                 )
                 VALUES (
-                    :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, :manual, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0, :achievementPoints
+                    :characterid, (SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), :name, UTC_DATE(), CURRENT_TIMESTAMP(), NULL, NULL, :biography, (SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), :avatar, (SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), :genderid, (SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), (SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), (SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid` = (SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), 0, :achievementPoints
                 )
                 ON DUPLICATE KEY UPDATE
-                    `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `name`=:name, `updated`=CURRENT_TIMESTAMP(), `privated`=NULL, `deleted`=NULL, `enemyid`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), `achievement_points`=:achievementPoints;',
+                    `serverid`=(SELECT `serverid` FROM `ffxiv__server` WHERE `server`=:server), `name`=:name, `updated`=CURRENT_TIMESTAMP(), `privated`=NULL, `deleted`=NULL, `biography`=:biography, `titleid`=(SELECT `achievementid` as `titleid` FROM `ffxiv__achievement` WHERE `title` IS NOT NULL AND `title`=:title LIMIT 1), `avatar`=:avatar, `clanid`=(SELECT `clanid` FROM `ffxiv__clan` WHERE `clan`=:clan), `genderid`=:genderid, `namedayid`=(SELECT `namedayid` FROM `ffxiv__nameday` WHERE `nameday`=:nameday), `guardianid`=(SELECT `guardianid` FROM `ffxiv__guardian` WHERE `guardian`=:guardian), `cityid`=(SELECT `cityid` FROM `ffxiv__city` WHERE `city`=:city), `gcrankid`=(SELECT `gcrankid` FROM `ffxiv__grandcompany_rank` WHERE `gc_rank` IS NOT NULL AND `gc_rank`=:gcRank ORDER BY `gcrankid` LIMIT 1), `achievement_points`=:achievementPoints;',
                 [
                     ':characterid' => $this->id,
                     ':server' => $this->lodestone['server'],
                     ':name' => $this->lodestone['name'],
-                    ':manual' => [$manual, 'bool'],
                     ':avatar' => str_replace(['https://img2.finalfantasyxiv.com/f/', 'c0_96x96.jpg', 'c0.jpg'], '', $this->lodestone['avatar']),
                     ':biography' => [
                         (empty($this->lodestone['bio']) ? NULL : $this->lodestone['bio']),
@@ -356,7 +353,7 @@ class Character extends Entity
                             ],
                         ];
                         #If the achievement is new since the last check, or if this is the first time the character is being processed, add and count the achievement
-                        if (!empty($updated)) {
+                        if (!empty($updated) && (int)$item['time'] > strtotime($updated)) {
                             $queries[] = [
                                 'INSERT INTO `ffxiv__character_achievement` SET `characterid`=:characterid, `achievementid`=:achievementid, `time`=:time ON DUPLICATE KEY UPDATE `time`=:time;',
                                 [
@@ -423,10 +420,13 @@ class Character extends Entity
                 $this->insertServerAndName($queries);
                 return Config::$dbController->query($queries);
             }
-            return Config::$dbController->query(
+            $result = Config::$dbController->query(
                 'UPDATE `ffxiv__character` SET `privated` = COALESCE(`privated`, UTC_DATE()), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :characterid',
                 [':characterid' => $this->id],
             );
+            #Also try cleaning achievements, but it does not matter much, if it fails
+            $this->cleanAchievements();
+            return $result;
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return false;
@@ -492,10 +492,13 @@ class Character extends Entity
             ];
             #Update character
             $queries[] = [
-                'UPDATE `ffxiv__character` SET `deleted` = COALESCE(`deleted`, UTC_DATE()), `enemyid` = COALESCE(`enemyid`, (SELECT `enemyid` FROM `ffxiv__enemy` ORDER BY RAND() LIMIT 1)), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :id',
+                'UPDATE `ffxiv__character` SET `deleted` = COALESCE(`deleted`, UTC_DATE()), `updated`=CURRENT_TIMESTAMP() WHERE `characterid` = :id',
                 [':id' => $this->id],
             ];
-            return Config::$dbController->query($queries);
+            $result = Config::$dbController->query($queries);
+            #Also try cleaning achievements, but it does not matter much, if it fails
+            $this->cleanAchievements();
+            return $result;
         } catch (\Throwable $e) {
             Errors::error_log($e, debug: $this->debug);
             return false;
@@ -557,33 +560,91 @@ class Character extends Entity
     public function cleanAchievements(): bool
     {
         try {
-            #Get list of potential achievements to remove, which is all achievements besides the last 50
-            $potential = Config::$dbController->selectColumn(
-                'SELECT `achievementid` FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid ORDER BY `time` DESC LIMIT 100000 OFFSET 50;',
+            #Get achievements to remove
+            $toRemove = Config::$dbController->selectColumn(
+            /** @lang MariaDB */ 'WITH `RankedAchievements` AS (
+                        -- Rank achievements by time for characterid
+                        SELECT
+                            `fca`.`achievementid`,
+                            `fca`.`characterid`,
+                            `fa`.`dbid`,
+                            `fca`.`time`,
+                            ROW_NUMBER() OVER (PARTITION BY `fca`.characterid ORDER BY `fca`.time DESC) AS `rank`
+                        FROM
+                            `ffxiv__character_achievement` AS `fca`
+                        JOIN
+                            `ffxiv__achievement` AS `fa` ON `fca`.`achievementid` = `fa`.`achievementid`
+                        WHERE
+                            `fca`.`characterid` = :characterid
+                    ),
+                    `FilteredAchievements` AS (
+                        -- Exclude the 50 latest achievements
+                        SELECT *
+                        FROM `RankedAchievements`
+                        WHERE `rank` > 50
+                    ),
+                    `DbidNotNull` AS (
+                        -- Select achievements with non-null dbid
+                        SELECT *
+                        FROM `FilteredAchievements`
+                        WHERE `dbid` IS NOT NULL
+                    ),
+                    `DbidNull` AS (
+                        -- Select achievements with null dbid
+                        SELECT *
+                        FROM `FilteredAchievements`
+                        WHERE `dbid` IS NULL
+                    ),
+                    `LatestCharacters` AS (
+                        -- Get up to 50 latest characters for each achievement in DbidNull
+                        SELECT
+                            `l`.`achievementid`,
+                            `l`.`characterid`,
+                            `l`.`time`
+                        FROM (
+                            SELECT
+                                `fca`.`achievementid`,
+                                `fca`.`characterid`,
+                                `fca`.`time`,
+                                ROW_NUMBER() OVER (PARTITION BY `fca`.`achievementid` ORDER BY `fca`.`time` DESC) AS `rank`
+                            FROM
+                                `ffxiv__character_achievement` AS `fca`
+                            JOIN
+                                `ffxiv__character` AS `fc` ON `fca`.`characterid` = `fc`.`characterid`
+                            WHERE
+                                `fca`.`achievementid` IN (SELECT `achievementid` FROM `DbidNull`)
+                                AND `fc`.`deleted` IS NULL
+                                AND `fc`.`privated` IS NULL
+                        ) l
+                        WHERE `l`.`rank` <= 50
+                    ),
+                    `FilteredLatestCharacters` AS (
+                        -- Filter achievements to exclude those where characterid 6691027 is among the latest 50 characters
+                        SELECT DISTINCT `l`.`achievementid`
+                        FROM
+                            `LatestCharacters` AS `l`
+                        WHERE
+                            `l`.`characterid` != :characterid
+                    ),
+                    `FinalDbidNullFiltered` AS (
+                        -- Combine results from DbidNull and FilteredLatestCharacters
+                        SELECT DISTINCT `dn`.*
+                        FROM
+                            `DbidNull` AS `dn`
+                        WHERE
+                            `dn`.`achievementid` IN (SELECT `achievementid` FROM `FilteredLatestCharacters`)
+                    )
+                    -- Combine results from DbidNotNull and FinalDbidNullFiltered
+                    SELECT * FROM `DbidNotNull`
+                    UNION ALL
+                    SELECT * FROM `FinalDbidNullFiltered`;
+                    ',
                 [':characterid' => $this->id],
             );
-            #Iterrate over each achievement, and remove them if current character is not one of the last 50 that has the achievement, and that there are still 50 owners of the achievement
-            foreach ($potential as $achievement) {
-                try {
-                    Config::$dbController->query('DELETE FROM `ffxiv__character_achievement`
-                            WHERE `achievementid`=:achievement AND `characterid`=:characterid AND
-                            (
-                                SELECT `count` FROM (
-                                    SELECT COUNT(*) AS `count`, GROUP_CONCAT(`characterid`) AS `ids` FROM (
-                                        SELECT `ffxiv__character_achievement`.`characterid` FROM `ffxiv__character_achievement`
-                                        INNER JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`characterid`=`ffxiv__character`.`characterid`
-                                        WHERE `achievementid`=:achievement AND `ffxiv__character`.`deleted` IS NULL AND `ffxiv__character`.`privated` IS NULL
-                                        ORDER BY `time` DESC LIMIT 50
-                                    ) AS `latestCharacters`
-                                ) AS `validation`
-                                WHERE `count`=50 AND NOT FIND_IN_SET(:characterid, `ids`)
-                            )=50;',
-                        [':characterid' => $this->id, ':achievement' => $achievement]
-                    );
-                } catch (\Throwable $exception) {
-                    #We do not want to stop, let it try other records
-                    Errors::error_log($exception);
-                }
+            if (!empty($toRemove)) {
+                Config::$dbController->query('DELETE FROM `ffxiv__character_achievement` WHERE `characterid`=:characterid AND `achievementid` IN (:achievementid);',
+                    [':characterid' => $this->id, ':achievementid' => [$toRemove, 'in', 'int']],
+                );
             }
         } catch (\Throwable $exception) {
             Errors::error_log($exception);

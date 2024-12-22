@@ -21,12 +21,13 @@
     {% endif %}
     {% if achievement.characters.total > 0 %}
         <p>Achievement has been earned by <i class="success">{{ achievement.characters.total }}</i> {% if achievement.characters.total > 1 %}people{% else %}person{% endif %}.</p>
-        <p>{% if achievement.characters.total > 1 %}Last <i>{{ achievement.characters.last|length }}</i> people{% else %}The only person{% endif %}, who received the achievement:</p>
-        <div class="searchResults">
-            {% for entity in achievement.characters.last %}
-                {{ include('common/elements/entitycard.twig', entity) }}
-            {% endfor %}
-        </div>
+        {% if achievement.characters.last|length > 0 %}
+            <p>{% if achievement.characters.total > 1 %}Some of the people who recently earned the achievement{% else %}That person is{% endif %}:</p>
+            <div class="searchResults">
+                {% for entity in achievement.characters.last %}
+                    {{ include('common/elements/entitycard.twig', entity) }}
+                {% endfor %}
+            </div>
+        {% endif %}
     {% endif %}
-
 </section>
