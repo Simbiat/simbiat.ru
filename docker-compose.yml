@@ -130,7 +130,7 @@ services:
       #Alias in format of "DNS:domain_name[,DNS:domain_name2]". If you do not need an alias use the servername for "domain_name"
       MARIADB_TLS_SETTING_SERVER_ALIAS: ${MARIADB_TLS_SETTING_SERVER_ALIAS}
       #Password for backups created by CRON job
-      MARIADB_BACKUP_PASSWORD: ${WEB_SERVER_TEST}
+      MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
     networks:
       - webserver
     ports:
