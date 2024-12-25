@@ -143,6 +143,8 @@
                                         SecRuleUpdateTargetById 932130 \"!ARGS:postForm[text]\"\n\
                                         SecRuleUpdateTargetById 934101 \"!ARGS:postForm[text]\"\n\
                                         SecRuleUpdateTargetById 941310 \"!ARGS:postForm[text]\"\n\
+                                        SecRuleUpdateTargetById 932230 \"!ARGS:postForm[text]\"\n\
+                                        SecRuleUpdateTargetById 932370 \"!ARGS:postForm[text]\"\n\
                                         SecRuleEngine On\n\
                                     ",
                                     "handler": "waf",
