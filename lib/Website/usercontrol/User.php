@@ -744,21 +744,27 @@ class User extends Entity
     
     /**
      * Delete cookie
+     *
+     * @param bool $logout Flag indicating whether cookie is being deleted during normal logout
+     *
      * @return bool
      */
-    public function deleteCookie(): bool
+    public function deleteCookie(bool $logout = false): bool
     {
         if (empty($this->id) || empty($_POST['cookie'])) {
             return false;
         }
-        Security::log('Logout', 'Manually deleted a cookie');
-        return Config::$dbController->query(
+        $result = Config::$dbController->query(
             'DELETE FROM `uc__cookies` WHERE `userid`=:userid AND `cookieid`=:cookie;',
             [
                 ':userid' => [(string)$this->id, 'string'],
                 ':cookie' => $_POST['cookie'],
             ]
         );
+        if (Config::$dbController->getResult() > 0) {
+            Security::log('Logout', $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
+        }
+        return $result;
     }
     
     /**
@@ -770,14 +776,17 @@ class User extends Entity
         if (empty($this->id) || empty($_POST['session'])) {
             return false;
         }
-        Security::log('Logout', 'Manually deleted a session');
-        return Config::$dbController->query(
+        $result = Config::$dbController->query(
             'DELETE FROM `uc__sessions` WHERE `userid`=:userid AND `sessionid`=:session;',
             [
                 ':userid' => [(string)$this->id, 'string'],
                 ':session' => $_POST['session'],
             ]
         );
+        if (Config::$dbController->getResult() > 0) {
+            Security::log('Logout', 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
+        }
+        return $result;
     }
     
     /**
@@ -897,12 +906,8 @@ class User extends Entity
         #From browser
         setcookie('rememberme_'.Config::$http_host, '', ['expires' => time() - 3600, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
         #From DB
-        try {
-            if (Config::$dbController !== null && !empty($_SESSION['cookieid'])) {
-                Config::$dbController->query('DELETE FROM `uc__cookies` WHERE `cookieid`=:id', [':id' => $_SESSION['cookieid']]);
-            }
-        } catch (\Throwable) {
-            #Do nothing
+        if (!empty($_SESSION['cookieid'])) {
+            $this->deleteCookie(true);
         }
         #Clean session (affects $_SESSION only)
         session_unset();
