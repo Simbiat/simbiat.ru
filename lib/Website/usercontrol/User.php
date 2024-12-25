@@ -603,7 +603,7 @@ class User extends Entity
         #Set cookie if we have "rememberme" checked
         if (!empty($_POST['signinup']['rememberme'])) {
             $this->rememberMe();
-            Security::log('Login', 'Successful login with cookie setup');
+            Security::log('Login', 'Successful login with cookie setup', 'Cookie ID is '.($_SESSION['cookieid'] ?? 'NULL'));
         } else {
             Security::log('Login', 'Successful login');
         }

@@ -55,44 +55,26 @@ class Maintenance
     {
         #Get existing cookies, that need to be cleaned
         try {
-            $items = Config::$dbController->selectAll('SELECT * FROM `uc__cookies` WHERE `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH)');
+            $items = Config::$dbController->selectAll(
+                'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (:systemUsers) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);',
+                [':systemUsers' => [[Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], 'in', 'int']],
+            );
         } catch (\Throwable) {
             $items = [];
         }
-        if (!empty($items)) {
-            #Generate queries
-            $queries = [];
-            foreach ($items as $item) {
-                #Register logout action
-                $queries[] = [
-                    'INSERT INTO `sys__logs`(`userid`, `ip`, `useragent`, `type`, `action`) VALUES (:userid, :ip, :useragent, 2, \'Logged out due to cookie timeout\')',
-                    [
-                        ':userid' => $item['userid'],
-                        ':ip' => $item['ip'],
-                        ':useragent' => $item['useragent'],
-                    ],
-                ];
-                #Actually delete cookie
-                $queries[] = [
-                    'DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
-                    [
-                        ':id' => $item['cookieid'],
-                    ]
-                ];
+        foreach ($items as $item) {
+            #Try to delete cookie
+            Config::$dbController->query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
+                [
+                    ':id' => $item['cookieid'],
+                ]
+            );
+            #If it was deleted - log it
+            if (Config::$dbController->getResult() > 0) {
+                Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['userid']);
             }
         }
-        #Add query to delete cookies for system users explicitly
-        $queries[] = 'DELETE FROM `uc__cookies` WHERE `userid` IN ('.Config::userIDs['Unknown user'].', '.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');';
-        $result = true;
-        if (!empty($queries)) {
-            try {
-                $result = Config::$dbController->query($queries);
-            } catch (\Throwable $e) {
-                Errors::error_log($e);
-                $result = false;
-            }
-        }
-        return $result;
+        return true;
     }
     
     /**
