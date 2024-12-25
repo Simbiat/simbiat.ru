@@ -182,7 +182,7 @@ class Security
      */
     public static function log(string $type, string $action, mixed $extras = NULL, ?int $userid = null): bool
     {
-        if (!empty($extras)) {
+        if (!empty($extras) && !\is_scalar($extras)) {
             $extras = json_encode($extras, JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
         }
         #Get IP
