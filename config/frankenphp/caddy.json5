@@ -13,7 +13,8 @@
                 },
                 "level": "WARN",
                 "exclude": [
-                    "http.log.access"
+                    "http.log.access",
+                    "http.handlers.waf"
                 ]
             },
             "access_log": {
@@ -28,6 +29,20 @@
                 "level": "DEBUG",
                 "include": [
                     "http.log.access"
+                ]
+            },
+            "waf": {
+                "writer": {
+                    "filename": "/app/logs/waf.log",
+                    "output": "file",
+                    "roll": true,
+                    "roll_size_mb": 10,
+                    "roll_keep": 21,
+                    "roll_keep_days": 14,
+                },
+                "level": "WARN",
+                "include": [
+                    "http.handlers.waf"
                 ]
             }
         }
