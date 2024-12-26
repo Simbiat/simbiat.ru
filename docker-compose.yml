@@ -4,9 +4,11 @@ name: simbiat-dev
 networks:
   webserver:
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         - subnet: 172.21.0.0/16
+        - subnet: 2001:db8:1::/64
 
 services:
   geoip:
@@ -40,9 +42,9 @@ services:
     networks:
       - webserver
     ports:
-      - 80:80 # HTTP
-      - 443:443 # HTTPS
-      - 443:443/udp # HTTP/3
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+      - "443:443/udp" # HTTP/3
     volumes:
       - ./:/app:rw
       - ./config/frankenphp:/usr/local/php/config:rw

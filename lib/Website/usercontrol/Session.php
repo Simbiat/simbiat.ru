@@ -301,10 +301,15 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     private function getIP(array &$data): void
     {
         $ip = null;
+        #Get real visitor IP if behind CloudFlare network
+        if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
         #Check if behind proxy
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
+        if (!empty($forwarded)) {
             #Get list of IPs, that do validate as proper IP
-            $ips = array_filter(array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])), static function ($value) {
+            $ips = array_filter(array_map('trim', explode(',', $forwarded)), static function ($value) {
                 return filter_var($value, FILTER_VALIDATE_IP);
             });
             #Check if any are left
