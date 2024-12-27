@@ -22,7 +22,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Backing up users for $currentDate...";
     mariadb-dump --all-tablespaces --opt --add-drop-database --default-character-set=utf8mb4 --flush-privileges --flush-logs --tz-utc --quote-names --single-transaction --insert-ignore --system=users 2>> "$logFile" 1>> "$logicBackup/$currentDate-users.sql"
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Backing up data for $currentDate (logical)...";
-    mariadb-dump --all-tablespaces --opt --add-drop-database --default-character-set=utf8mb4 --flush-privileges --flush-logs --tz-utc --quote-names --single-transaction --insert-ignore --routines --triggers --databases simbiatr_simbiat --tables "$tablesOrder" 2>> "$logFile" 1>> "$logicBackup/$currentDate-${logicalName}.sql"
+    mariadb-dump --all-tablespaces --opt --add-drop-database --default-character-set=utf8mb4 --flush-privileges --flush-logs --tz-utc --quote-names --single-transaction --insert-ignore --routines --triggers --databases simbiatr_simbiat --tables $tablesOrder 2>> "$logFile" 1>> "$logicBackup/$currentDate-${logicalName}.sql"
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Backing up full database for $currentDate (physical)..."
     mariadb-backup --backup --target-dir="$physBackup" --kill-long-queries-timeout=300 --extended-validation --lock-ddl-per-table
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Owning for $currentDate..."
