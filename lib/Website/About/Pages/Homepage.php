@@ -441,7 +441,7 @@ class Homepage extends Page
                 ],
                 [
                     'startTime' => '2024-09-12',
-                    'endTime' => null,
+                    'endTime' => '2024-12-28',
                     'name' => 'Far Far Games',
                     'icon' => '/assets/images/icons/Far Far Games.webp',
                     'href' => 'https://farfargames.com/',
