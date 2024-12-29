@@ -74,11 +74,13 @@ services:
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     container_name: crowdsec
-    image: crowdsecurity/crowdsec:latest
+    build:
+      context: ./config/crowdsec
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       GID: 1000
-      COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist
+      COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist openappsec/openappsec
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
     networks:
@@ -86,14 +88,17 @@ services:
     ports:
       - "8080:8080"
       - "6060:6060"
+      - "7422:7422"
     volumes:
       - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
       - ./data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
       - ./data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
-      - ./config/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:rw
-      - ./config/crowdsec/acquis/:/etc/crowdsec/acquis.d/:rw
-      - ./config/crowdsec/config.yaml.local:/etc/crowdsec/config.yaml.local:rw
-      - ./config/crowdsec/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:rw
+      - ./config/crowdsec/yaml/acquis.yaml:/etc/crowdsec/acquis.yaml:rw
+      - ./config/crowdsec/yaml/acquis/:/etc/crowdsec/acquis.d/:rw
+      - ./config/crowdsec/yaml/config.yaml.local:/etc/crowdsec/config.yaml.local:rw
+      - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:rw
+      - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:rw
+      - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:rw
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -112,7 +117,8 @@ services:
     #Override image's entrypoint to execute custom command
     entrypoint: ''
     command: >
-      /bin/sh -c "printf \"#!/bin/sh\\ncscli hub update&&cscli hub upgrade\">/etc/periodic/daily/crowdsec_update.sh &&
+      /bin/sh -c "mkdir -p /etc/periodic/daily/ &&
+                  printf \"#!/bin/sh\\ncscli hub update&&cscli hub upgrade\">/etc/periodic/daily/crowdsec_update.sh &&
                   chmod +x /etc/periodic/daily/crowdsec_update.sh &&
                   /bin/bash /docker_start.sh"
 

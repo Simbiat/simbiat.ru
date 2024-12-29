@@ -157,4 +157,4 @@ dist
 #For some reason composer this .htaccess
 /config/caddy/composer/.htaccess
 #CrowdSec credentials
-/config/crowdsec/online_api_credentials.yaml
+/config/crowdsec/yaml/online_api_credentials.yaml
