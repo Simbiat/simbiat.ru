@@ -16,15 +16,23 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      * Constructor for the class
      * @param int $sessionLife Default lifetime for session in seconds (15 minutes)
      */
-    public function __construct(private int $sessionLife = 2700)
+    public function __construct(private int $sessionLife = 900)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
         if (!headers_sent()) {
-            session_name('__Host-sess_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
+            session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
         }
         if ($this->sessionLife < 0) {
-            $this->sessionLife = 2700;
+            $this->sessionLife = 900;
         }
+        #Set session cookie parameters
+        ini_set('session.cookie_lifetime', $this->sessionLife);
+        ini_set('session.cookie_secure', Config::$cookieSettings['secure']);
+        ini_set('session.cookie_httponly', Config::$cookieSettings['httponly']);
+        ini_set('session.cookie_path', Config::$cookieSettings['path']);
+        ini_set('session.cookie_samesite', Config::$cookieSettings['samesite']);
+        ini_set('session.use_strict_mode', true);
+        ini_set('session.use_only_cookies', true);
     }
     
     ##########################
@@ -80,7 +88,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = Config::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` > DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = Config::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
         } catch (\Throwable) {
             $data = '';
         }
@@ -121,106 +129,105 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $data = unserialize($data, [false]);
         #Prepare empty array
         $queries = [];
-        #Try to update client information for cookie
-        if (!empty($data['cookieid'])) {
-            Config::$dbController->query('UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
+        #Update SEO related tables, if this was determined to be a new page view
+        if (empty($data['UA']['bot'])) {
+            if (!empty($data['IP']) && $data['newView']) {
+                #Update unique visitors
+                $queries[] = [
+                    'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
+                    [
+                        #Data that makes this visitor unique
+                        ':ip' => [$data['IP'], 'string'],
+                        ':os' => [
+                            (empty($data['UA']['os']) ? '' : $data['UA']['os']),
+                            'string',
+                        ],
+                        ':client' => [
+                            (empty($data['UA']['client']) ? '' : $data['UA']['client']),
+                            'string',
+                        ],
+                    ],
+                ];
+                #Update page views
+                $page = mb_substr(preg_replace('/^.*:\/\/[^\/]*\//u', '', Config::$canonical), 0, 256, 'UTF-8');
+                if (empty($page)) {
+                    $page = 'index.php';
+                }
+                $queries[] = [
+                    'INSERT INTO `seo__pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
+                    [
+                        #What page is being viewed
+                        ':page' => $page,
+                        #Optional referer (if sent from other sources)
+                        ':referer' => [
+                            (empty($_SERVER['HTTP_REFERER']) ? '' : mb_substr($_SERVER['HTTP_REFERER'], 0, 256, 'UTF-8')),
+                            'string',
+                        ],
+                        #Data that identify this visit as unique
+                        ':ip' => [$data['IP'], 'string'],
+                        ':os' => [
+                            (empty($data['UA']['os']) ? '' : $data['UA']['os']),
+                            'string',
+                        ],
+                        ':client' => [
+                            (empty($data['UA']['client']) ? '' : $data['UA']['client']),
+                            'string',
+                        ],
+                    ],
+                ];
+            }
+            #Write session data
+            $queries[] = [
+                'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `ip`=:ip, `useragent`=:useragent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `userid`=:userid, `ip`=:ip, `useragent`=:useragent, `page`=:page, `data`=:data;',
                 [
-                    ':cookie' => $data['cookieid'],
+                    ':id' => $id,
+                    #Whether cookie is associated with this session
+                    ':cookieid' => [
+                        (empty($data['cookieid']) ? NULL : $data['cookieid']),
+                        (empty($data['cookieid']) ? 'null' : 'string'),
+                    ],
                     ':ip' => [
                         (empty($data['IP']) ? NULL : $data['IP']),
                         (empty($data['IP']) ? 'null' : 'string'),
                     ],
+                    #Useragent details only for logged-in users for ability of review of active sessions
                     ':useragent' => [
                         (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
                         (empty($data['UA']['full']) ? 'null' : 'string'),
                     ],
-                ]
-            );
-        }
-        #Update SEO related tables, if this was determined to be a new page view
-        if (empty($data['UA']['bot']) && !empty($data['IP']) && $data['newView']) {
-            #Update unique visitors
-            $queries[] = [
-                'INSERT INTO `seo__visitors` SET `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
-                [
-                    #Data that makes this visitor unique
-                    ':ip' => [$data['IP'], 'string'],
-                    ':os' => [
-                        (empty($data['UA']['os']) ? '' : $data['UA']['os']),
-                        'string',
-                    ],
-                    ':client' => [
-                        (empty($data['UA']['client']) ? '' : $data['UA']['client']),
-                        'string',
-                    ],
-                ],
-            ];
-            #Update page views
-            $page = mb_substr(preg_replace('/^.*:\/\/[^\/]*\//u', '', Config::$canonical), 0, 256, 'UTF-8');
-            if (empty($page)) {
-                $page = 'index.php';
-            }
-            $queries[] = [
-                'INSERT INTO `seo__pageviews` SET `page`=:page, `referer`=:referer, `ip`=:ip, `os`=:os, `client`=:client ON DUPLICATE KEY UPDATE `views`=`views`+1;',
-                [
+                    ':userid' => [$data['userid'], 'int'],
                     #What page is being viewed
-                    ':page' => $page,
-                    #Optional referer (if sent from other sources)
-                    ':referer' => [
-                        (empty($_SERVER['HTTP_REFERER']) ? '' : mb_substr($_SERVER['HTTP_REFERER'], 0, 256, 'UTF-8')),
-                        'string',
-                    ],
-                    #Data that identify this visit as unique
-                    ':ip' => [$data['IP'], 'string'],
-                    ':os' => [
-                        (empty($data['UA']['os']) ? '' : $data['UA']['os']),
-                        'string',
-                    ],
-                    ':client' => [
-                        (empty($data['UA']['client']) ? '' : $data['UA']['client']),
+                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr($_SERVER['REQUEST_URI'], 0, 256, 'UTF-8')),
+                    #Actual session data
+                    ':data' => [
+                        (empty($data) ? '' : Security::encrypt(serialize($data))),
                         'string',
                     ],
                 ],
             ];
+            #Try to update client information for cookie
+            if (!empty($data['cookieid'])) {
+                $queries[] = [
+                    'UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
+                    [
+                        ':cookie' => $data['cookieid'],
+                        ':ip' => [
+                            (empty($data['IP']) ? NULL : $data['IP']),
+                            (empty($data['IP']) ? 'null' : 'string'),
+                        ],
+                        ':useragent' => [
+                            (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
+                            (empty($data['UA']['full']) ? 'null' : 'string'),
+                        ],
+                    ]
+                ];
+            }
         }
-        #Write session data
-        $queries[] = [
-            'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `userid`=:userid, `bot`=:bot, `ip`=:ip, `useragent`=:useragent, `username`=:username, `page`=:page, `data`=:data;',
-            [
-                ':id' => $id,
-                #Whether cookie is associated with this session
-                ':cookieid' => [
-                    (empty($data['cookieid']) ? NULL : $data['cookieid']),
-                    (empty($data['cookieid']) ? 'null' : 'string'),
-                ],
-                #Whether this is a bot
-                ':bot' => [(empty($data['UA']['bot']) ? 0 : 1), 'int'],
-                ':ip' => [
-                    (empty($data['IP']) ? NULL : $data['IP']),
-                    (empty($data['IP']) ? 'null' : 'string'),
-                ],
-                #Useragent details only for logged-in users for ability of review of active sessions
-                ':useragent' => [
-                    (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
-                    (empty($data['UA']['full']) ? 'null' : 'string'),
-                ],
-                #Either username (if logged in) or bot name, if it's a bot
-                ':username' => [
-                    (empty($data['username']) ? NULL : $data['username']),
-                    (empty($data['username']) ? 'null' : 'string'),
-                ],
-                ':userid' => [$data['userid'], 'int'],
-                #What page is being viewed
-                ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr($_SERVER['REQUEST_URI'], 0, 256, 'UTF-8')),
-                #Actual session data
-                ':data' => [
-                    (empty($data) ? '' : Security::encrypt(serialize($data))),
-                    'string',
-                ],
-            ],
-        ];
         try {
-            return Config::$dbController->query($queries);
+            if (!empty($queries)) {
+                return Config::$dbController->query($queries);
+            }
+            return true;
         } catch (\Throwable $exception) {
             Errors::error_log($exception, $queries);
             return false;

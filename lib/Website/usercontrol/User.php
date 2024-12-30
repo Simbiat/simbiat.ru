@@ -632,31 +632,57 @@ class User extends Entity
             }
             #Generate cookie password
             $pass = bin2hex(random_bytes(128));
+            $hashedPass = Security::passHash($pass);
             #Write cookie data to DB
-            if (Config::$dbController === null) {
-                #If we can't write to DB for some reason - do not share any data with client
-                return;
-            }
             if (Config::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) || !empty($this->id))) {
-                Config::$dbController->query('INSERT INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id) ON DUPLICATE KEY UPDATE `validator`=:pass, `userid`=:id, `time`=CURRENT_TIMESTAMP();',
+                #Check if cookie exist, and get its `validator`. This also helps with race conditions a bit
+                $currentPass = Config::$dbController->selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
                     [
-                        ':cookie' => $cookieId,
-                        ':pass' => Security::passHash($pass),
                         ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
+                        ':cookie' => $cookieId
                     ]
                 );
-                #Set cookie ID to session if it's not already linked or if it was linked to other cookie (not sure if that would even be possible)
-                if (empty($_SESSION['cookieid']) || $_SESSION['cookieid'] !== $cookieId) {
-                    $_SESSION['cookieid'] = $cookieId;
+                if (empty($currentPass)) {
+                    Config::$dbController->query('INSERT IGNORE INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id);',
+                        [
+                            ':cookie' => $cookieId,
+                            ':pass' => $hashedPass,
+                            ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
+                        ]
+                    );
+                } else {
+                    Config::$dbController->query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP() WHERE `userid`=:id AND `cookieid`=:cookie AND `validator`=:validator;',
+                        [
+                            ':cookie' => $cookieId,
+                            ':pass' => $hashedPass,
+                            ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
+                            ':validator' => $currentPass,
+                        ]
+                    );
                 }
-            } else {
-                return;
+                #Update stuff only if we did insert cookie or update the validator value
+                if (Config::$dbController->getResult() > 0) {
+                    #Set cookie ID to session if it's not already linked or if it was linked to other cookie (not sure if that would even be possible)
+                    if (empty($_SESSION['cookieid']) || $_SESSION['cookieid'] !== $cookieId) {
+                        $_SESSION['cookieid'] = $cookieId;
+                    }
+                    #Set cookie
+                    $currentPass = Config::$dbController->selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
+                        [
+                            ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
+                            ':cookie' => $cookieId
+                        ]
+                    );
+                    #Another attempt to prevent race conditions
+                    if ($currentPass === $hashedPass) {
+                        setcookie('rememberme_'.Config::$http_host,
+                            json_encode(['cookieid' => Security::encrypt($cookieId), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION),
+                            array_merge(Config::$cookieSettings, ['expires' => time() + 2592000]),
+                        );
+                    }
+                }
             }
-            #Set options
-            $options = ['expires' => time() + 60 * 60 * 24 * 30, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Strict'];
-            #Set cookie value
-            $value = json_encode(['cookieid' => Security::encrypt($cookieId), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
-            setcookie('rememberme_'.Config::$http_host, $value, $options);
+            return;
         } catch (\Throwable $e) {
             Errors::error_log($e);
             #Do nothing, since not critical
@@ -757,7 +783,7 @@ class User extends Entity
         $result = Config::$dbController->query(
             'DELETE FROM `uc__cookies` WHERE `userid`=:userid AND `cookieid`=:cookie;',
             [
-                ':userid' => [(string)$this->id, 'string'],
+                ':userid' => [$this->id, 'int'],
                 ':cookie' => $_POST['cookie'],
             ]
         );
@@ -904,9 +930,12 @@ class User extends Entity
         Security::log('Logout', 'Logout');
         #Remove rememberme cookie
         #From browser
-        setcookie('rememberme_'.Config::$http_host, '', ['expires' => time() - 3600, 'path' => '/', 'domain' => Config::$http_host, 'secure' => true, 'httponly' => true, 'samesite' => 'Lax']);
+        setcookie('rememberme_'.Config::$http_host, '',
+            array_merge(Config::$cookieSettings, ['expires' => time() - 3600])
+        );
         #From DB
         if (!empty($_SESSION['cookieid'])) {
+            $_POST['cookie'] = $_SESSION['cookieid'];
             $this->deleteCookie(true);
         }
         #Clean session (affects $_SESSION only)

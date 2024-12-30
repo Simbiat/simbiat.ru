@@ -76,6 +76,9 @@ final class Config
     public static bool $dbUpdate = false;
     #Database controller object
     public static ?Controller $dbController = NULL;
+    #Default cookie settings
+    public static array $cookieSettings = [];
+    
     
     public function __construct()
     {
@@ -114,6 +117,15 @@ final class Config
         if (empty(self::$argonSettings)) {
             self::$argonSettings = Security::argonCalc();
         }
+        #Set default cookie settings
+        self::$cookieSettings = [
+            'expires' => time() + 60,
+            'path' => '/',
+            'domain' => self::$http_host,
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ];
         #These are required only if we are outside of CLI mode
         if (!self::$CLI) {
             $this->canonical();
