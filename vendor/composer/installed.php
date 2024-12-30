@@ -65,9 +65,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.4.1',
-            'version' => '6.4.1.0',
-            'reference' => '0d364e0dd6c177da3c24cd4049178026324fd7ac',
+            'pretty_version' => '6.4.2',
+            'version' => '6.4.2.0',
+            'reference' => '806e52d214b05ddead1a1d4304c7592f61f95976',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -112,7 +112,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.4.1',
+                0 => '6.4.2',
             ),
         ),
         'psr/http-factory' => array(
@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'dcb2bdb48e1d9b0b5b1c333b61f49772aee879ff',
+            'reference' => 'b0773b71d5acae723304549cbc171fa30c65c51d',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -241,18 +241,18 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.5.1',
-            'version' => '7.5.1.0',
-            'reference' => '3ba28fd6a4037849dbdaf7f6341493b23db9e13c',
+            'pretty_version' => '7.6.0',
+            'version' => '7.6.0.0',
+            'reference' => '0c4bc43d572ea9673468bf12cc30e8fb556550f4',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'twig/twig' => array(
-            'pretty_version' => 'v3.16.0',
-            'version' => '3.16.0.0',
-            'reference' => '475ad2dc97d65d8631393e721e7e44fb544f0561',
+            'pretty_version' => 'v3.18.0',
+            'version' => '3.18.0.0',
+            'reference' => 'acffa88cc2b40dbe42eaf3a5025d6c0d4600cc50',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),
