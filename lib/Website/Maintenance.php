@@ -40,7 +40,7 @@ class Maintenance
     public function sessionClean(): bool
     {
         try {
-            return (bool)new Session()->gc(300);
+            return (bool)new Session()->gc();
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

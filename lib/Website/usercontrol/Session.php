@@ -14,16 +14,16 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
 {
     /**
      * Constructor for the class
-     * @param int $sessionLife Default lifetime for session in seconds (15 minutes)
+     * @param int $sessionLife Default lifetime for session in seconds (5 minutes)
      */
-    public function __construct(private int $sessionLife = 900)
+    public function __construct(private int $sessionLife = 300)
     {
         #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
         if (!headers_sent()) {
             session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
         }
         if ($this->sessionLife < 0) {
-            $this->sessionLife = 900;
+            $this->sessionLife = 300;
         }
         #Set session cookie parameters
         ini_set('session.cookie_lifetime', $this->sessionLife);
@@ -425,7 +425,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      *                          </p>
      * @since 5.4
      */
-    public function gc(int $max_lifetime): false|int
+    public function gc(int $max_lifetime = 300): false|int
     {
         try {
             if (Config::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
