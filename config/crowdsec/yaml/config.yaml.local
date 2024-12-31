@@ -43,6 +43,7 @@ api:
       - 127.0.0.1
       - ::1
       - 172.21.0.0/16
+      - 2001:db8:1::/64
     online_client: # Central API credentials (to push signals and receive bad IPs)
       credentials_path: /etc/crowdsec/online_api_credentials.yaml
     enable: true

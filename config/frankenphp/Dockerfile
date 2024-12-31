@@ -1,5 +1,5 @@
 # Based on https://frankenphp.dev/docs/docker/
-FROM dunglas/frankenphp:1.3.5-builder-php8.4.1-bookworm AS builder
+FROM dunglas/frankenphp:1.3.6-builder-php8.4.2-bookworm AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -16,10 +16,14 @@ RUN xcaddy build \
     --with github.com/dunglas/vulcain/caddy \
     # Add extra Caddy modules here
     --with github.com/caddyserver/json5-adapter \
-    --with github.com/corazawaf/coraza-caddy/v2 \
-    --with github.com/hslatman/caddy-crowdsec-bouncer/http
+    --with github.com/corazawaf/coraza-caddy/v2@main \
+    # CrowdSec modules \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/crowdsec@main \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/http@main \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/layer4@main \
+    --with github.com/hslatman/caddy-crowdsec-bouncer/appsec@main
 
-FROM dunglas/frankenphp:1.3.5-php8.4.1-bookworm AS runner
+FROM dunglas/frankenphp:1.3.6-php8.4.2-bookworm AS runner
 
 # Replace the official binary by the one contained your custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp

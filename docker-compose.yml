@@ -93,12 +93,16 @@ services:
       - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
       - ./data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
       - ./data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
-      - ./config/crowdsec/yaml/acquis.yaml:/etc/crowdsec/acquis.yaml:rw
+      - ./config/crowdsec/yaml/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
       - ./config/crowdsec/yaml/acquis/:/etc/crowdsec/acquis.d/:rw
-      - ./config/crowdsec/yaml/config.yaml.local:/etc/crowdsec/config.yaml.local:rw
-      - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:rw
-      - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:rw
-      - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:rw
+      - ./config/crowdsec/yaml/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
+      - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
+      - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
+      - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
+      - ./config/crowdsec/01-coraza-recommended.conf:/var/lib/crowdsec/data/01-coraza-recommended.conf:ro
+      - ./config/crowdsec/02-crs-setup.conf:/var/lib/crowdsec/data/02-crs-setup.conf:ro
+      - ./config/crowdsec/03-exclusions-before-crs.conf:/var/lib/crowdsec/data/03-exclusions-before-crs.conf:ro
+      - ./config/crowdsec/04-exclusions-after-crs.conf:/var/lib/crowdsec/data/04-exclusions-after-crs.conf:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
