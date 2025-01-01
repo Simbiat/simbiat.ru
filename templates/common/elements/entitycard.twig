@@ -32,7 +32,11 @@
         {% elseif type == 'achievement' %}
             <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ icon }}">
         {% elseif type == 'character' %}
-            <img loading="lazy" decoding="async" alt="{{ name }}" src="https://img2.finalfantasyxiv.com/f/{{ icon }}c0.jpg">
+            {% if icon == 'defaultf' %}
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/noimage.svg">
+            {% else %}
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="https://img2.finalfantasyxiv.com/f/{{ icon }}c0.jpg">
+            {% endif %}
         {% elseif type == 'freecompany' %}
             {% if icon == '1' %}
                 <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/Maelstrom.webp">
