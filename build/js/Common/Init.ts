@@ -141,7 +141,7 @@ function init(): void
     });
     //Process URL
     cleanGET();
-    //hashCheck();
+    hashCheck();
     router();
 }
 
