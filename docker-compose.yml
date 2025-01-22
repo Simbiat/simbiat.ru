@@ -120,8 +120,13 @@ services:
       retries: 3
     #Override image's entrypoint to execute custom command
     entrypoint: ''
+    #We clone latest configs from coreruleset, since those packed with CrowdSec are very old. We also want to remove .git files due to https://youtrack.jetbrains.com/issue/WI-80162/Auto-adds-a-git-repo-from-ignored-directory which just annoys me
     command: >
-      /bin/sh -c "mkdir -p /etc/periodic/daily/ &&
+      /bin/sh -c "rm -r -f /var/lib/crowdsec/data/coreruleset &&
+                  mkdir -p /var/lib/crowdsec/data/coreruleset &&
+                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.10.0 &&
+                  rm -r -f /var/lib/crowdsec/data/coreruleset/.git* &&
+                  mkdir -p /etc/periodic/daily/ &&
                   printf \"#!/bin/sh\\ncscli hub update&&cscli hub upgrade\">/etc/periodic/daily/crowdsec_update.sh &&
                   chmod +x /etc/periodic/daily/crowdsec_update.sh &&
                   /bin/bash /docker_start.sh"

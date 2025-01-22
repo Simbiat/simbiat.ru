@@ -55,3 +55,6 @@
 [submodule "lib/http/sse"]
 	path = lib/http/sse
 	url = https://github.com/Simbiat/sse
+[submodule "build/PSDs/FFXIV"]
+	path = build/PSDs/FFXIV
+	url = https://github.com/Simbiat/FFXIV-PSDs

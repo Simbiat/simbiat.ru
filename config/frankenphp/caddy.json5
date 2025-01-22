@@ -142,29 +142,7 @@
                             ],
                             "handle": [
                                 {
-                                    "load_owasp_crs": true,
-                                    "directives": "\
-                                        # Allow PUT, PATCH and DELETE methods\n\
-                                        SecAction \"id:1000001,phase:1,nolog,pass,t:none,setvar:tx.allowed_methods=GET HEAD POST OPTIONS PUT PATCH DELETE\"\n\
-                                        Include @coraza.conf-recommended\n\
-                                        Include @crs-setup.conf.example\n\
-                                        Include @owasp_crs/*.conf\n\
-                                        # Set collection time to 10 minutes instead of hour\n\
-                                        SecCollectionTimeout 600\n\
-                                        # Allow HTML when submitting new posts\n\
-                                        SecRuleUpdateTargetById 941160 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 942100 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 942190 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 932380 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 932130 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 934101 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 941310 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 932230 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleUpdateTargetById 932370 \"!ARGS:postForm[text]\"\n\
-                                        SecRuleEngine On\n\
-                                    ",
-                                    "handler": "waf",
-                                    "include": []
+                                    "handler": "appsec"
                                 }
                             ]
                         },

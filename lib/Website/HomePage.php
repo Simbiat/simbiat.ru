@@ -120,7 +120,11 @@ class HomePage
                 self::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
                 #Check if there was an internal redirect to custom error page
                 if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
-                    self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
+                    if (preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
+                        self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
+                    } else {
+                        self::$http_error = ['http_error' => 500, 'reason' => 'Failed on Caddy level and could not retrieve the error message'];
+                    }
                 }
                 #Do not do processing if we already encountered a problem
                 if (empty(self::$http_error)) {
