@@ -71,9 +71,9 @@ class Curl
      * Get page content
      * @param string $link
      *
-     * @return string|false
+     * @return string|false|int
      */
-    public function getPage(string $link): string|false
+    public function getPage(string $link): string|false|int
     {
         if (!self::$curlHandle instanceof \CurlHandle) {
             return false;
@@ -88,8 +88,11 @@ class Curl
         #Get response
         $response = curl_exec(self::$curlHandle);
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
-        if ($response === false || $httpCode !== 200) {
+        if ($response === false) {
             return false;
+        }
+        if ($httpCode !== 200) {
+            return $httpCode;
         }
         return mb_substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
     }

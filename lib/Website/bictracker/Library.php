@@ -632,7 +632,7 @@ class Library
         #Generate link
         $link = self::bicDownBase.date('d.m.Y', $date);
         $data = (new Curl())->getPage($link);
-        if ($data === false) {
+        if (!is_string($data)) {
             return false;
         }
         #Load page as DOM Document
