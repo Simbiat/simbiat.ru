@@ -10,6 +10,7 @@ use Simbiat\Website\Curl;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
 use Simbiat\Website\Sanitization;
+use Simbiat\Website\Security;
 use Simbiat\Website\Talks\Search\Posts;
 use Simbiat\Website\Talks\Search\Threads;
 
@@ -506,10 +507,18 @@ class Thread extends Entity
             #Get supported links and set keys to respective values of `type` field
             $altLinks = ArrayHelpers::DigitToKey(self::getAltLinkTypes(), 'type');
             foreach ($data['altlinks'] as $key => $link) {
+                if (!empty($link)) {
+                    $link = Security::sanitizeURL($link);
+                } else {
+                    unset($data['altlinks'][$key]);
+                    continue;
+                }
                 #Check if website (sent as key) is supported and check the value against regex (to avoid using field for YouTube (as example) for some random website which is not YouTube)
-                if (!\array_key_exists($key, $altLinks) || preg_match('/^https:\/\/(www\.)?'.$altLinks[$key]['regex'].'.*$/ui', $link) !== 1) {
+                if (empty($link) || !\array_key_exists($key, $altLinks) || preg_match('/^https:\/\/(www\.)?'.$altLinks[$key]['regex'].'.*$/ui', $link) !== 1) {
                     #Remove unsupported or possibly malicious website
                     unset($data['altlinks'][$key]);
+                } else {
+                    $data['altlinks'][$key] = $link;
                 }
             }
         }

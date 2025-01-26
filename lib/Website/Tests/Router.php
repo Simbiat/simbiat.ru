@@ -1,7 +1,9 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Tests;
 
+use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\http20\Common;
 use Simbiat\Website\Twig\EnvironmentGenerator;
@@ -13,25 +15,27 @@ class Router extends \Simbiat\Website\Abstracts\Router
     protected array $subRoutes = ['mail', 'styling'];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/tests/', 'name'=>'Tests']
+        ['href' => '/tests/', 'name' => 'Tests']
     ];
     protected string $title = 'Tests';
     protected string $h1 = 'Tests';
     protected string $ogdesc = 'Tests';
-
+    
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         $outputArray = [];
         #Forbid if on PROD
-        if (\Simbiat\Website\Config::$PROD === true || empty($path)) {
-            $outputArray['http_error'] = 403;
-            return $outputArray;
+        if (!empty($path[0]) && $path[0] !== 'styling') {
+            if (Config::$PROD === true || empty($path)) {
+                $outputArray['http_error'] = 403;
+                return $outputArray;
+            }
         }
         switch ($path[0]) {
             case 'mail':
                 if (!empty($path[1]) && $path[1] === 'send') {
-                    echo (new Email(\Simbiat\Website\Config::adminMail))->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
+                    echo (new Email(Config::adminMail))->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
                 } else {
                     try {
                         $output = EnvironmentGenerator::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
@@ -43,7 +47,7 @@ class Router extends \Simbiat\Website\Abstracts\Router
                 }
                 exit;
             case 'styling':
-                return ['serviceName' => 'stylingTest'];
+                return ['serviceName' => 'stylingTest', 'static_page' => true];
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported endpoint'];
         }

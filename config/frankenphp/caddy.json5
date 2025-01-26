@@ -380,7 +380,7 @@
                                             "match": [
                                                 {
                                                     "path_regexp": {
-                                                        "pattern": "(^|/)assets/(.+)\\.[0-9]+(\\.js|\\.js\\.map)",
+                                                        "pattern": "(^|/)assets/(.+)\\.\\d+(\\.json|\\.js|\\.js\\.map)",
                                                         "name": "jsFiles"
                                                     }
                                                 }

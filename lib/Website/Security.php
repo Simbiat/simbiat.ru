@@ -8,6 +8,7 @@ use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 
+use Simbiat\http20\IRI;
 use function is_array;
 
 /**
@@ -281,5 +282,45 @@ class Security
             $client = NULL;
         }
         return ['bot' => NULL, 'os' => ($os !== NULL ? mb_substr($os, 0, 100, 'UTF-8') : NULL), 'client' => ($client !== NULL ? mb_substr($client, 0, 100, 'UTF-8') : NULL), 'full' => $_SERVER['HTTP_USER_AGENT'], 'unsupported' => $unsupported, 'browser' => $browser];
+    }
+    
+    /**
+     * Sanitize URLs and remove tracking query parameters from them
+     * @param string $url
+     *
+     * @return string
+     */
+    public static function sanitizeURL(string $url): string
+    {
+        #Check if valid IRI
+        if (IRI::isValidIri($url) === false) {
+            return '';
+        }
+        #Check if valid URL
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return '';
+        }
+        #Attempt to parse it
+        $parsedUrl = parse_url($url);
+        #Ignore failed strings
+        if (!is_array($parsedUrl)) {
+            return '';
+        }
+        #Ignore non-https
+        if ($parsedUrl['scheme'] !== 'https') {
+            return '';
+        }
+        #Parse the query string into an associative array
+        parse_str($parsedUrl['query'] ?? '', $queryParams);
+        #Remove tracking parameters
+        foreach ($queryParams as $param => $value) {
+            if (\in_array($param, Config::$sharedWithJS['trackingQueryParameters'], true)) {
+                unset($queryParams[$param]);
+            }
+        }
+        #Rebuild the query string
+        $parsedUrl['query'] = http_build_query($queryParams);
+        #Reconstruct the full URL
+        return IRI::restoreUri($parsedUrl);
     }
 }

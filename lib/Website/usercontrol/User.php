@@ -454,7 +454,8 @@ class User extends Entity
         }
         #Query for website
         if (isset($_POST['details']['website'])) {
-            if (IRI::isValidIri($_POST['details']['website']) === false || mb_strlen($_POST['details']['website'], 'UTF-8') > 255 || mb_strtolower((string)parse_url($_POST['details']['website'], PHP_URL_SCHEME), 'UTF-8') !== 'https') {
+            $_POST['details']['website'] = Security::sanitizeURL($_POST['details']['website']);
+            if (!empty($_POST['details']['website']) || mb_strlen($_POST['details']['website'], 'UTF-8') > 255) {
                 $_POST['details']['website'] = $this->website ?? null;
             }
             if ($this->website !== $_POST['details']['website']) {

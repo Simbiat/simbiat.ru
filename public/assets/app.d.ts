@@ -37,6 +37,8 @@ declare function pageRefresh(): void;
 declare function copyQuote(target: HTMLElement): string;
 declare function is_file(url: string): Promise<boolean>;
 declare function init(): void;
+declare const configUrlElement: Element | null;
+declare let sharedWithPHP: {};
 declare function ariaNation(inputElement: HTMLInputElement): void;
 declare function buttonToggle(button: HTMLInputElement, enable?: boolean): void;
 declare function countInTextarea(textarea: HTMLTextAreaElement): void;
@@ -308,6 +310,7 @@ declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: b
 declare function saveTinyMCE(id: string, textareaOnly?: boolean): void;
 declare function cleanGET(): void;
 declare function urlClean(event: Event): Promise<void>;
+declare function urlCleanString(url: string): string;
 declare function hashCheck(): void;
 declare function router(): void;
 declare class BackToTop extends HTMLElement {

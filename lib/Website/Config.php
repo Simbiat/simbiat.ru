@@ -78,7 +78,8 @@ final class Config
     public static ?Controller $dbController = NULL;
     #Default cookie settings
     public static array $cookieSettings = [];
-    
+    #Settings shared by PHP and JS code
+    public static array $sharedWithJS = [];
     
     public function __construct()
     {
@@ -131,6 +132,13 @@ final class Config
             $this->canonical();
             $this->nonApiLinks();
         }
+        #Load shared config
+        try {
+            self::$sharedWithJS = json_decode(file_get_contents(self::$workDir.'/public/assets/config.json'), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Throwable $exception) {
+            #For now just logging, at the moment of writing there should not be anything critical here
+            Errors::error_log($exception);
+        }
     }
     
     /**
@@ -180,6 +188,7 @@ final class Config
             self::$links = array_merge(self::$links, [
                 ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(self::$cssDir.'/app.css').'.css', 'as' => 'style'],
                 ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(self::$jsDir.'/app.js').'.js', 'as' => 'script'],
+                ['rel' => 'preload', 'href' => '/assets/config.'.filemtime(self::$jsDir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json'],
             ]);
         }
     }
