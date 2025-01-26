@@ -7,10 +7,10 @@ interface ajaxJSONResponse extends JSON {
 }
 
 async function ajax(
-                    url: string, formData: FormData | null = null,
-                    type ='json', method = 'GET',
-                    timeout = 60000, skipError = false
-                    ): Promise<ajaxJSONResponse | ArrayBuffer | Blob | FormData | boolean | string>
+    url: string, formData: FormData | null = null,
+    type = 'json', method = 'GET',
+    timeout = 60000, skipError = false
+): Promise<ajaxJSONResponse | ArrayBuffer | Blob | FormData | boolean | string>
 {
     let result;
     const controller = new AbortController();

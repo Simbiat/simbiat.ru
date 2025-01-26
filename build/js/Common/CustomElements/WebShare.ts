@@ -10,19 +10,28 @@ class WebShare extends HTMLElement
             'title': document.title,
             'url': document.location.href,
         };
-        if (navigator.canShare(this.shareData)) {
-            this.classList.remove('hidden');
-            this.addEventListener('click', this.share.bind(this));
-        } else {
-            this.classList.add('hidden');
-        }
+        this.addEventListener('click', this.share.bind(this));
     }
     
     private share(): void
     {
-        navigator.share(this.shareData).catch(() => {
-            addSnackbar('Failed to share link, possibly unsupported feature.', 'failure', 10000);
-            this.classList.add('hidden');
-        });
+        if (navigator.share) {
+            navigator.share(this.shareData)
+                     .catch(() => {
+                         this.toClipboard();
+                     });
+        } else {
+            this.toClipboard();
+        }
+        this.blur();
+    }
+    
+    private toClipboard(): void {
+        navigator.clipboard.writeText(window.location.href)
+                 .then(() => {
+                     addSnackbar(`Page link copied to clipboard`, 'success');
+                 }, () => {
+                     addSnackbar(`Failed to copy page link to clipboard`, 'failure');
+                 });
     }
 }

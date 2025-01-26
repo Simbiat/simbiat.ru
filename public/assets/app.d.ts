@@ -43,7 +43,7 @@ declare function ariaNation(inputElement: HTMLInputElement): void;
 declare function buttonToggle(button: HTMLInputElement, enable?: boolean): void;
 declare function countInTextarea(textarea: HTMLTextAreaElement): void;
 declare function nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | null;
-declare function pasteSplit(event: Event): Promise<void>;
+declare function pasteSplit(event: ClipboardEvent): Promise<void>;
 declare function formEnter(event: KeyboardEvent): boolean;
 declare function inputBackSpace(event: Event): void;
 declare function autoNext(event: Event): void;
@@ -309,7 +309,7 @@ declare function tinyMCEHideInputs(): void;
 declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: boolean): void;
 declare function saveTinyMCE(id: string, textareaOnly?: boolean): void;
 declare function cleanGET(): void;
-declare function urlClean(event: Event): Promise<void>;
+declare function urlClean(event: ClipboardEvent): Promise<void>;
 declare function urlCleanString(url: string): string;
 declare function hashCheck(): void;
 declare function router(): void;
@@ -492,4 +492,5 @@ declare class WebShare extends HTMLElement {
     private readonly shareData;
     constructor();
     private share;
+    private toClipboard;
 }

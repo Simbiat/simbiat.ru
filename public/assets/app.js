@@ -4538,52 +4538,49 @@ function nextInput(initial, reverse = false) {
     return null;
 }
 async function pasteSplit(event) {
-    const permission = await navigator.permissions.query({ 'name': 'clipboard-read', }).catch(() => {
-    });
-    if (permission && permission.state !== 'denied') {
-        void navigator.clipboard.readText().then((result) => {
-            let buffer = result.toString();
-            let current = event.target;
-            if (current === null) {
+    const originalString = event.clipboardData?.getData('text/plain');
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    let buffer = originalString;
+    let current = event.target;
+    if (current === null) {
+        return;
+    }
+    if (current.value && !(current.selectionStart === 0 && current.selectionEnd === current.value.length)) {
+        return;
+    }
+    if (current.getAttribute('type') === 'url') {
+        buffer = urlCleanString(buffer);
+    }
+    let maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
+    while (current !== null && maxLength && buffer.length > maxLength) {
+        current.value = buffer.substring(0, maxLength);
+        current.dispatchEvent(new Event('input', {
+            'bubbles': true,
+            'cancelable': true,
+        }));
+        if (!current.validity.valid) {
+            return;
+        }
+        buffer = buffer.substring(maxLength);
+        if (current.getAttribute('data-no-spill')) {
+            return;
+        }
+        current = nextInput(current, false);
+        if (current) {
+            if (current.value) {
                 return;
             }
-            if (current.value && !(current.selectionStart === 0 && current.selectionEnd === current.value.length)) {
-                return;
-            }
-            if (current.getAttribute('type') === 'url') {
-                buffer = urlCleanString(buffer);
-            }
-            let maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
-            while (current !== null && maxLength && buffer.length > maxLength) {
-                current.value = buffer.substring(0, maxLength);
-                current.dispatchEvent(new Event('input', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-                if (!current.validity.valid) {
-                    return;
-                }
-                buffer = buffer.substring(maxLength);
-                if (current.getAttribute('data-no-spill')) {
-                    return;
-                }
-                current = nextInput(current, false);
-                if (current) {
-                    if (current.value) {
-                        return;
-                    }
-                    current.focus();
-                    maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
-                }
-            }
-            if (current) {
-                current.value = buffer;
-                current.dispatchEvent(new Event('input', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-            }
-        });
+            current.focus();
+            maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
+        }
+    }
+    if (current) {
+        current.value = buffer;
+        current.dispatchEvent(new Event('input', {
+            'bubbles': true,
+            'cancelable': true,
+        }));
     }
 }
 function formEnter(event) {
@@ -5111,25 +5108,18 @@ function cleanGET() {
     window.history.replaceState(document.title, document.title, url.toString());
 }
 async function urlClean(event) {
-    const permission = await navigator.permissions.query({ 'name': 'clipboard-read', }).catch(() => {
-    });
-    if (permission && permission.state !== 'denied') {
-        void navigator.clipboard.readText().then((result) => {
-            event.preventDefault();
-            const current = event.target;
-            if (current === null) {
-                return;
-            }
-            const cleanedUrl = urlCleanString(result.toString());
-            setTimeout(() => {
-                current.value = cleanedUrl;
-                current.dispatchEvent(new Event('change', {
-                    'bubbles': true,
-                    'cancelable': true,
-                }));
-            }, 0.1);
-        });
+    const originalString = event.clipboardData?.getData('text/plain');
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const current = event.target;
+    if (current === null) {
+        return;
     }
+    current.value = urlCleanString(originalString);
+    current.dispatchEvent(new Event('input', {
+        'bubbles': true,
+        'cancelable': true,
+    }));
 }
 function urlCleanString(url) {
     const paramsToDelete = sharedWithPHP?.trackingQueryParameters || [];
@@ -6319,18 +6309,26 @@ class WebShare extends HTMLElement {
             'title': document.title,
             'url': document.location.href,
         };
-        if (navigator.canShare(this.shareData)) {
-            this.classList.remove('hidden');
-            this.addEventListener('click', this.share.bind(this));
-        }
-        else {
-            this.classList.add('hidden');
-        }
+        this.addEventListener('click', this.share.bind(this));
     }
     share() {
-        navigator.share(this.shareData).catch(() => {
-            addSnackbar('Failed to share link, possibly unsupported feature.', 'failure', 10000);
-            this.classList.add('hidden');
+        if (navigator.share) {
+            navigator.share(this.shareData)
+                .catch(() => {
+                this.toClipboard();
+            });
+        }
+        else {
+            this.toClipboard();
+        }
+        this.blur();
+    }
+    toClipboard() {
+        navigator.clipboard.writeText(window.location.href)
+            .then(() => {
+            addSnackbar(`Page link copied to clipboard`, 'success');
+        }, () => {
+            addSnackbar(`Failed to copy page link to clipboard`, 'failure');
         });
     }
 }

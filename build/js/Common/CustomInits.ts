@@ -8,7 +8,7 @@ function inputInit(input: HTMLInputElement): void
     });
     //Initial application of the function
     ariaNation(input);
-    if (input.getAttribute('type') === 'url') {
+    if (input.getAttribute('type') === 'url' && !input.form) {
         input.addEventListener('paste', (event) => { void urlClean(event); });
     }
 }

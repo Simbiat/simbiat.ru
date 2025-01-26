@@ -146,5 +146,19 @@ function init(): void
 }
 
 //Stuff to do on load
+const configUrlElement = document.querySelector('head > link[rel="preload"][as="fetch"]');
+let sharedWithPHP = {};
+if (configUrlElement && configUrlElement.getAttribute('href')) {
+    const configUrl = configUrlElement.getAttribute('href');
+    fetch(configUrl as string)
+        .then(response => response.json())
+        .then(config => {
+            sharedWithPHP = config;
+        }).catch(() => {
+            sharedWithPHP = {};
+        }).finally(() => {
+            sharedWithPHP = Object.freeze(sharedWithPHP);
+        });
+}
 document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('hashchange', () => { hashCheck(); });
