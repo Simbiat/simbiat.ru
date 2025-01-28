@@ -124,7 +124,7 @@ services:
     command: >
       /bin/sh -c "rm -r -f /var/lib/crowdsec/data/coreruleset &&
                   mkdir -p /var/lib/crowdsec/data/coreruleset &&
-                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.10.0 &&
+                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.11.0 &&
                   rm -r -f /var/lib/crowdsec/data/coreruleset/.git* &&
                   mkdir -p /etc/periodic/daily/ &&
                   printf \"#!/bin/sh\\ncscli hub update&&cscli hub upgrade\">/etc/periodic/daily/crowdsec_update.sh &&

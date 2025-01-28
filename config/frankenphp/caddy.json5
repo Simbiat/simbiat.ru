@@ -85,7 +85,7 @@
                             }
                         ],
                         "key_type": "rsa4096",
-                        "must_staple": true
+                        "must_staple": false
                     }
                 ]
             }
