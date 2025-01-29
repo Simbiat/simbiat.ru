@@ -4546,15 +4546,16 @@ async function pasteSplit(event) {
     if (current === null) {
         return;
     }
-    if (current.value && !(current.selectionStart === 0 && current.selectionEnd === current.value.length)) {
-        return;
-    }
     if (current.getAttribute('type') === 'url') {
         buffer = urlCleanString(buffer);
     }
+    if (current.value && !(current.selectionStart === 0 && current.selectionEnd === current.value.length)) {
+        pasteAndMove(current, buffer);
+        return;
+    }
     let maxLength = parseInt(current.getAttribute('maxlength') ?? '0', 10);
     while (current !== null && maxLength && buffer.length > maxLength) {
-        current.value = buffer.substring(0, maxLength);
+        pasteAndMove(current, buffer.substring(0, maxLength));
         current.dispatchEvent(new Event('input', {
             'bubbles': true,
             'cancelable': true,
@@ -4576,12 +4577,29 @@ async function pasteSplit(event) {
         }
     }
     if (current) {
-        current.value = buffer;
+        pasteAndMove(current, buffer);
         current.dispatchEvent(new Event('input', {
             'bubbles': true,
             'cancelable': true,
         }));
     }
+}
+function pasteAndMove(input, text) {
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const selectedLength = end - start;
+    const lengthAfterPaste = input.value.length + text.length - selectedLength;
+    let newText;
+    if (input.maxLength && lengthAfterPaste > input.maxLength) {
+        newText = text.substring(0, input.maxLength - input.value.length + selectedLength);
+    }
+    else {
+        newText = text;
+    }
+    const newCursorPos = start + newText.length;
+    input.value = input.value.substring(0, start) + newText + input.value.substring(end);
+    input.setSelectionRange(newCursorPos, newCursorPos);
+    input.scrollLeft = (input.scrollWidth / input.value.length) * newCursorPos;
 }
 function formEnter(event) {
     if (event.target) {
@@ -5115,7 +5133,7 @@ async function urlClean(event) {
     if (current === null) {
         return;
     }
-    current.value = urlCleanString(originalString);
+    pasteAndMove(current, urlCleanString(originalString));
     current.dispatchEvent(new Event('input', {
         'bubbles': true,
         'cancelable': true,

@@ -44,6 +44,7 @@ declare function buttonToggle(button: HTMLInputElement, enable?: boolean): void;
 declare function countInTextarea(textarea: HTMLTextAreaElement): void;
 declare function nextInput(initial: HTMLInputElement, reverse?: boolean): HTMLInputElement | null;
 declare function pasteSplit(event: ClipboardEvent): Promise<void>;
+declare function pasteAndMove(input: HTMLInputElement, text: string): void;
 declare function formEnter(event: KeyboardEvent): boolean;
 declare function inputBackSpace(event: Event): void;
 declare function autoNext(event: Event): void;

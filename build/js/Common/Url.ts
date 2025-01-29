@@ -22,11 +22,12 @@ async function urlClean(event: ClipboardEvent): Promise<void>
         //If somehow we got here - exit early
         return;
     }
-    (current as HTMLInputElement).value = urlCleanString(originalString as string);
+    //Update the value
+    pasteAndMove((current as HTMLInputElement), urlCleanString(originalString as string));
     current.dispatchEvent(new Event('input', {
         'bubbles': true,
         'cancelable': true,
-    })
+    }));
 }
 
 function urlCleanString(url: string): string

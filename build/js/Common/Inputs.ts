@@ -134,20 +134,21 @@ async function pasteSplit(event: ClipboardEvent): Promise<void>
         //If somehow we got here - exit early
         return;
     }
-    //Exit if current field has a value already
-    if ((current as HTMLInputElement).value && !((current as HTMLInputElement).selectionStart === 0 && (current as HTMLInputElement).selectionEnd === (current as HTMLInputElement).value.length)) {
-        return;
-    }
     //If we are pasting into URL field, clean it
     if ((current as HTMLInputElement).getAttribute('type') === 'url') {
         buffer = urlCleanString(buffer);
+    }
+    //Exit if current field has a value already
+    if ((current as HTMLInputElement).value && !((current as HTMLInputElement).selectionStart === 0 && (current as HTMLInputElement).selectionEnd === (current as HTMLInputElement).value.length)) {
+        pasteAndMove((current as HTMLInputElement), buffer);
+        return;
     }
     //Get initial length attribute
     let maxLength = parseInt((current as HTMLInputElement).getAttribute('maxlength') ?? '0', 10);
     //Loop while the buffer is too large
     while (current !== null && maxLength && buffer.length > maxLength) {
         //Ensure input value is updated
-        (current as HTMLInputElement).value = buffer.substring(0, maxLength);
+        pasteAndMove((current as HTMLInputElement), buffer.substring(0, maxLength));
         //Trigger input event to bubble any bound events
         current.dispatchEvent(new Event('input', {
             'bubbles': true,
@@ -179,13 +180,36 @@ async function pasteSplit(event: ClipboardEvent): Promise<void>
     //Check if we still have a valid node
     if (current) {
         //Dump everything we can from leftovers
-        (current as HTMLInputElement).value = buffer;
+        pasteAndMove((current as HTMLInputElement), buffer);
         //Trigger input event to bubble any bound events
         current.dispatchEvent(new Event('input', {
             'bubbles': true,
             'cancelable': true,
         }));
     }
+}
+
+//Paste and move cursor to the end of the field value. Essentially this is meant to simulate default paste event
+function pasteAndMove(input: HTMLInputElement, text: string): void
+{
+    const start = input.selectionStart as number;
+    const end = input.selectionEnd as number;
+    const selectedLength = end - start;
+    const lengthAfterPaste = input.value.length + text.length - selectedLength;
+    let newText;
+    //Ensure that we paste only up to the maximum length of the field
+    if (input.maxLength && lengthAfterPaste > input.maxLength) {
+        newText = text.substring(0, input.maxLength - input.value.length + selectedLength);
+    } else {
+        newText = text;
+    }
+    const newCursorPos = start + newText.length;
+    //Insert text at the cursor position
+    input.value = input.value.substring(0, start) + newText + input.value.substring(end);
+    //Move cursor to the end of the inserted text
+    input.setSelectionRange(newCursorPos, newCursorPos);
+    //Scroll to cursor position
+    input.scrollLeft = (input.scrollWidth / input.value.length) * newCursorPos;
 }
 
 function formEnter(event: KeyboardEvent): boolean
