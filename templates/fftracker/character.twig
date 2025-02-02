@@ -40,7 +40,7 @@
                 {% if character.location.previousServers %}
                     Has also been seen on
                     {% for server in character.location.previousServers %}
-                        {% if loop.last %}and {% endif %}{{ server.server }} of {{ server.datacenter }}{% if not loop.last %}, {% else %}.{% endif %}
+                        {% if loop.last and character.location.previousServers|length > 1 %}and {% endif %}{{ server.server }} of {{ server.datacenter }}{% if not loop.last %}, {% else %}.{% endif %}
                     {% endfor %}
                 {% endif %}
             </p>
