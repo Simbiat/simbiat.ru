@@ -32,7 +32,6 @@
                     {% for incarnation in character.biology.incarnations %}
                         {% if loop.last and character.biology.incarnations|length > 1 %}and {% endif %}{% if character.biology.gender == 1 %}male{% else %}female{% endif %} {{ incarnation.race }} of {{ incarnation.clan }}{% if not loop.last %}, {% else %}.{% endif %}
                     {% endfor %}
-                    .
                 {% endif %}
             </p>
             <p>
