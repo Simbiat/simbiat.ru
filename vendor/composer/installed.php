@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => 'fb6b00411f2c212631318ab412b2208632e507ba',
+            'reference' => '4015f7fbd4aedd2ebe19143e26e9f64fafae8d88',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -196,9 +196,9 @@
             'dev_requirement' => false,
         ),
         'symfony/html-sanitizer' => array(
-            'pretty_version' => 'v6.4.17',
-            'version' => '6.4.17.0',
-            'reference' => '7f1692593d6e66c497b6588b86999728b50f24e5',
+            'pretty_version' => 'v6.4.18',
+            'version' => '6.4.18.0',
+            'reference' => '28e9fb12a6784c64b1b5e6fc92853bb7a3c4bf05',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/html-sanitizer',
             'aliases' => array(),
@@ -250,9 +250,9 @@
             'dev_requirement' => false,
         ),
         'twig/twig' => array(
-            'pretty_version' => 'v3.18.0',
-            'version' => '3.18.0.0',
-            'reference' => 'acffa88cc2b40dbe42eaf3a5025d6c0d4600cc50',
+            'pretty_version' => 'v3.19.0',
+            'version' => '3.19.0.0',
+            'reference' => 'd4f8c2b86374f08efc859323dbcd95c590f7124e',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),
