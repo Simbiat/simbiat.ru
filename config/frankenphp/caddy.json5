@@ -76,7 +76,7 @@
                         "issuers": [
                             {
                                 "module": "acme",
-                                "email": "simbiat@outlook.com",
+                                "email": "support@simbiat.dev",
                                 "acme_timeout": "60s"
                             },
                             {

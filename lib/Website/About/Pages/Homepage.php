@@ -476,7 +476,7 @@ class Homepage extends Page
                     'hidden' => false,
                 ],
                 [
-                    'url' => 'mailto:simbiat@outlook.com',
+                    'url' => 'mailto:support@simbiat.dev',
                     'img' => '/assets/images/social/email.svg',
                     'name' => 'Email',
                     'hidden' => false,

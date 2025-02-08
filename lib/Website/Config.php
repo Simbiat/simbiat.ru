@@ -17,8 +17,8 @@ final class Config
 {
     public static bool $PROD = false;
     public static string $workDir = '';
-    public const string adminMail = 'simbiat@outlook.com';
-    public const string adminName = 'Dmitry Kustov';
+    public const string adminMail = 'support@simbiat.dev';
+    public const string adminName = 'Dmitrii Kustov';
     public const string siteName = 'Simbiat Software';
     #Mail to use to send emails from
     public const string from = 'noreply@simbiat.dev';

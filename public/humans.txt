@@ -2,13 +2,13 @@
 # The humans responsible & technology colophon
 
 # TEAM
-    Developer: Dmitry Kustov
-    Contact: simbiat [at] outlook.com
+    Developer: Dmitrii Kustov
+    Contact: support [at] simbiat.dev
     From: Moscow, Russia
 
 # THANKS
-    Developer: Dmitry Kustov
-    Contact: simbiat [at] outlook.com
+    Developer: Dmitrii Kustov
+    Contact: support [at] simbiat.dev
     From: Moscow, Russia
 
 # TECHNOLOGY COLOPHON
