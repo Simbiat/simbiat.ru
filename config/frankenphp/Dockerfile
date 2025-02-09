@@ -44,7 +44,7 @@ COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
 RUN composer self-update
 
 # cron required for crontab, libnss3-tools is recommended for Caddy (looks like)
-RUN apt-get -y update&&apt-get -y upgrade&&apt-get -y install cron libnss3-tools&&apt-get -y autoremove
+RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install cron libnss3-tools&&apt-get -y autoremove&&apt-get clean
 # Install Git and unzip on test environment (for composer)
 ARG WEB_SERVER_TEST
 RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
