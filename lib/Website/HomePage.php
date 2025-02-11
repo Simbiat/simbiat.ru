@@ -111,7 +111,7 @@ class HomePage
                     $ua = Security::getUA();
                     #Show that client is unsupported
                     if ($ua['unsupported'] === true) {
-                        self::$http_error = ['client' => $ua['client'], 'http_error' => 418, 'reason' => 'Teapot'];
+                        self::$http_error = ['client' => $ua['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                     }
                     #Handle Sec-Fetch. Use strict mode if request is not from known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                     Headers::secFetch(strict: (empty($ua['bot']) && $ua['browser']));

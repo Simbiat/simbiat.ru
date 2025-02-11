@@ -150,8 +150,10 @@ dist
 /config/Installers
 #Environment variables should not be included
 /.env
+/.prod.env
 #Some security settings for MySQL
 /config/mysql/security.cnf
+/config/mysql/security.prod.cnf
 #Temporary folder for reference
 /symfony
 #For some reason composer this .htaccess
