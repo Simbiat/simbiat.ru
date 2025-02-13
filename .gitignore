@@ -153,7 +153,7 @@ dist
 /.prod.env
 #Some security settings for MySQL
 /config/mysql/security.cnf
-/config/mysql/security.prod.cnf
+/config/mysql/security.cnf.prod
 #Temporary folder for reference
 /symfony
 #For some reason composer this .htaccess
