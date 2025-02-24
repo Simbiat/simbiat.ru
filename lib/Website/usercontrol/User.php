@@ -524,7 +524,7 @@ class User extends Entity
     {
         #Check format
         if (preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
-            return false;
+            return true;
         }
         #Check against DB table
         try {
@@ -559,9 +559,10 @@ class User extends Entity
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
+        $isEmail = filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL);
         if (
-            $this->bannedName($_POST['signinup']['email']) ||
-            (filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL) === true && (new Email($_POST['signinup']['email']))->isBanned())
+            (!$isEmail && $this->bannedName($_POST['signinup']['email'])) ||
+            ($isEmail && (new Email($_POST['signinup']['email']))->isBanned())
         ) {
             Security::log('Failed login', 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
