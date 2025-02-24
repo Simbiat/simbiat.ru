@@ -5708,7 +5708,7 @@ class Likedis extends HTMLElement {
     }
 }
 class LoginForm extends HTMLElement {
-    userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
+    userRegex = '^[\\p{L}\\d.!$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
     emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`\\{\\|\\}~\\-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
     loginForm = null;
     existUser = null;
@@ -5770,13 +5770,18 @@ class LoginForm extends HTMLElement {
             if (this.login.labels) {
                 loginLabel = this.login.labels[0];
             }
+            this.login.placeholder = 'Email or name';
+            if (loginLabel) {
+                loginLabel.innerHTML = 'Email or name';
+            }
+            this.login.setAttribute('pattern', `^(${this.userRegex})|(${this.emailRegex})$`);
+            this.rememberme.checked = false;
+            this.password.setAttribute('minlength', '8');
+            this.login.setAttribute('type', 'text');
+            this.login.setAttribute('autocomplete', 'username');
             if ((this.existUser?.checked) === true) {
                 this.password.required = true;
                 this.password.setAttribute('autocomplete', 'current-password');
-                this.login.setAttribute('type', 'email');
-                this.login.setAttribute('autocomplete', 'email');
-                this.login.setAttribute('pattern', `^${this.emailRegex}$`);
-                this.password.setAttribute('minlength', '8');
                 this.button.value = 'Sign in';
                 this.password.parentElement.classList.remove('hidden');
                 this.rememberme.parentElement.classList.remove('hidden');
@@ -5789,7 +5794,6 @@ class LoginForm extends HTMLElement {
                 this.login.setAttribute('type', 'email');
                 this.login.setAttribute('autocomplete', 'email');
                 this.login.setAttribute('pattern', `^${this.emailRegex}$`);
-                this.password.setAttribute('minlength', '8');
                 this.button.value = 'Join';
                 this.password.parentElement.classList.remove('hidden');
                 this.rememberme.parentElement.classList.remove('hidden');
@@ -5803,18 +5807,10 @@ class LoginForm extends HTMLElement {
             if ((this.forget?.checked) === true) {
                 this.password.required = false;
                 this.password.removeAttribute('autocomplete');
-                this.login.setAttribute('type', 'text');
-                this.login.setAttribute('autocomplete', 'username');
-                this.login.setAttribute('pattern', `^(${this.userRegex})|(${this.emailRegex})$`);
                 this.password.removeAttribute('minlength');
                 this.button.value = 'Remind';
                 this.password.parentElement.classList.add('hidden');
                 this.rememberme.parentElement.classList.add('hidden');
-                this.rememberme.checked = false;
-                this.login.placeholder = 'Email or name';
-                if (loginLabel) {
-                    loginLabel.innerHTML = 'Email or name';
-                }
                 this.username.parentElement.classList.add('hidden');
                 this.username.required = false;
             }

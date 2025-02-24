@@ -523,7 +523,7 @@ class User extends Entity
     public function bannedName(string $name): bool
     {
         #Check format
-        if (preg_match('/^[\p{L}\d.!#$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
+        if (preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
             return false;
         }
         #Check against DB table
@@ -561,7 +561,7 @@ class User extends Entity
         #Check if banned
         if (
             $this->bannedName($_POST['signinup']['email']) ||
-            (new Email($_POST['signinup']['email']))->isBanned()
+            (filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL) === true && (new Email($_POST['signinup']['email']))->isBanned())
         ) {
             Security::log('Failed login', 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
@@ -572,7 +572,7 @@ class User extends Entity
         }
         #Get password of the user, while also checking if it exists
         try {
-            $credentials = Config::$dbController->selectRow('SELECT `uc__users`.`userid`, `username`, `password`, `strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__emails`.`email`=:mail',
+            $credentials = Config::$dbController->selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__users`.`password`, `uc__users`.`strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail LIMIT 1',
                 [':mail' => $_POST['signinup']['email']]
             );
         } catch (\Throwable) {

@@ -1,7 +1,7 @@
 class LoginForm extends HTMLElement
 {
     //Regex for username. This is NOT JS Regex, thus it has doubled slashes.
-    private readonly userRegex = '^[\\p{L}\\d.!#$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
+    private readonly userRegex = '^[\\p{L}\\d.!$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
     //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
     private readonly emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`\\{\\|\\}~\\-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
     private readonly loginForm: HTMLFormElement | null = null;
@@ -74,19 +74,25 @@ class LoginForm extends HTMLElement
             if (this.login.labels) {
                 loginLabel = this.login.labels[0];
             }
+            this.login.placeholder = 'Email or name';
+            if (loginLabel) {
+                loginLabel.innerHTML = 'Email or name';
+            }
+            //Set pattern for login
+            this.login.setAttribute('pattern', `^(${this.userRegex})|(${this.emailRegex})$`);
+            //Additionally uncheck rememberme as precaution
+            this.rememberme.checked = false;
+            //Enforce minimum length for password
+            this.password.setAttribute('minlength', '8');
+            //Autocomplete suggestion for login
+            this.login.setAttribute('type', 'text');
+            this.login.setAttribute('autocomplete', 'username');
             //Adjust elements based on the toggle
             if ((this.existUser?.checked) === true) {
                 //Whether password field is required
                 this.password.required = true;
                 //Autocomplete suggestion for password
                 this.password.setAttribute('autocomplete', 'current-password');
-                //Autocomplete suggestion for login
-                this.login.setAttribute('type', 'email');
-                this.login.setAttribute('autocomplete', 'email');
-                //Set pattern for login
-                this.login.setAttribute('pattern', `^${this.emailRegex}$`);
-                //Enforce minimum length for password
-                this.password.setAttribute('minlength', '8');
                 //Adjust name of the button
                 this.button.value = 'Sign in';
                 //Show or hide password field
@@ -103,7 +109,6 @@ class LoginForm extends HTMLElement
                 this.login.setAttribute('type', 'email');
                 this.login.setAttribute('autocomplete', 'email');
                 this.login.setAttribute('pattern', `^${this.emailRegex}$`);
-                this.password.setAttribute('minlength', '8');
                 this.button.value = 'Join';
                 (this.password.parentElement as HTMLDivElement).classList.remove('hidden');
                 (this.rememberme.parentElement as HTMLDivElement).classList.remove('hidden');
@@ -118,19 +123,11 @@ class LoginForm extends HTMLElement
             if ((this.forget?.checked) === true) {
                 this.password.required = false;
                 this.password.removeAttribute('autocomplete');
-                this.login.setAttribute('type', 'text');
-                this.login.setAttribute('autocomplete', 'username');
-                this.login.setAttribute('pattern', `^(${this.userRegex})|(${this.emailRegex})$`);
                 this.password.removeAttribute('minlength');
                 this.button.value = 'Remind';
                 (this.password.parentElement as HTMLDivElement).classList.add('hidden');
+                //Show or hide remember me checkbox
                 (this.rememberme.parentElement as HTMLDivElement).classList.add('hidden');
-                //Additionally uncheck rememberme as precaution
-                this.rememberme.checked = false;
-                this.login.placeholder = 'Email or name';
-                if (loginLabel) {
-                    loginLabel.innerHTML = 'Email or name';
-                }
                 //Hide username field
                 (this.username.parentElement as HTMLDivElement).classList.add('hidden');
                 this.username.required = false;
