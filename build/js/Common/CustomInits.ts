@@ -11,6 +11,9 @@ function inputInit(input: HTMLInputElement): void
     if (input.getAttribute('type') === 'url' && !input.form) {
         input.addEventListener('paste', (event) => { void urlClean(event); });
     }
+    if (input.classList.contains('toggle_details')) {
+        input.addEventListener('click', () => { toggleDetailsButton(input); });
+    }
 }
 
 function textareaInit(textarea: HTMLTextAreaElement): void

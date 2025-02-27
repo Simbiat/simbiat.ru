@@ -171,8 +171,15 @@
     display: grid;
     grid-template-areas:
             'post_likes post_icons'
+            'post_likes post_attachments'
             'post_likes post_edit';
-    align-items: end;
+    align-items: center;
+}
+.post_attachments {
+    display: block;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    grid-area: post_attachments;
 }
 .post_edited {
     grid-area: post_edit;
@@ -183,6 +190,12 @@
 .post_icons {
     grid-area: post_icons;
     text-align: right;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-end;
 }
 .post_icons span {
     text-decoration: none!important;

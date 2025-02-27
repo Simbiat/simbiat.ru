@@ -38,6 +38,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('timeTag', [$runtime, 'timeTag'], ['is_safe' => ['html']]),
             new TwigFunction('tooltip', [$runtime, 'tooltip'], ['is_safe' => ['html']]),
             new TwigFunction('linkTags', [$runtime, 'linkTags'], ['is_safe' => ['html']]),
+            new TwigFunction('cuteBytes', [$runtime, 'cuteBytes'], ['is_safe' => ['html']]),
+            new TwigFunction('uploadedLink', [$runtime, 'uploadedLink'], ['is_safe' => ['html']]),
         ];
     }
     

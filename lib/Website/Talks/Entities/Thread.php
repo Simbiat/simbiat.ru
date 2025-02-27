@@ -92,6 +92,9 @@ class Thread extends Entity
         } else {
             #Get posts
             $data['posts'] = (new Posts([':threadid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__posts`.`threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC'))->listEntities($page);
+            foreach ($data['posts']['entities'] as $postKey => $post) {
+                $data['posts']['entities'][$postKey]['attachments'] = Config::$dbController->selectAll('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $post['id']]);
+            }
             #Get tags
             $data['tags'] = Config::$dbController->selectColumn('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
             #Get external links

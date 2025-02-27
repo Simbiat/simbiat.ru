@@ -1,19 +1,24 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website;
 
+use JetBrains\PhpStorm\Pure;
 use Simbiat\SandClock;
-use Simbiat\Website\Config;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
-#Class for some common sanitization functions
+use function in_array;
+
+/**
+ * Class for some common sanitization function
+ */
 class Sanitization
 {
-
-    #Static sanitizer config for a little bit performance
+    
+    #Static sanitizer config for a little bit of performance
     public static ?HtmlSanitizerConfig $sanitizerConfig = null;
-
+    
     public static function sanitizeHTML(string $string, bool $head = false): string
     {
         #Check if config has been created already
@@ -21,8 +26,8 @@ class Sanitization
             $config = self::$sanitizerConfig;
         } else {
             $config = (new HtmlSanitizerConfig())->withMaxInputLength(-1)->allowSafeElements()
-                        ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
-                        ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+                ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
+                ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
             #Block some extra elements
             foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
                          'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
@@ -76,7 +81,7 @@ class Sanitization
     public static function carefulArraySanitization(array &$array, $fullList = false): void
     {
         foreach($array as &$item) {
-            if (is_string($item)) {
+            if (\is_string($item)) {
                 $item = self::removeNonPrintable($item, $fullList);
             }
         }
@@ -92,7 +97,7 @@ class Sanitization
         if (!isset($checkbox)) {
             return false;
         }
-        if (is_string($checkbox)) {
+        if (\is_string($checkbox)) {
             return mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
         return (bool)$checkbox;
@@ -120,5 +125,37 @@ class Sanitization
             $time = null;
         }
         return $time;
+    }
+    
+    /**
+     * Function to generate a "hash tree" from string
+     * @param string $string
+     *
+     * @return string
+     */
+    public static function hashTree(string $string): string
+    {
+        return mb_substr($string, 0, 2, 'UTF-8').'/'.mb_substr($string, 2, 2, 'UTF-8').'/'.mb_substr($string, 4, 2, 'UTF-8');
+    }
+    
+    /**
+     * Get link for uploaded file based on its filename (ID + extension)
+     *
+     * @param string $filename
+     *
+     * @return string
+     */
+    #[Pure(true)] public static function getUploadedFileLink(string $filename): string
+    {
+        #Get hash tree
+        $hashTree = self::hashTree($filename);
+        #Check if file exists in images
+        if (file_exists(Config::$uploadedImg.'/'.$hashTree.'/'.$filename)) {
+            return '/assets/images/uploaded/'.$hashTree.'/'.$filename;
+        }
+        if (file_exists(Config::$uploaded.'/'.$hashTree.'/'.$filename)) {
+            return '/assets/uploaded/'.$hashTree.'/'.$filename;
+        }
+        return '/assets/images/noimage.svg';
     }
 }

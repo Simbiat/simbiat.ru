@@ -42,6 +42,7 @@ class Post extends Entity
     public ?int $liked = null;
     #Number of the page to which the post belongs (at the time of access)
     public int $page = 1;
+    public array $attachments = [];
     
     /**
      * Get data from DB
@@ -68,6 +69,7 @@ class Post extends Entity
         }
         $data['thread'] = (new Thread($data['threadid']))->setForPost(true)->getArray();
         $data['page'] = $this->getPage($data['threadid']);
+        $data['attachments'] = Config::$dbController->selectAll('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $this->id]);
         return $data;
     }
     
@@ -99,6 +101,7 @@ class Post extends Entity
         $this->text = $fromDB['text'];
         $this->likes = (int)$fromDB['likes'];
         $this->dislikes = (int)$fromDB['dislikes'];
+        $this->attachments = $fromDB['attachments'];
         $this->liked = $fromDB['liked'];
         $this->page = $fromDB['page'];
     }
@@ -322,6 +325,7 @@ class Post extends Entity
      */
     public function edit(): array
     {
+        $success = ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
         #Check permission
         if (!in_array('canPost', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
@@ -353,7 +357,7 @@ class Post extends Entity
         #Check if the text is different
         if ($this->text === $data['text']) {
             #Do not do anything
-            return ['response' => true];
+            return $success;
         }
         try {
             #Prepare queries
@@ -381,7 +385,9 @@ class Post extends Entity
             Config::$dbController->query($queries);
             #Add text to history
             $this->addHistory($data['text']);
-            return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
+            #Link attachments
+            $this->attach([], $data['inlineFiles']);
+            return $success;
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to update post'];

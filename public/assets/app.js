@@ -3892,6 +3892,9 @@ function inputInit(input) {
     if (input.getAttribute('type') === 'url' && !input.form) {
         input.addEventListener('paste', (event) => { void urlClean(event); });
     }
+    if (input.classList.contains('toggle_details')) {
+        input.addEventListener('click', () => { toggleDetailsButton(input); });
+    }
 }
 function textareaInit(textarea) {
     if (!textarea.hasAttribute('placeholder')) {
@@ -4117,8 +4120,7 @@ function closeAllDetailsTags(target) {
     const details = target.parentElement;
     if (details) {
         if (details.open) {
-            getAllDetailsTags().
-                forEach((tag) => {
+            getAllDetailsTags().forEach((tag) => {
                 if (tag !== details) {
                     tag.open = false;
                 }
@@ -4146,6 +4148,21 @@ function resetDetailsTags(target) {
             });
         }
     });
+}
+function toggleDetailsButton(input) {
+    const detailsId = input.getAttribute('data-details-id');
+    if (detailsId) {
+        let details = document.getElementById(detailsId);
+        if (details) {
+            if (details.open) {
+                details.open = false;
+            }
+            else {
+                details.open = true;
+            }
+        }
+    }
+    input.blur();
 }
 function addSnackbar(text, color = '', milliseconds = 3000) {
     const snacks = document.querySelector('snack-bar');

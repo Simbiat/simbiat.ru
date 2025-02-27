@@ -74,9 +74,31 @@
                     <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
                 {% endif %}
             {% endif %}
+            {% if post.attachments|length > 0 %}
+                <input type="button" class="toggle_details" data-details-id="post_attachments_{{ post.id }}" data-tooltip="List of {{ post.attachments|length }} attachment{% if post.attachments|length > 1 %}s{% endif %}" value="📎">
+            {% endif %}
             {% if post.private %}<span data-tooltip="Private post">🚷</span>{% endif %}
             {% if post.system %}<span data-tooltip="System post">⚠</span>{% endif %}
         </div>
+        {% if post.attachments|length > 0 %}
+            <details class="noMarker post_attachments" id="post_attachments_{{ post.id }}">
+                <summary></summary>
+                <table>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Type</th>
+                        <th>Size</th>
+                    </tr>
+                    {% for attachment in post.attachments %}
+                        <tr>
+                            <td><a href="{{ uploadedLink(attachment.fileid ~ '.' ~ attachment.extension) }}" target="_blank">{{ attachment.name }}</a></td>
+                            <td>{{ attachment.mime }}</td>
+                            <td>{{ cuteBytes(attachment.size) }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </details>
+        {% endif %}
         {% if post.noeditedtime != true %}
             <div class="post_edited">{% if post.updated > post.created %}{% if 'viewPostsHistory' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.updatedby ?? post.updatedBy }}">{{ post.updatedby_name ?? post.updatedBy_name }}</a>{% endif %}</div>
         {% endif %}

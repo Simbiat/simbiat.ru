@@ -226,10 +226,10 @@ class Images
                 return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
             }
         } else {
-            $hashTree = mb_substr($fileId, 0, 2, 'UTF-8').'/'.mb_substr($fileId, 2, 2, 'UTF-8').'/'.mb_substr($fileId, 4, 2, 'UTF-8').'/';
+            $hashTree = Sanitization::hashTree($fileId);
             #Use glob to get real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = glob(Config::$uploadedImg.'/'.$hashTree.$fileId.'.*');
+            $file = glob(Config::$uploadedImg.'/'.$hashTree.'/'.$fileId.'.*');
             if (empty($file)) {
                 return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
             }
@@ -248,6 +248,6 @@ class Images
         if ($isPath) {
             return ['ogimage' => '/assets/images'.$fileId, 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
         }
-        return ['ogimage' => '/assets/images/uploaded/'.$hashTree.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
+        return ['ogimage' => '/assets/images/uploaded/'.$hashTree.'/'.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
     }
 }

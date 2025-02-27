@@ -380,8 +380,12 @@ details.adult>summary:hover {
     border-style: inset;
 }
 details.spoiler>summary::-webkit-details-marker,
-details.adult>summary::-webkit-details-marker {
-    display: none
+details.adult>summary::-webkit-details-marker,
+details.noMarker>summary::-webkit-details-marker {
+    display: none;
+}
+details.noMarker>summary {
+    list-style: none;
 }
 details[open].spoiler>summary,
 details[open].adult>summary{

@@ -25,6 +25,7 @@ declare function getAllDetailsTags(): NodeListOf<HTMLDetailsElement>;
 declare function closeAllDetailsTags(target: HTMLDetailsElement): void;
 declare function clickOutsideDetailsTags(initialEvent: MouseEvent, details: HTMLDetailsElement): void;
 declare function resetDetailsTags(target: HTMLDetailsElement): void;
+declare function toggleDetailsButton(input: HTMLInputElement): void;
 declare function addSnackbar(text: string, color?: string, milliseconds?: number): void;
 declare function getMeta(metaName: string): string | null;
 declare function updateHistory(newUrl: string, title: string): void;
