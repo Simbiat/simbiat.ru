@@ -573,6 +573,34 @@
                                                 }
                                             ]
                                         },
+                                        //Old image folder
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "name": "oldImages",
+                                                        "pattern": "/img/uploaded/(.*)"
+                                                    },
+                                                    "file": {
+                                                        "root": "/app/public",
+                                                        "split_path": [],
+                                                        "try_files": [
+                                                            "/assets/images/noimage.svg"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "{http.matchers.file.relative}"
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "root": "/app/public"
+                                                }
+                                            ]
+                                        },
                                         //All other images
                                         {
                                             "match": [

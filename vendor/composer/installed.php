@@ -65,9 +65,9 @@
             'dev_requirement' => false,
         ),
         'matomo/device-detector' => array(
-            'pretty_version' => '6.4.3',
-            'version' => '6.4.3.0',
-            'reference' => 'aa4586d495a7f59029d46d976f160b13eb769bb0',
+            'pretty_version' => '6.4.5',
+            'version' => '6.4.5.0',
+            'reference' => '270bbc41f80994e80805ac377b67324eba53c412',
             'type' => 'library',
             'install_path' => __DIR__ . '/../matomo/device-detector',
             'aliases' => array(),
@@ -112,7 +112,7 @@
         'piwik/device-detector' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => '6.4.3',
+                0 => '6.4.5',
             ),
         ),
         'psr/http-factory' => array(
@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '4015f7fbd4aedd2ebe19143e26e9f64fafae8d88',
+            'reference' => '34461e30edf463b5f9522c60bd4f326f955fca69',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -231,28 +231,19 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
-        'symfony/polyfill-php81' => array(
-            'pretty_version' => 'v1.31.0',
-            'version' => '1.31.0.0',
-            'reference' => '4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../symfony/polyfill-php81',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.6.1',
-            'version' => '7.6.1.0',
-            'reference' => 'f0b12677418f3cbb2aeffc2216bd36b0590dd418',
+            'pretty_version' => '7.7.0',
+            'version' => '7.7.0.0',
+            'reference' => '4b04481b24137029525f6dc372706fa9d3168f14',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'twig/twig' => array(
-            'pretty_version' => 'v3.19.0',
-            'version' => '3.19.0.0',
-            'reference' => 'd4f8c2b86374f08efc859323dbcd95c590f7124e',
+            'pretty_version' => 'v3.20.0',
+            'version' => '3.20.0.0',
+            'reference' => '3468920399451a384bef53cf7996965f7cd40183',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),
