@@ -71,7 +71,7 @@ class Sessions extends Page
                 }
                 $outputArray[$type][$key]['country'] = $ips[$item['ip']]['country'];
                 $outputArray[$type][$key]['city'] = $ips[$item['ip']]['city'];
-                $dd->setUserAgent($item['useragent']);
+                $dd->setUserAgent((string)$item['useragent']);
                 $dd->parse();
                 #Get OS
                 $outputArray[$type][$key]['os'] = $dd->getOs();
