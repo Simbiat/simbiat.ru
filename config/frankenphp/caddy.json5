@@ -601,6 +601,35 @@
                                                 }
                                             ]
                                         },
+                                        //Old image folder
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "name": "DDCIcons",
+                                                        "pattern": "/assets/images/devicedetector/(.*)"
+                                                    },
+                                                    "file": {
+                                                        "root": "/app",
+                                                        "split_path": [],
+                                                        "try_files": [
+                                                            "/lib/DDCIcons/src/icons/{http.regexp.DDCIcons.1}",
+                                                            "/public/assets/images/noimage.svg"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "{http.matchers.file.relative}"
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "root": "/app/public"
+                                                }
+                                            ]
+                                        },
                                         //All other images
                                         {
                                             "match": [
