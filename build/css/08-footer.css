@@ -21,8 +21,26 @@ a.noOutline {
     outline: none;
 }
 #footerContacts {
-    display: block;
     margin-bottom: 3rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+#footerContacts .linkIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+/* GitHub icon is too dark by itself, so need to play with filter a bit to make it brighter by default than other icons. Invention works nicely*/
+#gitHubIcon {
+    filter: brightness(70%) invert(30%);
+}
+#gitHubIcon:hover,
+#gitHubIcon:active,
+#gitHubIcon:focus {
+    filter: brightness(100%) invert(100%);
 }
 #footerSitemap {
     display: inline-block;

@@ -3,6 +3,15 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\About;
 
+use Simbiat\Website\About\Pages\Me;
+use Simbiat\Website\About\Pages\Privacy;
+use Simbiat\Website\About\Pages\Security;
+use Simbiat\Website\About\Pages\Tech;
+use Simbiat\Website\About\Pages\ToS;
+use Simbiat\Website\About\Redirects\Contacts;
+use Simbiat\Website\About\Redirects\Resume;
+use Simbiat\Website\About\Redirects\Website;
+
 use function array_slice;
 
 class Router extends \Simbiat\Website\Abstracts\Router
@@ -18,18 +27,23 @@ class Router extends \Simbiat\Website\Abstracts\Router
     protected string $ogdesc = 'About Simbiat Software';
     protected string $serviceName = 'about';
     
-    #This is actual page generation based on further details of the $path
+    /**
+     * This is actual page generation based on further details of the $path
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         return match($path[0]) {
-            'tech' => (new \Simbiat\Website\About\Pages\Tech)->get(array_slice($path, 1)),
-            'tos' => (new \Simbiat\Website\About\Pages\ToS)->get(array_slice($path, 1)),
-            'privacy' => (new \Simbiat\Website\About\Pages\Privacy)->get(array_slice($path, 1)),
-            'security' => (new \Simbiat\Website\About\Pages\Security)->get(array_slice($path, 1)),
-            'website' => (new \Simbiat\Website\About\Redirects\Website)->get(array_slice($path, 1)),
-            'me' => (new \Simbiat\Website\About\Redirects\Me)->get(array_slice($path, 1)),
-            'resume' => (new \Simbiat\Website\About\Redirects\Resume)->get(array_slice($path, 1)),
-            'contacts' => (new \Simbiat\Website\About\Redirects\Contacts)->get(array_slice($path, 1)),
+            'tech' => (new Tech())->get(array_slice($path, 1)),
+            'tos' => (new ToS())->get(array_slice($path, 1)),
+            'privacy' => (new Privacy())->get(array_slice($path, 1)),
+            'security' => (new Security())->get(array_slice($path, 1)),
+            'website' => (new Website())->get(array_slice($path, 1)),
+            'me' => (new Me())->get(array_slice($path, 1)),
+            'resume' => (new Resume())->get(array_slice($path, 1)),
+            'contacts' => (new Contacts())->get(array_slice($path, 1)),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
         };
     }

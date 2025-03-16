@@ -1,4 +1,4 @@
-<article class="post">
+<article class="post{% if post.showbanner == true and post.ogimage %} hasbanner{% endif %}{% if post.nouser %} nouser{% endif %}">
     <section class="post_header">
         {% if post.noname != true %}
             {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
@@ -17,13 +17,13 @@
             {% endif %}
         </div>
     </section>
+    {% if post.showbanner == true and post.ogimage %}
+        <section class="post_banner">
+            <a href="/talks/threads/{{ post.threadid }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage }}"></a>
+        </section>
+    {% endif %}
     {% if post.htmlcut == true %}
         <section class="post_text">
-            {% if post.showbanner == true and post.ogimage %}
-                <section class="post_banner">
-                    <a href="/talks/threads/{{ post.threadid }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage }}"></a>
-                </section>
-            {% endif %}
             {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
                 {{ sanitize(preg_replace(htmlCut(changelog(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
             {% else %}

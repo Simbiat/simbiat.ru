@@ -13,5 +13,5 @@ class Resume extends Redirect
     #Regex match pattern with / and flags
     protected string $searchFor = '(\/about\/resume)';
     #Regex replace pattern
-    protected string $replaceWith = '#experience';
+    protected string $replaceWith = '/about/me';
 }

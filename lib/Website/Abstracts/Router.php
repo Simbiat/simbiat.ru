@@ -83,7 +83,12 @@ abstract class Router
         }
         return $pageData;
     }
-
-    #This is actual page generation based on further details of the $path
+    
+    /**
+     * This is actual page generation based on further details of the $path
+     * @param array $path
+     *
+     * @return array
+     */
     abstract protected function pageGen(array $path): array;
 }

@@ -101,6 +101,7 @@
             <details class="navCat{% if serviceName == 'about' %} persistent{% endif %}" {% if serviceName == 'about' %}open{% endif %}>
                 <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="About" src="/assets/images/navigation/about.svg"><span itemprop="name">About</span></summary>
                 <ul>
+                    <li{% if subServiceName == 'me' %} class="current"{% endif %}><a class="navItem" href="/about/me" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
                     <li{% if subServiceName == 'tech' %} class="current"{% endif %}><a class="navItem" href="/about/tech" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
                     <li{% if subServiceName == 'tos' %} class="current"{% endif %}><a class="navItem" href="/about/tos" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
                     <li{% if subServiceName == 'privacy' %} class="current"{% endif %}><a class="navItem" href="/about/privacy" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
@@ -112,10 +113,12 @@
     </li>
 </ul>
 <address id="footerContacts">
+    <a href="mailto:support@simbiat.dev" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/email.svg" alt="Email"></a>
     <a href="https://facebook.com/SimbiatSoftware/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/facebook.svg" alt="Facebook"></a>
     <a href="https://vk.com/simbiat19" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/VK.svg" alt="VK"></a>
+    <a href="https://kitsu.io/users/Simbiat" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/kitsu.svg" alt="Kitsu"></a>
+    <a href="https://www.linkedin.com/in/simbiat19/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/linkedin.svg" alt="LinkedIn"></a>
     <a href="https://www.instagram.com/simbiat19/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/instagram.svg" alt="Instagram"></a>
     <a href="https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/youtube.svg" alt="Youtube"></a>
-    <a href="https://www.linkedin.com/in/simbiat19/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/linkedin.svg" alt="LinkedIn"></a>
-    <a href="https://github.com/Simbiat" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon colorInversion" src="/assets/images/social/github.svg" alt="GitHub"></a>
+    <a href="https://github.com/Simbiat" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon" id="gitHubIcon" src="/assets/images/social/github.svg" alt="GitHub"></a>
 </address>

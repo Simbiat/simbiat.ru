@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'composer/ca-bundle' => array(
-            'pretty_version' => '1.5.5',
-            'version' => '1.5.5.0',
-            'reference' => '08c50d5ec4c6ced7d0271d2862dec8c1033283e6',
+            'pretty_version' => '1.5.6',
+            'version' => '1.5.6.0',
+            'reference' => 'f65c239c970e7f072f067ab78646e9f0b2935175',
             'type' => 'library',
             'install_path' => __DIR__ . '/./ca-bundle',
             'aliases' => array(),
@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '34461e30edf463b5f9522c60bd4f326f955fca69',
+            'reference' => '9e474e1c4987ea63445e2eaefed17e4a87acf2df',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -232,9 +232,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.7.0',
-            'version' => '7.7.0.0',
-            'reference' => '4b04481b24137029525f6dc372706fa9d3168f14',
+            'pretty_version' => '7.7.1',
+            'version' => '7.7.1.0',
+            'reference' => 'c92b29a72c467c07799fd09dc9e0add45cf504a1',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),

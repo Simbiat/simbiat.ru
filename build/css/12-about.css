@@ -20,10 +20,6 @@
     padding: 1rem;
 }
 
-.homePage.blockTitle {
-    margin-top: 5rem;
-}
-
 .homePage.showcase {
     display: flex;
     flex-wrap: wrap;
@@ -54,7 +50,6 @@ section.homePage {
     align-items: flex-end;
 }
 .homePage.hWrapper img {
-    margin-top: 5rem;
     margin-bottom: 1.25rem;
 }
 

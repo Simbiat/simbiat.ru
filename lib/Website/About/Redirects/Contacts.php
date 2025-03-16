@@ -13,5 +13,5 @@ class Contacts extends Redirect
     #Regex match pattern with / and flags
     protected string $searchFor = '(\/about\/contacts)';
     #Regex replace pattern
-    protected string $replaceWith = '#contacts';
+    protected string $replaceWith = '#footerContacts';
 }

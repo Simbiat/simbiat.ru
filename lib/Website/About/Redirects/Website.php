@@ -13,5 +13,5 @@ class Website extends Redirect
     #Regex match pattern with / and flags
     protected string $searchFor = '(\/about\/website)';
     #Regex replace pattern
-    protected string $replaceWith = '#hiThere';
+    protected string $replaceWith = '/about/tech';
 }
