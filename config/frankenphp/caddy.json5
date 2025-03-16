@@ -13,8 +13,7 @@
                 },
                 "level": "WARN",
                 "exclude": [
-                    "http.log.access",
-                    "http.handlers.waf"
+                    "http.log.access"
                 ]
             },
             "access_log": {
@@ -29,20 +28,6 @@
                 "level": "DEBUG",
                 "include": [
                     "http.log.access"
-                ]
-            },
-            "waf": {
-                "writer": {
-                    "filename": "/app/logs/waf.log",
-                    "output": "file",
-                    "roll": true,
-                    "roll_size_mb": 10,
-                    "roll_keep": 21,
-                    "roll_keep_days": 14,
-                },
-                "level": "WARN",
-                "include": [
-                    "http.handlers.waf"
                 ]
             }
         }
@@ -601,7 +586,7 @@
                                                 }
                                             ]
                                         },
-                                        //Old image folder
+                                        //Device detector icons
                                         {
                                             "match": [
                                                 {
@@ -620,13 +605,27 @@
                                                 }
                                             ],
                                             "handle": [
+                                                //No idea why it does not work without this
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "X-File-Path-Check": [
+                                                                "/lib/DDCIcons/src/icons/{http.regexp.DDCIcons.1}"
+                                                            ],
+                                                            "X-File-Path-Check-Alt": [
+                                                                "/lib/DDCIcons/src/icons/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
                                                 {
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
                                                 {
                                                     "handler": "file_server",
-                                                    "root": "/app/public"
+                                                    "root": "/app"
                                                 }
                                             ]
                                         },

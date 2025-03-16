@@ -24,6 +24,7 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/array2table/src" isTestSource="false" packagePrefix="Simbiat\ArrayToTable\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/http/sse/src" isTestSource="false" packagePrefix="Simbiat\http\" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/lib/DDCIcons/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
