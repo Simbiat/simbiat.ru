@@ -325,6 +325,7 @@ declare class BackToTop extends HTMLElement {
 declare class Gallery extends HTMLElement {
     private _current;
     images: HTMLElement[];
+    isOpened: boolean;
     private readonly galleryName;
     private readonly galleryNameLink;
     private readonly galleryLoadedImage;

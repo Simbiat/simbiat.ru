@@ -4,6 +4,8 @@ class Gallery extends HTMLElement
     private _current = 0;
     //Array of the images
     public images: HTMLElement[] = [];
+    //Flag indicating that gallery is open
+    public isOpened = false;
     //Basic sub-elements
     private readonly galleryName: HTMLDivElement | null = null;
     private readonly galleryNameLink: HTMLAnchorElement | null = null;
@@ -84,12 +86,16 @@ class Gallery extends HTMLElement
                 //Update URL
                 this.history();
                 this.focus();
+                this.isOpened = true;
             }
         }
     }
-
+    
     public close(): void
     {
+        if (!this.isOpened) {
+            return;
+        }
         this.tabIndex = -1;
         //Hide overlay
         (this.parentElement as HTMLDialogElement).close();
@@ -97,18 +103,19 @@ class Gallery extends HTMLElement
         this.history();
         //Focus on 1st focusable element to help with keyboard navigation. If not done, focus may stay on close button.
         (document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0] as HTMLElement).focus();
+        this.isOpened = false;
     }
-
+    
     public previous(): void
     {
         this.current -= 1;
     }
-
+    
     public next(): void
     {
         this.current += 1;
     }
-
+    
     //Navigation with keyboard
     private keyNav(event: KeyboardEvent): boolean
     {
@@ -131,7 +138,7 @@ class Gallery extends HTMLElement
         }
         return true;
     }
-
+    
     private history(): void
     {
         const url = new URL(document.location.href);
@@ -156,7 +163,7 @@ class GalleryImage extends HTMLElement
 {
     private readonly image: HTMLImageElement | null = null;
     private readonly zoomListener;
-
+    
     public constructor() {
         super();
         this.image = document.querySelector('#galleryLoadedImage');
@@ -165,7 +172,7 @@ class GalleryImage extends HTMLElement
             this.image.addEventListener('load', this.checkZoom.bind(this));
         }
     }
-
+    
     private checkZoom(): void
     {
         if (this.image) {
@@ -195,7 +202,7 @@ class GalleryImage extends HTMLElement
 class GalleryPrev extends HTMLElement
 {
     private readonly overlay: Gallery | null;
-
+    
     public constructor() {
         super();
         this.overlay = document.querySelector('gallery-overlay');
@@ -214,7 +221,7 @@ class GalleryPrev extends HTMLElement
 class GalleryNext extends HTMLElement
 {
     private readonly overlay: Gallery | null;
-
+    
     public constructor() {
         super();
         this.overlay = document.querySelector('gallery-overlay');
@@ -250,7 +257,7 @@ class CarouselList extends HTMLElement
     private readonly next: HTMLDivElement | null;
     private readonly previous: HTMLDivElement | null;
     private readonly maxScroll: number = 0;
-
+    
     public constructor()
     {
         super();
