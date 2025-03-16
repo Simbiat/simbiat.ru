@@ -1,6 +1,3 @@
-[submodule "public/assets/images/devicedetector"]
-	path = public/assets/images/devicedetector
-	url = https://github.com/Simbiat/DeviceDetectorIcons
 [submodule "public/assets/images/fftracker/icons"]
 	path = public/assets/images/fftracker/icons
 	url = https://github.com/Simbiat/FFXIV-Icons
