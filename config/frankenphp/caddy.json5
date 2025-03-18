@@ -422,6 +422,7 @@
                                                     "file": {
                                                         "root": "/app",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist",
                                                         "try_files": [
                                                             "/public/static/{http.regexp.oldStatic.1}",
                                                             "/public/{http.regexp.oldStatic.1}"
@@ -450,6 +451,7 @@
                                                     "file": {
                                                         "root": "/app",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
                                                             "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
                                                             "/public/assets/images/fftracker/default-crests/pvp.webp",
@@ -480,6 +482,7 @@
                                                     "file": {
                                                         "root": "/app/public",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
                                                             "/assets/images/fftracker/jobs/{http.request.uri.path.4}",
                                                             "/assets/images/fftracker/jobs/None.webp",
@@ -510,10 +513,10 @@
                                                     "file": {
                                                         "root": "/app",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
                                                             "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
-                                                            "/public/assets/images/avatar.svg",
-                                                            "/public/assets/images/noimage.svg"
+                                                            "/public/assets/images/avatar.svg"
                                                         ]
                                                     }
                                                 }
@@ -540,6 +543,7 @@
                                                     "file": {
                                                         "root": "/app",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
                                                             "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
                                                             "/public/assets/images/noimage.svg"
@@ -569,6 +573,7 @@
                                                     "file": {
                                                         "root": "/app/public",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
                                                             "/assets/images/noimage.svg"
                                                         ]
@@ -597,8 +602,12 @@
                                                     "file": {
                                                         "root": "/app",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
-                                                            "/lib/DDCIcons/src/icons/{http.regexp.DDCIcons.1}",
+                                                            "/lib/DDCIcons/src/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                                            "/lib/DDCIcons/src/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                                                            "/lib/DDCIcons/src/icons/{http.request.uri.path.3}/{http.request.uri.path.4}",
+                                                            "/lib/DDCIcons/src/icons/{http.request.uri.path.3}",
                                                             "/public/assets/images/noimage.svg"
                                                         ]
                                                     }
@@ -614,7 +623,7 @@
                                                                 "/lib/DDCIcons/src/icons/{http.regexp.DDCIcons.1}"
                                                             ],
                                                             "X-File-Path-Check-Alt": [
-                                                                "/lib/DDCIcons/src/icons/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}"
+                                                                "/lib/DDCIcons/src/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}"
                                                             ]
                                                         }
                                                     }
@@ -640,6 +649,7 @@
                                                     "file": {
                                                         "root": "/app/public",
                                                         "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
                                                         "try_files": [
                                                             "{http.request.uri.path}",
                                                             "/assets/images/noimage.svg"
