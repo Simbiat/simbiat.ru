@@ -102,29 +102,8 @@
                                 }
                             ]
                         },
-                        //Coraza WAF
+                        //Coraza provided by Crowdsec
                         {
-                            //PHPMyAdmin gets blocked by WAF without this
-                            //It is fine to disable it, since it's launched from localhost on test only
-                            "match": [
-                                {
-                                    "not": [
-                                        {
-                                            "path": [
-                                                "/dbhelper*"
-                                            ],
-                                            "host": [
-                                                "localhost"
-                                            ],
-                                            "vars": {
-                                                "{env.WEB_SERVER_TEST}": [
-                                                    "true"
-                                                ]
-                                            }
-                                        }
-                                    ]
-                                }
-                            ],
                             "handle": [
                                 {
                                     "handler": "appsec"
@@ -200,23 +179,7 @@
                                                     "path_regexp": {
                                                         "pattern": "^(.+?)/$",
                                                         "name": "noTrailSlash"
-                                                    },
-                                                    //Without this exclusion, PHPMyAdmin on test gets redirect loop
-                                                    "not": [
-                                                        {
-                                                            "path": [
-                                                                "/dbhelper*"
-                                                            ],
-                                                            "host": [
-                                                                "localhost"
-                                                            ],
-                                                            "vars": {
-                                                                "{env.WEB_SERVER_TEST}": [
-                                                                    "true"
-                                                                ]
-                                                            }
-                                                        }
-                                                    ]
+                                                    }
                                                 }
                                             ],
                                             "handle": [
@@ -18136,120 +18099,6 @@
                                                             ]
                                                         }
                                                     }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                //PHPMyAdmin (allowed only on localhost in test environment)
-                                {
-                                    "handler": "subroute",
-                                    "routes": [
-                                        {
-                                            "match": [
-                                                {
-                                                    "path": [
-                                                        "/dbhelper*"
-                                                    ],
-                                                    "host": [
-                                                        "localhost"
-                                                    ],
-                                                    "vars": {
-                                                        "{env.WEB_SERVER_TEST}": [
-                                                            "true"
-                                                        ]
-                                                    }
-                                                }
-                                            ],
-                                            "terminal": true,
-                                            "handle": [
-                                                {
-                                                    "handler": "subroute",
-                                                    "routes": [
-                                                        {
-                                                            "handle": [
-                                                                {
-                                                                    "handler": "vars",
-                                                                    "root": "/app/build"
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "handle": [
-                                                                {
-                                                                    "handler": "static_response",
-                                                                    "headers": {
-                                                                        "Location": [
-                                                                            "{http.request.orig_uri.path}/"
-                                                                        ]
-                                                                    },
-                                                                    "status_code": 308
-                                                                }
-                                                            ],
-                                                            "match": [
-                                                                {
-                                                                    "file": {
-                                                                        "try_files": [
-                                                                            "{http.request.uri.path}/index.php",
-                                                                        ]
-                                                                    },
-                                                                    "not": [
-                                                                        {
-                                                                            "path": [
-                                                                                "*/"
-                                                                            ]
-                                                                        }
-                                                                    ]
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "handle": [
-                                                                {
-                                                                    "handler": "rewrite",
-                                                                    "uri": "{http.matchers.file.relative}"
-                                                                }
-                                                            ],
-                                                            "match": [
-                                                                {
-                                                                    "file": {
-                                                                        "split_path": [
-                                                                            ".php"
-                                                                        ],
-                                                                        "try_files": [
-                                                                            "{http.request.uri.path}",
-                                                                            "{http.request.uri.path}/index.php",
-                                                                            "index.php"
-                                                                        ]
-                                                                    }
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "handle": [
-                                                                {
-                                                                    "handler": "php",
-                                                                    "split_path": [
-                                                                        ".php"
-                                                                    ]
-                                                                }
-                                                            ],
-                                                            "match": [
-                                                                {
-                                                                    "path": [
-                                                                        "*.php"
-                                                                    ]
-                                                                }
-                                                            ]
-                                                        },
-                                                        {
-                                                            "handle": [
-                                                                {
-                                                                    "handler": "file_server"
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
                                                 }
                                             ]
                                         }

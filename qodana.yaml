@@ -23,5 +23,4 @@ exclude:
       - data
       - config
       - build/DDL
-      - build/dbhelper
       - symfony

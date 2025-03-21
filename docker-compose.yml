@@ -11,8 +11,35 @@ networks:
         - subnet: 2001:db8:1::/64
 
 services:
+  phpmyadmin:
+    container_name: phpmyadmin
+    profiles: [ test ]
+    image: phpmyadmin:5.2.2-apache
+    restart: no
+    environment:
+      - PMA_ARBITRARY=1
+      - APACHE_PORT=7476
+    networks:
+      - webserver
+    ports:
+      - "7476:7476"
+    volumes:
+      - ./build/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+      - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
+      - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
+      - ./config/keys:/etc/phpmyadmin/ssl/:ro
+    security_opt:
+      - no-new-privileges=true
+    depends_on:
+      local.simbiat.dev:
+        condition: service_healthy
+    links:
+      - local.simbiat.dev:mysql
+      - local.simbiat.dev:database
+
   geoip:
     container_name: geoip
+    profiles: [ prod, test ]
     build:
       context: ./config/geoip
       dockerfile: Dockerfile
@@ -28,6 +55,7 @@ services:
 
   frankenphp:
     container_name: frankenphp
+    profiles: [ prod, test ]
     build:
       context: ./config/frankenphp
       dockerfile: Dockerfile
@@ -74,6 +102,7 @@ services:
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     container_name: crowdsec
+    profiles: [ prod, test ]
     build:
       context: ./config/crowdsec
       dockerfile: Dockerfile
@@ -134,6 +163,7 @@ services:
 
   local.simbiat.dev:
     container_name: mariadb
+    profiles: [ prod, test ]
     build:
       context: ./config/mysql
       dockerfile: Dockerfile
