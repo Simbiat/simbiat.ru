@@ -40,35 +40,33 @@
     <img loading="lazy" decoding="async" class="navIcon" alt="Read" data-tooltip="Read" src="/assets/images/navigation/talks.svg">
     <h2 id="Read" class="homePage blockTitle">Read</h2>
 </div>
-<div class="homePage showcase">
-    <div class="searchResults">
-        {% for post in posts %}
-            <article class="post hasbanner nouser">
-                <section class="post_header">
-                    {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
-                        <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.threadid }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
-                    {% else %}
-                        <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.threadid }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
-                    {% endif %}
-                </section>
-                {% if post.ogimage %}
-                    <section class="post_banner">
-                        <a href="/talks/threads/{{ post.threadid }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage.ogimage }}"></a>
-                    </section>
+<div class="searchResults">
+    {% for post in posts %}
+        <article class="post hasbanner nouser">
+            <section class="post_header">
+                {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
+                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.threadid }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
+                {% else %}
+                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.threadid }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
                 {% endif %}
-                <section class="post_text">
-                    {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
-                        {{ sanitize(preg_replace(htmlCut(changelog(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
-                    {% else %}
-                        {{ sanitize(preg_replace(htmlCut(nl2p(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
-                    {% endif %}
+            </section>
+            {% if post.ogimage %}
+                <section class="post_banner">
+                    <a href="/talks/threads/{{ post.threadid }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage.ogimage }}"></a>
                 </section>
-                <section class="post_footer">
-                    <div class="post_time_id">
-                        {{ timeTag(post.created, "d/m/Y H:i", "post_time") }}
-                    </div>
-                </section>
-            </article>
-        {% endfor %}
-    </div>
+            {% endif %}
+            <section class="post_text">
+                {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+                    {{ sanitize(preg_replace(htmlCut(changelog(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
+                {% else %}
+                    {{ sanitize(preg_replace(htmlCut(nl2p(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
+                {% endif %}
+            </section>
+            <section class="post_footer">
+                <div class="post_time_id">
+                    {{ timeTag(post.created, "d/m/Y H:i", "post_time") }}
+                </div>
+            </section>
+        </article>
+    {% endfor %}
 </div>
