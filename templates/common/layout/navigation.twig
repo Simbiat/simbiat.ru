@@ -2,22 +2,7 @@
 <ul id="navList">
     <li class="navElement">
         <div class="navLine">
-            {% if serviceName == 'homepage' %}
-                <details class="navCat persistent" open>
-                    <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></summary>
-                    <ul>
-                        <li><a class="navItem" href="#skills" target="_self" itemprop="url"><span itemprop="name">Skills</span></a></li>
-                        <li><a class="navItem" href="#experience" target="_self" itemprop="url"><span itemprop="name">Experience</span></a></li>
-                        <li><a class="navItem" href="#projects" target="_self" itemprop="url"><span itemprop="name">Projects</span></a></li>
-                        <li><a class="navItem" href="#testimonials" target="_self" itemprop="url"><span itemprop="name">Testimonials</span></a></li>
-                        <li><a class="navItem" href="#latestPosts" target="_self" itemprop="url"><span itemprop="name">Posts</span></a></li>
-                        <li><a class="navItem" href="#downloads" target="_self" itemprop="url"><span itemprop="name">Downloads</span></a></li>
-                        <li><a class="navItem" href="#contacts" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
-                    </ul>
-                </details>
-            {% else %}
-                <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" data-tooltip="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></a>
-            {% endif %}
+            <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" data-tooltip="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></a>
         </div>
     </li>
     {% if serviceName != 'homepage' and breadcrumbs and breadcrumbs|length > 1 %}
