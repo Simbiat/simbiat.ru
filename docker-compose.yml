@@ -18,11 +18,10 @@ services:
     restart: no
     environment:
       - PMA_ARBITRARY=1
-      - APACHE_PORT=7476
     networks:
       - webserver
     ports:
-      - "7476:7476"
+      - "7476:80"
     volumes:
       - ./build/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
       - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
@@ -133,8 +132,9 @@ services:
       - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
       - ./config/crowdsec/01-coraza-recommended.conf:/var/lib/crowdsec/data/01-coraza-recommended.conf:ro
       - ./config/crowdsec/02-crs-setup.conf:/var/lib/crowdsec/data/02-crs-setup.conf:ro
-      - ./config/crowdsec/03-exclusions-before-crs.conf:/var/lib/crowdsec/data/03-exclusions-before-crs.conf:ro
-      - ./config/crowdsec/04-exclusions-after-crs.conf:/var/lib/crowdsec/data/04-exclusions-after-crs.conf:ro
+      - ./config/crowdsec/03-custom-blocks.conf:/var/lib/crowdsec/data/03-custom-blocks.conf:ro
+      - ./config/crowdsec/04-exclusions-before-crs.conf:/var/lib/crowdsec/data/04-exclusions-before-crs.conf:ro
+      - ./config/crowdsec/05-exclusions-after-crs.conf:/var/lib/crowdsec/data/05-exclusions-after-crs.conf:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here

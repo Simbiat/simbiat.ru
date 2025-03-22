@@ -3,7 +3,8 @@ description: "Rules based on Coraza recommendations with some customizations"
 seclang_files_rules:
   - 01-coraza-recommended.conf
   - 02-crs-setup.conf
-  - 03-exclusions-before-crs.conf
+  - 03-custom-blocks.conf
+  - 04-exclusions-before-crs.conf
   - /coreruleset/rules/REQUEST-901-INITIALIZATION.conf
   - /coreruleset/rules/REQUEST-905-COMMON-EXCEPTIONS.conf
   - /coreruleset/rules/REQUEST-911-METHOD-ENFORCEMENT.conf
@@ -29,4 +30,4 @@ seclang_files_rules:
   - /coreruleset/rules/RESPONSE-955-WEB-SHELLS.conf
   - /coreruleset/rules/RESPONSE-959-BLOCKING-EVALUATION.conf
   - /coreruleset/rules/RESPONSE-980-CORRELATION.conf
-  - 04-exclusions-after-crs.conf
+  - 05-exclusions-after-crs.conf

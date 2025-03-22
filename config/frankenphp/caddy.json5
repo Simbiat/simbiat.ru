@@ -17988,6 +17988,7 @@
                                             ]
                                         },
                                         //Deny access to certain folders. They should not be in /public, but just as a precaution
+                                        //Some of these folders are legacy, but keeping them also as a precaution
                                         {
                                             "handle": [
                                                 {
@@ -17998,9 +17999,13 @@
                                             "match": [
                                                 {
                                                     "path": [
+                                                        "/bin*",
+                                                        "/build*",
                                                         "/config*",
                                                         "/lib*",
+                                                        "/logs*",
                                                         "/node_modules*",
+                                                        "/templates*",
                                                         "/twig*",
                                                         "/vendor*",
                                                         "/.*",
