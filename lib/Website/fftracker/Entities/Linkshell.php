@@ -65,7 +65,7 @@ class Linkshell extends Entity
     {
         $Lodestone = (new Lodestone());
         $data = $Lodestone->getLinkshellMembers($this->id, 0)->getResult();
-        if (empty($data['linkshells'][$this->id]['server']) || (empty($data['linkshells'][$this->id]['members']) && (int)$data['linkshells'][$this->id]['memberscount'] > 0) || (!empty($data['linkshells'][$this->id]['members']) && \count($data['linkshells'][$this->id]['members']) < (int)$data['linkshells'][$this->id]['memberscount'])) {
+        if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]['server']) || (empty($data['linkshells'][$this->id]['members']) && (int)$data['linkshells'][$this->id]['memberscount'] > 0) || (!empty($data['linkshells'][$this->id]['members']) && \count($data['linkshells'][$this->id]['members']) < (int)$data['linkshells'][$this->id]['memberscount'])) {
             if (!empty($data['linkshells'][$this->id]['members']) && $data['linkshells'][$this->id]['members'] === 404) {
                 $this->delete();
                 return ['404' => true];
