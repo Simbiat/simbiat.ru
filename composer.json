@@ -46,6 +46,7 @@
                 "./lib/AccountKeying/src",
                 "./lib/ArrayHelpers/src",
                 "./lib/CuteBytes/src",
+                "./lib/DDCIcons/src",
                 "./lib/HTMLCache/src",
                 "./lib/HTMLCut/src",
                 "./lib/Lodestone/src",

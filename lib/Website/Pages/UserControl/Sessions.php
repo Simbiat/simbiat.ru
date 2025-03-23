@@ -7,6 +7,7 @@ use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use GeoIp2\Database\Reader;
+use Simbiat\DDCIcons;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
 
@@ -78,12 +79,8 @@ class Sessions extends Page
                 #Get client
                 $outputArray[$type][$key]['client'] = $dd->getClient();
                 #Set OS and client icon if they exist
-                if (is_file(Config::$imgDir.'/devicedetector/client/os/'.$outputArray[$type][$key]['os']['name'].'.webp')) {
-                    $outputArray[$type][$key]['os']['icon'] = '/assets/images/devicedetector/client/os/'.$outputArray[$type][$key]['os']['name'].'.webp';
-                }
-                if (is_file(Config::$imgDir.'/devicedetector/client/'.$outputArray[$type][$key]['client']['type'].'/'.$outputArray[$type][$key]['client']['name'].'.webp')) {
-                    $outputArray[$type][$key]['client']['icon'] = '/assets/images/devicedetector/client/'.$outputArray[$type][$key]['client']['type'].'/'.$outputArray[$type][$key]['client']['name'].'.webp';
-                }
+                $outputArray[$type][$key]['os']['icon'] = DDCIcons::getOS($outputArray[$type][$key]['os']['name'], $outputArray[$type][$key]['os']['family']);
+                $outputArray[$type][$key]['client']['icon'] = DDCIcons::getClient($outputArray[$type][$key]['client']['name'], $outputArray[$type][$key]['client']['type']);
                 #Set country icon, if flag exists
                 if (!empty($outputArray[$type][$key]['country']) && is_file(Config::$imgDir.'/flags/'.$outputArray[$type][$key]['country'].'.svg')) {
                     $outputArray[$type][$key]['countryIcon'] = '/assets/images/flags/'.$outputArray[$type][$key]['country'].'.svg';
