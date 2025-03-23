@@ -10,6 +10,7 @@ use Simbiat\Cron\TaskInstance;
 use Simbiat\Lodestone;
 use Simbiat\Website\Caching;
 use Simbiat\Website\Config;
+use Simbiat\Website\Errors;
 use Simbiat\Website\fftracker\Entities\Achievement;
 use Simbiat\Website\fftracker\Entities\Character;
 use Simbiat\Website\fftracker\Entities\CrossworldLinkshell;
@@ -17,6 +18,7 @@ use Simbiat\Website\fftracker\Entities\FreeCompany;
 use Simbiat\Website\fftracker\Entities\Linkshell;
 use Simbiat\Website\fftracker\Entities\PvPTeam;
 use Simbiat\Website\fftracker\Statistics;
+use Simbiat\Website\usercontrol\Email;
 
 /**
  * Class handling regular tasks for FFXIV tracker
@@ -35,7 +37,9 @@ class FFTracker
             }
             return true;
         } catch (\Throwable $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+            $error = $e->getMessage()."\r\n".$e->getTraceAsString();
+            (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            return $error;
         }
     }
     
@@ -74,8 +78,7 @@ class FFTracker
             $limit = 1;
         }
         try {
-            $dbCon = Config::$dbController;
-            $entities = $dbCon->selectAll('
+            $entities = Config::$dbController->selectAll('
                     SELECT `type`, `id`, `priority`, `updated` FROM (
                         (SELECT \'character\' AS `type`, `characterid` AS `id`, `updated`, IF(`userid` IS NOT NULL AND `deleted` IS NULL AND `privated` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` ORDER BY `priority` DESC, `updated` LIMIT :maxLines OFFSET :offset)
                         UNION ALL
@@ -94,6 +97,7 @@ class FFTracker
                 ]
             );
             foreach ($entities as $entity) {
+                $extraForError = $entity['type'].' ID '.$entity['id'];
                 $result = $this->UpdateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
                     #If we were throttled, means we already slept, and can continue, instead of breaking the whole instance
@@ -107,6 +111,7 @@ class FFTracker
             }
             return true;
         } catch (\Throwable $e) {
+            Errors::error_log($e, $extraForError ?? '');
             return $e->getMessage()."\r\n".$e->getTraceAsString();
         }
     }
@@ -133,7 +138,9 @@ class FFTracker
             }
             return Config::$dbController->query($queries);
         } catch (\Throwable $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+            $error = $e->getMessage()."\r\n".$e->getTraceAsString();
+            (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            return $error;
         }
     }
     
@@ -152,10 +159,12 @@ class FFTracker
             $newMaxId = min($maxId + 100, 4294967295);
             if ($maxId < $newMaxId) {
                 for ($character = $maxId + 1; $character <= $newMaxId; $character++) {
+                    $extraForError = 'character ID '.$character;
                     $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$character, 'character'], 'message' => 'Updating character with ID '.$character])->add();
                 }
             }
         } catch (\Throwable $exception) {
+            Errors::error_log($exception, $extraForError ?? '');
             return $exception->getMessage()."\r\n".$exception->getTraceAsString();
         }
         return true;
@@ -213,6 +222,7 @@ class FFTracker
                                     $data = array_keys($data['linkshells']);
                                     #Iterrate through found items
                                     foreach ($data as $linkshell) {
+                                        $extraForError = 'linkshell ID '.$linkshell;
                                         #Check if Linkshell exists in DB
                                         if (!$dbCon->check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
                                             $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
@@ -235,6 +245,7 @@ class FFTracker
                 }
             }
         } catch (\Throwable $exception) {
+            Errors::error_log($exception, $extraForError ?? '');
             return $exception->getMessage()."\r\n".$exception->getTraceAsString();
         }
         return true;

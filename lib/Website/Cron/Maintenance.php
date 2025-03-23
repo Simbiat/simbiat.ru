@@ -167,7 +167,9 @@ class Maintenance
             $cron->setSetting('enabled', 0);
             (new optimizeTables())->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
         } catch (\Throwable $e) {
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+            $error = $e->getMessage()."\r\n".$e->getTraceAsString();
+            (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            return $error;
         } finally {
             Config::$dbController->query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 1);
