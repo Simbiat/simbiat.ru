@@ -21,7 +21,7 @@ class BICTracker
     public function LibraryUpdate(): bool|string
     {
         $result = (new Library())->update(true);
-        if (\is_string($result) && str_starts_with($result, 'Failed to run query')) {
+        if (\is_string($result) || !is_numeric($result)) {
             #Send email notification, this most likely means some change in UFEBS form
             (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $result], 'Simbiat');
         }
