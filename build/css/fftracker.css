@@ -23,9 +23,6 @@
     flex-basis: 45%;
     padding: 0.1rem;
 }
-.ff_char_block .entityCard {
-    max-width: 45%;
-}
 .ff_char_page .searchResults {
     justify-content: flex-start;
 }

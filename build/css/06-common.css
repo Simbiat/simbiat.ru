@@ -159,7 +159,6 @@ ol.searchResults {
     margin: .2rem;
 }
 .searchResults li .entityCard {
-    width: 80%;
     margin: 0;
 }
 .list-decimal {
@@ -170,7 +169,7 @@ ol.searchResults {
     margin-bottom: 0.5rem;
 }
 .entityCard {
-    width: clamp(30%,50%,13rem);
+    width: 12rem;
     height: 2rem;
     background-color: var(--color-block);
     margin: 0.2rem;
