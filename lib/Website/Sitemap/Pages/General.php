@@ -9,7 +9,7 @@ class General extends StaticPage
 {
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/sitemap/general.xml', 'name'=>'Static pages']
+        ['href' => '/sitemap/general.xml', 'name' => 'Static pages']
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';

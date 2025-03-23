@@ -1,17 +1,16 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Routing;
 
 use Simbiat\About;
-use Simbiat\Website\About\Pages\Homepage;
 use Simbiat\Abstracts;
 use Simbiat\bictracker;
-use Simbiat\Website\Feeds;
 use Simbiat\fftracker;
 use Simbiat\Sitemap;
-use Simbiat\Website\Tests\Router;
 use Simbiat\usercontrol;
-use Simbiat\Website\Routing\Api;
+use Simbiat\Website\Feeds;
+use Simbiat\Website\Pages\About\Homepage;
 
 class MainRouter extends \Simbiat\Website\Abstracts\Router
 {
@@ -36,7 +35,7 @@ class MainRouter extends \Simbiat\Website\Abstracts\Router
     ];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [
-        ['href'=>'/', 'name'=>'Home page'],
+        ['href' => '/', 'name' => 'Home page'],
     ];
 
     /**
@@ -51,20 +50,20 @@ class MainRouter extends \Simbiat\Website\Abstracts\Router
         return match($path[0]) {
             'api' => array_merge(['template_override' => 'common/pages/api.twig'], (new Api)->route(array_slice($path, 1))),
             #Forum/Articles
-            'talks' => (new \Simbiat\Website\Talks\Router())->route(array_slice($path, 1)),
+            'talks' => (new \Simbiat\Website\Routing\Talks())->route(array_slice($path, 1)),
             #Pages routing
-            'about' => (new \Simbiat\Website\About\Router)->route(array_slice($path, 1)),
-            'bictracker' => (new \Simbiat\Website\bictracker\Router)->route(array_slice($path, 1)),
-            'bic' => (new \Simbiat\Website\bictracker\Redirects\Legacy)->get(array_slice($path, 1)),
-            'fftracker' => (new \Simbiat\Website\fftracker\Router)->route(array_slice($path, 1)),
-            'uc' => (new \Simbiat\Website\usercontrol\Router)->route(array_slice($path, 1)),
-            'tests' => (new Router)->route(array_slice($path, 1)),
+            'about' => (new \Simbiat\Website\Routing\About)->route(array_slice($path, 1)),
+            'bictracker' => (new \Simbiat\Website\Routing\BICTracker)->route(array_slice($path, 1)),
+            'bic' => (new \Simbiat\Website\Redirects\BICTracker\Legacy)->get(array_slice($path, 1)),
+            'fftracker' => (new \Simbiat\Website\Routing\FFTracker)->route(array_slice($path, 1)),
+            'uc' => (new \Simbiat\Website\Routing\UserControl)->route(array_slice($path, 1)),
+            'tests' => (new Tests)->route(array_slice($path, 1)),
             #Simple pages
-            'simplepages' => (new \Simbiat\Website\SimplePages\Router)->route(array_slice($path, 1)),
+            'simplepages' => (new \Simbiat\Website\Routing\SimplePages)->route(array_slice($path, 1)),
             #Games
-            'games' => (new \Simbiat\Website\Games\Router)->route(array_slice($path, 1)),
+            'games' => (new \Simbiat\Website\Routing\Games)->route(array_slice($path, 1)),
             #Feeds
-            'sitemap' => (new \Simbiat\Website\Sitemap\Router)->route(array_slice($path, 1)),
+            'sitemap' => (new \Simbiat\Website\Routing\Sitemap)->route(array_slice($path, 1)),
             'rss', 'atom' => (new Feeds)->uriParse($path),
             #Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),

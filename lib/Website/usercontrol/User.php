@@ -3,19 +3,19 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
-use Simbiat\Website\Abstracts\Entity;
 use Simbiat\ArrayHelpers;
+use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
 use Simbiat\Website\Errors;
-use Simbiat\http20\IRI;
 use Simbiat\Website\Images;
 use Simbiat\Website\Sanitization;
+use Simbiat\Website\Search\Posts;
+use Simbiat\Website\Search\Threads;
 use Simbiat\Website\Security;
-use Simbiat\Website\Talks\Search\Posts;
-use Simbiat\Website\Talks\Search\Threads;
-
-use function in_array, is_string, is_array;
+use function in_array;
+use function is_array;
+use function is_string;
 
 /**
  * Main user class

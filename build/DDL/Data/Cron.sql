@@ -79,3 +79,8 @@ INSERT INTO `cron__schedule` (`task`, `arguments`, `instance`, `system`, `freque
 UPDATE `cron__settings` SET `value` = '7' WHERE `cron__settings`.`setting` = 'maxThreads';
 
 UPDATE `cron__settings` SET `value` = '10' WHERE `cron__settings`.`setting` = 'maxThreads';
+
+UPDATE `cron__tasks` SET `object`='\\Simbiat\\Website\\Cron\\Maintenance' WHERE `object`='\\Simbiat\\Website\\Maintenance';
+UPDATE `cron__tasks` SET `object`='\\Simbiat\\Website\\Cron\\Talks' WHERE `object`='\\Simbiat\\Website\\Talks\\Cron';
+UPDATE `cron__tasks` SET `object`='\\Simbiat\\Website\\Cron\\FFTracker' WHERE `object`='\\Simbiat\\Website\\fftracker\\Cron';
+UPDATE `cron__tasks` SET `object`='\\Simbiat\\Website\\Cron\\BICTracker', `function`='LibraryUpdate' WHERE `object`='\\Simbiat\\Website\\bictracker\\Library';

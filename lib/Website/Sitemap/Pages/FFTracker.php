@@ -1,5 +1,6 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Sitemap\Pages;
 
 use Simbiat\Website\Sitemap\Pages\Index;

@@ -1,13 +1,14 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Sitemap;
 
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
+use Simbiat\Website\Routing\Sitemap;
 use Simbiat\Website\Twig\EnvironmentGenerator;
-use Simbiat\Website\Sitemap\Router;
 
 class Generate
 {
@@ -20,7 +21,7 @@ class Generate
             #Set method, since router requires it
             HomePage::$method = 'GET';
             #Cache router
-            $router = (new Router);
+            $router = (new Sitemap);
             #Generate index files
             $index = [];
             $links = [];

@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 use Simbiat\Cron\Agent;
 use Simbiat\Website\Config;
+use Simbiat\Website\Cron\Maintenance;
 use Simbiat\Website\Errors;
-use Simbiat\Website\Maintenance;
 
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';

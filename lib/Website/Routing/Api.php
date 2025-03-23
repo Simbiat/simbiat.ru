@@ -1,12 +1,13 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
+
 namespace Simbiat\Website\Routing;
 
 use Simbiat\Abstracts;
 use Simbiat\bictracker;
 use Simbiat\fftracker;
-use Simbiat\Website\Upload;
 use Simbiat\usercontrol;
+use Simbiat\Website\Upload;
 
 class Api extends \Simbiat\Website\Abstracts\Api
 {
@@ -28,10 +29,10 @@ class Api extends \Simbiat\Website\Abstracts\Api
     protected function genData(array $path): array
     {
         return match($path[0]) {
-            'fftracker' => (new \Simbiat\Website\fftracker\Api)->route(array_slice($path, 1)),
-            'bictracker' => (new \Simbiat\Website\bictracker\Api)->route(array_slice($path, 1)),
-            'uc' => (new \Simbiat\Website\usercontrol\Api)->route(array_slice($path, 1)),
-            'talks' => (new \Simbiat\Website\Talks\Api)->route(array_slice($path, 1)),
+            'fftracker' => (new Api\FFTracker)->route(array_slice($path, 1)),
+            'bictracker' => (new Api\BICTracker)->route(array_slice($path, 1)),
+            'uc' => (new Api\UserControl)->route(array_slice($path, 1)),
+            'talks' => (new Api\Talks)->route(array_slice($path, 1)),
             #Upload does not require any further paths
             'upload' => (new Upload)->route([]),
         };

@@ -24,6 +24,8 @@
             {{ include('mail/nospace.twig') }}
         {% elseif subject == '[Alert]: Database is down' or subject == '[Resolved]: Database is down' %}
             {{ include('mail/dbdown.twig') }}
+        {% elseif subject == '[Alert]: Cron task failed' %}
+            {{ include('mail/cron.twig') }}
         {% endif %}
     </div>
 </div>

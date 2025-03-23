@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '9e474e1c4987ea63445e2eaefed17e4a87acf2df',
+            'reference' => '786548323f3a9452244ddf83672e34c260d6b717',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -232,9 +232,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.7.1',
-            'version' => '7.7.1.0',
-            'reference' => 'c92b29a72c467c07799fd09dc9e0add45cf504a1',
+            'pretty_version' => '7.7.2',
+            'version' => '7.7.2.0',
+            'reference' => '841a2f73ed89df874d5abca7286c344353098f14',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),
