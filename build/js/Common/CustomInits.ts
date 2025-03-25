@@ -60,13 +60,20 @@ function headingInit(heading: HTMLHeadingElement): void
         }
         heading.setAttribute('id', altId);
     }
-    heading.addEventListener('click', (event: Event) => {
+    heading.addEventListener('click', (event: MouseEvent) => {
+        //Get the element under the mouse pointer
+        const elementUnderMouse = document.elementFromPoint(event.clientX, event.clientY);
+        //Check if it's an <a> element
+        if (elementUnderMouse && elementUnderMouse.tagName === "A") {
+            //Cancel this event if we clicked on an anchor, because it can confuse if we get notification about copy, and follow the link right away
+            return;
+        }
         //Checking for selection. If it's present most likely the text in anchor is being selected with intention of copying it.
         //In this case, if we copy the anchor link, we may provide undesired effect (although ctrl+c will most likely fire after this).
         const selection = window.getSelection();
         if (selection && selection.type !== 'Range') {
             //Generate anchor link
-            const link = `${window.location.href.replaceAll(/(?<beforeDies>^[^#]*)(?<afterDies>#.*)?$/gmu, `$<beforeDies>`)}#${(event.target as HTMLHeadingElement).getAttribute('id') ?? ''}`;
+            const link = `${window.location.href.replaceAll(/(?<beforeSharp>^[^#]*)(?<afterSharp>#.*)?$/gmu, `$<beforeSharp>`)}#${(event.target as HTMLHeadingElement).getAttribute('id') ?? ''}`;
             // Copy anchor link to clipboard
             navigator.clipboard.writeText(link).then(() => {
                 addSnackbar(`Anchor link for "${(event.target as HTMLHeadingElement).textContent ?? ''}" copied to clipboard`, 'success');
@@ -125,7 +132,7 @@ function sampInit(samp: HTMLElement): void
         samp.innerHTML = `${samp.innerHTML}<span class="quoteSource">${source}</span>`;
     }
     //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
-    samp.querySelector('.copyQuote')?.addEventListener('click', (event: Event) => { copyQuote(event.target as HTMLElement); });
+    samp.querySelector('.copyQuote')?.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });
 }
 
 function codeInit(code: HTMLElement): void
@@ -143,7 +150,7 @@ function codeInit(code: HTMLElement): void
         code.innerHTML = `${code.innerHTML}<span class="quoteSource">${source}</span>`;
     }
     //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
-    code.querySelector('.copyQuote')?.addEventListener('click', (event: Event) => { copyQuote(event.target as HTMLElement); });
+    code.querySelector('.copyQuote')?.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });
 }
 
 function blockquoteInit(quote: HTMLElement): void
@@ -161,7 +168,7 @@ function blockquoteInit(quote: HTMLElement): void
         quote.innerHTML = `${quote.innerHTML}<span class="quoteSource">${source}</span>`;
     }
     //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
-    quote.querySelector('.copyQuote')?.addEventListener('click', (event: Event) => { copyQuote(event.target as HTMLElement); });
+    quote.querySelector('.copyQuote')?.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });
 }
 
 function qInit(quote: HTMLQuoteElement): void
@@ -169,7 +176,7 @@ function qInit(quote: HTMLQuoteElement): void
     //q tag is inline and a visual button does not suit it, so we add tooltip to it
     quote.setAttribute('data-tooltip', 'Click to copy quote');
     //Add listener
-    quote.addEventListener('click', (event: Event) => { copyQuote(event.target as HTMLElement); });
+    quote.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });
 }
 
 function detailsInit(details: HTMLDetailsElement): void

@@ -15,20 +15,20 @@ export class Emails
             submitIntercept(this.addMailForm, this.add.bind(this));
             //Listener for mail activation buttons
             document.querySelectorAll('.mail_activation').forEach((item) => {
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Emails.activate(event.target as HTMLInputElement);
                 });
             });
             //Listener for mail subscription checkbox
             document.querySelectorAll('[id^=subscription_checkbox_]').forEach((item) => {
                 //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Emails.subscribe(event);
                 });
             });
             //Listener for mail deletion buttons
             document.querySelectorAll('.mail_deletion').forEach((item) => {
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Emails.delete(event.target as HTMLInputElement);
                 });
             });
@@ -83,7 +83,7 @@ export class Emails
                 if (inputElement1) {
                     inputElement1.setAttribute('data-email', email);
                     //Attach listener
-                    inputElement1.addEventListener('click', (event: Event) => {
+                    inputElement1.addEventListener('click', (event: MouseEvent) => {
                         Emails.activate(event.target as HTMLInputElement);
                     });
                 }
@@ -106,7 +106,7 @@ export class Emails
                     inputElement3.setAttribute('alt', String(inputElement3.getAttribute('alt')).
                         replace('email', email));
                     //Attach listener
-                    inputElement3.addEventListener('click', (event: Event) => {
+                    inputElement3.addEventListener('click', (event: MouseEvent) => {
                         Emails.delete(event.target as HTMLInputElement);
                     });
                 }

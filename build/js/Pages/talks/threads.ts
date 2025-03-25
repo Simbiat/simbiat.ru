@@ -34,7 +34,7 @@ export class Threads
         //Listener for `reply to` buttons
         document.querySelectorAll('.replyto_button').forEach((item) => {
             //Tracking click to be able to roll back change easily
-            item.addEventListener('click', (event: Event) => {
+            item.addEventListener('click', (event: MouseEvent) => {
                 this.replyTo(event.target as HTMLInputElement);
             });
         });

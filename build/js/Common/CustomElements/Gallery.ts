@@ -47,7 +47,7 @@ class Gallery extends HTMLElement
         if (this.images.length > 0) {
             //Attach trigger for opening overlay
             this.images.forEach((item, index: number) => {
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     event.preventDefault();
                     event.stopPropagation();
                     this.current = index;
@@ -273,7 +273,7 @@ class CarouselList extends HTMLElement
             });
             //Attach scroll triggers to carousel buttons
             [this.next, this.previous].forEach((item) => {
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     this.toScroll(event);
                 });
             });

@@ -9,13 +9,13 @@ export class EditSessions
         this.sessionButtons = document.querySelectorAll('.session_deletion:not([disabled])');
         //Listener for deletion buttons
         document.querySelectorAll('.cookie_deletion, .session_deletion').forEach((item) => {
-            item.addEventListener('click', (event: Event) => {
+            item.addEventListener('click', (event: MouseEvent) => {
                 EditSessions.delete(event.target as HTMLInputElement);
             });
         });
         //Listener for "Delete all" buttons
         document.querySelectorAll('#delete_cookies, #delete_sessions').forEach((item) => {
-            item.addEventListener('click', (event: Event) => {
+            item.addEventListener('click', (event: MouseEvent) => {
                 this.deleteAll(event.target as HTMLInputElement);
             });
         });

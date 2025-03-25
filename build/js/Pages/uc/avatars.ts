@@ -32,7 +32,7 @@ export class EditAvatars
         });
         //Listen to avatar deletion
         document.querySelectorAll('input[id^="del_"]').forEach((item) => {
-            item.addEventListener('click', (event: Event) => {
+            item.addEventListener('click', (event: MouseEvent) => {
                 this.delete(event.target as HTMLInputElement);
             });
         });
@@ -146,7 +146,7 @@ export class EditAvatars
             }
             if (inputs[1]) {
                 inputs[1].id = inputs[1].id.replace('hash', hash);
-                inputs[1].addEventListener('click', (event: Event) => {
+                inputs[1].addEventListener('click', (event: MouseEvent) => {
                     this.delete(event.target as HTMLInputElement);
                 });
             }

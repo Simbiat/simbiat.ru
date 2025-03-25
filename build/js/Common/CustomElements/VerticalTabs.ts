@@ -12,7 +12,7 @@ class VerticalTabs extends HTMLElement
         this.contents = Array.from(this.querySelectorAll('tab-content'));
         //Attach listener to tabs
         this.tabs.forEach((item) => {
-            item.addEventListener('click', (event) => {
+            item.addEventListener('click', (event: MouseEvent) => {
                 this.tabSwitch(event.target as HTMLSpanElement);
             });
         });

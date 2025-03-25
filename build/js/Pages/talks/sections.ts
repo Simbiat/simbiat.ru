@@ -31,14 +31,14 @@ export class Sections
             //Listener for marking sections private/public
             document.querySelectorAll('.section_private[id^=section_private_checkbox_]').forEach((item) => {
                 //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Sections.makeSectionPrivate(event);
                 });
             });
             //Listener for opening/closing sections
             document.querySelectorAll('.section_closed[id^=section_closed_checkbox_]').forEach((item) => {
                 //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Sections.closeSection(event);
                 });
             });
@@ -55,14 +55,14 @@ export class Sections
             //Listener for marking threads private/public
             document.querySelectorAll('.thread_private[id^=thread_private_checkbox_]').forEach((item) => {
                 //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Sections.makeThreadPrivate(event);
                 });
             });
             //Listener for (un)pinning threads
             document.querySelectorAll('.thread_pin[id^=thread_pin_checkbox_]').forEach((item) => {
                 //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: Event) => {
+                item.addEventListener('click', (event: MouseEvent) => {
                     Sections.pinThread(event);
                 });
             });
