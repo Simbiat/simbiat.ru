@@ -133,8 +133,6 @@ dist
 #/.idea/webResources.xml
 #/.idea/
 
-# PHP My Admin config
-/build/phpmyadmin/config.inc.php
 # DDLs for PHP My Admin
 /build/DDL/pma__*.sql
 # File to store SQL changes yet to be applied to PROD

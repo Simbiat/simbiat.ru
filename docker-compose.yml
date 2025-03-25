@@ -13,20 +13,32 @@ networks:
 services:
   phpmyadmin:
     container_name: phpmyadmin
-    profiles: [ test ]
+    profiles: [ management ]
     image: phpmyadmin:5.2.2-apache
     restart: no
     environment:
-      - PMA_ARBITRARY=1
+      PMA_ARBITRARY: 0
+      PMA_HOST: ${DATABASE_HOST}
+      PMA_PORT: ${MARIADB_PORT}
+      PMA_USER: ${DATABASE_USER}
+      PMA_PASSWORD: ${DATABASE_PASSWORD}
+      PMA_PMADB: ${DATABASE_NAME}
+      PMA_SSL: 1
+      PMA_SSL_VERIFY: 1
+      PMA_SSL_CA: ${DATABASE_TLS_CA}
+      PMA_SSL_CERT: ${DATABASE_TLS_CRT}
+      PMA_SSL_KEY: ${DATABASE_TLS_KEY}
+      PMA_UPLOADDIR: /etc/phpmyadmin/upload
+      PMA_SAVEDIR: /etc/phpmyadmin/save
     networks:
       - webserver
     ports:
       - "7476:80"
     volumes:
-      - ./build/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+      - ./config/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
       - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
       - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
-      - ./config/keys:/etc/phpmyadmin/ssl/:ro
+      - ./config/keys:/app/config/keys:ro
     security_opt:
       - no-new-privileges=true
     depends_on:
@@ -38,7 +50,7 @@ services:
 
   geoip:
     container_name: geoip
-    profiles: [ prod, test ]
+    profiles: [ website ]
     build:
       context: ./config/geoip
       dockerfile: Dockerfile
@@ -54,7 +66,7 @@ services:
 
   frankenphp:
     container_name: frankenphp
-    profiles: [ prod, test ]
+    profiles: [ website ]
     build:
       context: ./config/frankenphp
       dockerfile: Dockerfile
@@ -101,7 +113,7 @@ services:
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     container_name: crowdsec
-    profiles: [ prod, test ]
+    profiles: [ website ]
     build:
       context: ./config/crowdsec
       dockerfile: Dockerfile
@@ -163,7 +175,7 @@ services:
 
   local.simbiat.dev:
     container_name: mariadb
-    profiles: [ prod, test ]
+    profiles: [ website, management ]
     build:
       context: ./config/mysql
       dockerfile: Dockerfile
