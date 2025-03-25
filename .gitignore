@@ -148,13 +148,11 @@ dist
 /config/Installers
 #Environment variables should not be included
 /.env
-/.prod.env
 #Some security settings for MySQL
 /config/mysql/security.cnf
-/config/mysql/security.cnf.prod
 #Temporary folder for reference
 /symfony
-#For some reason composer this .htaccess
+#For some reason composer creates this .htaccess
 /config/caddy/composer/.htaccess
 #CrowdSec credentials
 /config/crowdsec/yaml/online_api_credentials.yaml

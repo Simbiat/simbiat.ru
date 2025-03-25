@@ -1,9 +1,0 @@
-[client]
-user=
-password=
-host=localhost
-
-[mysqld]
-ssl_ca=
-ssl_cert=
-ssl_key=
