@@ -36,7 +36,7 @@
     flex-grow: 1;
     text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: normal;
     text-decoration: none!important;
 }
 .section_description {
@@ -47,27 +47,39 @@
     width: 2rem;
     padding: 0.5rem;
 }
-#sections_list tr td:nth-child(3),
-#sections_list tr td:nth-child(4),
 #sections_list tr td:nth-child(9),
 #sections_list tr td:nth-child(10) {
-    width: 4rem;
+    width: clamp(2rem, 3rem, 4rem);
+    text-align: center;
+}
+#sections_list tr td:nth-child(3) {
+    min-width: 1rem;
+    max-width: 4rem;
+    text-align: center;
+}
+#sections_list tr td:nth-child(4) {
+    min-width: 1rem;
+    max-width: 3rem;
     text-align: center;
 }
 #sections_list tr td:nth-child(7),
 #sections_list tr td:nth-child(8) {
-    width: 5rem;
+    min-width: 1rem;
+    max-width: 5rem;
     text-align: center;
 }
 #sections_list tr td:nth-child(5) {
-    width: clamp(1rem,2rem,3rem);
+    width: clamp(1rem, 2rem, 3rem);
     text-align: center;
 }
 #sections_list tr td:nth-child(6) {
-    width: 5rem;
+    width: 4rem;
     text-align: center;
 }
 
+#sections_list .radio_and_label {
+    white-space: normal;
+}
 
 .thread_name {
     padding-left: 0.5rem;
@@ -81,10 +93,15 @@
 #threads_list,
 #sections_list {
     margin-bottom: 1rem;
+    table-layout: auto;
+}
+#threads_list tr td:nth-child(1) {
+    width: auto;
 }
 #threads_list tr td:nth-child(2),
 #threads_list tr td:nth-child(3) {
-    width: 7rem;
+    min-width: 4rem;
+    max-width: 7rem;
     text-align: center;
 }
 #threads_list tbody tr td:nth-child(2),
@@ -92,23 +109,27 @@
     font-size: small;
 }
 #threads_list tr td:nth-child(4) {
-    width: 4rem;
+    width: 3rem;
     text-align: center;
 }
 #threads_list tr td:nth-child(5) {
-    width: clamp(1rem, 2rem, 3rem);
+    width: 2rem;
     text-align: center;
 }
 #threads_list tr td:nth-child(6),
 #threads_list tr td:nth-child(7) {
-    width: 7rem;
+    min-width: 1rem;
+    max-width: 7rem;
     text-align: center;
+}
+
+#threads_list .radio_and_label {
+    white-space: normal;
 }
 
 /*Styling posts*/
 .post {
     display: grid;
-    width: 100%;
     padding: 0;
     gap: var(--grid-gap);
     align-items: start;
@@ -140,7 +161,7 @@
     margin-top: 0.25rem;
     text-overflow: ellipsis;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: normal;
 }
 .post_name a {
     /*For cleaner look and to suppress data-tooltip styling*/
