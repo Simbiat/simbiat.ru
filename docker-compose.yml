@@ -203,7 +203,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    #We want to generate keys automatically, and it is also a good idea to regenerate them on each restart
     #We need to ensure that buffer pool file exists, too
     #We need to register cron tasks and start cron service before the endpoint
     command: >
