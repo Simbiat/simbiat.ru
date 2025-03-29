@@ -41,11 +41,11 @@ services:
     security_opt:
       - no-new-privileges=true
     depends_on:
-      local.simbiat.dev:
+      mariadb:
         condition: service_healthy
     links:
-      - local.simbiat.dev:mysql
-      - local.simbiat.dev:database
+      - mariadb:mysql
+      - mariadb:database
 
   geoip:
     container_name: geoip
@@ -94,11 +94,11 @@ services:
         condition: service_started
       crowdsec:
         condition: service_healthy
-      local.simbiat.dev:
+      mariadb:
         condition: service_healthy
     links:
-      - local.simbiat.dev:mysql
-      - local.simbiat.dev:database
+      - mariadb:mysql
+      - mariadb:database
     #We need to register cron task and start cron service before the endpoint
     command: >
       /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
@@ -156,7 +156,7 @@ services:
     depends_on:
       geoip:
         condition: service_started
-      local.simbiat.dev:
+      mariadb:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "cscli", "lapi", "status" ]
@@ -175,7 +175,7 @@ services:
                   mkdir -p /etc/periodic/daily/ &&
                   /bin/bash /docker_start.sh"
 
-  local.simbiat.dev:
+  mariadb:
     container_name: mariadb
     build:
       context: ./config/mysql
