@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/PSDs/FFXIV" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/data/crowdsec/coreruleset (# Name clash 2025-03-29 7umz82C #)" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/AccountKeying" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/ArrayHelpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Cron" vcs="Git" />

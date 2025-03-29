@@ -93,8 +93,7 @@ final class Config
         $dotenv = Dotenv::createImmutable(self::$workDir, '.env');
         $dotenv->load();
         #Database settings
-        $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_HOST', 'DATABASE_TLS_CA', 'DATABASE_TLS_KEY', 'DATABASE_TLS_CRT'])->notEmpty();
-        $dotenv->required('MARIADB_PORT')->isInteger();
+        $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_SOCKET'])->notEmpty();
         #Other settings
         $dotenv->required(['WEB_SERVER_TEST', 'SENDGRID_API_KEY', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
         self::$PROD = ($_ENV['WEB_SERVER_TEST'] === 'false');
@@ -204,7 +203,7 @@ final class Config
             try {
                 Pool::openConnection(
                     new \Simbiat\Database\Config()
-                        ->setHost($_ENV['DATABASE_HOST'], (int)$_ENV['MARIADB_PORT'])
+                        ->setHost(socket: $_ENV['DATABASE_SOCKET'])
                         ->setUser($_ENV['DATABASE_USER'])
                         ->setPassword($_ENV['DATABASE_PASSWORD'])
                         ->setDB($_ENV['DATABASE_NAME'])
@@ -216,11 +215,7 @@ final class Config
                                                                                     SESSION character_set_results = \'utf8mb4\',
                                                                                     SESSION character_set_server = \'utf8mb4\',
                                                                                     SESSION time_zone=\'+00:00\';')
-                        ->setOption(\PDO::ATTR_TIMEOUT, 1)
-                        ->setOption(\PDO::MYSQL_ATTR_SSL_CA, $_ENV['DATABASE_TLS_CA'])
-                        ->setOption(\PDO::MYSQL_ATTR_SSL_CERT, $_ENV['DATABASE_TLS_CRT'])
-                        ->setOption(\PDO::MYSQL_ATTR_SSL_KEY, $_ENV['DATABASE_TLS_KEY'])
-                        ->setOption(\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT, true), maxTries: 5);
+                        ->setOption(\PDO::ATTR_TIMEOUT, 1), maxTries: 5);
                 self::$dbup = true;
                 #Cache controller
                 self::$dbController = new Controller();

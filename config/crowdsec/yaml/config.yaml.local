@@ -1,11 +1,12 @@
 common:
   daemonize: true
   log_media: file
-  log_level: warning
+  log_level: error
   log_dir: /usr/local/logs/
-  log_max_size: 10
+  log_max_size: 1
   log_max_age: 14
-  log_max_files: 21
+  log_max_files: 30
+  compress_logs: true
 config_paths:
   config_dir: /etc/crowdsec/
   data_dir: /var/lib/crowdsec/data/
@@ -24,19 +25,31 @@ plugin_config:
 cscli:
   output: human
 db_config:
-  log_level: warning
-  type: sqlite
-  db_path: /var/lib/crowdsec/data/crowdsec.db
+  log_level: error
+  db_path: ${DATABASE_SOCKET}
+  type: mysql
+  user: crowdsec
+  password: ${DATABASE_PASSWORD}
+  db_name: crowdsec
+  max_open_conns: 100
+  decision_bulk_size: 1000
   flush:
-    max_items: 5000
-    max_age: 7d
+    max_items: 10000
+    max_age: 30d
+    #metrics_max_age: 365d
+    bouncers_autodelete:
+      cert: 30d
+      api_key: 30d
+    agents_autodelete:
+      cert: 30d
+      login_password: 30d
   use_wal: true
 api:
   client:
     insecure_skip_verify: false
     credentials_path: /etc/crowdsec/local_api_credentials.yaml
   server:
-    log_level: warning
+    log_level: error
     listen_uri: 0.0.0.0:8080
     profiles_path: /etc/crowdsec/profiles.yaml
     trusted_ips: # IP ranges, or IPs which can have admin API access
@@ -46,6 +59,10 @@ api:
       - 2001:db8:1::/64
     online_client: # Central API credentials (to push signals and receive bad IPs)
       credentials_path: /etc/crowdsec/online_api_credentials.yaml
+      sharing: true
+      pull:
+        community: true
+        blocklists: true
     enable: true
 prometheus:
   enabled: true
