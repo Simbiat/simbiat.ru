@@ -20,6 +20,7 @@
 </section>
 <section>
     {% if serviceName == 'bictracker' %}
+        <p class="relative warning">Начиная с апреля 2025ого года ЦБ использует DDoS-Guard, который блокирует запросы с сервера в большинстве случаев, судя по всему, по IP, так как на тесте проблем нет вовсе. Обновления библиотеки больше не гарантируются.</p>
         <p class="relative">Библиотека обновлена {{ timeTag(bicDate, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/assets/images/refresh.svg"></p>
     {% endif %}
     {% for type, subResult in searchResult %}

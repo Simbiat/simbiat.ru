@@ -21,7 +21,8 @@ class BICTracker
     public function LibraryUpdate(): bool|string
     {
         $result = (new Library())->update(true);
-        if (\is_string($result) && !is_numeric($result)) {
+        #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
+        if (\is_string($result) && !is_numeric($result) && $result !== 'Не удалось скачать файл') {
             #Send email notification, this most likely means some change in UFEBS form
             (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $result], 'Simbiat');
         }
