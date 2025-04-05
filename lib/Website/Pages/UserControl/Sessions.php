@@ -79,8 +79,12 @@ class Sessions extends Page
                 #Get client
                 $outputArray[$type][$key]['client'] = $dd->getClient();
                 #Set OS and client icon if they exist
-                $outputArray[$type][$key]['os']['icon'] = DDCIcons::getOS($outputArray[$type][$key]['os']['name'], $outputArray[$type][$key]['os']['family']);
-                $outputArray[$type][$key]['client']['icon'] = DDCIcons::getClient($outputArray[$type][$key]['client']['name'], $outputArray[$type][$key]['client']['type']);
+                if (!empty($outputArray[$type][$key]['os'])) {
+                    $outputArray[$type][$key]['os']['icon'] = DDCIcons::getOS($outputArray[$type][$key]['os']['name'], $outputArray[$type][$key]['os']['family']);
+                }
+                if (!empty($outputArray[$type][$key]['client'])) {
+                    $outputArray[$type][$key]['client']['icon'] = DDCIcons::getClient($outputArray[$type][$key]['client']['name'], $outputArray[$type][$key]['client']['type']);
+                }
                 #Set country icon, if flag exists
                 if (!empty($outputArray[$type][$key]['country']) && is_file(Config::$imgDir.'/flags/'.$outputArray[$type][$key]['country'].'.svg')) {
                     $outputArray[$type][$key]['countryIcon'] = '/assets/images/flags/'.$outputArray[$type][$key]['country'].'.svg';
