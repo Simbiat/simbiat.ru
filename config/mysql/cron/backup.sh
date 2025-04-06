@@ -5,7 +5,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   logFile=/usr/local/logs/backup-$currentDate.log
   physBackup=/usr/local/backups/physical
   logicBackup=/usr/local/backups
-  tablesOrder=$(cat /usr/local/DDL/00-recommended_table_order.txt)
+  tablesOrder=$(cat /usr/local/DDL/000-recommended_table_order.txt)
   logicalName="daily"
   if [ "$(date +%u)" -eq 1 ]; then
       logicalName="weekly"

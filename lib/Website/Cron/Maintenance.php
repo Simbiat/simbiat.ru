@@ -138,16 +138,18 @@ class Maintenance
         $dumpOrder = '';
         try {
             #Get tables in order
-            $tables = Config::$dbController->showOrderedTables($_ENV['DATABASE_NAME']);
-            foreach ($tables as $table) {
+            foreach (Config::$dbController->showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
                 #Get DDL statement
-                Config::$dbController->showCreateTable($table['schema'], $table['table']);
+                $create = Config::$dbController->showCreateTable($table['schema'], $table['table'], ifNotExist: true);
+                if ($create === null) {
+                    throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
+                }
                 #Get DDL statement
-                file_put_contents(Config::$DDLDir.'/'.$table['table'].'.sql', trim(Config::$dbController->showCreateTable($table['schema'], $table['table'])));
+                file_put_contents(Config::$DDLDir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', trim($create));
                 #Add item to file with dump order
                 $dumpOrder .= $table['table'].' ';
             }
-            file_put_contents(Config::$DDLDir.'/00-recommended_table_order.txt', $dumpOrder);
+            file_put_contents(Config::$DDLDir.'/000-recommended_table_order.txt', $dumpOrder);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return $e->getMessage();

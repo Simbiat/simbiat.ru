@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS `ffxiv__linkshell` (
+  `linkshellid` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Linkshell ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/linkshell/linkshellid/ or https://eu.finalfantasyxiv.com/lodestone/crossworld_linkshell/linkshellid/)',
+  `name` varchar(50) NOT NULL COMMENT 'Linkshell name',
+  `serverid` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of the server Linkshell resides on',
+  `crossworld` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating whether linkshell is crossworld',
+  `formed` date DEFAULT NULL COMMENT 'Linkshell formation day as seen on Lodestone',
+  `registered` date NOT NULL DEFAULT current_timestamp() COMMENT 'When Linkshsell was initially added to tracker',
+  `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When Linkshsell was last updated on the tracker',
+  `deleted` date DEFAULT NULL COMMENT 'Date when Linkshell was marked as deleted',
+  `communityid` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Community ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/community_finder/communityid/)',
+  PRIMARY KEY (`linkshellid`) USING BTREE,
+  KEY `serverid_ls` (`serverid`),
+  KEY `registered` (`registered`),
+  KEY `deleted` (`deleted`),
+  KEY `crossworld` (`crossworld`),
+  KEY `communityid` (`communityid`),
+  KEY `name_order` (`name`),
+  KEY `updated` (`updated` DESC),
+  FULLTEXT KEY `name` (`name`),
+  CONSTRAINT `serverid_ls` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Linkshells (both crossworld and not) found on Lodestone' `PAGE_COMPRESSED`='ON';

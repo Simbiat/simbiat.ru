@@ -1,0 +1,18 @@
+/*Changes related to admin user
+  Stored in separate file due to sensitive information (password).
+  Named in a way to be processed by MariaDB as the very last file.
+  Below is just an example.
+*/
+INSERT INTO `uc__users` (`userid`, `username`, `password`, `strikes`, `pw_reset`, `api_key`, `ff_token`)
+VALUES (4, 'Admin', 'password', 0, NULL, NULL, 'token');
+
+INSERT INTO `uc__emails` (`email`, `userid`, `subscribed`, `activation`)
+VALUES ('admin@example.com', 4, 1, NULL);
+
+INSERT INTO `uc__user_to_group` (`userid`, `groupid`)
+VALUES (4, 1),
+       (4, 3),
+       (4, 6);
+
+INSERT INTO `uc__user_to_section` (`userid`, `blog`, `knowledgebase`, `changelog`)
+VALUES (4, 6, 8, 7);

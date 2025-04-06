@@ -133,8 +133,9 @@ dist
 #/.idea/webResources.xml
 #/.idea/
 
-# DDLs for PHP My Admin
-/build/DDL/pma__*.sql
+#Some DDL files should be ignores due to sensetive data
+/build/DDL/000-create_users.sql
+/build/DDL/999-Z-Admin.sql
 # File to store SQL changes yet to be applied to PROD
 /build/toupdateonprod.sql
 #Logs

@@ -46,6 +46,11 @@ services:
     links:
       - mariadb:mysql
       - mariadb:database
+    #Before starting the container it's better to clear the session files, because it looks like otherwise the service can pick-up older settings (unless manually clearing session data)
+    #This is also important, in case something happens to the phpMyAdmin database/tables and they got removed, because otherwise it will keep showing error without allowing to fix it directly through UI
+    command: >
+      /bin/sh -c "rm -f -r /sessions/* &
+                  /docker-entrypoint.sh apache2-foreground"
 
   geoip:
     container_name: geoip
@@ -99,9 +104,9 @@ services:
     links:
       - mariadb:mysql
       - mariadb:database
-    #We need to register cron task and start cron service before the endpoint
     command: >
       /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
+                  #We need to register cron task and start cron service before the endpoint
                   cp /usr/local/php/config/cron/php.cron /etc/cron.d/php.cron &&
                   chmod 0644 /etc/cron.d/php.cron &&
                   crontab /etc/cron.d/php.cron &&
@@ -166,11 +171,12 @@ services:
       retries: 3
     #Override image's entrypoint to execute custom command
     entrypoint: ''
-    #We clone latest configs from coreruleset, since those packed with CrowdSec are very old. We also want to remove .git files due to https://youtrack.jetbrains.com/issue/WI-80162/Auto-adds-a-git-repo-from-ignored-directory which just annoys me
     command: >
       /bin/sh -c "rm -r -f /var/lib/crowdsec/data/coreruleset &&
                   mkdir -p /var/lib/crowdsec/data/coreruleset &&
-                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.12.0 &&
+                  #We clone latest configs from coreruleset, since those packed with CrowdSec are very old
+                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.13.0 &&
+                  #We also want to remove .git files due to https://youtrack.jetbrains.com/issue/WI-80162/Auto-adds-a-git-repo-from-ignored-directory which just annoys me
                   rm -r -f /var/lib/crowdsec/data/coreruleset/.git* &&
                   mkdir -p /etc/periodic/daily/ &&
                   /bin/bash /docker_start.sh"
@@ -178,8 +184,8 @@ services:
   mariadb:
     container_name: mariadb
     build:
-      context: ./config/mysql
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: config/mysql/Dockerfile
     restart: unless-stopped
     environment:
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}
@@ -188,6 +194,8 @@ services:
       MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
     networks:
       - webserver
+    ports:
+      - "3306:3306"
     volumes:
       - mariadb_socket:/run/mysqld/:rw
       - ${MARIADB_DATA_DIR}:/var/lib/mysql:rw
@@ -203,12 +211,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-    #We need to ensure that buffer pool file exists, too
-    #We need to register cron tasks and start cron service before the endpoint
     command: >
       /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
+                  #We need to ensure that buffer pool file exists
                   touch /var/lib/mysql/ib_buffer_pool &&
                   chown mysql:mysql /var/lib/mysql/ib_buffer_pool &&
+                  #We need to register cron tasks and start cron service before the endpoint
                   cp /etc/mysql/conf.d/cron/mariadb.cron /etc/cron.d/mariadb.cron &&
                   chmod 0644 /etc/cron.d/mariadb.cron &&
                   crontab /etc/cron.d/mariadb.cron &&
