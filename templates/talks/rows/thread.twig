@@ -7,7 +7,7 @@
                 {% if thread.closed %}<span data-tooltip="Closed thread">🔒</span>{% endif %}
                 {% if thread.private %}<span data-tooltip="Private thread">🚷</span>{% endif %}
             </div>
-            <a href="/talks/threads/{{ thread.id }}"{% if thread.detailedType != 'Changelog' or is_numeric(thread.name) == false %} data-tooltip="{{ thread.name }}"{% endif %}>{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
+            <a href="/talks/threads/{{ thread.id }}"{% if thread.detailedType != 'Changelog' or is_numeric(thread.name) == false %}"{% endif %}>{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
         </div>
     </td>
     <td>{{ timeTag(thread.created, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.createdby }}/{{ prettyURL(thread.createdby_name) }}">{{ thread.createdby_name }}</a></td>
