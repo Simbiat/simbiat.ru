@@ -3,6 +3,7 @@
   Named in a way to be processed by MariaDB as the very last file.
   Below is just an example.
 */
+USE `simbiatr_simbiat`;
 INSERT INTO `uc__users` (`userid`, `username`, `password`, `strikes`, `pw_reset`, `api_key`, `ff_token`)
 VALUES (4, 'Admin', 'password', 0, NULL, NULL, 'token');
 

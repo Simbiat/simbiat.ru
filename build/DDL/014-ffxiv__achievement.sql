@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__achievement` (
   `achievementid` smallint(5) unsigned NOT NULL COMMENT 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Name of achievement',

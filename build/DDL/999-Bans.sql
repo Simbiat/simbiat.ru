@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 /*Initial bans*/
 INSERT IGNORE INTO `ban__names` (`name`, `added`, `reason`) VALUES
 ('Administrator', '2021-05-04 21:00:00', NULL),

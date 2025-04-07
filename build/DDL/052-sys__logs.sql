@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `sys__logs` (
   `time` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When action occurred',
   `type` tinyint(2) unsigned NOT NULL COMMENT 'Type of the action',

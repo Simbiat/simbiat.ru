@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__clan` (
   `clanid` tinyint(2) unsigned NOT NULL COMMENT 'Clan ID based on filters taken from Lodestone',
   `clan` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Clan name',

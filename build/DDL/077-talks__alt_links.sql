@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__alt_links` (
   `threadid` int(10) unsigned NOT NULL COMMENT 'Thread ID, to which link relates to',
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Respective alternative URL',

@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `cron__log` (
   `time` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'Time the error occurred',
   `type` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_nopad_ci NOT NULL DEFAULT 'Status' COMMENT 'Event type',

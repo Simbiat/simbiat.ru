@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__thread_to_tags` (
   `threadid` int(10) unsigned NOT NULL COMMENT 'Thread ID',
   `tagid` int(10) unsigned NOT NULL COMMENT 'Tag ID',

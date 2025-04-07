@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `bic__list` (
   `BIC` int(9) unsigned zerofill NOT NULL COMMENT 'Банковский идентификационный код (БИК)',
   `DateIn` date DEFAULT current_timestamp() COMMENT 'Дата включения в состав участников перевода',

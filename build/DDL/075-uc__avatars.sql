@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `uc__avatars` (
   `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',
   `fileid` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'File hash, which is also its ID. Also used as file name on file system.',

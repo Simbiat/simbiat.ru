@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__posts_history` (
   `postid` int(10) unsigned NOT NULL COMMENT 'Post ID',
   `time` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'Time of the change',

@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `cron__event_types` (
   `type` varchar(30) NOT NULL COMMENT 'Type of the event',
   `description` varchar(100) NOT NULL COMMENT 'Description of the event',

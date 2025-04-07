@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__freecompany_rank` (
   `freecompanyid` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Free Company ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/freecompany/freecompanyid/)',
   `rankid` tinyint(2) unsigned NOT NULL COMMENT 'ID calculated based on rank icon on Lodestone',

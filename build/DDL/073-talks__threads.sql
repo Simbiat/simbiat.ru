@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__threads` (
   `threadid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Thread ID',
   `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Thread name',

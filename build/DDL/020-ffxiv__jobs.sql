@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__jobs` (
   `jobid` tinyint(3) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Job ID',
   `name` varchar(20) NOT NULL COMMENT 'Job name',

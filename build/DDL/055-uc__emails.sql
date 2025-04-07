@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `uc__emails` (
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'Email address',
   `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',

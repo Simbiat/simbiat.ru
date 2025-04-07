@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `uc__users` (
   `userid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'User ID',
   `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'User''s username/login',

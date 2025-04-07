@@ -1,4 +1,6 @@
-INSERT IGNORE INTO `sys__languages` (`tag`, `name`) VALUES
+USE `simbiatr_simbiat`;
+SET FOREIGN_KEY_CHECKS = 0;
+INSERT INTO `sys__languages` (`tag`, `name`) VALUES
 ('af', 'Afrikaans'),
 ('af-ZA', 'Afrikaans (South Africa)'),
 ('sq', 'Albanian'),
@@ -232,7 +234,7 @@ INSERT IGNORE INTO `sys__languages` (`tag`, `name`) VALUES
 ('zu', 'Zulu'),
 ('zu-ZA', 'Zulu (South Africa)');
 
-INSERT IGNORE INTO `sys__log_types` (`typeid`, `name`) VALUES
+INSERT INTO `sys__log_types` (`typeid`, `name`) VALUES
 (11, 'Avatar'),
 (3, 'Ban'),
 (5, 'BIC Tracker'),
@@ -246,13 +248,13 @@ INSERT IGNORE INTO `sys__log_types` (`typeid`, `name`) VALUES
 (6, 'User details change'),
 (12, 'User removal');
 
-INSERT IGNORE INTO `sys__settings` (`setting`, `value`, `description`) VALUES
+INSERT INTO `sys__settings` (`setting`, `value`, `description`) VALUES
 ('maintenance', '0', 'Sets the site under maintenance if set to 1, forcing to show appropriate error messages.'),
 ('ogdesc', 'Website of Simbiat Software providing services like Final Fantasy XIV Free Company Tracker and BIC Library.', 'General description of the website for meta-tags'),
 ('registration', '1', 'Flag determining whether registration of new users is open or not.'),
 ('site_name', 'Simbiat Software', 'General name of the website for \"title\" and meta-tags');
 
-INSERT IGNORE INTO `talks__alt_link_types` (`type`, `icon`, `regex`) VALUES
+INSERT INTO `talks__alt_link_types` (`type`, `icon`, `regex`) VALUES
 ('Facebook', '/img/social/facebook.svg', '(facebook\\.com|fb\\.(com|gg|me|watch)|metacareers\\.com|fbwat\\.ch)'),
 ('IMDB', '/img/social/imdb.svg', 'imdb\\.com'),
 ('Instagram', '/img/social/instagram.svg', '(instagram\\.com|ig\\.me)'),
@@ -264,7 +266,7 @@ INSERT IGNORE INTO `talks__alt_link_types` (`type`, `icon`, `regex`) VALUES
 ('VK', '/img/social/VK.svg', 'vk\\.(com|ru)'),
 ('YouTube', '/img/social/youtube.svg', '((yt|youtu)\\.be|youtube\\.com)');
 
-INSERT IGNORE INTO `talks__types` (`typeid`, `type`, `description`, `icon`) VALUES
+INSERT INTO `talks__types` (`typeid`, `type`, `description`, `icon`) VALUES
 (1, 'Category', 'Section that is used only for grouping', '/img/talks/category.svg'),
 (2, 'Blog', 'Threads created in this section will be styled as blogs', '/img/talks/blog.svg'),
 (3, 'Forum', 'Threads created in this section will be styled as forum', '/img/talks/forum.svg'),
@@ -272,12 +274,12 @@ INSERT IGNORE INTO `talks__types` (`typeid`, `type`, `description`, `icon`) VALU
 (5, 'Support', 'Threads in this section are by default limited for access to creator and support group(s)', '/img/talks/support.svg'),
 (6, 'Knowledgebase', 'Threads in this section are meant as knowledge-shares or FAQs', '/img/talks/knowledgebase.svg');
 
-INSERT IGNORE INTO `uc__users` (`userid`, `username`, `phone`, `password`, `strikes`, `pw_reset`, `api_key`, `ff_token`, `registered`, `updated`, `parentid`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`) VALUES
+INSERT INTO `uc__users` (`userid`, `username`, `phone`, `password`, `strikes`, `pw_reset`, `api_key`, `ff_token`, `registered`, `updated`, `parentid`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`) VALUES
 (1, 'Unknown user', NULL, 'Unknown user', 0, NULL, NULL, 'Unknown user', '2022-11-17 09:52:13', '2022-11-17 09:52:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'UTC', NULL, NULL, NULL),
 (2, 'System user', NULL, 'System user', 0, NULL, NULL, 'System user', '2022-11-17 09:52:13', '2022-11-17 09:52:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'UTC', NULL, NULL, NULL),
 (3, 'Deleted user', NULL, 'Deleted user', 0, NULL, NULL, 'Deleted user', '2022-11-01 16:06:40', '2022-11-17 09:53:13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'UTC', NULL, NULL, NULL);
 
-INSERT IGNORE INTO `talks__sections` (`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `system`, `closed`, `private`, `created`, `createdby`, `updated`, `updatedby`, `icon`) VALUES
+INSERT INTO `talks__sections` (`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `system`, `closed`, `private`, `created`, `createdby`, `updated`, `updatedby`, `icon`) VALUES
 (1, 'Blogs', 'Default section to store all blog-like content', NULL, 5, 1, 1, NULL, 0, '2022-05-22 12:03:08', 2, '2022-05-22 12:03:08', 2, NULL),
 (2, 'Forums', 'Default section to store all forum-like content', NULL, 4, 1, 1, NULL, 0, '2022-10-31 08:17:03', 2, '2022-10-31 08:17:03', 2, NULL),
 (3, 'Changelogs', 'Default section to store changelogs', NULL, 3, 1, 1, NULL, 0, '2022-10-31 08:17:03', 2, '2022-10-31 08:17:03', 2, NULL),
@@ -286,17 +288,17 @@ INSERT IGNORE INTO `talks__sections` (`sectionid`, `name`, `description`, `paren
 (6, 'Simbiat', NULL, 1, 0, 2, 1, NULL, 0, '2022-05-22 12:03:08', 2, '2022-11-19 17:11:14', 2, '/img/logo.svg'),
 (7, 'simbiat.dev', 'Changelog of this very website', 3, 0, 4, 1, NULL, 0, '2022-11-04 07:36:43', 2, '2022-11-04 07:36:43', 2, '/img/logo.svg');
 
-INSERT IGNORE INTO `sys__files` (`fileid`, `userid`, `name`, `extension`, `mime`, `size`, `added`) VALUES
+INSERT INTO `sys__files` (`fileid`, `userid`, `name`, `extension`, `mime`, `size`, `added`) VALUES
 ('5bfa21b6a3e13858511c752ee1af7f219ca60e2d374ff859a4c835062d5ae3f28f52f2765888523273cb1ffe0f9bdee2a40b9724aed775d8304d88596849005a', 2, 'unknown.svg', 'svg', 'image/svg+xml', 6686, '2022-11-30 07:38:11'),
 ('6ede2e8d189ae608c2ce925f8f61f7679b1126a311cf1031ec56ed56742319dccee84b54b879b32b10ed6f73b2a5cb50c07200b00843f6ef40dd0340dce13c74', 2, 'deleted.svg', 'svg', 'image/svg+xml', 3429, '2022-11-30 07:37:56'),
 ('729405e93e9a0b29d0179e07912f7daba0b3bd191c1817640d9a1be4425353363778eb37f462e0d9b277d002e097e6c6937aff80dd5523722e294529d3cd338d', 2, 'robot.svg', 'svg', 'image/svg+xml', 7491, '2022-11-30 07:38:03');
 
-INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES
+INSERT INTO `uc__avatars` (`userid`, `fileid`, `current`) VALUES
 (1, '5bfa21b6a3e13858511c752ee1af7f219ca60e2d374ff859a4c835062d5ae3f28f52f2765888523273cb1ffe0f9bdee2a40b9724aed775d8304d88596849005a', 1),
 (2, '729405e93e9a0b29d0179e07912f7daba0b3bd191c1817640d9a1be4425353363778eb37f462e0d9b277d002e097e6c6937aff80dd5523722e294529d3cd338d', 1),
 (3, '6ede2e8d189ae608c2ce925f8f61f7679b1126a311cf1031ec56ed56742319dccee84b54b879b32b10ed6f73b2a5cb50c07200b00843f6ef40dd0340dce13c74', 1);
 
-INSERT IGNORE INTO `uc__groups` (`groupid`, `groupname`, `description`) VALUES
+INSERT INTO `uc__groups` (`groupid`, `groupname`, `description`) VALUES
 (0, 'Bots', 'Group specifically for users, that were identified bots, as well internal system users'),
 (1, 'Administrators ', 'Group for administrators, which provides some extra permissions'),
 (2, 'Unverified', 'Group for newly registered users, before they confirm their email'),
@@ -305,7 +307,7 @@ INSERT IGNORE INTO `uc__groups` (`groupid`, `groupname`, `description`) VALUES
 (5, 'Banned', 'Group for banned users'),
 (6, 'Linked to FF', 'Group for users, who linked their profiles to any FFXIV characters');
 
-INSERT IGNORE INTO `uc__permissions` (`permission`, `description`) VALUES
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES
 ('addSections', 'Can create new sections'),
 ('canLike', 'Can like posts'),
 ('canLogin', 'Can login to the website'),
@@ -336,7 +338,7 @@ INSERT IGNORE INTO `uc__permissions` (`permission`, `description`) VALUES
 ('viewPrivate', 'Can view private posts created by others'),
 ('viewScheduled', 'Can view scheduled posts');
 
-INSERT IGNORE INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES
+INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES
 (0, 'viewBic'),
 (0, 'viewFF'),
 (0, 'viewPosts'),
@@ -387,18 +389,18 @@ INSERT IGNORE INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES
 (6, 'postFF'),
 (6, 'refreshOwnedFF');
 
-INSERT IGNORE INTO `uc__user_to_group` (`userid`, `groupid`) VALUES
+INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES
 (1, 0),
 (2, 0),
 (3, 0);
 
-INSERT IGNORE INTO `uc__user_to_permission` (`userid`, `permission`) VALUES
+INSERT INTO `uc__user_to_permission` (`userid`, `permission`) VALUES
 (1, 'viewBic'),
 (1, 'viewFF'),
 (1, 'viewPosts');
 
 /*Stuff added or changed after initial setup above*/
-INSERT IGNORE INTO `sys__files` (`fileid`, `userid`, `name`, `extension`, `mime`, `size`, `added`) VALUES
+INSERT INTO `sys__files` (`fileid`, `userid`, `name`, `extension`, `mime`, `size`, `added`) VALUES
 ('36c4b98fcbbbdbdcaf7f4173e55b796f742510d55ac02a972c900907b3e098402e87f65d22b468c6352e5f490928b62a096a0343e61c7fab582ea5dfe1dc3927', 2, 'knowledgebase.svg', 'svg', 'image/svg+xml', 2912, '2022-12-10 11:07:30'),
 ('818b80c8e771bd57fae093b08608c987da756fe5b08a883b8d2ba1d6393dd882cc92e852b6911890a0bf275d090ef948572adedbfe523f8e5e7dc2ab34cd2056', 2, 'forum.svg', 'svg', 'image/svg+xml', 1173, '2022-12-10 11:07:10'),
 ('8eeaa8280a4dd26d44a507155d80954da8812d2ea2f10be6a63189ec1ffe9dbdc29dff29d04fc73f3722c2de8d7dc75f5ea24eaefb41106ff59d8dc76473cfe3', 2, 'category.svg', 'svg', 'image/svg+xml', 406, '2022-12-10 11:07:00'),
@@ -426,11 +428,11 @@ INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 're
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveThreads', 'Can move threads to different sections');
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('movePosts', 'Can move posts to different threads');
 INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'moveThreads'), ('1', 'movePosts');
-UPDATE `talks__sections` SET `createdby` = '4' WHERE `talks__sections`.`sectionid` = 6;
-UPDATE `talks__sections` SET `updatedby` = '4' WHERE `talks__sections`.`sectionid` = 6;
+UPDATE `talks__sections` SET `createdby` = '2' WHERE `talks__sections`.`sectionid` = 6;
+UPDATE `talks__sections` SET `updatedby` = '2' WHERE `talks__sections`.`sectionid` = 6;
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveSections', 'Can move and order sections');
 INSERT INTO `uc__group_to_permission` (`groupid`, `permission`) VALUES ('1', 'moveSections');
-INSERT INTO `talks__sections` (`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `system`, `closed`, `private`, `created`, `createdby`, `updated`, `updatedby`, `icon`) VALUES ('8', 'simbiat.dev', 'Help articles related to the simbiat.dev website', '4', '0', '6', '1', NULL, '0', current_timestamp(), '2', current_timestamp(), '4', 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac');
+INSERT INTO `talks__sections` (`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `system`, `closed`, `private`, `created`, `createdby`, `updated`, `updatedby`, `icon`) VALUES ('8', 'simbiat.dev', 'Help articles related to the simbiat.dev website', '4', '0', '6', '1', NULL, '0', current_timestamp(), '2', current_timestamp(), '2', 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac');
 UPDATE `talks__sections` SET `sequence` = '99' WHERE `talks__sections`.`sectionid` IN (6, 7, 8);
 UPDATE `talks__sections` SET `description` = 'Personal blog of simbiat.dev\'s owner' WHERE `talks__sections`.`sectionid` = 6;
 
@@ -440,3 +442,4 @@ UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.app' WHERE `talks__alt_lin
 UPDATE `talks__alt_links` SET `url`=REPLACE(`url`, 'kitsu.io', 'kitsu.app');
 
 UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.(app|io)' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
+SET FOREIGN_KEY_CHECKS = 1;

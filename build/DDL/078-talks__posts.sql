@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__posts` (
   `postid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Post ID',
   `threadid` int(10) unsigned NOT NULL COMMENT 'ID of a thread the post belongs to',

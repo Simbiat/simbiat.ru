@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `bic__accounts` (
   `Account` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Номер счёта',
   `BIC` int(9) unsigned zerofill NOT NULL COMMENT 'БИК участника',

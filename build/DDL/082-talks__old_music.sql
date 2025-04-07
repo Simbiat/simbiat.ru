@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__old_music` (
   `fileid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'File ID',
   `postid` int(10) unsigned NOT NULL COMMENT 'ID of the post to which the file is attached',

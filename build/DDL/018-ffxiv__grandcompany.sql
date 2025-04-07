@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__grandcompany` (
   `gcId` tinyint(1) unsigned NOT NULL COMMENT 'ID based on filters from Lodestone',
   `gcName` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Name of the company',

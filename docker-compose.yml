@@ -192,6 +192,10 @@ services:
       MARIADB_AUTO_UPGRADE: true
       #Password for backups created by CRON job
       MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
+      #Limit root access from localhost only
+      MARIADB_ROOT_HOST: localhost
+      MARIADB_RANDOM_ROOT_PASSWORD: true
+      MARIADB_MYSQL_LOCALHOST_USER: true
     networks:
       - webserver
     ports:

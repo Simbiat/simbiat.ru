@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__nameday` (
   `namedayid` smallint(3) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Nameday ID as registered by the tracker',
   `nameday` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Nameday',

@@ -1,1 +1,78 @@
-/*Put commands for users' creation here*/
+/*Put commands for users' creation and respective GRANTs here. Below is just an example.
+  CrwodSec requires full access to CrowdSec database, since it manages the database fully, you do not need to think about it yourself.
+  phpMyAdmin does not really need all privileges, but I do not see harm in that either since it's isolated.
+  `mainapp` - is a dummy username here for the main app. It does not *need* all privileges, at the moment of writing, technically only SELECT, INSERT, UPDATE, DELETE are required for the app database.
+  IPs listed are all localhost and Docker's own network to limit access from outside, but you should still not expose the ports, if you can.
+*/
+CREATE USER IF NOT EXISTS `mainapp`@`127.0.0.1` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `mainapp`@`::1` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `mainapp`@`localhost` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `mainapp`@`172.21.0.%` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `mainapp`@`2001:db8:1::%` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON *.* TO `mainapp`@`127.0.0.1` IDENTIFIED BY PASSWORD 'password' WITH GRANT OPTION;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'mainapp'@'127.0.0.1' */;
+/*!80001 ALTER USER 'mainapp'@'127.0.0.1' DEFAULT ROLE NONE */;
+GRANT ALL PRIVILEGES ON *.* TO `mainapp`@`::1` IDENTIFIED BY PASSWORD 'password' WITH GRANT OPTION;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'mainapp'@'::1' */;
+/*!80001 ALTER USER 'mainapp'@'::1' DEFAULT ROLE NONE */;
+GRANT ALL PRIVILEGES ON *.* TO `mainapp`@`localhost` IDENTIFIED BY PASSWORD 'password' WITH GRANT OPTION;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'mainapp'@'localhost' */;
+/*!80001 ALTER USER 'mainapp'@'localhost' DEFAULT ROLE NONE */;
+GRANT ALL PRIVILEGES ON *.* TO `mainapp`@`172.21.0.%` IDENTIFIED BY PASSWORD 'password' WITH GRANT OPTION;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'mainapp'@'172.21.0.%' */;
+/*!80001 ALTER USER 'mainapp'@'172.21.0.%' DEFAULT ROLE NONE */;
+GRANT ALL PRIVILEGES ON *.* TO `mainapp`@`2001:db8:1::%` IDENTIFIED BY PASSWORD 'password' WITH GRANT OPTION;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'mainapp'@'2001:db8:1::%' */;
+/*!80001 ALTER USER 'mainapp'@'2001:db8:1::%' DEFAULT ROLE NONE */;
+
+CREATE USER IF NOT EXISTS `phpmyadmin`@`::1` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `phpmyadmin`@`2001:db8:1::%` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `phpmyadmin`@`172.21.0.%` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `phpmyadmin`@`127.0.0.1` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `phpmyadmin`@`localhost` IDENTIFIED BY PASSWORD 'password';
+GRANT USAGE ON *.* TO `phpmyadmin`@`::1` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `phpmyadmin`.* TO `phpmyadmin`@`::1`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'phpmyadmin'@'::1' */;
+/*!80001 ALTER USER 'phpmyadmin'@'::1' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `phpmyadmin`@`2001:db8:1::%` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `phpmyadmin`.* TO `phpmyadmin`@`2001:db8:1::%`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'phpmyadmin'@'2001:db8:1::%' */;
+/*!80001 ALTER USER 'phpmyadmin'@'2001:db8:1::%' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `phpmyadmin`@`172.21.0.%` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `phpmyadmin`.* TO `phpmyadmin`@`172.21.0.%`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'phpmyadmin'@'172.21.0.%' */;
+/*!80001 ALTER USER 'phpmyadmin'@'172.21.0.%' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `phpmyadmin`@`127.0.0.1` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `phpmyadmin`.* TO `phpmyadmin`@`127.0.0.1`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'phpmyadmin'@'127.0.0.1' */;
+/*!80001 ALTER USER 'phpmyadmin'@'127.0.0.1' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `phpmyadmin`@`localhost` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `phpmyadmin`.* TO `phpmyadmin`@`localhost`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'phpmyadmin'@'localhost' */;
+/*!80001 ALTER USER 'phpmyadmin'@'localhost' DEFAULT ROLE NONE */;
+
+CREATE USER IF NOT EXISTS `crowdsec`@`localhost` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `crowdsec`@`127.0.0.1` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `crowdsec`@`172.21.0.%` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `crowdsec`@`2001:db8:1::%` IDENTIFIED BY PASSWORD 'password';
+CREATE USER IF NOT EXISTS `crowdsec`@`::1` IDENTIFIED BY PASSWORD 'password';
+GRANT USAGE ON *.* TO `crowdsec`@`localhost` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `crowdsec`.* TO `crowdsec`@`localhost`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'crowdsec'@'localhost' */;
+/*!80001 ALTER USER 'crowdsec'@'localhost' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `crowdsec`@`127.0.0.1` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `crowdsec`.* TO `crowdsec`@`127.0.0.1`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'crowdsec'@'127.0.0.1' */;
+/*!80001 ALTER USER 'crowdsec'@'127.0.0.1' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `crowdsec`@`172.21.0.%` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `crowdsec`.* TO `crowdsec`@`172.21.0.%`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'crowdsec'@'172.21.0.%' */;
+/*!80001 ALTER USER 'crowdsec'@'172.21.0.%' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `crowdsec`@`2001:db8:1::%` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `crowdsec`.* TO `crowdsec`@`2001:db8:1::%`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'crowdsec'@'2001:db8:1::%' */;
+/*!80001 ALTER USER 'crowdsec'@'2001:db8:1::%' DEFAULT ROLE NONE */;
+GRANT USAGE ON *.* TO `crowdsec`@`::1` IDENTIFIED BY PASSWORD 'password';
+GRANT ALL PRIVILEGES ON `crowdsec`.* TO `crowdsec`@`::1`;
+/*M!100005 SET DEFAULT ROLE NONE FOR 'crowdsec'@'::1' */;
+/*!80001 ALTER USER 'crowdsec'@'::1' DEFAULT ROLE NONE */;

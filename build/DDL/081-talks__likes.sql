@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__likes` (
   `postid` int(10) unsigned NOT NULL COMMENT 'Post ID',
   `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',

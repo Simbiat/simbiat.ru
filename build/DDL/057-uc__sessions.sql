@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `uc__sessions` (
   `sessionid` varchar(256) NOT NULL COMMENT 'Session''s UID',
   `cookieid` varchar(256) DEFAULT NULL COMMENT 'Cookie associated with the session',

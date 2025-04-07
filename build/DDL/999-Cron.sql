@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 /*Static CRON tasks*/
 INSERT IGNORE INTO `cron__tasks` (`task`, `function`, `object`, `parameters`, `allowedreturns`, `maxTime`, `description`) VALUES
 ('bicUpdate', 'update', '\\Simbiat\\bictracker\\Library', NULL, NULL, 3600, 'Job to update BIC library'),

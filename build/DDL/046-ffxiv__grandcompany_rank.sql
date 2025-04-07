@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__grandcompany_rank` (
   `gcrankid` tinyint(2) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID of character''s Grand Company''s affiliation and current rank there as registered by tracker',
   `gcId` tinyint(1) unsigned NOT NULL COMMENT 'Grand Company ID based on filters from Lodestone',

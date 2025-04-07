@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `uc__user_to_group` (
   `userid` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID',
   `groupid` int(10) unsigned NOT NULL DEFAULT 2 COMMENT 'Group ID',

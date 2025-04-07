@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `uc__user_to_section` (
   `userid` int(10) unsigned NOT NULL COMMENT 'User ID',
   `blog` int(10) unsigned DEFAULT NULL COMMENT 'ID of the personal blog',

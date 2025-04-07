@@ -1,3 +1,4 @@
+USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__estate` (
   `estateid` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Estate ID as registered by the tracker',
   `cityid` tinyint(2) unsigned NOT NULL DEFAULT 5 COMMENT 'City ID as registered by the tracker',
