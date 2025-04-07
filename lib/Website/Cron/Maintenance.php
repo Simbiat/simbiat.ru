@@ -140,7 +140,7 @@ class Maintenance
             #Get tables in order
             foreach (Config::$dbController->showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
                 #Get DDL statement
-                $create = Config::$dbController->showCreateTable($table['schema'], $table['table'], ifNotExist: true);
+                $create = Config::$dbController->showCreateTable($table['schema'], $table['table'], ifNotExist: true, addUse: true);
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
