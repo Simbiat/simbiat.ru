@@ -77,7 +77,7 @@ class Linkshell extends Entity
                 }
                 return 'Request throttled by Lodestone';
             }
-            if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]) || empty($data['linkshells'][$this->id]['pageTotal']) || $data['linkshells'][$this->id]['pageTotal'] !== 0) {
+            if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]) || !isset($data['linkshells'][$this->id]['pageTotal']) || $data['linkshells'][$this->id]['pageTotal'] !== 0) {
                 if (empty($Lodestone->getLastError())) {
                     return 'Failed to get any data for '.($this::crossworld ? 'Crossworld ' : '').'Linkshell '.$this->id;
                 }

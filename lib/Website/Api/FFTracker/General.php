@@ -54,7 +54,7 @@ abstract class General extends Api
             return $data;
         }
         if ($data === 404 || (!empty($data['404']) && $data['404'] === true)) {
-            return ['http_error' => 404, 'reason' => $this->nameForErrors.' with ID `'.$path[0].'` is not found on Lodestone'];
+            return ['http_error' => 404, 'reason' => $data['reason'] ?? ($this->nameForErrors.' with ID `'.$path[0].'` is not found on Lodestone')];
         }
         if ($data === 400) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];

@@ -86,7 +86,7 @@ abstract class Entity extends \Simbiat\Website\Abstracts\Entity
             }
             $this->lodestone = $tempLodestone;
         }
-        #If we got 404, mark as deleted, unless already marked
+        #If we got 404, return true. If entity is to be removed, it's done during getFromLodestone()
         if (isset($this->lodestone['404']) && $this->lodestone['404'] === true) {
             return true;
         }

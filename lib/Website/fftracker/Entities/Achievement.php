@@ -60,6 +60,9 @@ class Achievement extends Entity
     {
         #Get the data that we have
         $achievement = $this->getFromDB();
+        if (empty($achievement['name'])) {
+            return ['404' => true, 'reason' => 'Achievement with ID `'.$this->id.'` is not found on Tracker'];
+        }
         #Cache Lodestone
         $Lodestone = new Lodestone();
         #If we do not have dbid already - try to get one
@@ -98,7 +101,7 @@ class Achievement extends Entity
                 return $data;
             }
         }
-        return [];
+        return ['404' => true];
     }
     
     /**
