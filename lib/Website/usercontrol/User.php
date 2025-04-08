@@ -319,7 +319,7 @@ class User extends Entity
         #Get token
         $outputArray['token'] = Config::$dbController->selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
         #Get linked characters
-        $outputArray['characters'] = Config::$dbController->selectAll('SELECT \'character\' as `type`, `characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']]);
+        $outputArray['characters'] = Config::$dbController->selectAll('SELECT \'character\' as `type`, `ffxiv__character`.`characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']]);
         #Get linked groups
         if (!empty($outputArray['characters'])) {
             foreach ($outputArray['characters'] as $character) {
