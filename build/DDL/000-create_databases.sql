@@ -1,4 +1,4 @@
-/*CrowdSec requires database to be created manually for it to work. Tables and their contents are handled by CrowdSec itself.*/
+/*CrowdSec requires database to be created manually for it to work. Tables and their contents are handled by CrowdSec itself. In fact, if restoring from Physical backup, tables need to be removed.*/
 CREATE DATABASE IF NOT EXISTS crowdsec;
 /*phpMyAdmin can create database itself, but creating it separately for convenience. Tables are created through UI, they are not critical, so not generating them separately.*/
 CREATE DATABASE IF NOT EXISTS phpmyadmin;
