@@ -49,7 +49,7 @@ class Activation extends Page
         }
         $outputArray = [];
         #Check if user requires activation
-        $outputArray['activation'] = Config::$dbController->check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]);
+        $outputArray['activation'] = Config::$dbController->check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=:groupid', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Unverified'], 'int']]);
         #Get list of mails for the user with activation codes
         $emails = Config::$dbController->selectPair('SELECT `email`, `activation` FROM `uc__emails` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
         #Check if provided activation code fits any of those mails

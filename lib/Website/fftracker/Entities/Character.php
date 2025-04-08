@@ -542,7 +542,7 @@ class Character extends Entity
             #Link character to user
             $result = Config::$dbController->query([
                 'UPDATE `ffxiv__character` SET `userid`=:userid WHERE `characterid`=:characterid;', [':userid' => $_SESSION['userid'], ':characterid' => $this->id],
-                'INSERT IGNORE INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, '.Config::groupsIDs['Linked to FF'].');', [':userid' => $_SESSION['userid']],
+                'INSERT IGNORE INTO `uc__user_to_group` (`userid`, `groupid`) VALUES (:userid, :groupid);', [':userid' => $_SESSION['userid'], ':groupid' => [Config::groupsIDs['Linked to FF'], 'int']],
             ]);
             Security::log('User details change', 'Attempted to link FFXIV character', ['id' => $this->id, 'result' => $result]);
             #Download avatar

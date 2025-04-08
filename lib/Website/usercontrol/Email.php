@@ -189,9 +189,9 @@ class Email extends Entity
             #Remove the code from DB
             ['UPDATE `uc__emails` SET `activation`=NULL WHERE `userid`=:userid AND `email`=:email', [':userid' => [$userid, 'int'], ':email' => $this->id]],
             #Add user to register users
-            ['INSERT IGNORE INTO `uc__user_to_group`(`userid`, `groupid`) VALUES (:userid, 3)', [':userid' => [$userid, 'int']]],
+            ['INSERT IGNORE INTO `uc__user_to_group`(`userid`, `groupid`) VALUES (:userid, :groupid)', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Users'], 'int']]],
             #Remove user from unverified users
-            ['DELETE FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=2', [':userid' => [$userid, 'int']]],
+            ['DELETE FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=:groupid', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Unverified'], 'int']]],
         ];
         $result = Config::$dbController->query($queries);
         Security::log('User details change', 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);

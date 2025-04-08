@@ -58,8 +58,7 @@ class Maintenance
         #Get existing cookies, that need to be cleaned
         try {
             $items = Config::$dbController->selectAll(
-                'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (:systemUsers) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);',
-                [':systemUsers' => [[Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], 'in', 'int']],
+                'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (SELECT `userid` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);',
             );
         } catch (\Throwable) {
             $items = [];

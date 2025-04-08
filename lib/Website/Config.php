@@ -57,13 +57,13 @@ final class Config
     ];
     #List of system group IDs
     public const array groupsIDs = [
-        'Bots' => 0,
         'Administrators' => 1,
         'Unverified' => 2,
         'Users' => 3,
         'Deleted' => 4,
         'Banned' => 5,
         'Linked to FF' => 6,
+        'Bots' => 7,
     ];
     public static array $argonSettings = [];
     #Flag indicating whether we are in CLI

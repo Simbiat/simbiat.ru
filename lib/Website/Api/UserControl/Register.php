@@ -103,9 +103,10 @@ class Register extends Api
                 ],
                 #Insert into groups table
                 [
-                    'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), 2)',
+                    'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :groupid)',
                     [
                         ':username' => $_POST['signinup']['username'],
+                        ':groupid' => [Config::groupsIDs['Unverified'], 'int'],
                     ]
                 ],
             ];

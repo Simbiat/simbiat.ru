@@ -33,7 +33,7 @@ class Index extends Page
     protected string $query = '
                     SELECT \'threads\' AS `link`, \'Forum Threads\' AS `name`, COUNT(*) AS `count` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()
                     UNION ALL
-                    SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `userid` NOT IN ('.Config::userIDs['Unknown user'].', '.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].')
+                    SELECT \'users\' AS `link`, \'Users\' AS `name`, COUNT(*) AS `count` FROM `uc__users` WHERE `system`!=1
                     UNION ALL
                     SELECT \'bics\' AS `link`, \'Russian Bank Codes\' AS `name`, COUNT(*) AS `count` FROM `bic__list`
                 ';

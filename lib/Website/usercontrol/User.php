@@ -26,6 +26,8 @@ class User extends Entity
     public const int avatarLimit = 10;
     #Entity's properties
     public string $username;
+    #System flag, if true, user can't be deleted
+    public bool $system = false;
     #Real name
     public array $name = [
         'firstname' => null,
@@ -88,7 +90,7 @@ class User extends Entity
     protected function getFromDB(): array
     {
         
-        $dbData = Config::$dbController->selectRow('SELECT `username`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`userid`=`uc__user_to_section`.`userid` WHERE `uc__users`.`userid`=:userid', ['userid' => [$this->id, 'int']]);
+        $dbData = Config::$dbController->selectRow('SELECT `username`, `system`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`userid`=`uc__user_to_section`.`userid` WHERE `uc__users`.`userid`=:userid', ['userid' => [$this->id, 'int']]);
         if (empty($dbData)) {
             return [];
         }
@@ -96,7 +98,7 @@ class User extends Entity
         $dbData['groups'] = Config::$dbController->selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
         #Get permissions
         $dbData['permissions'] = $this->getPermissions();
-        if (in_array($this->id, [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) {
+        if ($this->system) {
             #System users need to be treated as not activated
             $dbData['activated'] = false;
         } else {
@@ -134,8 +136,9 @@ class User extends Entity
             'changelog' => empty($fromDB['changelog']) ? null : $fromDB['changelog'],
             'knowledgebase' => empty($fromDB['knowledgebase']) ? null : $fromDB['knowledgebase'],
         ];
+        $this->system = (bool)$fromDB['system'];
         #Cleanup the array
-        unset($fromDB['parentid'], $fromDB['parentname'], $fromDB['firstname'], $fromDB['lastname'], $fromDB['middlename'], $fromDB['fathername'], $fromDB['prefix'],
+        unset($fromDB['system'], $fromDB['parentid'], $fromDB['parentname'], $fromDB['firstname'], $fromDB['lastname'], $fromDB['middlename'], $fromDB['fathername'], $fromDB['prefix'],
             $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday'], $fromDB['blog'], $fromDB['changelog'], $fromDB['knowledgebase']);
         #Populate the rest properties
         $this->arrayToProperties($fromDB);
@@ -214,6 +217,9 @@ class User extends Entity
     public function addAvatar(bool $setActive = false, string $link = '', ?int $character = null): array
     {
         try {
+            if ($this->system) {
+                return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+            }
             #Get current avatars
             $avatars = $this->getAvatars();
             #Count values in `current` column
@@ -267,6 +273,9 @@ class User extends Entity
      */
     public function delAvatar(): array
     {
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+        }
         $fileid = $_POST['avatar'] ?? '';
         #Log the change
         Security::log('Avatar', 'Deleted avatar', $fileid);
@@ -283,6 +292,9 @@ class User extends Entity
      */
     public function setAvatar(string $fileid = ''): array
     {
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+        }
         if (!empty($_POST['avatar']) && is_string($_POST['avatar'])) {
             $fileid = $_POST['avatar'];
         }
@@ -333,6 +345,9 @@ class User extends Entity
      */
     public function changeUsername(string $newName): array
     {
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+        }
         $sanitizedName = Sanitization::removeNonPrintable($newName, true);
         if (!is_string($sanitizedName)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
@@ -375,6 +390,9 @@ class User extends Entity
      */
     public function updateProfile(): array
     {
+        if ($this->system) {
+            return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
+        }
         if (empty($_POST['details'])) {
             return ['http_error' => 400, 'reason' => 'No data provided'];
         }
@@ -628,6 +646,9 @@ class User extends Entity
     public function rememberMe(string $cookieId = ''): void
     {
         try {
+            if ($this->system) {
+                return;
+            }
             #Generate cookie ID
             if (empty($cookieId)) {
                 $cookieId = bin2hex(random_bytes(64));
@@ -738,6 +759,9 @@ class User extends Entity
         if (empty($this->id)) {
             return false;
         }
+        if ($this->system) {
+            return false;
+        }
         $result = Config::$dbController->query(
             'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
@@ -762,6 +786,9 @@ class User extends Entity
         if (empty($this->id)) {
             return false;
         }
+        if ($this->system) {
+            return false;
+        }
         return Config::$dbController->query(
             'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
@@ -780,6 +807,9 @@ class User extends Entity
     public function deleteCookie(bool $logout = false): bool
     {
         if (empty($this->id) || empty($_POST['cookie'])) {
+            return false;
+        }
+        if ($this->system) {
             return false;
         }
         $result = Config::$dbController->query(
@@ -802,6 +832,9 @@ class User extends Entity
     public function deleteSession(): bool
     {
         if (empty($this->id) || empty($_POST['session'])) {
+            return false;
+        }
+        if ($this->system) {
             return false;
         }
         $result = Config::$dbController->query(
@@ -960,7 +993,7 @@ class User extends Entity
     public function remove(bool $hard = false): bool
     {
         #Check if we are trying to remove one of the system users and prevent that
-        if (in_array($this->id, Config::userIDs, true)) {
+        if ($this->system) {
             return false;
         }
         try {
