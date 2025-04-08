@@ -136,6 +136,8 @@ class Maintenance
         }
         $dumpOrder = '';
         try {
+            #Clean up SQL files
+            array_map('unlink', glob(Config::$DDLDir.'/*.sql'));
             #Get tables in order
             foreach (Config::$dbController->showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
                 #Get DDL statement
