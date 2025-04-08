@@ -387,7 +387,7 @@ class Character extends Entity
             }
             #Check if character is linked to a user
             $character = Config::$dbController->selectRow('SELECT `characterid`, `userid` FROM `uc__user_to_ff_character` WHERE `characterid`=:id;', [':id' => $this->id]);
-            if ($character['userid']) {
+            if (!empty($character['userid'])) {
                 #Download avatar
                 (new User($character['userid']))->addAvatar(false, $this->lodestone['avatar'], (int)$this->id);
             }
