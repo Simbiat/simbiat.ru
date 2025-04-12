@@ -84,7 +84,7 @@ class Email extends Entity
     {
         #Check against DB table
         try {
-            return Config::$dbController->check('SELECT `mail` FROM `ban__mails` WHERE `mail`=:mail', [':mail' => $this->id]);
+            return Config::$dbController->check('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id]);
         } catch (\Throwable) {
             return false;
         }

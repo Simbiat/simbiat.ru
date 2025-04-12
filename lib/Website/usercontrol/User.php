@@ -546,7 +546,7 @@ class User extends Entity
         }
         #Check against DB table
         try {
-            return Config::$dbController->check('SELECT `name` FROM `ban__names` WHERE `name`=:name', [':name' => $name]);
+            return Config::$dbController->check('SELECT `name` FROM `uc__bad_names` WHERE `name`=:name', [':name' => $name]);
         } catch (\Throwable) {
             return false;
         }

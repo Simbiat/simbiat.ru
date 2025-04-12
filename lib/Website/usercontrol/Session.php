@@ -261,7 +261,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Check if IP is banned
             if (!empty($data['IP'])) {
                 try {
-                    $data['bannedIP'] = Config::$dbController->check('SELECT `ip` FROM `ban__ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
+                    $data['bannedIP'] = Config::$dbController->check('SELECT `ip` FROM `sys__bad_ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
                 } catch (\Throwable) {
                     $data['bannedIP'] = false;
                 }

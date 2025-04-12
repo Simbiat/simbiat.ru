@@ -1,6 +1,6 @@
 USE `simbiatr_simbiat`;
 /*Initial bans*/
-INSERT IGNORE INTO `ban__names` (`name`, `added`, `reason`) VALUES
+INSERT IGNORE INTO `uc__bad_names` (`name`, `added`, `reason`) VALUES
 ('Administrator', '2021-05-04 21:00:00', NULL),
 ('Dickhead', '2021-05-04 21:00:00', NULL),
 ('Idiot', '2021-05-04 21:00:00', NULL),
