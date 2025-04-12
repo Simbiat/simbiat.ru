@@ -12,4 +12,4 @@ CREATE TABLE IF NOT EXISTS `uc__user_to_section` (
   CONSTRAINT `changelog_to_sections` FOREIGN KEY (`changelog`) REFERENCES `talks__sections` (`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `kb_to_sections` FOREIGN KEY (`knowledgebase`) REFERENCES `talks__sections` (`sectionid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `special_section_to_user` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='Junction table for special sections created by the user' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs COMMENT='Junction table for special sections created by the user' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

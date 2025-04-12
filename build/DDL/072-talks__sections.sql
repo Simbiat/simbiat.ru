@@ -1,8 +1,8 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__sections` (
   `sectionid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Forum ID',
-  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Forum name',
-  `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Optional description of the forum',
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Forum name',
+  `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Optional description of the forum',
   `parentid` int(10) unsigned DEFAULT NULL COMMENT 'ID of the parent forum',
   `sequence` int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Optional order for sorting. The higher the value, the higher in the list a forum will be. After that name sorting is expected.	',
   `type` tinyint(3) unsigned NOT NULL DEFAULT 1 COMMENT 'Type of the forum',
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `talks__sections` (
   `createdby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the creator',
   `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When forum was updated',
   `updatedby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the last updater',
-  `icon` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Icon override',
+  `icon` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci DEFAULT NULL COMMENT 'Icon override',
   PRIMARY KEY (`sectionid`) USING BTREE,
   UNIQUE KEY `name_2` (`name`,`parentid`),
   KEY `forum_created_by` (`createdby`),
@@ -30,4 +30,4 @@ CREATE TABLE IF NOT EXISTS `talks__sections` (
   CONSTRAINT `forum_to_type` FOREIGN KEY (`type`) REFERENCES `talks__types` (`typeid`) ON UPDATE CASCADE,
   CONSTRAINT `forum_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
   CONSTRAINT `section_to_file` FOREIGN KEY (`icon`) REFERENCES `sys__files` (`fileid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs COMMENT='List of forums' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

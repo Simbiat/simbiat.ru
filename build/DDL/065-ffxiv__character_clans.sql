@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS `ffxiv__character_clans` (
   KEY `char_clan_clan` (`clanid`),
   CONSTRAINT `char_clan_clan` FOREIGN KEY (`clanid`) REFERENCES `ffxiv__clan` (`clanid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `char_clan_id` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Past clans used by characters' `PAGE_COMPRESSED`='ON';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs ROW_FORMAT=DYNAMIC COMMENT='Past clans used by characters' `PAGE_COMPRESSED`='ON';

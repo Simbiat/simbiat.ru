@@ -1,15 +1,14 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__character` (
   `characterid` int(10) unsigned NOT NULL COMMENT 'Character ID taken from Lodestone URL (https://eu.finalfantasyxiv.com/lodestone/character/characterid/)',
-  `userid` int(10) unsigned DEFAULT NULL COMMENT 'ID of the user, that is linked to the character',
   `serverid` tinyint(2) unsigned DEFAULT NULL COMMENT 'ID of the server character resides on',
   `name` varchar(50) NOT NULL COMMENT 'Character''s name',
-  `avatar` varchar(66) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL COMMENT 'ID portion of the link to character avatar (requires adding of ''l0.jpg'' or ''c0.jpg'' to the end of the field and ''https://img2.finalfantasyxiv.com/f/'' to the beginning to be turned into actual image link)',
+  `avatar` varchar(66) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'ID portion of the link to character avatar (requires adding of ''l0.jpg'' or ''c0.jpg'' to the end of the field and ''https://img2.finalfantasyxiv.com/f/'' to the beginning to be turned into actual image link)',
   `registered` date NOT NULL DEFAULT current_timestamp() COMMENT 'When character was initially added to tracker',
   `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When character was last updated on the tracker',
   `privated` date DEFAULT NULL COMMENT 'Date when profile was marked as private on Lodestone',
   `deleted` date DEFAULT NULL COMMENT 'Date when character was marked as deleted',
-  `biography` text CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci DEFAULT NULL COMMENT 'Text from "Character profile" section on Lodestone',
+  `biography` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Text from "Character profile" section on Lodestone',
   `titleid` smallint(5) unsigned DEFAULT NULL COMMENT 'ID of achievement title currently being used by character',
   `clanid` tinyint(2) unsigned DEFAULT NULL COMMENT 'Clan ID identifying both clan and race of the character',
   `genderid` tinyint(1) unsigned NOT NULL DEFAULT 1 COMMENT '0 for female and 1 for male',
@@ -31,7 +30,6 @@ CREATE TABLE IF NOT EXISTS `ffxiv__character` (
   KEY `deleted` (`deleted`),
   KEY `name_order` (`name`),
   KEY `updated` (`updated` DESC),
-  KEY `userid` (`userid`),
   KEY `achievement_points` (`achievement_points` DESC),
   KEY `privated` (`privated`) USING BTREE,
   FULLTEXT KEY `name` (`name`),
@@ -42,6 +40,5 @@ CREATE TABLE IF NOT EXISTS `ffxiv__character` (
   CONSTRAINT `guardianid` FOREIGN KEY (`guardianid`) REFERENCES `ffxiv__guardian` (`guardianid`) ON UPDATE CASCADE,
   CONSTRAINT `namedayid` FOREIGN KEY (`namedayid`) REFERENCES `ffxiv__nameday` (`namedayid`) ON UPDATE CASCADE,
   CONSTRAINT `serverid` FOREIGN KEY (`serverid`) REFERENCES `ffxiv__server` (`serverid`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `titleid` FOREIGN KEY (`titleid`) REFERENCES `ffxiv__achievement` (`achievementid`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `userid` FOREIGN KEY (`userid`) REFERENCES `uc__users` (`userid`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs ROW_FORMAT=DYNAMIC COMMENT='Characters found on Lodestone' `PAGE_COMPRESSED`='ON';
+  CONSTRAINT `titleid` FOREIGN KEY (`titleid`) REFERENCES `ffxiv__achievement` (`achievementid`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs ROW_FORMAT=DYNAMIC COMMENT='Characters found on Lodestone' `PAGE_COMPRESSED`='ON';

@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS `ffxiv__character_jobs` (
   KEY `jobs_to_jobs` (`jobid`),
   CONSTRAINT `jobs_to_character` FOREIGN KEY (`characterid`) REFERENCES `ffxiv__character` (`characterid`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `jobs_to_jobs` FOREIGN KEY (`jobid`) REFERENCES `ffxiv__jobs` (`jobid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_as_cs COMMENT='Current job levels for characters' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs COMMENT='Current job levels for characters' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

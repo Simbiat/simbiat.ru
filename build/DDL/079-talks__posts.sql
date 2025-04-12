@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `talks__posts` (
   `createdby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the creator',
   `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When post was updated',
   `updatedby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the last updater',
-  `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Text of the post',
+  `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Text of the post',
   PRIMARY KEY (`postid`) USING BTREE,
   KEY `post_to_thread` (`threadid`),
   KEY `post_to_post` (`replyto`),
@@ -22,4 +22,4 @@ CREATE TABLE IF NOT EXISTS `talks__posts` (
   CONSTRAINT `post_to_post` FOREIGN KEY (`replyto`) REFERENCES `talks__posts` (`postid`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `post_to_thread` FOREIGN KEY (`threadid`) REFERENCES `talks__threads` (`threadid`) ON UPDATE CASCADE,
   CONSTRAINT `post_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of all posts' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs COMMENT='List of all posts' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;

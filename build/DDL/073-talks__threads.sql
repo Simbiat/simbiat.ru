@@ -1,9 +1,9 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__threads` (
   `threadid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Thread ID',
-  `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_ai_ci NOT NULL COMMENT 'Thread name',
+  `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Thread name',
   `sectionid` int(10) unsigned NOT NULL COMMENT 'Forum ID where the thread is located',
-  `language` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci NOT NULL DEFAULT 'en' COMMENT 'Main language of the thread',
+  `language` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL DEFAULT 'en' COMMENT 'Main language of the thread',
   `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',
   `pinned` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag to indicate if a thread needs to be shown above others in the list',
   `closed` datetime(6) DEFAULT NULL COMMENT 'Flag to indicate if a thread is closed',
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `talks__threads` (
   `updatedby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the updater',
   `lastpost` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'Time of the last post',
   `lastpostby` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'ID of the last poster',
-  `ogimage` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_nopad_as_ci DEFAULT NULL COMMENT 'Optional file ID to be used as og:image',
+  `ogimage` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci DEFAULT NULL COMMENT 'Optional file ID to be used as og:image',
   PRIMARY KEY (`threadid`) USING BTREE,
   UNIQUE KEY `name_2` (`name`,`sectionid`),
   KEY `thread_to_forum` (`sectionid`),
@@ -35,4 +35,4 @@ CREATE TABLE IF NOT EXISTS `talks__threads` (
   CONSTRAINT `thread_lastpost_by` FOREIGN KEY (`lastpostby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE,
   CONSTRAINT `thread_to_forum` FOREIGN KEY (`sectionid`) REFERENCES `talks__sections` (`sectionid`) ON UPDATE CASCADE,
   CONSTRAINT `thread_updated_by` FOREIGN KEY (`updatedby`) REFERENCES `uc__users` (`userid`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_nopad_as_cs COMMENT='List of threads' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs COMMENT='List of threads' `PAGE_COMPRESSED`='ON' ROW_FORMAT=Dynamic;
