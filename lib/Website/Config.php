@@ -209,7 +209,7 @@ final class Config
                         ->setDB($_ENV['DATABASE_NAME'])
                         ->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)
                         ->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, 'SET SESSION character_set_client = \'utf8mb4\',
-                                                                                    SESSION collation_connection = \'utf8mb4_uca1400_nopad_as_cs\',
+                                                                                    SESSION collation_connection = \'utf8mb4_0900_as_cs\',
                                                                                     SESSION character_set_connection = \'utf8mb4\',
                                                                                     SESSION character_set_database = \'utf8mb4\',
                                                                                     SESSION character_set_results = \'utf8mb4\',
