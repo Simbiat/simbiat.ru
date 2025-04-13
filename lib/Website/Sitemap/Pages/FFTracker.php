@@ -3,8 +3,6 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Sitemap\Pages;
 
-use Simbiat\Website\Sitemap\Pages\Index;
-
 class FFTracker extends Index
 {
     #Current breadcrumb for navigation
@@ -15,7 +13,7 @@ class FFTracker extends Index
     protected bool $mainIndex = false;
     #Query for countables
     protected string $query = '
-                    SELECT \'ffxiv_characters\' AS `link`, \'FFXIV Characters\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__character`
+                    SELECT \'ffxiv_characters\' AS `link`, \'FFXIV Characters\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__character` WHERE `privated` IS NULL
                     UNION ALL
                     SELECT \'ffxiv_freecompanies\' AS `link`, \'FFXIV Free Companies\' AS `name`, COUNT(*) AS `count` FROM `ffxiv__freecompany`
                     UNION ALL

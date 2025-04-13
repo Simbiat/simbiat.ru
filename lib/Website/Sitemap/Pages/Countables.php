@@ -62,7 +62,7 @@ class Countables extends Page
                 break;
             case 'ffxiv_characters':
                 $this->breadCrumb[0]['name'] = 'FFXIV Characters';
-                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` WHERE `privated` IS NULL LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'ffxiv_freecompanies':
                 $this->breadCrumb[0]['name'] = 'FFXIV Free Companies';

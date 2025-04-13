@@ -46,7 +46,7 @@ abstract class Page
     protected bool $sessionChange = false;
     #Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
-    #Cache strategy: aggressive, private, live, month, week, day, hour
+    #Cache strategy: aggressive, private, none, live, month, week, day, hour
     protected string $cacheStrat = 'hour';
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;

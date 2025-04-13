@@ -35,6 +35,12 @@ class Character extends Page
         if (empty($outputArray['character']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
+        if (!empty($outputArray['character']['dates']['privated'])) {
+            #Do not cache privated characters on our side
+            $this->cacheAge = 0;
+            #Try to not cache privated characters in browsers/proxies
+            $this->cacheStrat = 'none';
+        }
         #Try to exit early based on modification date
         $this->lastModified($outputArray['character']['dates']['updated']);
         #Continue breadcrumbs
