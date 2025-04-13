@@ -5,7 +5,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
-use Simbiat\Website\bictracker\Library;
+use Simbiat\BIC\Library;
 use Simbiat\Website\Config;
 use Simbiat\Website\usercontrol\Email;
 

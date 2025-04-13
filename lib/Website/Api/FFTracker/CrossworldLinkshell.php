@@ -6,7 +6,7 @@ namespace Simbiat\Website\Api\FFTracker;
 class CrossworldLinkshell extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\Website\fftracker\CrossworldLinkshell::class;
+    protected string $entityClass = \Simbiat\FFXIV\CrossworldLinkshell::class;
     #Name to show in errors
     protected string $nameForErrors = 'Crossworld Linkshell';
     #Name for links

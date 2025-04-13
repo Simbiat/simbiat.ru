@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Pages\FFTracker;
 
+use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\fftracker\AbstractEntity;
 
 class PvPTeam extends Page
 {
@@ -31,7 +31,7 @@ class PvPTeam extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        $outputArray['pvpteam'] = (new \Simbiat\Website\fftracker\PvPTeam($id))->getArray();
+        $outputArray['pvpteam'] = (new \Simbiat\FFXIV\PvPTeam($id))->getArray();
         #Check if ID was found
         if (empty($outputArray['pvpteam']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
@@ -55,7 +55,7 @@ class PvPTeam extends Page
             }
         }
         #Merge crest and update favicon
-        $outputArray['favicon'] = $outputArray['pvpteam']['crest'] = AbstractEntity::crestToFavicon($outputArray['pvpteam']['crest']);
+        $outputArray['favicon'] = $outputArray['pvpteam']['crest'] = AbstractTrackerEntity::crestToFavicon($outputArray['pvpteam']['crest']);
         #Check if linked to current user
         if ($_SESSION['userid'] !== 1 && in_array($_SESSION['userid'], array_column($outputArray['pvpteam']['members'], 'userid'), true)) {
             $outputArray['pvpteam']['linked'] = true;

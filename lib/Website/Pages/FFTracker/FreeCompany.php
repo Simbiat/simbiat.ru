@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Pages\FFTracker;
 
+use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\fftracker\AbstractEntity;
 
 class FreeCompany extends Page
 {
@@ -31,7 +31,7 @@ class FreeCompany extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        $outputArray['freecompany'] = (new \Simbiat\Website\fftracker\FreeCompany($id))->getArray();
+        $outputArray['freecompany'] = (new \Simbiat\FFXIV\FreeCompany($id))->getArray();
         #Check if ID was found
         if (empty($outputArray['freecompany']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
@@ -55,7 +55,7 @@ class FreeCompany extends Page
             }
         }
         #Merge crest and update favicon
-        $outputArray['favicon'] = $outputArray['freecompany']['crest'] = AbstractEntity::crestToFavicon($outputArray['freecompany']['crest']);
+        $outputArray['favicon'] = $outputArray['freecompany']['crest'] = AbstractTrackerEntity::crestToFavicon($outputArray['freecompany']['crest']);
         #Check if linked to current user
         if ($_SESSION['userid'] !== 1 && in_array($_SESSION['userid'], array_column($outputArray['freecompany']['members'], 'userid'), true)) {
             $outputArray['freecompany']['linked'] = true;

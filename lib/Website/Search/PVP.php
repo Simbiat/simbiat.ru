@@ -2,8 +2,8 @@
 declare(strict_types = 1);
 
 namespace Simbiat\Website\Search;
+use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Search;
-use Simbiat\Website\fftracker\AbstractEntity;
 
 class PVP extends Search
 {
@@ -35,6 +35,6 @@ class PVP extends Search
     
     protected function postProcess(array $results): array
     {
-        return AbstractEntity::cleanCrestResults($results);
+        return AbstractTrackerEntity::cleanCrestResults($results);
     }
 }

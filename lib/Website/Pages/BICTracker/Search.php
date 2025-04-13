@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Pages\BICTracker;
 
-use Simbiat\Website\bictracker\Library;
+use Simbiat\BIC\Library;
 use Simbiat\Website\Search\ClosedBics;
 use Simbiat\Website\Search\OpenBics;
 

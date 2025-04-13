@@ -3,9 +3,9 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\FFTracker;
 
+use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
-use Simbiat\Website\fftracker\AbstractEntity;
 
 class MergeCrest extends Api
 {
@@ -47,7 +47,7 @@ class MergeCrest extends Api
             }
             $images[0] = $_POST['crest_background'];
         }
-        $location = AbstractEntity::crestToFavicon($images);
+        $location = AbstractTrackerEntity::crestToFavicon($images);
         if (empty($location)) {
             return ['http_error' => 500, 'reason' => 'Failed to merge the component'];
         }

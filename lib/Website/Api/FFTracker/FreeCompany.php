@@ -6,7 +6,7 @@ namespace Simbiat\Website\Api\FFTracker;
 class FreeCompany extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\Website\fftracker\FreeCompany::class;
+    protected string $entityClass = \Simbiat\FFXIV\FreeCompany::class;
     #Name to show in errors
     protected string $nameForErrors = 'Free Company';
     #Name for links

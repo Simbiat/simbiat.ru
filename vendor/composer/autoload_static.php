@@ -125,6 +125,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\FFXIV\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src',
+            1 => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src',
         ),
         'Simbiat\\Database\\' => 
         array (
@@ -138,6 +139,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\BIC\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib/BIC/AccountKeying/src',
+            1 => __DIR__ . '/../..' . '/lib/BIC/Tracker/src',
         ),
         'Simbiat\\Arrays\\' => 
         array (
@@ -529,6 +531,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Arrays\\Sorters' => __DIR__ . '/../..' . '/lib/ArrayHelpers/src/Sorters.php',
         'Simbiat\\Arrays\\Splitters' => __DIR__ . '/../..' . '/lib/ArrayHelpers/src/Splitters.php',
         'Simbiat\\BIC\\AccountKeying' => __DIR__ . '/../..' . '/lib/BIC/AccountKeying/src/AccountKeying.php',
+        'Simbiat\\BIC\\BIC' => __DIR__ . '/../..' . '/lib/BIC/Tracker/src/BIC.php',
+        'Simbiat\\BIC\\Library' => __DIR__ . '/../..' . '/lib/BIC/Tracker/src/Library.php',
         'Simbiat\\Cron\\Agent' => __DIR__ . '/../..' . '/lib/Cron/src/Agent.php',
         'Simbiat\\Cron\\Task' => __DIR__ . '/../..' . '/lib/Cron/src/Task.php',
         'Simbiat\\Cron\\TaskInstance' => __DIR__ . '/../..' . '/lib/Cron/src/TaskInstance.php',
@@ -538,6 +542,12 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Database\\Controller' => __DIR__ . '/../..' . '/lib/Database/Database/src/Controller.php',
         'Simbiat\\Database\\Optimize' => __DIR__ . '/../..' . '/lib/Database/Optimize/src/Optimize.php',
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/Database/src/Pool.php',
+        'Simbiat\\FFXIV\\AbstractTrackerEntity' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/AbstractTrackerEntity.php',
+        'Simbiat\\FFXIV\\Achievement' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Achievement.php',
+        'Simbiat\\FFXIV\\Character' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Character.php',
+        'Simbiat\\FFXIV\\CrossworldLinkshell' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/CrossworldLinkshell.php',
+        'Simbiat\\FFXIV\\FreeCompany' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/FreeCompany.php',
+        'Simbiat\\FFXIV\\Linkshell' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Linkshell.php',
         'Simbiat\\FFXIV\\Lodestone' => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src/Lodestone.php',
         'Simbiat\\FFXIV\\LodestoneModules\\Converters' => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src/LodestoneModules/Converters.php',
         'Simbiat\\FFXIV\\LodestoneModules\\HttpRequest' => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src/LodestoneModules/HttpRequest.php',
@@ -545,6 +555,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\FFXIV\\LodestoneModules\\Regex' => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src/LodestoneModules/Regex.php',
         'Simbiat\\FFXIV\\LodestoneModules\\Routes' => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src/LodestoneModules/Routes.php',
         'Simbiat\\FFXIV\\LodestoneTest' => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src/LodestoneTest.php',
+        'Simbiat\\FFXIV\\PvPTeam' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/PvPTeam.php',
+        'Simbiat\\FFXIV\\Statistics' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Statistics.php',
         'Simbiat\\HTMLCache' => __DIR__ . '/../..' . '/lib/HTMLCache/src/HTMLCache.php',
         'Simbiat\\HTML\\ArrayToTable\\AbstractType' => __DIR__ . '/../..' . '/lib/array2table/src/AbstractType.php',
         'Simbiat\\HTML\\ArrayToTable\\Generator' => __DIR__ . '/../..' . '/lib/array2table/src/Generator.php',
@@ -724,16 +736,6 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Website\\Twig\\Extension' => __DIR__ . '/../..' . '/lib/Website/Twig/Extension.php',
         'Simbiat\\Website\\Twig\\RuntimeExtension' => __DIR__ . '/../..' . '/lib/Website/Twig/RuntimeExtension.php',
         'Simbiat\\Website\\Upload' => __DIR__ . '/../..' . '/lib/Website/Upload.php',
-        'Simbiat\\Website\\bictracker\\BIC' => __DIR__ . '/../..' . '/lib/Website/bictracker/BIC.php',
-        'Simbiat\\Website\\bictracker\\Library' => __DIR__ . '/../..' . '/lib/Website/bictracker/Library.php',
-        'Simbiat\\Website\\fftracker\\AbstractEntity' => __DIR__ . '/../..' . '/lib/Website/fftracker/AbstractEntity.php',
-        'Simbiat\\Website\\fftracker\\Achievement' => __DIR__ . '/../..' . '/lib/Website/fftracker/Achievement.php',
-        'Simbiat\\Website\\fftracker\\Character' => __DIR__ . '/../..' . '/lib/Website/fftracker/Character.php',
-        'Simbiat\\Website\\fftracker\\CrossworldLinkshell' => __DIR__ . '/../..' . '/lib/Website/fftracker/CrossworldLinkshell.php',
-        'Simbiat\\Website\\fftracker\\FreeCompany' => __DIR__ . '/../..' . '/lib/Website/fftracker/FreeCompany.php',
-        'Simbiat\\Website\\fftracker\\Linkshell' => __DIR__ . '/../..' . '/lib/Website/fftracker/Linkshell.php',
-        'Simbiat\\Website\\fftracker\\PvPTeam' => __DIR__ . '/../..' . '/lib/Website/fftracker/PvPTeam.php',
-        'Simbiat\\Website\\fftracker\\Statistics' => __DIR__ . '/../..' . '/lib/Website/fftracker/Statistics.php',
         'Simbiat\\Website\\usercontrol\\Email' => __DIR__ . '/../..' . '/lib/Website/usercontrol/Email.php',
         'Simbiat\\Website\\usercontrol\\Session' => __DIR__ . '/../..' . '/lib/Website/usercontrol/Session.php',
         'Simbiat\\Website\\usercontrol\\User' => __DIR__ . '/../..' . '/lib/Website/usercontrol/User.php',

@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\BICTracker;
 
+use Simbiat\BIC\Library;
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\bictracker\Library;
 use Simbiat\Website\HomePage;
 
 /**

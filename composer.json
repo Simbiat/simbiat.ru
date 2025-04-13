@@ -53,14 +53,16 @@
                 "./lib/ArrayHelpers/src"
             ],
             "Simbiat\\BIC\\": [
-                "./lib/BIC/AccountKeying/src"
+                "./lib/BIC/AccountKeying/src",
+                "./lib/BIC/Tracker/src"
             ],
             "Simbiat\\Database\\": [
                 "./lib/Database/Database/src",
                 "./lib/Database/Optimize/src"
             ],
             "Simbiat\\FFXIV\\": [
-                "./lib/FFXIV/Lodestone/src"
+                "./lib/FFXIV/Lodestone/src",
+                "./lib/FFXIV/Tracker/src"
             ],
             "Simbiat\\HTTP\\": [
                 "./lib/HTTP/SSE/src"

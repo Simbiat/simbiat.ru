@@ -8,7 +8,7 @@ class Achievement extends General
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => '', 'PUT' => 'update'];
     #Entity class name
-    protected string $entityClass = \Simbiat\Website\fftracker\Achievement::class;
+    protected string $entityClass = \Simbiat\FFXIV\Achievement::class;
     #Name to show in errors
     protected string $nameForErrors = 'Achievement';
     #Name for links

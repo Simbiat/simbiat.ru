@@ -6,7 +6,7 @@ namespace Simbiat\Website\Api\FFTracker;
 class Linkshell extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\Website\fftracker\Linkshell::class;
+    protected string $entityClass = \Simbiat\FFXIV\Linkshell::class;
     #Name to show in errors
     protected string $nameForErrors = 'Linkshell';
     #Name for links
