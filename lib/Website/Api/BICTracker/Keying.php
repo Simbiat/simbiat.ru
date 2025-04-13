@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\BICTracker;
 
-use Simbiat\AccountKeying;
+use Simbiat\BIC\AccountKeying;
 use Simbiat\Website\Abstracts\Api;
 
 class Keying extends Api

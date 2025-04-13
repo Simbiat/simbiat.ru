@@ -4,11 +4,11 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Twig;
 
 use Simbiat\CuteBytes;
-use Simbiat\HTMLCut;
+use Simbiat\HTML\Cut;
 use Simbiat\http20\HTML;
 use Simbiat\http20\Links;
 use Simbiat\http20\PrettyURL;
-use Simbiat\nl2tag;
+use Simbiat\HTML\nl2tag;
 use Simbiat\SandClock;
 use Simbiat\Website\Sanitization;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -80,7 +80,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
     
     public function htmlCut(string $string, int $length = 250): string
     {
-        return HTMLCut::Cut($string, $length, 3);
+        return Cut::Cut($string, $length, 3);
     }
     
     public function timeTag(int|string $string, string $format = 'd/m/Y H:i', string $classes = ''): string

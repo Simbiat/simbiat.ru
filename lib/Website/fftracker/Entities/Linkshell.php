@@ -7,7 +7,7 @@ use Simbiat\Cron\TaskInstance;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\fftracker\Entity;
-use Simbiat\Lodestone;
+use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV linkshell (chat group)

@@ -7,36 +7,18 @@
 [submodule "public/assets/images/fftracker/maps"]
 	path = public/assets/images/fftracker/maps
 	url = https://github.com/Simbiat/ffxiv-estate-maps
-[submodule "lib/AccountKeying"]
-	path = lib/AccountKeying
-	url = https://github.com/Simbiat/AccountKeying
 [submodule "lib/ArrayHelpers"]
 	path = lib/ArrayHelpers
 	url = https://github.com/Simbiat/ArrayHelpers
 [submodule "lib/SafeFileName"]
 	path = lib/SafeFileName
 	url = https://github.com/Simbiat/filename-sanitizer
-[submodule "lib/HTMLCut"]
-	path = lib/HTMLCut
-	url = https://github.com/Simbiat/htmlcut
-[submodule "lib/Lodestone"]
-	path = lib/Lodestone
-	url = https://github.com/Simbiat/lodestone-parser
-[submodule "lib/nl2tag"]
-	path = lib/nl2tag
-	url = https://github.com/Simbiat/nl2tag
-[submodule "lib/optimizeTables"]
-	path = lib/optimizeTables
-	url = https://github.com/Simbiat/optimize-tables
 [submodule "lib/SandClock"]
 	path = lib/SandClock
 	url = https://github.com/Simbiat/sand-clock
 [submodule "lib/Cron"]
 	path = lib/Cron
 	url = https://github.com/Simbiat/cron
-[submodule "lib/Database"]
-	path = lib/Database
-	url = https://github.com/Simbiat/database
 [submodule "lib/http20"]
 	path = lib/http20
 	url = https://github.com/Simbiat/http20
@@ -49,12 +31,36 @@
 [submodule "lib/HTMLCache"]
 	path = lib/HTMLCache
 	url = https://github.com/Simbiat/HTMLCache
-[submodule "lib/http/sse"]
-	path = lib/http/sse
-	url = https://github.com/Simbiat/sse
 [submodule "build/PSDs/FFXIV"]
 	path = build/PSDs/FFXIV
 	url = https://github.com/Simbiat/FFXIV-PSDs
 [submodule "lib/DDCIcons"]
 	path = lib/DDCIcons
 	url = https://github.com/Simbiat/DeviceDetectorIcons
+[submodule "lib/BIC/Tracker"]
+	path = lib/BIC/Tracker
+	url = https://github.com/Simbiat/BIC-Tracker
+[submodule "lib/BIC/AccountKeying"]
+	path = lib/BIC/AccountKeying
+	url = https://github.com/Simbiat/AccountKeying
+[submodule "lib/FFXIV/Tracker"]
+	path = lib/FFXIV/Tracker
+	url = https://github.com/Simbiat/FFXIV-Tracker
+[submodule "lib/FFXIV/Lodestone"]
+	path = lib/FFXIV/Lodestone
+	url = https://github.com/Simbiat/lodestone-parser
+[submodule "lib/HTML/Cut"]
+	path = lib/HTML/Cut
+	url = https://github.com/Simbiat/htmlcut
+[submodule "lib/HTML/nl2tag"]
+	path = lib/HTML/nl2tag
+	url = https://github.com/Simbiat/nl2tag
+[submodule "lib/HTTP/SSE"]
+	path = lib/HTTP/SSE
+	url = https://github.com/Simbiat/sse
+[submodule "lib/Database/Database"]
+	path = lib/Database/Database
+	url = https://github.com/Simbiat/database
+[submodule "lib/Database/Optimize"]
+	path = lib/Database/Optimize
+	url = https://github.com/Simbiat/optimize-tables

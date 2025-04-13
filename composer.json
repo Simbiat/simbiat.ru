@@ -43,24 +43,32 @@
     "autoload": {
         "psr-4": {
             "Simbiat\\": [
-                "./lib/AccountKeying/src",
                 "./lib/ArrayHelpers/src",
                 "./lib/CuteBytes/src",
                 "./lib/DDCIcons/src",
                 "./lib/HTMLCache/src",
-                "./lib/HTMLCut/src",
-                "./lib/Lodestone/src",
-                "./lib/nl2tag/src",
-                "./lib/optimizeTables/src",
                 "./lib/SafeFileName/src",
                 "./lib/SandClock/src"
             ],
-            "Simbiat\\http\\": [
-                "./lib/http/sse/src"
+            "Simbiat\\BIC\\": [
+                "./lib/BIC/AccountKeying/src"
             ],
-            "Simbiat\\ArrayToTable\\": "./lib/array2table/src",
+            "Simbiat\\Database\\": [
+                "./lib/Database/Database/src",
+                "./lib/Database/Optimize/src"
+            ],
+            "Simbiat\\FFXIV\\": [
+                "./lib/FFXIV/Lodestone/src"
+            ],
+            "Simbiat\\HTTP\\": [
+                "./lib/HTTP/SSE/src"
+            ],
+            "Simbiat\\HTML\\": [
+                "./lib/HTML/Cut/src",
+                "./lib/HTML/nl2tag/src"
+            ],
+            "Simbiat\\HTML\\ArrayToTable\\": "./lib/array2table/src",
             "Simbiat\\Cron\\": "./lib/Cron/src",
-            "Simbiat\\Database\\": "./lib/Database/src",
             "Simbiat\\http20\\": "./lib/http20/src",
             "Simbiat\\Website\\": "./lib/Website"
         }

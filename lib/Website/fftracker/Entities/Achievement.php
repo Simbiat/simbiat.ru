@@ -8,7 +8,7 @@ use Simbiat\Cron\TaskInstance;
 use Simbiat\Website\Errors;
 use Simbiat\Website\fftracker\Entity;
 use Simbiat\Website\Images;
-use Simbiat\Lodestone;
+use Simbiat\FFXIV\Lodestone;
 
 /**
  * Class representing a FFXIV achievement

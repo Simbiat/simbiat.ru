@@ -6,7 +6,7 @@ namespace Simbiat\Website\Abstracts;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
-use Simbiat\HTMLCut;
+use Simbiat\HTML\Cut;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
 use Simbiat\Website\Images;
@@ -294,7 +294,7 @@ abstract class Page
         $cleanedHtml = $html->saveHTML();
         #Strip the excessive HTML tags, if we added them
         $cleanedHtml = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
-        $newDesc = strip_tags(HTMLCut::Cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
+        $newDesc = strip_tags(Cut::Cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
         #Update description only if it's not empty
         if (preg_match('/^\s*$/u', $newDesc) === 0) {
             $this->ogdesc = $newDesc;

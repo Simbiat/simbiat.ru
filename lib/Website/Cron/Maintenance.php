@@ -7,7 +7,7 @@ namespace Simbiat\Website\Cron;
 
 use Simbiat\Cron;
 use Simbiat\Database\Pool;
-use Simbiat\optimizeTables;
+use Simbiat\Database\Optimize;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
@@ -168,7 +168,7 @@ class Maintenance
         try {
             Config::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 0);
-            (new optimizeTables())->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
+            (new Optimize())->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
             (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');

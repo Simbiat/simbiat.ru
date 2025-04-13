@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '786548323f3a9452244ddf83672e34c260d6b717',
+            'reference' => '9a519dd30df3313d2ee076579ea69a289b0a26a3',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -145,9 +145,9 @@
             'dev_requirement' => true,
         ),
         'sendgrid/php-http-client' => array(
-            'pretty_version' => '4.1.1',
-            'version' => '4.1.1.0',
-            'reference' => 'ec09bcfccabeb21d69e245a1e1c0e51f2813fc35',
+            'pretty_version' => '4.1.3',
+            'version' => '4.1.3.0',
+            'reference' => '3002e9c8d21dcf664936ced4e5802ba8581a52c2',
             'type' => 'library',
             'install_path' => __DIR__ . '/../sendgrid/php-http-client',
             'aliases' => array(),
@@ -232,9 +232,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.7.2',
-            'version' => '7.7.2.0',
-            'reference' => '841a2f73ed89df874d5abca7286c344353098f14',
+            'pretty_version' => '7.8.0',
+            'version' => '7.8.0.0',
+            'reference' => '88d1b2874256895338034dba28bf6e920aa4ba17',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),

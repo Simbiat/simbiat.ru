@@ -8,7 +8,7 @@ use Simbiat\ArrayHelpers;
 use Simbiat\Website\Config;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Controller;
-use Simbiat\LodestoneModules\Converters;
+use Simbiat\FFXIV\LodestoneModules\Converters;
 use function in_array;
 
 /**

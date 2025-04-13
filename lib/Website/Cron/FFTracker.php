@@ -7,7 +7,7 @@ namespace Simbiat\Website\Cron;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Cron\TaskInstance;
-use Simbiat\Lodestone;
+use Simbiat\FFXIV\Lodestone;
 use Simbiat\Website\Caching;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
