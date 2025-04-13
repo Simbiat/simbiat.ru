@@ -30,7 +30,7 @@ class Bic extends Page
         #Sanitize BIC
         $BIC = $path[0] ?? '';
         #Try to get details
-        $outputArray['bicdetails'] = (new \Simbiat\Website\bictracker\Bic($BIC))->getArray();
+        $outputArray['bicdetails'] = (new \Simbiat\Website\bictracker\BIC($BIC))->getArray();
         #Check if ID was found
         if ($outputArray['bicdetails']['id'] === null) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\usercontrol;
 
 use SendGrid\Mail\Mail;
+use Simbiat\Arrays\Converters;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
@@ -59,7 +60,7 @@ class Email extends Entity
      */
     protected function process(array $fromDB): void
     {
-        $this->arrayToProperties($fromDB);
+        Converters::arrayToProperties($this, $fromDB);
     }
     
     /**

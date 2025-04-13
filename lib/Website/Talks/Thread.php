@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Talks;
 
-use Simbiat\ArrayHelpers;
+use Simbiat\Arrays\Editors;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
@@ -133,7 +133,7 @@ class Thread extends Entity
         if (!$this->forPost) {
             $this->posts = $fromDB['posts'];
             $this->tags = $fromDB['tags'];
-            $this->externalLinks = ArrayHelpers::DigitToKey($fromDB['links'], 'type');
+            $this->externalLinks = Editors::DigitToKey($fromDB['links'], 'type');
         }
     }
     
@@ -508,7 +508,7 @@ class Thread extends Entity
             $data['altlinks'] = [];
         } else {
             #Get supported links and set keys to respective values of `type` field
-            $altLinks = ArrayHelpers::DigitToKey(self::getAltLinkTypes(), 'type');
+            $altLinks = Editors::DigitToKey(self::getAltLinkTypes(), 'type');
             foreach ($data['altlinks'] as $key => $link) {
                 if (!empty($link)) {
                     $link = Security::sanitizeURL($link);

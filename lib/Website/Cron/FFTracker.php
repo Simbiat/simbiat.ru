@@ -11,12 +11,12 @@ use Simbiat\FFXIV\Lodestone;
 use Simbiat\Website\Caching;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
-use Simbiat\Website\fftracker\Entities\Achievement;
-use Simbiat\Website\fftracker\Entities\Character;
-use Simbiat\Website\fftracker\Entities\CrossworldLinkshell;
-use Simbiat\Website\fftracker\Entities\FreeCompany;
-use Simbiat\Website\fftracker\Entities\Linkshell;
-use Simbiat\Website\fftracker\Entities\PvPTeam;
+use Simbiat\Website\fftracker\Achievement;
+use Simbiat\Website\fftracker\Character;
+use Simbiat\Website\fftracker\CrossworldLinkshell;
+use Simbiat\Website\fftracker\FreeCompany;
+use Simbiat\Website\fftracker\Linkshell;
+use Simbiat\Website\fftracker\PvPTeam;
 use Simbiat\Website\fftracker\Statistics;
 use Simbiat\Website\usercontrol\Email;
 

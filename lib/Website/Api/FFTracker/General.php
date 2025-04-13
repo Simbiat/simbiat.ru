@@ -31,9 +31,9 @@ abstract class General extends Api
         try {
             if ($this->nameForLinks === 'achievement') {
                 $data = match ($path[1]) {
-                    'update' => (new \Simbiat\Website\fftracker\Entities\Achievement($path[0]))->updateFromApi(),
-                    'lodestone' => (new \Simbiat\Website\fftracker\Entities\Achievement($path[0]))->getFromLodestone(),
-                    default => (new \Simbiat\Website\fftracker\Entities\Achievement($path[0]))->getArray(),
+                    'update' => (new \Simbiat\Website\fftracker\Achievement($path[0]))->updateFromApi(),
+                    'lodestone' => (new \Simbiat\Website\fftracker\Achievement($path[0]))->getFromLodestone(),
+                    default => (new \Simbiat\Website\fftracker\Achievement($path[0]))->getArray(),
                 };
             } else {
                 $data = match ($path[1]) {

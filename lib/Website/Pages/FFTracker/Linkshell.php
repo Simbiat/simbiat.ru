@@ -32,9 +32,9 @@ class Linkshell extends Page
         $id = $path[0] ?? '';
         #Try to get details
         if ($this::crossworld) {
-            $outputArray['linkshell'] = (new \Simbiat\Website\fftracker\Entities\CrossworldLinkshell($id))->getArray();
+            $outputArray['linkshell'] = (new \Simbiat\Website\fftracker\CrossworldLinkshell($id))->getArray();
         } else {
-            $outputArray['linkshell'] = (new \Simbiat\Website\fftracker\Entities\Linkshell($id))->getArray();
+            $outputArray['linkshell'] = (new \Simbiat\Website\fftracker\Linkshell($id))->getArray();
         }
         #Check if ID was found
         if (empty($outputArray['linkshell']['id'])) {

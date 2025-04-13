@@ -101,30 +101,6 @@ abstract class Entity
     abstract protected function process(array $fromDB): void;
     
     /**
-     * Convert an array to object properties
-     * @param array $array  Array of properties
-     * @param array $skip   Properties to skip
-     * @param bool  $strict Whether property needs to exist
-     *
-     * @return void
-     */
-    final protected function arrayToProperties(array $array, array $skip = [], bool $strict = true): void
-    {
-        #Iterrate the array
-        foreach ($array as $key => $value) {
-            #Check that key is string and not in list of keys to skip
-            if (\is_string($key) && !\in_array($key, $skip, true)) {
-                #Throw an error if a property does not exist, and we use a strict mode
-                if ($strict && property_exists($this, $key) !== true) {
-                    throw new \LogicException(get_class($this).' must have declared `'.$key.'` property.');
-                }
-                #Set property (or, at least, attempt to)
-                $this->{$key} = $value;
-            }
-        }
-    }
-    
-    /**
      * Get the data in an array
      * @return array
      */

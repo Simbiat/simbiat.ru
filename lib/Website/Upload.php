@@ -4,8 +4,6 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\Curl;
-use Simbiat\Website\Errors;
 
 class Upload extends Api
 {
@@ -28,7 +26,7 @@ class Upload extends Api
         header('Access-Control-Allow-Credentials: true');
         header('P3P: CP="There is no P3P policy."');
         try {
-            $upload = (new Curl)->upload();
+            $upload = (new Curl())->upload();
             if (!empty($upload['http_error'])) {
                 return $upload;
             }

@@ -1,24 +1,22 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\fftracker\Entities;
+namespace Simbiat\Website\fftracker;
 
-use Simbiat\Website\Config;
 use Simbiat\Cron\TaskInstance;
-use Simbiat\Website\Errors;
-use Simbiat\Website\fftracker\Entity;
-use Simbiat\Website\Images;
 use Simbiat\FFXIV\Lodestone;
+use Simbiat\Website\Config;
+use Simbiat\Website\Errors;
+use Simbiat\Website\Images;
 use Simbiat\Website\Sanitization;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\User;
-
 use function is_array;
 
 /**
  * Class representing a FFXIV character
  */
-class Character extends Entity
+class Character extends AbstractEntity
 {
     #Custom properties
     public ?string $avatarID = '';
@@ -72,7 +70,7 @@ class Character extends Entity
         #Get achievements
         $data['achievements'] = Config::$dbController->selectAll('SELECT \'achievement\' AS `type`, `ffxiv__achievement`.`achievementid` AS `id`, `ffxiv__achievement`.`category`, `ffxiv__achievement`.`subcategory`, `ffxiv__achievement`.`name`, `time`, `icon` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__achievement` ON `ffxiv__character_achievement`.`achievementid`=`ffxiv__achievement`.`achievementid` WHERE `ffxiv__character_achievement`.`characterid` = :id AND `ffxiv__achievement`.`category` IS NOT NULL AND `ffxiv__achievement`.`achievementid` IS NOT NULL ORDER BY `time` DESC, `name` LIMIT 10', [':id' => $this->id]);
         #Get affiliated groups' details
-        $data['groups'] = Entity::cleanCrestResults(Config::$dbController->selectAll(
+        $data['groups'] = AbstractEntity::cleanCrestResults(Config::$dbController->selectAll(
             '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, `current`, `ffxiv__freecompany_character`.`rankid`, `ffxiv__freecompany_rank`.`rankname` AS `rank`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id)
             UNION ALL
             (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, `current`, `ffxiv__linkshell_character`.`rankid`, `ffxiv__linkshell_rank`.`rank` AS `rank`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id)

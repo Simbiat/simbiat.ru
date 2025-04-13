@@ -3,14 +3,15 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\bictracker;
 
+use Simbiat\Arrays\Converters;
+use Simbiat\Arrays\Sorters;
 use Simbiat\Website\Abstracts\Entity;
-use Simbiat\ArrayHelpers;
 use Simbiat\Website\Config;
 
 /**
  * Class representing a Bank Identification Code (BIC)
  */
-class Bic extends Entity
+class BIC extends Entity
 {
     #Custom properties
     #Bank code of the entity
@@ -107,7 +108,7 @@ class Bic extends Entity
         }
         #Get all branches of the bank (if any)
         $fromDB['branches'] = $this->getBranches($fromDB['BIC']);
-        $fromDB['branches'] = ArrayHelpers::MultiArrSort($fromDB['branches'], 'name');
+        $fromDB['branches'] = Sorters::MultiArrSort($fromDB['branches'], 'name');
         #Get SWIFT codes
         $fromDB['SWIFTs'] = Config::$dbController->selectAll('SELECT `SWBIC`, `DefaultSWBIC`, `DateIn`, `DateOut` FROM `bic__swift` WHERE `BIC`=:BIC ORDER BY `DefaultSWBIC` DESC, `DateOut` DESC', [':BIC' => $this->id]);
         #Get restrictions for BIC
@@ -153,28 +154,28 @@ class Bic extends Entity
         }
         #Get the chain of predecessors (if any) based on DBF data
         $fromDB['DBF']['predecessors'] = (empty($fromDB['VKEY']) ? [] : $this->predecessors($fromDB['VKEY']));
-        $fromDB['DBF']['predecessors'] = ArrayHelpers::MultiArrSort($fromDB['DBF']['predecessors'], 'name');
+        $fromDB['DBF']['predecessors'] = Sorters::MultiArrSort($fromDB['DBF']['predecessors'], 'name');
         #Get the chain of successors (if any) based on DBF data
         $fromDB['DBF']['successors'] = (empty($fromDB['VKEYDEL']) ? [] : $this->successors($fromDB['VKEYDEL']));
         #Moving DBF related values around
         foreach (['NAMEMAXB', 'NAMEN', 'SWIFT_NAME'] as $key) {
-            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'names', $key]);
+            \Simbiat\Arrays\Editors::moveToSubarray($fromDB, $key, ['DBF', 'names', $key]);
         }
         foreach (['AT1', 'AT2', 'TELEF', 'CKS'] as $key) {
-            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'contacts', $key]);
+            \Simbiat\Arrays\Editors::moveToSubarray($fromDB, $key, ['DBF', 'contacts', $key]);
         }
         foreach (['R_CLOSE', 'PRIM1', 'PRIM2', 'PRIM3'] as $key) {
-            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'removal', $key]);
+            \Simbiat\Arrays\Editors::moveToSubarray($fromDB, $key, ['DBF', 'removal', $key]);
         }
         foreach (['DATE_CH', 'VKEY', 'VKEYDEL', 'BVKEY', 'FVKEY', 'RKC', 'SROK', 'NEWKS', 'OKPO', 'PERMFO'] as $key) {
-            ArrayHelpers::moveToSubarray($fromDB, $key, ['DBF', 'misc', $key]);
+            \Simbiat\Arrays\Editors::moveToSubarray($fromDB, $key, ['DBF', 'misc', $key]);
         }
         #If RKC equals headquarters - remove it. For newer entries, they were essentially replaced
         if ($fromDB['DBF']['misc']['RKC'] === $fromDB['PrntBIC']) {
             $fromDB['DBF']['misc']['RKC'] = NULL;
         }
         #Convert array to properties
-        $this->arrayToProperties($fromDB);
+        Converters::arrayToProperties($this, $fromDB);
     }
     
     /**

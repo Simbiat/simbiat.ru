@@ -4,11 +4,12 @@ declare(strict_types = 1);
 namespace Simbiat\Website\fftracker;
 
 use JetBrains\PhpStorm\ExpectedValues;
-use Simbiat\ArrayHelpers;
-use Simbiat\Website\Config;
+use Simbiat\Arrays\Converters;
+use Simbiat\Arrays\Editors;
+use Simbiat\Arrays\Splitters;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Controller;
-use Simbiat\FFXIV\LodestoneModules\Converters;
+use Simbiat\Website\Config;
 use function in_array;
 
 /**
@@ -40,10 +41,6 @@ class Statistics
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', Config::$statistics));
         }
         $cachePath = Config::$statistics.$type.'.json';
-        #Get Lodestone object for optimization
-        $Lodestone = (new Converters());
-        #Get ArrayHelpers object for optimization
-        $ArrayHelpers = (new ArrayHelpers());
         #Get connection object for slight optimization
         $dbCon = Config::$dbController;
         $data['time'] = time();
@@ -70,7 +67,7 @@ class Statistics
                 $this->getOthers($data, $dbCon);
                 break;
         }
-        unset($dbCon, $ArrayHelpers, $Lodestone);
+        unset($dbCon);
         #Attempt to write to cache
         file_put_contents($cachePath, json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
         if ($type === 'bugs') {
@@ -81,6 +78,7 @@ class Statistics
     
     /**
      * Get data raw data for character statistics based on counts
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -101,6 +99,7 @@ class Statistics
     
     /**
      * Get data for character-based statistics
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -114,25 +113,25 @@ class Statistics
         );
         #Most name changes
         $data['characters']['changes']['name'] = $dbCon->countUnique('ffxiv__character_names', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['changes']['name'], 'value', 'name');
+        Editors::renameColumn($data['characters']['changes']['name'], 'value', 'name');
         #Most reincarnation
         $data['characters']['changes']['clan'] = $dbCon->countUnique('ffxiv__character_clans', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['changes']['clan'], 'value', 'name');
+        Editors::renameColumn($data['characters']['changes']['clan'], 'value', 'name');
         #Most servers
         $data['characters']['changes']['server'] = $dbCon->countUnique('ffxiv__character_servers', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['changes']['server'], 'value', 'name');
+        Editors::renameColumn($data['characters']['changes']['server'], 'value', 'name');
         #Most companies
         $data['characters']['groups']['Free Companies'] = $dbCon->countUnique('ffxiv__freecompany_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
+        Editors::renameColumn($data['characters']['groups']['Free Companies'], 'value', 'name');
         #Most PvP teams
         $data['characters']['groups']['PvP Teams'] = $dbCon->countUnique('ffxiv__pvpteam_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
+        Editors::renameColumn($data['characters']['groups']['PvP Teams'], 'value', 'name');
         #Most x-linkshells
         $data['characters']['groups']['Linkshells'] = $dbCon->countUnique('ffxiv__linkshell_character', 'characterid', '', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
+        Editors::renameColumn($data['characters']['groups']['Linkshells'], 'value', 'name');
         #Most linkshells
         $data['characters']['groups']['simLinkshells'] = $dbCon->countUnique('ffxiv__linkshell_character', 'characterid', '`ffxiv__linkshell_character`.`current`=1', 'ffxiv__character', 'INNER', 'characterid', '`tempresult`.`characterid` AS `id`, `ffxiv__character`.`avatar` AS `icon`, \'character\' AS `type`, `ffxiv__character`.`name`', 'DESC', 20, [], true);
-        ArrayHelpers::renameColumn($data['characters']['groups']['simLinkshells'], 'value', 'name');
+        Editors::renameColumn($data['characters']['groups']['simLinkshells'], 'value', 'name');
         #Groups affiliation
         $data['characters']['groups']['participation'] = $dbCon->selectAll('
                         SELECT COUNT(*) as `count`,
@@ -164,6 +163,7 @@ class Statistics
     
     /**
      * Get data for statistics related to different groups
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -172,7 +172,7 @@ class Statistics
     private function getGroups(array &$data, Controller $dbCon): void
     {
         #Get most popular estate locations
-        $data['freecompany']['estate'] = ArrayHelpers::topAndBottom($dbCon->countUnique('ffxiv__freecompany', 'estateid', '`ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL', 'ffxiv__estate', 'INNER', 'estateid', '`ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, \', plot \', `ffxiv__estate`.`plot`)'), 20);
+        $data['freecompany']['estate'] = Splitters::topAndBottom($dbCon->countUnique('ffxiv__freecompany', 'estateid', '`ffxiv__freecompany`.`deleted` IS NULL AND `ffxiv__freecompany`.`estateid` IS NOT NULL', 'ffxiv__estate', 'INNER', 'estateid', '`ffxiv__estate`.`area`, `ffxiv__estate`.`plot`, CONCAT(`ffxiv__estate`.`area`, \', plot \', `ffxiv__estate`.`plot`)'), 20);
         #Get statistics by activity time
         $data['freecompany']['active'] = $dbCon->sumUnique('ffxiv__freecompany', 'activeid', [1, 2, 3], ['Always', 'Weekdays', 'Weekends'], '`ffxiv__freecompany`.`deleted` IS NULL', 'ffxiv__timeactive', 'INNER', 'activeid', 'IF(`ffxiv__freecompany`.`recruitment`=1, \'Recruiting\', \'Not recruiting\') AS `recruiting`');
         #Get statistics by activities
@@ -203,14 +203,15 @@ class Statistics
         #PvP teams
         $data['servers']['pvpteam'] = $dbCon->countUnique('ffxiv__pvpteam', 'datacenterid', '`ffxiv__pvpteam`.`deleted` IS NULL', 'ffxiv__server', 'INNER', 'serverid', '`ffxiv__server`.`datacenter`');
         #Get most popular crests for companies
-        $data['freecompany']['crests'] = Entity::cleanCrestResults($dbCon->selectAll('SELECT COUNT(*) AS `count`, `crest_part_1`, `crest_part_2`, `crest_part_3` FROM `ffxiv__freecompany` GROUP BY `crest_part_1`, `crest_part_2`, `crest_part_3` ORDER BY `count` DESC LIMIT 20;'));
+        $data['freecompany']['crests'] = AbstractEntity::cleanCrestResults($dbCon->selectAll('SELECT COUNT(*) AS `count`, `crest_part_1`, `crest_part_2`, `crest_part_3` FROM `ffxiv__freecompany` GROUP BY `crest_part_1`, `crest_part_2`, `crest_part_3` ORDER BY `count` DESC LIMIT 20;'));
         #Get most popular crests for PvP Teams
-        $data['pvpteam']['crests'] = Entity::cleanCrestResults($dbCon->selectAll('SELECT COUNT(*) AS `count`, `crest_part_1`, `crest_part_2`, `crest_part_3` FROM `ffxiv__pvpteam` GROUP BY `crest_part_1`, `crest_part_2`, `crest_part_3` ORDER BY `count` DESC LIMIT 20;'));
+        $data['pvpteam']['crests'] = AbstractEntity::cleanCrestResults($dbCon->selectAll('SELECT COUNT(*) AS `count`, `crest_part_1`, `crest_part_2`, `crest_part_3` FROM `ffxiv__pvpteam` GROUP BY `crest_part_1`, `crest_part_2`, `crest_part_3` ORDER BY `count` DESC LIMIT 20;'));
         
     }
     
     /**
      * Get data for achievements' statistics
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -225,18 +226,19 @@ class Statistics
                     WHERE `ffxiv__achievement`.`category` IS NOT NULL AND `earnedby`>0 ORDER BY `count`;'
         );
         #Split achievements by categories
-        $data['achievements'] = ArrayHelpers::splitByKey($data['achievements'], 'category');
+        $data['achievements'] = Splitters::splitByKey($data['achievements'], 'category');
         #Get only top 20 for each category
         foreach ($data['achievements'] as $key => $category) {
             $data['achievements'][$key] = \array_slice($category, 0, 20);
         }
         #Get most and least popular titles
-        $data['titles'] = ArrayHelpers::topAndBottom($dbCon->selectAll('SELECT COUNT(*) as `count`, `ffxiv__achievement`.`title`, `ffxiv__achievement`.`achievementid` FROM `ffxiv__character` LEFT JOIN `ffxiv__achievement` ON `ffxiv__achievement`.`achievementid`=`ffxiv__character`.`titleid` WHERE `ffxiv__character`.`titleid` IS NOT NULL GROUP BY `titleid` ORDER BY `count` DESC;'), 20);
+        $data['titles'] = Splitters::topAndBottom($dbCon->selectAll('SELECT COUNT(*) as `count`, `ffxiv__achievement`.`title`, `ffxiv__achievement`.`achievementid` FROM `ffxiv__character` LEFT JOIN `ffxiv__achievement` ON `ffxiv__achievement`.`achievementid`=`ffxiv__character`.`titleid` WHERE `ffxiv__character`.`titleid` IS NOT NULL GROUP BY `titleid` ORDER BY `count` DESC;'), 20);
         
     }
     
     /**
      * Get data statistics linked to dates
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -272,15 +274,16 @@ class Statistics
                             UNION
                             SELECT `deleted` AS `date`, COUNT(*) AS `count`, \'linkshells_deleted\' as `type` FROM `ffxiv__linkshell` WHERE `deleted` IS NOT NULL GROUP BY `date`;'
         );
-        $data['timelines'] = ArrayHelpers::splitByKey($data['timelines'], 'date');
+        $data['timelines'] = Splitters::splitByKey($data['timelines'], 'date');
         foreach ($data['timelines'] as $date => $datapoint) {
-            $data['timelines'][$date] = ArrayHelpers::MultiToSingle(ArrayHelpers::DigitToKey($datapoint, 'type', true), 'count');
+            $data['timelines'][$date] = Converters::MultiToSingle(Editors::DigitToKey($datapoint, 'type', true), 'count');
         }
         krsort($data['timelines']);
     }
     
     /**
      * Get data for potential data bugs
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -293,7 +296,7 @@ class Statistics
         #Characters with no avatar
         $data['bugs']['noAvatar'] = $dbCon->selectAll('SELECT `characterid` AS `id`, `name`, `avatar` AS `icon`, \'character\' AS `type` FROM `ffxiv__character` WHERE `avatar` LIKE \'defaultf%\' AND `deleted` IS NULL AND `privated` IS NULL ORDER BY `updated`, `name`;');
         #Groups with no members
-        $data['bugs']['noMembers'] = Entity::cleanCrestResults($dbCon->selectAll(
+        $data['bugs']['noMembers'] = AbstractEntity::cleanCrestResults($dbCon->selectAll(
             'SELECT `freecompanyid` AS `id`, `name`, \'freecompany\' AS `type`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany` as `fc` WHERE `deleted` IS NULL AND `freecompanyid` NOT IN (SELECT `freecompanyid` FROM `ffxiv__freecompany_character` WHERE `freecompanyid`=`fc`.`freecompanyid` AND `current`=1)
                         UNION
                         SELECT `linkshellid` AS `id`, `name`, IF(`crossworld`=1, \'crossworldlinkshell\', \'linkshell\') AS `type`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__linkshell` as `ls` WHERE `deleted` IS NULL AND `linkshellid` NOT IN (SELECT `linkshellid` FROM `ffxiv__linkshell_character` WHERE `linkshellid`=`ls`.`linkshellid` AND `current`=1)
@@ -312,16 +315,16 @@ class Statistics
                             SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `linkshellid` AS `id`, `name`, NULL as `icon`, NULL as `userid`, NULL as `crest_part_1`, NULL as `crest_part_2`, NULL as `crest_part_3`, `server`, `datacenter`  FROM `ffxiv__linkshell` as `lstable` LEFT JOIN `ffxiv__server` ON `ffxiv__server`.`serverid`=`lstable`.`serverid` WHERE `deleted` is NULL AND (SELECT COUNT(*) as `count` FROM `ffxiv__linkshell` WHERE `ffxiv__linkshell`.`name`= BINARY `lstable`.`name` AND `ffxiv__linkshell`.`serverid`=`lstable`.`serverid` AND `deleted` is NULL AND `ffxiv__linkshell`.`crossworld`=`lstable`.`crossworld`)>1;'
         );
         #Split by entity type
-        $data['bugs']['duplicateNames'] = ArrayHelpers::splitByKey($duplicateNames, 'type', keepKey: true);
+        $data['bugs']['duplicateNames'] = Splitters::splitByKey($duplicateNames, 'type', keepKey: true);
         foreach ($data['bugs']['duplicateNames'] as $entityType => $namesData) {
             #Split by server/datacenter
-            $data['bugs']['duplicateNames'][$entityType] = ArrayHelpers::splitByKey($namesData, (in_array($entityType, ['pvpteam', 'crosswordlinkshell']) ? 'datacenter' : 'server'));
+            $data['bugs']['duplicateNames'][$entityType] = Splitters::splitByKey($namesData, (in_array($entityType, ['pvpteam', 'crosswordlinkshell']) ? 'datacenter' : 'server'));
             foreach ($data['bugs']['duplicateNames'][$entityType] as $server => $serverData) {
                 #Split by name
-                $data['bugs']['duplicateNames'][$entityType][$server] = ArrayHelpers::splitByKey($serverData, 'name', keepKey: true, caseInsensitive: true);
+                $data['bugs']['duplicateNames'][$entityType][$server] = Splitters::splitByKey($serverData, 'name', keepKey: true, caseInsensitive: true);
                 foreach ($data['bugs']['duplicateNames'][$entityType][$server] as $name => $nameData) {
                     if (in_array($entityType, ['freecompany', 'pvpteam'])) {
-                        $nameData = Entity::cleanCrestResults($nameData);
+                        $nameData = AbstractEntity::cleanCrestResults($nameData);
                     }
                     foreach ($nameData as $key => $duplicates) {
                         #Clean up
@@ -341,6 +344,7 @@ class Statistics
     
     /**
      * Get data for uncategorized statistics
+     *
      * @param array                        $data  Array of gathered data
      * @param \Simbiat\Database\Controller $dbCon Database connection object
      *
@@ -400,9 +404,9 @@ class Statistics
                             UNION
                             (SELECT DATE(`updated`) AS `date`, COUNT(*) AS `count`, \'linkshells\' as `type` FROM `ffxiv__linkshell` GROUP BY `date` ORDER BY `date` DESC LIMIT 30);'
         );
-        $data['updates_stats'] = ArrayHelpers::splitByKey($data['updates_stats'], 'date');
+        $data['updates_stats'] = Splitters::splitByKey($data['updates_stats'], 'date');
         foreach ($data['updates_stats'] as $date => $datapoint) {
-            $data['updates_stats'][$date] = ArrayHelpers::MultiToSingle(ArrayHelpers::DigitToKey($datapoint, 'type', true), 'count');
+            $data['updates_stats'][$date] = Converters::MultiToSingle(Editors::DigitToKey($datapoint, 'type', true), 'count');
         }
         krsort($data['updates_stats']);
         $data['updates_stats'] = \array_slice($data['updates_stats'], 0, 30);

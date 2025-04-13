@@ -43,12 +43,14 @@
     "autoload": {
         "psr-4": {
             "Simbiat\\": [
-                "./lib/ArrayHelpers/src",
                 "./lib/CuteBytes/src",
                 "./lib/DDCIcons/src",
                 "./lib/HTMLCache/src",
                 "./lib/SafeFileName/src",
                 "./lib/SandClock/src"
+            ],
+            "Simbiat\\Arrays\\": [
+                "./lib/ArrayHelpers/src"
             ],
             "Simbiat\\BIC\\": [
                 "./lib/BIC/AccountKeying/src"

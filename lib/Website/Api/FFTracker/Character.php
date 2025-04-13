@@ -6,7 +6,7 @@ namespace Simbiat\Website\Api\FFTracker;
 class Character extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\Website\fftracker\Entities\Character::class;
+    protected string $entityClass = \Simbiat\Website\fftracker\Character::class;
     #Name to show in errors
     protected string $nameForErrors = 'Character';
     #Name for links

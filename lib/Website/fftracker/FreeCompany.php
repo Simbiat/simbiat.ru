@@ -1,21 +1,19 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\fftracker\Entities;
+namespace Simbiat\Website\fftracker;
 
 use Simbiat\Cron\TaskInstance;
+use Simbiat\FFXIV\Lodestone;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
-use Simbiat\Website\fftracker\Entity;
-use Simbiat\FFXIV\Lodestone;
 use Simbiat\Website\Sanitization;
-
 use function count;
 
 /**
  * Class representing a FFXIV free company (guild)
  */
-class FreeCompany extends Entity
+class FreeCompany extends AbstractEntity
 {
     #Custom properties
     protected const string entityType = 'freecompany';

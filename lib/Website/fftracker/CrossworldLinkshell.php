@@ -1,9 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\fftracker\Entities;
-
-use Simbiat\Website\fftracker\Entities\Linkshell;
+namespace Simbiat\Website\fftracker;
 
 class CrossworldLinkshell extends Linkshell
 {

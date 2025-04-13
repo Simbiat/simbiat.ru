@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
-use Simbiat\ArrayHelpers;
+use Simbiat\Arrays\Converters;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
@@ -141,7 +141,7 @@ class User extends Entity
         unset($fromDB['system'], $fromDB['parentid'], $fromDB['parentname'], $fromDB['firstname'], $fromDB['lastname'], $fromDB['middlename'], $fromDB['fathername'], $fromDB['prefix'],
             $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday'], $fromDB['blog'], $fromDB['changelog'], $fromDB['knowledgebase']);
         #Populate the rest properties
-        $this->arrayToProperties($fromDB);
+        Converters::arrayToProperties($this, $fromDB);
     }
     
     /**
@@ -323,7 +323,7 @@ class User extends Entity
         #Get linked groups
         if (!empty($outputArray['characters'])) {
             foreach ($outputArray['characters'] as $character) {
-                $outputArray['groups'][$character['id']] = \Simbiat\Website\fftracker\Entity::cleanCrestResults(Config::$dbController->selectAll(
+                $outputArray['groups'][$character['id']] = \Simbiat\Website\fftracker\AbstractEntity::cleanCrestResults(Config::$dbController->selectAll(
                     '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rankid`=1)
@@ -927,7 +927,7 @@ class User extends Entity
                 }
             }
             #Convert regular 0, 1, ... n IDs to real thread IDs for later use
-            $threads = ArrayHelpers::DigitToKey($threads, 'id');
+            $threads = \Simbiat\Arrays\Editors::DigitToKey($threads, 'id');
             #Get post IDs
             $ids = array_column($threads, 'firstPost');
         } else {

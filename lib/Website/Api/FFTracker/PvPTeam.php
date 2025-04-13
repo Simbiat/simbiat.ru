@@ -6,7 +6,7 @@ namespace Simbiat\Website\Api\FFTracker;
 class PvPTeam extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\Website\fftracker\Entities\PvPTeam::class;
+    protected string $entityClass = \Simbiat\Website\fftracker\PvPTeam::class;
     #Name to show in errors
     protected string $nameForErrors = 'PvP Team';
     #Name for links

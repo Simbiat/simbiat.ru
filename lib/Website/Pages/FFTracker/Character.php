@@ -30,7 +30,7 @@ class Character extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        $outputArray['character'] = (new \Simbiat\Website\fftracker\Entities\Character($id))->getArray();
+        $outputArray['character'] = (new \Simbiat\Website\fftracker\Character($id))->getArray();
         #Check if ID was found
         if (empty($outputArray['character']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];

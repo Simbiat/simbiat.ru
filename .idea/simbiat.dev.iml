@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/symfony/demo/tests" isTestSource="true" packagePrefix="App\Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/symfony/webapp/src" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/symfony/webapp/tests" isTestSource="true" packagePrefix="App\Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/./lib/ArrayHelpers/src" isTestSource="false" packagePrefix="Simbiat\" />
+      <sourceFolder url="file://$MODULE_DIR$/./lib/ArrayHelpers/src" isTestSource="false" packagePrefix="Simbiat\Arrays\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/Cron/src" isTestSource="false" packagePrefix="Simbiat\Cron\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/SafeFileName/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/SandClock/src" isTestSource="false" packagePrefix="Simbiat\" />

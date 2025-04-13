@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\fftracker\Entities\Character;
+use Simbiat\Website\fftracker\Character;
 
 class FFLink extends Api
 {

@@ -19,7 +19,7 @@ class Bic extends Api
     protected function genData(array $path): array
     {
         try {
-            $data = (new \Simbiat\Website\bictracker\Bic($path[0]))->getArray();
+            $data = (new \Simbiat\Website\bictracker\BIC($path[0]))->getArray();
         } catch (\UnexpectedValueException) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
         } catch (\Throwable) {

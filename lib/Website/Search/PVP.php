@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Search;
 use Simbiat\Website\Abstracts\Search;
-use Simbiat\Website\fftracker\Entity;
+use Simbiat\Website\fftracker\AbstractEntity;
 
 class PVP extends Search
 {
@@ -35,6 +35,6 @@ class PVP extends Search
     
     protected function postProcess(array $results): array
     {
-        return Entity::cleanCrestResults($results);
+        return AbstractEntity::cleanCrestResults($results);
     }
 }
