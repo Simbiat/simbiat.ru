@@ -202,7 +202,7 @@ final class Config
         if (self::$dbup === false) {
             try {
                 Pool::openConnection(
-                    new \Simbiat\Database\Config()
+                    new \Simbiat\Database\Connection()
                         ->setHost(socket: $_ENV['DATABASE_SOCKET'])
                         ->setUser($_ENV['DATABASE_USER'])
                         ->setPassword($_ENV['DATABASE_PASSWORD'])

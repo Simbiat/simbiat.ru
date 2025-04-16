@@ -131,6 +131,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         array (
             0 => __DIR__ . '/../..' . '/lib/Database/Database/src',
             1 => __DIR__ . '/../..' . '/lib/Database/Optimize/src',
+            2 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
         ),
         'Simbiat\\Cron\\' => 
         array (
@@ -538,10 +539,10 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Cron\\TaskInstance' => __DIR__ . '/../..' . '/lib/Cron/src/TaskInstance.php',
         'Simbiat\\CuteBytes' => __DIR__ . '/../..' . '/lib/CuteBytes/src/CuteBytes.php',
         'Simbiat\\DDCIcons' => __DIR__ . '/../..' . '/lib/DDCIcons/src/DDCIcons.php',
-        'Simbiat\\Database\\Config' => __DIR__ . '/../..' . '/lib/Database/Database/src/Config.php',
+        'Simbiat\\Database\\Connection' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Connection.php',
         'Simbiat\\Database\\Controller' => __DIR__ . '/../..' . '/lib/Database/Database/src/Controller.php',
         'Simbiat\\Database\\Optimize' => __DIR__ . '/../..' . '/lib/Database/Optimize/src/Optimize.php',
-        'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/Database/src/Pool.php',
+        'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Pool.php',
         'Simbiat\\FFXIV\\AbstractTrackerEntity' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/AbstractTrackerEntity.php',
         'Simbiat\\FFXIV\\Achievement' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Achievement.php',
         'Simbiat\\FFXIV\\Character' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Character.php',
@@ -608,6 +609,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Website\\Api\\Talks\\Posts' => __DIR__ . '/../..' . '/lib/Website/Api/Talks/Posts.php',
         'Simbiat\\Website\\Api\\Talks\\Sections' => __DIR__ . '/../..' . '/lib/Website/Api/Talks/Sections.php',
         'Simbiat\\Website\\Api\\Talks\\Threads' => __DIR__ . '/../..' . '/lib/Website/Api/Talks/Threads.php',
+        'Simbiat\\Website\\Api\\Upload' => __DIR__ . '/../..' . '/lib/Website/Api/Upload.php',
         'Simbiat\\Website\\Api\\UserControl\\Avatars' => __DIR__ . '/../..' . '/lib/Website/Api/UserControl/Avatars.php',
         'Simbiat\\Website\\Api\\UserControl\\Cookies' => __DIR__ . '/../..' . '/lib/Website/Api/UserControl/Cookies.php',
         'Simbiat\\Website\\Api\\UserControl\\Emails' => __DIR__ . '/../..' . '/lib/Website/Api/UserControl/Emails.php',
@@ -735,7 +737,6 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Website\\Twig\\EnvironmentGenerator' => __DIR__ . '/../..' . '/lib/Website/Twig/EnvironmentGenerator.php',
         'Simbiat\\Website\\Twig\\Extension' => __DIR__ . '/../..' . '/lib/Website/Twig/Extension.php',
         'Simbiat\\Website\\Twig\\RuntimeExtension' => __DIR__ . '/../..' . '/lib/Website/Twig/RuntimeExtension.php',
-        'Simbiat\\Website\\Upload' => __DIR__ . '/../..' . '/lib/Website/Upload.php',
         'Simbiat\\Website\\usercontrol\\Email' => __DIR__ . '/../..' . '/lib/Website/usercontrol/Email.php',
         'Simbiat\\Website\\usercontrol\\Session' => __DIR__ . '/../..' . '/lib/Website/usercontrol/Session.php',
         'Simbiat\\Website\\usercontrol\\User' => __DIR__ . '/../..' . '/lib/Website/usercontrol/User.php',

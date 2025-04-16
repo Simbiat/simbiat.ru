@@ -3,11 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
-use Simbiat\Abstracts;
-use Simbiat\bictracker;
-use Simbiat\fftracker;
-use Simbiat\usercontrol;
-use Simbiat\Website\Upload;
+use Simbiat\Website\Api\Upload;
 
 class Api extends \Simbiat\Website\Abstracts\Api
 {

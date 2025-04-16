@@ -64,3 +64,6 @@
 [submodule "lib/Database/Optimize"]
 	path = lib/Database/Optimize
 	url = https://github.com/Simbiat/optimize-tables
+[submodule "lib/Database/Pool"]
+	path = lib/Database/Pool
+	url = https://github.com/Simbiat/db-pool

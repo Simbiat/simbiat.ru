@@ -1,9 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website;
+namespace Simbiat\Website\Api;
 
 use Simbiat\Website\Abstracts\Api;
+use Simbiat\Website\Curl;
+use Simbiat\Website\Errors;
 
 class Upload extends Api
 {

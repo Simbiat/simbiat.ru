@@ -58,7 +58,8 @@
             ],
             "Simbiat\\Database\\": [
                 "./lib/Database/Database/src",
-                "./lib/Database/Optimize/src"
+                "./lib/Database/Optimize/src",
+                "./lib/Database/Pool/src"
             ],
             "Simbiat\\FFXIV\\": [
                 "./lib/FFXIV/Lodestone/src",

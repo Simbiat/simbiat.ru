@@ -11,6 +11,7 @@
     <mapping directory="$PROJECT_DIR$/lib/DDCIcons" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Database" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Optimize" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/Database/Pool" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/FFXIV/Lodestone" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/FFXIV/Tracker" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/HTML/Cut" vcs="Git" />
