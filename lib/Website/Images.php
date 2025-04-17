@@ -75,7 +75,7 @@ class Images
             header('Content-Type: image/webp');
             header('Content-Length: ' . $size);
             ob_end_flush();
-            exit;
+            exit(0);
         }
         return $gd;
     }
@@ -214,7 +214,7 @@ class Images
         header('Content-Type: image/svg+xml');
         header('Content-Length: ' . filesize($file));
         readfile($file);
-        exit;
+        exit(0);
     }
     
     #Function to generate data for og:image using provided file ID

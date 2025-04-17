@@ -55,7 +55,7 @@ class Errors
         #Write to log
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
-            exit;
+            exit(0);
         }
         file_put_contents(Config::$workDir.'/logs/php.log', $message, FILE_APPEND);
         return false;

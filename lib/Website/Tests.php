@@ -30,7 +30,7 @@ class Tests
         curl_setopt($curl, CURLOPT_INFILE, fopen($filepath, 'rb'));
         curl_setopt($curl, CURLOPT_INFILESIZE, filesize($filepath));
         Tests::testDump(curl_exec($curl));
-        exit;
+        exit(0);
     }
 
     #Function to test file upload using POST
@@ -55,7 +55,7 @@ class Tests
                 echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
             }
         }
-        exit;
+        exit(0);
     }
 
     #Function to test download
@@ -65,7 +65,7 @@ class Tests
             $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;
         }
         Sharing::download($filepath, '', '', true);
-        exit;
+        exit(0);
     }
 
     #A simple wrapper function for var_dump to apply <pre> tag and exit the script by default
@@ -77,7 +77,7 @@ class Tests
         @ob_flush();
         @flush();
         if ($exit) {
-            exit;
+            exit(0);
         }
     }
 }

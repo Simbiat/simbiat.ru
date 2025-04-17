@@ -46,7 +46,7 @@ class Tests extends Router
                     }
                     Common::zEcho($output, 'live');
                 }
-                exit;
+                exit(0);
             case 'styling':
                 return ['serviceName' => 'stylingTest', 'static_page' => true];
             default:

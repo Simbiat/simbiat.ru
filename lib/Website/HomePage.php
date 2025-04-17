@@ -69,7 +69,7 @@ class HomePage
             #Process requests to file or cache
             $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
             if ($fileResult === 200) {
-                exit;
+                exit(0);
             }
             #Exploding further processing
             $uri = explode('/', $_SERVER['REQUEST_URI']);
@@ -199,7 +199,7 @@ class HomePage
                 @ob_flush();
                 flush();
                 if (!empty($twigVars['cache_expires_at']) && ($twigVars['cache_expires_at'] - time()) > 0) {
-                    exit;
+                    exit(0);
                 }
                 return true;
             } catch (\Throwable) {
@@ -237,7 +237,7 @@ class HomePage
                 #Output data
                 Common::zEcho($output, $twigVars['cacheStrat'] ?? 'hour', false);
             }
-            exit;
+            exit(0);
         }
     }
 }
