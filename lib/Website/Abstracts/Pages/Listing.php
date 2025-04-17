@@ -53,7 +53,7 @@ class Listing extends Search
             $this->attachCrumb('?search=' . rawurlencode($this->searchFor), sprintf($this->shortTitle, $this->searchFor));
             $this->breadCrumb[] = ['href' => '/'.$this->serviceName.'/' . $this->subServiceName . '/?search=' . rawurlencode($this->searchFor), 'name' => $this->types[$this->subServiceName]['name']];
             if ($page > 1) {
-                $this->attachCrumb('page=' . $page, ucfirst($this->pageWord).' ' . $page, true);
+                $this->attachCrumb('page=' . $page, mb_ucfirst($this->pageWord, 'UTF-8').' '.$page, true);
             }
             #Set search value, if available
             $outputArray['searchValue'] = $this->searchFor;
@@ -64,7 +64,7 @@ class Listing extends Search
             #Update breadcrumbs
             $this->breadCrumb = [['href' => '/' .$this->serviceName. '/' . $this->subServiceName, 'name' => $this->types[$this->subServiceName]['name']]];
             if ($page > 1) {
-                $this->attachCrumb('/?page=' . $page, ucfirst($this->pageWord).' ' . $page);
+                $this->attachCrumb('/?page=' . $page, mb_ucfirst($this->pageWord, 'UTF-8').' ' . $page);
             }
             #Set titles
             $this->h1 = $this->title = $this->ogdesc = $this->types[$this->subServiceName]['name'].', '.$this->pageWord.' '.$page;

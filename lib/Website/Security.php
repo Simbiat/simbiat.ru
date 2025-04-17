@@ -249,7 +249,7 @@ class Security
         #Get OS
         $os = $dd->getOs();
         #Concat OS and version
-        $os = trim(($os['name'] ?? '').' '.($os['version'] ?? ''));
+        $os = mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), encoding: 'UTF-8');
         #Force OS to be NULL, if it's empty
         if (empty($os)) {
             $os = NULL;
@@ -276,7 +276,7 @@ class Security
             $unsupported = false;
         }
         #Concat client and version
-        $client = trim(($client['name'] ?? '').' '.($client['version'] ?? ''));
+        $client = mb_trim(($client['name'] ?? '').' '.($client['version'] ?? ''), encoding: 'UTF-8');
         #Force client to be NULL, if it's empty
         if (empty($client)) {
             $client = NULL;

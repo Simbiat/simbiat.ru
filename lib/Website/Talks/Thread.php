@@ -248,7 +248,7 @@ class Thread extends Entity
             $newID = Config::$dbController->insertAI(
                 'INSERT INTO `talks__threads`(`threadid`, `name`, `sectionid`, `language`, `pinned`, `closed`, `private`, `ogimage`, `created`, `createdby`, `updatedby`, `lastpostby`) VALUES (NULL, :name, :parentid, :language, COALESCE(:pinned, DEFAULT(`pinned`)), COALESCE(:closed, DEFAULT(`closed`)), COALESCE(:private, DEFAULT(`private`)), :ogimage, :time,:userid,:userid,:userid);',
                 [
-                    ':name' => trim($data['name']),
+                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
                     ':parentid' => [$data['parentid'], 'int'],
                     ':language' => $data['language'],
                     ':closed' => [
@@ -340,7 +340,7 @@ class Thread extends Entity
                 'UPDATE `talks__threads` SET `name`=:name, `sectionid`=:parentid, `language`=:language, `pinned`=COALESCE(:pinned, `pinned`), `closed`=COALESCE(:closed, `closed`), `private`=COALESCE(:private, `private`), `updatedby`=:userid, `ogimage`=COALESCE(:ogimage, `ogimage`) WHERE `threadid`=:thread;',
                 [
                     ':thread' => [$this->id, 'int'],
-                    ':name' => trim($data['name']),
+                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
                     ':parentid' => [$data['parentid'], 'int'],
                     ':language' => $data['language'],
                     ':closed' => [

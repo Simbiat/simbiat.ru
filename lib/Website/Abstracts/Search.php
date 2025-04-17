@@ -277,6 +277,6 @@ abstract class Search
             $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
         }
         #Remove last +, close the brackets and return
-        return trim($result, ' +').')';
+        return mb_trim($result, ' +', 'UTF-8').')';
     }
 }

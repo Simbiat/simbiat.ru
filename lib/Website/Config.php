@@ -147,7 +147,7 @@ final class Config
     private function canonical(): void
     {
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = mb_strtolower(rawurldecode(trim(trim(trim(preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? '')), '/'))), 'UTF-8');
+        self::$canonical = mb_strtolower(rawurldecode(mb_trim(mb_trim(mb_trim(preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), encoding: 'UTF-8'), '/', 'UTF-8'), encoding: 'UTF-8')), 'UTF-8');
         #Remove bad UTF
         self::$canonical = mb_scrub(self::$canonical, 'UTF-8');
         #Remove "friendly" portion of the links, but exclude API
@@ -165,9 +165,9 @@ final class Config
                 'search' => $_GET['search'] ?? null,
             ], encoding_type: PHP_QUERY_RFC3986);
         #Trim the excessive question mark, in case no query was attached
-        self::$canonical = rtrim(self::$canonical, '?');
+        self::$canonical = mb_rtrim(self::$canonical, '?', 'UTF-8');
         #Trim trailing slashes if any
-        self::$canonical = rtrim(self::$canonical, '/');
+        self::$canonical = mb_rtrim(self::$canonical, '/', 'UTF-8');
         #Set canonical link, that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', self::$http_host) === 1 ? 'www.' : '').self::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
         #Update list with dynamic values

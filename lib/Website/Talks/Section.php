@@ -350,8 +350,8 @@ class Section extends Entity
             $newID = Config::$dbController->insertAI(
                 'INSERT INTO `talks__sections`(`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `closed`, `private`, `created`, `createdby`, `updatedby`, `icon`) VALUES (NULL,:name,:description,:parentid,:sequence,:type,:closed,:private,:time,:userid,:userid,:icon);',
                 [
-                    ':name' => trim($data['name']),
-                    ':description' => trim($data['description']),
+                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
+                    ':description' => mb_trim($data['description'], encoding: 'UTF-8'),
                     ':parentid' => [
                         (empty($data['parentid']) ? null : $data['parentid']),
                         (empty($data['parentid']) ? 'null' : 'int')
@@ -432,8 +432,8 @@ class Section extends Entity
                 'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `parentid`=:parentid, `sequence`=:sequence, `type`=:type, `closed`=:closed, `private`=:private, `updatedby`=:userid, `icon`=COALESCE(:icon, `icon`) WHERE `sectionid`=:sectionid;',
                 [
                     ':sectionid' => [$this->id, 'int'],
-                    ':name' => trim($data['name']),
-                    ':description' => trim($data['description']),
+                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
+                    ':description' => mb_trim($data['description'], encoding: 'UTF-8'),
                     ':parentid' => [
                         (empty($data['parentid']) ? null : $data['parentid']),
                         (empty($data['parentid']) ? 'null' : 'int')

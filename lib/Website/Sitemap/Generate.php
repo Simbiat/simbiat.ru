@@ -48,11 +48,11 @@ class Generate
             foreach ($links as $link) {
                 if (!empty($link)) {
                     #Get path to use for router function (without format)
-                    $path = explode('/', trim(str_replace(Config::$baseUrl.'/sitemap/', '', $link), '/'));
+                    $path = explode('/', mb_trim(str_replace(Config::$baseUrl.'/sitemap/', '', $link), '/', 'UTF-8'));
                     #Strip trailing .xml extension
                     $path[array_key_last($path)] = str_replace('.xml', '', $path[array_key_last($path)]);
                     #Get filepath and filename
-                    $filePath = rtrim(Config::$sitemap.implode('/', array_slice($path, 0, -1)), '/');
+                    $filePath = mb_rtrim(Config::$sitemap.implode('/', array_slice($path, 0, -1)), '/', 'UTF-8');
                     $fileName = implode('/', array_slice($path, -1));
                     #Create folder if it does not exist
                     if (!@mkdir($filePath) && !is_dir($filePath)) {

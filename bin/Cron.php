@@ -18,7 +18,7 @@ $healthCheck->dbDown();
 $healthCheck->noSpace();
 #Run cron
 try {
-    (new Agent())->process(50);
+    new Agent()->process(50);
 } catch (Throwable $e) {
     Errors::error_log($e);
 }
