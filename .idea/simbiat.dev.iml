@@ -34,7 +34,6 @@
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/vcs" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/twig" />
       <excludeFolder url="file://$MODULE_DIR$/symfony" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri-interfaces" />
@@ -60,6 +59,27 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind-db/reader" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind/web-service-common" />
       <excludeFolder url="file://$MODULE_DIR$/templates/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dictionaries" />
+      <excludeFolder url="file://$MODULE_DIR$/config/Installers" />
+      <excludeFolder url="file://$MODULE_DIR$/data/backups" />
+      <excludeFolder url="file://$MODULE_DIR$/data/bic" />
+      <excludeFolder url="file://$MODULE_DIR$/data/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/data/caddy" />
+      <excludeFolder url="file://$MODULE_DIR$/data/caddy_config" />
+      <excludeFolder url="file://$MODULE_DIR$/data/crowdsec" />
+      <excludeFolder url="file://$MODULE_DIR$/data/ffstatistics" />
+      <excludeFolder url="file://$MODULE_DIR$/data/geoip" />
+      <excludeFolder url="file://$MODULE_DIR$/data/mariadb" />
+      <excludeFolder url="file://$MODULE_DIR$/data/mergedcrests" />
+      <excludeFolder url="file://$MODULE_DIR$/data/sessions" />
+      <excludeFolder url="file://$MODULE_DIR$/data/sitemap" />
+      <excludeFolder url="file://$MODULE_DIR$/data/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/data/uploaded" />
+      <excludeFolder url="file://$MODULE_DIR$/data/uploadedimages" />
+      <excludeFolder url="file://$MODULE_DIR$/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/data" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
