@@ -470,21 +470,21 @@
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" negateName="true" within="" contains="" />
       </replaceConfiguration>
-      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, encoding: 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" negateName="true" within="" contains="" />
-      </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_ltrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ltrim($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
+      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, encoding: 'UTF-8')">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="p" within="" contains="" />
+      </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, encoding: 'UTF-8')">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="p" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
