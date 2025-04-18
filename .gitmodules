@@ -1,12 +1,3 @@
-[submodule "public/assets/images/fftracker/icons"]
-	path = public/assets/images/fftracker/icons
-	url = https://github.com/Simbiat/FFXIV-Icons
-[submodule "public/assets/images/fftracker/crests-components"]
-	path = public/assets/images/fftracker/crests-components
-	url = https://github.com/Simbiat/FFXIV-Crests-Components
-[submodule "public/assets/images/fftracker/maps"]
-	path = public/assets/images/fftracker/maps
-	url = https://github.com/Simbiat/ffxiv-estate-maps
 [submodule "lib/ArrayHelpers"]
 	path = lib/ArrayHelpers
 	url = https://github.com/Simbiat/ArrayHelpers
@@ -31,9 +22,6 @@
 [submodule "lib/HTMLCache"]
 	path = lib/HTMLCache
 	url = https://github.com/Simbiat/HTMLCache
-[submodule "build/PSDs/FFXIV"]
-	path = build/PSDs/FFXIV
-	url = https://github.com/Simbiat/FFXIV-PSDs
 [submodule "lib/DDCIcons"]
 	path = lib/DDCIcons
 	url = https://github.com/Simbiat/DeviceDetectorIcons
@@ -67,3 +55,15 @@
 [submodule "lib/Database/Pool"]
 	path = lib/Database/Pool
 	url = https://github.com/Simbiat/db-pool
+[submodule "lib/FFXIV/PSDs"]
+	path = lib/FFXIV/PSDs
+	url = https://github.com/Simbiat/FFXIV-PSDs
+[submodule "lib/FFXIV/Icons"]
+	path = lib/FFXIV/Icons
+	url = https://github.com/Simbiat/FFXIV-Icons
+[submodule "lib/FFXIV/EstateMaps"]
+	path = lib/FFXIV/EstateMaps
+	url = https://github.com/Simbiat/ffxiv-estate-maps
+[submodule "lib/FFXIV/CrestComponents"]
+	path = lib/FFXIV/CrestComponents
+	url = https://github.com/Simbiat/FFXIV-Crests-Components

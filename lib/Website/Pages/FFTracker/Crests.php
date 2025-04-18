@@ -23,9 +23,9 @@ class Crests extends FileListing
     protected bool $recursive = true;
     #Directories relative to working dir
     protected array $dirs = [
-        'background' => ['path' => '/public/assets/images/fftracker/crests-components/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
-        'frame' => ['path' => '/public/assets/images/fftracker/crests-components/frames', 'name' => 'Frames'],
-        'emblem' => ['path' => '/public/assets/images/fftracker/crests-components/emblems', 'name' => 'Emblems', 'depth' => 1],
+        'background' => ['path' => '/lib/FFXIV/CrestComponents/backgrounds', 'name' => 'Backgrounds', 'depth' => 1],
+        'frame' => ['path' => '/lib/FFXIV/CrestComponents/frames', 'name' => 'Frames'],
+        'emblem' => ['path' => '/lib/FFXIV/CrestComponents/emblems', 'name' => 'Emblems', 'depth' => 1],
         'merged' => ['path' => '/data/mergedcrests', 'name' => 'Merged crests (cached)', 'depth' => 1],
     ];
     #List of prohibited extensions, files with which should be excluded
@@ -35,7 +35,7 @@ class Crests extends FileListing
     
     protected function extra(array &$fileDetails): void
     {
-        $fileDetails['icon'] = str_replace('/public/assets/', '/assets/', str_replace('/data/mergedcrests', '/assets/images/fftracker/merged-crests', $fileDetails['path'])).'/'.$fileDetails['filename'];
+        $fileDetails['icon'] = str_replace('/lib/FFXIV/CrestComponents', '/assets/images/fftracker/crests-components', str_replace('/public/assets/', '/assets/', str_replace('/data/mergedcrests', '/assets/images/fftracker/merged-crests', $fileDetails['path']))).'/'.$fileDetails['filename'];
         $fileDetails['name'] = (str_contains($fileDetails['path'], 'merged') ? $fileDetails['key'] : $fileDetails['filename']);
     }
 }

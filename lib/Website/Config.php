@@ -108,9 +108,9 @@ final class Config
         self::$uploaded = self::$workDir.'/data/uploaded';
         self::$uploadedImg = self::$workDir.'/data/uploadedimages';
         self::$DDLDir = self::$workDir.'/build/DDL';
-        self::$crestsComponents = self::$imgDir.'/fftracker/crests-components/';
+        self::$crestsComponents = self::$workDir.'/lib/FFXIV/CrestComponents/';
         self::$mergedCrestsCache = self::$workDir.'/data/mergedcrests/';
-        self::$icons = self::$imgDir.'/fftracker/icons/';
+        self::$icons = self::$workDir.'/lib/FFXIV/Icons/';
         self::$statistics = self::$workDir.'/data/ffstatistics/';
         self::$geoip = self::$workDir.'/data/geoip/';
         #Generate Argon settings

@@ -141,7 +141,7 @@
                                 }
                             ],
                             "handle": [
-                                //Remove certain headers from responses, if they are present
+                                //Remove certain headers from responses if they are present
                                 {
                                     "handler": "headers",
                                     "response": {
@@ -216,7 +216,7 @@
                                                 }
                                             ]
                                         },
-                                        //Sitemap without file specified
+                                        //Sitemap without a file specified
                                         {
                                             "match": [
                                                 {
@@ -409,7 +409,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "mergedCrest",
-                                                        "pattern": "/assets/images/fftracker/merged-crests/(.*)"
+                                                        "pattern": "/assets/images/fftracker/merged-crests/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app",
@@ -428,6 +428,28 @@
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
                                                 {
                                                     "handler": "file_server",
                                                     "root": "/app"
@@ -440,7 +462,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "ffxivJobs",
-                                                        "pattern": "/assets/images/fftracker/jobs/(.*)"
+                                                        "pattern": "/assets/images/fftracker/jobs/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app/public",
@@ -459,9 +481,189 @@
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/assets/images/fftracker/jobs/None.webp",
+                                                                        "/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app/public",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
                                                 {
                                                     "handler": "file_server",
                                                     "root": "/app/public"
+                                                }
+                                            ]
+                                        },
+                                        //FFXIV icons
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "name": "ffxivIcons",
+                                                        "pattern": "/assets/images/fftracker/icons/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                                                    },
+                                                    "file": {
+                                                        "root": "/app",
+                                                        "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
+                                                        "try_files": [
+                                                            "/lib/FFXIV/Icons/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                                                            "/public/assets/images/noimage.svg"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "{http.matchers.file.relative}"
+                                                },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "root": "/app"
+                                                }
+                                            ]
+                                        },
+                                        //FFXIV crests components
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "name": "ffxivCrestsComponents",
+                                                        "pattern": "/assets/images/fftracker/crests-components/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                                                    },
+                                                    "file": {
+                                                        "root": "/app",
+                                                        "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
+                                                        "try_files": [
+                                                            "/lib/FFXIV/CrestComponents/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                                            "/lib/FFXIV/CrestComponents/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                                                            "/public/assets/images/noimage.svg"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "{http.matchers.file.relative}"
+                                                },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "root": "/app"
+                                                }
+                                            ]
+                                        },
+                                        //FFXIV estate maps
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "name": "ffxivEstateMaps",
+                                                        "pattern": "/assets/images/fftracker/maps/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                                                    },
+                                                    "file": {
+                                                        "root": "/app",
+                                                        "split_path": [],
+                                                        "try_policy": "first_exist_fallback",
+                                                        "try_files": [
+                                                            "/lib/FFXIV/EstateMaps/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                                                            "/public/assets/images/noimage.svg"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "{http.matchers.file.relative}"
+                                                },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "root": "/app"
                                                 }
                                             ]
                                         },
@@ -471,7 +673,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "avatars",
-                                                        "pattern": "/assets/images/avatars/(.*)"
+                                                        "pattern": "/assets/images/avatars/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app",
@@ -489,6 +691,28 @@
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/avatar.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
                                                 {
                                                     "handler": "file_server",
                                                     "root": "/app"
@@ -501,7 +725,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "uploadedImages",
-                                                        "pattern": "/assets/images/uploaded/(.*)"
+                                                        "pattern": "/assets/images/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app",
@@ -519,6 +743,28 @@
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
                                                 {
                                                     "handler": "file_server",
                                                     "root": "/app"
@@ -531,7 +777,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "oldImages",
-                                                        "pattern": "/img/uploaded/(.*)"
+                                                        "pattern": "/img/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app/public",
@@ -548,6 +794,28 @@
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app/public",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
                                                 {
                                                     "handler": "file_server",
                                                     "root": "/app/public"
@@ -560,7 +828,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "DDCIcons",
-                                                        "pattern": "/assets/images/devicedetector/(.*)"
+                                                        "pattern": "/assets/images/devicedetector/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app",
@@ -577,23 +845,31 @@
                                                 }
                                             ],
                                             "handle": [
-                                                //No idea why it does not work without this
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "X-File-Path-Check": [
-                                                                "/lib/DDCIcons/src/icons/{http.regexp.DDCIcons.1}"
-                                                            ],
-                                                            "X-File-Path-Check-Alt": [
-                                                                "/lib/DDCIcons/src/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}"
-                                                            ]
-                                                        }
-                                                    }
-                                                },
                                                 {
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
+                                                },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/public/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
                                                 },
                                                 {
                                                     "handler": "file_server",
@@ -607,7 +883,7 @@
                                                 {
                                                     "path_regexp": {
                                                         "name": "missingImages",
-                                                        "pattern": "/assets/images/(.*)"
+                                                        "pattern": "/assets/images/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
                                                     },
                                                     "file": {
                                                         "root": "/app/public",
@@ -625,13 +901,35 @@
                                                     "handler": "rewrite",
                                                     "uri": "{http.matchers.file.relative}"
                                                 },
+                                                //Return 404 if we failback to noimage.svg
+                                                {
+                                                    "handler": "subroute",
+                                                    "routes": [
+                                                        {
+                                                            "match": [
+                                                                {
+                                                                    "path": [
+                                                                        "/assets/images/noimage.svg"
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "handle": [
+                                                                {
+                                                                    "handler": "file_server",
+                                                                    "root": "/app/public",
+                                                                    "status_code": 404
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
                                                 {
                                                     "handler": "file_server",
                                                     "root": "/app/public"
                                                 }
                                             ]
                                         },
-                                        //Sitemap (This is an attempt to force Google Search recognize the sitemaps)
+                                        //Sitemap (This is an attempt to force Google Search to recognize the sitemaps)
                                         {
                                             "match": [
                                                 {
@@ -682,7 +980,7 @@
                                         }
                                     }
                                 },
-                                //Set Cache-Control fot HTML5 games
+                                //Set Cache-Control for HTML5 games
                                 {
                                     "handler": "subroute",
                                     "routes": [
@@ -930,11 +1228,11 @@
                                         }
                                     }
                                 },
-                                //Set some headers based on path
+                                //Set some headers based on a path
                                 {
                                     "handler": "subroute",
                                     "routes": [
-                                        //Allow access to images from outside (for example just opening them in separate tab)
+                                        //Allow access to images from outside (for example, just opening them in a separate tab)
                                         {
                                             "handle": [
                                                 {
@@ -959,7 +1257,7 @@
                                                 }
                                             ]
                                         },
-                                        //FFTracker loads some images directly from FFXIV Lodestone and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
+                                        //FFTracker loads some images directly from FFXIV Lodestone, and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
                                         //Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them,
                                         {
                                             "handle": [
@@ -1048,7 +1346,7 @@
                                         }
                                     }
                                 },
-                                //Add Accept-Encoding to Vary, if Content-Encoding is set
+                                //Add Accept-Encoding to Vary if Content-Encoding is set
                                 {
                                     "handler": "headers",
                                     "response": {
@@ -18014,7 +18312,7 @@
                                                     "not": [
                                                         {
                                                             "path": [
-                                                                //Access to TinyMCE folder is required for loading of the editor components
+                                                                //Access to the TinyMCE folder is required for loading of the editor components
                                                                 "/vendor/tinymce/*",
                                                                 //well-known folder is allowed to be accessed
                                                                 "/.well-known/*",
@@ -18210,11 +18508,11 @@
                                     {
                                         "handler": "subroute",
                                         "routes": [
-                                            //This routes replicates selected header processing from main route,
+                                            //This routes replicates selected header processing from the main route,
                                             //since otherwise processing does not reach them (due to error)
                                             {
                                                 "handle": [
-                                                    //Remove certain headers from responses, if they are present
+                                                    //Remove certain headers from responses if they are present
                                                     {
                                                         "handler": "headers",
                                                         "response": {
@@ -18311,7 +18609,7 @@
                                                             }
                                                         }
                                                     },
-                                                    //Add Accept-Encoding to Vary, if Content-Encoding is set
+                                                    //Add Accept-Encoding to Vary if Content-Encoding is set
                                                     {
                                                         "handler": "headers",
                                                         "response": {
