@@ -121,10 +121,11 @@ final class Config
         self::$cookieSettings = [
             'expires' => time() + 60,
             'path' => '/',
-            'domain' => self::$http_host,
+            'domain' => (self::$PROD ? 'simbiat.dev' : 'localhost'),
             'secure' => true,
             'httponly' => true,
-            'samesite' => 'Strict',
+            #Adding "Partitioned" to enable CHIPS. This is a "hack" until PHP supports the setting natively. https://github.com/php/php-src/issues/12646
+            'samesite' => 'Strict; Partitioned',
         ];
         #These are required only if we are outside of CLI mode
         if (!self::$CLI) {
