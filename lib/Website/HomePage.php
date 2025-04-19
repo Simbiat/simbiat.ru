@@ -34,7 +34,15 @@ class HomePage
         #Cache headers object
         self::$headers = new Headers();
         self::$dataCache ??= new Caching();
-        #Get all POST and GET keys to lower case
+        #Set method
+        self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
+        #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
+        Headers::multiPartFormParse();
+        if (\in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
+            $_POST = array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
+            $_FILES = Headers::$_FILES;
+        }
+        #Get all POST and GET keys to the lower case
         $_POST = array_change_key_case($_POST);
         Sanitization::carefulArraySanitization($_POST);
         $_GET = array_change_key_case($_GET);
@@ -49,19 +57,11 @@ class HomePage
     private function init(): void
     {
         try {
-            #Set method
-            self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
-            #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
-            Headers::multiPartFormParse();
-            if (\in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
-                $_POST = array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
-                Sanitization::carefulArraySanitization($_POST);
-            }
-            #May be client is using HTTP1.0 and there is not much to worry about, but maybe there is.
+            #Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
             if (empty($_SERVER['HTTP_HOST'])) {
                 Headers::clientReturn(403);
             }
-            #Redirect if page number is set and is less than 1
+            #Redirect if the page number is set and is less than 1
             if (isset($_GET['page']) && (int)$_GET['page'] < 1) {
                 #Remove page (since we ignore page=1 in canonical)
                 Headers::redirect(preg_replace('/\\?page=-?\d+/ui', '', Config::$canonical));
@@ -76,13 +76,15 @@ class HomePage
             try {
                 #Connect to DB
                 Config::dbConnect();
-                #Show error page if DB is down
+                #Show an error page if DB is down
                 if (!Config::$dbup) {
                     self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
                 } elseif (Config::$dbUpdate) {
-                    #Show error page if maintenance is running
+                    #Show an error page if maintenance is running
                     self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
                 }
+                #Supress inspection, since we only need headers to be sent
+                /** @noinspection UnusedFunctionResultInspection */
                 Links::links(Config::$links);
                 #Send standard headers
                 if ($uri[0] === 'api') {
@@ -90,7 +92,7 @@ class HomePage
                 } else {
                     Page::headers();
                 }
-                #Try to start session if it's not started yet and DB is up
+                #Try to start a session if it's not started yet and DB is up
                 if (Config::$dbup && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
                     session_start();
@@ -98,27 +100,27 @@ class HomePage
                     if ($uri[0] !== 'api') {
                         $_SESSION['CSRF'] = Security::genToken();
                     }
-                    #Show that client is unsupported
+                    #Show that the client is unsupported
                     if (isset($_SESSION['UA']['unsupported']) && $_SESSION['UA']['unsupported'] === true) {
                         self::$http_error = ['client' => $_SESSION['UA']['client'] ?? 'unknown', 'http_error' => 418, 'reason' => 'Teapot'];
                         #Check if banned IP
                     } elseif (!empty($_SESSION['bannedIP'])) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                     }
-                    #Handle Sec-Fetch. Use strict mode if request is not from known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
+                    #Handle Sec-Fetch. Use strict mode if a request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                     Headers::secFetch(strict: (empty($_SESSION['UA']['bot']) && $_SESSION['UA']['browser']));
                 } else {
                     $ua = Security::getUA();
-                    #Show that client is unsupported
+                    #Show that the client is unsupported
                     if ($ua['unsupported'] === true) {
                         self::$http_error = ['client' => $ua['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                     }
-                    #Handle Sec-Fetch. Use strict mode if request is not from known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
+                    #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                     Headers::secFetch(strict: (empty($ua['bot']) && $ua['browser']));
                 }
                 #Check if we have cached the results already
                 self::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
-                #Check if there was an internal redirect to custom error page
+                #Check if there was an internal redirect to a custom error page
                 if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
                     if (preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
                         self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
@@ -157,8 +159,8 @@ class HomePage
         #Remove query string, if present (that is everything after ?)
         $request = preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
         if (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
-            #Send headers, that will identify this as actual file
-            if (headers_sent() === false) {
+            #Send headers that will identify this as an actual file
+            if (!headers_sent()) {
                 header('Content-Type: text/plain; charset=utf-8');
                 header('Content-Disposition: inline; filename="security.txt"');
             }
@@ -217,7 +219,7 @@ class HomePage
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
                 try {
-                    $output = EnvironmentGenerator::getTwig()->render('index.twig', array_merge(['http_error' => 500, 'reason' => 'Twig failure'], ['session_data' => $_SESSION ?? NULL]));
+                    $output = EnvironmentGenerator::getTwig()->render('index.twig', ['http_error' => 500, 'reason' => 'Twig failure', 'session_data' => $_SESSION ?? NULL]);
                 } catch (\Throwable) {
                     $output = 'Complete twig failure';
                 }
@@ -230,7 +232,7 @@ class HomePage
             if (Config::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
                 self::$dataCache->write($twigVars, age: (int)$twigVars['cacheAge']);
             }
-            if (self::$staleReturn === true) {
+            if (self::$staleReturn) {
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_end_clean();
             } else {

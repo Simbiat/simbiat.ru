@@ -19,13 +19,20 @@ class Sanitization
     #Static sanitizer config for a little bit of performance
     public static ?HtmlSanitizerConfig $sanitizerConfig = null;
     
+    /**
+     * Sanitize HTML string
+     * @param string $string String to sanitize
+     * @param bool   $head   Flag indicating whether we are sanitizing for `head`
+     *
+     * @return string
+     */
     public static function sanitizeHTML(string $string, bool $head = false): string
     {
         #Check if config has been created already
         if (self::$sanitizerConfig) {
             $config = self::$sanitizerConfig;
         } else {
-            $config = (new HtmlSanitizerConfig())->withMaxInputLength(-1)->allowSafeElements()
+            $config = new HtmlSanitizerConfig()->withMaxInputLength(-1)->allowSafeElements()
                 ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
                 ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
             #Block some extra elements
@@ -34,7 +41,7 @@ class Sanitization
                          'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
                          'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
                          'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp'] as $element) {
-                #Need to update the original, because clone is returned, instead of the same instance.
+                #Need to update the original, because a clone is returned, instead of the same instance.
                 $config = $config->blockElement($element);
             }
             #Allow class attribute
@@ -45,19 +52,19 @@ class Sanitization
             $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
             #Allow tooltips
             $config = $config->allowAttribute('data-tooltip', '*');
-            #Drop title element, since it will create a tooltip using the browser's engine, which can create inconsistent experience
+            #Drop the title element, since it will create a tooltip using the browser's engine, which can create an inconsistent experience
             $config = $config->dropAttribute('title', '*');
-            #TinyMCE adds `border` attribute to tables, which we do not use, so dropping it for cleaner code
+            #TinyMCE adds the `border` attribute to tables, which we do not use, so dropping it for cleaner code
             $config = $config->dropAttribute('border', '*');
             #Save config to static for future reuse
             self::$sanitizerConfig = $config;
         }
-        #Allow some property attributes for meta tags
+        #Allow some property attributes for meta-tags
         if ($head) {
             $config = $config->allowAttribute('property', 'meta');
         }
         #Remove excessive new lines
-        $string = preg_replace('/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi', '', preg_replace('/(\s*<br \/>\s*){5,}/mi', '<br>', $string));
+        $string = preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
         #Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
         if ($head) {
@@ -68,7 +75,13 @@ class Sanitization
         return $string;
     }
     
-    #Remove controls characters from strings with $fullList controlling whether newlines and tabs should be kept (false will keep them)
+    /**
+     * Remove controls characters from strings and arrays.
+     * @param string|array $string   String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
+     * @param bool         $fullList Flag whether newlines and tabs should also be removed
+     *
+     * @return string|array
+     */
     public static function removeNonPrintable(string|array $string, bool $fullList = false): string|array
     {
         if ($fullList) {
@@ -77,20 +90,32 @@ class Sanitization
         return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
     }
     
-    #Remove controls characters from strings in an array with $fullList controlling whether newlines and tabs should be kept (false will keep them)
-    public static function carefulArraySanitization(array &$array, $fullList = false): void
+    /**
+     * Remove control characters from strings in an array.
+     * @param array $array    Array to sanitize
+     * @param bool  $fullList Flag whether newlines and tabs should also be removed
+     *
+     * @return void
+     */
+    public static function carefulArraySanitization(array &$array, bool $fullList = false): void
     {
-        foreach($array as &$item) {
+        foreach ($array as &$item) {
             if (\is_string($item)) {
                 $item = self::removeNonPrintable($item, $fullList);
             }
         }
     }
     
-    #Function to convert checkbox values to boolean.
-    #Using reference to "simulate" isset()/empty() behaviour (as per https://stackoverflow.com/questions/55060/php-function-argument-error-suppression-empty-isset-emulation)
-    #Thus also suppressing respective inspection.
-    #I mean, I could use @ when calling it, but if I forget it, it can result in error and even unexpected behaviour.
+    /**
+     * Function to convert checkbox values to boolean.
+     * Using reference to "simulate" isset()/empty() behavior (as per https://stackoverflow.com/questions/55060/php-function-argument-error-suppression-empty-isset-emulation)
+     * Thus also suppressing the respective inspection.
+     * I mean, I could use @ when calling it, but if I forget it, it can result in error and even unexpected behavior.
+     *
+     * @param mixed $checkbox
+     *
+     * @return bool
+     */
     /** @noinspection PhpParameterByRefIsNotUsedAsReferenceInspection */
     public static function checkboxToBoolean(mixed &$checkbox): bool
     {
@@ -103,7 +128,13 @@ class Sanitization
         return (bool)$checkbox;
     }
     
-    #Function to sanitize time for creating scheduled section/threads/posts
+    /**
+     * Function to sanitize time for creating scheduled section/threads/posts
+     * @param string|int|null $time
+     * @param string|null     $timezone
+     *
+     * @return int|null
+     */
     public static function scheduledTime(string|int|null &$time, ?string &$timezone = null): ?int
     {
         if (in_array('postScheduled', $_SESSION['permissions'], true)) {
@@ -116,7 +147,7 @@ class Sanitization
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $curTime = time();
-                #Sections should not be created in the past, so if time is less than current one - correct it
+                #Sections should not be created in the past, so if time is less than the current one - correct it
                 if ($time < $curTime && !in_array('postBacklog', $_SESSION['permissions'], true)) {
                     $time = $curTime;
                 }
@@ -139,7 +170,7 @@ class Sanitization
     }
     
     /**
-     * Get link for uploaded file based on its filename (ID + extension)
+     * Get a link for the uploaded file based on its filename (ID + extension)
      *
      * @param string $filename
      *
@@ -149,7 +180,7 @@ class Sanitization
     {
         #Get hash tree
         $hashTree = self::hashTree($filename);
-        #Check if file exists in images
+        #Check if the file exists in images
         if (file_exists(Config::$uploadedImg.'/'.$hashTree.'/'.$filename)) {
             return '/assets/images/uploaded/'.$hashTree.'/'.$filename;
         }
