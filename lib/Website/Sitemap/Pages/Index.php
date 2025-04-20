@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Sitemap\Pages;
 
+use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\Config;
 
 /**
  * Class for the main sitemap index file
@@ -19,15 +19,15 @@ class Index extends Page
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sitemap Index';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Sitemap Index';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $ogdesc = 'Sitemap Index';
     #Max elements per sitemap page
     protected int $maxElements = 50000;
-    #Flag indicating main index file (index.xml)
+    #Flag indicating the main index file (index.xml)
     protected bool $mainIndex = true;
     #Query for countables
     protected string $query = '
@@ -60,7 +60,7 @@ class Index extends Page
         }
         #Get countable links
         try {
-            $counts = Config::$dbController->selectAll($this->query);
+            $counts = Select::selectAll($this->query);
         } catch (\Throwable) {
             $counts = [];
         }

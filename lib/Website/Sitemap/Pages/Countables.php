@@ -3,8 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Sitemap\Pages;
 
+use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\Config;
 
 /**
  * Class for pages that can be counted (that is they have multiple items)
@@ -19,11 +19,11 @@ class Countables extends Page
     ];
     #Sub service name
     protected string $subServiceName = 'sitemap';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sitemap: ';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Sitemap: ';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $ogdesc = 'Sitemap: ';
     #Max elements per sitemap page
     protected int $maxElements = 50000;
@@ -40,7 +40,7 @@ class Countables extends Page
             $this->maxElements = 50000;
         }
         $this->h2push = [];
-        #Remove potential file extension at the end of path
+        #Remove potential file extension at the end of a path
         if (!empty($path[1])) {
             $path[1] = preg_replace('/\.xml$/ui', '', $path[1]);
         }
@@ -50,11 +50,11 @@ class Countables extends Page
         } else {
             $path[1] = (int)$path[1];
         }
-        #Update link of breadcrumb
+        #Update the link of breadcrumb
         $this->breadCrumb[0]['href'] .= $path[0].'/';
-        #Set starting position for query
+        #Set the starting position for the query
         $start = ($path[1] - 1) * $this->maxElements;
-        #Set values based on route
+        #Set values based on the route
         switch ($path[0]) {
             case 'bics':
                 $this->breadCrumb[0]['name'] = 'Russian Banks';
@@ -98,7 +98,7 @@ class Countables extends Page
         #Get actual links
         if (!empty($query)) {
             try {
-                $links = Config::$dbController->selectAll($query);
+                $links = Select::selectAll($query);
             } catch (\Throwable) {
                 $links = [];
             }

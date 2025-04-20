@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use Simbiat\Database\Select;
 use Simbiat\http20\Atom;
 use Simbiat\http20\RSS;
 
@@ -47,7 +48,7 @@ class Feeds
                 default => '',
             };
             $settings = [];
-            #Check that type is supported based on existence of the title
+            #Check that type is supported based on the existence of the title
             if (!empty($title)) {
                 #Set general settings first for feeds. Using one array for both types of feeds
                 if ($format === 'atom') {
@@ -91,7 +92,7 @@ class Feeds
                 if ($format === 'rss' && \in_array($uri[0], ['bicchanged', 'bicdeleted'])) {
                     $settings['language'] = 'ru-ru';
                 }
-                #Set query for the feed
+                #Set a query for the feed
                 if ($format === 'atom') {
                     $query = match ($uri[0]) {
                         'bicchanged' => 'SELECT CONCAT(\''.Config::$baseUrl.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
@@ -106,9 +107,9 @@ class Feeds
                 #Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
-                        Atom::Atom(Config::siteName.': '.$title, Config::$dbController->selectAll($query), feed_settings: $settings);
+                        Atom::Atom(Config::siteName.': '.$title, Select::selectAll($query), feed_settings: $settings);
                     } elseif ($format === 'rss') {
-                        RSS::RSS(Config::siteName.': '.$title, Config::$dbController->selectAll($query), feed_settings: $settings);
+                        RSS::RSS(Config::siteName.': '.$title, Select::selectAll($query), feed_settings: $settings);
                     }
                 }
             }

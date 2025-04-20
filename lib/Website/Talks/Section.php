@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Talks;
 
+use Simbiat\Database\Modify;
+use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
@@ -42,7 +44,7 @@ class Section extends Entity
     public array $children = [];
     #List of threads
     public array $threads = [];
-    #Flag indicating if we are getting data for a thread, and can skip some details
+    #Flag indicating if we are getting data for a thread and can skip some details
     private bool $forThread = false;
     
     /**
@@ -63,7 +65,7 @@ class Section extends Entity
      */
     protected function getFromDB(): array
     {
-        #Set page required for threads
+        #Set the page required for threads
         $page = (int)($_GET['page'] ?? 1);
         if ($this->id === 'top') {
             $data = [
@@ -84,12 +86,12 @@ class Section extends Entity
             ];
             #Get children
             if (!$this->forThread) {
-                $data['children'] = (new Sections(where: '`talks__sections`.`parentid` IS NULL'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()')))->listEntities($page);
+                $data['children'] = new Sections(where: '`talks__sections`.`parentid` IS NULL'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
             }
         } else {
-            $data = (new Sections([':sectionid' => [$this->id, 'int']], '`talks__sections`.`sectionid`=:sectionid'))->listEntities();
-            #Return empty, if nothing was found
-            if (empty($data['entities'])) {
+            $data = new Sections([':sectionid' => [$this->id, 'int']], '`talks__sections`.`sectionid`=:sectionid')->listEntities();
+            #Return empty if nothing was found
+            if (!is_array($data) || empty($data['entities'])) {
                 return [];
             }
             $data = $data['entities'][0];
@@ -138,21 +140,21 @@ class Section extends Entity
                 $bindings[':userid'] = [$_SESSION['userid'], 'int'];
             }
             if (!$this->forThread) {
-                $data['children'] = (new Sections($bindings, '`talks__sections`.`parentid`=:sectionid'.$where))->listEntities($page);
+                $data['children'] = new Sections($bindings, '`talks__sections`.`parentid`=:sectionid'.$where)->listEntities($page);
             }
             #Get threads
             if ($data['detailedType'] === 'Category') {
                 #Categories are not meant to have threads in them
                 $data['threads'] = [];
             } else {
-                #If we have a blog or changelog - order by creation date, if forum or support - by update date, if knowledgebase - by name
+                #If we have a blog or changelog - order by creation date, if we have a forum or support - by update date, if knowledgebase - by name
                 $orderBy = match ($data['detailedType']) {
                     'Blog', 'Changelog' => '`created` DESC, `lastpost` DESC, `name` ASC',
                     'Forum' => '`lastpost` DESC, `name` ASC',
                     'Support' => '`closed` IS NOT NULL, `closed` DESC, `lastpost` DESC, `name` ASC',
                     'Knowledgebase' => '`name` ASC',
                 };
-                #If user is not an admin, also limit the selection to non-private threads or those created by the user
+                #If the user is not an admin, also limit the selection to non-private threads or those created by the user
                 $where = '`talks__threads`.`sectionid`=:sectionid';
                 $bindings = [':sectionid' => [$this->id, 'int']];
                 if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
@@ -163,7 +165,7 @@ class Section extends Entity
                     $bindings[':userid'] = [$_SESSION['userid'], 'int'];
                 }
                 if (!$this->forThread) {
-                    $data['threads'] = (new Threads($bindings, $where, $orderBy))->listEntities($page);
+                    $data['threads'] = new Threads($bindings, $where, $orderBy)->listEntities($page);
                 }
             }
         }
@@ -184,7 +186,7 @@ class Section extends Entity
                 }
                 foreach ($data['children']['entities'] as &$category) {
                     $bindings[':sectionid'] = [$category['sectionid'], 'int'];
-                    ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = Config::$dbController->selectRow(
+                    ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = Select::selectRow(
                         'WITH RECURSIVE `SectionHierarchy` AS (
                                     SELECT `sectionid`, `parentid`
                                     FROM `talks__sections`
@@ -204,7 +206,7 @@ class Section extends Entity
             #Count posts
             if (!empty($data['threads']['entities'])) {
                 foreach ($data['threads']['entities'] as &$thread) {
-                    $thread['posts'] = Config::$dbController->count('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$thread['id'], 'int']]);
+                    $thread['posts'] = Select::count('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$thread['id'], 'int']]);
                 }
             }
         }
@@ -250,11 +252,11 @@ class Section extends Entity
     {
         $parents = [];
         #Get parent of the current ID
-        $parents[] = Config::$dbController->selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid`, `createdby` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$id, 'int']]);
+        $parents[] = Select::selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid`, `createdby` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$id, 'int']]);
         if (empty($parents)) {
             return [];
         }
-        #If parent has its own parent - get it and add to array
+        #If the parent has its own parent - get it and add to array
         if (!empty($parents[0]['parentid'])) {
             $parents = array_merge($parents, $this->getParents((int)$parents[0]['parentid']));
         } else {
@@ -265,7 +267,7 @@ class Section extends Entity
     }
     
     /**
-     * Function to (un)mark section as private
+     * Function to (un)mark the section as private
      * @param bool $private
      *
      * @return array|false[]|true[]
@@ -277,7 +279,8 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
         }
         try {
-            Config::$dbController->query('UPDATE `talks__sections` SET `private`=:private WHERE `sectionid`=:sectionid;', [':private' => [$private, 'int'], ':sectionid' => [$this->id, 'int']]);
+            Config::$dbController::query('UPDATE `talks__sections` SET `private`=:private WHERE `sectionid`=:sectionid;', [':private' => [$private, 'int'], ':sectionid' => [$this->id, 'int']]);
+            $this->private = $private;
             return ['response' => true];
         } catch (\Throwable) {
             return ['response' => false];
@@ -297,7 +300,8 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
         }
         try {
-            Config::$dbController->query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':sectionid' => [$this->id, 'int']]);
+            Config::$dbController::query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':sectionid' => [$this->id, 'int']]);
+            $this->closed = ($closed ? time() : null);
             return ['response' => true];
         } catch (\Throwable) {
             return ['response' => false];
@@ -305,7 +309,7 @@ class Section extends Entity
     }
     
     /**
-     * Function to change order (sequence) of a section
+     * Function to change the order (sequence) of a section
      * @return array|false[]
      */
     public function order(): array
@@ -327,7 +331,7 @@ class Section extends Entity
             return ['http_error' => 400, 'reason' => 'Order value needs to be between 0 and 99 inclusively'];
         }
         try {
-            $result = Config::$dbController->query('UPDATE `talks__sections` SET `sequence`=:sequence WHERE `sectionid`=:sectionid;', [':sequence' => [$_POST['order'], 'int'], ':sectionid' => [$this->id, 'int']]);
+            $result = Config::$dbController::query('UPDATE `talks__sections` SET `sequence`=:sequence WHERE `sectionid`=:sectionid;', [':sequence' => [$_POST['order'], 'int'], ':sectionid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             $result = false;
         }
@@ -347,11 +351,11 @@ class Section extends Entity
             return $sanitize;
         }
         try {
-            $newID = Config::$dbController->insertAI(
+            $newID = Modify::insertAI(
                 'INSERT INTO `talks__sections`(`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `closed`, `private`, `created`, `createdby`, `updatedby`, `icon`) VALUES (NULL,:name,:description,:parentid,:sequence,:type,:closed,:private,:time,:userid,:userid,:icon);',
                 [
-                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
-                    ':description' => mb_trim($data['description'], encoding: 'UTF-8'),
+                    ':name' => mb_trim($data['name'], null, 'UTF-8'),
+                    ':description' => mb_trim($data['description'], null, 'UTF-8'),
                     ':parentid' => [
                         (empty($data['parentid']) ? null : $data['parentid']),
                         (empty($data['parentid']) ? 'null' : 'int')
@@ -374,11 +378,11 @@ class Section extends Entity
                     ],
                 ]
             );
-            #Link the section to user, if it's required
+            #Link the section to the user, if it's required
             if (!empty($data['linkType'])) {
                 switch ($data['linkType']) {
                     case 2:
-                        Config::$dbController->query('INSERT INTO `uc__user_to_section` (`userid`, `blog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `blog`=:sectionid;',
+                        Config::$dbController::query('INSERT INTO `uc__user_to_section` (`userid`, `blog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `blog`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -386,7 +390,7 @@ class Section extends Entity
                         );
                         break;
                     case 4:
-                        Config::$dbController->query('INSERT INTO `uc__user_to_section` (`userid`, `changelog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `changelog`=:sectionid;',
+                        Config::$dbController::query('INSERT INTO `uc__user_to_section` (`userid`, `changelog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `changelog`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -394,7 +398,7 @@ class Section extends Entity
                         );
                         break;
                     case 6:
-                        Config::$dbController->query('INSERT INTO `uc__user_to_section` (`userid`, `knowledgebase`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `knowledgebase`=:sectionid;',
+                        Config::$dbController::query('INSERT INTO `uc__user_to_section` (`userid`, `knowledgebase`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `knowledgebase`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -422,8 +426,8 @@ class Section extends Entity
         if (is_array($sanitize)) {
             return $sanitize;
         }
-        #Check if we are changing to category and if we have any threads in it
-        if ($data['type'] === 1 && Config::$dbController->check('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid LIMIT 1;', [':sectionid' => [$this->id, 'int']])) {
+        #Check if we are changing to a category and if we have any threads in it
+        if ($data['type'] === 1 && Select::check('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid LIMIT 1;', [':sectionid' => [$this->id, 'int']])) {
             return ['http_error' => 400, 'reason' => 'Can\'t change section type to `Category`, because it has threads in it'];
         }
         try {
@@ -432,8 +436,8 @@ class Section extends Entity
                 'UPDATE `talks__sections` SET `name`=:name, `description`=:description, `parentid`=:parentid, `sequence`=:sequence, `type`=:type, `closed`=:closed, `private`=:private, `updatedby`=:userid, `icon`=COALESCE(:icon, `icon`) WHERE `sectionid`=:sectionid;',
                 [
                     ':sectionid' => [$this->id, 'int'],
-                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
-                    ':description' => mb_trim($data['description'], encoding: 'UTF-8'),
+                    ':name' => mb_trim($data['name'], null, 'UTF-8'),
+                    ':description' => mb_trim($data['description'], null, 'UTF-8'),
                     ':parentid' => [
                         (empty($data['parentid']) ? null : $data['parentid']),
                         (empty($data['parentid']) ? 'null' : 'int')
@@ -452,7 +456,7 @@ class Section extends Entity
                     ],
                 ]
             ];
-            #Nullify the icon, if `clearicon` flag was set
+            #Nullify the icon if the `clearicon` flag was set
             if ($data['clearicon']) {
                 $queries[] = [
                     'UPDATE `talks__sections` SET `icon`=NULL, `updated`=`updated` WHERE `sectionid`=:sectionid;',
@@ -461,7 +465,7 @@ class Section extends Entity
                     ]
                 ];
             }
-            Config::$dbController->query($queries);
+            Config::$dbController::query($queries);
             return ['response' => true];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -504,12 +508,12 @@ class Section extends Entity
         #Strip tags from description, since we do not allow HTML here
         $data['name'] = Sanitization::removeNonPrintable($data['name'], true);
         $data['description'] = Sanitization::removeNonPrintable(strip_tags($data['description'] ?? ''), true);
-        #Check if name is empty or whitespaces
+        #Check if the name is empty or whitespaces
         if (preg_match('/^\s*$/u', $data['name']) === 1) {
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
         #Check if parent exists
-        $parent = (new Section($data['parentid']))->get();
+        $parent = new Section($data['parentid'])->get();
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent section with ID `'.$data['parentid'].'` does not exist'];
         }
@@ -522,19 +526,19 @@ class Section extends Entity
             #Check permission
             return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
         }
-        #Check that type is allowed in current section
+        #Check that type is allowed in the current section
         $allowedTypes = self::getSectionTypes($parent->inheritedType);
         if (!in_array($data['type'], array_column($allowedTypes, 'value'), true)) {
             return ['http_error' => 400, 'reason' => 'Can\'t create this type in current section'];
         }
-        #Check if section is being created in appropriate parent
+        #Check if the section is being created in the appropriate parent
         switch ($data['type']) {
             case 2:
-                #Do not allow creation of blogs outside of root Blog section
+                #Do not allow creation of blogs outside the root Blog section
                 if ($data['parentid'] !== 1) {
                     return ['http_error' => 400, 'reason' => 'Blogs can only be created inside root `Blogs` section'];
                 }
-                #Empty $this->name implies creation of new section
+                #Empty $this->name implies creation of a new section
                 if (empty($this->name)) {
                     if (!empty($_SESSION['sections']['blog'])) {
                         return ['http_error' => 400, 'reason' => 'User already has a personal blog'];
@@ -551,7 +555,7 @@ class Section extends Entity
                 if ($data['parentid'] !== 3 && $parent->inheritedType !== 'Changelog') {
                     return ['http_error' => 400, 'reason' => 'Changelogs can only be created inside root `Changelogs` section or its subsections'];
                 }
-                #Empty $this->name implies creation of new section
+                #Empty $this->name implies creation of a new section
                 if (empty($this->name) && $data['parentid'] === 3) {
                     if (!empty($_SESSION['sections']['changelog'])) {
                         return ['http_error' => 400, 'reason' => 'User already has a personal changelog'];
@@ -568,7 +572,7 @@ class Section extends Entity
                 if ($data['parentid'] !== 4 && $parent->inheritedType !== 'Knowledgebase') {
                     return ['http_error' => 400, 'reason' => 'Knowledgebases can only be created inside root `Knowledgebases` section or its subsections'];
                 }
-                #Empty $this->name implies creation of new section
+                #Empty $this->name implies creation of a new section
                 if (empty($this->name) && $data['parentid'] === 4) {
                     if (!empty($_SESSION['sections']['knowledgebase'])) {
                         return ['http_error' => 400, 'reason' => 'User already has a personal knowledgebase'];
@@ -577,27 +581,27 @@ class Section extends Entity
                 }
                 break;
         }
-        #Check if parent is closed
+        #Check if the parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create subsection in closed section `'.$parent->name.'`'];
         }
-        #Check if name is duplicated
+        #Check if the name is duplicated
         if (
             (
-                #If name is empty (new section is being created)
+                #If the name is empty (a new section is being created)
                 empty($this->name) ||
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            Config::$dbController->check('SELECT `name` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$this->id, 'int']])
+            Select::check('SELECT `name` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$this->id, 'int']])
         ) {
             return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
         }
-        #Check if section type exists
-        if (!Config::$dbController->check('SELECT `typeid` FROM `talks__types` WHERE `typeid`=:type;', [':type' => [$data['type'], 'int']])) {
+        #Check if a section type exists
+        if (!Select::check('SELECT `typeid` FROM `talks__types` WHERE `typeid`=:type;', [':type' => [$data['type'], 'int']])) {
             return ['http_error' => 400, 'reason' => 'Unknown section type ID `'.$data['type'].'`'];
         }
-        #Check if image for the icon was sent and try to process it, unless `clearicon` is set
+        #Check if the image for the icon was sent and try to process it, unless `clearicon` is set
         if ($data['icon'] && !$data['clearicon']) {
             #Attempt to upload the image
             $upload = new Curl()->upload(onlyImages: true);
@@ -617,7 +621,7 @@ class Section extends Entity
      */
     public function delete(): array
     {
-        #Deletion is critical, so ensure, that we get the actual data, even if this function is somehow called outside of API
+        #Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
         if (!$this->attempted) {
             $this->get();
         }
@@ -632,7 +636,7 @@ class Section extends Entity
         if ($this->system) {
             return ['http_error' => 403, 'reason' => 'Can\'t delete system section'];
         }
-        #Check if section has any subsections or threads
+        #Check if the section has any subsections or threads
         if (!empty($this->children['entities']) || !empty($this->threads['entities'])) {
             return ['http_error' => 400, 'reason' => 'Can\'t delete non-empty section'];
         }
@@ -644,7 +648,7 @@ class Section extends Entity
         }
         #Attempt removal
         try {
-            Config::$dbController->query('DELETE FROM `talks__sections` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
+            Config::$dbController::query('DELETE FROM `talks__sections` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -683,6 +687,6 @@ class Section extends Entity
                 $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Knowledgebase\')';
                 break;
         }
-        return Config::$dbController->selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid`'.$where.' ORDER BY `typeid`;');
+        return Select::selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid`'.$where.' ORDER BY `typeid`;');
     }
 }

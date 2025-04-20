@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
+use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
@@ -18,7 +19,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      */
     public function __construct(private int $sessionLife = 300)
     {
-        #Set session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
+        #Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
         if (!headers_sent()) {
             session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
         }
@@ -88,7 +89,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = Config::$dbController->selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = Config::$dbController::selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
         } catch (\Throwable) {
             $data = '';
         }
@@ -127,9 +128,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Deserialize to check if UserAgent data is present
         $data = unserialize($data, [false]);
-        #Prepare empty array
+        #Prepare an empty array
         $queries = [];
-        #Update SEO related tables, if this was determined to be a new page view
+        #Update SEO-related tables if this was determined to be a new page view
         if (empty($data['UA']['bot'])) {
             if (!empty($data['IP']) && $data['newView']) {
                 #Update unique visitors
@@ -181,7 +182,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `ip`=:ip, `useragent`=:useragent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `userid`=:userid, `ip`=:ip, `useragent`=:useragent, `page`=:page, `data`=:data;',
                 [
                     ':id' => $id,
-                    #Whether cookie is associated with this session
+                    #Whether a cookie is associated with this session
                     ':cookieid' => [
                         (empty($data['cookieid']) ? NULL : $data['cookieid']),
                         (empty($data['cookieid']) ? 'null' : 'string'),
@@ -190,7 +191,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                         (empty($data['IP']) ? NULL : $data['IP']),
                         (empty($data['IP']) ? 'null' : 'string'),
                     ],
-                    #Useragent details only for logged-in users for ability of review of active sessions
+                    #Useragent details only for logged-in users for the ability to review active sessions
                     ':useragent' => [
                         (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
                         (empty($data['UA']['full']) ? 'null' : 'string'),
@@ -225,7 +226,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         try {
             if (!empty($queries)) {
-                return Config::$dbController->query($queries);
+                return Config::$dbController::query($queries);
             }
             return true;
         } catch (\Throwable $exception) {
@@ -261,7 +262,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Check if IP is banned
             if (!empty($data['IP'])) {
                 try {
-                    $data['bannedIP'] = Config::$dbController->check('SELECT `ip` FROM `sys__bad_ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
+                    $data['bannedIP'] = Select::check('SELECT `ip` FROM `sys__bad_ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
                 } catch (\Throwable) {
                     $data['bannedIP'] = false;
                 }
@@ -281,7 +282,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $data['activated'] = false;
                 $data['avatar'] = null;
             } else {
-                $user = (new User($data['userid']))->get();
+                $user = new User($data['userid'])->get();
                 #Assign some data to the session
                 if ($user->id) {
                     $data['username'] = $user->username;
@@ -315,7 +316,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Check if behind proxy
         $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
         if (!empty($forwarded)) {
-            #Get list of IPs, that do validate as proper IP
+            #Get a list of IPs that do validate as proper IP
             $ips = array_filter(array_map('trim', explode(',', $forwarded)), static function ($value) {
                 return filter_var($value, FILTER_VALIDATE_IP);
             });
@@ -337,7 +338,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     }
     
     /**
-     * Attempt to log in using cookie
+     * Attempt to log in using a cookie
      * @return array
      */
     private function cookieLogin(): array
@@ -346,7 +347,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         if (!\is_string($cookieName)) {
             return [];
         }
-        #Check if cookie exists
+        #Check if a cookie exists
         if (empty($_COOKIE[$cookieName])) {
             return [];
         }
@@ -364,7 +365,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Check DB
             if (Config::$dbController !== null) {
                 #Get user data
-                $savedData = Config::$dbController->selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
+                $savedData = Select::selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
                     [':id' => $data['cookieid']]
                 );
                 if (empty($savedData) || empty($savedData['validator'])) {
@@ -405,7 +406,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function destroy(string $id): bool
     {
         try {
-            return Config::$dbController->query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
+            return Config::$dbController::query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -428,8 +429,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            if (Config::$dbController->query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
-                return Config::$dbController->getResult();
+            if (Config::$dbController::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
+                return Config::$dbController::$lastAffected;
             }
             return false;
         } catch (\Throwable $e) {
@@ -468,7 +469,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get ID
         try {
-            $sessionId = Config::$dbController->selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
+            $sessionId = Config::$dbController::selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -483,7 +484,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     }
     
     /**
-     * Update timestamp of a session
+     * Update the timestamp of a session
      * @link https://www.php.net/manual/sessionupdatetimestamphandlerinterface.updatetimestamp.php
      * @param string $id   The session id
      * @param string $data <p>
@@ -498,7 +499,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return Config::$dbController->query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+            return Config::$dbController::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

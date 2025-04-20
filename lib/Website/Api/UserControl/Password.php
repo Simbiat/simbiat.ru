@@ -12,7 +12,7 @@ use Simbiat\Website\usercontrol\User;
  */
 class Password extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PATCH' => ''];
@@ -42,14 +42,14 @@ class Password extends Api
         if (empty($_POST['new_password'])) {
             return ['http_error' => 400, 'reason' => 'New password not provided'];
         }
-        if (Config::$dbup === false) {
+        if (!Config::$dbup) {
             return ['http_error' => 503, 'reason' => 'Database is not available'];
         }
         $user = (new User($id));
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {
-                $password = Config::$dbController->selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
+                $password = Config::$dbController::selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
                     [':userid' => $id]
                 );
             } catch (\Throwable) {
@@ -59,13 +59,13 @@ class Password extends Api
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate current password
-            if ($user->passValid($_POST['current_password'], $password) === false) {
+            if (!$user->passValid($_POST['current_password'], $password)) {
                 return ['http_error' => 403, 'reason' => 'Bad password'];
             }
         } else {
             #Get activation code
             try {
-                $pwReset = Config::$dbController->selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
+                $pwReset = Config::$dbController::selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
                     [':userid' => $id]
                 );
             } catch (\Throwable) {

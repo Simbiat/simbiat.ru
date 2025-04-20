@@ -46,11 +46,11 @@
         </section>
     {% endif %}
     <section class="post_footer">
-        <like-dis data-postid="{{ post.id }}" data-liked="{% if post.liked is null %}0{% else %}{{ post.liked }}{% endif %}">
-            <input type="button" value="👍" class="like_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked > 0 %}Remove like{% else %}Like{% endif %}">
-            <span class="likes_count{% if post.liked > 0 %} success{% endif %}">{{ post.likes }}</span>
-            <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
-            <span class="dislikes_count{% if post.liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
+        <like-dis data-postid="{{ post.id }}" data-liked="{% if post.isLiked is null %}0{% else %}{{ post.isLiked }}{% endif %}">
+            <input type="button" value="👍" class="like_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked > 0 %}Remove like{% else %}Like{% endif %}">
+            <span class="likes_count{% if post.isLiked > 0 %} success{% endif %}">{{ post.likes }}</span>
+            <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
+            <span class="dislikes_count{% if post.isLiked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
             <img loading="lazy" decoding="async" class="hidden inline spinner" src="/assets/images/spinner.svg" alt="Registering preference...">
         </like-dis>
         <div class="post_icons">

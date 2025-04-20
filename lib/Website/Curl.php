@@ -47,7 +47,7 @@ class Curl
         'Sec-Fetch-Site: none',
         'Sec-Fetch-Mode: cors',
     ];
-    #cURL Handle is static to allow reuse of single instance, if possible and needed
+    #cURL Handle is static to allow reuse of a single instance, if possible and needed
     public static \CurlHandle|null|false $curlHandle = null;
     #Allowed MIME types
     public const array allowedMime = [
@@ -80,7 +80,7 @@ class Curl
         }
         #Get page contents
         curl_setopt(self::$curlHandle, CURLOPT_HEADER, true);
-        #Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to browser directly even with CURLOPT_RETURNTRANSFER set to true
+        #Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to the browser directly even with CURLOPT_RETURNTRANSFER set to true
         curl_setopt(self::$curlHandle, CURLOPT_FILE, tmpfile());
         #For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
         curl_setopt(self::$curlHandle, CURLOPT_RETURNTRANSFER, true);
@@ -105,12 +105,12 @@ class Curl
      */
     public function getFile(string $link): array|false
     {
-        #Set temp filepath
+        #Set the temp filepath
         $filepath = tempnam(sys_get_temp_dir(), 'download');
         if (!self::$curlHandle instanceof \CurlHandle) {
             return false;
         }
-        #Get file
+        #Get a file
         curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
         $fp = fopen($filepath, 'wb');
         if ($fp === false) {
@@ -126,7 +126,7 @@ class Curl
         if ($response === false || $httpCode !== 200) {
             return false;
         }
-        #Rename file to give it a proper extension
+        #Rename the file to give it a proper extension
         $mime = mime_content_type($filepath);
         $newName = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::extToMime, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
         rename($filepath, sys_get_temp_dir().'/'.$newName);
@@ -189,10 +189,10 @@ class Curl
      */
     public function addHeader(string $header): self
     {
-        #Check if header is already present
+        #Check if the header is already present
         if (!in_array(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true)) {
             #Add it, if not
-            self::$headers = array_merge(self::$headers, [$header]);
+            self::$headers[] = $header;
             curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
         }
         return $this;
@@ -206,7 +206,7 @@ class Curl
      */
     public function removeHeader(string $header): self
     {
-        #Check if header is already present
+        #Check if the header is already present
         $key = array_search(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true);
         if ($key !== false) {
             #Remove it, if yes
@@ -230,7 +230,7 @@ class Curl
     }
     
     /**
-     * Check if remote file exists
+     * Check if a remote file exists
      * @param $remoteFile
      *
      * @return bool
@@ -252,7 +252,7 @@ class Curl
     
     /**
      * Function to process file uploads either through POST/PUT or by using a provided link
-     * @param string $link       URL to process, if we are to download remote file
+     * @param string $link       URL to process, if we are to download a remote file
      * @param bool   $onlyImages Flag to indicate that only images are allowed
      * @param bool   $toWebp     Whether to convert images to WEBP (if possible)
      *
@@ -286,7 +286,7 @@ class Curl
                         default => 'Failed to upload the file'.$upload,
                     }];
                 }
-                #If $upload had more than 1 file - remove all except 1st one
+                #If $upload had more than 1 file - remove all except the 1st one
                 if (\count($upload) > 1) {
                     foreach ($upload as $key => $file) {
                         if ($key !== 0) {
@@ -296,14 +296,14 @@ class Curl
                 }
                 $upload = $upload[0];
             }
-            #Check if file is one of the allowed types
+            #Check if a file is one of the allowed types
             if (!in_array($upload['type'], self::allowedMime, true)) {
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
             }
             #Check if we have an image
             if (preg_match('/^image\/.+/ui', $upload['type']) === 1) {
-                #Convert to webp, if it's a supported format, unless we chose not to
+                #Convert to webp if it's a supported format, unless we chose not to
                 if ($toWebp) {
                     $converted = Images::toWebP($upload['server_path'].'/'.$upload['server_name']);
                 } else {
@@ -332,23 +332,23 @@ class Curl
             }
             #Get extension
             $upload['extension'] = pathinfo($upload['server_path'].'/'.$upload['server_name'], PATHINFO_EXTENSION);
-            #Get path for hash-tree structure
+            #Get a path for hash-tree structure
             $upload['hash_tree'] = mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
             if (!is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
                 mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true);
             }
-            #Set file location to return in output
+            #Set the file location to return in output
             $upload['location'] .= $upload['hash_tree'].$upload['new_name'];
-            #Move to hash-tree directory, only if file is not already present
+            #Move to the hash-tree directory only if a file is not already present
             if (is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
-                #Remove newly downloaded copy
+                #Remove a newly downloaded copy
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
-            } elseif (@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name']) === false) {
+            } elseif (!@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
             }
-            #Add to database
-            Config::$dbController->query(
+            #Add to the database
+            Config::$dbController::query(
                 'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],

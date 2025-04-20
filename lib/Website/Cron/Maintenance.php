@@ -6,8 +6,10 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Cron;
 
 use Simbiat\Cron;
+use Simbiat\Database\Manage;
 use Simbiat\Database\Optimize;
 use Simbiat\Database\Pool;
+use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
@@ -16,7 +18,7 @@ use Simbiat\Website\usercontrol\Session;
 use function dirname;
 
 /**
- * Various function for service maintenance
+ * Various functions for service maintenance
  */
 class Maintenance
 {
@@ -55,9 +57,9 @@ class Maintenance
      */
     public function cookiesClean(): bool
     {
-        #Get existing cookies, that need to be cleaned
+        #Get existing cookies that need to be cleaned
         try {
-            $items = Config::$dbController->selectAll(
+            $items = Select::selectAll(
                 'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (SELECT `userid` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);',
             );
         } catch (\Throwable) {
@@ -65,13 +67,13 @@ class Maintenance
         }
         foreach ($items as $item) {
             #Try to delete cookie
-            Config::$dbController->query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
+            Config::$dbController::query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
                 [
                     ':id' => $item['cookieid'],
                 ]
             );
             #If it was deleted - log it
-            if (Config::$dbController->getResult() > 0) {
+            if (Config::$dbController::$lastAffected > 0) {
                 Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['userid']);
             }
         }
@@ -88,7 +90,7 @@ class Maintenance
         #Clean audit logs
         $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 YEAR)';
         try {
-            $result = Config::$dbController->query($queries);
+            $result = Config::$dbController::query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             $result = false;
@@ -108,7 +110,7 @@ class Maintenance
         #Remove visitors who have not come in 2 years
         $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
-            $result = Config::$dbController->query($queries);
+            $result = Config::$dbController::query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             $result = false;
@@ -126,7 +128,7 @@ class Maintenance
     }
     
     /**
-     * Create list of ordered tables for backup generation
+     * Create a list of ordered tables for backup generation
      * @return bool|string
      */
     public function forBackup(): bool|string
@@ -139,15 +141,15 @@ class Maintenance
             #Clean up SQL files
             array_map('unlink', glob(Config::$DDLDir.'/*.sql'));
             #Get tables in order
-            foreach (Config::$dbController->showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
+            foreach (Manage::showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
                 #Get DDL statement
-                $create = Config::$dbController->showCreateTable($table['schema'], $table['table'], ifNotExist: true, addUse: true);
+                $create = Manage::showCreateTable($table['schema'], $table['table'], ifNotExist: true, addUse: true);
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
                 #Get DDL statement
                 file_put_contents(Config::$DDLDir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, encoding: 'UTF-8'));
-                #Add item to file with dump order
+                #Add item to the file with dump order
                 $dumpOrder .= $table['table'].' ';
             }
             file_put_contents(Config::$DDLDir.'/000-recommended_table_order.txt', $dumpOrder);
@@ -166,15 +168,15 @@ class Maintenance
     {
         $cron = (new Cron\Agent());
         try {
-            Config::$dbController->query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
+            Config::$dbController::query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 0);
-            (new Optimize())->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
+            new Optimize()->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
             return $error;
         } finally {
-            Config::$dbController->query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
+            Config::$dbController::query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 1);
         }
         return true;
@@ -204,7 +206,7 @@ class Maintenance
                 $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
-                    (new Email(Config::adminMail))->send('[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
+                    new Email(Config::adminMail)->send('[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
                     #Generate flag
                     file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
@@ -212,7 +214,7 @@ class Maintenance
         } elseif (is_file($dir.'/noSpace.flag')) {
             @unlink($dir.'/noSpace.flag');
             #Send mail
-            (new Email(Config::adminMail))->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
+            new Email(Config::adminMail)->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
         }
     }
     
@@ -228,14 +230,14 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
-                (new Email(Config::adminMail))->send('[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
+                new Email(Config::adminMail)->send('[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
                 #Generate flag
                 file_put_contents($dir.'/noDB.flag', 'Database is down');
             }
         } elseif (is_file($dir.'/noDB.flag')) {
             @unlink($dir.'/noDB.flag');
             #Send mail
-            (new Email(Config::adminMail))->send('[Resolved]: Database is down', username: 'Simbiat');
+            new Email(Config::adminMail)->send('[Resolved]: Database is down', username: 'Simbiat');
         }
     }
     
@@ -270,12 +272,12 @@ class Maintenance
             #Otherwise, convert to megabytes (lower than 1 MB does not make sense)
             $maxSize *= 1024 * 1024;
         }
-        #Set list of empty folders (removing within iteration seems to cause fatal error)
+        #Set a list of empty folders (removing within iteration seems to cause a fatal error)
         $emptyDirs = [];
         if ($maxAge > 0) {
             #Get the oldest allowed time
             $oldest = time() - $maxAge;
-            #Garbage collector for old files, if files pool is used
+            #Garbage collector for old files, if the file pool is used
             $sizeToRemove = 0;
             #Initiate iterator
             $fileSI = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
@@ -284,12 +286,12 @@ class Maintenance
             #List of fresh files with their sizes
             $fresh = [];
             #Iterate the files to get size and date first
-            #Using catch to handle potential race condition, when file gets removed by a different process before the check gets called
+            #Using catch to handle potential race condition, when a file gets removed by a different process before the check gets called
             try {
                 foreach ($fileSI as $file) {
                     if (is_dir($file)) {
                         #Check if empty
-                        if (!(new \RecursiveDirectoryIterator($file, \FilesystemIterator::SKIP_DOTS))->valid()) {
+                        if (!new \RecursiveDirectoryIterator($file, \FilesystemIterator::SKIP_DOTS)->valid()) {
                             #Remove directory
                             $emptyDirs[] = $file;
                         }
@@ -301,8 +303,8 @@ class Maintenance
                         } else {
                             $size = 0;
                         }
-                        if ($maxAge > 0 && $time <= $oldest) {
-                            #Add to list of files to delete
+                        if ($maxAge > 0 && \is_int($time) && $time <= $oldest) {
+                            #Add to a list of files to delete
                             $toDelete[] = $file;
                             if ($maxSize > 0) {
                                 $sizeToRemove += $size;
@@ -316,7 +318,7 @@ class Maintenance
             } catch (\Throwable) {
                 #Do nothing
             }
-            #If we have size limitation and list of fresh items is not empty
+            #If we have size limitation and a list of fresh items is not empty
             if ($maxSize > 0 && !empty($fresh)) {
                 #Calclate total size
                 $totalSize = array_sum(array_column($fresh, 'size')) + $sizeToRemove;
@@ -330,7 +332,7 @@ class Maintenance
                     foreach ($fresh as $file) {
                         $toDelete[] = $file['path'];
                         $sizeToRemove += $file['size'];
-                        #Check if removing this file will be enough and break cycle if it is
+                        #Check if removing this file will be enough and break the cycle if it is
                         if ($totalSize - $sizeToRemove < $maxSize) {
                             break;
                         }
@@ -338,15 +340,15 @@ class Maintenance
                 }
             }
             foreach ($toDelete as $file) {
-                #Using catch to handle potential race condition, when file gets removed by a different process before the check gets called
+                #Using catch to handle potential race condition, when a file gets removed by a different process before the check gets called
                 try {
-                    #Check if file and is old enough
+                    #Check if the file is old enough
                     if (is_file($file)) {
                         #Remove the file
                         /** @noinspection PhpUsageOfSilenceOperatorInspection */
                         @unlink($file);
-                        #Remove parent directory if empty
-                        if (!(new \RecursiveDirectoryIterator(dirname($file), \FilesystemIterator::SKIP_DOTS))->valid()) {
+                        #Remove the parent directory if empty
+                        if (!new \RecursiveDirectoryIterator(dirname($file), \FilesystemIterator::SKIP_DOTS)->valid()) {
                             $emptyDirs[] = $file;
                         }
                     }
@@ -359,11 +361,11 @@ class Maintenance
         #Garbage collector for empty directories
         foreach ($emptyDirs as $dir) {
             if ($dir !== $path) {
-                #Using catch to handle potential race condition, when directory gets removed by a different process before the check gets called
+                #Using catch to handle potential race condition, when a directory gets removed by a different process before the check gets called
                 try {
                     @rmdir($dir);
-                    #Remove parent directory if empty
-                    if (dirname($dir) !== $path && !(new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS))->valid()) {
+                    #Remove the parent directory if empty
+                    if (dirname($dir) !== $path && !new \RecursiveDirectoryIterator(dirname($dir), \FilesystemIterator::SKIP_DOTS)->valid()) {
                         @rmdir(dirname($dir));
                     }
                 } catch (\Throwable) {

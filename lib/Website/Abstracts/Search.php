@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts;
 
-use Simbiat\Website\Config;
+use Simbiat\Database\Select;
 use Simbiat\Website\Errors;
 
 /**
@@ -20,23 +20,23 @@ abstract class Search
     protected string $table = '';
     #List of fields
     protected string $fields = '';
-    #Optional JOIN string, in case it's needed
+    #Optional JOIN string, in case it is required
     protected string $join = '';
     #Optional WHERE clause for every SELECT
     protected string $where = '';
-    #Optional WHERE clause for SELECT where search term is defined
+    #Optional WHERE clause for SELECT where the search term is defined
     protected string $whereSearch = '';
     #Optional GROUP BY
     protected string $groupBy = '';
-    #Optional bindings, in case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values
+    #Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values
     protected array $bindings = [];
-    #Count argument. In some cases you may want to count a certain column, instead of using * (default).
+    #Count argument. In some cases you may want to count a certain column instead of using * (default).
     protected string $countArgument = '*';
-    #Default order (for main page, for example)
+    #Default order (for the main page, for example)
     protected string $orderDefault = '';
     #Order for list pages
     protected string $orderList = '';
-    #Next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
+    #The next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     #the more weight/relevancy condition with it will have (if true)
     #List of FULLTEXT columns
     protected array $fulltext = [];
@@ -91,7 +91,7 @@ abstract class Search
         try {
             #Count first
             $results = ['count' => $this->countEntities($what)];
-            #Do actual search only if count is not 0
+            #Do actual search only if the count is not 0
             if ($results['count'] > 0) {
                 $results['results'] = $this->selectEntities($what, $limit);
             } else {
@@ -105,7 +105,7 @@ abstract class Search
     }
     
     /**
-     * Function to generate list of entities or get a proper page number for redirect
+     * Function to generate a list of entities or get a proper page number for redirect
      * @param int    $page Page number
      * @param string $what What to search for
      *
@@ -113,7 +113,7 @@ abstract class Search
      */
     final public function listEntities(int $page = 1, string $what = ''): int|array
     {
-        #Suggest redirect if page number is less than 1
+        #Suggest redirect if the page number is lower than 1
         if ($page < 1) {
             return 1;
         }
@@ -124,7 +124,7 @@ abstract class Search
         if ($pages < 1) {
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
-        #Suggest redirect if page is larger than the number of pages
+        #Suggest redirect if the page is larger than the number of pages
         if ($page > $pages) {
             return $pages;
         }
@@ -146,7 +146,7 @@ abstract class Search
     {
         try {
             if ($what !== '') {
-                #Check if search term has %
+                #Check if the search term has %
                 if (preg_match('/%/', $what) === 1) {
                     $like = true;
                 } else {
@@ -158,7 +158,7 @@ abstract class Search
                 $results = 0;
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = Config::$dbController->count($exactlyLike.$this->exact().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string']]));
+                    $results = Select::count($exactlyLike.$this->exact().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string']]));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -169,15 +169,15 @@ abstract class Search
                         return 0;
                     }
                     #Get fulltext results
-                    return Config::$dbController->count($exactlyLike.$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'match']]));
+                    return Select::count($exactlyLike.$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'match']]));
                 }
                 if (empty($this->like)) {
                     return 0;
                 }
                 #Search using LIKE
-                return Config::$dbController->count($exactlyLike.$this->like().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
+                return Select::count($exactlyLike.$this->like().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
             }
-            return Config::$dbController->count('SELECT COUNT('.$this->countArgument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).';', $this->bindings);
+            return Select::count('SELECT COUNT('.$this->countArgument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).';', $this->bindings);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return 0;
@@ -189,7 +189,7 @@ abstract class Search
      * @param string $what   What to search for
      * @param int    $limit  How much to select
      * @param int    $offset Optional offset (for pagination)
-     * @param bool   $list   Whether we are selecting thing for a list (to apply ordering)
+     * @param bool   $list   Whether we are selecting for a list (to apply ordering)
      *
      * @return array
      */
@@ -197,7 +197,7 @@ abstract class Search
     {
         try {
             if ($what !== '') {
-                #Check if search term has %
+                #Check if the search term has %
                 if (preg_match('/%/', $what) === 1) {
                     $like = true;
                 } else {
@@ -209,7 +209,7 @@ abstract class Search
                 $results = [];
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = $this->postProcess(Config::$dbController->selectAll($exactlyLike.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']])));
+                    $results = $this->postProcess(Select::selectAll($exactlyLike.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']])));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -220,15 +220,15 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->postProcess(Config::$dbController->selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']])));
+                    return $this->postProcess(Select::selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']])));
                 }
                 if (empty($this->like)) {
                     return [];
                 }
                 #Search using LIKE
-                return $this->postProcess(Config::$dbController->selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']])));
+                return $this->postProcess(Select::selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']])));
             }
-            return $this->postProcess(Config::$dbController->selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings));
+            return $this->postProcess(Select::selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings));
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];
@@ -276,7 +276,7 @@ abstract class Search
         foreach ($this->fulltext as $key => $field) {
             $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
         }
-        #Remove last +, close the brackets and return
+        #Remove the last +, close the brackets and return
         return mb_trim($result, ' +', 'UTF-8').')';
     }
 }

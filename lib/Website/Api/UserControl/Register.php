@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use GeoIp2\Database\Reader;
+use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
 use Simbiat\Website\Security;
@@ -15,7 +16,7 @@ use Simbiat\Website\usercontrol\User;
  */
 class Register extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
@@ -64,7 +65,7 @@ class Register extends Api
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Check if registration is enabled
-        if ((bool)Config::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'') === false) {
+        if (!Select::selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'')) {
             return ['http_error' => 503, 'reason' => 'Registration is currently disabled'];
         }
         #Generate password and activation strings
@@ -73,13 +74,13 @@ class Register extends Api
         $ff_token = Security::genToken();
         #Try to read country and city for IP
         try {
-            $geoIp = (new Reader(Config::$geoip.'GeoLite2-City.mmdb'))->city($_SESSION['IP']);
+            $geoIp = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($_SESSION['IP']);
         } catch (\Throwable) {
             #Do nothing, not critical
         }
         try {
             $queries = [
-                #Insert to main database
+                #Insert to the main database
                 [
                     'INSERT INTO `uc__users`(`username`, `password`, `ff_token`, `timezone`, `country`, `city`) VALUES (:username, :password, :ff_token, :timezone, :country, :city)',
                     [
@@ -101,7 +102,7 @@ class Register extends Api
                         ':activation' => Security::passHash($activation),
                     ]
                 ],
-                #Insert into groups table
+                #Insert into group table
                 [
                     'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :groupid)',
                     [
@@ -110,7 +111,7 @@ class Register extends Api
                     ]
                 ],
             ];
-            Config::$dbController->query($queries);
+            Config::$dbController::query($queries);
             $email->confirm($_POST['signinup']['username'], $activation);
             return $user->login(true);
         } catch (\Throwable) {

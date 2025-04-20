@@ -5,6 +5,7 @@ namespace Simbiat\Website\usercontrol;
 
 use SendGrid\Mail\Mail;
 use Simbiat\Arrays\Converters;
+use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
@@ -22,7 +23,7 @@ class Email extends Entity
     public bool $banned = false;
     
     /**
-     * Overriding the standard function to use standard email filter
+     * Overriding the standard function to use a standard email filter
      * @param string|int $id
      *
      * @return $this
@@ -32,7 +33,7 @@ class Email extends Entity
     {
         #Convert to string for consistency
         $id = (string)$id;
-        #Validate that string is a mail
+        #Validate that string is email
         if (filter_var($id, FILTER_VALIDATE_EMAIL) === false) {
             #Not an email, something is wrong, protect ourselves
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
@@ -71,7 +72,9 @@ class Email extends Entity
     {
         #Check against DB table
         try {
-            return Config::$dbController->check('SELECT `email` FROM `uc__emails` WHERE `email`=:mail', [':mail' => $this->id]);
+            $result = Select::check('SELECT `email` FROM `uc__emails` WHERE `email`=:mail', [':mail' => $this->id]);
+            $this->registered = $result;
+            return $result;
         } catch (\Throwable) {
             return false;
         }
@@ -85,7 +88,9 @@ class Email extends Entity
     {
         #Check against DB table
         try {
-            return Config::$dbController->check('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id]);
+            $result = Select::check('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id]);
+            $this->banned = $result;
+            return $result;
         } catch (\Throwable) {
             return false;
         }
@@ -117,7 +122,7 @@ class Email extends Entity
     {
         /** @noinspection PhpUsageOfSilenceOperatorInspection */
         @session_regenerate_id(true);
-        $result = Config::$dbController->query('UPDATE `uc__emails` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = Config::$dbController::query('UPDATE `uc__emails` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -129,11 +134,11 @@ class Email extends Entity
     public function unsubscribe(): bool
     {
         if ($_SESSION['userid'] === 1) {
-            $result = Config::$dbController->query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
+            $result = Config::$dbController::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
         } else {
             /** @noinspection PhpUsageOfSilenceOperatorInspection */
             @session_regenerate_id(true);
-            $result = Config::$dbController->query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+            $result = Config::$dbController::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         }
         Security::log('User details change', 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
@@ -147,7 +152,7 @@ class Email extends Entity
     {
         /** @noinspection PhpUsageOfSilenceOperatorInspection */
         @session_regenerate_id(true);
-        $result = Config::$dbController->query('DELETE FROM `uc__emails` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = Config::$dbController::query('DELETE FROM `uc__emails` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -164,7 +169,7 @@ class Email extends Entity
             return ['http_error' => 403, 'reason' => 'Bad email provided'];
         }
         #Add email
-        $result = Config::$dbController->query('INSERT IGNORE INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = Config::$dbController::query('INSERT IGNORE INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
         if ($result) {
             /** @noinspection PhpUsageOfSilenceOperatorInspection */
@@ -194,7 +199,7 @@ class Email extends Entity
             #Remove user from unverified users
             ['DELETE FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=:groupid', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Unverified'], 'int']]],
         ];
-        $result = Config::$dbController->query($queries);
+        $result = Config::$dbController::query($queries);
         Security::log('User details change', 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -213,26 +218,26 @@ class Email extends Entity
             return false;
         }
         if (empty($username)) {
-            $data = Config::$dbController->selectRow('SELECT `uc__emails`.`userid`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id]);
+            $data = Select::selectRow('SELECT `uc__emails`.`userid`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id]);
             if (empty($data)) {
-                #Avoid potential abuse to get list of registered mails
+                #Avoid potential abuse to get a list of registered mails
                 return true;
             }
             $username = $data['username'];
             $userid = $data['userid'];
         } else {
             #Get user ID for link generation
-            $userid = Config::$dbController->selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username]);
+            $userid = Select::selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username]);
         }
         if (empty($userid)) {
-            #Avoid potential abuse to get list of registered mails
+            #Avoid potential abuse to get a list of registered mails
             return true;
         }
         #Generate activation code if none was provided (requested new activation mail)
         if (empty($activation)) {
             $activation = Security::genToken();
             #Insert into mails database
-            Config::$dbController->query(
+            Select::query(
                 'UPDATE `uc__emails` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',
                 [
                     ':userid' => [$userid, 'int'],

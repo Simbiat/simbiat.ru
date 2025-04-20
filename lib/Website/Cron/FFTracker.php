@@ -7,6 +7,7 @@ namespace Simbiat\Website\Cron;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Cron\TaskInstance;
+use Simbiat\Database\Select;
 use Simbiat\FFXIV\Achievement;
 use Simbiat\FFXIV\Character;
 use Simbiat\FFXIV\CrossworldLinkshell;
@@ -33,12 +34,12 @@ class FFTracker
     {
         try {
             foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
-                (new Statistics())->update($type);
+                new Statistics()->update($type);
             }
             return true;
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
             return $error;
         }
     }
@@ -53,12 +54,12 @@ class FFTracker
     public function UpdateEntity(string|int $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
-            'character' => (new Character($id))->update(true),
-            'freecompany' => (new FreeCompany($id))->update(true),
-            'pvpteam' => (new PvPTeam($id))->update(true),
-            'linkshell' => (new Linkshell($id))->update(true),
-            'crossworldlinkshell', 'crossworld_linkshell' => (new CrossworldLinkshell($id))->update(true),
-            'achievement' => (new Achievement($id))->update(true),
+            'character' => new Character($id)->update(true),
+            'freecompany' => new FreeCompany($id)->update(true),
+            'pvpteam' => new PvPTeam($id)->update(true),
+            'linkshell' => new Linkshell($id)->update(true),
+            'crossworldlinkshell', 'crossworld_linkshell' => new CrossworldLinkshell($id)->update(true),
+            'achievement' => new Achievement($id)->update(true),
             default => false,
         };
     }
@@ -67,7 +68,7 @@ class FFTracker
      * Function to update old entities
      *
      * @param int $limit    How many entities to process
-     * @param int $instance Instance number, that called the function
+     * @param int $instance Instance number that called the function
      *
      * @return bool|string
      */
@@ -78,7 +79,7 @@ class FFTracker
             $limit = 1;
         }
         try {
-            $entities = Config::$dbController->selectAll('
+            $entities = Select::selectAll('
                     SELECT `type`, `id`, `priority`, `updated` FROM (
                         (SELECT \'character\' AS `type`, `ffxiv__character`.`characterid` AS `id`, `updated`, IF(`userid` IS NOT NULL AND `deleted` IS NULL AND `privated` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`characterid`=`ffxiv__character`.`characterid` ORDER BY `priority` DESC, `updated` LIMIT :maxLines OFFSET :offset)
                         UNION ALL
@@ -100,14 +101,14 @@ class FFTracker
                 $extraForError = $entity['type'].' ID '.$entity['id'];
                 $result = $this->UpdateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
-                    #If we were throttled, means we already slept, and can continue, instead of breaking the whole instance
+                    #If we were throttled, means we already slept and can continue, instead of breaking the whole instance
                     if (preg_match('/Request throttled by Lodestone/', $result) === 1) {
                         continue;
                     }
                     return $result;
                 }
-                #Remove cron task, if it's present
-                (new TaskInstance('ffUpdateEntity', [(string)$entity['id'], $entity['type']]))->delete();
+                #Remove the cron task if it's present
+                new TaskInstance('ffUpdateEntity', [(string)$entity['id'], $entity['type']])->delete();
             }
             return true;
         } catch (\Throwable $e) {
@@ -117,7 +118,7 @@ class FFTracker
     }
     
     /**
-     * Update list of servers
+     * Update the list of servers
      * @return bool|string
      */
     public function UpdateServers(): bool|string
@@ -136,10 +137,10 @@ class FFTracker
                     ];
                 }
             }
-            return Config::$dbController->query($queries);
+            return Config::$dbController::query($queries);
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            (new Email(Config::adminMail))->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
             return $error;
         }
     }
@@ -154,11 +155,11 @@ class FFTracker
             $cron = new TaskInstance();
             $dbCon = Config::$dbController;
             #Try to register new characters
-            $maxId = $dbCon->selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
+            $maxId = $dbCon::selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $newMaxId = min($maxId + 100, 4294967295);
-            if ($maxId < $newMaxId) {
-                for ($character = $maxId + 1; $character <= $newMaxId; $character++) {
+            if ((int)$maxId < (int)$newMaxId) {
+                for ($character = $maxId + 1; (int)$character <= (int)$newMaxId; $character++) {
                     $extraForError = 'character ID '.$character;
                     $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$character, 'character'], 'message' => 'Updating character with ID '.$character])->add();
                 }
@@ -179,29 +180,28 @@ class FFTracker
         try {
             $Lodestone = (new Lodestone());
             $cron = new TaskInstance();
-            $dbCon = Config::$dbController;
-            #Generate list of worlds for linkshells
-            $worlds = $dbCon->selectAll(
+            #Generate a list of worlds for linkshells
+            $worlds = Select::selectAll(
                 'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
                             UNION ALL
                             SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;'
             );
             #Get cache
             $cachePath = Config::$statistics.'linkshellPages.json';
-            $json = (new Caching())->getArrayFromFile($cachePath);
+            $json = new Caching()->getArrayFromFile($cachePath);
             #Loop through the servers
             $pagesParsed = 0;
             foreach ($worlds as $world) {
                 #Loop through order filter
                 foreach (['1', '2', '3', '4'] as $order) {
-                    #Loop through number of members filter
+                    #Loop through the number of members filter
                     foreach ([10, 30, 50, 51] as $count) {
                         #Loop through pages
                         for ($page = 1; $page <= 20; $page++) {
                             if (!isset($json[$world['entity']][$world['world']][$order][$count][$page]) ||
-                                #Count of 0 may mean that last attempt failed (rate limit or maintenance)
+                                #Count of 0 may mean that the last attempt failed (rate limit or maintenance)
                                 $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
-                                #Cycle through everything every 5 days. At the time of writing there should be less than 30000 pages, with 500 pages per hourly scan, full cycle finishes in less than 3 days
+                                #Cycle through everything every 5 days. At the time of writing there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
                                 time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
                             ) {
                                 $pagesParsed++;
@@ -224,7 +224,7 @@ class FFTracker
                                     foreach ($data as $linkshell) {
                                         $extraForError = 'linkshell ID '.$linkshell;
                                         #Check if Linkshell exists in DB
-                                        if (!$dbCon->check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
+                                        if (!Select::check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
                                             $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
                                         }
                                     }

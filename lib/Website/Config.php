@@ -7,11 +7,12 @@ namespace Simbiat\Website;
 
 #Database settings
 use Dotenv\Dotenv;
-use Simbiat\Database\Controller;
+use Simbiat\Database\Connection;
+use Simbiat\Database\Select;
 use Simbiat\Database\Pool;
 
 /**
- * Class that holds main settings for the website. Needs to be instantiated early as part of bootstrapping.
+ * Class that holds the main settings for the website. Needs to be instantiated early as part of bootstrapping.
  */
 final class Config
 {
@@ -70,12 +71,12 @@ final class Config
     public static bool $CLI = false;
     #Allow access to canonical value of the host
     public static string $canonical = '';
-    #Track if DB connection is up
+    #Track if the DB connection is up
     public static bool $dbup = false;
     #Maintenance flag
     public static bool $dbUpdate = false;
     #Database controller object
-    public static ?Controller $dbController = NULL;
+    public static ?Select $dbController = NULL;
     #Default cookie settings
     public static array $cookieSettings = [];
     #Settings shared by PHP and JS code
@@ -127,7 +128,7 @@ final class Config
             #Adding "Partitioned" to enable CHIPS. This is a "hack" until PHP supports the setting natively. https://github.com/php/php-src/issues/12646
             'samesite' => 'Strict; Partitioned',
         ];
-        #These are required only if we are outside of CLI mode
+        #These are required only if we are outside CLI mode
         if (!self::$CLI) {
             $this->canonical();
             $this->nonApiLinks();
@@ -148,20 +149,20 @@ final class Config
     private function canonical(): void
     {
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = mb_strtolower(rawurldecode(mb_trim(mb_trim(mb_trim(preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), encoding: 'UTF-8'), '/', 'UTF-8'), encoding: 'UTF-8')), 'UTF-8');
+        self::$canonical = mb_strtolower(rawurldecode(mb_trim(mb_trim(mb_trim(preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), null, 'UTF-8'), '/', 'UTF-8'), null, 'UTF-8')), 'UTF-8');
         #Remove bad UTF
         self::$canonical = mb_scrub(self::$canonical, 'UTF-8');
-        #Remove "friendly" portion of the links, but exclude API
+        #Remove the "friendly" portion of the links but exclude API
         self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Update REQUEST_URI to ensure the data returned will be consistent
         $_SERVER['REQUEST_URI'] = self::$canonical;
-        #For canonical, though, we need to ensure, that it does have a trailing slash
+        #For canonical, though, we need to ensure that it does have a trailing slash
         if (preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = preg_replace('/([^\/])$/u', '$1/', self::$canonical);
         }
-        #And also return page or search query, if present
+        #And also return a page or search query, if present
         self::$canonical .= '?'.http_build_query([
-                #Do not add 1st page as query (since it is excessive)
+                #Do not add the 1st page as a query (since it is excessive)
                 'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
                 'search' => $_GET['search'] ?? null,
             ], encoding_type: PHP_QUERY_RFC3986);
@@ -169,12 +170,10 @@ final class Config
         self::$canonical = mb_rtrim(self::$canonical, '?', 'UTF-8');
         #Trim trailing slashes if any
         self::$canonical = mb_rtrim(self::$canonical, '/', 'UTF-8');
-        #Set canonical link, that may be used in the future
+        #Set a canonical link that may be used in the future
         self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', self::$http_host) === 1 ? 'www.' : '').self::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
-        #Update list with dynamic values
-        self::$links = array_merge(self::$links, [
-            ['rel' => 'canonical', 'href' => self::$canonical],
-        ]);
+        #Update the list with dynamic values
+        self::$links[] = ['rel' => 'canonical', 'href' => self::$canonical];
     }
     
     /**
@@ -183,13 +182,9 @@ final class Config
      */
     private function nonApiLinks(): void
     {
-        $uri = explode('/', $_SERVER['REQUEST_URI']);
+        $uri = explode('/', $_SERVER['REQUEST_URI'], 100);
         if ($uri[0] !== 'api') {
-            self::$links = array_merge(self::$links, [
-                ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(self::$cssDir.'/app.css').'.css', 'as' => 'style'],
-                ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(self::$jsDir.'/app.js').'.js', 'as' => 'script'],
-                ['rel' => 'preload', 'href' => '/assets/config.'.filemtime(self::$jsDir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json'],
-            ]);
+            array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(self::$cssDir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(self::$jsDir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.filemtime(self::$jsDir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
         }
     }
     
@@ -199,11 +194,11 @@ final class Config
      */
     public static function dbConnect(): bool
     {
-        #Check in case we accidentally call this for 2nd time
-        if (self::$dbup === false) {
+        #Check in case we accidentally call this for the 2nd time
+        if (!self::$dbup) {
             try {
                 Pool::openConnection(
-                    new \Simbiat\Database\Connection()
+                    new Connection()
                         ->setHost(socket: $_ENV['DATABASE_SOCKET'])
                         ->setUser($_ENV['DATABASE_USER'])
                         ->setPassword($_ENV['DATABASE_PASSWORD'])
@@ -219,10 +214,10 @@ final class Config
                         ->setOption(\PDO::ATTR_TIMEOUT, 1), maxTries: 5);
                 self::$dbup = true;
                 #Cache controller
-                self::$dbController = new Controller();
+                self::$dbController = new Select();
                 #Check for maintenance
-                self::$dbUpdate = (bool)self::$dbController->selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'');
-                self::$dbController->query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
+                self::$dbUpdate = (bool)self::$dbController::selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'');
+                self::$dbController::query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
             } catch (\Throwable $exception) {
                 #2002 error code means server is not listening on port
                 #2006 error code means server has gone away
