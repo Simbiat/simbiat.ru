@@ -104,7 +104,7 @@ class Post extends Entity
         $this->likes = (int)$fromDB['likes'];
         $this->dislikes = (int)$fromDB['dislikes'];
         $this->attachments = $fromDB['attachments'];
-        $this->isLiked = $fromDB['liked'];
+        $this->isLiked = $fromDB['isLiked'];
         $this->page = $fromDB['page'];
     }
     
