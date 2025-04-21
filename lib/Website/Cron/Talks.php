@@ -5,6 +5,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
@@ -24,7 +25,7 @@ class Talks
     public function lockPosts(): bool
     {
         try {
-            return Config::$dbController::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND `locked`=0;');
+            return Query::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND `locked`=0;');
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
             return false;
@@ -56,7 +57,7 @@ class Talks
                 #Log the change
                 Security::log('Avatar', 'Automatically deleted avatars', $toDelete, userid: $user);
                 #Delete from DB
-                Select::query(
+                Query::query(
                     'DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `current`=0 AND `fileid` IN (\''.implode('\', \'', $toDelete).'\');',
                     [
                         ':userid' => [$user, 'int'],
@@ -93,7 +94,7 @@ class Talks
                 #Log the removal
                 Security::log('File upload', 'Automatically deleted file', $file['fileid'].'.'.$file['extension'], userid: $file['userid']);
                 #Remove from DB
-                Config::$dbController::query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $file['fileid']]);
+                Query::query('DELETE FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $file['fileid']]);
                 #Remove from drive
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @unlink($fullPath);

@@ -8,6 +8,7 @@ use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 
+use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
 use function is_array, function_exists;
 
@@ -193,30 +194,27 @@ class Security
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {
-            if (Config::$dbController !== null) {
-                Config::$dbController::query(
-                    'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (CURRENT_TIMESTAMP(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
-                    [
-                        ':type' => $type,
-                        ':action' => $action,
-                        ':userid' => [$userid, 'int'],
-                        ':ip' => [
-                            (empty($ip) ? NULL : $ip),
-                            (empty($ip) ? 'null' : 'string'),
-                        ],
-                        ':ua' => [
-                            (empty($ua) ? NULL : $ua),
-                            (empty($ua) ? 'null' : 'string'),
-                        ],
-                        ':extras' => [
-                            (empty($extras) ? NULL : $extras),
-                            (empty($extras) ? 'null' : 'string'),
-                        ],
-                    ]
-                );
-                return true;
-            }
-            return false;
+            Query::query(
+                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (CURRENT_TIMESTAMP(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
+                [
+                    ':type' => $type,
+                    ':action' => $action,
+                    ':userid' => [$userid, 'int'],
+                    ':ip' => [
+                        (empty($ip) ? NULL : $ip),
+                        (empty($ip) ? 'null' : 'string'),
+                    ],
+                    ':ua' => [
+                        (empty($ua) ? NULL : $ua),
+                        (empty($ua) ? 'null' : 'string'),
+                    ],
+                    ':extras' => [
+                        (empty($extras) ? NULL : $extras),
+                        (empty($extras) ? 'null' : 'string'),
+                    ],
+                ]
+            );
+            return true;
         } catch (\Throwable $exception) {
             #Log to the file. Generally we do not lose much if this fails
             Errors::error_log($exception);

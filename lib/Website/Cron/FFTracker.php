@@ -7,6 +7,7 @@ namespace Simbiat\Website\Cron;
 
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Cron\TaskInstance;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\FFXIV\Achievement;
 use Simbiat\FFXIV\Character;
@@ -137,7 +138,7 @@ class FFTracker
                     ];
                 }
             }
-            return Config::$dbController::query($queries);
+            return Query::query($queries);
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
             new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
@@ -153,9 +154,8 @@ class FFTracker
     {
         try {
             $cron = new TaskInstance();
-            $dbCon = Config::$dbController;
             #Try to register new characters
-            $maxId = $dbCon::selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
+            $maxId = Select::selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $newMaxId = min($maxId + 100, 4294967295);
             if ((int)$maxId < (int)$newMaxId) {

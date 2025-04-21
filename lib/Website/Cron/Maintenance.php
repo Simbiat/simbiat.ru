@@ -9,6 +9,7 @@ use Simbiat\Cron;
 use Simbiat\Database\Manage;
 use Simbiat\Database\Optimize;
 use Simbiat\Database\Pool;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
@@ -67,13 +68,13 @@ class Maintenance
         }
         foreach ($items as $item) {
             #Try to delete cookie
-            Config::$dbController::query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
+            Query::query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
                 [
                     ':id' => $item['cookieid'],
                 ]
             );
             #If it was deleted - log it
-            if (Config::$dbController::$lastAffected > 0) {
+            if (Query::$lastAffected > 0) {
                 Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['userid']);
             }
         }
@@ -90,7 +91,7 @@ class Maintenance
         #Clean audit logs
         $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 YEAR)';
         try {
-            $result = Config::$dbController::query($queries);
+            $result = Query::query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             $result = false;
@@ -110,7 +111,7 @@ class Maintenance
         #Remove visitors who have not come in 2 years
         $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
-            $result = Config::$dbController::query($queries);
+            $result = Query::query($queries);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             $result = false;
@@ -168,7 +169,7 @@ class Maintenance
     {
         $cron = (new Cron\Agent());
         try {
-            Config::$dbController::query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
+            Query::query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 0);
             new Optimize()->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
         } catch (\Throwable $e) {
@@ -176,7 +177,7 @@ class Maintenance
             new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
             return $error;
         } finally {
-            Config::$dbController::query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
+            Query::query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
             $cron->setSetting('enabled', 1);
         }
         return true;

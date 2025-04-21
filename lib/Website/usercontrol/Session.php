@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
+use Simbiat\Database\Common;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
@@ -53,7 +55,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function open(string $path, string $name): bool
     {
         #If controller was initialized - session is ready
-        return Config::$dbController !== null;
+        return Common::$dbh !== null;
     }
     
     /**
@@ -89,7 +91,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = Config::$dbController::selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = Select::selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
         } catch (\Throwable) {
             $data = '';
         }
@@ -226,7 +228,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         try {
             if (!empty($queries)) {
-                return Config::$dbController::query($queries);
+                return Query::query($queries);
             }
             return true;
         } catch (\Throwable $exception) {
@@ -362,31 +364,27 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Cache Security object
             $data['cookieid'] = Security::decrypt($data['cookieid']);
             $data['pass'] = Security::decrypt($data['pass']);
-            #Check DB
-            if (Config::$dbController !== null) {
-                #Get user data
-                $savedData = Select::selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
-                    [':id' => $data['cookieid']]
-                );
-                if (empty($savedData) || empty($savedData['validator'])) {
-                    #No cookie found or no password present
-                    return [];
-                }
-                #Validate cookie password
-                if (!password_verify($data['pass'], $savedData['validator'])) {
-                    #Wrong password
-                    return [];
-                }
-                $user = (new User($savedData['userid']));
-                #Reset strikes if any
-                $user->resetStrikes();
-                #Update cookie
-                $user->rememberMe($data['cookieid']);
-                $savedData['cookieid'] = $data['cookieid'];
-                unset($savedData['validator']);
-                return $savedData;
+            #Get user data
+            $savedData = Select::selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
+                [':id' => $data['cookieid']]
+            );
+            if (empty($savedData) || empty($savedData['validator'])) {
+                #No cookie found or no password present
+                return [];
             }
-            return [];
+            #Validate cookie password
+            if (!password_verify($data['pass'], $savedData['validator'])) {
+                #Wrong password
+                return [];
+            }
+            $user = (new User($savedData['userid']));
+            #Reset strikes if any
+            $user->resetStrikes();
+            #Update cookie
+            $user->rememberMe($data['cookieid']);
+            $savedData['cookieid'] = $data['cookieid'];
+            unset($savedData['validator']);
+            return $savedData;
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];
@@ -406,7 +404,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function destroy(string $id): bool
     {
         try {
-            return Config::$dbController::query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
+            return Query::query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -429,8 +427,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            if (Config::$dbController::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
-                return Config::$dbController::$lastAffected;
+            if (Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
+                return Query::$lastAffected;
             }
             return false;
         } catch (\Throwable $e) {
@@ -469,7 +467,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get ID
         try {
-            $sessionId = Config::$dbController::selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
+            $sessionId = Select::selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -499,7 +497,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return Config::$dbController::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

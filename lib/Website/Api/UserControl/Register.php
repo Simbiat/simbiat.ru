@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use GeoIp2\Database\Reader;
+use Simbiat\Database\Common;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
@@ -61,7 +63,7 @@ class Register extends Api
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
-        if (empty(Config::$dbController)) {
+        if (Common::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Check if registration is enabled
@@ -102,7 +104,7 @@ class Register extends Api
                         ':activation' => Security::passHash($activation),
                     ]
                 ],
-                #Insert into group table
+                #Insert into the group table
                 [
                     'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :groupid)',
                     [
@@ -111,7 +113,7 @@ class Register extends Api
                     ]
                 ],
             ];
-            Config::$dbController::query($queries);
+            Query::query($queries);
             $email->confirm($_POST['signinup']['username'], $activation);
             return $user->login(true);
         } catch (\Throwable) {

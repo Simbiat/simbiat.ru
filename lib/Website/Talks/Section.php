@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Talks;
 
 use Simbiat\Database\Modify;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
@@ -279,7 +280,7 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
         }
         try {
-            Config::$dbController::query('UPDATE `talks__sections` SET `private`=:private WHERE `sectionid`=:sectionid;', [':private' => [$private, 'int'], ':sectionid' => [$this->id, 'int']]);
+            Query::query('UPDATE `talks__sections` SET `private`=:private WHERE `sectionid`=:sectionid;', [':private' => [$private, 'int'], ':sectionid' => [$this->id, 'int']]);
             $this->private = $private;
             return ['response' => true];
         } catch (\Throwable) {
@@ -300,7 +301,7 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
         }
         try {
-            Config::$dbController::query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':sectionid' => [$this->id, 'int']]);
+            Query::query('UPDATE `talks__sections` SET `closed`=:closed WHERE `sectionid`=:sectionid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':sectionid' => [$this->id, 'int']]);
             $this->closed = ($closed ? time() : null);
             return ['response' => true];
         } catch (\Throwable) {
@@ -331,7 +332,7 @@ class Section extends Entity
             return ['http_error' => 400, 'reason' => 'Order value needs to be between 0 and 99 inclusively'];
         }
         try {
-            $result = Config::$dbController::query('UPDATE `talks__sections` SET `sequence`=:sequence WHERE `sectionid`=:sectionid;', [':sequence' => [$_POST['order'], 'int'], ':sectionid' => [$this->id, 'int']]);
+            $result = Query::query('UPDATE `talks__sections` SET `sequence`=:sequence WHERE `sectionid`=:sectionid;', [':sequence' => [$_POST['order'], 'int'], ':sectionid' => [$this->id, 'int']]);
         } catch (\Throwable) {
             $result = false;
         }
@@ -382,7 +383,7 @@ class Section extends Entity
             if (!empty($data['linkType'])) {
                 switch ($data['linkType']) {
                     case 2:
-                        Config::$dbController::query('INSERT INTO `uc__user_to_section` (`userid`, `blog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `blog`=:sectionid;',
+                        Query::query('INSERT INTO `uc__user_to_section` (`userid`, `blog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `blog`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -390,7 +391,7 @@ class Section extends Entity
                         );
                         break;
                     case 4:
-                        Config::$dbController::query('INSERT INTO `uc__user_to_section` (`userid`, `changelog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `changelog`=:sectionid;',
+                        Query::query('INSERT INTO `uc__user_to_section` (`userid`, `changelog`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `changelog`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -398,7 +399,7 @@ class Section extends Entity
                         );
                         break;
                     case 6:
-                        Config::$dbController::query('INSERT INTO `uc__user_to_section` (`userid`, `knowledgebase`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `knowledgebase`=:sectionid;',
+                        Query::query('INSERT INTO `uc__user_to_section` (`userid`, `knowledgebase`) VALUES (:userid, :sectionid) ON DUPLICATE KEY UPDATE `knowledgebase`=:sectionid;',
                             [
                                 ':userid' => [$_SESSION['userid'], 'int'],
                                 ':sectionid' => [$newID, 'int'],
@@ -465,7 +466,7 @@ class Section extends Entity
                     ]
                 ];
             }
-            Config::$dbController::query($queries);
+            Query::query($queries);
             return ['response' => true];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -648,7 +649,7 @@ class Section extends Entity
         }
         #Attempt removal
         try {
-            Config::$dbController::query('DELETE FROM `talks__sections` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
+            Query::query('DELETE FROM `talks__sections` WHERE `sectionid`=:sectionid;', [':sectionid' => [$this->id, 'int']]);
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

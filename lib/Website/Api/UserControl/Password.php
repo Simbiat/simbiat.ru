@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\UserControl;
 
+use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
 use Simbiat\Website\usercontrol\User;
@@ -49,7 +50,7 @@ class Password extends Api
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {
-                $password = Config::$dbController::selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
+                $password = Select::selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
                     [':userid' => $id]
                 );
             } catch (\Throwable) {
@@ -65,7 +66,7 @@ class Password extends Api
         } else {
             #Get activation code
             try {
-                $pwReset = Config::$dbController::selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
+                $pwReset = Select::selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
                     [':userid' => $id]
                 );
             } catch (\Throwable) {

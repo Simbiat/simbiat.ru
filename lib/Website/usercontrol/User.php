@@ -5,6 +5,8 @@ namespace Simbiat\Website\usercontrol;
 
 use Simbiat\Arrays\Converters;
 use Simbiat\Arrays\Editors;
+use Simbiat\Database\Common;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Entity;
@@ -247,7 +249,7 @@ class User extends Entity
             #Log the change
             Security::log('Avatar', 'Added avatar', $upload['hash']);
             #Add to DB
-            Config::$dbController::query(
+            Query::query(
                 'INSERT IGNORE INTO `uc__avatars` (`userid`, `fileid`, `characterid`, `current`) VALUES (:userid, :fileid, :character, 0);',
                 [
                     ':userid' => [$this->id, 'int'],
@@ -287,7 +289,7 @@ class User extends Entity
         #Log the change
         Security::log('Avatar', 'Deleted avatar', $fileid);
         #Delete the avatar (only allow deletion of those that are not current)
-        Select::query('DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid`=:fileid AND `current`=0;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]);
+        Query::query('DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `fileid`=:fileid AND `current`=0;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]);
         return ['location' => $this->getAvatar(), 'response' => true];
     }
     
@@ -307,7 +309,7 @@ class User extends Entity
         }
         #Log the change
         Security::log('Avatar', 'Changed active avatar', $fileid);
-        Config::$dbController::query([
+        Query::query([
             #Set the chosen avatar as current
             ['UPDATE `uc__avatars` SET `current`=1 WHERE `userid`=:userid AND `fileid`=:fileid;', [':userid' => [$this->id, 'int'], ':fileid' => $fileid]],
             #Set the rest as non-current
@@ -372,7 +374,7 @@ class User extends Entity
             return ['response' => true];
         }
         try {
-            $result = Config::$dbController::query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
+            $result = Query::query('UPDATE `uc__users` SET `username`=:username WHERE `userid`=:userid;', [
                 ':userid' => [$this->id, 'int'],
                 ':username' => $newName,
             ]);
@@ -517,7 +519,7 @@ class User extends Entity
         if (empty($queries)) {
             return ['http_error' => 400, 'reason' => 'No changes detected'];
         }
-        $result = Config::$dbController::query($queries);
+        $result = Query::query($queries);
         #Log the change
         Security::log('User details change', 'Changed details', $log);
         return ['response' => $result];
@@ -593,7 +595,7 @@ class User extends Entity
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
-        if (empty(Config::$dbController)) {
+        if (Common::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get the password of the user while also checking if it exists
@@ -664,16 +666,16 @@ class User extends Entity
             $pass = bin2hex(random_bytes(128));
             $hashedPass = Security::passHash($pass);
             #Write cookie data to DB
-            if (Config::$dbController !== null && ((!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true)) || !empty($this->id))) {
+            if (!empty($this->id) || (!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true))) {
                 #Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
-                $currentPass = Config::$dbController::selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
+                $currentPass = Select::selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
                     [
                         ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                         ':cookie' => $cookieId
                     ]
                 );
                 if (empty($currentPass)) {
-                    Config::$dbController::query('INSERT IGNORE INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id);',
+                    Query::query('INSERT IGNORE INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id);',
                         [
                             ':cookie' => $cookieId,
                             ':pass' => $hashedPass,
@@ -681,7 +683,7 @@ class User extends Entity
                         ]
                     );
                 } else {
-                    Config::$dbController::query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP() WHERE `userid`=:id AND `cookieid`=:cookie AND `validator`=:validator;',
+                    Query::query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP() WHERE `userid`=:id AND `cookieid`=:cookie AND `validator`=:validator;',
                         [
                             ':cookie' => $cookieId,
                             ':pass' => $hashedPass,
@@ -691,13 +693,13 @@ class User extends Entity
                     );
                 }
                 #Update stuff only if we did insert cookie or update the validator value
-                if (Config::$dbController::$lastAffected > 0) {
+                if (Query::$lastAffected > 0) {
                     #Set cookie ID to session if it's not already linked or if it was linked to another cookie (not sure if that would even be possible)
                     if (empty($_SESSION['cookieid']) || $_SESSION['cookieid'] !== $cookieId) {
                         $_SESSION['cookieid'] = $cookieId;
                     }
                     #Set cookie
-                    $currentPass = Config::$dbController::selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
+                    $currentPass = Select::selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
                         [
                             ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                             ':cookie' => $cookieId
@@ -745,7 +747,7 @@ class User extends Entity
                 return true;
             }
             #Increase strike count
-            Config::$dbController::query(
+            Query::query(
                 'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `userid`=:userid',
                 [':userid' => [$this->id, 'string']]);
             Security::log('Failed login', 'Strike added');
@@ -769,7 +771,7 @@ class User extends Entity
         if ($this->system) {
             return false;
         }
-        $result = Config::$dbController::query(
+        $result = Query::query(
             'UPDATE `uc__users` SET `password`=:password, `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
                 ':userid' => [$this->id, 'string'],
@@ -796,7 +798,7 @@ class User extends Entity
         if ($this->system) {
             return false;
         }
-        return Config::$dbController::query(
+        return Query::query(
             'UPDATE `uc__users` SET `strikes`=0, `pw_reset`=NULL WHERE `userid`=:userid;',
             [
                 ':userid' => [(string)$this->id, 'string']
@@ -819,14 +821,14 @@ class User extends Entity
         if ($this->system) {
             return false;
         }
-        $result = Config::$dbController::query(
+        $result = Query::query(
             'DELETE FROM `uc__cookies` WHERE `userid`=:userid AND `cookieid`=:cookie;',
             [
                 ':userid' => [$this->id, 'int'],
                 ':cookie' => $_POST['cookie'],
             ]
         );
-        if (Config::$dbController::$lastAffected > 0) {
+        if (Query::$lastAffected > 0) {
             Security::log('Logout', $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
         }
         return $result;
@@ -844,14 +846,14 @@ class User extends Entity
         if ($this->system) {
             return false;
         }
-        $result = Config::$dbController::query(
+        $result = Query::query(
             'DELETE FROM `uc__sessions` WHERE `userid`=:userid AND `sessionid`=:session;',
             [
                 ':userid' => [(string)$this->id, 'string'],
                 ':session' => $_POST['session'],
             ]
         );
-        if (Config::$dbController::$lastAffected > 0) {
+        if (Query::$lastAffected > 0) {
             Security::log('Logout', 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
         }
         return $result;
@@ -1083,7 +1085,7 @@ class User extends Entity
                 [':userid' => $this->id]
             ];
             #If queries ran successfully - logout properly
-            if (Config::$dbController::query($queries)) {
+            if (Query::query($queries)) {
                 $this->logout();
                 $result = true;
             } else {

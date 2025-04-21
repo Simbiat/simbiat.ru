@@ -5,6 +5,7 @@ namespace Simbiat\Website\Talks;
 
 use Simbiat\Arrays\Editors;
 use Simbiat\Database\Modify;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
@@ -170,7 +171,7 @@ class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `markPrivate` permission'];
         }
         try {
-            Select::query('UPDATE `talks__threads` SET `private`=:private WHERE `threadid`=:threadid;', [':private' => [$private, 'int'], ':threadid' => [$this->id, 'int']]);
+            Query::query('UPDATE `talks__threads` SET `private`=:private WHERE `threadid`=:threadid;', [':private' => [$private, 'int'], ':threadid' => [$this->id, 'int']]);
             $this->private = $private;
             return ['response' => true];
         } catch (\Throwable) {
@@ -198,7 +199,7 @@ class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `closeOthersThreads` permission'];
         }
         try {
-            Config::$dbController::query('UPDATE `talks__threads` SET `closed`=:closed WHERE `threadid`=:threadid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':threadid' => [$this->id, 'int']]);
+            Query::query('UPDATE `talks__threads` SET `closed`=:closed WHERE `threadid`=:threadid;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':threadid' => [$this->id, 'int']]);
             $this->closed = (!$closed ? null : time());
             return ['response' => true];
         } catch (\Throwable) {
@@ -219,7 +220,7 @@ class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `canPin` permission'];
         }
         try {
-            Config::$dbController::query('UPDATE `talks__threads` SET `pinned`=:pinned WHERE `threadid`=:threadid;', [':pinned' => [$pinned, 'int'], ':threadid' => [$this->id, 'int']]);
+            Query::query('UPDATE `talks__threads` SET `pinned`=:pinned WHERE `threadid`=:threadid;', [':pinned' => [$pinned, 'int'], ':threadid' => [$this->id, 'int']]);
             $this->pinned = $pinned;
             return ['response' => true];
         } catch (\Throwable) {
@@ -253,7 +254,7 @@ class Thread extends Entity
             $newID = Modify::insertAI(
                 'INSERT INTO `talks__threads`(`threadid`, `name`, `sectionid`, `language`, `pinned`, `closed`, `private`, `ogimage`, `created`, `createdby`, `updatedby`, `lastpostby`) VALUES (NULL, :name, :parentid, :language, COALESCE(:pinned, DEFAULT(`pinned`)), COALESCE(:closed, DEFAULT(`closed`)), COALESCE(:private, DEFAULT(`private`)), :ogimage, :time,:userid,:userid,:userid);',
                 [
-                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
+                    ':name' => mb_trim($data['name'], null, 'UTF-8'),
                     ':parentid' => [$data['parentid'], 'int'],
                     ':language' => $data['language'],
                     ':closed' => [
@@ -293,7 +294,7 @@ class Thread extends Entity
             }
             if (!empty($queries)) {
                 try {
-                    Config::$dbController::query($queries);
+                    Query::query($queries);
                 } catch (\Throwable) {
                     #Do nothing, this is not critical
                 }
@@ -345,7 +346,7 @@ class Thread extends Entity
                 'UPDATE `talks__threads` SET `name`=:name, `sectionid`=:parentid, `language`=:language, `pinned`=COALESCE(:pinned, `pinned`), `closed`=COALESCE(:closed, `closed`), `private`=COALESCE(:private, `private`), `updatedby`=:userid, `ogimage`=COALESCE(:ogimage, `ogimage`) WHERE `threadid`=:thread;',
                 [
                     ':thread' => [$this->id, 'int'],
-                    ':name' => mb_trim($data['name'], encoding: 'UTF-8'),
+                    ':name' => mb_trim($data['name'], null, 'UTF-8'),
                     ':parentid' => [$data['parentid'], 'int'],
                     ':language' => $data['language'],
                     ':closed' => [
@@ -369,7 +370,7 @@ class Thread extends Entity
             ];
             #Nullify the ogimage if the `clearogimage` flag was set
             if ($data['clearogimage']) {
-                Config::$dbController::query(
+                Query::query(
                     'UPDATE `talks__threads` SET `ogimage`=NULL, `updated`=`updated` WHERE `threadid`=:threadid;',
                     [
                         ':threadid' => [$this->id, 'int'],
@@ -395,7 +396,7 @@ class Thread extends Entity
                 ];
             }
             #Run the queries
-            Config::$dbController::query($queries);
+            Query::query($queries);
             return ['response' => true];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
@@ -581,7 +582,7 @@ class Thread extends Entity
         }
         #Attempt removal
         try {
-            Config::$dbController::query('DELETE FROM `talks__threads` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int']]);
+            Query::query('DELETE FROM `talks__threads` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int']]);
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

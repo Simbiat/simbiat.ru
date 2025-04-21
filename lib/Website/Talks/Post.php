@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Talks;
 
 use Simbiat\Database\Modify;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
@@ -168,13 +169,13 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'No `canLike` permission'];
         }
         #Get the current value (if any)
-        $isLiked = (int)(Config::$dbController::selectValue('SELECT `likevalue` FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
+        $isLiked = (int)(Select::selectValue('SELECT `likevalue` FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
             [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']]
         ) ?? 0);
         if (($dislike && $isLiked === -1) || (!$dislike && $isLiked === 1)) {
             #Remove the (dis)like
             try {
-                $result = Config::$dbController::query('DELETE FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
+                $result = Query::query('DELETE FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
                     [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']]
                 );
             } catch (\Throwable) {
@@ -187,7 +188,7 @@ class Post extends Entity
         }
         #Insert/update the value
         try {
-            $result = Config::$dbController::query('INSERT INTO `talks__likes` (`postid`, `userid`, `likevalue`) VALUES (:postid, :userid, :like) ON DUPLICATE KEY UPDATE `likevalue`=:like;',
+            $result = Query::query('INSERT INTO `talks__likes` (`postid`, `userid`, `likevalue`) VALUES (:postid, :userid, :like) ON DUPLICATE KEY UPDATE `likevalue`=:like;',
                 [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']]
             );
         } catch (\Throwable) {
@@ -234,7 +235,7 @@ class Post extends Entity
                 ]
             );
             #Update last post for thread
-            Config::$dbController::query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=:time, `lastpostby`=:userid WHERE `threadid`=:threadid;',
+            Query::query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=:time, `lastpostby`=:userid WHERE `threadid`=:threadid;',
                 [
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
@@ -294,7 +295,7 @@ class Post extends Entity
                     ],
                 ];
             }
-            Config::$dbController::query($fileQueries);
+            Query::query($fileQueries);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
         }
@@ -309,7 +310,7 @@ class Post extends Entity
     private function addHistory(string $text): void
     {
         try {
-            Config::$dbController::query('INSERT INTO `talks__posts_history` (`postid`, `userid`, `text`) VALUES (:postid, :userid, :text);',
+            Query::query('INSERT INTO `talks__posts_history` (`postid`, `userid`, `text`) VALUES (:postid, :userid, :text);',
                 [
                     ':postid' => [$this->id, 'int'],
                     ':userid' => [$_SESSION['userid'], 'int'],
@@ -384,7 +385,7 @@ class Post extends Entity
                 ];
             }
             #Run queries
-            Config::$dbController::query($queries);
+            Query::query($queries);
             #Add text to history
             $this->addHistory($data['text']);
             #Link attachments
@@ -424,7 +425,7 @@ class Post extends Entity
         preg_match_all('/(<img[^>]*src="\/assets\/images\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'], $inlineImages, PREG_PATTERN_ORDER);
         #Remove any files that are not in DB from the array of inline files
         foreach ($inlineImages[2] as $key => $image) {
-            $filename = Config::$dbController::selectValue('SELECT `name` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image]);
+            $filename = Select::selectValue('SELECT `name` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image]);
             #If no filename - no file exists
             if (!empty($filename)) {
                 #Add the file to the list
@@ -496,7 +497,7 @@ class Post extends Entity
         }
         #Attempt removal
         try {
-            Config::$dbController::query('DELETE FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$this->id, 'int']]);
+            Query::query('DELETE FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$this->id, 'int']]);
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

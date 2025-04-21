@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\UserControl;
 
+use Simbiat\Database\Common;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
@@ -35,7 +37,7 @@ class Remind extends Api
             return ['http_error' => 400, 'reason' => 'No email/name provided'];
         }
         #Check DB
-        if (empty(Config::$dbController)) {
+        if (Common::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get the password of the user while also checking if it exists
@@ -51,7 +53,7 @@ class Remind extends Api
             try {
                 $token = Security::genToken();
                 #Write the reset token to DB
-                Config::$dbController::query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
+                Query::query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
                 new Email($credentials['email'])->send('Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Registration failed'];
