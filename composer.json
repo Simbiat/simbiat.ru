@@ -57,6 +57,7 @@
                 "./lib/BIC/Tracker/src"
             ],
             "Simbiat\\Database\\": [
+                "./lib/Database/Binder/src",
                 "./lib/Database/Database/src",
                 "./lib/Database/Optimize/src",
                 "./lib/Database/Pool/src"

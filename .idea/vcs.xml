@@ -13,6 +13,7 @@
     <mapping directory="$PROJECT_DIR$/lib/Cron" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/CuteBytes" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/DDCIcons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/Database/Binder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Database" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Optimize" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Pool" vcs="Git" />

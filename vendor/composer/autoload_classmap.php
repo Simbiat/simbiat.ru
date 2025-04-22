@@ -314,7 +314,7 @@ return array(
     'Simbiat\\Cron\\TaskInstance' => $baseDir . '/lib/Cron/src/TaskInstance.php',
     'Simbiat\\CuteBytes' => $baseDir . '/lib/CuteBytes/src/CuteBytes.php',
     'Simbiat\\DDCIcons' => $baseDir . '/lib/DDCIcons/src/DDCIcons.php',
-    'Simbiat\\Database\\Bind' => $baseDir . '/lib/Database/Database/src/Bind.php',
+    'Simbiat\\Database\\Bind' => $baseDir . '/lib/Database/Binder/src/Bind.php',
     'Simbiat\\Database\\Common' => $baseDir . '/lib/Database/Database/src/Common.php',
     'Simbiat\\Database\\Connection' => $baseDir . '/lib/Database/Pool/src/Connection.php',
     'Simbiat\\Database\\Manage' => $baseDir . '/lib/Database/Database/src/Manage.php',

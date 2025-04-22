@@ -67,3 +67,6 @@
 [submodule "lib/FFXIV/CrestComponents"]
 	path = lib/FFXIV/CrestComponents
 	url = https://github.com/Simbiat/FFXIV-Crests-Components
+[submodule "lib/Database/Binder"]
+	path = lib/Database/Binder
+	url = https://github.com/Simbiat/db-binder

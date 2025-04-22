@@ -129,9 +129,10 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         ),
         'Simbiat\\Database\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/lib/Database/Database/src',
-            1 => __DIR__ . '/../..' . '/lib/Database/Optimize/src',
-            2 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
+            0 => __DIR__ . '/../..' . '/lib/Database/Binder/src',
+            1 => __DIR__ . '/../..' . '/lib/Database/Database/src',
+            2 => __DIR__ . '/../..' . '/lib/Database/Optimize/src',
+            3 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
         ),
         'Simbiat\\Cron\\' => 
         array (
@@ -539,7 +540,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Cron\\TaskInstance' => __DIR__ . '/../..' . '/lib/Cron/src/TaskInstance.php',
         'Simbiat\\CuteBytes' => __DIR__ . '/../..' . '/lib/CuteBytes/src/CuteBytes.php',
         'Simbiat\\DDCIcons' => __DIR__ . '/../..' . '/lib/DDCIcons/src/DDCIcons.php',
-        'Simbiat\\Database\\Bind' => __DIR__ . '/../..' . '/lib/Database/Database/src/Bind.php',
+        'Simbiat\\Database\\Bind' => __DIR__ . '/../..' . '/lib/Database/Binder/src/Bind.php',
         'Simbiat\\Database\\Common' => __DIR__ . '/../..' . '/lib/Database/Database/src/Common.php',
         'Simbiat\\Database\\Connection' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Connection.php',
         'Simbiat\\Database\\Manage' => __DIR__ . '/../..' . '/lib/Database/Database/src/Manage.php',
