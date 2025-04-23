@@ -936,7 +936,7 @@ class User extends Entity
                 }
             }
             #Convert regular 0, 1, ... n IDs to real thread IDs for later use
-            $threads = Editors::DigitToKey($threads, 'id');
+            $threads = Editors::digitToKey($threads, 'id');
             #Get the posts' IDs
             $ids = array_column($threads, 'firstPost');
         } else {

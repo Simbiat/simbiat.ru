@@ -28,6 +28,7 @@
       <sourceFolder url="file://$MODULE_DIR$/./lib/FFXIV/Tracker/src" isTestSource="false" packagePrefix="Simbiat\FFXIV\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/Database/Pool/src" isTestSource="false" packagePrefix="Simbiat\Database\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/Database/Binder/src" isTestSource="false" packagePrefix="Simbiat\Database\" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
