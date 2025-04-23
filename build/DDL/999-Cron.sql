@@ -86,3 +86,6 @@ UPDATE `cron__tasks` SET `object`='\\Simbiat\\Website\\Cron\\FFTracker' WHERE `o
 UPDATE `cron__tasks` SET `object`='\\Simbiat\\Website\\Cron\\BICTracker', `function`='LibraryUpdate' WHERE `object`='\\Simbiat\\Website\\bictracker\\Library';
 
 UPDATE `cron__schedule` SET `frequency` = '86400' WHERE `cron__schedule`.`task` = 'bicUpdate' AND `cron__schedule`.`arguments` = '' AND `cron__schedule`.`instance` = 1;
+
+UPDATE `cron__schedule` SET `frequency` = '60' WHERE `cron__schedule`.`task` = 'sessionClean' AND `cron__schedule`.`arguments` = '' AND `cron__schedule`.`instance` = 1;
+UPDATE `cron__schedule` SET `frequency` = '60' WHERE `cron__schedule`.`task` = 'cookiesClean' AND `cron__schedule`.`arguments` = '' AND `cron__schedule`.`instance` = 1;
