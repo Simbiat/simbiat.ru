@@ -70,3 +70,9 @@
 [submodule "lib/Database/Binder"]
 	path = lib/Database/Binder
 	url = https://github.com/Simbiat/db-binder
+[submodule "lib/Database/Manager"]
+	path = lib/Database/Manager
+	url = https://github.com/Simbiat/db-manager
+[submodule "lib/Database/Query"]
+	path = lib/Database/Query
+	url = https://github.com/Simbiat/db-query

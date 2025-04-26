@@ -130,9 +130,10 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Database\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib/Database/Binder/src',
-            1 => __DIR__ . '/../..' . '/lib/Database/Database/src',
+            1 => __DIR__ . '/../..' . '/lib/Database/Manager/src',
             2 => __DIR__ . '/../..' . '/lib/Database/Optimize/src',
             3 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
+            4 => __DIR__ . '/../..' . '/lib/Database/Query/src',
         ),
         'Simbiat\\Cron\\' => 
         array (
@@ -541,14 +542,14 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\CuteBytes' => __DIR__ . '/../..' . '/lib/CuteBytes/src/CuteBytes.php',
         'Simbiat\\DDCIcons' => __DIR__ . '/../..' . '/lib/DDCIcons/src/DDCIcons.php',
         'Simbiat\\Database\\Bind' => __DIR__ . '/../..' . '/lib/Database/Binder/src/Bind.php',
-        'Simbiat\\Database\\Common' => __DIR__ . '/../..' . '/lib/Database/Database/src/Common.php',
+        'Simbiat\\Database\\Common' => __DIR__ . '/../..' . '/lib/Database/Query/src/Common.php',
         'Simbiat\\Database\\Connection' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Connection.php',
-        'Simbiat\\Database\\Manage' => __DIR__ . '/../..' . '/lib/Database/Database/src/Manage.php',
-        'Simbiat\\Database\\Modify' => __DIR__ . '/../..' . '/lib/Database/Database/src/Modify.php',
+        'Simbiat\\Database\\Manage' => __DIR__ . '/../..' . '/lib/Database/Manager/src/Manage.php',
+        'Simbiat\\Database\\Modify' => __DIR__ . '/../..' . '/lib/Database/Query/src/Modify.php',
         'Simbiat\\Database\\Optimize' => __DIR__ . '/../..' . '/lib/Database/Optimize/src/Optimize.php',
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Pool.php',
-        'Simbiat\\Database\\Query' => __DIR__ . '/../..' . '/lib/Database/Database/src/Query.php',
-        'Simbiat\\Database\\Select' => __DIR__ . '/../..' . '/lib/Database/Database/src/Select.php',
+        'Simbiat\\Database\\Query' => __DIR__ . '/../..' . '/lib/Database/Query/src/Query.php',
+        'Simbiat\\Database\\Select' => __DIR__ . '/../..' . '/lib/Database/Query/src/Select.php',
         'Simbiat\\FFXIV\\AbstractTrackerEntity' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/AbstractTrackerEntity.php',
         'Simbiat\\FFXIV\\Achievement' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Achievement.php',
         'Simbiat\\FFXIV\\Character' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/Character.php',

@@ -149,7 +149,7 @@ class Maintenance
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
                 #Get DDL statement
-                file_put_contents(Config::$DDLDir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, encoding: 'UTF-8'));
+                file_put_contents(Config::$DDLDir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
                 #Add item to the file with dump order
                 $dumpOrder .= $table['table'].' ';
             }
