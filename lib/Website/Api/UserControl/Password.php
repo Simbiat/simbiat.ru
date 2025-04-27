@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
 use Simbiat\Website\usercontrol\User;

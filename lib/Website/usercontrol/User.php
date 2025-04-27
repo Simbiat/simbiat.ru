@@ -950,7 +950,8 @@ class User extends Entity
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`createdby`=:createdby)';
             $bindings[':createdby'] = [$_SESSION['userid'], 'int'];
         }
-        $posts = new Posts($bindings, '`talks__posts`.`postid` IN ('.implode(',', $ids).')'.$where, '`talks__posts`.`created` DESC')->listEntities();
+        $bindings[':postIDs'] = [$ids, 'in', 'int'];
+        $posts = new Posts($bindings, '`talks__posts`.`postid` IN (:postIDs)'.$where, '`talks__posts`.`created` DESC')->listEntities();
         if (is_array($posts) && !empty($posts['entities'])) {
             #Get like value for each post if the current user has appropriate permission
             foreach ($posts['entities'] as &$post) {

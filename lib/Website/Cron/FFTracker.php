@@ -8,7 +8,6 @@ namespace Simbiat\Website\Cron;
 use JetBrains\PhpStorm\ExpectedValues;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\FFXIV\Achievement;
 use Simbiat\FFXIV\Character;
 use Simbiat\FFXIV\CrossworldLinkshell;

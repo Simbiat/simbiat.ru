@@ -8,7 +8,6 @@ use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use GeoIp2\Database\Reader;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\DDCIcons;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;

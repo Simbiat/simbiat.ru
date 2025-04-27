@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\http20\Atom;
 use Simbiat\http20\RSS;
 

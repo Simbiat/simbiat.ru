@@ -10,7 +10,6 @@ use Simbiat\Database\Manage;
 use Simbiat\Database\Optimize;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;

@@ -6,7 +6,6 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Cron;
 
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
@@ -58,9 +57,10 @@ class Talks
                 Security::log('Avatar', 'Automatically deleted avatars', $toDelete, userid: $user);
                 #Delete from DB
                 Query::query(
-                    'DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `current`=0 AND `fileid` IN (\''.implode('\', \'', $toDelete).'\');',
+                    'DELETE FROM `uc__avatars` WHERE `userid`=:userid AND `current`=0 AND `fileid` IN (:toDelete);',
                     [
                         ':userid' => [$user, 'int'],
+                        ':toDelete' => [$toDelete, 'in', 'string'],
                     ]
                 );
             }

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Twig;
 
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\HomePage;
 use Twig\Extension\AbstractExtension;

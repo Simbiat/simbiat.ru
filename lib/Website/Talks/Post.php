@@ -3,9 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Talks;
 
-use Simbiat\Database\Modify;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;

@@ -6,7 +6,6 @@ namespace Simbiat\Website\usercontrol;
 use SendGrid\Mail\Mail;
 use Simbiat\Arrays\Converters;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
