@@ -40,7 +40,7 @@ class Errors
         if (!\is_string($extra)) {
             try {
                 $extra = json_encode($extra, JSON_THROW_ON_ERROR);
-            } catch (\Exception) {
+            } catch (\Throwable) {
                 $extra = '';
             }
         }
