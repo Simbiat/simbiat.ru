@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\UserControl;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
@@ -50,8 +51,8 @@ class Password extends Api
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {
-                $password = Select::selectValue('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
-                    [':userid' => $id]
+                $password = Query::query('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
+                    [':userid' => $id], return: 'value'
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
@@ -66,8 +67,8 @@ class Password extends Api
         } else {
             #Get activation code
             try {
-                $pwReset = Select::selectValue('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
-                    [':userid' => $id]
+                $pwReset = Query::query('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
+                    [':userid' => $id], return: 'value'
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];

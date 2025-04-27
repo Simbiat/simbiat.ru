@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\http20\Atom;
 use Simbiat\http20\RSS;
@@ -107,9 +108,9 @@ class Feeds
                 #Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
-                        Atom::Atom(Config::siteName.': '.$title, Select::selectAll($query), feed_settings: $settings);
+                        Atom::Atom(Config::siteName.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     } elseif ($format === 'rss') {
-                        RSS::RSS(Config::siteName.': '.$title, Select::selectAll($query), feed_settings: $settings);
+                        RSS::RSS(Config::siteName.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     }
                 }
             }

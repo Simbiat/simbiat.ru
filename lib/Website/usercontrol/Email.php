@@ -73,7 +73,7 @@ class Email extends Entity
     {
         #Check against DB table
         try {
-            $result = Select::check('SELECT `email` FROM `uc__emails` WHERE `email`=:mail', [':mail' => $this->id]);
+            $result = Query::query('SELECT `email` FROM `uc__emails` WHERE `email`=:mail', [':mail' => $this->id], return: 'check');
             $this->registered = $result;
             return $result;
         } catch (\Throwable) {
@@ -89,7 +89,7 @@ class Email extends Entity
     {
         #Check against DB table
         try {
-            $result = Select::check('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id]);
+            $result = Query::query('SELECT `mail` FROM `uc__bad_mails` WHERE `mail`=:mail', [':mail' => $this->id], return: 'check');
             $this->banned = $result;
             return $result;
         } catch (\Throwable) {
@@ -216,7 +216,7 @@ class Email extends Entity
     {
         if (empty($username)) {
             try {
-                $data = Select::selectRow('SELECT `uc__emails`.`userid`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id]);
+                $data = Query::query('SELECT `uc__emails`.`userid`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
             } catch (\Throwable) {
                 return false;
             }
@@ -229,7 +229,7 @@ class Email extends Entity
         } else {
             #Get user ID for link generation
             try {
-                $userid = Select::selectValue('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username]);
+                $userid = Query::query('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username], return: 'value');
             } catch (\Throwable) {
                 return false;
             }

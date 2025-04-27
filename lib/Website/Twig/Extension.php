@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Twig;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\HomePage;
@@ -59,7 +60,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
         if (Config::$dbup) {
             #Update default variables with values from database
             try {
-                $defaults = array_merge($defaults, Select::selectPair('SELECT `setting`, `value` FROM `sys__settings`'));
+                $defaults = array_merge($defaults, Query::query('SELECT `setting`, `value` FROM `sys__settings`', return: 'pair'));
             } catch (\Throwable) {
                 #Do nothing, retain defaults
             }

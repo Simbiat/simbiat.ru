@@ -263,7 +263,7 @@ class Curl
     {
         try {
             #Check DB
-            if (\Simbiat\Database\Common::$dbh === null) {
+            if (Query::$dbh === null) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
             Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Config::userIDs['System user']);

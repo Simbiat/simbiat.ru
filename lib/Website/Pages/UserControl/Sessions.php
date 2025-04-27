@@ -7,6 +7,7 @@ use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use GeoIp2\Database\Reader;
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\DDCIcons;
 use Simbiat\Website\Abstracts\Page;
@@ -46,11 +47,11 @@ class Sessions extends Page
     {
         $outputArray = [];
         #Get sessions
-        $outputArray['sessions'] = Select::selectAll('SELECT `time`, `cookieid`, `sessionid`, `uc__sessions`.`ip`, `useragent` FROM `uc__sessions` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
+        $outputArray['sessions'] = Query::query('SELECT `time`, `cookieid`, `sessionid`, `uc__sessions`.`ip`, `useragent` FROM `uc__sessions` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']], return: 'all');
         #Get cookies
-        $outputArray['cookies'] = Select::selectAll('SELECT `time`, `cookieid`, `uc__cookies`.`ip`, `useragent` FROM `uc__cookies` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']]);
+        $outputArray['cookies'] = Query::query('SELECT `time`, `cookieid`, `uc__cookies`.`ip`, `useragent` FROM `uc__cookies` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']], return: 'all');
         #Get logs
-        $outputArray['logs'] = Select::selectAll('SELECT `time`, `action`, `sys__logs`.`ip`, `useragent` FROM `sys__logs` WHERE `userid`=:userid AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']]);
+        $outputArray['logs'] = Query::query('SELECT `time`, `action`, `sys__logs`.`ip`, `useragent` FROM `sys__logs` WHERE `userid`=:userid AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']], return: 'all');
         #Create useragent object
         #Force full string versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);

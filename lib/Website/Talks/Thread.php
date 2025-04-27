@@ -88,7 +88,7 @@ class Thread extends Entity
             #Get pagination data
             try {
                 #Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-                $data['posts']['pages'] = Select::count('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$this->id, 'int']]);
+                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$this->id, 'int']], return: 'count');
             } catch (\Throwable) {
                 $data['posts']['pages'] = 1;
             }
@@ -96,12 +96,12 @@ class Thread extends Entity
             #Get posts
             $data['posts'] = new Posts([':threadid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__posts`.`threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC')->listEntities($page);
             foreach ($data['posts']['entities'] as $postKey => $post) {
-                $data['posts']['entities'][$postKey]['attachments'] = Select::selectAll('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $post['id']]);
+                $data['posts']['entities'][$postKey]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $post['id']], return: 'all');
             }
             #Get tags
-            $data['tags'] = Select::selectColumn('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
+            $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tagid`=`talks__tags`.`tagid` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],], return: 'column');
             #Get external links
-            $data['links'] = Select::selectAll('SELECT `url`, `talks__alt_links`.`type`, `icon` FROM `talks__alt_links` INNER JOIN `talks__alt_link_types` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],]);
+            $data['links'] = Query::query('SELECT `url`, `talks__alt_links`.`type`, `icon` FROM `talks__alt_links` INNER JOIN `talks__alt_link_types` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type` WHERE `threadid`=:threadid;', [':threadid' => [$this->id, 'int'],], return: 'all');
         }
         return $data;
     }
@@ -146,7 +146,7 @@ class Thread extends Entity
      */
     public static function getLanguages(): array
     {
-        return Select::selectAll('SELECT `tag` AS `value`, `name` FROM `sys__languages` ORDER BY `name`;');
+        return Query::query('SELECT `tag` AS `value`, `name` FROM `sys__languages` ORDER BY `name`;', return: 'all');
     }
     
     /**
@@ -155,7 +155,7 @@ class Thread extends Entity
      */
     public static function getAltLinkTypes(): array
     {
-        return Select::selectAll('SELECT * FROM `talks__alt_link_types` ORDER BY `type`;');
+        return Query::query('SELECT * FROM `talks__alt_link_types` ORDER BY `type`;', return: 'all');
     }
     
     /**
@@ -251,7 +251,7 @@ class Thread extends Entity
             return $sanitize;
         }
         try {
-            $newID = Modify::insertAI(
+            $newID = Query::query(
                 'INSERT INTO `talks__threads`(`threadid`, `name`, `sectionid`, `language`, `pinned`, `closed`, `private`, `ogimage`, `created`, `createdby`, `updatedby`, `lastpostby`) VALUES (NULL, :name, :parentid, :language, COALESCE(:pinned, DEFAULT(`pinned`)), COALESCE(:closed, DEFAULT(`closed`)), COALESCE(:private, DEFAULT(`private`)), :ogimage, :time,:userid,:userid,:userid);',
                 [
                     ':name' => mb_trim($data['name'], null, 'UTF-8'),
@@ -278,7 +278,7 @@ class Thread extends Entity
                         (empty($data['ogimage']) ? null : $data['ogimage']),
                         (empty($data['ogimage']) ? 'null' : 'string')
                     ],
-                ]
+                ], return: 'increment'
             );
             #Add alt links
             $queries = [];
@@ -479,7 +479,7 @@ class Thread extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            Select::check('SELECT `name` FROM `talks__threads` WHERE `sectionid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']])
+            Query::query('SELECT `name` FROM `talks__threads` WHERE `sectionid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']], return: 'check')
         ) {
             return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
         }

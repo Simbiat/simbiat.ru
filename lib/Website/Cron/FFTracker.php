@@ -80,7 +80,7 @@ class FFTracker
             $limit = 1;
         }
         try {
-            $entities = Select::selectAll('
+            $entities = Query::query('
                     SELECT `type`, `id`, `priority`, `updated` FROM (
                         (SELECT \'character\' AS `type`, `ffxiv__character`.`characterid` AS `id`, `updated`, IF(`userid` IS NOT NULL AND `deleted` IS NULL AND `privated` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`characterid`=`ffxiv__character`.`characterid` ORDER BY `priority` DESC, `updated` LIMIT :maxLines OFFSET :offset)
                         UNION ALL
@@ -96,7 +96,7 @@ class FFTracker
                 [
                     ':maxLines' => [$limit, 'int'],
                     ':offset' => [($instance - 1) * $limit, 'int'],
-                ]
+                ], return: 'all'
             );
             foreach ($entities as $entity) {
                 $extraForError = $entity['type'].' ID '.$entity['id'];
@@ -155,7 +155,7 @@ class FFTracker
         try {
             $cron = new TaskInstance();
             #Try to register new characters
-            $maxId = Select::selectValue('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;');
+            $maxId = Query::query('SELECT MAX(`characterid`) as `characterid` FROM `ffxiv__character`;', return: 'value');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
             $newMaxId = min($maxId + 100, 4294967295);
             if ((int)$maxId < (int)$newMaxId) {
@@ -181,10 +181,10 @@ class FFTracker
             $Lodestone = (new Lodestone());
             $cron = new TaskInstance();
             #Generate a list of worlds for linkshells
-            $worlds = Select::selectAll(
+            $worlds = Query::query(
                 'SELECT `server` AS `world`, \'linkshell\' AS `entity` FROM `ffxiv__server`
                             UNION ALL
-                            SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;'
+                            SELECT UNIQUE(`datacenter`) AS `world`, \'crossworldlinkshell\' AS `entity` FROM `ffxiv__server`;', return: 'all'
             );
             #Get cache
             $cachePath = Config::$statistics.'linkshellPages.json';
@@ -224,7 +224,7 @@ class FFTracker
                                     foreach ($data as $linkshell) {
                                         $extraForError = 'linkshell ID '.$linkshell;
                                         #Check if Linkshell exists in DB
-                                        if (!Select::check('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']])) {
+                                        if (!Query::query('SELECT `linkshellid` FROM `ffxiv__linkshell` WHERE `linkshellid`=:id;', [':id' => [$linkshell, 'string']], return: 'check')) {
                                             $cron->settingsFromArray(['task' => 'ffUpdateEntity', 'arguments' => [(string)$linkshell, $world['entity']], 'message' => 'Updating '.$world['entity'].' with ID '.$linkshell])->add();
                                         }
                                     }

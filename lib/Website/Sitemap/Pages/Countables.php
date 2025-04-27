@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Sitemap\Pages;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Page;
 
@@ -98,7 +99,7 @@ class Countables extends Page
         #Get actual links
         if (!empty($query)) {
             try {
-                $links = Select::selectAll($query);
+                $links = Query::query($query, return: 'all');
             } catch (\Throwable) {
                 $links = [];
             }

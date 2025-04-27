@@ -4,9 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use GeoIp2\Database\Reader;
-use Simbiat\Database\Common;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
 use Simbiat\Website\Security;
@@ -63,11 +61,11 @@ class Register extends Api
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
-        if (Common::$dbh === null) {
+        if (Query::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Check if registration is enabled
-        if (!Select::selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'')) {
+        if (!Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'registration\'', return: 'value')) {
             return ['http_error' => 503, 'reason' => 'Registration is currently disabled'];
         }
         #Generate password and activation strings

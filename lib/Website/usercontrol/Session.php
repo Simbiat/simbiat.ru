@@ -3,9 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
-use Simbiat\Database\Common;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
@@ -55,7 +53,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function open(string $path, string $name): bool
     {
         #If controller was initialized - session is ready
-        return Common::$dbh !== null;
+        return Query::$dbh !== null;
     }
     
     /**
@@ -91,7 +89,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = Select::selectValue('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']]);
+            $data = Query::query('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']], return: 'value');
         } catch (\Throwable) {
             $data = '';
         }
@@ -264,7 +262,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Check if IP is banned
             if (!empty($data['IP'])) {
                 try {
-                    $data['bannedIP'] = Select::check('SELECT `ip` FROM `sys__bad_ips` WHERE `ip`=:ip', [':ip' => $data['IP']]);
+                    $data['bannedIP'] = Query::query('SELECT `ip` FROM `sys__bad_ips` WHERE `ip`=:ip', [':ip' => $data['IP']], return: 'check');
                 } catch (\Throwable) {
                     $data['bannedIP'] = false;
                 }
@@ -365,8 +363,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             $data['cookieid'] = Security::decrypt($data['cookieid']);
             $data['pass'] = Security::decrypt($data['pass']);
             #Get user data
-            $savedData = Select::selectRow('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
-                [':id' => $data['cookieid']]
+            $savedData = Query::query('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
+                [':id' => $data['cookieid']], return: 'row'
             );
             if (empty($savedData) || empty($savedData['validator'])) {
                 #No cookie found or no password present
@@ -427,10 +425,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            if (Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']])) {
-                return Query::$lastAffected;
-            }
-            return false;
+            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -467,7 +462,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get ID
         try {
-            $sessionId = Select::selectValue('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id]);
+            $sessionId = Query::query('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id], return: 'value');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

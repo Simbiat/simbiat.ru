@@ -72,7 +72,7 @@ class Post extends Entity
         }
         $data['thread'] = new Thread($data['threadid'])->setForPost(true)->getArray();
         $data['page'] = $this->getPage($data['threadid']);
-        $data['attachments'] = Select::selectAll('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $this->id]);
+        $data['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $this->id], return: 'all');
         return $data;
     }
     
@@ -119,7 +119,7 @@ class Post extends Entity
         $posts = [];
         try {
             #Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-            $posts = Select::selectColumn('SELECT `postid` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':threadid' => [$thread, 'int']]);
+            $posts = Query::query('SELECT `postid` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':threadid' => [$thread, 'int']], return: 'column');
         } catch (\Throwable) {
             #Do nothing
         }
@@ -142,7 +142,7 @@ class Post extends Entity
     {
         try {
             if (in_array('viewPostsHistory', $_SESSION['permissions'], true)) {
-                $data = Select::selectPair('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `postid`=:postid ORDER BY `time` DESC;', [':postid' => [$this->id, 'int'], ':time' => [$time, 'datetime']]);
+                $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `postid`=:postid ORDER BY `time` DESC;', [':postid' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'pair');
             } else {
                 $data = [];
             }
@@ -169,8 +169,8 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'No `canLike` permission'];
         }
         #Get the current value (if any)
-        $isLiked = (int)(Select::selectValue('SELECT `likevalue` FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
-            [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']]
+        $isLiked = (int)(Query::query('SELECT `likevalue` FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
+            [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], return: 'value'
         ) ?? 0);
         if (($dislike && $isLiked === -1) || (!$dislike && $isLiked === 1)) {
             #Remove the (dis)like
@@ -218,7 +218,7 @@ class Post extends Entity
         }
         try {
             #Create the post itself
-            $newID = Modify::insertAI(
+            $newID = Query::query(
                 'INSERT INTO `talks__posts`(`postid`, `threadid`, `replyto`, `created`, `updated`, `createdby`, `updatedby`, `text`) VALUES (NULL,:threadid,:replyto,:time,:time,:userid,:userid,:text);',
                 [
                     ':threadid' => [$data['threadid'], 'int'],
@@ -232,7 +232,7 @@ class Post extends Entity
                     ],
                     ':userid' => [$_SESSION['userid'], 'int'],
                     ':text' => $data['text'],
-                ]
+                ], return: 'increment'
             );
             #Update last post for thread
             Query::query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=:time, `lastpostby`=:userid WHERE `threadid`=:threadid;',
@@ -425,7 +425,7 @@ class Post extends Entity
         preg_match_all('/(<img[^>]*src="\/assets\/images\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'], $inlineImages, PREG_PATTERN_ORDER);
         #Remove any files that are not in DB from the array of inline files
         foreach ($inlineImages[2] as $key => $image) {
-            $filename = Select::selectValue('SELECT `name` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image]);
+            $filename = Query::query('SELECT `name` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image], return: 'value');
             #If no filename - no file exists
             if (!empty($filename)) {
                 #Add the file to the list
@@ -458,7 +458,7 @@ class Post extends Entity
                 return ['http_error' => 400, 'reason' => 'Only numeric thread IDs allowed'];
             }
             #Check if the post exists
-            if (!Select::check('SELECT `postid` FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$data['replyto'], 'int']])) {
+            if (!Query::query('SELECT `postid` FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$data['replyto'], 'int']], return: 'check')) {
                 return ['http_error' => 400, 'reason' => 'The post ID `'.$data['replyto'].'` your are replying to does not exist'];
             }
         }

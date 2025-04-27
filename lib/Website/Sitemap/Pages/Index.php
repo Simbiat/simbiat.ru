@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Sitemap\Pages;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Page;
 
@@ -60,7 +61,7 @@ class Index extends Page
         }
         #Get countable links
         try {
-            $counts = Select::selectAll($this->query);
+            $counts = Query::query($this->query, return: 'all');
         } catch (\Throwable) {
             $counts = [];
         }

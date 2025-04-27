@@ -60,21 +60,21 @@ class Maintenance
     {
         #Get existing cookies that need to be cleaned
         try {
-            $items = Select::selectAll(
-                'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (SELECT `userid` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);',
+            $items = Query::query(
+                'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (SELECT `userid` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);', return: 'all'
             );
         } catch (\Throwable) {
             $items = [];
         }
         foreach ($items as $item) {
             #Try to delete cookie
-            Query::query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
+            $affected = Query::query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
                 [
                     ':id' => $item['cookieid'],
-                ]
+                ], return: 'affected'
             );
             #If it was deleted - log it
-            if (Query::$lastAffected > 0) {
+            if ($affected > 0) {
                 Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['userid']);
             }
         }

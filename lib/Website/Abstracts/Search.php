@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Errors;
 
@@ -158,7 +159,7 @@ abstract class Search
                 $results = 0;
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = Select::count($exactlyLike.$this->exact().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string']]));
+                    $results = Query::query($exactlyLike.$this->exact().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'count');
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -169,15 +170,15 @@ abstract class Search
                         return 0;
                     }
                     #Get fulltext results
-                    return Select::count($exactlyLike.$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'match']]));
+                    return Query::query($exactlyLike.$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'count');
                 }
                 if (empty($this->like)) {
                     return 0;
                 }
                 #Search using LIKE
-                return Select::count($exactlyLike.$this->like().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]));
+                return Query::query($exactlyLike.$this->like().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]), return: 'count');
             }
-            return Select::count('SELECT COUNT('.$this->countArgument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).';', $this->bindings);
+            return Query::query('SELECT COUNT('.$this->countArgument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).';', $this->bindings, return: 'count');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return 0;
@@ -209,7 +210,7 @@ abstract class Search
                 $results = [];
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = $this->postProcess(Select::selectAll($exactlyLike.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']])));
+                    $results = $this->postProcess(Query::query($exactlyLike.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'all'));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -220,15 +221,15 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->postProcess(Select::selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']])));
+                    return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
                 }
                 if (empty($this->like)) {
                     return [];
                 }
                 #Search using LIKE
-                return $this->postProcess(Select::selectAll($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']])));
+                return $this->postProcess(Query::query($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]), return: 'all'));
             }
-            return $this->postProcess(Select::selectAll('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings));
+            return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];

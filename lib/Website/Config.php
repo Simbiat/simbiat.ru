@@ -7,10 +7,8 @@ namespace Simbiat\Website;
 
 #Database settings
 use Dotenv\Dotenv;
-use Simbiat\Database\Common;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Database\Pool;
 
 /**
@@ -197,7 +195,7 @@ final class Config
         #Check in case we accidentally call this for the 2nd time
         if (!self::$dbup) {
             try {
-                Common::setDbh(Pool::openConnection(
+                new Query(Pool::openConnection(
                     new Connection()
                         ->setHost(socket: $_ENV['DATABASE_SOCKET'])
                         ->setUser($_ENV['DATABASE_USER'])
@@ -215,7 +213,7 @@ final class Config
                 );
                 self::$dbup = true;
                 #Check for maintenance
-                self::$dbUpdate = (bool)Select::selectValue('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'');
+                self::$dbUpdate = (bool)Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');
                 Query::query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
             } catch (\Throwable $exception) {
                 #2002 error code means server is not listening on port

@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Pages\UserControl;
 
+use Simbiat\Database\Query;
 use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
@@ -52,15 +53,15 @@ class Activation extends Page
             return ['http_error' => 403];
         }
         #Check if a user exists
-        if (!Select::check('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', [':userid' => [$userid, 'int']])) {
+        if (!Query::query('SELECT `userid` FROM `uc__users` WHERE `userid`=:userid', [':userid' => [$userid, 'int']], return: 'check')) {
             #While technically this is closer to 404, we do not want potential abuse to get user IDs, although an attack vector here is unlikely
             return ['http_error' => 403];
         }
         $outputArray = [];
         #Check if the user requires activation
-        $outputArray['activation'] = Select::check('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=:groupid', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Unverified'], 'int']]);
+        $outputArray['activation'] = Query::query('SELECT `userid` FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=:groupid', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Unverified'], 'int']], return: 'check');
         #Get a list of mails for the user with activation codes
-        $emails = Select::selectPair('SELECT `email`, `activation` FROM `uc__emails` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']]);
+        $emails = Query::query('SELECT `email`, `activation` FROM `uc__emails` WHERE `userid`=:userid AND `activation` IS NOT NULL;', [':userid' => [$userid, 'int']], return: 'pair');
         #Check if the provided activation code fits any of those mails
         foreach ($emails as $email => $code) {
             if (password_verify($activation, $code) && new Email($email)->activate($userid)) {

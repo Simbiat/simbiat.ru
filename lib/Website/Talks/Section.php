@@ -187,7 +187,7 @@ class Section extends Entity
                 }
                 foreach ($data['children']['entities'] as &$category) {
                     $bindings[':sectionid'] = [$category['sectionid'], 'int'];
-                    ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = Select::selectRow(
+                    ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = Query::query(
                         'WITH RECURSIVE `SectionHierarchy` AS (
                                     SELECT `sectionid`, `parentid`
                                     FROM `talks__sections`
@@ -200,14 +200,14 @@ class Section extends Entity
                                 SELECT
                                     (SELECT COUNT(`threadid`) FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' AND '.$where).') AS `thread_count`,
                                     (SELECT COUNT(`postid`) FROM `talks__posts` `p` WHERE `p`.`threadid` IN (SELECT `threadid` FROM `talks__threads` `t` WHERE `t`.`sectionid` IN (SELECT `sectionid` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' AND '.$where).')) AS `post_count`;',
-                        $bindings);
+                        $bindings, return: 'row');
                 }
                 unset($category);
             }
             #Count posts
             if (!empty($data['threads']['entities'])) {
                 foreach ($data['threads']['entities'] as &$thread) {
-                    $thread['posts'] = Select::count('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$thread['id'], 'int']]);
+                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':threadid' => [$thread['id'], 'int']], return: 'count');
                 }
             }
         }
@@ -253,7 +253,7 @@ class Section extends Entity
     {
         $parents = [];
         #Get parent of the current ID
-        $parents[] = Select::selectRow('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid`, `createdby` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$id, 'int']]);
+        $parents[] = Query::query('SELECT `sectionid`, `name`, `talks__types`.`type`, `parentid`, `createdby` FROM `talks__sections` LEFT JOIN `talks__types` ON `talks__types`.`typeid`=`talks__sections`.`type` WHERE `sectionid`=:sectionid;', [':sectionid' => [$id, 'int']], return: 'row');
         if (empty($parents)) {
             return [];
         }
@@ -352,7 +352,7 @@ class Section extends Entity
             return $sanitize;
         }
         try {
-            $newID = Modify::insertAI(
+            $newID = Query::query(
                 'INSERT INTO `talks__sections`(`sectionid`, `name`, `description`, `parentid`, `sequence`, `type`, `closed`, `private`, `created`, `createdby`, `updatedby`, `icon`) VALUES (NULL,:name,:description,:parentid,:sequence,:type,:closed,:private,:time,:userid,:userid,:icon);',
                 [
                     ':name' => mb_trim($data['name'], null, 'UTF-8'),
@@ -377,7 +377,7 @@ class Section extends Entity
                         (empty($data['icon']) ? null : $data['icon']),
                         (empty($data['icon']) ? 'null' : 'string')
                     ],
-                ]
+                ], return: 'increment'
             );
             #Link the section to the user, if it's required
             if (!empty($data['linkType'])) {
@@ -428,7 +428,7 @@ class Section extends Entity
             return $sanitize;
         }
         #Check if we are changing to a category and if we have any threads in it
-        if ($data['type'] === 1 && Select::check('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid LIMIT 1;', [':sectionid' => [$this->id, 'int']])) {
+        if ($data['type'] === 1 && Query::query('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid LIMIT 1;', [':sectionid' => [$this->id, 'int']], return: 'check')) {
             return ['http_error' => 400, 'reason' => 'Can\'t change section type to `Category`, because it has threads in it'];
         }
         try {
@@ -594,12 +594,12 @@ class Section extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            Select::check('SELECT `name` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$this->id, 'int']])
+            Query::query('SELECT `name` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$this->id, 'int']], return: 'check')
         ) {
             return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
         }
         #Check if a section type exists
-        if (!Select::check('SELECT `typeid` FROM `talks__types` WHERE `typeid`=:type;', [':type' => [$data['type'], 'int']])) {
+        if (!Query::query('SELECT `typeid` FROM `talks__types` WHERE `typeid`=:type;', [':type' => [$data['type'], 'int']], return: 'check')) {
             return ['http_error' => 400, 'reason' => 'Unknown section type ID `'.$data['type'].'`'];
         }
         #Check if the image for the icon was sent and try to process it, unless `clearicon` is set
@@ -688,6 +688,6 @@ class Section extends Entity
                 $where = ' WHERE `talks__types`.`type` IN (\'Category\', \'Knowledgebase\')';
                 break;
         }
-        return Select::selectAll('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid`'.$where.' ORDER BY `typeid`;');
+        return Query::query('SELECT `typeid` AS `value`, `type` AS `name`, `description`, CONCAT(\'/assets/images/uploaded/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `icon` FROM `talks__types` INNER JOIN `sys__files` ON `talks__types`.`icon`=`sys__files`.`fileid`'.$where.' ORDER BY `typeid`;', return: 'all');
     }
 }

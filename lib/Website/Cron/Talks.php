@@ -41,18 +41,18 @@ class Talks
         try {
             $limit = User::avatarLimit;
             #Get users with more than 10 unused avatars
-            $users = Select::selectPair('SELECT `userid`, COUNT(*) as `count` FROM `uc__avatars` WHERE `current`=0 GROUP BY `userid` HAVING `count`>:limit;', [':limit' => [$limit, 'int']]);
+            $users = Query::query('SELECT `userid`, COUNT(*) as `count` FROM `uc__avatars` WHERE `current`=0 GROUP BY `userid` HAVING `count`>:limit;', [':limit' => [$limit, 'int']], return: 'pair');
             #Iterate over the list
             foreach ($users as $user => $count) {
                 #Count how many avatars are excessive
                 $excess = $count - $limit;
                 #Get the IDs of the avatars to remove
-                $toDelete = Select::selectColumn(
+                $toDelete = Query::query(
                     'SELECT `uc__avatars`.`fileid` FROM `uc__avatars` INNER JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=0 ORDER BY `size` DESC, `added` LIMIT :limit;',
                     [
                         ':userid' => [$user, 'int'],
                         ':limit' => [$excess, 'int'],
-                    ]
+                    ], return: 'column'
                 );
                 #Log the change
                 Security::log('Avatar', 'Automatically deleted avatars', $toDelete, userid: $user);
@@ -81,7 +81,7 @@ class Talks
         try {
             #PHPStorm does not like HAVING in the query, even though it is completely normal, so suppressing inspection for it
             /** @noinspection SqlAggregates */
-            $dbFiles = Select::selectAll('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF(`fileid` IN (SELECT `fileid` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`fileid` IN (SELECT `ogimage` FROM `talks__threads`), 1, 0) as `ogimage`, IF(`fileid` IN (SELECT `fileid` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`fileid` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`fileid` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` WHERE `added` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) HAVING `attachment`+`ogimage`+`avatar`+`section`+`section_defaults`=0;');
+            $dbFiles = Query::query('SELECT `fileid`, `extension`, `mime`, `sys__files`.`userid`, IF(`fileid` IN (SELECT `fileid` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`fileid` IN (SELECT `ogimage` FROM `talks__threads`), 1, 0) as `ogimage`, IF(`fileid` IN (SELECT `fileid` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`fileid` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`fileid` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` WHERE `added` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) HAVING `attachment`+`ogimage`+`avatar`+`section`+`section_defaults`=0;', return: 'all');
             #Iterrate through the list
             foreach ($dbFiles as $file) {
                 #Get the expected full path of the file
@@ -104,7 +104,7 @@ class Talks
             $allFiles->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
             $allFiles->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploadedImg, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
             #Now get only the file IDs from DB. We need to do it a 2nd time in the function and AFTER directory iterators, to minimize the chances of removing a file that is in the process of being uploaded
-            $dbFiles = Select::selectColumn('SELECT `fileid` FROM `sys__files`;');
+            $dbFiles = Query::query('SELECT `fileid` FROM `sys__files`;', return: 'column');
             foreach ($allFiles as $file) {
                 #Ignore directories and .gitignore and check if the file's ID is present in a database
                 if (!is_dir($file) && preg_match('/\.gitignore$/ui', $file) !== 1 && !\in_array(pathinfo($file, PATHINFO_FILENAME), $dbFiles, true)) {

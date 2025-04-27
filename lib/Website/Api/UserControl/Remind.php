@@ -3,11 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\UserControl;
 
-use Simbiat\Database\Common;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\Config;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\Email;
 
@@ -37,13 +34,13 @@ class Remind extends Api
             return ['http_error' => 400, 'reason' => 'No email/name provided'];
         }
         #Check DB
-        if (Common::$dbh === null) {
+        if (Query::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get the password of the user while also checking if it exists
         try {
-            $credentials = Select::selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
-                [':mail' => $_POST['signinup']['email']]
+            $credentials = Query::query('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
+                [':mail' => $_POST['signinup']['email']], return: 'row'
             );
         } catch (\Throwable) {
             $credentials = null;

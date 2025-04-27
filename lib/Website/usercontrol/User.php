@@ -5,9 +5,7 @@ namespace Simbiat\Website\usercontrol;
 
 use Simbiat\Arrays\Converters;
 use Simbiat\Arrays\Editors;
-use Simbiat\Database\Common;
 use Simbiat\Database\Query;
-use Simbiat\Database\Select;
 use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
@@ -95,12 +93,12 @@ class User extends Entity
     protected function getFromDB(): array
     {
         
-        $dbData = Select::selectRow('SELECT `username`, `system`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`userid`=`uc__user_to_section`.`userid` WHERE `uc__users`.`userid`=:userid', ['userid' => [$this->id, 'int']]);
+        $dbData = Query::query('SELECT `username`, `system`, `phone`, `ff_token`, `registered`, `updated`, `parentid`, (IF(`parentid` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `userid`=:userid))) as `parentname`, `birthday`, `firstname`, `lastname`, `middlename`, `fathername`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`userid`=`uc__user_to_section`.`userid` WHERE `uc__users`.`userid`=:userid OR `uc__users`.`userid`=2', ['userid' => [$this->id, 'int']], return: 'row');
         if (empty($dbData)) {
             return [];
         }
         #Get user's groups
-        $dbData['groups'] = Select::selectColumn('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']]);
+        $dbData['groups'] = Query::query('SELECT `groupid` FROM `uc__user_to_group` WHERE `userid`=:userid', ['userid' => [$this->id, 'int']], return: 'column');
         #Get permissions
         $dbData['permissions'] = $this->getPermissions();
         if ($this->system) {
@@ -156,13 +154,13 @@ class User extends Entity
     private function getPermissions(): array
     {
         try {
-            return Select::selectColumn('
+            return Query::query('
                 SELECT * FROM (
                     SELECT `uc__group_to_permission`.`permission` FROM `uc__group_to_permission` LEFT JOIN `uc__groups` ON `uc__group_to_permission`.`groupid`=`uc__groups`.`groupid` LEFT JOIN `uc__permissions` ON `uc__group_to_permission`.`permission`=`uc__permissions`.`permission` LEFT JOIN `uc__user_to_group` ON `uc__group_to_permission`.`groupid`=`uc__user_to_group`.`groupid` WHERE `userid`=:userid
                     UNION ALL
                     SELECT `permission` FROM `uc__user_to_permission` WHERE `userid`=:userid
                 ) as `temp` GROUP BY `permission`;
-            ', ['userid' => [$this->id, 'int']]);
+            ', ['userid' => [$this->id, 'int']], return: 'column');
         } catch (\Throwable) {
             return [];
         }
@@ -175,7 +173,7 @@ class User extends Entity
     public function getEmails(): array
     {
         try {
-            $result = Select::selectAll('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']]);
+            $result = Query::query('SELECT `email`, `subscribed`, `activation` FROM `uc__emails` WHERE `userid`=:userid ORDER BY `email`;', [':userid' => [$this->id, 'int']], return: 'all');
             $this->emails = $result;
             return $result;
         } catch (\Throwable) {
@@ -190,7 +188,7 @@ class User extends Entity
     public function getAvatar(): string
     {
         try {
-            $avatar = Select::selectValue('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid' => [$this->id, 'int']]);
+            $avatar = Query::query('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) AS `url` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid AND `current`=1 LIMIT 1', ['userid' => [$this->id, 'int']], return: 'value');
             if (empty($avatar)) {
                 $avatar = '/assets/images/avatar.svg';
             }
@@ -207,7 +205,7 @@ class User extends Entity
     public function getAvatars(): array
     {
         try {
-            $result = Select::selectAll('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `uc__avatars`.`fileid`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid ORDER BY `current` DESC;', [':userid' => [$this->id, 'int']]);
+            $result = Query::query('SELECT CONCAT(\'/assets/images/avatars/\', SUBSTRING(`sys__files`.`fileid`, 1, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 3, 2), \'/\', SUBSTRING(`sys__files`.`fileid`, 5, 2), \'/\', `sys__files`.`fileid`, \'.\', `sys__files`.`extension`) as `url`, `uc__avatars`.`fileid`, `current` FROM `uc__avatars` LEFT JOIN `sys__files` ON `uc__avatars`.`fileid`=`sys__files`.`fileid` WHERE `uc__avatars`.`userid`=:userid ORDER BY `current` DESC;', [':userid' => [$this->id, 'int']], return: 'all');
             $this->avatars = $result;
             return $result;
         } catch (\Throwable) {
@@ -263,7 +261,7 @@ class User extends Entity
             if ($setActive) {
                 return $this->setAvatar($upload['hash']);
             }
-            if ($character !== null && Select::check('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']])) {
+            if ($character !== null && Query::query('SELECT `fileid` FROM `uc__avatars` WHERE `userid`=:userid AND `current`=1 AND `characterid`=:character;', [':userid' => [$this->id, 'int'], ':character' => [$character, 'int']], return: 'check')) {
                 #Set the new one as active
                 return $this->setAvatar($upload['hash']);
             }
@@ -326,20 +324,20 @@ class User extends Entity
     {
         $outputArray = [];
         #Get token
-        $outputArray['token'] = Select::selectValue('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']]);
+        $outputArray['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `userid`=:userid;', [':userid' => [$this->id, 'int']], return: 'value');
         #Get linked characters
-        $outputArray['characters'] = Select::selectAll('SELECT \'character\' as `type`, `ffxiv__character`.`characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']]);
+        $outputArray['characters'] = Query::query('SELECT \'character\' as `type`, `ffxiv__character`.`characterid` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`characterid`=`ffxiv__character`.`characterid` WHERE `userid`=:userid ORDER BY `name`;', [':userid' => [$this->id, 'int']], return: 'all');
         #Get linked groups
         if (!empty($outputArray['characters'])) {
             foreach ($outputArray['characters'] as $character) {
-                $outputArray['groups'][$character['id']] = AbstractTrackerEntity::cleanCrestResults(Select::selectAll(
-                    '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
+                $outputArray['groups'][$character['id']] = AbstractTrackerEntity::cleanCrestResults(Query::query(
+                /** @lang SQL */ '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`freecompanyid` AS `id`, `ffxiv__freecompany`.`name` as `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `grandcompanyid` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`freecompanyid`=`ffxiv__freecompany`.`freecompanyid` AND `ffxiv__freecompany_character`.`rankid`=`ffxiv__freecompany_rank`.`rankid` WHERE `characterid`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rankid`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`linkshellid` AS `id`, `ffxiv__linkshell`.`name` as `name`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`linkshellid`=`ffxiv__linkshell`.`linkshellid` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rankid`=`ffxiv__linkshell_rank`.`lsrankid` WHERE `characterid`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rankid`=1)
                 UNION ALL
                 (SELECT \'pvpteam\' AS `type`, 1 AS `crossworld`, `ffxiv__pvpteam_character`.`pvpteamid` AS `id`, `ffxiv__pvpteam`.`name` as `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, null as `grandcompanyid` FROM `ffxiv__pvpteam_character` LEFT JOIN `ffxiv__pvpteam` ON `ffxiv__pvpteam_character`.`pvpteamid`=`ffxiv__pvpteam`.`pvpteamid` LEFT JOIN `ffxiv__pvpteam_rank` ON `ffxiv__pvpteam_character`.`rankid`=`ffxiv__pvpteam_rank`.`pvprankid` WHERE `characterid`=:id AND `ffxiv__pvpteam_character`.`current`=1 AND `ffxiv__pvpteam_character`.`rankid`=1)
-                ORDER BY `name` ASC;',
-                    [':id' => [$character['id'], 'int']]
+                ORDER BY `name`;',
+                    [':id' => [$character['id'], 'int']], return: 'all'
                 ));
             }
         }
@@ -535,7 +533,7 @@ class User extends Entity
     {
         #Check against DB table
         try {
-            return Select::check('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name]);
+            return Query::query('SELECT `username` FROM `uc__users` WHERE `username`=:name', [':name' => $name], return: 'check');
         } catch (\Throwable) {
             return false;
         }
@@ -555,7 +553,7 @@ class User extends Entity
         }
         #Check against DB table
         try {
-            return Select::check('SELECT `name` FROM `uc__bad_names` WHERE `name`=:name', [':name' => $name]);
+            return Query::query('SELECT `name` FROM `uc__bad_names` WHERE `name`=:name', [':name' => $name], return: 'check');
         } catch (\Throwable) {
             return false;
         }
@@ -595,13 +593,13 @@ class User extends Entity
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
-        if (Common::$dbh === null) {
+        if (Query::$dbh === null) {
             return ['http_error' => 503, 'reason' => 'Database unavailable'];
         }
         #Get the password of the user while also checking if it exists
         try {
-            $credentials = Select::selectRow('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__users`.`password`, `uc__users`.`strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail LIMIT 1',
-                [':mail' => $_POST['signinup']['email']]
+            $credentials = Query::query('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__users`.`password`, `uc__users`.`strikes` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE `uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail LIMIT 1',
+                [':mail' => $_POST['signinup']['email']], return: 'row'
             );
         } catch (\Throwable) {
             $credentials = null;
@@ -668,14 +666,14 @@ class User extends Entity
             #Write cookie data to DB
             if (!empty($this->id) || (!empty($_SESSION['userid']) && !in_array($_SESSION['userid'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true))) {
                 #Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
-                $currentPass = Select::selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
+                $currentPass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
                     [
                         ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                         ':cookie' => $cookieId
-                    ]
+                    ], return: 'value'
                 );
                 if (empty($currentPass)) {
-                    Query::query('INSERT IGNORE INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id);',
+                    $affected = Query::query('INSERT IGNORE INTO `uc__cookies` (`cookieid`, `validator`, `userid`) VALUES (:cookie, :pass, :id);',
                         [
                             ':cookie' => $cookieId,
                             ':pass' => $hashedPass,
@@ -683,27 +681,27 @@ class User extends Entity
                         ]
                     );
                 } else {
-                    Query::query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP() WHERE `userid`=:id AND `cookieid`=:cookie AND `validator`=:validator;',
+                    $affected = Query::query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP() WHERE `userid`=:id AND `cookieid`=:cookie AND `validator`=:validator;',
                         [
                             ':cookie' => $cookieId,
                             ':pass' => $hashedPass,
                             ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                             ':validator' => $currentPass,
-                        ]
+                        ], return: 'affected'
                     );
                 }
                 #Update stuff only if we did insert cookie or update the validator value
-                if (Query::$lastAffected > 0) {
+                if ($affected > 0) {
                     #Set cookie ID to session if it's not already linked or if it was linked to another cookie (not sure if that would even be possible)
                     if (empty($_SESSION['cookieid']) || $_SESSION['cookieid'] !== $cookieId) {
                         $_SESSION['cookieid'] = $cookieId;
                     }
                     #Set cookie
-                    $currentPass = Select::selectValue('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
+                    $currentPass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `userid`=:id AND `cookieid`=:cookie',
                         [
                             ':id' => [$this->id ?? $_SESSION['userid'], 'int'],
                             ':cookie' => $cookieId
-                        ]
+                        ], return: 'value'
                     );
                     #Another attempt to prevent race conditions
                     if ($currentPass === $hashedPass) {
@@ -826,12 +824,12 @@ class User extends Entity
             [
                 ':userid' => [$this->id, 'int'],
                 ':cookie' => $_POST['cookie'],
-            ]
+            ], return: 'affected'
         );
-        if (Query::$lastAffected > 0) {
+        if ($result > 0) {
             Security::log('Logout', $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
         }
-        return $result;
+        return true;
     }
     
     /**
@@ -851,12 +849,12 @@ class User extends Entity
             [
                 ':userid' => [(string)$this->id, 'string'],
                 ':session' => $_POST['session'],
-            ]
+            ], return: 'affected'
         );
-        if (Query::$lastAffected > 0) {
+        if ($result > 0) {
             Security::log('Logout', 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
         }
-        return $result;
+        return true;
     }
     
     /**
