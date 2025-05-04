@@ -32,135 +32,135 @@ seclang_files_rules:
   - /CoreRuleSet/RESPONSE-980-CORRELATION.conf
   - /CoreRuleSet/05-exclusions-after-crs.conf
 data:
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-901-INITIALIZATION.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-901-INITIALIZATION.conf
     dest_file: /CoreRuleSet/REQUEST-901-INITIALIZATION.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-905-COMMON-EXCEPTIONS.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-905-COMMON-EXCEPTIONS.conf
     dest_file: /CoreRuleSet/REQUEST-905-COMMON-EXCEPTIONS.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-911-METHOD-ENFORCEMENT.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-911-METHOD-ENFORCEMENT.conf
     dest_file: /CoreRuleSet/REQUEST-911-METHOD-ENFORCEMENT.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-913-SCANNER-DETECTION.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-913-SCANNER-DETECTION.conf
     dest_file: /CoreRuleSet/REQUEST-913-SCANNER-DETECTION.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-920-PROTOCOL-ENFORCEMENT.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-920-PROTOCOL-ENFORCEMENT.conf
     dest_file: /CoreRuleSet/REQUEST-920-PROTOCOL-ENFORCEMENT.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-921-PROTOCOL-ATTACK.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-921-PROTOCOL-ATTACK.conf
     dest_file: /CoreRuleSet/REQUEST-921-PROTOCOL-ATTACK.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-922-MULTIPART-ATTACK.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-922-MULTIPART-ATTACK.conf
     dest_file: /CoreRuleSet/REQUEST-922-MULTIPART-ATTACK.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-930-APPLICATION-ATTACK-LFI.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-930-APPLICATION-ATTACK-LFI.conf
     dest_file: /CoreRuleSet/REQUEST-930-APPLICATION-ATTACK-LFI.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-931-APPLICATION-ATTACK-RFI.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-931-APPLICATION-ATTACK-RFI.conf
     dest_file: /CoreRuleSet/REQUEST-931-APPLICATION-ATTACK-RFI.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-932-APPLICATION-ATTACK-RCE.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-932-APPLICATION-ATTACK-RCE.conf
     dest_file: /CoreRuleSet/REQUEST-932-APPLICATION-ATTACK-RCE.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-933-APPLICATION-ATTACK-PHP.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-933-APPLICATION-ATTACK-PHP.conf
     dest_file: /CoreRuleSet/REQUEST-933-APPLICATION-ATTACK-PHP.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-934-APPLICATION-ATTACK-GENERIC.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-934-APPLICATION-ATTACK-GENERIC.conf
     dest_file: /CoreRuleSet/REQUEST-934-APPLICATION-ATTACK-GENERIC.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-941-APPLICATION-ATTACK-XSS.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-941-APPLICATION-ATTACK-XSS.conf
     dest_file: /CoreRuleSet/REQUEST-941-APPLICATION-ATTACK-XSS.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-942-APPLICATION-ATTACK-SQLI.conf
     dest_file: /CoreRuleSet/REQUEST-942-APPLICATION-ATTACK-SQLI.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-943-APPLICATION-ATTACK-SESSION-FIXATION.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-943-APPLICATION-ATTACK-SESSION-FIXATION.conf
     dest_file: /CoreRuleSet/REQUEST-943-APPLICATION-ATTACK-SESSION-FIXATION.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-944-APPLICATION-ATTACK-JAVA.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-944-APPLICATION-ATTACK-JAVA.conf
     dest_file: /CoreRuleSet/REQUEST-944-APPLICATION-ATTACK-JAVA.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/REQUEST-949-BLOCKING-EVALUATION.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesREQUEST-949-BLOCKING-EVALUATION.conf
     dest_file: /CoreRuleSet/REQUEST-949-BLOCKING-EVALUATION.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-950-DATA-LEAKAGES.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-950-DATA-LEAKAGES.conf
     dest_file: /CoreRuleSet/RESPONSE-950-DATA-LEAKAGES.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-951-DATA-LEAKAGES-SQL.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-951-DATA-LEAKAGES-SQL.conf
     dest_file: /CoreRuleSet/RESPONSE-951-DATA-LEAKAGES-SQL.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-952-DATA-LEAKAGES-JAVA.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-952-DATA-LEAKAGES-JAVA.conf
     dest_file: /CoreRuleSet/RESPONSE-952-DATA-LEAKAGES-JAVA.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-953-DATA-LEAKAGES-PHP.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-953-DATA-LEAKAGES-PHP.conf
     dest_file: /CoreRuleSet/RESPONSE-953-DATA-LEAKAGES-PHP.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-954-DATA-LEAKAGES-IIS.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-954-DATA-LEAKAGES-IIS.conf
     dest_file: /CoreRuleSet/RESPONSE-954-DATA-LEAKAGES-IIS.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-955-WEB-SHELLS.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-955-WEB-SHELLS.conf
     dest_file: /CoreRuleSet/RESPONSE-955-WEB-SHELLS.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-959-BLOCKING-EVALUATION.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-959-BLOCKING-EVALUATION.conf
     dest_file: /CoreRuleSet/RESPONSE-959-BLOCKING-EVALUATION.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/RESPONSE-980-CORRELATION.conf
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesRESPONSE-980-CORRELATION.conf
     dest_file: /CoreRuleSet/RESPONSE-980-CORRELATION.conf
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/iis-errors.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesiis-errors.data
     dest_file: /CoreRuleSet/iis-errors.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/java-classes.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesjava-classes.data
     dest_file: /CoreRuleSet/java-classes.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/java-errors.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesjava-errors.data
     dest_file: /CoreRuleSet/java-errors.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/lfi-os-files.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/ruleslfi-os-files.data
     dest_file: /CoreRuleSet/lfi-os-files.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/php-config-directives.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesphp-config-directives.data
     dest_file: /CoreRuleSet/php-config-directives.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/php-errors.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesphp-errors.data
     dest_file: /CoreRuleSet/php-errors.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/php-errors-pl2.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesphp-errors-pl2.data
     dest_file: /CoreRuleSet/php-errors-pl2.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/php-function-names-933150.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesphp-function-names-933150.data
     dest_file: /CoreRuleSet/php-function-names-933150.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/php-function-names-933151.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesphp-function-names-933151.data
     dest_file: /CoreRuleSet/php-function-names-933151.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/php-variables.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesphp-variables.data
     dest_file: /CoreRuleSet/php-variables.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/restricted-files.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesrestricted-files.data
     dest_file: /CoreRuleSet/restricted-files.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/restricted-upload.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesrestricted-upload.data
     dest_file: /CoreRuleSet/restricted-upload.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/scanners-user-agents.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesscanners-user-agents.data
     dest_file: /CoreRuleSet/scanners-user-agents.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/sql-errors.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulessql-errors.data
     dest_file: /CoreRuleSet/sql-errors.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/ssrf.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesssrf.data
     dest_file: /CoreRuleSet/ssrf.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/unix-shell.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesunix-shell.data
     dest_file: /CoreRuleSet/unix-shell.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/web-shells-asp.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesweb-shells-asp.data
     dest_file: /CoreRuleSet/web-shells-asp.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/web-shells-php.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/rulesweb-shells-php.data
     dest_file: /CoreRuleSet/web-shells-php.data
     type: modsec
-  - source_url: https://github.com/CoreRuleSet/coreruleset/raw/refs/tags/v4.14.0/rules/windows-powershell-commands.data
+  - source_url: https://github.com/coreruleset/coreruleset/raw/refs/tags/v4.14.0/ruleswindows-powershell-commands.data
     dest_file: /CoreRuleSet/windows-powershell-commands.data
     type: modsec
