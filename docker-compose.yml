@@ -170,8 +170,7 @@ services:
     #Override image's entrypoint to execute custom command
     entrypoint: ''
     command: >
-      /bin/sh -c "mkdir -p /var/lib/crowdsec/data/coreruleset/ &
-                  mkdir -p /etc/periodic/daily/ &
+      /bin/sh -c "mkdir -p /etc/periodic/daily/ &
                   /bin/bash /docker_start.sh"
 
   mariadb:
