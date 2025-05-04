@@ -116,9 +116,7 @@ services:
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     container_name: crowdsec
-    build:
-      context: ./config/crowdsec
-      dockerfile: Dockerfile
+    image: crowdsecurity/crowdsec:v1.6.8-debian
     restart: unless-stopped
     environment:
       GID: 1000
@@ -147,11 +145,11 @@ services:
       - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
       - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
       - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
-      - ./config/crowdsec/01-coraza-recommended.conf:/var/lib/crowdsec/data/01-coraza-recommended.conf:ro
-      - ./config/crowdsec/02-crs-setup.conf:/var/lib/crowdsec/data/02-crs-setup.conf:ro
-      - ./config/crowdsec/03-custom-blocks.conf:/var/lib/crowdsec/data/03-custom-blocks.conf:ro
-      - ./config/crowdsec/04-exclusions-before-crs.conf:/var/lib/crowdsec/data/04-exclusions-before-crs.conf:ro
-      - ./config/crowdsec/05-exclusions-after-crs.conf:/var/lib/crowdsec/data/05-exclusions-after-crs.conf:ro
+      - ./config/crowdsec/CoreRuleSet/01-coraza-recommended.conf:/var/lib/crowdsec/data/CoreRuleSet/01-coraza-recommended.conf:ro
+      - ./config/crowdsec/CoreRuleSet/02-crs-setup.conf:/var/lib/crowdsec/data/CoreRuleSet/02-crs-setup.conf:ro
+      - ./config/crowdsec/CoreRuleSet/03-custom-blocks.conf:/var/lib/crowdsec/data/CoreRuleSet/03-custom-blocks.conf:ro
+      - ./config/crowdsec/CoreRuleSet/04-exclusions-before-crs.conf:/var/lib/crowdsec/data/CoreRuleSet/04-exclusions-before-crs.conf:ro
+      - ./config/crowdsec/CoreRuleSet/05-exclusions-after-crs.conf:/var/lib/crowdsec/data/CoreRuleSet/05-exclusions-after-crs.conf:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -172,13 +170,8 @@ services:
     #Override image's entrypoint to execute custom command
     entrypoint: ''
     command: >
-      /bin/sh -c "rm -r -f /var/lib/crowdsec/data/coreruleset &&
-                  mkdir -p /var/lib/crowdsec/data/coreruleset &&
-                  #We clone latest configs from coreruleset, since those packed with CrowdSec are very old
-                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.14.0 &&
-                  #We also want to remove .git files due to https://youtrack.jetbrains.com/issue/WI-80162/Auto-adds-a-git-repo-from-ignored-directory which just annoys me
-                  rm -r -f /var/lib/crowdsec/data/coreruleset/.git* &&
-                  mkdir -p /etc/periodic/daily/ &&
+      /bin/sh -c "mkdir -p /var/lib/crowdsec/data/coreruleset/ &
+                  mkdir -p /etc/periodic/daily/ &
                   /bin/bash /docker_start.sh"
 
   mariadb:
