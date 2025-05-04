@@ -175,7 +175,7 @@ services:
       /bin/sh -c "rm -r -f /var/lib/crowdsec/data/coreruleset &&
                   mkdir -p /var/lib/crowdsec/data/coreruleset &&
                   #We clone latest configs from coreruleset, since those packed with CrowdSec are very old
-                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.13.0 &&
+                  git clone https://github.com/coreruleset/coreruleset /var/lib/crowdsec/data/coreruleset --branch v4.14.0 &&
                   #We also want to remove .git files due to https://youtrack.jetbrains.com/issue/WI-80162/Auto-adds-a-git-repo-from-ignored-directory which just annoys me
                   rm -r -f /var/lib/crowdsec/data/coreruleset/.git* &&
                   mkdir -p /etc/periodic/daily/ &&
