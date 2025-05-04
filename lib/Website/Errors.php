@@ -28,8 +28,8 @@ class Errors
     /**
      * Helper function to log errors with identifying the page
      * @param \Throwable $error Error object
-     * @param mixed      $extra Extra data to store in log
-     * @param bool       $debug If set to `true` will output the error, instead of writing to file
+     * @param mixed      $extra Extra data to store in the log
+     * @param bool       $debug If set to `true` will output the error instead of writing to file
      *
      * @return false
      */
@@ -65,8 +65,8 @@ class Errors
      * Actual custom error handler
      * @param int    $level   Error level
      * @param string $message Error message
-     * @param string $file    File, where error happened
-     * @param int    $line    Line in file, where error happened
+     * @param string $file    The file where the error happened
+     * @param int    $line    Line in file where the error happened
      *
      * @return bool
      */
@@ -105,10 +105,10 @@ class Errors
     }
     
     /**
-     * Helper to write errors in log
+     * Helper to write errors in the log
      * @param string     $type    Error type
-     * @param string     $file    File, where the error happened
-     * @param string|int $line    Line in file, where error happened
+     * @param string     $file    The file where the error happened
+     * @param string|int $line    Line in file where the error happened
      * @param string     $message Error message
      *
      * @return void
@@ -126,17 +126,17 @@ class Errors
     }
     
     /**
-     * Helper to attempt to get URL, which was used, when error occurred
+     * Helper to attempt to get URL, which was used when the error occurred
      * @return string
      */
     private static function getPage(): string
     {
         if (Config::$CLI) {
             $page = 'CLI';
-        } elseif (empty($_SERVER['REQUEST_URI'])) {
+        } elseif (empty(Config::$canonical)) {
             $page = 'index.php';
         } else {
-            $page = $_SERVER['REQUEST_URI'];
+            $page = Config::$canonical;
         }
         return $page;
     }
