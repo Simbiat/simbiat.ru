@@ -120,7 +120,7 @@ services:
     restart: unless-stopped
     environment:
       GID: 1000
-      COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-crs crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist openappsec/openappsec
+      COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist openappsec/openappsec
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
       ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
@@ -145,11 +145,7 @@ services:
       - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
       - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
       - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
-      - ./config/crowdsec/CoreRuleSet/01-coraza-recommended.conf:/var/lib/crowdsec/data/CoreRuleSet/01-coraza-recommended.conf:ro
-      - ./config/crowdsec/CoreRuleSet/02-crs-setup.conf:/var/lib/crowdsec/data/CoreRuleSet/02-crs-setup.conf:ro
-      - ./config/crowdsec/CoreRuleSet/03-custom-blocks.conf:/var/lib/crowdsec/data/CoreRuleSet/03-custom-blocks.conf:ro
-      - ./config/crowdsec/CoreRuleSet/04-exclusions-before-crs.conf:/var/lib/crowdsec/data/CoreRuleSet/04-exclusions-before-crs.conf:ro
-      - ./config/crowdsec/CoreRuleSet/05-exclusions-after-crs.conf:/var/lib/crowdsec/data/CoreRuleSet/05-exclusions-after-crs.conf:ro
+      - ./config/crowdsec/CoreRuleSet/:/var/lib/crowdsec/data/CoreRuleSet/:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -170,7 +166,10 @@ services:
     #Override image's entrypoint to execute custom command
     entrypoint: ''
     command: >
-      /bin/sh -c "mkdir -p /etc/periodic/daily/ &
+      /bin/sh -c "#Need to ensure that CRS files are downloaded every time, so we remove them
+                  rm -f /var/lib/crowdsec/data/REQUEST-9*.conf /var/lib/crowdsec/data/RESPONSE-9*.conf /var/lib/crowdsec/data/iis-errors.data /var/lib/crowdsec/data/java-classes.data /var/lib/crowdsec/data/java-errors.data /var/lib/crowdsec/data/lfi-os-files.data /var/lib/crowdsec/data/php-config-directives.data /var/lib/crowdsec/data/php-errors.data /var/lib/crowdsec/data/php-errors-pl2.data /var/lib/crowdsec/data/php-function-names-933150.data /var/lib/crowdsec/data/php-function-names-933151.data /var/lib/crowdsec/data/php-variables.data /var/lib/crowdsec/data/restricted-files.data /var/lib/crowdsec/data/restricted-upload.data /var/lib/crowdsec/data/scanners-user-agents.data /var/lib/crowdsec/data/sql-errors.data /var/lib/crowdsec/data/ssrf.data /var/lib/crowdsec/data/unix-shell.data /var/lib/crowdsec/data/web-shells-asp.data /var/lib/crowdsec/data/web-shells-php.data /var/lib/crowdsec/data/windows-powershell-commands.data &
+                  #Don't remember why this is required, I think the folder is not created automatically in some cases
+                  mkdir -p /etc/periodic/daily/ &
                   /bin/bash /docker_start.sh"
 
   mariadb:
