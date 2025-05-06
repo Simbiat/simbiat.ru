@@ -22,7 +22,7 @@ class Search extends Page
     #Items to display per page for search results per type
     protected int $searchItems = 15;
     #Regex to sanitize search value (remove disallowed characters)
-    protected string $regexSearch = '/[^a-zA-Z\d _\'\-,!%]/i';
+    protected string $regexSearch = '/[^\p{L}\p{N} _\'\-,!%]/iu';
     #Short title to be used for <title> and <h1> when having a search value
     protected string $shortTitle = 'Search for `%s`';
     #Full title to be used for description metatags when having a search value
@@ -42,7 +42,7 @@ class Search extends Page
         $this->typesCheck();
         #Check if we got some old link (before GET implementation)
         if (empty($_GET['search']) && !empty($path[0])) {
-            #Redirect to proper version using GET value
+            #Redirect to a proper version using GET value
             Headers::redirect(preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', Config::$canonical));
         }
         #Sanitize search value
@@ -80,7 +80,7 @@ class Search extends Page
      */
     final protected function typesCheck(): void
     {
-        #Bad if array is empty
+        #Bad if the array is empty
         if (empty($this->types)) {
             throw new \RuntimeException('Search types are not set');
         }
@@ -100,12 +100,12 @@ class Search extends Page
      */
     protected function getDate(array $results): int|string
     {
-        #Prepare array of dates
+        #Prepare the array of dates
         $dates = [];
         foreach ($results as $type) {
             $dates = array_merge($dates, array_column($type['results'], 'updated'));
         }
-        #Return max value if dates array is not empty or 0 otherwise
+        #Return max value if the array is not empty or 0 otherwise
         if (empty($dates)) {
             return 0;
         }
@@ -123,14 +123,13 @@ class Search extends Page
             return true;
         }
         $term = Sanitization::removeNonPrintable($term, true);
-        $decodedSearch = preg_replace($this->regexSearch, '', $term);
-        #Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in future
-        $decodedSearch = preg_replace('/:/', '', $decodedSearch);
-        #Check if the new value is just the set of operators and if it is - consider bad request
+        #Remove not allowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
+        $decodedSearch = preg_replace([$this->regexSearch, '/:/'], '', $term);
+        #Check if the new value is just the set of operators and if it is - consider a bad request
         if (preg_match('/^[+\-<>~()"*]+$/', $decodedSearch)) {
             return false;
         }
-        #If value is empty, ensure it's an empty string
+        #If the value is empty, ensure it's an empty string
         if (!empty($decodedSearch)) {
             $this->searchFor = $decodedSearch;
         }
