@@ -538,6 +538,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\BIC\\BIC' => __DIR__ . '/../..' . '/lib/BIC/Tracker/src/BIC.php',
         'Simbiat\\BIC\\Library' => __DIR__ . '/../..' . '/lib/BIC/Tracker/src/Library.php',
         'Simbiat\\Cron\\Agent' => __DIR__ . '/../..' . '/lib/Cron/src/Agent.php',
+        'Simbiat\\Cron\\Installer' => __DIR__ . '/../..' . '/lib/Cron/src/Installer.php',
         'Simbiat\\Cron\\Task' => __DIR__ . '/../..' . '/lib/Cron/src/Task.php',
         'Simbiat\\Cron\\TaskInstance' => __DIR__ . '/../..' . '/lib/Cron/src/TaskInstance.php',
         'Simbiat\\Cron\\TraitForCron' => __DIR__ . '/../..' . '/lib/Cron/src/TraitForCron.php',

@@ -311,6 +311,7 @@ return array(
     'Simbiat\\BIC\\BIC' => $baseDir . '/lib/BIC/Tracker/src/BIC.php',
     'Simbiat\\BIC\\Library' => $baseDir . '/lib/BIC/Tracker/src/Library.php',
     'Simbiat\\Cron\\Agent' => $baseDir . '/lib/Cron/src/Agent.php',
+    'Simbiat\\Cron\\Installer' => $baseDir . '/lib/Cron/src/Installer.php',
     'Simbiat\\Cron\\Task' => $baseDir . '/lib/Cron/src/Task.php',
     'Simbiat\\Cron\\TaskInstance' => $baseDir . '/lib/Cron/src/TaskInstance.php',
     'Simbiat\\Cron\\TraitForCron' => $baseDir . '/lib/Cron/src/TraitForCron.php',
