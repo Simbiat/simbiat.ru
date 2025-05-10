@@ -471,7 +471,7 @@ final class Config
                 'frequency' => 2592000,
                 'priority' => 0,
                 'message' => 'Recalculating Argon settings',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 2:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'bicUpdate',
@@ -481,7 +481,7 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 5,
                 'message' => 'Updating BIC library',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 23:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'cleanAvatars',
@@ -491,7 +491,7 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 0,
                 'message' => 'Removing excessive avatars',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 0:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'cleanUploads',
@@ -501,7 +501,7 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 0,
                 'message' => 'Cleaning uploaded files',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 0:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'cookiesClean',
@@ -511,7 +511,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 9,
                 'message' => 'Removing old cookies',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 0:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'dbForBackup',
@@ -521,7 +521,7 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 9,
                 'message' => 'Dumping DDLs',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 2:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'dbMaintenance',
@@ -531,7 +531,7 @@ final class Config
                 'frequency' => 2592000,
                 'priority' => 0,
                 'message' => 'Running database maintenance',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 5:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffAddServers',
@@ -542,7 +542,7 @@ final class Config
                 'dayofweek' => '[3]',
                 'priority' => 1,
                 'message' => 'Checking for new servers on Lodestone',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 7:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffNewCharacters',
@@ -551,8 +551,8 @@ final class Config
                 'system' => 1,
                 'frequency' => 86400,
                 'priority' => 1,
-                'message' => 'Scheduling potential new character',
-                'nextrun' => '',
+                'message' => 'Scheduling potential new characters',
+                'nextrun' => strtotime('today 12:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffNewLinkshells',
@@ -562,7 +562,7 @@ final class Config
                 'frequency' => 3600,
                 'priority' => 1,
                 'message' => 'Checking for new linkshells',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 9:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateOld',
@@ -573,7 +573,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 0,
                 'message' => 'Updating old FFXIV entities',
-                'nextrun' => '',
+                'nextrun' => time(),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateOld',
@@ -584,7 +584,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 0,
                 'message' => 'Updating old FFXIV entities',
-                'nextrun' => '',
+                'nextrun' => time(),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateOld',
@@ -595,7 +595,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 0,
                 'message' => 'Updating old FFXIV entities',
-                'nextrun' => '',
+                'nextrun' => time(),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateOld',
@@ -606,7 +606,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 0,
                 'message' => 'Updating old FFXIV entities',
-                'nextrun' => '',
+                'nextrun' => time(),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateOld',
@@ -617,7 +617,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 0,
                 'message' => 'Updating old FFXIV entities',
-                'nextrun' => '',
+                'nextrun' => time(),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateOld',
@@ -628,7 +628,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 0,
                 'message' => 'Updating old FFXIV entities',
-                'nextrun' => '',
+                'nextrun' => time(),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'ffUpdateStatistics',
@@ -638,7 +638,7 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 2,
                 'message' => 'Updating FFXIV statistics',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 3:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'filesClean',
@@ -648,7 +648,7 @@ final class Config
                 'frequency' => 604800,
                 'priority' => 0,
                 'message' => 'Removing old files',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 1:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'lockPosts',
@@ -658,7 +658,7 @@ final class Config
                 'frequency' => 3600,
                 'priority' => 9,
                 'message' => 'Locking posts',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 1:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'logsClean',
@@ -668,7 +668,7 @@ final class Config
                 'frequency' => 2592000,
                 'priority' => 9,
                 'message' => 'Removing old logs',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 5:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'sessionClean',
@@ -678,7 +678,7 @@ final class Config
                 'frequency' => 60,
                 'priority' => 9,
                 'message' => 'Removing old sessions',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 0:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'sitemap',
@@ -688,7 +688,7 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 0,
                 'message' => 'Generating sitemap files',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 0:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
                 'task' => 'statisticsClean',
@@ -698,7 +698,7 @@ final class Config
                 'frequency' => 2592000,
                 'priority' => 0,
                 'message' => 'Removing old statistical data',
-                'nextrun' => '',
+                'nextrun' => strtotime('today 2:00'),
             ])->add();
             
         }
