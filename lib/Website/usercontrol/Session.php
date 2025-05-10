@@ -19,21 +19,21 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      */
     public function __construct(private int $sessionLife = 300)
     {
-        #Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
-        if (!headers_sent()) {
-            session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
-        }
         if ($this->sessionLife < 0) {
             $this->sessionLife = 300;
         }
-        #Set session cookie parameters
-        ini_set('session.cookie_lifetime', $this->sessionLife);
-        ini_set('session.cookie_secure', Config::$cookieSettings['secure']);
-        ini_set('session.cookie_httponly', Config::$cookieSettings['httponly']);
-        ini_set('session.cookie_path', Config::$cookieSettings['path']);
-        ini_set('session.cookie_samesite', Config::$cookieSettings['samesite']);
-        ini_set('session.use_strict_mode', true);
-        ini_set('session.use_only_cookies', true);
+        if (!headers_sent()) {
+            #Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
+            session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
+            #Set session cookie parameters
+            ini_set('session.cookie_lifetime', $this->sessionLife);
+            ini_set('session.cookie_secure', Config::$cookieSettings['secure']);
+            ini_set('session.cookie_httponly', Config::$cookieSettings['httponly']);
+            ini_set('session.cookie_path', Config::$cookieSettings['path']);
+            ini_set('session.cookie_samesite', Config::$cookieSettings['samesite']);
+            ini_set('session.use_strict_mode', true);
+            ini_set('session.use_only_cookies', true);
+        }
     }
     
     ##########################
