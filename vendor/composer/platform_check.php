@@ -16,6 +16,7 @@ extension_loaded('dom') || $missingExtensions[] = 'dom';
 extension_loaded('fileinfo') || $missingExtensions[] = 'fileinfo';
 extension_loaded('filter') || $missingExtensions[] = 'filter';
 extension_loaded('gd') || $missingExtensions[] = 'gd';
+extension_loaded('iconv') || $missingExtensions[] = 'iconv';
 extension_loaded('intl') || $missingExtensions[] = 'intl';
 extension_loaded('json') || $missingExtensions[] = 'json';
 extension_loaded('libxml') || $missingExtensions[] = 'libxml';
