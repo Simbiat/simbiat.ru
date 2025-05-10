@@ -540,6 +540,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Cron\\Agent' => __DIR__ . '/../..' . '/lib/Cron/src/Agent.php',
         'Simbiat\\Cron\\Task' => __DIR__ . '/../..' . '/lib/Cron/src/Task.php',
         'Simbiat\\Cron\\TaskInstance' => __DIR__ . '/../..' . '/lib/Cron/src/TaskInstance.php',
+        'Simbiat\\Cron\\TraitForCron' => __DIR__ . '/../..' . '/lib/Cron/src/TraitForCron.php',
         'Simbiat\\CuteBytes' => __DIR__ . '/../..' . '/lib/CuteBytes/src/CuteBytes.php',
         'Simbiat\\DDCIcons' => __DIR__ . '/../..' . '/lib/DDCIcons/src/DDCIcons.php',
         'Simbiat\\Database\\Bind' => __DIR__ . '/../..' . '/lib/Database/Binder/src/Bind.php',

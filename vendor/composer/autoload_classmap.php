@@ -313,6 +313,7 @@ return array(
     'Simbiat\\Cron\\Agent' => $baseDir . '/lib/Cron/src/Agent.php',
     'Simbiat\\Cron\\Task' => $baseDir . '/lib/Cron/src/Task.php',
     'Simbiat\\Cron\\TaskInstance' => $baseDir . '/lib/Cron/src/TaskInstance.php',
+    'Simbiat\\Cron\\TraitForCron' => $baseDir . '/lib/Cron/src/TraitForCron.php',
     'Simbiat\\CuteBytes' => $baseDir . '/lib/CuteBytes/src/CuteBytes.php',
     'Simbiat\\DDCIcons' => $baseDir . '/lib/DDCIcons/src/DDCIcons.php',
     'Simbiat\\Database\\Bind' => $baseDir . '/lib/Database/Binder/src/Bind.php',
