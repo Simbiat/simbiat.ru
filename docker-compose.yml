@@ -1,6 +1,6 @@
 name: simbiat-dev
 
-# Looks like subnet may change in some cases for no apparent reason, so trying to force it
+#It looks like subnet may change in some cases for no clear reason, so trying to force it
 networks:
   webserver:
     driver: bridge
@@ -46,8 +46,8 @@ services:
     links:
       - mariadb:mysql
       - mariadb:database
-    #Before starting the container it's better to clear the session files, because it looks like otherwise the service can pick-up older settings (unless manually clearing session data)
-    #This is also important, in case something happens to the phpMyAdmin database/tables and they got removed, because otherwise it will keep showing error without allowing to fix it directly through UI
+    #Before starting the container, it's better to clear the session files. It looks like otherwise the service can pick up older settings (unless manually clearing session data).
+    #This is also important in case something happens to the phpMyAdmin database/tables, and they got removed, because otherwise it will keep showing error without allowing to fix it directly through the UI.
     command: >
       /bin/sh -c "rm -f -r /sessions/* &
                   /docker-entrypoint.sh apache2-foreground"
