@@ -11,6 +11,8 @@ networks:
         - subnet: 2001:db8:1::/64
 
 volumes:
+  crs_files:
+    driver: local
   mariadb_socket:
     driver: local
 
@@ -146,6 +148,7 @@ services:
       - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
       - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
       - ./config/crowdsec/CoreRuleSet/:/var/lib/crowdsec/data/CoreRuleSet/:ro
+      - crs_files:/var/lib/crowdsec/data/OWASP/:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -156,6 +159,8 @@ services:
       geoip:
         condition: service_started
       mariadb:
+        condition: service_healthy
+      crs:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "cscli", "lapi", "status" ]
@@ -168,6 +173,7 @@ services:
     command: >
       /bin/sh -c "#Need to ensure that CRS files are downloaded every time, so we remove them
                   rm -f /var/lib/crowdsec/data/REQUEST-9*.conf /var/lib/crowdsec/data/RESPONSE-9*.conf /var/lib/crowdsec/data/iis-errors.data /var/lib/crowdsec/data/java-classes.data /var/lib/crowdsec/data/java-errors.data /var/lib/crowdsec/data/lfi-os-files.data /var/lib/crowdsec/data/php-config-directives.data /var/lib/crowdsec/data/php-errors.data /var/lib/crowdsec/data/php-errors-pl2.data /var/lib/crowdsec/data/php-function-names-933150.data /var/lib/crowdsec/data/php-function-names-933151.data /var/lib/crowdsec/data/php-variables.data /var/lib/crowdsec/data/restricted-files.data /var/lib/crowdsec/data/restricted-upload.data /var/lib/crowdsec/data/scanners-user-agents.data /var/lib/crowdsec/data/sql-errors.data /var/lib/crowdsec/data/ssrf.data /var/lib/crowdsec/data/unix-shell.data /var/lib/crowdsec/data/web-shells-asp.data /var/lib/crowdsec/data/web-shells-php.data /var/lib/crowdsec/data/windows-powershell-commands.data &
+                  cp -r /var/lib/crowdsec/data/OWASP/* /var/lib/crowdsec/data/ &&
                   #Don't remember why this is required, I think the folder is not created automatically in some cases
                   mkdir -p /etc/periodic/daily/ &
                   /bin/bash /docker_start.sh"
@@ -217,3 +223,14 @@ services:
                   crontab /etc/cron.d/mariadb.cron &&
                   cron &&
                   docker-entrypoint.sh mariadbd"
+
+  crs:
+    container_name: crs
+    image: owasp/modsecurity-crs:4.14.0-nginx-alpine-202505250105
+    restart: unless-stopped
+    networks:
+      - webserver
+    security_opt:
+      - no-new-privileges=true
+    volumes:
+      - crs_files:/opt/owasp-crs/rules:ro
