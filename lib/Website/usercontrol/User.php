@@ -584,7 +584,7 @@ class User extends Entity
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
-        $isEmail = filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL | FILTER_FLAG_EMAIL_UNICODE);
+        $isEmail = filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
         if (
             (!$isEmail && $this->bannedName($_POST['signinup']['email'])) ||
             ($isEmail && new Email($_POST['signinup']['email'])->isBanned())

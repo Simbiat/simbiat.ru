@@ -290,18 +290,16 @@ class Security
      */
     public static function sanitizeURL(string $url): string
     {
+        #First, normalize the string
+        $url = \Normalizer::normalize($url, \Normalizer::FORM_C);
         #Check if valid IRI
-        if (!IRI::isValidIri($url)) {
+        if (!IRI::isValidIri($url, 'https')) {
             return '';
         }
         #Attempt to parse it
-        $parsedUrl = parse_url($url);
+        $parsedUrl = IRI::parseUri($url);
         #Ignore failed strings
         if (!is_array($parsedUrl)) {
-            return '';
-        }
-        #Ignore non-https
-        if ($parsedUrl['scheme'] !== 'https') {
             return '';
         }
         #Parse the query string into an associative array
@@ -313,7 +311,7 @@ class Security
             }
         }
         #Rebuild the query string
-        $parsedUrl['query'] = http_build_query($queryParams);
+        $parsedUrl['query'] = IRI::rawBuildQuery($queryParams);
         #Reconstruct the full URL
         return IRI::restoreUri($parsedUrl);
     }

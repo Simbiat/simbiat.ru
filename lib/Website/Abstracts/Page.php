@@ -207,8 +207,12 @@ abstract class Page
         $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
         #Generate link for cache reset, if page uses cache
         if ($this->cacheAge > 0 && $this->static === false) {
-            $page['cacheReset'] = parse_url(Config::$canonical, PHP_URL_QUERY);
-            $page['cacheReset'] = Config::$canonical.(empty($page['cacheReset']) ? '?cacheReset=true' : '&cacheReset=true');
+            $query = \Simbiat\HTTP20\IRI::parseUri(Config::$canonical);
+            if (\is_array($page['cacheReset'])) {
+                $page['cacheReset'] = Config::$canonical.(empty($query['query']) ? '?cacheReset=true' : '&cacheReset=true');
+            } else {
+                $page['cacheReset'] = '';
+            }
         }
         return $page;
     }

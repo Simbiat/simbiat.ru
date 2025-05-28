@@ -318,7 +318,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         if (!empty($forwarded)) {
             #Get a list of IPs that do validate as proper IP
             $ips = array_filter(array_map('trim', explode(',', $forwarded)), static function ($value) {
-                return filter_var($value, FILTER_VALIDATE_IP);
+                return filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
             });
             #Check if any are left
             if (!empty($ips)) {
@@ -328,11 +328,11 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         }
         #Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
         if (empty($ip) && !empty($_SERVER['REMOTE_ADDR'])) {
-            $ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP);
+            $ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
         }
         #Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
         if (empty($ip) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP);
+            $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
         }
         $data['IP'] = $ip ?? null;
     }
