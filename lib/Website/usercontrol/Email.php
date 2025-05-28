@@ -34,7 +34,7 @@ class Email extends Entity
         #Convert to string for consistency
         $id = (string)$id;
         #Validate that string is email
-        if (filter_var($id, FILTER_VALIDATE_EMAIL) === false) {
+        if (filter_var($id, FILTER_VALIDATE_EMAIL | FILTER_FLAG_EMAIL_UNICODE) === false) {
             #Not an email, something is wrong, protect ourselves
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
         }
