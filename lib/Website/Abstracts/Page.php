@@ -207,9 +207,9 @@ abstract class Page
         #Limit Ogdesc to 120 characters
         $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
         #Generate link for cache reset, if page uses cache
-        if ($this->cacheAge > 0 && $this->static === false) {
+        if ($this->cacheAge > 0 && !$this->static) {
             $query = IRI::parseUri(Config::$canonical);
-            if (\is_array($page['cacheReset'])) {
+            if (\is_array($query)) {
                 $page['cacheReset'] = Config::$canonical.(empty($query['query']) ? '?cacheReset=true' : '&cacheReset=true');
             } else {
                 $page['cacheReset'] = '';
