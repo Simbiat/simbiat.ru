@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts;
 
+use Simbiat\http20\IRI;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
@@ -207,7 +208,7 @@ abstract class Page
         $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
         #Generate link for cache reset, if page uses cache
         if ($this->cacheAge > 0 && $this->static === false) {
-            $query = \Simbiat\HTTP20\IRI::parseUri(Config::$canonical);
+            $query = IRI::parseUri(Config::$canonical);
             if (\is_array($page['cacheReset'])) {
                 $page['cacheReset'] = Config::$canonical.(empty($query['query']) ? '?cacheReset=true' : '&cacheReset=true');
             } else {
