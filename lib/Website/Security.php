@@ -294,10 +294,6 @@ class Security
         if (!IRI::isValidIri($url)) {
             return '';
         }
-        #Check if valid URL
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return '';
-        }
         #Attempt to parse it
         $parsedUrl = parse_url($url);
         #Ignore failed strings
