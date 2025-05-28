@@ -27,6 +27,7 @@
         "oly_enc_id",
         "pid",
         "rb_clickid",
+        "rcm",
         "ref",
         "ref_",
         "referrer",
