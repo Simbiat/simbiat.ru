@@ -93,7 +93,7 @@ class HomePage
                     Page::headers();
                 }
                 #Try to start a session if it's not started yet and DB is up
-                if (Config::$dbup && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
+                if (Config::$dbup && !Config::$dbUpdate && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
                     session_start();
                     #Update CSRF token
