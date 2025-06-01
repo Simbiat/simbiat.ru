@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'composer/ca-bundle' => array(
-            'pretty_version' => '1.5.6',
-            'version' => '1.5.6.0',
-            'reference' => 'f65c239c970e7f072f067ab78646e9f0b2935175',
+            'pretty_version' => '1.5.7',
+            'version' => '1.5.7.0',
+            'reference' => 'd665d22c417056996c59019579f1967dfe5c1e82',
             'type' => 'library',
             'install_path' => __DIR__ . '/./ca-bundle',
             'aliases' => array(),
@@ -136,7 +136,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '59be420c5cdc0c3c9cdae31804d32fefb515a918',
+            'reference' => 'c6007a53027047b08044448c57571988ac9b6e93',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -187,9 +187,9 @@
             'dev_requirement' => false,
         ),
         'symfony/deprecation-contracts' => array(
-            'pretty_version' => 'v3.5.1',
-            'version' => '3.5.1.0',
-            'reference' => '74c71c939a79f7d5bf3c1ce9f5ea37ba0114c6f6',
+            'pretty_version' => 'v3.6.0',
+            'version' => '3.6.0.0',
+            'reference' => '63afe740e99a13ba87ec199bb07bbdee937a5b62',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/deprecation-contracts',
             'aliases' => array(),
@@ -232,9 +232,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '7.8.0',
-            'version' => '7.8.0.0',
-            'reference' => '88d1b2874256895338034dba28bf6e920aa4ba17',
+            'pretty_version' => '7.9.1',
+            'version' => '7.9.1.0',
+            'reference' => '3d6219296c9a92c87337bb38fb502a469ac1167f',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),

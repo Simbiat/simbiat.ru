@@ -74,6 +74,7 @@
                 "./lib/HTML/Cut/src",
                 "./lib/HTML/nl2tag/src"
             ],
+            "Simbiat\\Database\\Maintainer\\": "./lib/Database/Maintainer/src",
             "Simbiat\\HTML\\ArrayToTable\\": "./lib/array2table/src",
             "Simbiat\\Cron\\": "./lib/Cron/src",
             "Simbiat\\http20\\": "./lib/http20/src",

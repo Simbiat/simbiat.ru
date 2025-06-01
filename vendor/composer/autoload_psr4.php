@@ -17,6 +17,7 @@ return array(
     'Simbiat\\HTML\\ArrayToTable\\' => array($baseDir . '/lib/array2table/src'),
     'Simbiat\\HTML\\' => array($baseDir . '/lib/HTML/Cut/src', $baseDir . '/lib/HTML/nl2tag/src'),
     'Simbiat\\FFXIV\\' => array($baseDir . '/lib/FFXIV/Lodestone/src', $baseDir . '/lib/FFXIV/Tracker/src'),
+    'Simbiat\\Database\\Maintainer\\' => array($baseDir . '/lib/Database/Maintainer/src'),
     'Simbiat\\Database\\' => array($baseDir . '/lib/Database/Binder/src', $baseDir . '/lib/Database/Manager/src', $baseDir . '/lib/Database/Optimize/src', $baseDir . '/lib/Database/Pool/src', $baseDir . '/lib/Database/Query/src'),
     'Simbiat\\Cron\\' => array($baseDir . '/lib/Cron/src'),
     'Simbiat\\BIC\\' => array($baseDir . '/lib/BIC/AccountKeying/src', $baseDir . '/lib/BIC/Tracker/src'),

@@ -76,3 +76,6 @@
 [submodule "lib/Database/Query"]
 	path = lib/Database/Query
 	url = https://github.com/Simbiat/db-query
+[submodule "lib/Database/Maintainer"]
+	path = lib/Database/Maintainer
+	url = https://github.com/Simbiat/db-maintainer

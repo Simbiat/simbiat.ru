@@ -36,6 +36,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
             'Simbiat\\HTML\\ArrayToTable\\' => 26,
             'Simbiat\\HTML\\' => 13,
             'Simbiat\\FFXIV\\' => 14,
+            'Simbiat\\Database\\Maintainer\\' => 28,
             'Simbiat\\Database\\' => 17,
             'Simbiat\\Cron\\' => 13,
             'Simbiat\\BIC\\' => 12,
@@ -126,6 +127,10 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         array (
             0 => __DIR__ . '/../..' . '/lib/FFXIV/Lodestone/src',
             1 => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src',
+        ),
+        'Simbiat\\Database\\Maintainer\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/lib/Database/Maintainer/src',
         ),
         'Simbiat\\Database\\' => 
         array (
@@ -546,6 +551,11 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\DDCIcons' => __DIR__ . '/../..' . '/lib/DDCIcons/src/DDCIcons.php',
         'Simbiat\\Database\\Bind' => __DIR__ . '/../..' . '/lib/Database/Binder/src/Bind.php',
         'Simbiat\\Database\\Connection' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Connection.php',
+        'Simbiat\\Database\\Maintainer\\Analyzer' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Analyzer.php',
+        'Simbiat\\Database\\Maintainer\\Commander' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Commander.php',
+        'Simbiat\\Database\\Maintainer\\Installer' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Installer.php',
+        'Simbiat\\Database\\Maintainer\\Settings' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Settings.php',
+        'Simbiat\\Database\\Maintainer\\TraitForMaintainer' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/TraitForMaintainer.php',
         'Simbiat\\Database\\Manage' => __DIR__ . '/../..' . '/lib/Database/Manager/src/Manage.php',
         'Simbiat\\Database\\Optimize' => __DIR__ . '/../..' . '/lib/Database/Optimize/src/Optimize.php',
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Pool.php',
