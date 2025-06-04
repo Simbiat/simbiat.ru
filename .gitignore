@@ -136,6 +136,7 @@ dist
 #Some DDL files should be ignores due to sensetive data
 /build/DDL/000-create_users.sql
 /build/DDL/999-Z-Admin.sql
+/build/DDL/000-optimization_commands.txt
 # File to store SQL changes yet to be applied to PROD
 /build/toupdateonprod.sql
 #Logs

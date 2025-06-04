@@ -325,7 +325,6 @@ return array(
     'Simbiat\\Database\\Maintainer\\Settings' => $baseDir . '/lib/Database/Maintainer/src/Settings.php',
     'Simbiat\\Database\\Maintainer\\TraitForMaintainer' => $baseDir . '/lib/Database/Maintainer/src/TraitForMaintainer.php',
     'Simbiat\\Database\\Manage' => $baseDir . '/lib/Database/Manager/src/Manage.php',
-    'Simbiat\\Database\\Optimize' => $baseDir . '/lib/Database/Optimize/src/Optimize.php',
     'Simbiat\\Database\\Pool' => $baseDir . '/lib/Database/Pool/src/Pool.php',
     'Simbiat\\Database\\Query' => $baseDir . '/lib/Database/Query/src/Query.php',
     'Simbiat\\FFXIV\\AbstractTrackerEntity' => $baseDir . '/lib/FFXIV/Tracker/src/AbstractTrackerEntity.php',

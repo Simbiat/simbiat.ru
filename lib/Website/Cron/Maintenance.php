@@ -6,6 +6,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Cron;
 
 use Simbiat\Cron;
+use Simbiat\Database\Maintainer\Analyzer;
+use Simbiat\Database\Maintainer\Settings;
 use Simbiat\Database\Manage;
 use Simbiat\Database\Optimize;
 use Simbiat\Database\Pool;
@@ -163,24 +165,32 @@ class Maintenance
     }
     
     /**
-     * Optimize DB tables
-     * @return bool|string
+     * Generates commands for optimizing tables
+     * @return bool
      */
-    public function dbOptimize(): bool|string
+    public function dbOptimize(): bool
     {
-        $cron = (new Cron\Agent());
-        try {
-            Query::query('UPDATE `sys__settings` SET `value`=1 WHERE `setting`=\'maintenance\'');
-            $cron->setSetting('enabled', 0);
-            new Optimize()->setJsonPath(Config::$workDir.'/data/tables.json')->optimize($_ENV['DATABASE_NAME'], true, true);
-        } catch (\Throwable $e) {
-            $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
-            return $error;
-        } finally {
-            Query::query('UPDATE `sys__settings` SET `value`=0 WHERE `setting`=\'maintenance\'');
-            $cron->setSetting('enabled', 1);
+        $analyzer = new Analyzer();
+        $settings = new Settings();
+        #Ensure we have all tables, even though we end up doing this twice
+        $analyzer->updateTables($_ENV['DATABASE_NAME']);
+        #Ensure settings are set to what we want
+        $settings->setTableFineTune($_ENV['DATABASE_NAME'], [], 'analyze_histogram', true)
+            ->setTableFineTune($_ENV['DATABASE_NAME'], [], 'analyze_histogram_auto', true)
+            ->setRun($_ENV['DATABASE_NAME'], [], 'check', true)
+            ->setRun($_ENV['DATABASE_NAME'], [], 'fulltext_rebuild', true)
+            ->setGlobalFineTune('prefer_compressed', true)
+            ->setGlobalFineTune('prefer_extended', true)
+            ->setGlobalFineTune('compress_auto_run', true)
+            ->setGlobalFineTune('use_flush', true);
+        $commands = $analyzer->getCommands($_ENV['DATABASE_NAME'], [], true, true);
+        foreach ($commands as $key => $command) {
+            if (preg_match('/^UPDATE.*`sys__settings` SET/ui', $command) === 1) {
+                unset($commands[$key]);
+            }
         }
+        #Dump commands to file
+        file_put_contents(Config::$DDLDir.'/000-optimization_commands.txt', implode(PHP_EOL, $commands));
         return true;
     }
     

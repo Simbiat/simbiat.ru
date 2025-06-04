@@ -136,9 +136,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         array (
             0 => __DIR__ . '/../..' . '/lib/Database/Binder/src',
             1 => __DIR__ . '/../..' . '/lib/Database/Manager/src',
-            2 => __DIR__ . '/../..' . '/lib/Database/Optimize/src',
-            3 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
-            4 => __DIR__ . '/../..' . '/lib/Database/Query/src',
+            2 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
+            3 => __DIR__ . '/../..' . '/lib/Database/Query/src',
         ),
         'Simbiat\\Cron\\' => 
         array (
@@ -557,7 +556,6 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Database\\Maintainer\\Settings' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Settings.php',
         'Simbiat\\Database\\Maintainer\\TraitForMaintainer' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/TraitForMaintainer.php',
         'Simbiat\\Database\\Manage' => __DIR__ . '/../..' . '/lib/Database/Manager/src/Manage.php',
-        'Simbiat\\Database\\Optimize' => __DIR__ . '/../..' . '/lib/Database/Optimize/src/Optimize.php',
         'Simbiat\\Database\\Pool' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Pool.php',
         'Simbiat\\Database\\Query' => __DIR__ . '/../..' . '/lib/Database/Query/src/Query.php',
         'Simbiat\\FFXIV\\AbstractTrackerEntity' => __DIR__ . '/../..' . '/lib/FFXIV/Tracker/src/AbstractTrackerEntity.php',

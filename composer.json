@@ -59,7 +59,6 @@
             "Simbiat\\Database\\": [
                 "./lib/Database/Binder/src",
                 "./lib/Database/Manager/src",
-                "./lib/Database/Optimize/src",
                 "./lib/Database/Pool/src",
                 "./lib/Database/Query/src"
             ],

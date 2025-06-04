@@ -16,7 +16,6 @@
     <mapping directory="$PROJECT_DIR$/lib/Database/Binder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Maintainer" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Manager" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Optimize" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Pool" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Database/Query" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/FFXIV/CrestComponents" vcs="Git" />
