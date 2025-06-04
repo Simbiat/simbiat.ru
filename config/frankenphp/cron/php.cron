@@ -1,3 +1,4 @@
+* * * * * /usr/local/php/config/cron/php-minute.sh
 * * * * * /usr/local/php/config/cron/php-cron.sh
 * * * * * sleep 20 && /usr/local/php/config/cron/php-cron.sh
 * * * * * sleep 40 && /usr/local/php/config/cron/php-cron.sh

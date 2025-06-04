@@ -297,17 +297,6 @@ final class Config
                 'description' => 'Removing unused and orphaned uploaded files',
             ])->add();
             new Task()->settingsFromArray([
-                'task' => 'cookiesClean',
-                'function' => 'cookiesClean',
-                'object' => '\\'.Maintenance::class,
-                'maxTime' => 3600,
-                'minFrequency' => 60,
-                'retry' => 0,
-                'enabled' => 1,
-                'system' => 1,
-                'description' => 'Job to purge old cookies',
-            ])->add();
-            new Task()->settingsFromArray([
                 'task' => 'dbForBackup',
                 'function' => 'forBackup',
                 'object' => '\\'.Maintenance::class,
@@ -430,17 +419,6 @@ final class Config
                 'description' => 'Job to purge old logs',
             ])->add();
             new Task()->settingsFromArray([
-                'task' => 'sessionClean',
-                'function' => 'sessionClean',
-                'object' => '\\'.Maintenance::class,
-                'maxTime' => 3600,
-                'minFrequency' => 60,
-                'retry' => 0,
-                'enabled' => 1,
-                'system' => 1,
-                'description' => 'Job to purge old sessions',
-            ])->add();
-            new Task()->settingsFromArray([
                 'task' => 'sitemap',
                 'function' => 'generate',
                 'object' => '\\'.Generate::class,
@@ -501,16 +479,6 @@ final class Config
                 'frequency' => 86400,
                 'priority' => 0,
                 'message' => 'Cleaning uploaded files',
-                'nextrun' => strtotime('today 0:00'),
-            ])->add();
-            new TaskInstance()->settingsFromArray([
-                'task' => 'cookiesClean',
-                'instance' => 1,
-                'enabled' => 1,
-                'system' => 1,
-                'frequency' => 60,
-                'priority' => 9,
-                'message' => 'Removing old cookies',
                 'nextrun' => strtotime('today 0:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
@@ -671,16 +639,6 @@ final class Config
                 'nextrun' => strtotime('today 5:00'),
             ])->add();
             new TaskInstance()->settingsFromArray([
-                'task' => 'sessionClean',
-                'instance' => 1,
-                'enabled' => 1,
-                'system' => 1,
-                'frequency' => 60,
-                'priority' => 9,
-                'message' => 'Removing old sessions',
-                'nextrun' => strtotime('today 0:00'),
-            ])->add();
-            new TaskInstance()->settingsFromArray([
                 'task' => 'sitemap',
                 'instance' => 1,
                 'enabled' => 1,
@@ -700,7 +658,8 @@ final class Config
                 'message' => 'Removing old statistical data',
                 'nextrun' => strtotime('today 2:00'),
             ])->add();
-            
+            #Install the Maintainer library
+            $result = new \Simbiat\Database\Maintainer\Installer()->install();
         }
     }
 }
