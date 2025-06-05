@@ -157,6 +157,7 @@ class Maintenance
                 $dumpOrder .= $table['table'].' ';
             }
             file_put_contents(Config::$DDLDir.'/000-recommended_table_order.txt', $dumpOrder);
+            $this->dbOptimize();
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return $e->getMessage();
