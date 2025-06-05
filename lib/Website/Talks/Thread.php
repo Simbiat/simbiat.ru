@@ -301,7 +301,11 @@ class Thread extends Entity
             if ($withPost) {
                 $_POST['postform']['threadid'] = $newID;
                 $_POST['postform']['time'] = $data['time'];
-                return new Post()->add();
+                $result = new Post()->add();
+                if (empty($result['location'])) {
+                    #An error occurred, return it
+                    return $result;
+                }
             }
             return ['response' => true, 'location' => '/talks/threads/'.$newID];
         } catch (\Throwable $throwable) {
