@@ -190,6 +190,8 @@ services:
       MARIADB_ROOT_HOST: localhost
       MARIADB_RANDOM_ROOT_PASSWORD: true
       MARIADB_MYSQL_LOCALHOST_USER: true
+      #Pass database name for backup
+      DATABASE_NAME: ${DATABASE_NAME}
     networks:
       - webserver
     ports:
@@ -219,4 +221,6 @@ services:
                   chmod 0644 /etc/cron.d/mariadb.cron &&
                   crontab /etc/cron.d/mariadb.cron &&
                   cron &&
+                  #If maintenance flag is found, it implies crash during maintenance: rename it to indicate this
+                  mv /usr/local/backups/maintenance.flag /usr/local/backups/crash.flag
                   docker-entrypoint.sh mariadbd"
