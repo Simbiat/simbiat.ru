@@ -33,7 +33,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     rm -rf $physBackup;
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Enabling maintenance mode...";
     mariadb --execute "UPDATE \`${DATABASE_NAME}\`.\`sys__settings\` SET \`value\` = 1 WHERE \`setting\` = 'maintenance';"
-    if [ -f /usr/local/logs/mariadb.log ]; then
+    if [ -f ${optimizationQueries} ]; then
       echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Running optimization script...";
       mariadb < ${optimizationQueries}
       rm -f ${optimizationQueries}
