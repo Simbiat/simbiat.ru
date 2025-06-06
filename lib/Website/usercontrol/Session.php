@@ -52,7 +52,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      */
     public function open(string $path, string $name): bool
     {
-        #If controller was initialized - session is ready
+        #If the controller was initialized - session is ready
         return Query::$dbh !== null;
     }
     
@@ -101,7 +101,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         } else {
             $data = [];
         }
-        #Login through cookie if present
+        #Login through cookie if it is present
         $data = array_merge($data, $this->cookieLogin());
         $this->dataRefresh($data);
         return serialize($data);
@@ -414,10 +414,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      * @link  https://php.net/manual/en/sessionhandlerinterface.gc.php
      * @param int $max_lifetime <p>
      *                          Sessions that have not updated for
-     *                          the last maxlifetime seconds will be removed.
+     *                          the last max_lifetime seconds will be removed.
      *                          </p>
      * @return int|false <p>
-     *                          Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true on success.
+     *                          Returns the number of deleted sessions on success, or false on failure. Prior to PHP version 7.1, the function returned true in case of success.
      *                          Note this value is returned internally to PHP for processing.
      *                          </p>
      * @since 5.4
@@ -439,7 +439,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      * Create session ID
      * @link https://php.net/manual/en/sessionidinterface.create-sid.php
      * @return string <p>
-     * The new session ID. Note that this value is returned internally to PHP for processing.
+     * The new session ID. Notes that this value is returned internally to PHP for processing.
      * </p>
      */
     public function create_sid(): string

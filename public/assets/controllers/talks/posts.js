@@ -18,7 +18,8 @@ export class Posts {
             const button = this.postForm.querySelector('input[type=submit]');
             const formData = new FormData(this.postForm);
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
                 const data = response;
                 if (data.data === true) {
                     if (this.postForm) {
@@ -31,7 +32,12 @@ export class Posts {
                     window.location.href = data.location;
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', 10000);
+                    if (data.location) {
+                        addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                    }
+                    else {
+                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    }
                     buttonToggle(button);
                 }
             });
@@ -43,14 +49,15 @@ export class Posts {
                 const id = this.deletePostButton.getAttribute('data-post') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deletePostButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                    ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                        .then((response) => {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Post removed. Redirecting to thread...', 'success');
                             window.location.href = data.location;
                         }
                         else {
-                            addSnackbar(data.reason, 'failure', 10000);
+                            addSnackbar(data.reason, 'failure', snackbarFailLife);
                         }
                         if (this.deletePostButton) {
                             buttonToggle(this.deletePostButton);

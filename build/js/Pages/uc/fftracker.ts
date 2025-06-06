@@ -18,13 +18,13 @@ export class EditFFLinks
             //Get form data
             const formData = new FormData(this.form);
             buttonToggle(this.button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/fflink`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/fflink`, formData, 'json', 'POST', ajaxTimeout, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     addSnackbar('Character linked successfully. Reloading page...', 'success');
                     pageRefresh();
                 } else {
-                    addSnackbar(data.reason, 'failure', 10000);
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
                 }
                 if (this.button) {
                     buttonToggle(this.button);

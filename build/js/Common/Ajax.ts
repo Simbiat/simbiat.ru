@@ -1,20 +1,27 @@
 //Interface for common JSON responses from API endpoints. Doing this for the sake of strong typing
-interface ajaxJSONResponse extends JSON {
+interface ajaxJSONResponse extends JSON
+{
     status: number;
     data: boolean | number | string;
     location: string;
     reason: string;
 }
 
+// noinspection OverlyComplexFunctionJS
 async function ajax(
-    url: string, formData: FormData | null = null,
-    type = 'json', method = 'GET',
-    timeout = 60000, skipError = false
+    url: string,
+    formData: FormData | null = null,
+    type = 'json',
+    method = 'GET',
+    timeout = ajaxTimeout,
+    skipError = false
 ): Promise<ajaxJSONResponse | ArrayBuffer | Blob | FormData | boolean | string>
 {
     let result;
     const controller = new AbortController();
-    window.setTimeout(() => { controller.abort(); }, timeout);
+    window.setTimeout(() => {
+        controller.abort();
+    }, timeout);
     try {
         const response = await fetch(url, {
             'body': ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
@@ -35,26 +42,32 @@ async function ajax(
             'signal': controller.signal,
         });
         if (!response.ok && !skipError) {
-            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', 10000);
+            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', snackbarFailLife);
             return false;
         }
-        if (type === 'json') {
-            result = await response.json() as ajaxJSONResponse;
-        } else if (type === 'blob') {
-            result = await response.blob();
-        } else if (type === 'array') {
-            result = await response.arrayBuffer();
-        } else if (type === 'form') {
-            result = await response.formData();
-        } else {
-            result = await response.text();
+        switch (type) {
+            case 'json':
+                result = await response.json() as ajaxJSONResponse;
+                break;
+            case 'blob':
+                result = await response.blob();
+                break;
+            case 'array':
+                result = await response.arrayBuffer();
+                break;
+            case 'form':
+                result = await response.formData();
+                break;
+            default:
+                result = await response.text();
+                break;
         }
         return result;
-    } catch(err) {
+    } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
-            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', 10000);
+            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', snackbarFailLife);
         } else {
-            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', 10000);
+            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', snackbarFailLife);
         }
         return false;
     }

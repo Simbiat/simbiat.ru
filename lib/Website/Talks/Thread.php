@@ -55,7 +55,7 @@ class Thread extends Entity
     private bool $forPost = false;
     
     /**
-     * Function to set a flag, that data is needed for a post (for optimization)
+     * Function to set a flag, indicating that data is needed for a post (for optimization)
      * @param bool $forPost
      *
      * @return $this
@@ -455,7 +455,7 @@ class Thread extends Entity
         }
         #Check if posting to Knowledgebase and have proper permission, unless created by the poster
         if ($parent->type === 'Knowledgebase' && !$parent->owned && !in_array('createKnowledge', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `createKnowledge` permission to post in Knowledgebase section `'.$parent->name.'`'];
+            return ['http_error' => 403, 'reason' => 'No `createKnowledge` permission to post in Knowledgebase section.'];
         }
         #Check if posting to Blog and have proper permission, unless created by the poster
         if ($parent->type === 'Blog' && !$parent->owned) {
@@ -467,23 +467,24 @@ class Thread extends Entity
         }
         #Check if the parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed section `'.$parent->name.'`'];
+            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed section.'];
         }
         #Check if category (where we cannot create threads)
         if ($parent->type === 'Category') {
             return ['http_error' => 400, 'reason' => 'Can\' post in categories'];
         }
         #Check if the name is duplicated
+        $threadExists = Query::query('SELECT `threadid` FROM `talks__threads` WHERE `sectionid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']], return: 'value');
         if (
             (
-                #If the name is empty (a new section is being created)
+                #If the name is empty (a new thread is being created)
                 empty($this->name) ||
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            Query::query('SELECT `name` FROM `talks__threads` WHERE `sectionid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']], return: 'check')
+            \is_int($threadExists)
         ) {
-            return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
+            return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section.', 'location' => '/talks/threads/'.$threadExists];
         }
         #Enforce private flag and prevent time change for support threads
         if ($parent->type === 'Support') {
@@ -515,7 +516,7 @@ class Thread extends Entity
             #Ensure it's an array
             $data['altlinks'] = [];
         } else {
-            #Get supported links and set keys to respective values of the `type` field
+            #Get supported links and set keys to the respective values of the `type` field
             $altLinks = Editors::digitToKey(self::getAltLinkTypes(), 'type');
             foreach ($data['altlinks'] as $key => $link) {
                 if (!empty($link)) {
@@ -561,7 +562,7 @@ class Thread extends Entity
         if (!in_array('removeThreads', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `removeThreads` permission'];
         }
-        #Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside of API
+        #Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
         if (!$this->attempted) {
             $this->get();
         }

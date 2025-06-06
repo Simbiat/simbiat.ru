@@ -444,11 +444,24 @@ class Post extends Entity
         }
         #Check if the parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed thread `'.$parent->name.'`'];
+            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed thread.'];
         }
         #Check if the thread is private, and we can post in it
         if ($parent->private && !$parent->owned && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'Cannot post in private and not owned thread'];
+        }
+        #Check if duplicate post
+        $postExists = Query::query('SELECT `postid` FROM `talks__posts` WHERE `threadid`=:threadid AND `text`=:text;', [':text' => $data['text'], ':threadid' => [$data['threadid'], 'int']], return: 'value');
+        if (
+            (
+                #If the name is empty (a new section is being created)
+                empty($this->text) ||
+                #Or it's not empty and is different from the one we are trying to set
+                $this->text !== $data['text']
+            ) &&
+            \is_int($postExists)
+        ) {
+            return ['http_error' => 409, 'reason' => 'Post already exists in thread.', 'location' => '/talks/posts/'.$postExists];
         }
         #Check if replyto is set
         if (!empty($data['replyto'])) {

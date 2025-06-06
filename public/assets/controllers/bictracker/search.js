@@ -38,7 +38,7 @@ export class bicRefresh {
                             }
                         }
                         else {
-                            addSnackbar('Не удалось обновить библиотеку БИК', 'failure', 10000);
+                            addSnackbar('Не удалось обновить библиотеку БИК', 'failure', snackbarFailLife);
                             this.refreshButton.classList.remove('spin');
                         }
                     }

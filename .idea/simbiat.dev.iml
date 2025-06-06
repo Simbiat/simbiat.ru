@@ -29,6 +29,7 @@
       <sourceFolder url="file://$MODULE_DIR$/./lib/Database/Manager/src" isTestSource="false" packagePrefix="Simbiat\Database\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/Database/Query/src" isTestSource="false" packagePrefix="Simbiat\Database\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/Database/Maintainer/src" isTestSource="false" packagePrefix="Simbiat\Database\Maintainer\" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />

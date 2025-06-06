@@ -47,7 +47,7 @@ class Section extends Entity
     private bool $forThread = false;
     
     /**
-     * Function to set a flag to return only the data required for a thread (for the sake of optimiziation)
+     * Function to set a flag to return only the data required for a thread (for the sake of optimization)
      * @param bool $forThread
      *
      * @return $this
@@ -146,7 +146,7 @@ class Section extends Entity
                 #Categories are not meant to have threads in them
                 $data['threads'] = [];
             } else {
-                #If we have a blog or changelog - order by creation date, if we have a forum or support - by update date, if knowledgebase - by name
+                #If we have a blog or changelog - order by creation date, if we have a forum or support - by update date, if a knowledgebase - by name
                 $orderBy = match ($data['detailedType']) {
                     'Blog', 'Changelog' => '`created` DESC, `lastpost` DESC, `name` ASC',
                     'Forum' => '`lastpost` DESC, `name` ASC',
@@ -582,9 +582,10 @@ class Section extends Entity
         }
         #Check if the parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create subsection in closed section `'.$parent->name.'`'];
+            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create subsection in closed section.'];
         }
         #Check if the name is duplicated
+        $sectionExists = Query::query('SELECT `parentid` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']], return: 'value');
         if (
             (
                 #If the name is empty (a new section is being created)
@@ -592,9 +593,9 @@ class Section extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            Query::query('SELECT `name` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$this->id, 'int']], return: 'check')
+            \is_int($sectionExists)
         ) {
-            return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section `'.$parent->name.'`'];
+            return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section.', 'location' => '/talks/sections/'.$sectionExists];
         }
         #Check if a section type exists
         if (!Query::query('SELECT `typeid` FROM `talks__types` WHERE `typeid`=:type;', [':type' => [$data['type'], 'int']], return: 'check')) {

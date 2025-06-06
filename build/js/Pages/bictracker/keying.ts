@@ -53,7 +53,7 @@ export class bicKeying
             if (this.spinner) {
                 this.spinner.classList.remove('hidden');
             }
-            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying`, formData, 'json', 'POST', 60000, true)
+            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     //Change address

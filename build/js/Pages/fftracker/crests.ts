@@ -76,13 +76,13 @@ export class ffCrests
             const formData = new FormData(this.form);
             const button = document.querySelector('#ff_merge_crest_submit');
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/fftracker/merge_crest`, formData, 'json', 'POST', 60000, true).
+            void ajax(`${location.protocol}//${location.host}/api/fftracker/merge_crest`, formData, 'json', 'POST', ajaxTimeout, true).
                 then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
                         addSnackbar(`Crest merged successfully. Click <a href="${data.location}" download>here</a> to download.`, 'success', 0);
                     } else {
-                        addSnackbar(data.reason, 'failure', 10000);
+                        addSnackbar(data.reason, 'failure', snackbarFailLife);
                     }
                     buttonToggle(button as HTMLInputElement);
                 });

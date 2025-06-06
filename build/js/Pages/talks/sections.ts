@@ -29,43 +29,48 @@ export class Sections
         }
         if (this.sectionsList) {
             //Listener for marking sections private/public
-            document.querySelectorAll('.section_private[id^=section_private_checkbox_]').forEach((item) => {
-                //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: MouseEvent) => {
-                    Sections.makeSectionPrivate(event);
-                });
-            });
+            document.querySelectorAll('.section_private[id^=section_private_checkbox_]')
+                    .forEach((item) => {
+                        //Tracking click to be able to roll back change easily
+                        (item as HTMLElement).addEventListener('click', (event: MouseEvent) => {
+                            Sections.makeSectionPrivate(event);
+                        });
+                    });
             //Listener for opening/closing sections
-            document.querySelectorAll('.section_closed[id^=section_closed_checkbox_]').forEach((item) => {
-                //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: MouseEvent) => {
-                    Sections.closeSection(event);
-                });
-            });
+            document.querySelectorAll('.section_closed[id^=section_closed_checkbox_]')
+                    .forEach((item) => {
+                        //Tracking click to be able to roll back change easily
+                        (item as HTMLElement).addEventListener('click', (event: MouseEvent) => {
+                            Sections.closeSection(event);
+                        });
+                    });
             //Listener for ordering sections
-            document.querySelectorAll('.section_sequence[id^=section_sequence_]').forEach((item) => {
-                //Tracking click to be able to roll back change easily
-                item.addEventListener('change', (event: Event) => {
-                    this.orderSection(event);
-                });
-            });
+            document.querySelectorAll('.section_sequence[id^=section_sequence_]')
+                    .forEach((item) => {
+                        //Tracking click to be able to roll back change easily
+                        item.addEventListener('change', (event: Event) => {
+                            this.orderSection(event);
+                        });
+                    });
         }
         //Listeners if there are threads
         if (document.querySelector('#threads_list')) {
             //Listener for marking threads private/public
-            document.querySelectorAll('.thread_private[id^=thread_private_checkbox_]').forEach((item) => {
-                //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: MouseEvent) => {
-                    Sections.makeThreadPrivate(event);
-                });
-            });
+            document.querySelectorAll('.thread_private[id^=thread_private_checkbox_]')
+                    .forEach((item) => {
+                        //Tracking click to be able to roll back change easily
+                        (item as HTMLElement).addEventListener('click', (event: MouseEvent) => {
+                            Sections.makeThreadPrivate(event);
+                        });
+                    });
             //Listener for (un)pinning threads
-            document.querySelectorAll('.thread_pin[id^=thread_pin_checkbox_]').forEach((item) => {
-                //Tracking click to be able to roll back change easily
-                item.addEventListener('click', (event: MouseEvent) => {
-                    Sections.pinThread(event);
-                });
-            });
+            document.querySelectorAll('.thread_pin[id^=thread_pin_checkbox_]')
+                    .forEach((item) => {
+                        //Tracking click to be able to roll back change easily
+                        (item as HTMLElement).addEventListener('click', (event: MouseEvent) => {
+                            Sections.pinThread(event);
+                        });
+                    });
         }
     }
     
@@ -83,21 +88,22 @@ export class Sections
         }
         buttonToggle(checkbox);
         const sectionId = checkbox.getAttribute('data-section') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/mark${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                if (checkbox.checked) {
-                    checkbox.checked = false;
-                    addSnackbar('Section marked as public', 'success');
+        ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+            .then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        addSnackbar('Section marked as public', 'success');
+                    } else {
+                        checkbox.checked = true;
+                        addSnackbar('Section marked as private', 'success');
+                    }
                 } else {
-                    checkbox.checked = true;
-                    addSnackbar('Section marked as private', 'success');
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
                 }
-            } else {
-                addSnackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(checkbox);
-        });
+                buttonToggle(checkbox);
+            });
     }
     
     private static closeSection(event: Event): void
@@ -114,21 +120,22 @@ export class Sections
         }
         buttonToggle(checkbox);
         const sectionId = checkbox.getAttribute('data-section') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                if (checkbox.checked) {
-                    checkbox.checked = false;
-                    addSnackbar('Section opened', 'success');
+        ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+            .then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        addSnackbar('Section opened', 'success');
+                    } else {
+                        checkbox.checked = true;
+                        addSnackbar('Section closed', 'success');
+                    }
                 } else {
-                    checkbox.checked = true;
-                    addSnackbar('Section closed', 'success');
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
                 }
-            } else {
-                addSnackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(checkbox);
-        });
+                buttonToggle(checkbox);
+            });
     }
     
     private orderSection(event: Event): void
@@ -138,25 +145,26 @@ export class Sections
         const orderInput = event.target as HTMLInputElement;
         const initialValue = orderInput.getAttribute('data-initial') ?? '0';
         const newValue = empty(orderInput.value) ? '0' : orderInput.value;
-        //Do anything only if new value is different from initial value. Not sure if change event can happen without change in the value, but better be safe and reduce potential calls
+        //Do anything only if new value is different from the initial value. Not sure if change event can happen without change in the value, but better be safe and reduce potential calls
         if (initialValue !== newValue) {
             buttonToggle(orderInput);
             //Generate form data
             const sectionId = orderInput.getAttribute('data-section') ?? '';
             const formData = new FormData();
             formData.append('order', newValue);
-            void ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/order`, formData, 'json', 'PATCH', 60000, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    orderInput.setAttribute('data-initial', newValue);
-                    this.sort();
-                    addSnackbar('Order updated', 'success');
-                } else {
-                    orderInput.value = initialValue;
-                    addSnackbar(data.reason, 'failure', 10000);
-                }
-                buttonToggle(orderInput);
-            });
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/order`, formData, 'json', 'PATCH', ajaxTimeout, true)
+                .then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        orderInput.setAttribute('data-initial', newValue);
+                        this.sort();
+                        addSnackbar('Order updated', 'success');
+                    } else {
+                        orderInput.value = initialValue;
+                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    }
+                    buttonToggle(orderInput);
+                });
         }
     }
     
@@ -174,7 +182,7 @@ export class Sections
                     const aText = a.querySelector('.section_name a');
                     const bText = b.querySelector('.section_name a');
                     let order = 0;
-                    //Get value of order inputs comparison. Important, that we compare "b" against "a" for descending order
+                    //Get the value of order inputs comparison. Important, that we compare "b" against "a" for descending order
                     if (aSequence && bSequence) {
                         //I do not see a way of "skip" an argument in function call without using `undefined`, so suppressing the check for the line
                         // eslint-disable-next-line no-undefined
@@ -184,7 +192,8 @@ export class Sections
                     if (order === 0) {
                         //Here we are compare "a" against "b" for ascending order
                         if (aText && bText) {
-                            return String(aText.textContent).localeCompare(String(bText.textContent));
+                            return String(aText.textContent)
+                                .localeCompare(String(bText.textContent));
                         }
                     }
                     return order;
@@ -212,18 +221,23 @@ export class Sections
                 formData.append('newSection[icon]', 'false');
             }
             //Add timezone
-            formData.append('newSection[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            formData.append('newSection[timezone]', timezone);
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', 60000, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    addSnackbar('Section created. Reloading...', 'success');
-                    pageRefresh();
-                } else {
-                    addSnackbar(data.reason, 'failure', 10000);
-                }
-                buttonToggle(button as HTMLInputElement);
-            });
+            ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        addSnackbar('Section created. Reloading...', 'success');
+                        pageRefresh();
+                    } else {
+                        if (data.location) {
+                            addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                        } else {
+                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        }
+                    }
+                    buttonToggle(button as HTMLInputElement);
+                });
         }
     }
     
@@ -242,16 +256,21 @@ export class Sections
                 formData.append('curSection[icon]', 'false');
             }
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[sectionid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    addSnackbar('Section updated. Reloading...', 'success');
-                    pageRefresh();
-                } else {
-                    addSnackbar(data.reason, 'failure', 10000);
-                    buttonToggle(button as HTMLInputElement);
-                }
-            });
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[sectionid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        addSnackbar('Section updated. Reloading...', 'success');
+                        pageRefresh();
+                    } else {
+                        if (data.location) {
+                            addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                        } else {
+                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        }
+                        buttonToggle(button as HTMLInputElement);
+                    }
+                });
         }
     }
     
@@ -262,18 +281,19 @@ export class Sections
                 const id = this.deleteSectionButton.getAttribute('data-section') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deleteSectionButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/sections/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
-                        const data = response as ajaxJSONResponse;
-                        if (data.data === true) {
-                            addSnackbar('Section removed. Redirecting to parent...', 'success');
-                            window.location.href = data.location;
-                        } else {
-                            addSnackbar(data.reason, 'failure', 10000);
-                        }
-                        if (this.deleteSectionButton) {
-                            buttonToggle(this.deleteSectionButton);
-                        }
-                    });
+                    ajax(`${location.protocol}//${location.host}/api/talks/sections/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                        .then((response) => {
+                            const data = response as ajaxJSONResponse;
+                            if (data.data === true) {
+                                addSnackbar('Section removed. Redirecting to parent...', 'success');
+                                window.location.href = data.location;
+                            } else {
+                                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            }
+                            if (this.deleteSectionButton) {
+                                buttonToggle(this.deleteSectionButton);
+                            }
+                        });
                 }
             }
         }
@@ -294,25 +314,30 @@ export class Sections
                 formData.append('newThread[ogimage]', 'false');
             }
             //Add timezone
-            formData.append('newThread[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            formData.append('newThread[timezone]', timezone);
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', 60000, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    if (this.addThreadForm) {
-                        //Notify TinyMCE, that data was saved
-                        const textarea = this.addThreadForm.querySelector('textarea');
-                        if (textarea && !empty(textarea.id)) {
-                            saveTinyMCE(textarea.id);
+            ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        if (this.addThreadForm) {
+                            //Notify TinyMCE, that data was saved
+                            const textarea = this.addThreadForm.querySelector('textarea');
+                            if (textarea && !empty(textarea.id)) {
+                                saveTinyMCE(textarea.id);
+                            }
+                        }
+                        addSnackbar('Thread created. Reloading...', 'success');
+                        window.location.href = data.location;
+                    } else {
+                        if (data.location) {
+                            addSnackbar(data.reason + ` View the thread <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                        } else {
+                            addSnackbar(data.reason, 'failure', snackbarFailLife);
                         }
                     }
-                    addSnackbar('Thread created. Reloading...', 'success');
-                    window.location.href = data.location;
-                } else {
-                    addSnackbar(data.reason, 'failure', 10000);
-                }
-                buttonToggle(button as HTMLInputElement);
-            });
+                    buttonToggle(button as HTMLInputElement);
+                });
         }
     }
     
@@ -330,21 +355,22 @@ export class Sections
         }
         buttonToggle(checkbox);
         const threadId = checkbox.getAttribute('data-thread') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/mark${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                if (checkbox.checked) {
-                    checkbox.checked = false;
-                    addSnackbar('Thread marked as public', 'success');
+        ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+            .then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        addSnackbar('Thread marked as public', 'success');
+                    } else {
+                        checkbox.checked = true;
+                        addSnackbar('Thread marked as private', 'success');
+                    }
                 } else {
-                    checkbox.checked = true;
-                    addSnackbar('Thread marked as private', 'success');
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
                 }
-            } else {
-                addSnackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(checkbox);
-        });
+                buttonToggle(checkbox);
+            });
     }
     
     private static pinThread(event: Event): void
@@ -361,20 +387,21 @@ export class Sections
         }
         buttonToggle(checkbox);
         const threadId = checkbox.getAttribute('data-thread') ?? '';
-        void ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                if (checkbox.checked) {
-                    checkbox.checked = false;
-                    addSnackbar('Thread unpinned', 'success');
+        ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+            .then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        addSnackbar('Thread unpinned', 'success');
+                    } else {
+                        checkbox.checked = true;
+                        addSnackbar('Thread pinned', 'success');
+                    }
                 } else {
-                    checkbox.checked = true;
-                    addSnackbar('Thread pinned', 'success');
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
                 }
-            } else {
-                addSnackbar(data.reason, 'failure', 10000);
-            }
-            buttonToggle(checkbox);
-        });
+                buttonToggle(checkbox);
+            });
     }
 }

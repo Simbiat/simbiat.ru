@@ -32,7 +32,7 @@ export class EditSessions
             type = 'sessions';
             buttons = this.sessionButtons;
         } else {
-            addSnackbar('Unknown button type', 'failure', 10000);
+            addSnackbar('Unknown button type', 'failure', snackbarFailLife);
             return;
         }
         //Traverse in reverse, because of numeric row IDs used for rows removal
@@ -58,11 +58,11 @@ export class EditSessions
             typeSingular = 'Session';
             formData.set('session', String(button.getAttribute('data-session')));
         } else {
-            addSnackbar('Unknown button type', 'failure', 10000);
+            addSnackbar('Unknown button type', 'failure', snackbarFailLife);
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete`, formData, 'json', 'DELETE', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete`, formData, 'json', 'DELETE', ajaxTimeout, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === true) {
                 deleteRow(button);
@@ -71,7 +71,7 @@ export class EditSessions
                 }
             } else {
                 buttonToggle(button);
-                addSnackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', snackbarFailLife);
             }
         });
     }

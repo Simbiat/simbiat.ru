@@ -27,24 +27,29 @@ export class Posts
             //Get form data
             const formData = new FormData(this.postForm);
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    //Notify TinyMCE, that data was saved
-                    if (this.postForm) {
-                        const textarea = this.postForm.querySelector('textarea');
-                        if (textarea && !empty(textarea.id)) {
-                            saveTinyMCE(textarea.id);
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[postid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        //Notify TinyMCE, that data was saved
+                        if (this.postForm) {
+                            const textarea = this.postForm.querySelector('textarea');
+                            if (textarea && !empty(textarea.id)) {
+                                saveTinyMCE(textarea.id);
+                            }
                         }
+                        addSnackbar('Post updated. Reloading...', 'success');
+                        //pageRefresh();
+                        window.location.href = data.location;
+                    } else {
+                        if (data.location) {
+                            addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                        } else {
+                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        }
+                        buttonToggle(button as HTMLInputElement);
                     }
-                    addSnackbar('Post updated. Reloading...', 'success');
-                    //pageRefresh();
-                    window.location.href = data.location;
-                } else {
-                    addSnackbar(data.reason, 'failure', 10000);
-                    buttonToggle(button as HTMLInputElement);
-                }
-            });
+                });
         }
     }
     
@@ -55,18 +60,19 @@ export class Posts
                 const id = this.deletePostButton.getAttribute('data-post') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deletePostButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
-                        const data = response as ajaxJSONResponse;
-                        if (data.data === true) {
-                            addSnackbar('Post removed. Redirecting to thread...', 'success');
-                            window.location.href = data.location;
-                        } else {
-                            addSnackbar(data.reason, 'failure', 10000);
-                        }
-                        if (this.deletePostButton) {
-                            buttonToggle(this.deletePostButton);
-                        }
-                    });
+                    ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                        .then((response) => {
+                            const data = response as ajaxJSONResponse;
+                            if (data.data === true) {
+                                addSnackbar('Post removed. Redirecting to thread...', 'success');
+                                window.location.href = data.location;
+                            } else {
+                                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            }
+                            if (this.deletePostButton) {
+                                buttonToggle(this.deletePostButton);
+                            }
+                        });
                 }
             }
         }

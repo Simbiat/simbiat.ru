@@ -47,10 +47,10 @@ class LoginForm extends HTMLElement
             if (empty(formData.get('signinup[type]'))) {
                 formData.set('signinup[type]', 'logout');
             }
-            formData.set('signinup[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            formData.set('signinup[timezone]', timezone);
             const button = this.loginForm.querySelector('#signinup_submit');
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', 60000, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', ajaxTimeout, true).then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
                     if (formData.get('signinup[type]') === 'remind') {
@@ -59,7 +59,7 @@ class LoginForm extends HTMLElement
                         pageRefresh();
                     }
                 } else {
-                    addSnackbar(data.reason, 'failure', 10000);
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
                 }
                 buttonToggle(button as HTMLInputElement);
             });

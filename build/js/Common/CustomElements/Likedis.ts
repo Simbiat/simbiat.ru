@@ -36,11 +36,11 @@ class Likedis extends HTMLElement
             action = 'dislike';
         }
         if (this.postId === 0) {
-            addSnackbar('No post ID', 'failure', 10000);
+            addSnackbar('No post ID', 'failure', snackbarFailLife);
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.postId}/${action}`, null, 'json', 'PATCH', 60000, true).then((response) => {
+        void ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.postId}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
             const data = response as ajaxJSONResponse;
             if (data.data === 0) {
                 this.updateCounts(data.data);
@@ -49,7 +49,7 @@ class Likedis extends HTMLElement
             } else if (data.data === -1) {
                 this.updateCounts(data.data);
             } else {
-                addSnackbar(data.reason, 'failure', 10000);
+                addSnackbar(data.reason, 'failure', snackbarFailLife);
             }
             buttonToggle(button);
         });

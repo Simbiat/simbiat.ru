@@ -26,7 +26,8 @@ export class Threads {
                 this.deleteThread();
             });
         }
-        document.querySelectorAll('.replyto_button').forEach((item) => {
+        document.querySelectorAll('.replyto_button')
+            .forEach((item) => {
             item.addEventListener('click', (event) => {
                 this.replyTo(event.target);
             });
@@ -46,9 +47,10 @@ export class Threads {
             }
             const button = this.addPostForm.querySelector('input[type=submit]');
             const formData = new FormData(this.addPostForm);
-            formData.append('postForm[timezone]', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            formData.append('postForm[timezone]', timezone);
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', 60000, true).then((response) => {
+            ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
                 const data = response;
                 if (data.data === true) {
                     if (this.addPostForm) {
@@ -60,7 +62,12 @@ export class Threads {
                     window.location.href = data.location;
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', 10000);
+                    if (data.location) {
+                        addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                    }
+                    else {
+                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    }
                 }
                 buttonToggle(button);
             });
@@ -72,14 +79,15 @@ export class Threads {
                 const id = this.deleteThreadButton.getAttribute('data-thread') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deleteThreadButton);
-                    void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete`, null, 'json', 'DELETE', 60000, true).then((response) => {
+                    ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                        .then((response) => {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Thread removed. Redirecting to parent...', 'success');
                             window.location.href = data.location;
                         }
                         else {
-                            addSnackbar(data.reason, 'failure', 10000);
+                            addSnackbar(data.reason, 'failure', snackbarFailLife);
                         }
                         if (this.deleteThreadButton) {
                             buttonToggle(this.deleteThreadButton);
@@ -95,7 +103,8 @@ export class Threads {
             const verb = this.closeThreadButton.value.toLowerCase();
             if (!empty(id)) {
                 buttonToggle(this.closeThreadButton);
-                void ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}`, null, 'json', 'PATCH', 60000, true).then((response) => {
+                ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+                    .then((response) => {
                     const data = response;
                     if (data.data === true) {
                         if (verb === 'close') {
@@ -107,7 +116,7 @@ export class Threads {
                         pageRefresh();
                     }
                     else {
-                        addSnackbar(data.reason, 'failure', 10000);
+                        addSnackbar(data.reason, 'failure', snackbarFailLife);
                     }
                     if (this.closeThreadButton) {
                         buttonToggle(this.closeThreadButton);
@@ -128,14 +137,20 @@ export class Threads {
                 formData.append('curThread[ogimage]', 'false');
             }
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit`, formData, 'json', 'POST', 60000, true).then((response) => {
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+                .then((response) => {
                 const data = response;
                 if (data.data === true) {
                     addSnackbar('Thread updated. Reloading...', 'success');
                     pageRefresh();
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', 10000);
+                    if (data.location) {
+                        addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                    }
+                    else {
+                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    }
                     buttonToggle(button);
                 }
             });

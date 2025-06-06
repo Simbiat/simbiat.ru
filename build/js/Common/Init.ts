@@ -1,3 +1,7 @@
+const timezone = Intl.DateTimeFormat()
+                     .resolvedOptions().timeZone;
+const ajaxTimeout = 60000;
+const snackbarFailLife = 10000;
 //Runs initialization routines
 function init(): void
 {

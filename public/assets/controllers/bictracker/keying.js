@@ -46,7 +46,7 @@ export class bicKeying {
             if (this.spinner) {
                 this.spinner.classList.remove('hidden');
             }
-            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying`, formData, 'json', 'POST', 60000, true)
+            void ajax(`${location.protocol}//${location.host}/api/bictracker/keying`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                 const data = response;
                 updateHistory(`${location.protocol}//${location.host}/bictracker/keying/${bicKey}/${accKey}/`, `Ключевание счёта ${accKey}`);

@@ -29,7 +29,7 @@ export class ffEntity {
                             pageRefresh();
                         }
                         else {
-                            addSnackbar('Failed to update data', 'failure', 10000);
+                            addSnackbar('Failed to update data', 'failure', snackbarFailLife);
                         }
                     });
                 }, 500);
