@@ -6,7 +6,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   physBackup=/usr/local/backups/physical
   logicBackup=/usr/local/backups
   tablesOrder=$(cat /usr/local/DDL/000-recommended_table_order.txt)
-  optimizationQueries=/usr/local/DDL/000-optimization_commands.txt
+  optimizationQueries=/usr/local/backups/optimization_commands.sql
   logicalName="daily"
   if [ "$(date +%u)" -eq 1 ]; then
     logicalName="weekly"

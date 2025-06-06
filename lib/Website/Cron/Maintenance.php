@@ -191,7 +191,7 @@ class Maintenance
             }
         }
         #Dump commands to file
-        file_put_contents(Config::$DDLDir.'/000-optimization_commands.txt', implode(PHP_EOL, $commands));
+        file_put_contents(Config::$workDir.'/data/backups/optimization_commands.sql', implode(PHP_EOL, $commands));
         return true;
     }
     
