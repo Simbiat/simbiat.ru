@@ -380,8 +380,7 @@ class User extends Entity
                 $_SESSION['username'] = $newName;
             }
             if (session_status() === PHP_SESSION_ACTIVE) {
-                /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                @session_regenerate_id(true);
+                Security::session_regenerate_id(true);
             }
             #Log the change
             Security::log('User details change', 'Changed name', ['name' => ['old' => $this->username, 'new' => $newName]]);
@@ -635,8 +634,7 @@ class User extends Entity
             Security::log('Login', 'Successful login');
         }
         if (session_status() === PHP_SESSION_ACTIVE) {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
-            @session_regenerate_id(true);
+            Security::session_regenerate_id(true);
         }
         if ($afterRegister) {
             return ['status' => 201, 'response' => true];
@@ -777,8 +775,7 @@ class User extends Entity
             ]
         );
         if (session_status() === PHP_SESSION_ACTIVE) {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
-            @session_regenerate_id(true);
+            Security::session_regenerate_id(true);
         }
         Security::log('Password change', 'Attempted to change password', $result);
         return $result;

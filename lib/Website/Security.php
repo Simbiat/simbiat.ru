@@ -34,9 +34,11 @@ class Security
      * Function to encrypt stuff.
      *
      * **DO NOT use for permanent data storage**
+     *
      * @param string $data
      *
      * @return string
+     * @throws \Random\RandomException
      */
     public static function encrypt(#[\SensitiveParameter] string $data): string
     {
@@ -44,7 +46,7 @@ class Security
             return '';
         }
         #Generate IV
-        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-GCM'));
+        $iv = random_bytes(openssl_cipher_iv_length('AES-256-GCM'));
         #This is where the tag will be written by OpenSSL
         $tag = '';
         #Ecnrypt and als get the tag
@@ -55,9 +57,11 @@ class Security
     
     /**
      * Function to decrypt stuff
+     *
      * @param string $data
      *
      * @return string
+     * @noinspection NoMBMultibyteAlternative
      */
     public static function decrypt(string $data): string
     {
@@ -86,7 +90,9 @@ class Security
         } catch (\Throwable) {
             $token = '';
         }
-        @header('X-CSRF-Token: '.$token);
+        if (!headers_sent()) {
+            header('X-CSRF-Token: '.$token);
+        }
         return $token;
     }
     
@@ -97,7 +103,7 @@ class Security
      * Time of 0.005 seems a good middle ground to keep average to allow a speedy webpages load (with ~500-600 ms on pages that are relatively small, but do have some computation)
      *
      * @param bool   $forceRefresh Force update of values
-     * @param float  $maxTimeSpent Amount of time we are ok to spend
+     * @param float  $maxTimeSpent The amount of time we are ok to spend
      * @param string $stringToTest Test string to test the time
      *
      * @return array
@@ -109,7 +115,7 @@ class Security
             #Read the file
             $argon = json_decode(file_get_contents(Config::$securitySettings), true);
             if (is_array($argon)) {
-                #Update settings, if they are present and comply with minimum requirements
+                #Update the settings if they are present and comply with minimum requirements
                 if (!isset($argon['memory_cost']) || $argon['memory_cost'] < 1024) {
                     $argon['memory_cost'] = 1024;
                 }
@@ -129,6 +135,9 @@ class Security
         do {
             $iterations++;
             $start = microtime(true);
+            #We do not store the results, and these are not real credentials, so suppressing the respective inspections
+            /** @noinspection UnusedFunctionResultInspection */
+            /** @noinspection HardcodedCredentialsInspection */
             password_hash($stringToTest, PASSWORD_ARGON2ID, ['threads' => $threads, 'time_cost' => $iterations]);
             $end = microtime(true);
         } while (($end - $start) <= $maxTimeSpent);
@@ -138,6 +147,9 @@ class Security
             $power++;
             $memory = 2 ** $power;
             $start = microtime(true);
+            #We do not store the results, and these are not real credentials, so suppressing the respective inspections
+            /** @noinspection UnusedFunctionResultInspection */
+            /** @noinspection HardcodedCredentialsInspection */
             password_hash($stringToTest, PASSWORD_ARGON2ID, ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory]);
             $end = microtime(true);
         } while (($end - $start) <= $maxTimeSpent);
@@ -166,11 +178,14 @@ class Security
     
     /**
      * Function to generate passphrase for encrypt and decrypt functions
+     *
      * @return string
+     * @throws \Random\RandomException
      */
     public static function genCrypto(): string
     {
-        return bin2hex(openssl_random_pseudo_bytes(openssl_cipher_iv_length('AES-256-GCM')));
+        $pass = random_bytes(openssl_cipher_iv_length('AES-256-GCM'));
+        return bin2hex($pass);
     }
     
     /**
@@ -190,7 +205,7 @@ class Security
         #Get IP
         $ip = $_SESSION['IP'] ?? null;
         #Get username
-        $userid = $_SESSION['userid'] ?? $userid ?? Config::userIDs['Unknown user'];
+        $userid = (int)($_SESSION['userid'] ?? $userid ?? Config::userIDs['Unknown user']);
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {
@@ -314,5 +329,22 @@ class Security
         $parsedUrl['query'] = IRI::rawBuildQuery($queryParams);
         #Reconstruct the full URL
         return IRI::restoreUri($parsedUrl);
+    }
+    
+    /**
+     * Wrapper for regular `session_regenerate_id`, to always include CSRF regeneration.
+     * @param bool $delete_old_session Whether to delete the old associated session or not.
+     *
+     * @return bool
+     */
+    public static function session_regenerate_id(bool $delete_old_session = false): bool
+    {
+        try {
+            session_regenerate_id($delete_old_session);
+            $_SESSION['CSRF'] = self::genToken();
+            return true;
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }

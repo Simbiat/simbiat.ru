@@ -120,8 +120,7 @@ class Email extends Entity
      */
     public function subscribe(): bool
     {
-        /** @noinspection PhpUsageOfSilenceOperatorInspection */
-        @session_regenerate_id(true);
+        Security::session_regenerate_id(true);
         $result = Query::query('UPDATE `uc__emails` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
@@ -136,8 +135,7 @@ class Email extends Entity
         if ($_SESSION['userid'] === 1) {
             $result = Query::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
         } else {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
-            @session_regenerate_id(true);
+            Security::session_regenerate_id(true);
             $result = Query::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         }
         Security::log('User details change', 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
@@ -150,8 +148,7 @@ class Email extends Entity
      */
     public function delete(): bool
     {
-        /** @noinspection PhpUsageOfSilenceOperatorInspection */
-        @session_regenerate_id(true);
+        Security::session_regenerate_id(true);
         $result = Query::query('DELETE FROM `uc__emails` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
         return $result;
@@ -172,8 +169,7 @@ class Email extends Entity
         $result = Query::query('INSERT IGNORE INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
         if ($result) {
-            /** @noinspection PhpUsageOfSilenceOperatorInspection */
-            @session_regenerate_id(true);
+            Security::session_regenerate_id(true);
             return ['status' => 201, 'response' => $this->confirm()];
         }
         return ['http_error' => 500, 'reason' => 'Failed to write email to database'];

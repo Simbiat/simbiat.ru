@@ -96,10 +96,6 @@ class HomePage
                 if (Config::$dbup && !Config::$dbUpdate && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
                     session_start();
-                    #Update CSRF token
-                    if ($uri[0] !== 'api') {
-                        $_SESSION['CSRF'] = Security::genToken();
-                    }
                     #Show that the client is unsupported
                     if (isset($_SESSION['UA']['unsupported']) && $_SESSION['UA']['unsupported'] === true) {
                         self::$http_error = ['client' => $_SESSION['UA']['client'] ?? 'unknown', 'http_error' => 418, 'reason' => 'Teapot'];
@@ -185,6 +181,10 @@ class HomePage
                 return false;
             }
             try {
+                #Update CSRF token
+                if (session_status() === PHP_SESSION_ACTIVE) {
+                    $_SESSION['CSRF'] = Security::genToken();
+                }
                 $twigVars = array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]);
                 if (isset($twigVars['http_error'])) {
                     Headers::clientReturn($twigVars['http_error'], false);
@@ -210,6 +210,10 @@ class HomePage
         } else {
             ob_start();
             try {
+                #Update CSRF token
+                if (session_status() === PHP_SESSION_ACTIVE) {
+                    $_SESSION['CSRF'] = Security::genToken();
+                }
                 $twigVars = array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]);
                 if (isset($twigVars['http_error'])) {
                     Headers::clientReturn($twigVars['http_error'], false);

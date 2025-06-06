@@ -585,7 +585,7 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create subsection in closed section.'];
         }
         #Check if the name is duplicated
-        $sectionExists = Query::query('SELECT `parentid` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']], return: 'value');
+        $sectionExists = Query::query('SELECT `sectionid` FROM `talks__sections` WHERE `parentid`=:sectionid AND `name`=:name;', [':name' => $data['name'], ':sectionid' => [$data['parentid'], 'int']], return: 'value');
         if (
             (
                 #If the name is empty (a new section is being created)

@@ -6,6 +6,7 @@ namespace Simbiat\Website\Api\UserControl;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
+use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\User;
 
 /**
@@ -80,8 +81,7 @@ class Password extends Api
                 return ['http_error' => 403, 'reason' => 'Bad password reset token'];
             }
         }
-        /** @noinspection PhpUsageOfSilenceOperatorInspection */
-        @session_regenerate_id(true);
+        Security::session_regenerate_id(true);
         #Change password
         if ($user->passChange($_POST['new_password'])) {
             return ['response' => true];
