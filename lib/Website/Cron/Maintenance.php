@@ -178,6 +178,7 @@ class Maintenance
         #Ensure settings are set to what we want
         $settings->setTableFineTune($_ENV['DATABASE_NAME'], [], 'analyze_histogram', true)
             ->setTableFineTune($_ENV['DATABASE_NAME'], [], 'analyze_histogram_auto', true)
+            ->setThresholdFragmentation($_ENV['DATABASE_NAME'], [], 5.0)
             ->setRun($_ENV['DATABASE_NAME'], [], 'check', true)
             ->setRun($_ENV['DATABASE_NAME'], [], 'fulltext_rebuild', true)
             ->setGlobalFineTune('prefer_compressed', true)
