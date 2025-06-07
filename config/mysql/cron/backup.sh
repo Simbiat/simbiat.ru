@@ -58,6 +58,9 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p"${MARIADB_BACKUP_PASSWORD}" "$logicBackup/$currentDate-${logicalName}.7z" "$logicBackup/$currentDate-${logicalName}.sql"
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Zipping backup for $currentDate (physical)..."
     7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -p"${MARIADB_BACKUP_PASSWORD}" "$logicBackup/$currentDate-physical.7z" $physBackup
+    #For some reason physical backup is no longer being deleted after compression, even though it should be, so using a separate command to do that, and also to remove any loose SQL files (should not happen normally)
+    rm -rf $logicBackup/*.sql;
+    rm -rf $physBackup;
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Backup completed"
   } >> "$logFile" 2>&1
   rm -f /usr/local/backups/maintenance.flag
