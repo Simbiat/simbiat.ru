@@ -209,7 +209,7 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
         }
         #Sanitize data
-        $data = $_POST['postform'] ?? [];
+        $data = $_POST['post_form'] ?? [];
         $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;
@@ -346,7 +346,7 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'Post is locked and no `editLocked` permission'];
         }
         #Sanitize data
-        $data = $_POST['postform'] ?? [];
+        $data = $_POST['post_form'] ?? [];
         $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;

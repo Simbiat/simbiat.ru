@@ -239,7 +239,7 @@ class Thread extends Entity
         if (!in_array('canPost', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
         }
-        if ($withPost && (empty($_POST['postform']) || empty($_POST['postform']['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $_POST['postform']['text']) === 1)) {
+        if ($withPost && (empty($_POST['post_form']) || empty($_POST['post_form']['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $_POST['post_form']['text']) === 1)) {
             return ['http_error' => 400, 'reason' => 'No post text provided'];
         }
         #Sanitize data
@@ -299,8 +299,8 @@ class Thread extends Entity
             }
             #Add post
             if ($withPost) {
-                $_POST['postform']['thread_id'] = $newID;
-                $_POST['postform']['time'] = $data['time'];
+                $_POST['post_form']['thread_id'] = $newID;
+                $_POST['post_form']['time'] = $data['time'];
                 $result = new Post()->add();
                 if (empty($result['location'])) {
                     #An error occurred, return it

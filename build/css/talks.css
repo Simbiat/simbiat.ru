@@ -451,7 +451,7 @@ og-image hide-banner {
     left: .5rem;
 }
 
-#deletePostForm {
+#delete_post_form {
     border-width: var(--border-width);
     border-radius: var(--border-radius);
     border-style: solid;
