@@ -58,7 +58,7 @@
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
         <ul class="flexList">
             {% for focus, value in freecompany.focus %}
-                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="linkIcon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus }}</li>{% endif %}
+                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="linkIcon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus|capitalize }}</li>{% endif %}
             {% endfor %}
         </ul>
     {% endif %}
@@ -69,7 +69,7 @@
             {% if freecompany.seeking.tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}
                 <ul class="flexList">
                     {% for seeking, value in freecompany.seeking %}
-                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="linkIcon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking }}</li>{% endif %}
+                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="linkIcon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking|capitalize }}</li>{% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}
