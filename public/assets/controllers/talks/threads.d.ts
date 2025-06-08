@@ -1,9 +1,9 @@
 export declare class Threads {
-    private readonly addPostForm;
+    private readonly add_post_form;
     private readonly editThreadForm;
     private readonly closeThreadButton;
     private readonly deleteThreadButton;
-    private readonly postForm;
+    private readonly post_form;
     constructor();
     private replyTo;
     private addPost;

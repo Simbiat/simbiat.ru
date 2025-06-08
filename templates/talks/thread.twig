@@ -25,5 +25,5 @@
     {% endfor %}
 {% endif %}
 {% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
-    {{ include('common/elements/postform.twig', {'verb': 'add', 'newThread': false, 'thread_id': id}, with_context = false) }}
+    {{ include('common/elements/postform.twig', {'verb': 'add', 'new_thread': false, 'thread_id': id}, with_context = false) }}
 {% endif %}

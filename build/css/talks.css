@@ -469,20 +469,20 @@ post-form {
     display: block;
     margin-top: 1rem;
 }
-#postForm_submit {
+#post_form_submit {
     width: 98%
 }
-#postForm_submit_wrapper {
+#post_form_submit_wrapper {
     position: relative;
 }
-#postForm_submit_wrapper::after {
+#post_form_submit_wrapper::after {
     content: '📩';
     position: absolute;
     top: 0.75rem;
     right: 4rem;
     z-index: 1;
 }
-#postForm_submit_wrapper::before {
+#post_form_submit_wrapper::before {
     content: '📩';
     position: absolute;
     top: 0.75rem;

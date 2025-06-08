@@ -1,17 +1,17 @@
 export class Threads {
-    addPostForm = null;
+    add_post_form = null;
     editThreadForm = null;
     closeThreadButton = null;
     deleteThreadButton = null;
-    postForm = null;
+    post_form = null;
     constructor() {
-        this.addPostForm = document.querySelector('#postForm');
+        this.add_post_form = document.querySelector('#post_form');
         this.editThreadForm = document.querySelector('#editThreadForm');
         this.closeThreadButton = document.querySelector('#close_thread');
         this.deleteThreadButton = document.querySelector('#delete_thread');
-        this.postForm = document.querySelector('post-form');
-        if (this.addPostForm) {
-            submitIntercept(this.addPostForm, this.addPost.bind(this));
+        this.post_form = document.querySelector('post-form');
+        if (this.add_post_form) {
+            submitIntercept(this.add_post_form, this.addPost.bind(this));
         }
         if (this.editThreadForm) {
             submitIntercept(this.editThreadForm, this.editThread.bind(this));
@@ -35,25 +35,25 @@ export class Threads {
     }
     replyTo(button) {
         const reply_to = button.getAttribute('data-post_id') ?? '';
-        if (this.postForm && reply_to) {
-            this.postForm.replyTo(reply_to);
+        if (this.post_form && reply_to) {
+            this.post_form.replyTo(reply_to);
         }
     }
     addPost() {
-        if (this.addPostForm) {
-            const textarea = this.addPostForm.querySelector('textarea');
+        if (this.add_post_form) {
+            const textarea = this.add_post_form.querySelector('textarea');
             if (textarea && !empty(textarea.id)) {
                 saveTinyMCE(textarea.id, true);
             }
-            const button = this.addPostForm.querySelector('input[type=submit]');
-            const formData = new FormData(this.addPostForm);
-            formData.append('postForm[timezone]', timezone);
+            const button = this.add_post_form.querySelector('input[type=submit]');
+            const formData = new FormData(this.add_post_form);
+            formData.append('post_form[timezone]', timezone);
             buttonToggle(button);
             ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
-                    if (this.addPostForm) {
+                    if (this.add_post_form) {
                         if (textarea && !empty(textarea.id)) {
                             saveTinyMCE(textarea.id);
                         }
@@ -131,13 +131,13 @@ export class Threads {
             const formData = new FormData(this.editThreadForm);
             const og_image = this.editThreadForm.querySelector('input[type=file]');
             if (og_image?.files?.[0]) {
-                formData.append('curThread[og_image]', 'true');
+                formData.append('current_thread[og_image]', 'true');
             }
             else {
-                formData.append('curThread[og_image]', 'false');
+                formData.append('current_thread[og_image]', 'false');
             }
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('current_thread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {

@@ -1,5 +1,5 @@
 {% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
-    <tab-name class="nav_tab" data-url="#postForm">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</tab-name>
+    <tab-name class="nav_tab" data-url="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</tab-name>
 {% endif %}
 {% if (owned and 'editOwnThreads' in session_data.permissions) or (not owned and 'editOthersThreads' in session_data.permissions) %}
     <tab-name class="nav_tab">Edit</tab-name>

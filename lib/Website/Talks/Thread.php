@@ -243,7 +243,7 @@ class Thread extends Entity
             return ['http_error' => 400, 'reason' => 'No post text provided'];
         }
         #Sanitize data
-        $data = $_POST['newThread'] ?? [];
+        $data = $_POST['new_thread'] ?? [];
         $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;
@@ -332,7 +332,7 @@ class Thread extends Entity
             return ['http_error' => 403, 'reason' => 'No `editOthersThreads` permission'];
         }
         #Sanitize data
-        $data = $_POST['curThread'] ?? [];
+        $data = $_POST['current_thread'] ?? [];
         $sanitize = $this->sanitizeInput($data, true);
         if (is_array($sanitize)) {
             return $sanitize;

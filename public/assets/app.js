@@ -5979,7 +5979,7 @@ class PostForm extends HTMLElement {
                 this.label.innerHTML = `Replying to post #${post_id}`;
             }
         }
-        window.location.href = '#postForm';
+        window.location.href = '#post_form';
     }
 }
 class SelectCustom extends HTMLElement {

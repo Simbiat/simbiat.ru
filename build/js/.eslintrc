@@ -101,7 +101,7 @@
         "sort-vars": "error",
         "symbol-description": "error",
         "yoda": "error",
-        "array-bracket-newline": ["warning", "consistent"],
+        "array-bracket-newline": [2, "consistent"],
         "array-element-newline": "off",
         "arrow-parens": "error",
         "arrow-spacing": "error",

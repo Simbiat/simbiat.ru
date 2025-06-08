@@ -1,11 +1,11 @@
 export class Posts {
-    postForm = null;
+    post_form = null;
     deletePostButton = null;
     constructor() {
-        this.postForm = document.querySelector('post-form form');
+        this.post_form = document.querySelector('post-form form');
         this.deletePostButton = document.querySelector('#delete_post');
-        if (this.postForm) {
-            submitIntercept(this.postForm, this.editPost.bind(this));
+        if (this.post_form) {
+            submitIntercept(this.post_form, this.editPost.bind(this));
         }
         if (this.deletePostButton) {
             this.deletePostButton.addEventListener('click', () => {
@@ -14,16 +14,16 @@ export class Posts {
         }
     }
     editPost() {
-        if (this.postForm) {
-            const button = this.postForm.querySelector('input[type=submit]');
-            const formData = new FormData(this.postForm);
+        if (this.post_form) {
+            const button = this.post_form.querySelector('input[type=submit]');
+            const formData = new FormData(this.post_form);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('post_form[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
-                    if (this.postForm) {
-                        const textarea = this.postForm.querySelector('textarea');
+                    if (this.post_form) {
+                        const textarea = this.post_form.querySelector('textarea');
                         if (textarea && !empty(textarea.id)) {
                             saveTinyMCE(textarea.id);
                         }

@@ -1,42 +1,42 @@
-<form role="form" id="addThreadForm" name="addThreadForm" autocomplete="off" class="middle">
-    <input form="addThreadForm" type="hidden" name="verb" value="add" required>
-    <input form="addThreadForm" type="hidden" name="newThread[parent_id]" value="{{ section_id }}" required>
+<form role="form" id="add_thread_form" name="add_thread_form" autocomplete="off" class="middle">
+    <input form="add_thread_form" type="hidden" name="verb" value="add" required>
+    <input form="add_thread_form" type="hidden" name="new_thread[parent_id]" value="{{ section_id }}" required>
     <div class="float_label_div">
-        <input form="addThreadForm" type="text" aria-required="true" required name="newThread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+        <input form="add_thread_form" type="text" aria-required="true" required name="new_thread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
         <label for="new_thread_name">Name</label>
     </div>
     {% if 'postPrivate' in session_data.permissions %}
         <span class="radio_and_label">
-            <input form="addSThreadForm" id="new_thread_private" class="thread_private" name="newThread[private]" type="checkbox">
+            <input form="addSThreadForm" id="new_thread_private" class="thread_private" name="new_thread[private]" type="checkbox">
             <label for="new_thread_private" data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
         </span>
     {% endif %}
     {% if 'closeOwnThreads' in session_data.permissions %}
         <span class="radio_and_label">
-            <input form="addThreadForm" id="new_thread_closed" class="thread_closed" name="newThread[closed]" type="checkbox">
+            <input form="add_thread_form" id="new_thread_closed" class="thread_closed" name="new_thread[closed]" type="checkbox">
             <label for="new_thread_closed" data-tooltip="Open threads allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
         </span>
     {% endif %}
     {% if 'canPin' in session_data.permissions %}
         <span class="radio_and_label">
-            <input form="addThreadForm" id="new_thread_pin" class="thread_pin" name="newThread[pinned]" type="checkbox">
+            <input form="add_thread_form" id="new_thread_pin" class="thread_pin" name="new_thread[pinned]" type="checkbox">
             <label for="new_thread_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change."></label>
         </span>
     {% endif %}
     {% if type != 'Support' %}
         <br>
         <div class="float_label_div">
-            <select form="addThreadForm" id="newThread_language" name="newThread[language]">
+            <select form="add_thread_form" id="new_thread_language" name="new_thread[language]">
                 {% for language in thread_languages %}
                     <option value="{{ language.value }}"{% if language.value == 'en' %} selected{% endif %}>{{ language.name }}{% if language.value == 'en' %} (Default){% endif %}</option>
                 {% endfor %}
             </select>
-            <label for="newThread_language" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>
+            <label for="new_thread_language" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>
         </div>
-        {{ include('common/elements/imageupload.twig', {'formName': 'addThreadForm', 'placeholder': 'Custom banner', 'inputName': 'newThread[og_image]', 'previewClasses': 'middle', 'required': false, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link.<br>If not set no banner will be shown on page, and social media will show a general one.<br>Only PNG files accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
+        {{ include('common/elements/imageupload.twig', {'formName': 'add_thread_form', 'placeholder': 'Custom banner', 'inputName': 'new_thread[og_image]', 'previewClasses': 'middle', 'required': false, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link.<br>If not set no banner will be shown on page, and social media will show a general one.<br>Only PNG files accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
         {% if 'postScheduled' in session_data.permissions %}
             <div class="float_label_div">
-                <input form="addThreadForm" id="new_thread_time" name="newThread[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
+                <input form="add_thread_form" id="new_thread_time" name="new_thread[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
                 <label for="new_thread_time" data-tooltip="You can select a future time at which, the thread and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
             </div>
             <br>
@@ -46,13 +46,13 @@
             <p>If the content being posted is available on any of the supported websites, you can add links to them below. Links will be shown below the first post in the thread.</p>
             {% for altlink in thread_link_types %}
                 <span class="float_label_div">
-                    <input form="addThreadForm" type="url" aria-required="false" name="newThread[altLinks][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
+                    <input form="add_thread_form" type="url" aria-required="false" name="new_thread[altLinks][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
                     <label for="new_thread_{{ altlink.type }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
                 </span>
             {% endfor %}
         </details>
     {% endif %}
-    {{ include('common/elements/postform.twig', {'verb': 'add', 'newThread': true}, with_context = false) }}
-    <input role="button" form="addThreadForm" type="submit" name="newThread[submit]" id="addThread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Post">
+    {{ include('common/elements/postform.twig', {'verb': 'add', 'new_thread': true}, with_context = false) }}
+    <input role="button" form="add_thread_form" type="submit" name="new_thread[submit]" id="addThread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Post">
     <img id="addThread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
 </form>

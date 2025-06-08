@@ -1,5 +1,5 @@
 export declare class Posts {
-    private readonly postForm;
+    private readonly post_form;
     private readonly deletePostButton;
     constructor();
     private editPost;

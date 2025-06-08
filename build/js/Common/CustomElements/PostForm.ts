@@ -24,6 +24,6 @@ class PostForm extends HTMLElement
             }
         }
         //Scroll to form
-        window.location.href = '#postForm';
+        window.location.href = '#post_form';
     }
 }

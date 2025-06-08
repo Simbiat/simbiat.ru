@@ -1,15 +1,15 @@
 export class Posts
 {
-    private readonly postForm: HTMLFormElement | null = null;
+    private readonly post_form: HTMLFormElement | null = null;
     private readonly deletePostButton: HTMLInputElement | null = null;
     
     public constructor()
     {
-        this.postForm = document.querySelector('post-form form');
+        this.post_form = document.querySelector('post-form form');
         this.deletePostButton = document.querySelector('#delete_post');
         //Listener for form
-        if (this.postForm) {
-            submitIntercept(this.postForm, this.editPost.bind(this));
+        if (this.post_form) {
+            submitIntercept(this.post_form, this.editPost.bind(this));
         }
         //Listener for deletion
         if (this.deletePostButton) {
@@ -21,19 +21,19 @@ export class Posts
     
     private editPost(): void
     {
-        if (this.postForm) {
+        if (this.post_form) {
             //Get submit button
-            const button = this.postForm.querySelector('input[type=submit]');
+            const button = this.post_form.querySelector('input[type=submit]');
             //Get form data
-            const formData = new FormData(this.postForm);
+            const formData = new FormData(this.post_form);
             buttonToggle(button as HTMLInputElement);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('postForm[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('post_form[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
                         //Notify TinyMCE, that data was saved
-                        if (this.postForm) {
-                            const textarea = this.postForm.querySelector('textarea');
+                        if (this.post_form) {
+                            const textarea = this.post_form.querySelector('textarea');
                             if (textarea && !empty(textarea.id)) {
                                 saveTinyMCE(textarea.id);
                             }

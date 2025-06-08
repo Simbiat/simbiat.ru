@@ -1,20 +1,20 @@
 export class Sections {
     addSectionForm = null;
-    addThreadForm = null;
+    add_thread_form = null;
     editSectionForm = null;
     sectionsList = null;
     deleteSectionButton = null;
     constructor() {
         this.sectionsList = document.querySelector('#sections_list');
         this.addSectionForm = document.querySelector('#addSectionForm');
-        this.addThreadForm = document.querySelector('#addThreadForm');
+        this.add_thread_form = document.querySelector('#add_thread_form');
         this.editSectionForm = document.querySelector('#editSectionForm');
         this.deleteSectionButton = document.querySelector('#delete_section');
         if (this.addSectionForm) {
             submitIntercept(this.addSectionForm, this.addSection.bind(this));
         }
-        if (this.addThreadForm) {
-            submitIntercept(this.addThreadForm, this.addThread.bind(this));
+        if (this.add_thread_form) {
+            submitIntercept(this.add_thread_form, this.addThread.bind(this));
         }
         if (this.editSectionForm) {
             submitIntercept(this.editSectionForm, this.editSection.bind(this));
@@ -268,24 +268,24 @@ export class Sections {
         }
     }
     addThread() {
-        if (this.addThreadForm) {
-            const button = this.addThreadForm.querySelector('input[type=submit]');
-            const formData = new FormData(this.addThreadForm);
-            const og_image = this.addThreadForm.querySelector('input[type=file]');
+        if (this.add_thread_form) {
+            const button = this.add_thread_form.querySelector('input[type=submit]');
+            const formData = new FormData(this.add_thread_form);
+            const og_image = this.add_thread_form.querySelector('input[type=file]');
             if (og_image?.files?.[0]) {
-                formData.append('newThread[og_image]', 'true');
+                formData.append('new_thread[og_image]', 'true');
             }
             else {
-                formData.append('newThread[og_image]', 'false');
+                formData.append('new_thread[og_image]', 'false');
             }
-            formData.append('newThread[timezone]', timezone);
+            formData.append('new_thread[timezone]', timezone);
             buttonToggle(button);
             ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
-                    if (this.addThreadForm) {
-                        const textarea = this.addThreadForm.querySelector('textarea');
+                    if (this.add_thread_form) {
+                        const textarea = this.add_thread_form.querySelector('textarea');
                         if (textarea && !empty(textarea.id)) {
                             saveTinyMCE(textarea.id);
                         }
