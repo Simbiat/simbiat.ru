@@ -121,7 +121,7 @@ class Email extends Entity
     public function subscribe(): bool
     {
         Security::session_regenerate_id(true);
-        $result = Query::query('UPDATE `uc__emails` SET `subscribed`=1 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = Query::query('UPDATE `uc__emails` SET `subscribed`=1 WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -132,11 +132,11 @@ class Email extends Entity
      */
     public function unsubscribe(): bool
     {
-        if ($_SESSION['userid'] === 1) {
+        if ($_SESSION['user_id'] === 1) {
             $result = Query::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `email`=:email', [':email' => $this->id]);
         } else {
             Security::session_regenerate_id(true);
-            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=0 WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         }
         Security::log('User details change', 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
@@ -149,7 +149,7 @@ class Email extends Entity
     public function delete(): bool
     {
         Security::session_regenerate_id(true);
-        $result = Query::query('DELETE FROM `uc__emails` WHERE `userid`=:userid AND `email`=:email', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = Query::query('DELETE FROM `uc__emails` WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
@@ -166,7 +166,7 @@ class Email extends Entity
             return ['http_error' => 403, 'reason' => 'Bad email provided'];
         }
         #Add email
-        $result = Query::query('INSERT IGNORE INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUE (:userid, :email, 0, NULL);', [':userid' => [$_SESSION['userid'], 'int'], ':email' => $this->id]);
+        $result = Query::query('INSERT IGNORE INTO `uc__emails` (`user_id`, `email`, `subscribed`, `activation`) VALUE (:user_id, :email, 0, NULL);', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         Security::log('User details change', 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
         if ($result) {
             Security::session_regenerate_id(true);
@@ -177,19 +177,19 @@ class Email extends Entity
     
     /**
      * Activate user
-     * @param int $userid
+     * @param int $user_id
      *
      * @return bool
      */
-    public function activate(int $userid): bool
+    public function activate(int $user_id): bool
     {
         $queries = [
             #Remove the code from DB
-            ['UPDATE `uc__emails` SET `activation`=NULL WHERE `userid`=:userid AND `email`=:email', [':userid' => [$userid, 'int'], ':email' => $this->id]],
+            ['UPDATE `uc__emails` SET `activation`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$user_id, 'int'], ':email' => $this->id]],
             #Add user to register users
-            ['INSERT IGNORE INTO `uc__user_to_group`(`userid`, `groupid`) VALUES (:userid, :groupid)', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Users'], 'int']]],
+            ['INSERT IGNORE INTO `uc__user_to_group`(`user_id`, `group_id`) VALUES (:user_id, :group_id)', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::groupsIDs['Users'], 'int']]],
             #Remove user from unverified users
-            ['DELETE FROM `uc__user_to_group` WHERE `userid`=:userid AND `groupid`=:groupid', [':userid' => [$userid, 'int'], ':groupid' => [Config::groupsIDs['Unverified'], 'int']]],
+            ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::groupsIDs['Unverified'], 'int']]],
         ];
         try {
             $result = Query::query($queries);
@@ -211,7 +211,7 @@ class Email extends Entity
     {
         if (empty($username)) {
             try {
-                $data = Query::query('SELECT `uc__emails`.`userid`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`userid`=`uc__users`.`userid` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
+                $data = Query::query('SELECT `uc__emails`.`user_id`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`user_id`=`uc__users`.`user_id` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
             } catch (\Throwable) {
                 return false;
             }
@@ -220,16 +220,16 @@ class Email extends Entity
                 return true;
             }
             $username = $data['username'];
-            $userid = $data['userid'];
+            $user_id = $data['user_id'];
         } else {
             #Get user ID for link generation
             try {
-                $userid = Query::query('SELECT `userid` FROM `uc__users` WHERE `username`=:username', [':username' => $username], return: 'value');
+                $user_id = Query::query('SELECT `user_id` FROM `uc__users` WHERE `username`=:username', [':username' => $username], return: 'value');
             } catch (\Throwable) {
                 return false;
             }
         }
-        if (empty($userid)) {
+        if (empty($user_id)) {
             #Avoid potential abuse to get a list of registered mails
             return true;
         }
@@ -239,9 +239,9 @@ class Email extends Entity
             #Insert into mails database
             try {
                 Query::query(
-                    'UPDATE `uc__emails` SET `activation`=:activation WHERE `userid`=:userid AND `email`=:mail',
+                    'UPDATE `uc__emails` SET `activation`=:activation WHERE `user_id`=:user_id AND `email`=:mail',
                     [
-                        ':userid' => [$userid, 'int'],
+                        ':user_id' => [$user_id, 'int'],
                         ':mail' => $this->id,
                         ':activation' => Security::passHash($activation),
                     ]
@@ -250,7 +250,7 @@ class Email extends Entity
                 return false;
             }
         }
-        $this->send('Account Activation', compact('activation', 'userid'), $username);
+        $this->send('Account Activation', compact('activation', 'user_id'), $username);
         return true;
     }
     

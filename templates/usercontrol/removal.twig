@@ -5,6 +5,6 @@
 <p>If unlinking of your account from respective sections, threads, posts and files is not enough, and you want to remove them as well, please, create a post in <a href="/talks/sections/5">Support</a>, so that administration can check and ensure that some potentially useful information is not lost.</p>
 <form id="user_removal" class="middle">
     <span class="radio_and_label"><input form="user_removal" id="hard_removal" type="checkbox"><label for="hard_removal">I want it hard</label></span><br>
-    <input role="button" form="user_removal" type="submit" name="submit" id="remove_user" formaction="/api/uc/{{ session_data.userid }}/remove" formmethod="post" formtarget="_self" value="Remove me" class="warning">
+    <input role="button" form="user_removal" type="submit" name="submit" id="remove_user" formaction="/api/uc/{{ session_data.user_id }}/remove" formmethod="post" formtarget="_self" value="Remove me" class="warning">
     <img loading="lazy" decoding="async" id="removal_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Removing user...">
 </form>

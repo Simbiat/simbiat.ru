@@ -46,7 +46,7 @@ class Register extends Api
         if (mb_strlen($_POST['signinup']['password'], 'UTF-8') < 8) {
             return ['http_error' => 400, 'reason' => 'Password is shorter than 8 symbols'];
         }
-        #Get timezone
+        #Get time zone
         $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
         if (!\in_array($timezone, timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
@@ -95,7 +95,7 @@ class Register extends Api
                 ],
                 #Insert into mails database
                 [
-                    'INSERT INTO `uc__emails` (`userid`, `email`, `subscribed`, `activation`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :mail, 1, :activation)',
+                    'INSERT INTO `uc__emails` (`user_id`, `email`, `subscribed`, `activation`) VALUES ((SELECT `user_id` FROM `uc__users` WHERE `username`=:username), :mail, 1, :activation)',
                     [
                         ':username' => $_POST['signinup']['username'],
                         ':mail' => $_POST['signinup']['email'],
@@ -104,10 +104,10 @@ class Register extends Api
                 ],
                 #Insert into the group table
                 [
-                    'INSERT INTO `uc__user_to_group` (`userid`, `groupid`) VALUES ((SELECT `userid` FROM `uc__users` WHERE `username`=:username), :groupid)',
+                    'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES ((SELECT `user_id` FROM `uc__users` WHERE `username`=:username), :group_id)',
                     [
                         ':username' => $_POST['signinup']['username'],
-                        ':groupid' => [Config::groupsIDs['Unverified'], 'int'],
+                        ':group_id' => [Config::groupsIDs['Unverified'], 'int'],
                     ]
                 ],
             ];

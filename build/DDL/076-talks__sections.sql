@@ -1,7 +1,7 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__sections` (
   `sectionid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Forum ID',
-  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Forum name',
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'Forum name',
   `description` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Optional description of the forum',
   `parentid` int(10) unsigned DEFAULT NULL COMMENT 'ID of the parent forum',
   `sequence` int(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Optional order for sorting. The higher the value, the higher in the list a forum will be. After that name sorting is expected.	',

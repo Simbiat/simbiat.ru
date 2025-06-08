@@ -139,7 +139,7 @@
     {% for datapoint in ffstats.data.servers.characters %}
         <tr>
             <td>{{ datapoint.value }}</td>
-            <td>{% if datapoint.genderid == 0 %}♀{% else %}♂{% endif %}</td>
+            <td>{% if datapoint.gender == 0 %}♀{% else %}♂{% endif %}</td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}

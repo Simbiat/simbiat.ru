@@ -26,13 +26,13 @@ class Post extends Entity
     public ?int $closed = null;
     public bool $owned = false;
     public ?int $created = null;
-    public int $createdBy = 1;
-    public string $createdBy_name = 'Deleted user';
+    public int $author = 1;
+    public string $author_name = 'Deleted user';
     public ?int $updated = null;
-    public int $updatedBy = 1;
-    public string $updatedBy_name = 'Deleted user';
-    public ?int $threadid = null;
-    public array $replyTo = [];
+    public int $editor = 1;
+    public string $editor_name = 'Deleted user';
+    public ?int $thread_id = null;
+    public array $reply_to = [];
     public string $text = '';
     public string $avatar = '/assets/images/avatar.svg';
     #List of parents for the section
@@ -52,25 +52,25 @@ class Post extends Entity
     protected function getFromDB(): array
     {
         #Set a page required for threads
-        $data = new Posts([':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__posts`.`postid`=:postid')->listEntities();
+        $data = new Posts([':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`post_id`=:post_id')->listEntities();
         if (!is_array($data) || empty($data['entities'])) {
             return [];
         }
         $data = $data['entities'][0];
         #Get details of a post, to which this is a reply to
-        if (!empty($data['replyto'])) {
-            $data['replyto'] = new Posts([':postid' => [$data['replyto'], 'int'], ':userid' => [$_SESSION['userid'], 'int']], '`talks__posts`.`postid`=:postid')->listEntities();
-            if (empty($data['replyto']['entities'])) {
-                $data['replyto'] = [];
+        if (!empty($data['reply_to'])) {
+            $data['reply_to'] = new Posts([':post_id' => [$data['reply_to'], 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`post_id`=:post_id')->listEntities();
+            if (empty($data['reply_to']['entities'])) {
+                $data['reply_to'] = [];
             } else {
-                $data['replyto'] = $data['replyto']['entities'][0];
+                $data['reply_to'] = $data['reply_to']['entities'][0];
             }
         } else {
-            $data['replyto'] = [];
+            $data['reply_to'] = [];
         }
-        $data['thread'] = new Thread($data['threadid'])->setForPost(true)->getArray();
-        $data['page'] = $this->getPage($data['threadid']);
-        $data['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`fileid` = `sys__files`.`fileid` WHERE `postid`=:postid;', [':postid' => $this->id], return: 'all');
+        $data['thread'] = new Thread($data['thread_id'])->setForPost(true)->getArray();
+        $data['page'] = $this->getPage($data['thread_id']);
+        $data['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $this->id], return: 'all');
         return $data;
     }
     
@@ -84,20 +84,20 @@ class Post extends Entity
     {
         $this->name = $fromDB['name'];
         $this->type = $fromDB['thread']['type'];
-        $this->threadid = $fromDB['threadid'];
+        $this->thread_id = $fromDB['thread_id'];
         $this->system = (bool)$fromDB['system'];
         $this->private = (bool)$fromDB['thread']['private'];
         $this->locked = (bool)$fromDB['locked'];
         $this->closed = $fromDB['thread']['closed'] ?? null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->createdBy = $fromDB['createdby'] ?? Config::userIDs['Deleted user'];
-        $this->owned = ($this->createdBy === $_SESSION['userid']);
-        $this->createdBy_name = $fromDB['createdby_name'] ?? 'Deleted user';
+        $this->author = $fromDB['author'] ?? Config::userIDs['Deleted user'];
+        $this->owned = ($this->author === $_SESSION['user_id']);
+        $this->author_name = $fromDB['author_name'] ?? 'Deleted user';
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->updatedBy = $fromDB['updatedby'] ?? Config::userIDs['Deleted user'];
-        $this->updatedBy_name = $fromDB['updatedby_name'] ?? 'Deleted user';
+        $this->editor = $fromDB['editor'] ?? Config::userIDs['Deleted user'];
+        $this->editor_name = $fromDB['editor_name'] ?? 'Deleted user';
         $this->parents = $fromDB['thread']['parents'];
-        $this->replyTo = $fromDB['replyto'];
+        $this->reply_to = $fromDB['reply_to'];
         $this->avatar = $fromDB['avatar'];
         $this->text = $fromDB['text'];
         $this->likes = (int)$fromDB['likes'];
@@ -117,7 +117,7 @@ class Post extends Entity
         $posts = [];
         try {
             #Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-            $posts = Query::query('SELECT `postid` FROM `talks__posts` WHERE `threadid`=:threadid'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':threadid' => [$thread, 'int']], return: 'column');
+            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':thread_id' => [$thread, 'int']], return: 'column');
         } catch (\Throwable) {
             #Do nothing
         }
@@ -131,7 +131,7 @@ class Post extends Entity
     }
     
     /**
-     * Get post's history, only if respective permission is available. Text is retrieved only for a specific version if it exists
+     * Get post's history only if the respective permission is available. Text is retrieved only for a specific version if it exists
      * @param int $time
      *
      * @return array
@@ -140,7 +140,7 @@ class Post extends Entity
     {
         try {
             if (in_array('viewPostsHistory', $_SESSION['permissions'], true)) {
-                $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `postid`=:postid ORDER BY `time` DESC;', [':postid' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'pair');
+                $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `post_id`=:post_id ORDER BY `time` DESC;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'pair');
             } else {
                 $data = [];
             }
@@ -167,14 +167,14 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'No `canLike` permission'];
         }
         #Get the current value (if any)
-        $isLiked = (int)(Query::query('SELECT `likevalue` FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
-            [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']], return: 'value'
+        $isLiked = (int)(Query::query('SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+            [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], return: 'value'
         ) ?? 0);
         if (($dislike && $isLiked === -1) || (!$dislike && $isLiked === 1)) {
             #Remove the (dis)like
             try {
-                $result = Query::query('DELETE FROM `talks__likes` WHERE `postid`=:postid AND `userid`=:userid;',
-                    [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int']]
+                $result = Query::query('DELETE FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
+                    [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']]
                 );
             } catch (\Throwable) {
                 $result = false;
@@ -186,8 +186,8 @@ class Post extends Entity
         }
         #Insert/update the value
         try {
-            $result = Query::query('INSERT INTO `talks__likes` (`postid`, `userid`, `likevalue`) VALUES (:postid, :userid, :like) ON DUPLICATE KEY UPDATE `likevalue`=:like;',
-                [':postid' => [$this->id, 'int'], ':userid' => [$_SESSION['userid'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']]
+            $result = Query::query('INSERT INTO `talks__likes` (`post_id`, `user_id`, `like_value`) VALUES (:post_id, :user_id, :like) ON DUPLICATE KEY UPDATE `like_value`=:like;',
+                [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'], ':like' => [($dislike ? -1 : 1), 'int']]
             );
         } catch (\Throwable) {
             $result = false;
@@ -217,30 +217,30 @@ class Post extends Entity
         try {
             #Create the post itself
             $newID = Query::query(
-                'INSERT INTO `talks__posts`(`postid`, `threadid`, `replyto`, `created`, `updated`, `createdby`, `updatedby`, `text`) VALUES (NULL,:threadid,:replyto,:time,:time,:userid,:userid,:text);',
+                'INSERT INTO `talks__posts`(`post_id`, `thread_id`, `reply_to`, `created`, `updated`, `author`, `editor`, `text`) VALUES (NULL,:thread_id,:reply_to,:time,:time,:user_id,:user_id,:text);',
                 [
-                    ':threadid' => [$data['threadid'], 'int'],
-                    ':replyto' => [
-                        (empty($data['replyto']) ? null : $data['replyto']),
-                        (empty($data['replyto']) ? 'null' : 'int')
+                    ':thread_id' => [$data['thread_id'], 'int'],
+                    ':reply_to' => [
+                        (empty($data['reply_to']) ? null : $data['reply_to']),
+                        (empty($data['reply_to']) ? 'null' : 'int')
                     ],
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
                         'datetime'
                     ],
-                    ':userid' => [$_SESSION['userid'], 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
                     ':text' => $data['text'],
                 ], return: 'increment'
             );
             #Update last post for thread
-            Query::query('UPDATE `talks__threads` SET `updated`=`updated`, `lastpost`=:time, `lastpostby`=:userid WHERE `threadid`=:threadid;',
+            Query::query('UPDATE `talks__threads` SET `updated`=`updated`, `last_post`=:time, `last_poster`=:user_id WHERE `thread_id`=:thread_id;',
                 [
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
                         'datetime'
                     ],
-                    ':threadid' => [$data['threadid'], 'int'],
-                    ':userid' => [$_SESSION['userid'], 'int'],
+                    ':thread_id' => [$data['thread_id'], 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
                 ]
             );
             #Refresh data
@@ -250,8 +250,8 @@ class Post extends Entity
             #Link attachments
             $this->attach([], $data['inlineFiles']);
             #Get the up-to-date data for the thread to get the last page for location
-            $thread = new Thread($data['threadid'])->get();
-            return ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($thread->lastPage === 1 ? '' : '?page='.$thread->lastPage).'#post_'.$newID];
+            $thread = new Thread($data['thread_id'])->get();
+            return ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.'/'.($thread->lastPage === 1 ? '' : '?page='.$thread->lastPage).'#post_'.$newID];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to create new post'];
@@ -270,26 +270,26 @@ class Post extends Entity
         try {
             $fileQueries = [];
             $fileQueries[] = [
-                'DELETE FROM `talks__attachments` WHERE `postid`=:postid;',
+                'DELETE FROM `talks__attachments` WHERE `post_id`=:post_id;',
                 [
-                    ':postid' => [$this->id, 'int'],
+                    ':post_id' => [$this->id, 'int'],
                 ],
             ];
             foreach ($regular as $file) {
                 $fileQueries[] = [
-                    'INSERT INTO `talks__attachments` (`postid`, `fileid`, `inline`) VALUES (:postid, :fileid, 0);',
+                    'INSERT INTO `talks__attachments` (`post_id`, `file_id`, `inline`) VALUES (:post_id, :file_id, 0);',
                     [
-                        ':postid' => [$this->id, 'int'],
-                        ':fileid' => $file,
+                        ':post_id' => [$this->id, 'int'],
+                        ':file_id' => $file,
                     ],
                 ];
             }
             foreach ($inline as $file) {
                 $fileQueries[] = [
-                    'INSERT INTO `talks__attachments` (`postid`, `fileid`, `inline`) VALUES (:postid, :fileid, 1);',
+                    'INSERT INTO `talks__attachments` (`post_id`, `file_id`, `inline`) VALUES (:post_id, :file_id, 1);',
                     [
-                        ':postid' => [$this->id, 'int'],
-                        ':fileid' => $file,
+                        ':post_id' => [$this->id, 'int'],
+                        ':file_id' => $file,
                     ],
                 ];
             }
@@ -308,10 +308,10 @@ class Post extends Entity
     private function addHistory(string $text): void
     {
         try {
-            Query::query('INSERT INTO `talks__posts_history` (`postid`, `userid`, `text`) VALUES (:postid, :userid, :text);',
+            Query::query('INSERT INTO `talks__posts_history` (`post_id`, `user_id`, `text`) VALUES (:post_id, :user_id, :text);',
                 [
-                    ':postid' => [$this->id, 'int'],
-                    ':userid' => [$_SESSION['userid'], 'int'],
+                    ':post_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
                     ':text' => $text,
                 ]
             );
@@ -326,7 +326,7 @@ class Post extends Entity
      */
     public function edit(): array
     {
-        $success = ['response' => true, 'location' => '/talks/threads/'.$this->threadid.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
+        $success = ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
         #Check permission
         if (!in_array('canPost', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
@@ -352,7 +352,7 @@ class Post extends Entity
             return $sanitize;
         }
         #Check if we are moving post and have permission for that
-        if ($this->threadid !== $data['threadid'] && !in_array('movePosts', $_SESSION['permissions'], true)) {
+        if ($this->thread_id !== $data['thread_id'] && !in_array('movePosts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `movePosts` permission'];
         }
         #Check if the text is different
@@ -365,20 +365,20 @@ class Post extends Entity
             $queries = [];
             #Update text
             $queries[] = [
-                'UPDATE `talks__posts` SET `threadid`=:threadid,`updatedby`=:userid,`text`=:text, `updated`=GREATEST(`created`, `updated`) WHERE `postid`=:postid;',
+                'UPDATE `talks__posts` SET `thread_id`=:thread_id,`editor`=:user_id,`text`=:text, `updated`=GREATEST(`created`, `updated`) WHERE `post_id`=:post_id;',
                 [
-                    ':postid' => [$this->id, 'int'],
-                    ':userid' => [$_SESSION['userid'], 'int'],
-                    ':threadid' => $data['threadid'],
+                    ':post_id' => [$this->id, 'int'],
+                    ':user_id' => [$_SESSION['user_id'], 'int'],
+                    ':thread_id' => $data['thread_id'],
                     ':text' => $data['text'],
                 ]
             ];
             #Update time
-            if (!$data['hideupdate']) {
+            if (!$data['hideUpdate']) {
                 $queries[] = [
-                    'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP() WHERE `postid`=:postid;',
+                    'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP() WHERE `post_id`=:post_id;',
                     [
-                        ':postid' => [$this->id, 'int'],
+                        ':post_id' => [$this->id, 'int'],
                     ]
                 ];
             }
@@ -407,11 +407,11 @@ class Post extends Entity
             return ['http_error' => 400, 'reason' => 'No form data provided'];
         }
         #Check for thread ID
-        if (empty($data['threadid'])) {
+        if (empty($data['thread_id'])) {
             return ['http_error' => 400, 'reason' => 'No thread ID provided'];
         }
-        if (!is_numeric($data['threadid'])) {
-            return ['http_error' => 400, 'reason' => 'Thread ID `'.$data['threadid'].'` is not numeric'];
+        if (!is_numeric($data['thread_id'])) {
+            return ['http_error' => 400, 'reason' => 'Thread ID `'.$data['thread_id'].'` is not numeric'];
         }
         #Check the text is not empty
         if (empty($data['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $data['text']) === 1) {
@@ -423,7 +423,7 @@ class Post extends Entity
         preg_match_all('/(<img[^>]*src="\/assets\/images\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'], $inlineImages, PREG_PATTERN_ORDER);
         #Remove any files that are not in DB from the array of inline files
         foreach ($inlineImages[2] as $key => $image) {
-            $filename = Query::query('SELECT `name` FROM `sys__files` WHERE `fileid`=:fileid;', [':fileid' => $image], return: 'value');
+            $filename = Query::query('SELECT `name` FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $image], return: 'value');
             #If no filename - no file exists
             if (!empty($filename)) {
                 #Add the file to the list
@@ -438,9 +438,9 @@ class Post extends Entity
             }
         }
         #Attempt to get the thread
-        $parent = new Thread($data['threadid'])->setForPost(true)->get();
+        $parent = new Thread($data['thread_id'])->setForPost(true)->get();
         if ($parent->id === null) {
-            return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parentid'].'` does not exist'];
+            return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parent_id'].'` does not exist'];
         }
         #Check if the parent is closed
         if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
@@ -451,7 +451,7 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'Cannot post in private and not owned thread'];
         }
         #Check if duplicate post
-        $postExists = Query::query('SELECT `postid` FROM `talks__posts` WHERE `threadid`=:threadid AND `text`=:text;', [':text' => $data['text'], ':threadid' => [$data['threadid'], 'int']], return: 'value');
+        $postExists = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id AND `text`=:text;', [':text' => $data['text'], ':thread_id' => [$data['thread_id'], 'int']], return: 'value');
         if (
             (
                 #If the name is empty (a new section is being created)
@@ -463,19 +463,19 @@ class Post extends Entity
         ) {
             return ['http_error' => 409, 'reason' => 'Post already exists in thread.', 'location' => '/talks/posts/'.$postExists];
         }
-        #Check if replyto is set
-        if (!empty($data['replyto'])) {
-            if (!is_numeric($data['replyto'])) {
+        #Check if reply_to is set
+        if (!empty($data['reply_to'])) {
+            if (!is_numeric($data['reply_to'])) {
                 return ['http_error' => 400, 'reason' => 'Only numeric thread IDs allowed'];
             }
             #Check if the post exists
-            if (!Query::query('SELECT `postid` FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$data['replyto'], 'int']], return: 'check')) {
-                return ['http_error' => 400, 'reason' => 'The post ID `'.$data['replyto'].'` your are replying to does not exist'];
+            if (!Query::query('SELECT `post_id` FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$data['reply_to'], 'int']], return: 'check')) {
+                return ['http_error' => 400, 'reason' => 'The post ID `'.$data['reply_to'].'` your are replying to does not exist'];
             }
         }
         #If time was set, convert to UTC
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
-        $data['hideupdate'] = Sanitization::checkboxToBoolean($data['hideupdate']);
+        $data['hideUpdate'] = Sanitization::checkboxToBoolean($data['hideUpdate']);
         return true;
     }
     
@@ -489,7 +489,7 @@ class Post extends Entity
         if (!in_array('removePosts', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `removePosts` permission'];
         }
-        #Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside of API
+        #Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
         if (!$this->attempted) {
             $this->get();
         }
@@ -501,14 +501,14 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'Can\'t delete system post'];
         }
         #Set location for successful removal
-        if (!empty($this->threadid)) {
-            $location = '/talks/threads/'.$this->threadid.'/';
+        if (!empty($this->thread_id)) {
+            $location = '/talks/threads/'.$this->thread_id.'/';
         } else {
             $location = '/talks/sections/';
         }
         #Attempt removal
         try {
-            Query::query('DELETE FROM `talks__posts` WHERE `postid`=:postid;', [':postid' => [$this->id, 'int']]);
+            Query::query('DELETE FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$this->id, 'int']]);
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

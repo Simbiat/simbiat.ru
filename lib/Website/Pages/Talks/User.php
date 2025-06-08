@@ -15,16 +15,16 @@ class User extends Page
     ];
     #Sub service name
     protected string $subServiceName = 'user';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'User profile';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'User profile';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'User profile';
     #Flag to indicate editor mode
     protected bool $editMode = false;
-
-    #This is actual page generation based on further details of the $path
+    
+    #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         if (empty($path[0])) {
@@ -42,16 +42,16 @@ class User extends Page
         $outputArray['threads'] = $user->getThreads();
         $outputArray['posts'] = $user->getPosts();
         #Update meta
-        $this->h1 = $this->title = $outputArray['userData']['username'];
+        $this->title = $outputArray['userData']['username'];
+        $this->h1 = $this->title;
         $this->ogdesc = 'Public profile of '.$outputArray['userData']['username'];
         #Setup OG profile for characters
         $outputArray['ogtype'] = 'profile';
         $outputArray['ogextra'] =
-            '<meta property="profile:username" content="'.htmlspecialchars($outputArray['userData']['username']).'" />'.
-            (is_null($outputArray['userData']['name']['firstname']) ? '' : '<meta property="profile:first_name" content="'.htmlspecialchars($outputArray['userData']['name']['firstname']).'" />').
-            (is_null($outputArray['userData']['name']['lastname']) ? '' : '<meta property="profile:last_name" content="'.htmlspecialchars($outputArray['userData']['name']['lastname']).'" />').
-            (is_null($outputArray['userData']['sex']) ? '' : '<meta property="profile:gender" content="'.htmlspecialchars(($outputArray['userData']['sex'] === 1 ? 'male' : 'female')).'" />')
-        ;
+            '<meta property="profile:username" content="'.htmlspecialchars($outputArray['userData']['username'], ENT_QUOTES | ENT_SUBSTITUTE).'" />'.
+            ($outputArray['userData']['name']['first_name'] === null ? '' : '<meta property="profile:first_name" content="'.htmlspecialchars($outputArray['userData']['name']['first_name'], ENT_QUOTES | ENT_SUBSTITUTE).'" />').
+            ($outputArray['userData']['name']['last_name'] === null ? '' : '<meta property="profile:last_name" content="'.htmlspecialchars($outputArray['userData']['name']['last_name'], ENT_QUOTES | ENT_SUBSTITUTE).'" />').
+            ($outputArray['userData']['sex'] === null ? '' : '<meta property="profile:gender" content="'.htmlspecialchars(($outputArray['userData']['sex'] === 1 ? 'male' : 'female'), ENT_QUOTES | ENT_SUBSTITUTE).'" />');
         #Set flag indicating that we are in edit mode
         $outputArray['editMode'] = $this->editMode;
         return $outputArray;

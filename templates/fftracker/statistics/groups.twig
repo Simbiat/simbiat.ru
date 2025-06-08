@@ -104,9 +104,9 @@
     </tr></thead>
     {% for datapoint in ffstats.data.gc_characters %}
         <tr>
-            <td>{{ datapoint.gcName }}</td>
+            <td>{{ datapoint.gc_name }}</td>
             <td>{{ datapoint.gc_rank }}</td>
-            <td>{% if datapoint.genderid == 0 %}♀{% else %}♂{% endif %}</td>
+            <td>{% if datapoint.gender == 0 %}♀{% else %}♂{% endif %}</td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}

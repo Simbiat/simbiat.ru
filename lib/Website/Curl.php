@@ -86,7 +86,7 @@ class Curl
         #For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
         curl_setopt(self::$curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
-        #Get response
+        #Get a response
         $response = curl_exec(self::$curlHandle);
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
         if ($response === false) {
@@ -119,7 +119,7 @@ class Curl
         }
         curl_setopt(self::$curlHandle, CURLOPT_HEADER, false);
         curl_setopt(self::$curlHandle, CURLOPT_FILE, $fp);
-        #Get response
+        #Get a response
         $response = curl_exec(self::$curlHandle);
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
         #Close file
@@ -156,7 +156,7 @@ class Curl
         }
         curl_setopt(self::$curlHandle, CURLOPT_POSTFIELDS, $payload);
         curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
-        #Get response
+        #Get a response
         $response = curl_exec(self::$curlHandle);
         $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
         return !($response === false || !in_array($httpCode, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
@@ -253,7 +253,7 @@ class Curl
     
     /**
      * Function to process file uploads either through POST/PUT or by using a provided link
-     * @param string $link       URL to process, if we are to download a remote file
+     * @param string $link       URL to process if we are to download a remote file
      * @param bool   $onlyImages Flag to indicate that only images are allowed
      * @param bool   $toWebp     Whether to convert images to WEBP (if possible)
      *
@@ -266,7 +266,7 @@ class Curl
             if (Query::$dbh === null) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['userid'] ?? Config::userIDs['System user']);
+            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['user_id'] ?? Config::userIDs['System user']);
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
@@ -350,10 +350,10 @@ class Curl
             }
             #Add to the database
             Query::query(
-                'INSERT IGNORE INTO `sys__files`(`fileid`, `userid`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :userid, :filename, :extension, :mime, :size);',
+                'INSERT IGNORE INTO `sys__files`(`file_id`, `user_id`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :user_id, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],
-                    ':userid' => $_SESSION['userid'] ?? Config::userIDs['System user'],
+                    ':user_id' => $_SESSION['user_id'] ?? Config::userIDs['System user'],
                     ':filename' => $upload['user_name'],
                     ':extension' => $upload['extension'],
                     ':mime' => $upload['type'],

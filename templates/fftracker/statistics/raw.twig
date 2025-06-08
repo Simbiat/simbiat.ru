@@ -14,10 +14,10 @@
             <td>{{ datapoint.count }}</td>
             <td>{{ datapoint.race }}</td>
             <td>{{ datapoint.clan }}</td>
-            <td>{% if datapoint.genderid == 0 %}♀{% else %}♂{% endif %}</td>
+            <td>{% if datapoint.gender == 0 %}♀{% else %}♂{% endif %}</td>
             <td>{{ datapoint.guardian }}</td>
             <td>{{ datapoint.city }}</td>
-            <td>{{ datapoint.gcName }}</td>
+            <td>{{ datapoint.gc_name }}</td>
         </tr>
     {% endfor %}
 </table>

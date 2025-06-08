@@ -22,18 +22,18 @@ class BICTracker extends Router
     protected string $title = 'БИК Трекер';
     protected string $h1 = 'БИК Трекер';
     protected string $ogdesc = 'Трекер БИК предоставляемых Центральным Банком Российской Федерации';
-    protected string $ogimage = '/ogimages/bictracker.png';
+    protected string $og_image = '/ogimages/bictracker.png';
     protected string $serviceName = 'bictracker';
     
-    #This is actual page generation based on further details of the $path
+    #This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
-        return match($path[0]) {
-            'bics' => (new Bic())->get(array_slice($path, 1)),
-            'bic' => (new ToBics())->get(array_slice($path, 1)),
-            'search' => (new Search())->get(array_slice($path, 1)),
-            'keying' => (new Keying())->get(array_slice($path, 1)),
-            'openbics', 'closedbics' => (new Listing())->get($path),
+        return match ($path[0]) {
+            'bics' => new Bic()->get(array_slice($path, 1)),
+            'bic' => new ToBics()->get(array_slice($path, 1)),
+            'search' => new Search()->get(array_slice($path, 1)),
+            'keying' => new Keying()->get(array_slice($path, 1)),
+            'openbics', 'closedbics' => new Listing()->get($path),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
         };
         #}

@@ -17,7 +17,7 @@
 <!-- Google Meta -->
 <meta itemprop="name" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
 <meta itemprop="description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
-<meta itemprop="image" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
+<meta itemprop="image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
 
 <meta name="X-CSRF-Token" content="{{ session_data.CSRF }}" />
 <!-- Custom meta tag to indicate whether Save-Data header was received -->
@@ -32,10 +32,10 @@
 <meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
 <meta property="og:description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
 <meta property="og:url" content="{{ url }}" />
-<meta property="og:image" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
-<meta property="og:image:secure_url" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
-<meta property="og:image:width" content="{{ ogimagewidth|default('1200') }}" />
-<meta property="og:image:height" content="{{ ogimageheight|default('630') }}" />
+<meta property="og:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
+<meta property="og:image:secure_url" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
+<meta property="og:image:width" content="{{ og_image_width|default('1200') }}" />
+<meta property="og:image:height" content="{{ og_image_height|default('630') }}" />
 <meta property="og:image:type" content="image/png" />
 {% if not ogtype %}
     <meta property="og:type" content="website" />
@@ -54,8 +54,8 @@
 <meta name="twitter:creator" content="@simbiat199" />
 <meta name="twitter:creator:id" content="3049604752" />
 <meta name="twitter:description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
-<meta name="twitter:image" content="{% if ogimage %}{{ domain ~ ogimage }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
-<meta name="twitter:image:alt" content="{% if ogimage %}{{ title }}{% else %}Default banner image{% endif %}" />
+<meta name="twitter:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
+<meta name="twitter:image:alt" content="{% if og_image %}{{ title }}{% else %}Default banner image{% endif %}" />
 
 <!-- MS Tiles -->
 <meta name="application-name" content="{{ site_name }}" />

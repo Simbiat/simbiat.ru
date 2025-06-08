@@ -23,21 +23,21 @@ class Statistics extends Router
     protected string $title = 'Final Fantasy XIV Statistics';
     protected string $h1 = 'Final Fantasy XIV Statistics';
     protected string $ogdesc = 'Final Fantasy XIV Statistics';
-    protected string $ogimage = '/ogimages/fftracker.png';
+    protected string $og_image = '/ogimages/fftracker.png';
     protected string $serviceName = 'fftracker';
     protected string $redirectMain = '/fftracker/statistics/characters';
     
-    #This is actual page generation based on further details of the $path
+    #This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
         return match ($path[0]) {
-            'raw' => (new Raw)->get([]),
-            'achievements' => (new Achievements)->get([]),
-            'bugs' => (new Bugs)->get([]),
-            'characters' => (new Characters)->get([]),
-            'groups' => (new Groups)->get([]),
-            'other' => (new Other)->get([]),
-            'timelines' => (new Timelines)->get([]),
+            'raw' => new Raw()->get([]),
+            'achievements' => new Achievements()->get([]),
+            'bugs' => new Bugs()->get([]),
+            'characters' => new Characters()->get([]),
+            'groups' => new Groups()->get([]),
+            'other' => new Other()->get([]),
+            'timelines' => new Timelines()->get([]),
         };
     }
 }

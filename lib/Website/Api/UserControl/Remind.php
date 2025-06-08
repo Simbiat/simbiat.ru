@@ -39,7 +39,7 @@ class Remind extends Api
         }
         #Get the password of the user while also checking if it exists
         try {
-            $credentials = Query::query('SELECT `uc__users`.`userid`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`userid`=`uc__emails`.`userid` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
+            $credentials = Query::query('SELECT `uc__users`.`user_id`, `uc__users`.`username`, `uc__emails`.`email` FROM `uc__emails` LEFT JOIN `uc__users` on `uc__users`.`user_id`=`uc__emails`.`user_id` WHERE (`uc__users`.`username`=:mail OR `uc__emails`.`email`=:mail) AND `uc__emails`.`activation` IS NULL ORDER BY `subscribed` DESC LIMIT 1',
                 [':mail' => $_POST['signinup']['email']], return: 'row'
             );
         } catch (\Throwable) {
@@ -50,8 +50,8 @@ class Remind extends Api
             try {
                 $token = Security::genToken();
                 #Write the reset token to DB
-                Query::query('UPDATE `uc__users` SET `pw_reset`=:token WHERE `userid`=:userid', [':userid' => $credentials['userid'], ':token' => Security::passHash($token)]);
-                new Email($credentials['email'])->send('Password Reset', ['token' => $token, 'userid' => $credentials['userid']], $credentials['username']);
+                Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
+                new Email($credentials['email'])->send('Password Reset', ['token' => $token, 'user_id' => $credentials['user_id']], $credentials['username']);
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Registration failed'];
             }

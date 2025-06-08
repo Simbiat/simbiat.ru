@@ -46,19 +46,19 @@ class Sessions extends Page
     {
         $outputArray = [];
         #Get sessions
-        $outputArray['sessions'] = Query::query('SELECT `time`, `cookieid`, `sessionid`, `uc__sessions`.`ip`, `useragent` FROM `uc__sessions` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']], return: 'all');
+        $outputArray['sessions'] = Query::query('SELECT `time`, `cookie_id`, `session_id`, `uc__sessions`.`ip`, `user_agent` FROM `uc__sessions` WHERE `user_id`=:user_id ORDER BY `time` DESC', [':user_id' => $_SESSION['user_id']], return: 'all');
         #Get cookies
-        $outputArray['cookies'] = Query::query('SELECT `time`, `cookieid`, `uc__cookies`.`ip`, `useragent` FROM `uc__cookies` WHERE `userid`=:userid ORDER BY `time` DESC', [':userid' => $_SESSION['userid']], return: 'all');
+        $outputArray['cookies'] = Query::query('SELECT `time`, `cookie_id`, `uc__cookies`.`ip`, `user_agent` FROM `uc__cookies` WHERE `user_id`=:user_id ORDER BY `time` DESC', [':user_id' => $_SESSION['user_id']], return: 'all');
         #Get logs
-        $outputArray['logs'] = Query::query('SELECT `time`, `action`, `sys__logs`.`ip`, `useragent` FROM `sys__logs` WHERE `userid`=:userid AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':userid' => $_SESSION['userid']], return: 'all');
-        #Create useragent object
+        $outputArray['logs'] = Query::query('SELECT `time`, `action`, `sys__logs`.`ip`, `user_agent` FROM `sys__logs` WHERE `user_id`=:user_id AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':user_id' => $_SESSION['user_id']], return: 'all');
+        #Create user_agent object
         #Force full string versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
         #Initialize device detector
         $dd = (new DeviceDetector());
         #Prevent unnecessary trips to a DB file by "caching" found IPs, since it's unlikely to have too many different ones
         $ips = [];
-        #Expand useragent
+        #Expand user_agent
         foreach (['sessions', 'cookies', 'logs'] as $type) {
             foreach ($outputArray[$type] as $key => $item) {
                 if (!isset($ips[$item['ip']])) {
@@ -73,7 +73,7 @@ class Sessions extends Page
                 }
                 $outputArray[$type][$key]['country'] = $ips[$item['ip']]['country'];
                 $outputArray[$type][$key]['city'] = $ips[$item['ip']]['city'];
-                $dd->setUserAgent((string)$item['useragent']);
+                $dd->setUserAgent((string)$item['user_agent']);
                 $dd->parse();
                 #Get OS
                 $outputArray[$type][$key]['os'] = $dd->getOs();

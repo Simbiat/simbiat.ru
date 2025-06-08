@@ -8,7 +8,7 @@ use Simbiat\Website\Abstracts\Api;
 
 class FFLink extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
@@ -20,9 +20,9 @@ class FFLink extends Api
     protected bool $CSRF = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
-        return (new Character($_POST['characterid'] ?? ''))->linkUser();
+        return new Character($_POST['character_id'] ?? '')->linkUser();
     }
 }

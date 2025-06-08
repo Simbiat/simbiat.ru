@@ -20,9 +20,9 @@ class Profile extends Api
     protected bool $CSRF = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
-        return (new User($_SESSION['userid']))->updateProfile();
+        return new User($_SESSION['user_id'])->updateProfile();
     }
 }

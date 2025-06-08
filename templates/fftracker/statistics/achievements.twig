@@ -23,7 +23,7 @@
     </tr></thead>
     {% for datapoint in ffstats.data.titles.top %}
         <tr>
-            <td><a href="/fftracker/achievements/{{ datapoint.achievementid }}">{{ datapoint.title }}</a></td>
+            <td><a href="/fftracker/achievements/{{ datapoint.achievement_id }}">{{ datapoint.title }}</a></td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}
@@ -36,7 +36,7 @@
     </tr></thead>
     {% for datapoint in ffstats.data.titles.bottom %}
         <tr>
-            <td><a href="/fftracker/achievements/{{ datapoint.achievementid }}">{{ datapoint.title }}</a></td>
+            <td><a href="/fftracker/achievements/{{ datapoint.achievement_id }}">{{ datapoint.title }}</a></td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}

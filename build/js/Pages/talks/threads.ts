@@ -32,7 +32,7 @@ export class Threads
             });
         }
         //Listener for `reply to` buttons
-        document.querySelectorAll('.replyto_button')
+        document.querySelectorAll('.reply_to_button')
                 .forEach((item) => {
                     //Tracking click to be able to roll back change easily
                     (item as HTMLElement).addEventListener('click', (event: MouseEvent) => {
@@ -44,9 +44,9 @@ export class Threads
     private replyTo(button: HTMLInputElement): void
     {
         //Get the post's ID
-        const replyto = button.getAttribute('data-postid') ?? '';
-        if (this.postForm && replyto) {
-            this.postForm.replyTo(replyto);
+        const reply_to = button.getAttribute('data-post_id') ?? '';
+        if (this.postForm && reply_to) {
+            this.postForm.replyTo(reply_to);
         }
     }
     
@@ -62,7 +62,7 @@ export class Threads
             const button = this.addPostForm.querySelector('input[type=submit]');
             //Get form data
             const formData = new FormData(this.addPostForm);
-            //Add timezone
+            //Add time zone
             formData.append('postForm[timezone]', timezone);
             buttonToggle(button as HTMLInputElement);
             ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', ajaxTimeout, true)
@@ -150,14 +150,14 @@ export class Threads
             //Get form data
             const formData = new FormData(this.editThreadForm);
             //Check if custom icon is being attached
-            const ogimage: HTMLInputElement | null = this.editThreadForm.querySelector('input[type=file]');
-            if (ogimage?.files?.[0]) {
-                formData.append('curThread[ogimage]', 'true');
+            const og_image: HTMLInputElement | null = this.editThreadForm.querySelector('input[type=file]');
+            if (og_image?.files?.[0]) {
+                formData.append('curThread[og_image]', 'true');
             } else {
-                formData.append('curThread[ogimage]', 'false');
+                formData.append('curThread[og_image]', 'false');
             }
             buttonToggle(button as HTMLInputElement);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {

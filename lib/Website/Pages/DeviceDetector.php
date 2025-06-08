@@ -13,13 +13,13 @@ class DeviceDetector extends FileListing
     ];
     #Sub service name
     protected string $subServiceName = 'devicedetector';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Device Detector Icons';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Device Detector Icons';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Icons or logos of operating systems, browsers and other applications based on respective items detectable by matomo-org/device-detector library';
-    protected string $ogimage = '/ogimages/devicedetector.png';
+    protected string $og_image = '/ogimages/devicedetector.png';
     #Directories relative to working dir
     protected array $dirs = [
         'bottype' => ['path' => '/lib/DDCIcons/src/icons/bot/category', 'name' => 'Bot Types'],

@@ -3,9 +3,9 @@
         {% if freecompany.crest %}
             src="{{ freecompany.crest }}"
         {% else %}
-            {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
+            {% if freecompany.grand_company == 'Order of the Twin Adder' %}
                 src="/assets/images/fftracker/default-crests/OrderOfTheTwinAdder.webp"
-            {% elseif freecompany.grandCompany == 'Immortal Flames' %}
+            {% elseif freecompany.grand_company == 'Immortal Flames' %}
                 src="/assets/images/fftracker/default-crests/ImmortalFlames.webp"
             {% else %}
                 src="/assets/images/fftracker/default-crests/Maelstrom.webp"
@@ -24,15 +24,15 @@
         <blockquote class="w100pc">{{ sanitize(freecompany.slogan) }}</blockquote>
     {% endif %}
     <p>
-        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.dataCenter }}</i>{% if freecompany.grandCompany %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grandCompany }}"
-        {% if freecompany.grandCompany == 'Order of the Twin Adder' %}
+        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.data_center }}</i>{% if freecompany.grand_company %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grand_company }}"
+        {% if freecompany.grand_company == 'Order of the Twin Adder' %}
             src="/assets/images/fftracker/cities/2.webp"
-        {% elseif freecompany.grandCompany == 'Immortal Flames' %}
+        {% elseif freecompany.grand_company == 'Immortal Flames' %}
             src="/assets/images/fftracker/cities/5.webp"
-        {% elseif freecompany.grandCompany == 'Maelstrom' %}
+        {% elseif freecompany.grand_company == 'Maelstrom' %}
             src="/assets/images/fftracker/cities/4.webp"
         {% endif %}
-        >{% endif %}<i>{{ freecompany.grandCompany }}</i>{% endif %}.
+        >{% endif %}<i>{{ freecompany.grand_company }}</i>{% endif %}.
         {% if freecompany.location.estate.ward %}
             {% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} a
             {% if freecompany.location.estate.size == 1 %}
@@ -54,22 +54,22 @@
         <p>{% if freecompany.dates.deleted %}Had{% else %}Has{% endif %} this message on its plot placard:</p>
         <blockquote class="w100pc">{{ sanitize(freecompany.location.estate.message) }}</blockquote>
     {% endif %}
-    {% if freecompany.focus['Role-playing'] or freecompany.focus.Leveling or freecompany.focus.Casual or freecompany.focus.Hardcore or freecompany.focus.Dungeons or freecompany.focus.Guildhests or freecompany.focus.Trials or freecompany.focus.Raids or freecompany.focus.PvP %}
+    {% if freecompany.focus['role-playing'] or freecompany.focus.leveling or freecompany.focus.casual or freecompany.focus.hardcore or freecompany.focus.dungeons or freecompany.focus.guildhests or freecompany.focus.trials or freecompany.focus.raids or freecompany.focus.PvP %}
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
         <ul class="flexList">
             {% for focus, value in freecompany.focus %}
-                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus }}" class="linkIcon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus }}</li>{% endif %}
+                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="linkIcon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus }}</li>{% endif %}
             {% endfor %}
         </ul>
     {% endif %}
     {% if not freecompany.dates.deleted %}
         {% if freecompany.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ freecompany.community }}" target="_blank">community</a>.{% endif %}
         {% if freecompany.recruiting == 1 %}
-            <p>Is recruiting{% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
-            {% if freecompany.seeking.Tank or freecompany.seeking.Healer or freecompany.seeking.DPS or freecompany.seeking.Crafter or freecompany.seeking.Gatherer %}
+            <p>Is recruiting{% if freecompany.seeking.Tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
+            {% if freecompany.seeking.tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}
                 <ul class="flexList">
                     {% for seeking, value in freecompany.seeking %}
-                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking }}" class="linkIcon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking }}</li>{% endif %}
+                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="linkIcon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking }}</li>{% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}

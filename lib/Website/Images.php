@@ -3,14 +3,26 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use JetBrains\PhpStorm\NoReturn;
+use function dirname, in_array;
 
+/**
+ * Collection of classes to work with image files
+ */
 class Images
 {
-    #Function to download images
+    /**
+     * Function to download images
+     * @param string $from    URL to download from
+     * @param string $to      Path to save to
+     * @param bool   $convert Whether conversion is required
+     *
+     * @return string|false
+     */
     public static function download(string $from, string $to, bool $convert = true): string|false
     {
         #Download to temp
-        $temp = (new Curl())->getFile($from);
+        $temp = new Curl()->getFile($from);
         if ($temp === false) {
             return false;
         }
@@ -32,18 +44,26 @@ class Images
         return false;
     }
     
-    #Function to merge images
+    /**
+     * Function to merge images
+     * @param array $images Array of images to merge
+     * @param int   $width  Width of the resulting image
+     * @param int   $height Height of the resulting image
+     * @param bool  $output Whether to output directly to browser
+     *
+     * @return \GdImage|null
+     */
     public static function merge(array $images, int $width = 128, int $height = 128, bool $output = false): ?\GdImage
     {
-        #Preparing set of layers, since Lodestone stores crests as 3 (or less) separate images
+        #Preparing a set of layers, since Lodestone stores crests as 3 (or less) separate images
         $layers = [];
-        foreach ($images as $key=>$image) {
+        foreach ($images as $key => $image) {
             $layers[$key] = self::open($image);
             if ($layers[$key] === false) {
                 if ($output) {
                     self::errorImage();
                 }
-                #This means that we failed to get the image thus final object will either fail or be corrupt, thus exiting early
+                #This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
                 throw new \RuntimeException('Failed to open `'.$image.'`');
             }
         }
@@ -68,29 +88,33 @@ class Images
             return null;
         }
         if ($output) {
-            self::errorImage();
             ob_start();
             imagewebp($gd, null, IMG_WEBP_LOSSLESS);
             $size = ob_get_length();
             header('Content-Type: image/webp');
-            header('Content-Length: ' . $size);
+            header('Content-Length: '.$size);
             ob_end_flush();
             exit(0);
         }
         return $gd;
     }
     
-    #Convert image to webp format
+    /**
+     * Convert image to webp format
+     * @param string $image
+     *
+     * @return string|false
+     */
     public static function toWebP(string $image): string|false
     {
-        #Check if file exists
+        #Check if a file exists
         if (!is_file($image)) {
             return false;
         }
         #Get MIME type
         $mime = mime_content_type($image);
         if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
-            #Presume, that this is not something to convert in the first place, which may be normal
+            #Presume that this is not something to convert in the first place, which may be normal
             return false;
         }
         #If we have a GIF, check if it's animated
@@ -105,8 +129,8 @@ class Images
         }
         #Set new name
         $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
-        #Create GD object from file
-        $gd = self::open($image, $mime);
+        #Create a GD object from a file
+        $gd = self::open($image);
         if ($gd === false) {
             return false;
         }
@@ -118,7 +142,7 @@ class Images
         imagesavealpha($gd, true);
         #Save the file
         if (imagewebp($gd, $newName, IMG_WEBP_LOSSLESS)) {
-            #Remove source image, if we did not just overwrite it
+            #Remove source image if we did not just overwrite it
             if ($image !== $newName) {
                 @unlink($image);
             }
@@ -127,32 +151,44 @@ class Images
         return false;
     }
     
-    #Taken from https://stackoverflow.com/a/47907134/2992851
+    /**
+     * Check if GIF is animated
+     * Taken from https://stackoverflow.com/a/47907134/2992851
+     * @param string $gif
+     *
+     * @return bool
+     */
     public static function isGIFAnimated(string $gif): bool
     {
-        if(!($fh = @fopen($gif, 'rb'))) {
+        if (!($fh = @fopen($gif, 'rb'))) {
             return false;
         }
         $count = 0;
-        //an animated gif contains multiple "frames", with each frame having a
+        //an animated GIF contains multiple "frames", with each frame having a
         //header made up of:
         // * a static 4-byte sequence (\x00\x21\xF9\x04)
         // * 4 variable bytes
         // * a static 2-byte sequence (\x00\x2C) (some variants may use \x00\x21 ?)
-    
+        
         // We read through the file til we reach the end of the file, or we've found
         // at least 2 frame headers
         $chunk = false;
-        while(!feof($fh) && $count < 2) {
+        while (!feof($fh) && $count < 2) {
             //add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            $chunk = ($chunk ? mb_substr($chunk, -20, encoding: 'UTF-8') : '').fread($fh, 1024 * 100); //read 100kb at a time
+            $chunk = ($chunk ? mb_substr($chunk, -20, encoding: 'UTF-8') : '').fread($fh, 1024 * 100); //read 100 kb at a time
             $count += preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
         fclose($fh);
         return $count > 1;
     }
     
-    #Taken from https://stackoverflow.com/a/68618296/2992851
+    /**
+     * Check if PNG is animated
+     * Taken from https://stackoverflow.com/a/68618296/2992851
+     * @param string $apng
+     *
+     * @return bool
+     */
     public static function isPNGAnimated(string $apng): bool
     {
         $f = new \SplFileObject($apng, 'rb');
@@ -162,7 +198,7 @@ class Images
         }
         while (!$f->eof()) {
             $bytes = $f->fread(4);
-            if (strlen($bytes) < 4) {
+            if (\strlen($bytes) < 4) {
                 return false;
             }
             $length = unpack('N', $bytes);
@@ -183,55 +219,73 @@ class Images
         return false;
     }
     
-    public static function open(string $image, ?string $mime = null): false|\GdImage
+    /**
+     * Open an image file
+     * @param string $image Path to the image file
+     *
+     * @return false|\GdImage
+     */
+    public static function open(string $image): false|\GdImage
     {
-        #Return false if file is missing
+        #Return false if a file is missing
         if (!is_file($image)) {
             return false;
         }
         #Get MIME type
-        if (empty($mime)) {
-            $mime = mime_content_type($image);
-        }
+        $mime = mime_content_type($image);
         if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
             #Unsuported format provided
             return false;
         }
-        #Create GD object from file
-        return match($mime) {
-            'image/avif' => @imagecreatefromavif($image),
-            'image/bmp' => @imagecreatefrombmp($image),
-            'image/gif' => @imagecreatefromgif($image),
-            'image/jpeg' => @imagecreatefromjpeg($image),
-            'image/png' => @imagecreatefrompng($image),
-            'image/webp' => @imagecreatefromwebp($image),
-        };
+        #Create a GD object from a file
+        try {
+            return match ($mime) {
+                'image/avif' => imagecreatefromavif($image),
+                'image/bmp' => imagecreatefrombmp($image),
+                'image/gif' => imagecreatefromgif($image),
+                'image/jpeg' => imagecreatefromjpeg($image),
+                'image/png' => imagecreatefrompng($image),
+                'image/webp' => imagecreatefromwebp($image),
+            };
+        } catch (\Throwable) {
+            return false;
+        }
     }
     
-    private static function errorImage(): void
+    /**
+     * Display an error image
+     * @return void
+     */
+    #[NoReturn] private static function errorImage(): void
     {
         $file = Config::$imgDir.'/noimage.svg';
         header('Content-Type: image/svg+xml');
-        header('Content-Length: ' . filesize($file));
+        header('Content-Length: '.filesize($file));
         readfile($file);
         exit(0);
     }
     
-    #Function to generate data for og:image using provided file ID
-    public static function ogImage(string $fileId, bool $isPath = false): array
+    /**
+     * Function to generate data for og:image using provided file ID
+     * @param string $file_id File ID to use
+     * @param bool   $isPath If `true` ID is actually a path
+     *
+     * @return array|null[]
+     */
+    public static function ogImage(string $file_id, bool $isPath = false): array
     {
         if ($isPath) {
-            $file = Config::$imgDir.$fileId;
+            $file = Config::$imgDir.$file_id;
             if (!is_file($file)) {
-                return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+                return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
         } else {
-            $hashTree = Sanitization::hashTree($fileId);
-            #Use glob to get real file path. We could simplify this by taking the extension from DB and using is_file,
+            $hashTree = Sanitization::hashTree($file_id);
+            #Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = glob(Config::$uploadedImg.'/'.$hashTree.'/'.$fileId.'.*');
+            $file = glob(Config::$uploadedImg.'/'.$hashTree.'/'.$file_id.'.*');
             if (empty($file)) {
-                return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+                return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
             $file = $file[0];
         }
@@ -239,15 +293,15 @@ class Images
         $info = array_merge(pathinfo($file));
         $info['mime'] = mime_content_type($file);
         if ($info['mime'] !== 'image/png') {
-            return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         [$info['width'], $info['height']] = getimagesize($file);
-        if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width']/$info['height'], 1) !== 1.9) {
-            return ['ogimage' => null, 'ogimagewidth' => null, 'ogimageheight' => null];
+        if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width'] / $info['height'], 1) !== 1.9) {
+            return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         if ($isPath) {
-            return ['ogimage' => '/assets/images'.$fileId, 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
+            return ['og_image' => '/assets/images'.$file_id, 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
         }
-        return ['ogimage' => '/assets/images/uploaded/'.$hashTree.'/'.$info['basename'], 'ogimagewidth' => $info['width'], 'ogimageheight' => $info['height']];
+        return ['og_image' => '/assets/images/uploaded/'.$hashTree.'/'.$info['basename'], 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
     }
 }

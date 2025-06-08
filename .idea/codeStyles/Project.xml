@@ -35,6 +35,7 @@
       <option name="LOWER_CASE_BOOLEAN_CONST" value="true" />
       <option name="LOWER_CASE_NULL_CONST" value="true" />
       <option name="ELSE_IF_STYLE" value="COMBINE" />
+      <option name="VARIABLE_NAMING_STYLE" value="SNAKE_CASE" />
       <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
       <option name="SPACE_AROUND_ASSIGNMENT_IN_DECLARE" value="true" />
       <option name="FORCE_EMPTY_METHODS_IN_ONE_LINE" value="true" />

@@ -9,7 +9,7 @@ use Simbiat\Website\usercontrol\User;
 
 class Avatars extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => 'add', 'DELETE' => 'delete', 'PATCH' => 'setactive'];
@@ -21,14 +21,14 @@ class Avatars extends Api
     protected bool $CSRF = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
         #We do not really care for verbs here, only methods
         return match(HomePage::$method) {
-            'POST' => (new User($_SESSION['userid']))->addAvatar(true),
-            'DELETE' => (new User($_SESSION['userid']))->delAvatar(),
-            'PATCH' => (new User($_SESSION['userid']))->setAvatar(),
+            'POST' => new User($_SESSION['user_id'])->addAvatar(true),
+            'DELETE' => new User($_SESSION['user_id'])->delAvatar(),
+            'PATCH' => new User($_SESSION['user_id'])->setAvatar(),
         };
     }
 }

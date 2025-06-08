@@ -5514,16 +5514,16 @@ class ImageUpload extends HTMLElement {
     }
 }
 class Likedis extends HTMLElement {
-    postId = 0;
-    likeValue = 0;
+    post_id = 0;
+    like_value = 0;
     likesCount;
     dislikesCount;
     likeButton;
     dislikeButton;
     constructor() {
         super();
-        this.likeValue = Number(this.getAttribute('data-liked') ?? 0);
-        this.postId = Number(this.getAttribute('data-postid') ?? 0);
+        this.like_value = Number(this.getAttribute('data-liked') ?? 0);
+        this.post_id = Number(this.getAttribute('data-post_id') ?? 0);
         this.likesCount = this.querySelector('.likes_count');
         this.dislikesCount = this.querySelector('.dislikes_count');
         this.likeButton = this.querySelector('.like_button');
@@ -5544,20 +5544,15 @@ class Likedis extends HTMLElement {
         else {
             action = 'dislike';
         }
-        if (this.postId === 0) {
+        if (this.post_id === 0) {
             addSnackbar('No post ID', 'failure', snackbarFailLife);
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.postId}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
+        ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.post_id}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true)
+            .then((response) => {
             const data = response;
-            if (data.data === 0) {
-                this.updateCounts(data.data);
-            }
-            else if (data.data === 1) {
-                this.updateCounts(data.data);
-            }
-            else if (data.data === -1) {
+            if (data.data === 0 || data.data === 1 || data.data === -1) {
                 this.updateCounts(data.data);
             }
             else {
@@ -5571,17 +5566,14 @@ class Likedis extends HTMLElement {
             this.likesCount.classList.remove('success');
             this.dislikesCount.classList.remove('failure');
             if (newValue === 0) {
-                if (this.likeValue === 1) {
-                    this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) - 1);
-                }
-                else if (this.likeValue === -1) {
-                    this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) - 1);
+                if (this.like_value === 1 || this.like_value === -1) {
+                    this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) + this.like_value);
                 }
                 this.likeButton.setAttribute('data-tooltip', 'Like');
                 this.dislikeButton.setAttribute('data-tooltip', 'Dislike');
             }
             else if (newValue === 1) {
-                if (this.likeValue === -1) {
+                if (this.like_value === -1) {
                     this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) - 1);
                 }
                 this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) + 1);
@@ -5590,7 +5582,7 @@ class Likedis extends HTMLElement {
                 this.dislikeButton.setAttribute('data-tooltip', 'Dislike');
             }
             else if (newValue === -1) {
-                if (this.likeValue === 1) {
+                if (this.like_value === 1) {
                     this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) - 1);
                 }
                 this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) + 1);
@@ -5605,7 +5597,7 @@ class Likedis extends HTMLElement {
                 this.dislikesCount.innerHTML = '0';
             }
             this.setAttribute('data-liked', String(newValue));
-            this.likeValue = newValue;
+            this.like_value = newValue;
         }
     }
 }
@@ -5776,11 +5768,11 @@ class SideHide extends HTMLElement {
     }
 }
 class OGImage extends HTMLElement {
-    ogimage = null;
+    og_image = null;
     hideBanner = null;
     constructor() {
         super();
-        this.ogimage = document.querySelector('#ogimage');
+        this.og_image = document.querySelector('#og_image');
         this.hideBanner = document.querySelector('hide-banner');
         if (this.hideBanner) {
             this.hideBanner.addEventListener('click', () => {
@@ -5789,13 +5781,13 @@ class OGImage extends HTMLElement {
         }
     }
     toggleBanner() {
-        if (this.ogimage && this.hideBanner) {
-            if (this.ogimage.classList.contains('hidden')) {
-                this.ogimage.classList.remove('hidden');
+        if (this.og_image && this.hideBanner) {
+            if (this.og_image.classList.contains('hidden')) {
+                this.og_image.classList.remove('hidden');
                 this.hideBanner.textContent = 'Hide banner';
             }
             else {
-                this.ogimage.classList.add('hidden');
+                this.og_image.classList.add('hidden');
                 this.hideBanner.textContent = 'Show banner';
             }
         }
@@ -5969,22 +5961,22 @@ class PasswordStrength extends HTMLElement {
 }
 class PostForm extends HTMLElement {
     textarea = null;
-    replyToInput = null;
+    reply_to_input = null;
     label = null;
     constructor() {
         super();
         this.textarea = this.querySelector('textarea');
-        this.replyToInput = this.querySelector('#replyingTo');
+        this.reply_to_input = this.querySelector('#replyingTo');
         this.label = this.querySelector('.label_for_tinymce');
         if (this.textarea && !empty(this.textarea.id)) {
             loadTinyMCE(this.textarea.id, false, true);
         }
     }
-    replyTo(postId) {
-        if (this.replyToInput && !((/^\s*$/ui).exec(postId))) {
-            this.replyToInput.value = postId;
+    replyTo(post_id) {
+        if (this.reply_to_input && !((/^\s*$/ui).exec(post_id))) {
+            this.reply_to_input.value = post_id;
             if (this.label) {
-                this.label.innerHTML = `Replying to post #${postId}`;
+                this.label.innerHTML = `Replying to post #${post_id}`;
             }
         }
         window.location.href = '#postForm';

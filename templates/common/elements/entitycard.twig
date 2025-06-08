@@ -21,7 +21,7 @@
     {% set url = 'talks/threads' %}
 {% endif %}
 {# Actual card #}
-<a class="entityCard{% if userid and session_data.userid == userid %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{% if rank %}{% if type == 'character' %}{{ rank }} {% else %}{{ rank }} in {% endif %}{% endif %}{{ name }}">
+<a class="entityCard{% if user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{% if rank %}{% if type == 'character' %}{{ rank }} {% else %}{{ rank }} in {% endif %}{% endif %}{{ name }}">
     <span class="entityIcon">
         {% if type == 'bic' %}
             {% if DateOut %}
@@ -61,14 +61,14 @@
         {% if type == 'thread' %}
             {{ timeTag(thread.updated, "d/m/Y H:i") }}<br>
         {% endif %}
-        {% if (type == 'linkshell' or type == 'crossworldlinkshell' or type == 'character') and lsrankid and lsrankid != 3 and lsrankid != 4 %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/lsranks/{{ lsrankid }}.webp">
+        {% if (type == 'linkshell' or type == 'crossworldlinkshell' or type == 'character') and ls_rank_id and ls_rank_id != 3 and ls_rank_id != 4 %}
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/lsranks/{{ ls_rank_id }}.webp">
         {% endif %}
-        {% if (type == 'pvpteam' or type == 'character') and pvprankid and pvprankid != 3 %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/pvpranks/{{ pvprankid }}.webp">
+        {% if (type == 'pvpteam' or type == 'character') and pvp_rank_id and pvp_rank_id != 3 %}
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/pvpranks/{{ pvp_rank_id }}.webp">
         {% endif %}
-        {% if (type == 'freecompany' or type == 'character') and rankid|default('') matches '/^\\d+$/' %}
-            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/fcranks/{{ rankid }}.webp">
+        {% if (type == 'freecompany' or type == 'character') and rank_id|default('') matches '/^\\d+$/' %}
+            <img class="entityRank" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/fcranks/{{ rank_id }}.webp">
         {% endif %}
         {% if type == 'thread' %}
             <b>{% if detailedType == 'Changelog' and is_numeric(name) %}{{ timeTag(name, "Y.m.d") }}{% else %}{{ name }}{% endif %}</b>
@@ -78,7 +78,7 @@
                 <br><img class="ff_achievement_points" loading="lazy" decoding="async" alt="{{ achievement_points }} points" data-tooltip="{{ achievement_points }} points" src="/assets/images/fftracker/Cup.webp">{{ achievement_points }}
             {% endif %}
         {% endif %}
-        {% if userid %}
+        {% if user_id %}
             <sup>🔗</sup>
         {% endif %}
     </span>

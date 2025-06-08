@@ -45,21 +45,21 @@
         <article class="post hasbanner nouser">
             <section class="post_header">
                 {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
-                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.threadid }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
+                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
                 {% else %}
-                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.threadid }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
+                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
                 {% endif %}
             </section>
-            {% if post.ogimage %}
+            {% if post.og_image %}
                 <section class="post_banner">
-                    <a href="/talks/threads/{{ post.threadid }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.ogimage.ogimage }}"></a>
+                    <a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.og_image.og_image }}"></a>
                 </section>
             {% endif %}
             <section class="post_text">
                 {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
-                    {{ sanitize(preg_replace(htmlCut(changelog(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
+                    {{ sanitize(preg_replace(htmlCut(changelog(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
                 {% else %}
-                    {{ sanitize(preg_replace(htmlCut(nl2p(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.threadid ~ '">…</a>$1')) }}
+                    {{ sanitize(preg_replace(htmlCut(nl2p(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
                 {% endif %}
             </section>
             <section class="post_footer">

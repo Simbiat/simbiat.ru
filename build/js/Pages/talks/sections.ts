@@ -87,8 +87,8 @@ export class Sections
             verb = 'public';
         }
         buttonToggle(checkbox);
-        const sectionId = checkbox.getAttribute('data-section') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        const section_id = checkbox.getAttribute('data-section') ?? '';
+        ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
             .then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
@@ -119,8 +119,8 @@ export class Sections
             verb = 'open';
         }
         buttonToggle(checkbox);
-        const sectionId = checkbox.getAttribute('data-section') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        const section_id = checkbox.getAttribute('data-section') ?? '';
+        ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
             .then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
@@ -149,10 +149,10 @@ export class Sections
         if (initialValue !== newValue) {
             buttonToggle(orderInput);
             //Generate form data
-            const sectionId = orderInput.getAttribute('data-section') ?? '';
+            const section_id = orderInput.getAttribute('data-section') ?? '';
             const formData = new FormData();
             formData.append('order', newValue);
-            ajax(`${location.protocol}//${location.host}/api/talks/sections/${sectionId}/order`, formData, 'json', 'PATCH', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/order`, formData, 'json', 'PATCH', ajaxTimeout, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
@@ -220,7 +220,7 @@ export class Sections
             } else {
                 formData.append('newSection[icon]', 'false');
             }
-            //Add timezone
+            //Add time zone
             formData.append('newSection[timezone]', timezone);
             buttonToggle(button as HTMLInputElement);
             ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', ajaxTimeout, true)
@@ -256,7 +256,7 @@ export class Sections
                 formData.append('curSection[icon]', 'false');
             }
             buttonToggle(button as HTMLInputElement);
-            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[sectionid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[section_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
@@ -307,13 +307,13 @@ export class Sections
             //Get form data
             const formData = new FormData(this.addThreadForm);
             //Check if custom icon is being attached
-            const ogimage: HTMLInputElement | null = this.addThreadForm.querySelector('input[type=file]');
-            if (ogimage?.files?.[0]) {
-                formData.append('newThread[ogimage]', 'true');
+            const og_image: HTMLInputElement | null = this.addThreadForm.querySelector('input[type=file]');
+            if (og_image?.files?.[0]) {
+                formData.append('newThread[og_image]', 'true');
             } else {
-                formData.append('newThread[ogimage]', 'false');
+                formData.append('newThread[og_image]', 'false');
             }
-            //Add timezone
+            //Add time zone
             formData.append('newThread[timezone]', timezone);
             buttonToggle(button as HTMLInputElement);
             ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', ajaxTimeout, true)
@@ -354,8 +354,8 @@ export class Sections
             verb = 'public';
         }
         buttonToggle(checkbox);
-        const threadId = checkbox.getAttribute('data-thread') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        const thread_id = checkbox.getAttribute('data-thread') ?? '';
+        ajax(`${location.protocol}//${location.host}/api/talks/threads/${thread_id}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
             .then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {
@@ -386,8 +386,8 @@ export class Sections
             verb = 'unpin';
         }
         buttonToggle(checkbox);
-        const threadId = checkbox.getAttribute('data-thread') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/threads/${threadId}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        const thread_id = checkbox.getAttribute('data-thread') ?? '';
+        ajax(`${location.protocol}//${location.host}/api/talks/threads/${thread_id}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
             .then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === true) {

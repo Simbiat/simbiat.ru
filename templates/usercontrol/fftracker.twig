@@ -8,14 +8,14 @@
             <li>Go to the profile of the character you want to link.</li>
             <li>Scroll the page to "Character profile" section and click the edit button.</li>
             <li>Paste this token <code>fftracker:{{ token }}</code> anywhere in the text field and save the changes.</li>
-            <li>Get the character id from URL of the character profile. URL normally looks like <samp>https://eu.finalfantasyxiv.com/lodestone/character/%characterid%/</samp>, where <samp>%characterid%</samp> is the value you need to copy.</li>
+            <li>Get the character id from URL of the character profile. URL normally looks like <samp>https://eu.finalfantasyxiv.com/lodestone/character/%character_id%/</samp>, where <samp>%character_id%</samp> is the value you need to copy.</li>
             <li>Input the copied value into the form below and link the character.</li>
             <li>If link was successful, you can revert the profile changes you've just made.</li>
         </ol>
     </details>
     <form id="ff_link_user">
         <div class="float_label_div" data-tooltip="Character ID as seen on Lodestone (in URL)">
-            <input autofocus form="ff_link_user" type="text" required aria-required="true" name="characterid" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
+            <input autofocus form="ff_link_user" type="text" required aria-required="true" name="character_id" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
             <label for="ff_link_id">Character ID</label>
         </div>
         <input type="submit" value="Link" form="ff_link_user" id="ff_link_submit">

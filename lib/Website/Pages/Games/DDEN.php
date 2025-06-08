@@ -13,14 +13,14 @@ class DDEN extends Game
     ];
     #Sub service name
     protected string $subServiceName = 'dden';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Dangerous Dave: Endless Nightmare';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Dangerous Dave: Endless Nightmare';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Homage to Dangerous Dave in the Haunted Mansion';
     #Page's banner. Defaults to website's banner
-    protected string $ogimage = '/ogimages/dden.png';
+    protected string $og_image = '/ogimages/dden.png';
     #Path to game's JS file
     protected string $gameJS = '/assets/html5games/dden/Dangerous Dave Endless Nightmare.js';
     #Flag to indicate the game has sound

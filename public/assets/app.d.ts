@@ -379,8 +379,8 @@ declare class ImageUpload extends HTMLElement {
     private update;
 }
 declare class Likedis extends HTMLElement {
-    private readonly postId;
-    private likeValue;
+    private readonly post_id;
+    private like_value;
     private readonly likesCount;
     private readonly dislikesCount;
     private readonly likeButton;
@@ -424,7 +424,7 @@ declare class SideHide extends HTMLElement {
     constructor();
 }
 declare class OGImage extends HTMLElement {
-    private readonly ogimage;
+    private readonly og_image;
     private readonly hideBanner;
     constructor();
     private toggleBanner;
@@ -451,10 +451,10 @@ declare class PasswordStrength extends HTMLElement {
 }
 declare class PostForm extends HTMLElement {
     private readonly textarea;
-    private readonly replyToInput;
+    private readonly reply_to_input;
     private readonly label;
     constructor();
-    replyTo(postId: string): void;
+    replyTo(post_id: string): void;
 }
 declare class SelectCustom extends HTMLElement {
     private readonly icon;

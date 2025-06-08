@@ -1,7 +1,7 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__threads` (
   `threadid` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Thread ID',
-  `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Thread name',
+  `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'Thread name',
   `sectionid` int(10) unsigned NOT NULL COMMENT 'Forum ID where the thread is located',
   `language` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL DEFAULT 'en' COMMENT 'Main language of the thread',
   `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',

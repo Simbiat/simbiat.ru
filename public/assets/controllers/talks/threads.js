@@ -26,7 +26,7 @@ export class Threads {
                 this.deleteThread();
             });
         }
-        document.querySelectorAll('.replyto_button')
+        document.querySelectorAll('.reply_to_button')
             .forEach((item) => {
             item.addEventListener('click', (event) => {
                 this.replyTo(event.target);
@@ -34,9 +34,9 @@ export class Threads {
         });
     }
     replyTo(button) {
-        const replyto = button.getAttribute('data-postid') ?? '';
-        if (this.postForm && replyto) {
-            this.postForm.replyTo(replyto);
+        const reply_to = button.getAttribute('data-post_id') ?? '';
+        if (this.postForm && reply_to) {
+            this.postForm.replyTo(reply_to);
         }
     }
     addPost() {
@@ -129,15 +129,15 @@ export class Threads {
         if (this.editThreadForm) {
             const button = this.editThreadForm.querySelector('input[type=submit]');
             const formData = new FormData(this.editThreadForm);
-            const ogimage = this.editThreadForm.querySelector('input[type=file]');
-            if (ogimage?.files?.[0]) {
-                formData.append('curThread[ogimage]', 'true');
+            const og_image = this.editThreadForm.querySelector('input[type=file]');
+            if (og_image?.files?.[0]) {
+                formData.append('curThread[og_image]', 'true');
             }
             else {
-                formData.append('curThread[ogimage]', 'false');
+                formData.append('curThread[og_image]', 'false');
             }
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[threadid]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('curThread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {

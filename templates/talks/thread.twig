@@ -1,5 +1,5 @@
-{% if ogimage %}
-    {{ include('common/elements/ogimage.twig', {'ogimage': ogimage}, with_context = false) }}
+{% if og_image %}
+    {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
 {% endif %}
 {% if not posts.entities %}
     <article class="margin05rem">
@@ -25,5 +25,5 @@
     {% endfor %}
 {% endif %}
 {% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
-    {{ include('common/elements/postform.twig', {'verb': 'add', 'newThread': false, 'threadid': id}, with_context = false) }}
+    {{ include('common/elements/postform.twig', {'verb': 'add', 'newThread': false, 'thread_id': id}, with_context = false) }}
 {% endif %}

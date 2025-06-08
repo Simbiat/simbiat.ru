@@ -1,13 +1,13 @@
 <form role="form" id="editSectionForm" name="editSectionForm" autocomplete="off" class="middle">
     <input form="editSectionForm" type="hidden" name="verb" value="edit" required>
-    <input form="editSectionForm" type="hidden" name="curSection[sectionid]" id="curSection_id" value="{{ sectionid }}" required>
+    <input form="editSectionForm" type="hidden" name="curSection[section_id]" id="curSection_id" value="{{ section_id }}" required>
     <div class="float_label_div">
         <input form="editSectionForm" type="text" aria-required="true" required name="curSection[name]" id="cur_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64" value="{{ name }}">
         <label for="cur_section_name">Name</label>
     </div>
     {% if 'moveSections' in session_data.permissions %}
         <div class="float_label_div">
-            <input form="editSectionForm" type="number" inputmode="decimal" min="1" value="{{ parentID }}" step="1" aria-required="true" required name="curSection[parentid]" id="cur_section_parent" placeholder="Parent ID">
+            <input form="editSectionForm" type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="curSection[parent_id]" id="cur_section_parent" placeholder="Parent ID">
             <label for="cur_section_parent" data-tooltip="ID of parent section.<br>Change it to move the section.">Parent ID</label>
         </div>
         <div class="float_label_div">
@@ -32,7 +32,7 @@
     {{ include('common/elements/selectcustom.twig', {'formName': 'editSectionForm', 'placeholder': 'Type', 'inputName': 'curSection[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
     {{ include('common/elements/imageupload.twig', {'formName': 'editSectionForm', 'placeholder': 'Custom icon', 'inputName': 'curSection[icon]', 'previewClasses': 'middle section_icon', 'required': false, 'imageUrl': icon}, with_context = false) }}
     <div class="radio_and_label">
-        <input form="editSectionForm" id="cur_section_clear_icon" name="curSection[clearicon]" type="checkbox">
+        <input form="editSectionForm" id="cur_section_clear_icon" name="curSection[clearIcon]" type="checkbox">
         <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section, replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
     </div>
     <br>

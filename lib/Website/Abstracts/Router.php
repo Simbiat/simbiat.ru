@@ -13,42 +13,42 @@ abstract class Router
     protected array $subRoutes = [];
     #Current breadcrumb for navigation
     protected array $breadCrumb = [];
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = '';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = '';
     #Banner for all pages under the router. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
-    protected string $ogimage = '';
+    protected string $og_image = '';
     #Service name
     protected string $serviceName = '';
-    #If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
+    #If no path[0] is provided, but we want to show a specific page, instead of a stub - redirect to page with this address
     protected string $redirectMain = '';
-
+    
     final public function __construct()
     {
         #Check that subclass has set appropriate properties
         foreach (['subRoutes', 'breadCrumb'] as $property) {
-            if(empty($this->{$property})) {
-                throw new \LogicException(get_class($this) . ' must have a non-empty `'.$property.'` property.');
+            if (empty($this->{$property})) {
+                throw new \LogicException(\get_class($this) . ' must have a non-empty `'.$property.'` property.');
             }
         }
     }
-
-    #This is general routing check for supported page
+    
+    #This is a general routing check for supported page
     final public function route(array $path): array
     {
         #Start data
         $pageData = [];
-        #Main page of the segment is called
+        #The main page of the segment is called
         if (empty($path)) {
-            #If no path is provided, but we want to show specific page, instead of a stub - redirect
+            #If no path is provided, but we want to show a specific page, instead of a stub - redirect
             if (!empty($this->redirectMain) && preg_match('/^\/.+?$/u', $this->redirectMain) === 1) {
                 Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirectMain);
             }
             $pageData['breadcrumbs'] = $this->breadCrumb;
-        } elseif (in_array($path[0], $this->subRoutes, true)) {
+        } elseif (\in_array($path[0], $this->subRoutes, true)) {
             #Generate page
             $pageData = $this->pageGen($path);
             #Update breadcrumbs
@@ -78,15 +78,15 @@ abstract class Router
         if (!empty($this->serviceName)) {
             $pageData['serviceName'] = $this->serviceName;
         }
-        #Set custom ogimage if available
-        if (!empty($this->ogimage) && empty($pageData['ogimage'])) {
-            $pageData = array_merge($pageData, Images::ogImage($this->ogimage, true));
+        #Set custom og_image if available
+        if (!empty($this->og_image) && empty($pageData['og_image'])) {
+            $pageData = array_merge($pageData, Images::ogImage($this->og_image, true));
         }
         return $pageData;
     }
     
     /**
-     * This is actual page generation based on further details of the $path
+     * This is the actual page generation based on further details of the $path
      * @param array $path
      *
      * @return array

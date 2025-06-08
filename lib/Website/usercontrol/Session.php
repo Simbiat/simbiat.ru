@@ -89,7 +89,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = Query::query('SELECT `data` FROM `uc__sessions` WHERE `sessionid` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']], return: 'value');
+            $data = Query::query('SELECT `data` FROM `uc__sessions` WHERE `session_id` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->sessionLife, 'int']], return: 'value');
         } catch (\Throwable) {
             $data = '';
         }
@@ -109,7 +109,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     
     /**
      * Write session data
+     *
      * @link  https://php.net/manual/en/sessionhandlerinterface.write.php
+     *
      * @param string $id   The session id.
      * @param string $data <p>
      *                     The encoded session data. This data is the
@@ -118,11 +120,13 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      *                     string and passing it as this parameter.
      *                     Please note sessions use an alternative serialization method.
      *                     </p>
+     *
      * @return bool <p>
      *                     The return value (usually TRUE on success, FALSE on failure).
      *                     Note this value is returned internally to PHP for processing.
      *                     </p>
      * @since 5.4
+     * @throws \Random\RandomException
      */
     public function write(string $id, string $data): bool
     {
@@ -179,24 +183,24 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             }
             #Write session data
             $queries[] = [
-                'INSERT INTO `uc__sessions` SET `sessionid`=:id, `cookieid`=:cookieid, `userid`=:userid, `ip`=:ip, `useragent`=:useragent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `userid`=:userid, `ip`=:ip, `useragent`=:useragent, `page`=:page, `data`=:data;',
+                'INSERT INTO `uc__sessions` SET `session_id`=:id, `cookie_id`=:cookie_id, `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data;',
                 [
                     ':id' => $id,
                     #Whether a cookie is associated with this session
-                    ':cookieid' => [
-                        (empty($data['cookieid']) ? NULL : $data['cookieid']),
-                        (empty($data['cookieid']) ? 'null' : 'string'),
+                    ':cookie_id' => [
+                        (empty($data['cookie_id']) ? NULL : $data['cookie_id']),
+                        (empty($data['cookie_id']) ? 'null' : 'string'),
                     ],
                     ':ip' => [
                         (empty($data['IP']) ? NULL : $data['IP']),
                         (empty($data['IP']) ? 'null' : 'string'),
                     ],
-                    #Useragent details only for logged-in users for the ability to review active sessions
-                    ':useragent' => [
+                    #user_agent details only for logged-in users for the ability to review active sessions
+                    ':user_agent' => [
                         (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
                         (empty($data['UA']['full']) ? 'null' : 'string'),
                     ],
-                    ':userid' => [$data['userid'], 'int'],
+                    ':user_id' => [$data['user_id'], 'int'],
                     #What page is being viewed
                     ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr($_SERVER['REQUEST_URI'], 0, 256, 'UTF-8')),
                     #Actual session data
@@ -207,16 +211,16 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 ],
             ];
             #Try to update client information for cookie
-            if (!empty($data['cookieid'])) {
+            if (!empty($data['cookie_id'])) {
                 $queries[] = [
-                    'UPDATE `uc__cookies` SET `ip`=:ip, `useragent`=:useragent WHERE `cookieid`=:cookie;',
+                    'UPDATE `uc__cookies` SET `ip`=:ip, `user_agent`=:user_agent WHERE `cookie_id`=:cookie;',
                     [
-                        ':cookie' => $data['cookieid'],
+                        ':cookie' => $data['cookie_id'],
                         ':ip' => [
                             (empty($data['IP']) ? NULL : $data['IP']),
                             (empty($data['IP']) ? 'null' : 'string'),
                         ],
-                        ':useragent' => [
+                        ':user_agent' => [
                             (empty($data['UA']['full']) ? NULL : $data['UA']['full']),
                             (empty($data['UA']['full']) ? 'null' : 'string'),
                         ],
@@ -273,8 +277,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             } elseif (!headers_sent()) {
                 header('X-CSRF-Token: '.$data['CSRF']);
             }
-            if (empty($data['userid'])) {
-                $data['userid'] = Config::userIDs['Unknown user'];
+            if (empty($data['user_id'])) {
+                $data['user_id'] = Config::userIDs['Unknown user'];
                 $data['username'] = $data['UA']['bot'] ?? null;
                 $data['timezone'] = null;
                 $data['groups'] = [];
@@ -282,7 +286,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $data['activated'] = false;
                 $data['avatar'] = null;
             } else {
-                $user = new User($data['userid'])->get();
+                $user = new User($data['user_id'])->get();
                 #Assign some data to the session
                 if ($user->id) {
                     $data['username'] = $user->username;
@@ -293,12 +297,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['avatar'] = $user->currentAvatar;
                     $data['sections'] = $user->sections;
                 } else {
-                    $data['userid'] = Config::userIDs['Unknown user'];
+                    $data['user_id'] = Config::userIDs['Unknown user'];
                     $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
                 }
             }
         } catch (\Throwable) {
-            $data['userid'] = Config::userIDs['Unknown user'];
+            $data['user_id'] = Config::userIDs['Unknown user'];
             $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
         }
     }
@@ -355,16 +359,16 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         try {
             #Decode data
             $data = json_decode($_COOKIE[$cookieName], true, flags: JSON_THROW_ON_ERROR);
-            if (empty($data['cookieid']) || empty($data['pass'])) {
+            if (empty($data['cookie_id']) || empty($data['pass'])) {
                 #No expected data found
                 return [];
             }
             #Cache Security object
-            $data['cookieid'] = Security::decrypt($data['cookieid']);
+            $data['cookie_id'] = Security::decrypt($data['cookie_id']);
             $data['pass'] = Security::decrypt($data['pass']);
             #Get user data
-            $savedData = Query::query('SELECT `validator`, `userid` FROM `uc__cookies` WHERE `uc__cookies`.`cookieid`=:id',
-                [':id' => $data['cookieid']], return: 'row'
+            $savedData = Query::query('SELECT `validator`, `user_id` FROM `uc__cookies` WHERE `uc__cookies`.`cookie_id`=:id',
+                [':id' => $data['cookie_id']], return: 'row'
             );
             if (empty($savedData) || empty($savedData['validator'])) {
                 #No cookie found or no password present
@@ -375,12 +379,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 #Wrong password
                 return [];
             }
-            $user = (new User($savedData['userid']));
+            $user = (new User($savedData['user_id']));
             #Reset strikes if any
             $user->resetStrikes();
             #Update cookie
-            $user->rememberMe($data['cookieid']);
-            $savedData['cookieid'] = $data['cookieid'];
+            $user->rememberMe($data['cookie_id']);
+            $savedData['cookie_id'] = $data['cookie_id'];
             unset($savedData['validator']);
             return $savedData;
         } catch (\Throwable $e) {
@@ -402,7 +406,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function destroy(string $id): bool
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `sessionid`=:id', [':id' => $id]);
+            return Query::query('DELETE FROM `uc__sessions` WHERE `session_id`=:id', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -425,7 +429,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `userid` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
+            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `user_id` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -462,18 +466,18 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get ID
         try {
-            $sessionId = Query::query('SELECT `sessionId` FROM `uc__sessions` WHERE `sessionId` = :id;', [':id' => $id], return: 'value');
+            $session_id = Query::query('SELECT `session_id` FROM `uc__sessions` WHERE `session_id` = :id;', [':id' => $id], return: 'value');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
         }
         #Check if it was returned
-        if (empty($sessionId)) {
+        if (empty($session_id)) {
             #No such session exists
             return false;
         }
         #Validate session id using hash_equals to mitigate timing attacks
-        return hash_equals($sessionId, $id);
+        return hash_equals($session_id, $id);
     }
     
     /**
@@ -492,7 +496,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `sessionid` = :id;', [':id' => $id]);
+            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `session_id` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

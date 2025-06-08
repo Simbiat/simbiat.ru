@@ -11,34 +11,34 @@
                     {% if section.private %}<span data-tooltip="Private section">🚷</span>{% endif %}
                 {% endif %}
             </div>
-            <a href="/talks/{% if editMode %}edit/{% endif %}sections/{{ section.sectionid|default('sectionid') }}/{{ prettyURL(section.name|default('')) }}">{{ section.name }}</a>
+            <a href="/talks/{% if editMode %}edit/{% endif %}sections/{{ section.section_id|default('section_id') }}/{{ prettyURL(section.name|default('')) }}">{{ section.name }}</a>
         </div>
         <div class="section_description">{{ section.description }}</div>
     </td>
     <td>{{ section.threads|default('0') }}</td>
     <td>{{ section.posts|default('0') }}</td>
     {% if editMode %}
-        <td>{{ section.sectionid|default('sectionid') }}</td>
+        <td>{{ section.section_id|default('section_id') }}</td>
         {% if 'editSections' in permissions %}
             <td>
                 <span class="float_label_div">
-                    <input id="section_sequence_{{ section.sectionid|default('sectionid') }}" class="section_sequence number_spinner" type="number" inputmode="decimal" min="0" max="99" step="1" value="{{ section.sequence }}" data-section="{{ section.sectionid|default('sectionid') }}" data-initial="{{ section.sequence }}">
-                    <label for="section_sequence_{{ section.sectionid|default('sectionid') }}">&nbsp</label>
+                    <input id="section_sequence_{{ section.section_id|default('section_id') }}" class="section_sequence number_spinner" type="number" inputmode="decimal" min="0" max="99" step="1" value="{{ section.sequence }}" data-section="{{ section.section_id|default('section_id') }}" data-initial="{{ section.sequence }}">
+                    <label for="section_sequence_{{ section.section_id|default('section_id') }}">&nbsp</label>
                     <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Changing order...">
                 </span>
             </td>
             <td>
                 <span class="radio_and_label">
-                    <input id="section_closed_checkbox_{{ section.sectionid|default('sectionid') }}" class="section_closed" data-section="{{ section.sectionid|default('sectionid') }}" type="checkbox"{% if section.closed %} checked{% endif %}>
-                    <label for="section_closed_checkbox_{{ section.sectionid|default('sectionid') }}"></label>
-                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Opening/closing section {{ section.sectionid|default('sectionid') }}...">
+                    <input id="section_closed_checkbox_{{ section.section_id|default('section_id') }}" class="section_closed" data-section="{{ section.section_id|default('section_id') }}" type="checkbox"{% if section.closed %} checked{% endif %}>
+                    <label for="section_closed_checkbox_{{ section.section_id|default('section_id') }}"></label>
+                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Opening/closing section {{ section.section_id|default('section_id') }}...">
                 </span>
             </td>
             <td>
                 <span class="radio_and_label">
-                    <input id="section_private_checkbox_{{ section.sectionid|default('sectionid') }}" class="section_private" data-section="{{ section.sectionid|default('sectionid') }}" type="checkbox"{% if section.private %} checked{% endif %}>
-                    <label for="section_private_checkbox_{{ section.sectionid|default('sectionid') }}"></label>
-                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Making section {{ section.sectionid|default('sectionid') }} public/private...">
+                    <input id="section_private_checkbox_{{ section.section_id|default('section_id') }}" class="section_private" data-section="{{ section.section_id|default('section_id') }}" type="checkbox"{% if section.private %} checked{% endif %}>
+                    <label for="section_private_checkbox_{{ section.section_id|default('section_id') }}"></label>
+                    <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Making section {{ section.section_id|default('section_id') }} public/private...">
                 </span>
             </td>
         {% endif %}

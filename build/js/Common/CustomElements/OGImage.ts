@@ -1,13 +1,14 @@
 class OGImage extends HTMLElement
 {
-    private readonly ogimage: HTMLImageElement | null = null;
+    private readonly og_image: HTMLImageElement | null = null;
     private readonly hideBanner: HTMLDivElement | null = null;
     
-    public constructor() {
+    public constructor()
+    {
         super();
-        this.ogimage = document.querySelector('#ogimage');
+        this.og_image = document.querySelector('#og_image');
         this.hideBanner = document.querySelector('hide-banner');
-        //Listener to hide ogimage
+        //Listener to hide og_image
         if (this.hideBanner) {
             this.hideBanner.addEventListener('click', () => {
                 this.toggleBanner();
@@ -17,12 +18,12 @@ class OGImage extends HTMLElement
     
     private toggleBanner(): void
     {
-        if (this.ogimage && this.hideBanner) {
-            if (this.ogimage.classList.contains('hidden')) {
-                this.ogimage.classList.remove('hidden');
+        if (this.og_image && this.hideBanner) {
+            if (this.og_image.classList.contains('hidden')) {
+                this.og_image.classList.remove('hidden');
                 this.hideBanner.textContent = 'Hide banner';
             } else {
-                this.ogimage.classList.add('hidden');
+                this.og_image.classList.add('hidden');
                 this.hideBanner.textContent = 'Show banner';
             }
         }

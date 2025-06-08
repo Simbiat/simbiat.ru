@@ -13,11 +13,11 @@ class Password extends Page
     ];
     #Sub service name
     protected string $subServiceName = 'password';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Password';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Password change';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Page to change password';
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cacheStrat = 'private';
@@ -25,19 +25,19 @@ class Password extends Page
     protected bool $authenticationNeeded = false;
     #Link to JS module for preload
     protected string $jsModule = 'uc/password';
-
-    #This is actual page generation based on further details of the $path
+    
+    #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         $outputArray = [];
-        if ($_SESSION['userid'] === 1) {
+        if ($_SESSION['user_id'] === 1) {
             #Check if password reset is being attempted
             if (!empty($path[0]) && preg_match('/\d+/u', $path[0]) === 1) {
                 #Check token
                 if (empty($path[1])) {
                     return ['http_error' => 403];
                 }
-                $outputArray = ['userid' => $path[0], 'token' => $path[1]];
+                $outputArray = ['user_id' => $path[0], 'token' => $path[1]];
             } else {
                 #Not authorized
                 return ['http_error' => 403];

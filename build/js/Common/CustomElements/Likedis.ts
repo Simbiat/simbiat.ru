@@ -1,17 +1,18 @@
 class Likedis extends HTMLElement
 {
-    private readonly postId: number = 0;
-    private likeValue = 0;
+    private readonly post_id: number = 0;
+    private like_value = 0;
     private readonly likesCount: HTMLSpanElement | null;
     private readonly dislikesCount: HTMLSpanElement | null;
     private readonly likeButton: HTMLInputElement | null;
     private readonly dislikeButton: HTMLInputElement | null;
     
-    public constructor() {
+    public constructor()
+    {
         super();
         //Set initial values for the object
-        this.likeValue = Number(this.getAttribute('data-liked') ?? 0);
-        this.postId = Number(this.getAttribute('data-postid') ?? 0);
+        this.like_value = Number(this.getAttribute('data-liked') ?? 0);
+        this.post_id = Number(this.getAttribute('data-post_id') ?? 0);
         this.likesCount = this.querySelector('.likes_count');
         this.dislikesCount = this.querySelector('.dislikes_count');
         this.likeButton = this.querySelector('.like_button');
@@ -35,24 +36,21 @@ class Likedis extends HTMLElement
         } else {
             action = 'dislike';
         }
-        if (this.postId === 0) {
+        if (this.post_id === 0) {
             addSnackbar('No post ID', 'failure', snackbarFailLife);
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.postId}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === 0) {
-                this.updateCounts(data.data);
-            } else if (data.data === 1) {
-                this.updateCounts(data.data);
-            } else if (data.data === -1) {
-                this.updateCounts(data.data);
-            } else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
-            }
-            buttonToggle(button);
-        });
+        ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.post_id}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true)
+            .then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === 0 || data.data === 1 || data.data === -1) {
+                    this.updateCounts(data.data);
+                } else {
+                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                }
+                buttonToggle(button);
+            });
     }
     
     //Function to update counts and styling in UI
@@ -64,17 +62,15 @@ class Likedis extends HTMLElement
             this.dislikesCount.classList.remove('failure');
             if (newValue === 0) {
                 //Update values depending on previous ones
-                if (this.likeValue === 1) {
-                    this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) - 1);
-                } else if (this.likeValue === -1) {
-                    this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) - 1);
+                if (this.like_value === 1 || this.like_value === -1) {
+                    this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) + this.like_value);
                 }
                 //Update tooltips
                 this.likeButton.setAttribute('data-tooltip', 'Like');
                 this.dislikeButton.setAttribute('data-tooltip', 'Dislike');
             } else if (newValue === 1) {
                 //Reduce dislikes
-                if (this.likeValue === -1) {
+                if (this.like_value === -1) {
                     this.dislikesCount.innerHTML = String(Number(this.dislikesCount.innerHTML) - 1);
                 }
                 //Increase likes
@@ -86,7 +82,7 @@ class Likedis extends HTMLElement
                 this.dislikeButton.setAttribute('data-tooltip', 'Dislike');
             } else if (newValue === -1) {
                 //Reduce likes
-                if (this.likeValue === 1) {
+                if (this.like_value === 1) {
                     this.likesCount.innerHTML = String(Number(this.likesCount.innerHTML) - 1);
                 }
                 //Increase dislikes
@@ -106,7 +102,7 @@ class Likedis extends HTMLElement
             }
             //Update pre-saved value of the (dis)like
             this.setAttribute('data-liked', String(newValue));
-            this.likeValue = newValue;
+            this.like_value = newValue;
         }
     }
 }

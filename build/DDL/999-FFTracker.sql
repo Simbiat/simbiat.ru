@@ -1,6 +1,6 @@
 USE `simbiatr_simbiat`;
 /*Initial static data for FFTracker*/
-INSERT IGNORE INTO `ffxiv__city` (`cityid`, `city`, `region`) VALUES
+INSERT IGNORE INTO `ffxiv__city` (`city_id`, `city`, `region`) VALUES
 (1, 'Garlemald', 'The Garlean Empire'),
 (2, 'Gridania', 'The Black Shroud'),
 (3, 'Ishgard', 'Coerthas'),
@@ -13,7 +13,7 @@ INSERT IGNORE INTO `ffxiv__city` (`cityid`, `city`, `region`) VALUES
 (10, 'The Crystarium', 'Norvrandt'),
 (11, 'Bozja', 'Ilsabard');
 
-INSERT IGNORE INTO `ffxiv__clan` (`clanid`, `clan`, `race`, `raceid`) VALUES
+INSERT IGNORE INTO `ffxiv__clan` (`clan_id`, `clan`, `race`, `race_id`) VALUES
 (1, 'Midlander', 'Hyur', 1),
 (2, 'Highlander', 'Hyur', 1),
 (3, 'Wildwood', 'Elezen', 2),
@@ -31,13 +31,13 @@ INSERT IGNORE INTO `ffxiv__clan` (`clanid`, `clan`, `race`, `raceid`) VALUES
 (15, 'Rava', 'Viera', 8),
 (16, 'Veena', 'Viera', 8);
 
-INSERT IGNORE INTO `ffxiv__count_filter` (`countId`, `value`) VALUES
+INSERT IGNORE INTO `ffxiv__count_filter` (`count_id`, `value`) VALUES
 (1, '1-10'),
 (2, '11-30'),
 (3, '31-50'),
 (4, '51-');
 
-INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`, `size`) VALUES
+INSERT IGNORE INTO `ffxiv__estate` (`estate_id`, `city_id`, `area`, `ward`, `plot`, `size`) VALUES
 (1, 4, 'Mist', 1, 1, 2),
 (2, 4, 'Mist', 1, 2, 3),
 (3, 4, 'Mist', 1, 3, 1),
@@ -1604,7 +1604,7 @@ INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`
 (1564, 5, 'The Goblet', 7, 4, 2),
 (1565, 5, 'The Goblet', 7, 5, 3);
 
-INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`, `size`) VALUES
+INSERT IGNORE INTO `ffxiv__estate` (`estate_id`, `city_id`, `area`, `ward`, `plot`, `size`) VALUES
 (1566, 5, 'The Goblet', 7, 6, 2),
 (1567, 5, 'The Goblet', 7, 7, 1),
 (1568, 5, 'The Goblet', 7, 8, 2),
@@ -3097,7 +3097,7 @@ INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`
 (3055, 5, 'The Goblet', 13, 55, 2),
 (3056, 5, 'The Goblet', 13, 56, 1);
 
-INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`, `size`) VALUES
+INSERT IGNORE INTO `ffxiv__estate` (`estate_id`, `city_id`, `area`, `ward`, `plot`, `size`) VALUES
 (3057, 5, 'The Goblet', 13, 57, 1),
 (3058, 5, 'The Goblet', 13, 58, 1),
 (3059, 5, 'The Goblet', 13, 59, 1),
@@ -4568,7 +4568,7 @@ INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`
 (4524, 2, 'The Lavender Beds', 19, 24, 1),
 (4525, 2, 'The Lavender Beds', 19, 25, 1);
 
-INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`, `size`) VALUES
+INSERT IGNORE INTO `ffxiv__estate` (`estate_id`, `city_id`, `area`, `ward`, `plot`, `size`) VALUES
 (4526, 2, 'The Lavender Beds', 19, 26, 1),
 (4527, 2, 'The Lavender Beds', 19, 27, 2),
 (4528, 2, 'The Lavender Beds', 19, 28, 3),
@@ -6059,7 +6059,7 @@ INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`
 (6043, 3, 'Empyreum', 5, 13, 1),
 (6044, 3, 'Empyreum', 5, 14, 1);
 
-INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`, `size`) VALUES
+INSERT IGNORE INTO `ffxiv__estate` (`estate_id`, `city_id`, `area`, `ward`, `plot`, `size`) VALUES
 (6045, 3, 'Empyreum', 5, 15, 1),
 (6046, 3, 'Empyreum', 5, 16, 2),
 (6047, 3, 'Empyreum', 5, 17, 1),
@@ -7247,13 +7247,13 @@ INSERT IGNORE INTO `ffxiv__estate` (`estateid`, `cityid`, `area`, `ward`, `plot`
 (7229, 3, 'Empyreum', 24, 59, 1),
 (7230, 3, 'Empyreum', 24, 60, 2);
 
-INSERT IGNORE INTO `ffxiv__grandcompany` (`gcId`, `gcName`) VALUES
+INSERT IGNORE INTO `ffxiv__grandcompany` (`gc_id`, `gc_name`) VALUES
 (3, 'Immortal Flames'),
 (1, 'Maelstrom'),
 (0, 'No Affiliation'),
 (2, 'Order of the Twin Adder');
 
-INSERT IGNORE INTO `ffxiv__grandcompany_rank` (`gcrankid`, `gcId`, `gc_rank`) VALUES
+INSERT IGNORE INTO `ffxiv__grandcompany_rank` (`gc_rank_id`, `gc_id`, `gc_rank`) VALUES
 (1, 3, 'Chief Flame Sergeant'),
 (2, 2, 'Chief Serpent Sergeant'),
 (3, 1, 'Chief Storm Sergeant'),
@@ -7312,7 +7312,7 @@ INSERT IGNORE INTO `ffxiv__grandcompany_rank` (`gcrankid`, `gcId`, `gc_rank`) VA
 (56, 1, 'Grand Storm Marshal'),
 (57, 1, 'Storm Champion');
 
-INSERT IGNORE INTO `ffxiv__guardian` (`guardianid`, `guardian`) VALUES
+INSERT IGNORE INTO `ffxiv__guardian` (`guardian_id`, `guardian`) VALUES
 (1, 'Althyk, the Keeper'),
 (2, 'Azeyma, the Warden'),
 (3, 'Byregot, the Builder'),
@@ -7326,7 +7326,7 @@ INSERT IGNORE INTO `ffxiv__guardian` (`guardianid`, `guardian`) VALUES
 (11, 'Rhalgr, the Destroyer'),
 (12, 'Thaliak, the Scholar');
 
-INSERT IGNORE INTO `ffxiv__nameday` (`namedayid`, `nameday`) VALUES
+INSERT IGNORE INTO `ffxiv__nameday` (`nameday_id`, `nameday`) VALUES
 (10, '10th Sun of the 1st Astral Moon'),
 (42, '10th Sun of the 1st Umbral Moon'),
 (74, '10th Sun of the 2nd Astral Moon'),
@@ -7712,7 +7712,7 @@ INSERT IGNORE INTO `ffxiv__nameday` (`namedayid`, `nameday`) VALUES
 (329, '9th Sun of the 6th Astral Moon'),
 (361, '9th Sun of the 6th Umbral Moon');
 
-INSERT IGNORE INTO `ffxiv__orderby` (`orderID`, `Description`) VALUES
+INSERT IGNORE INTO `ffxiv__orderby` (`order_id`, `description`) VALUES
 (1, 'Order by name A-Z'),
 (2, 'Order by name Z-A'),
 (3, 'Order by world name A-Z or descending number of members in a group'),
@@ -7720,7 +7720,7 @@ INSERT IGNORE INTO `ffxiv__orderby` (`orderID`, `Description`) VALUES
 (5, 'Order by descending level or descending group foundation date'),
 (6, 'Order by ascending level or ascending group foundation date');
 
-INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
+INSERT IGNORE INTO `ffxiv__server` (`server_id`, `server`, `data_center`) VALUES
 (1, 'Adamantoise', 'Aether'),
 (2, 'Aegis', 'Elemental'),
 (3, 'Alexander', 'Gaia'),
@@ -7803,15 +7803,15 @@ INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
 (66, 'Zodiark', 'Light'),
 (73, 'Zurvan', 'Materia');
 
-INSERT IGNORE INTO `ffxiv__timeactive` (`activeid`, `active`) VALUES
+INSERT IGNORE INTO `ffxiv__timeactive` (`active_id`, `active`) VALUES
 (3, 'Always'),
 (1, 'Weekdays'),
 (2, 'Weekends');
 
 /*New data after initial dump*/
-INSERT INTO `ffxiv__estate`(`cityid`, `area`, `ward`, `plot`, `size`) SELECT `cityid`, `area`, `ward`+20 as `ward`, `plot`, `size` FROM `ffxiv__estate` WHERE `ward` IN (5, 6, 7, 8, 9, 10);
-INSERT INTO `ffxiv__linkshell_rank` (`lsrankid`, `rank`, `icon`) VALUES ('4', 'Invitee', NULL);
-INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
+INSERT INTO `ffxiv__estate`(`city_id`, `area`, `ward`, `plot`, `size`) SELECT `city_id`, `area`, `ward`+20 as `ward`, `plot`, `size` FROM `ffxiv__estate` WHERE `ward` IN (5, 6, 7, 8, 9, 10);
+INSERT INTO `ffxiv__linkshell_rank` (`ls_rank_id`, `rank`, `icon`) VALUES ('4', 'Invitee', NULL);
+INSERT IGNORE INTO `ffxiv__server` (`server_id`, `server`, `data_center`) VALUES
 (82, 'Innocence', 'Shadow'),
 (83, 'Pixie', 'Shadow'),
 (84, 'Titania', 'Shadow'),
@@ -7823,4 +7823,4 @@ INSERT IGNORE INTO `ffxiv__server` (`serverid`, `server`, `datacenter`) VALUES
 
 INSERT INTO `ffxiv__jobs`(`name`) VALUES ('Alchemist'), ('Armorer'), ('Astrologian'), ('Bard'), ('Black Mage'), ('Blacksmith'), ('Blue Mage'), ('Botanist'), ('Carpenter'), ('Culinarian'), ('Dancer'), ('Dark Knight'), ('Dragoon'), ('Fisher'), ('Goldsmith'), ('Gunbreaker'), ('Leatherworker'), ('Machinist'), ('Miner'), ('Monk'), ('Ninja'), ('Paladin'), ('Pictomancer'), ('Reaper'), ('Red Mage'), ('Sage'), ('Samurai'), ('Scholar'), ('Summoner'), ('Viper'), ('Warrior'), ('Weaver'), ('White Mage');
 
-UPDATE `ffxiv__achievement` SET `earnedby`=(SELECT COUNT(*) FROM `ffxiv__character_achievement` WHERE `ffxiv__character_achievement`.`achievementid`=`ffxiv__achievement`.`achievementid`);
+UPDATE `ffxiv__achievement` SET `earned_by`=(SELECT COUNT(*) FROM `ffxiv__character_achievement` WHERE `ffxiv__character_achievement`.`achievement_id`=`ffxiv__achievement`.`achievement_id`);

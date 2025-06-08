@@ -7,7 +7,7 @@ use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Page;
 
 /**
- * Class for pages that can be counted (that is they have multiple items)
+ * Class for pages that can be counted (that is, they have multiple items)
  */
 class Countables extends Page
 {
@@ -62,31 +62,31 @@ class Countables extends Page
                 break;
             case 'ffxiv_characters':
                 $this->breadCrumb[0]['name'] = 'FFXIV Characters';
-                $query = 'SELECT CONCAT(\'fftracker/characters/\', `characterid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` WHERE `privated` IS NULL LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/characters/\', `character_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` WHERE `hidden` IS NULL LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'ffxiv_freecompanies':
                 $this->breadCrumb[0]['name'] = 'FFXIV Free Companies';
-                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `freecompanyid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `fc_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'ffxiv_linkshells':
                 $this->breadCrumb[0]['name'] = 'FFXIV Linkshells';
-                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `linkshellid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `ls_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'ffxiv_pvpteams':
                 $this->breadCrumb[0]['name'] = 'FFXIV PvP Teams';
-                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvpteamid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvp_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'ffxiv_achievements':
                 $this->breadCrumb[0]['name'] = 'FFXIV Achievements';
-                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievementid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievement_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'threads':
                 $this->breadCrumb[0]['name'] = 'Forums Threads';
-                $query = 'SELECT CONCAT(\'talks/threads/\', `threadid`) AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP() ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/threads/\', `thread_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`created`<=CURRENT_TIMESTAMP() ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
                 break;
             case 'users':
                 $this->breadCrumb[0]['name'] = 'Users';
-                $query = 'SELECT CONCAT(\'talks/users/\', `userid`) AS `loc`, `updated` AS `lastmod`, `username` as `name` FROM `uc__users` WHERE `userid` NOT IN (SELECT `userid` FROM `uc__users` WHERE `system`=1) ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
+                $query = 'SELECT CONCAT(\'talks/users/\', `user_id`) AS `loc`, `updated` AS `lastmod`, `username` as `name` FROM `uc__users` WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) ORDER BY `name` LIMIT '.$start.', '.$this->maxElements;
                 break;
         }
         #Update name of breadcrumb

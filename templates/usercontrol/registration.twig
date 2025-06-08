@@ -1,4 +1,4 @@
-{% if session_data.userid != 1 and session_data.username %}
+{% if session_data.user_id != 1 and session_data.username %}
     <div class="success">Hey, {{ session_data.username }}! You are already registered and logged in, nothing else is required.</div>
 {% else %}
     {% if registration == 0 %}

@@ -4,13 +4,13 @@
     {% endif %}
         <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="verb" value="{{ verb }}" required>
         {% if not newThread %}
-            <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[threadid]" value="{{ threadid }}" required>
+            <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[thread_id]" value="{{ thread_id }}" required>
             {% if verb == 'add' %}
-                <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" id="replyingTo" name="postForm[replyto]" value="">
+                <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" id="replyingTo" name="postForm[reply_to]" value="">
             {% endif %}
         {% endif %}
         {% if verb == 'edit' %}
-            <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[postid]" value="{{ postid }}">
+            <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" type="hidden" name="postForm[post_id]" value="{{ post_id }}">
         {% endif %}
         <div class="float_label_div wrapper_for_tinymce">
             <textarea form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="postText" name="postForm[text]" placeholder="Text" spellcheck="true" wrap="soft">{{ text }}</textarea>
@@ -18,7 +18,7 @@
         </div>
         {% if 'hideUpdate' in permissions %}
             <div class="radio_and_label">
-                <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="post_hide_update" name="postForm[hideupdate]" type="checkbox">
+                <input form="{% if newThread %}addThreadForm{% else %}postForm{% endif %}" id="post_hide_update" name="postForm[hideUpdate]" type="checkbox">
                 <label for="post_hide_update" data-tooltip="If checked and there is a text change, the `updated` time of the post will not be changed.">Hide update</label>
             </div>
         {% endif %}

@@ -10,21 +10,21 @@
 <form class="middle" id="profile_details">
     <p>Form below auto-saves 10 seconds after any changes.</p>
     <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.firstname }}" type="text" aria-required="false" name="details[name][firstname]" id="firstname_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
-        <label for="firstname_value">First name</label>
+        <input form="profile_details" value="{{ userData.name.first_name }}" type="text" aria-required="false" name="details[name][first_name]" id="first_name_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+        <label for="first_name_value">First name</label>
     </div>
     <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.lastname }}" type="text" aria-required="false" name="details[name][lastname]" id="lastname_value" placeholder="Last name" autocomplete="family-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
-        <label for="lastname_value">Last name</label>
+        <input form="profile_details" value="{{ userData.name.last_name }}" type="text" aria-required="false" name="details[name][last_name]" id="last_name_value" placeholder="Last name" autocomplete="family-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+        <label for="last_name_value">Last name</label>
     </div>
     <br/>
     <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.middlename }}" type="text" aria-required="false" name="details[name][middlename]" id="middlename_value" placeholder="Middle name" autocomplete="additional-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
-        <label for="middlename_value">Middle name</label>
+        <input form="profile_details" value="{{ userData.name.middle_name }}" type="text" aria-required="false" name="details[name][middle_name]" id="middle_name_value" placeholder="Middle name" autocomplete="additional-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+        <label for="middle_name_value">Middle name</label>
     </div>
     <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.fathername }}" type="text" aria-required="false" name="details[name][fathername]" id="fathername_value" placeholder="Father's name" autocomplete="on" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
-        <label for="fathername_value">Father's name</label>
+        <input form="profile_details" value="{{ userData.name.father_name }}" type="text" aria-required="false" name="details[name][father_name]" id="father_name_value" placeholder="Father's name" autocomplete="on" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+        <label for="father_name_value">Father's name</label>
     </div>
     <br/>
     <div class="float_label_div">
@@ -64,7 +64,7 @@
                 <option value="{{ timezone }}"{% if details.current %} selected{% endif %}>{{ timezone }} (GMT{{ details.offset }})</option>
             {% endfor %}
         </select>
-        <label for="timezone_value">Timezone</label>
+        <label for="timezone_value">Time zone</label>
     </div>
     <br/>
     <div class="float_label_div">

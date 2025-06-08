@@ -30,13 +30,13 @@ class Password extends Api
      */
     protected function genData(array $path): array
     {
-        if (!empty($_POST['pass_userid']) && preg_match('/\d+/u', $_POST['pass_userid']) === 1) {
-            $id = $_POST['pass_userid'];
+        if (!empty($_POST['pass_user_id']) && preg_match('/\d+/u', $_POST['pass_user_id']) === 1) {
+            $id = $_POST['pass_user_id'];
         } else {
-            if ($_SESSION['userid'] === 1) {
+            if ($_SESSION['user_id'] === 1) {
                 return ['http_error' => 403, 'reason' => 'Not logged in'];
             }
-            $id = $_SESSION['userid'];
+            $id = $_SESSION['user_id'];
         }
         if (empty($_POST['current_password']) && empty($_POST['pass_reset'])) {
             return ['http_error' => 400, 'reason' => 'No current password or reset token provided'];
@@ -51,8 +51,8 @@ class Password extends Api
         if (empty($_POST['pass_reset'])) {
             #Get password
             try {
-                $password = Query::query('SELECT `password` FROM `uc__users` WHERE `userid`=:userid',
-                    [':userid' => $id], return: 'value'
+                $password = Query::query('SELECT `password` FROM `uc__users` WHERE `user_id`=:user_id',
+                    [':user_id' => $id], return: 'value'
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
@@ -67,8 +67,8 @@ class Password extends Api
         } else {
             #Get activation code
             try {
-                $pwReset = Query::query('SELECT `pw_reset` FROM `uc__users` WHERE `userid`=:userid',
-                    [':userid' => $id], return: 'value'
+                $pwReset = Query::query('SELECT `password_reset` FROM `uc__users` WHERE `user_id`=:user_id',
+                    [':user_id' => $id], return: 'value'
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];

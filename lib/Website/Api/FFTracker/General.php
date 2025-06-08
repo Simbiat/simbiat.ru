@@ -9,7 +9,7 @@ use Simbiat\Website\Errors;
 
 abstract class General extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => '', 'PUT' => 'update', 'POST' => 'register'];
@@ -24,23 +24,23 @@ abstract class General extends Api
     
     protected function genData(array $path): array
     {
-        #Reset verb for consistency, if it's not set
+        #Reset verb for consistency if it's not set
         if (empty($path[1])) {
             $path[1] = '';
         }
         try {
             if ($this->nameForLinks === 'achievement') {
                 $data = match ($path[1]) {
-                    'update' => (new \Simbiat\FFXIV\Achievement($path[0]))->updateFromApi(),
-                    'lodestone' => (new \Simbiat\FFXIV\Achievement($path[0]))->getFromLodestone(),
-                    default => (new \Simbiat\FFXIV\Achievement($path[0]))->getArray(),
+                    'update' => new \Simbiat\FFXIV\Achievement($path[0])->updateFromApi(),
+                    'lodestone' => new \Simbiat\FFXIV\Achievement($path[0])->getFromLodestone(),
+                    default => new \Simbiat\FFXIV\Achievement($path[0])->getArray(),
                 };
             } else {
                 $data = match ($path[1]) {
-                    'update' => (new $this->entityClass())->setId($path[0])->updateFromApi(),
-                    'register' => (new $this->entityClass())->setId($path[0])->register(),
-                    'lodestone' => (new $this->entityClass())->setId($path[0])->getFromLodestone(),
-                    default => (new $this->entityClass())->setId($path[0])->getArray(),
+                    'update' => new $this->entityClass()->setId($path[0])->updateFromApi(),
+                    'register' => new $this->entityClass()->setId($path[0])->register(),
+                    'lodestone' => new $this->entityClass()->setId($path[0])->getFromLodestone(),
+                    default => new $this->entityClass()->setId($path[0])->getArray(),
                 };
             }
         } catch (\UnexpectedValueException) {
@@ -98,8 +98,8 @@ abstract class General extends Api
                 $result['alt_links'][] = ['type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/'.($this->nameForLinks === 'freecompany' ? 'freecompanies' : $this->nameForLinks.'s').'/'.$path[0]];
             }
             if ($this->nameForLinks === 'achievement') {
-                if (!empty($data['dbid'])) {
-                    $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/'.$data['dbid']];
+                if (!empty($data['db_id'])) {
+                    $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/achievement/'.$data['db_id']];
                 }
                 if (!empty($data['rewards']['item']['id'])) {
                     $result['alt_links'][] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/'.$data['rewards']['item']['id']];

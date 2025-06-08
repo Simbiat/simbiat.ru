@@ -18,9 +18,9 @@ class Homepage extends Page
     ];
     #Sub service name
     protected string $subServiceName = 'homepage';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Home';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Homepage of Simbiat Software';
     #List of images to H2 push
     protected array $h2pushExtra = [
@@ -37,7 +37,7 @@ class Homepage extends Page
         $outputArray['posts'] = new User(Config::userIDs['Owner'])->getTalksStarters(true);
         #Add ogimages to H2 push
         foreach ($outputArray['posts'] as $post) {
-            $this->h2pushExtra[] = $post['ogimage']['ogimage'];
+            $this->h2pushExtra[] = $post['og_image']['og_image'];
         }
         return $outputArray;
     }

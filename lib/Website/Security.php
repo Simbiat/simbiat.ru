@@ -190,14 +190,14 @@ class Security
     
     /**
      * Function to log actions
-     * @param string     $type   Action type
-     * @param string     $action Message of the action
-     * @param mixed|null $extras Extra data related to the action
-     * @param int|null   $userid User ID of the user that triggered the action
+     * @param string     $type    Action type
+     * @param string     $action  Message of the action
+     * @param mixed|null $extras  Extra data related to the action
+     * @param int|null   $user_id User ID of the user that triggered the action
      *
      * @return bool
      */
-    public static function log(string $type, string $action, mixed $extras = NULL, ?int $userid = null): bool
+    public static function log(string $type, string $action, mixed $extras = NULL, ?int $user_id = null): bool
     {
         if (!empty($extras) && !\is_scalar($extras)) {
             $extras = json_encode($extras, JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
@@ -205,16 +205,16 @@ class Security
         #Get IP
         $ip = $_SESSION['IP'] ?? null;
         #Get username
-        $userid = (int)($_SESSION['userid'] ?? $userid ?? Config::userIDs['Unknown user']);
+        $user_id = (int)($_SESSION['user_id'] ?? $user_id ?? Config::userIDs['Unknown user']);
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {
             Query::query(
-                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `userid`, `ip`, `useragent`, `extra`) VALUES (CURRENT_TIMESTAMP(), (SELECT `typeid` FROM `sys__log_types` WHERE `name`=:type), :action, :userid, :ip, :ua, :extras);',
+                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(), (SELECT `type_id` FROM `sys__log_types` WHERE `name`=:type), :action, :user_id, :ip, :ua, :extras);',
                 [
                     ':type' => $type,
                     ':action' => $action,
-                    ':userid' => [$userid, 'int'],
+                    ':user_id' => [$user_id, 'int'],
                     ':ip' => [
                         (empty($ip) ? NULL : $ip),
                         (empty($ip) ? 'null' : 'string'),

@@ -9,7 +9,7 @@ use Simbiat\Website\usercontrol\User;
 
 class Remove extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PATCH' => '', 'DELETE' => ''];
@@ -21,13 +21,13 @@ class Remove extends Api
     protected bool $CSRF = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
         #If DELETE method is used, enforce hard deletion
         if (HomePage::$method === 'DELETE') {
             $_POST['hard'] = true;
         }
-        return ['response' => (new User($_SESSION['userid']))->remove(boolval($_POST['hard'] ?? false))];
+        return ['response' => new User($_SESSION['user_id'])->remove((bool)($_POST['hard'] ?? false))];
     }
 }

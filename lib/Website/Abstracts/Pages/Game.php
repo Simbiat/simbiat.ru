@@ -5,6 +5,9 @@ namespace Simbiat\Website\Abstracts\Pages;
 
 use Simbiat\Website\Abstracts\Page;
 
+/**
+ * Game page class
+ */
 class Game extends Page
 {
     #Flag to indicate this is a static page
@@ -19,8 +22,13 @@ class Game extends Page
     protected bool $hasSound = false;
     #Flag to indicate the game has music
     protected bool $hasMusic = false;
-
-    #Static pages have all the data in Twig templates, thus we just return empty array
+    
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         #Allow `data:`
@@ -36,8 +44,8 @@ class Game extends Page
         $outputArray['gameJS'] = $this->gameJS.'?'.filemtime($file);
         $outputArray['hasSound'] = $this->hasSound;
         $outputArray['hasMusic'] = $this->hasMusic;
-        if (!empty($this->ogimage)) {
-            $this->h2pushExtra[] = '/assets/images'.$this->ogimage;
+        if (!empty($this->og_image)) {
+            $this->h2pushExtra[] = '/assets/images'.$this->og_image;
         }
         return $outputArray;
     }

@@ -1,5 +1,5 @@
 {% if editMode %}
-    {{ include('common/elements/postform.twig', {'verb': 'edit', 'newThread': false, 'threadid': threadid, 'postid': id, 'text': text, 'permissions': session_data.permissions}, with_context = false) }}
+    {{ include('common/elements/postform.twig', {'verb': 'edit', 'newThread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions}, with_context = false) }}
 {% else %}
     {{ include('common/elements/post.twig', post) }}
 {% endif %}

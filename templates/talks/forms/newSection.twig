@@ -1,6 +1,6 @@
 <form role="form" id="addSectionForm" name="addSectionForm" autocomplete="off" class="middle">
     <input form="addSectionForm" type="hidden" name="verb" value="add" required>
-    <input form="addSectionForm" type="hidden" name="newSection[parentid]" value="{{ sectionid }}" required>
+    <input form="addSectionForm" type="hidden" name="newSection[parent_id]" value="{{ section_id }}" required>
     <div class="float_label_div">
         <input form="addSectionForm" type="text" aria-required="true" required name="newSection[name]" id="new_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64"{% if startingNewBlog or startingNewChangelog or startingNewKB %} value="{{ session_data.username }}"{% endif %}>
         <label for="new_section_name">Name</label>

@@ -25,19 +25,19 @@ abstract class Page
     protected array $altLinks = [];
     #Sub service name
     protected string $subServiceName = '';
-    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = '';
-    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
-    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = '';
     #Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
-    protected string $ogimage = '';
+    protected string $og_image = '';
     #Cache age, in case we prefer the generated page to be cached
     protected int $cacheAge = 0;
     #Time of last data modification (defaults to current time on initialization)
     protected int $lastModified = 0;
-    #Flag to check if Last Modified header was sent already
+    #Flag to check if the Last Modified header was sent already
     protected bool $headerSent = false;
     #Language override, to be sent in header (if present)
     protected string $language = '';
@@ -124,7 +124,7 @@ abstract class Page
             $page = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
         } elseif (empty(HomePage::$http_error) || $this->static) {
             #Generate the page only if no prior errors detected
-            #Generate list of allowed methods
+            #Generate a list of allowed methods
             $allowedMethods = array_unique(array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
             #Send headers
             if (!headers_sent()) {
@@ -135,7 +135,7 @@ abstract class Page
             if (!in_array(HomePage::$method, $allowedMethods, true)) {
                 $page = ['http_error' => 405];
                 #Check that user is authenticated
-            } elseif ($this->authenticationNeeded && $_SESSION['userid'] === 1) {
+            } elseif ($this->authenticationNeeded && $_SESSION['user_id'] === 1) {
                 $page = ['http_error' => 403, 'reason' => 'Authentication required'];
             } else {
                 #Generate the page
@@ -169,14 +169,14 @@ abstract class Page
         $page['title'] = $this->title;
         $page['h1'] = $this->h1;
         $page['ogdesc'] = $this->ogdesc;
-        if (!empty($this->ogimage) && empty($page['ogimage'])) {
-            $page = array_merge($page, Images::ogImage($this->ogimage, true));
+        if (!empty($this->og_image) && empty($page['og_image'])) {
+            $page = array_merge($page, Images::ogImage($this->og_image, true));
         }
         $page['cacheAge'] = $this->cacheAge;
         $page['cacheStrat'] = $this->cacheStrat;
         if (!empty($this->h2push) || !empty($this->h2pushExtra)) {
             $this->h2push = array_merge($this->h2push, $this->h2pushExtra);
-            #Prepare set of images to push
+            #Prepare a set of images to push
             foreach ($this->h2push as $key => $image) {
                 $this->h2push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
@@ -190,7 +190,7 @@ abstract class Page
             if (!HomePage::$staleReturn) {
                 Links::links($this->altLinks);
             }
-            #Add link to HTML
+            #Add a link to HTML
             $page['link_extra'] = $this->altLinks;
         }
         #Check if we are loading a static page
@@ -206,7 +206,7 @@ abstract class Page
         }
         #Limit Ogdesc to 120 characters
         $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
-        #Generate link for cache reset, if page uses cache
+        #Generate a link for cache reset if page uses cache
         if ($this->cacheAge > 0 && !$this->static) {
             $query = IRI::parseUri(Config::$canonical);
             if (\is_array($query)) {
@@ -230,7 +230,7 @@ abstract class Page
         if (\is_string($time)) {
             $time = strtotime($time);
         }
-        #If time is less than 0, use Last Modified set initially
+        #If time is less than 0, use the Last Modified set initially
         if ($time === null || $time <= 0) {
             $time = $this->lastModified;
         }
@@ -245,16 +245,16 @@ abstract class Page
     }
     
     /**
-     * Function to append a breadcrumb, which is based on last crumb currently set
+     * Function to append a breadcrumb, which is based on the last crumb currently set
      * @param string $path  Current path node
      * @param string $name  Current path name
-     * @param bool   $query Whether current path name is an actual node or a GET parameter
+     * @param bool   $query Whether the current path name is an actual node or a GET parameter
      *
      * @return void
      */
     final protected function attachCrumb(string $path, string $name, bool $query = false): void
     {
-        #Add path to breadcrumbs
+        #Add a path to breadcrumbs
         $this->breadCrumb[] = [
             'href' => $this->breadCrumb[array_key_last($this->breadCrumb)]['href'].($query ? '&' : '/').$path,
             'name' => $name,
@@ -282,7 +282,7 @@ abstract class Page
         $string = '<html>'.$string.'</html>';
         /** @noinspection DuplicatedCode */
         $html = new \DOMDocument(encoding: 'UTF-8');
-        #mb_convert_encoding is done as per workaround for UTF-8 loss/corruption on load from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
+        #`mb_convert_encoding` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
         #LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
         $html->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOBLANKS | LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
         $html->preserveWhiteSpace = false;
@@ -297,7 +297,7 @@ abstract class Page
         }
         #Get the cleaned HTML
         $cleanedHtml = $html->saveHTML();
-        #Strip the excessive HTML tags, if we added them
+        #Strip the excessive HTML tags if we added them
         $cleanedHtml = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
         $newDesc = strip_tags(Cut::Cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
         #Update description only if it's not empty

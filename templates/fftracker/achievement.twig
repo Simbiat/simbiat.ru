@@ -13,9 +13,9 @@
             <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
         {% endif %}
     </ul>
-    {% if achievement.howto %}
+    {% if achievement.how_to %}
         <p>But it won't be easy to reap these rewards. As per established rules, one is required to fulfill these conditions:</p>
-        <blockquote class="w100pc">{{ achievement.howto }}</blockquote>
+        <blockquote class="w100pc">{{ achievement.how_to }}</blockquote>
     {% else %}
         <p>But it won't be easy to reap these rewards. What makes that even harder, is that it is still unknown, what the requirements are.</p>
     {% endif %}

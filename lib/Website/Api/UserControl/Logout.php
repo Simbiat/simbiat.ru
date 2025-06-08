@@ -8,7 +8,7 @@ use Simbiat\Website\usercontrol\User;
 
 class Logout extends Api
 {
-    #Flag to indicate, that this is the lowest level
+    #Flag to indicate that this is the lowest level
     protected bool $finalNode = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
@@ -20,10 +20,10 @@ class Logout extends Api
     protected bool $CSRF = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
         
-        return ['response' => (new User($_SESSION['userid']))->logout()];
+        return ['response' => new User($_SESSION['user_id'])->logout()];
     }
 }

@@ -41,7 +41,7 @@
             {{ include('talks/forms/editSection.twig') }}
         {% else %}
             <p>For editing this section, please, use the edit mode using the button below.</p>
-            <a class="button" href="/talks/edit/sections/{{ sectionid }}">Edit mode</a>
+            <a class="button" href="/talks/edit/sections/{{ section_id }}">Edit mode</a>
         {% endif %}
     </tab-content>
 {% endif %}
@@ -53,7 +53,7 @@
             <p>Pressing below button will delete the current section completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
             <p>If section has a custom icon it will not be removed along with the section. Instead, it will be removed during routine check for orphaned files, if the icon file is not linked to anything else.</p>
             <p>If deletion is successful you will be redirected to respective parent section.</p>
-            <input role="button" type="button" id="delete_section" value="Delete" data-section="{{ sectionid }}">
+            <input role="button" type="button" id="delete_section" value="Delete" data-section="{{ section_id }}">
             <img loading="lazy" decoding="async" id="section_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting section...">
         {% endif %}
     </tab-content>

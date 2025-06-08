@@ -5,7 +5,6 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
-use Simbiat\Cron;
 use Simbiat\Database\Maintainer\Analyzer;
 use Simbiat\Database\Maintainer\Settings;
 use Simbiat\Database\Manage;
@@ -62,21 +61,21 @@ class Maintenance
         #Get existing cookies that need to be cleaned
         try {
             $items = Query::query(
-                'SELECT `cookieid`, `userid`, `ip`, `useragent`, `time` FROM `uc__cookies` WHERE `userid` IN (SELECT `userid` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);', return: 'all'
+                'SELECT `cookie_id`, `user_id`, `ip`, `user_agent`, `time` FROM `uc__cookies` WHERE `user_id` IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);', return: 'all'
             );
         } catch (\Throwable) {
             $items = [];
         }
         foreach ($items as $item) {
             #Try to delete cookie
-            $affected = Query::query('DELETE FROM `uc__cookies`WHERE `cookieid`=:id',
+            $affected = Query::query('DELETE FROM `uc__cookies`WHERE `cookie_id`=:id',
                 [
-                    ':id' => $item['cookieid'],
+                    ':id' => $item['cookie_id'],
                 ], return: 'affected'
             );
             #If it was deleted - log it
             if ($affected > 0) {
-                Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['userid']);
+                Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['user_id']);
             }
         }
         return true;
