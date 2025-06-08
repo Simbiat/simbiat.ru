@@ -220,10 +220,12 @@ class Images
     }
     
     /**
-     * Open an image file
+     * Open an image file. Suppression is used for warnings about incorrect color profiles
+     *
      * @param string $image Path to the image file
      *
      * @return false|\GdImage
+     * @noinspection PhpUsageOfSilenceOperatorInspection
      */
     public static function open(string $image): false|\GdImage
     {
@@ -240,12 +242,12 @@ class Images
         #Create a GD object from a file
         try {
             return match ($mime) {
-                'image/avif' => imagecreatefromavif($image),
-                'image/bmp' => imagecreatefrombmp($image),
-                'image/gif' => imagecreatefromgif($image),
-                'image/jpeg' => imagecreatefromjpeg($image),
-                'image/png' => imagecreatefrompng($image),
-                'image/webp' => imagecreatefromwebp($image),
+                'image/avif' => @imagecreatefromavif($image),
+                'image/bmp' => @imagecreatefrombmp($image),
+                'image/gif' => @imagecreatefromgif($image),
+                'image/jpeg' => @imagecreatefromjpeg($image),
+                'image/png' => @imagecreatefrompng($image),
+                'image/webp' => @imagecreatefromwebp($image),
             };
         } catch (\Throwable) {
             return false;
