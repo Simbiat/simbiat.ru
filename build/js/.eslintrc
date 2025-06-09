@@ -7,7 +7,8 @@
         "ecmaVersion": "latest"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "@stylistic"
     ],
     "extends": [
         "eslint:recommended",
@@ -181,22 +182,19 @@
         "@typescript-eslint/no-use-before-define": "error",
         "no-return-await": "off",
         "@typescript-eslint/return-await": "error",
-        "semi": "off",
-        "@typescript-eslint/semi": "error",
+        "@stylistic/semi": "error",
         "no-array-constructor": "off",
         "@typescript-eslint/no-array-constructor": "error",
         "no-empty-function": "off",
         "@typescript-eslint/no-empty-function": "error",
-        "no-extra-semi": "off",
-        "@typescript-eslint/no-extra-semi": "error",
+        "@stylistic/no-extra-semi": "error",
         "no-implied-eval": "off",
         "@typescript-eslint/no-implied-eval": "error",
         "require-await": "off",
         "@typescript-eslint/require-await": "error",
         "dot-notation": "off",
         "@typescript-eslint/dot-notation": "error",
-        "no-throw-literal": "off",
-        "@typescript-eslint/no-throw-literal": "error",
+        "@stylistic/no-throw-literal": "error",
         "no-useless-constructor": "off",
         "@typescript-eslint/no-useless-constructor": "error",
         //Unsure if really needed, may be removed later

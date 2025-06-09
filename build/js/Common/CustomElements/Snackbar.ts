@@ -2,7 +2,7 @@ class SnackbarClose extends HTMLElement
 {
     private readonly snackbar: HTMLDivElement | null = null;
     private readonly snack: HTMLDialogElement;
-
+    
     public constructor()
     {
         super();
@@ -19,7 +19,7 @@ class SnackbarClose extends HTMLElement
             }, closeIn);
         }
     }
-
+    
     private close(): void
     {
         //Animate removal
