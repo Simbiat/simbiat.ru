@@ -321,7 +321,6 @@ declare function router(): void;
 declare class BackToTop extends HTMLElement {
     private readonly content;
     private readonly BTTs;
-    private readonly chkVis;
     constructor();
     private toggleButtons;
 }

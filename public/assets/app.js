@@ -5148,14 +5148,10 @@ function router() {
 class BackToTop extends HTMLElement {
     content;
     BTTs;
-    chkVis = false;
     constructor() {
         super();
         this.content = document.querySelector('#content');
         this.BTTs = document.querySelectorAll('back-to-top');
-        if (typeof this.checkVisibility === 'function') {
-            this.chkVis = true;
-        }
         if (this.content) {
             window.addEventListener('scroll', this.toggleButtons.bind(this), false);
             this.addEventListener('click', () => {
@@ -5180,18 +5176,17 @@ class BackToTop extends HTMLElement {
                 });
             }
         }
-        if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+        if (!window.location.hash.toLowerCase()
+            .startsWith('#gallery=')) {
             const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
             for (let i = 0; i <= headings.length - 1; i++) {
                 const heading = headings[i];
                 const bottom = heading.getBoundingClientRect().bottom;
                 const top = heading.getBoundingClientRect().top;
                 const height = heading.getBoundingClientRect().height;
-                if (top >= -height * 2 && bottom <= height * 2) {
-                    if (!this.chkVis || heading.checkVisibility()) {
-                        history.replaceState(document.title, document.title, `#${heading.id}`);
-                        return;
-                    }
+                if (top >= -height * 2 && bottom <= height * 2 && heading.checkVisibility()) {
+                    history.replaceState(document.title, document.title, `#${heading.id}`);
+                    return;
                 }
             }
         }
