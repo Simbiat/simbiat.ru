@@ -364,7 +364,7 @@ return array(
     'Simbiat\\HTML\\ArrayToTable\\Types\\Time' => $baseDir . '/lib/array2table/src/Types/Time.php',
     'Simbiat\\HTML\\ArrayToTable\\Types\\Url' => $baseDir . '/lib/array2table/src/Types/Url.php',
     'Simbiat\\HTML\\Cut' => $baseDir . '/lib/HTML/Cut/src/Cut.php',
-    'Simbiat\\HTML\\nl2tag' => $baseDir . '/lib/HTML/nl2tag/src/nl2tag.php',
+    'Simbiat\\HTML\\NL2Tag' => $baseDir . '/lib/HTML/nl2tag/src/NL2Tag.php',
     'Simbiat\\HTTP\\ArrayToTable\\Types\\Boolean' => $baseDir . '/lib/array2table/src/Types/Boolean.php',
     'Simbiat\\HTTP\\SSE' => $baseDir . '/lib/HTTP/SSE/src/SSE.php',
     'Simbiat\\SafeFileName' => $baseDir . '/lib/SafeFileName/src/SafeFileName.php',

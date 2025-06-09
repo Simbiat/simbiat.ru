@@ -9,7 +9,7 @@ use Simbiat\HTML\Cut;
 use Simbiat\http20\HTML;
 use Simbiat\http20\Links;
 use Simbiat\http20\PrettyURL;
-use Simbiat\HTML\nl2tag;
+use Simbiat\HTML\NL2Tag;
 use Simbiat\SandClock;
 use Simbiat\Website\Sanitization;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -107,7 +107,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function nl2p(string $string): string
     {
-        $nl2tag = (new nl2tag());
+        $nl2tag = (new NL2Tag());
         $nl2tag->preserveNonBreakingSpace = true;
         return $nl2tag->nl2p($string);
     }
@@ -120,7 +120,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function changelog(string $string): string
     {
-        $nl2tag = (new nl2tag());
+        $nl2tag = (new NL2Tag());
         $nl2tag->preserveNonBreakingSpace = true;
         return $nl2tag->changelog($string);
     }

@@ -596,7 +596,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\HTML\\ArrayToTable\\Types\\Time' => __DIR__ . '/../..' . '/lib/array2table/src/Types/Time.php',
         'Simbiat\\HTML\\ArrayToTable\\Types\\Url' => __DIR__ . '/../..' . '/lib/array2table/src/Types/Url.php',
         'Simbiat\\HTML\\Cut' => __DIR__ . '/../..' . '/lib/HTML/Cut/src/Cut.php',
-        'Simbiat\\HTML\\nl2tag' => __DIR__ . '/../..' . '/lib/HTML/nl2tag/src/nl2tag.php',
+        'Simbiat\\HTML\\NL2Tag' => __DIR__ . '/../..' . '/lib/HTML/nl2tag/src/NL2Tag.php',
         'Simbiat\\HTTP\\ArrayToTable\\Types\\Boolean' => __DIR__ . '/../..' . '/lib/array2table/src/Types/Boolean.php',
         'Simbiat\\HTTP\\SSE' => __DIR__ . '/../..' . '/lib/HTTP/SSE/src/SSE.php',
         'Simbiat\\SafeFileName' => __DIR__ . '/../..' . '/lib/SafeFileName/src/SafeFileName.php',
