@@ -248,6 +248,7 @@ class Maintenance
                 file_put_contents($dir.'/noDB.flag', 'Database is down');
             }
         } elseif (is_file(Config::$workDir.'/data/backups/crash.flag')) {
+            $error_text = file_get_contents(Config::$workDir.'/data/backups/crash.flag');
             try {
                 $result = Query::query('UPDATE `sys__settings` SET `value` = 0 WHERE `setting` = \'maintenance\';');
             } catch (\Throwable) {
@@ -256,7 +257,7 @@ class Maintenance
             @unlink(Config::$workDir.'/data/backups/crash.flag');
             @unlink($dir.'/noDB.flag');
             #Send mail
-            new Email(Config::adminMail)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result], 'Simbiat');
+            new Email(Config::adminMail)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');
         } elseif (is_file($dir.'/noDB.flag')) {
             @unlink($dir.'/noDB.flag');
             #Send mail

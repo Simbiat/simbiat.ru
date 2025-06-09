@@ -9,7 +9,10 @@
 {% else %}
     <p>The database appears to have started up again.</p>
     {% if maintenance %}
-        <p>It looks like it was down due to a crash during maintenance.</p>
+        <p>It looks like something went wrong during maintenance.</p>
+        {% if error_text %}
+            <p>{{ error_text }}</p>
+        {% endif %}
         {% if restored %}
             <p>Maintenance mode was successfully canceled.</p>
         {% else %}

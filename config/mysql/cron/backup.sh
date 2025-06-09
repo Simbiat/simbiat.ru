@@ -21,6 +21,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     # shellcheck disable=SC2317
     if [ "$1" != "0" ]; then
       echo "Error $1 occurred on $2">> "$logFile" 2>&1
+      echo "Error $1 occurred on $2">> /usr/local/backups/maintenance.flag 2>&1
       mv /usr/local/backups/maintenance.flag /usr/local/backups/crash.flag
     fi
   }
