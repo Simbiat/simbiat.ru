@@ -7,7 +7,7 @@ use Simbiat\Website\Abstracts\Search;
 class OpenBics extends Search
 {
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'bic';
+    protected string $entity_type = 'bic';
     #Name of the table to search use
     protected string $table = 'bic__list';
     #List of fields

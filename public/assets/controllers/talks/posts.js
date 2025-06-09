@@ -18,7 +18,7 @@ export class Posts {
             const button = this.post_form.querySelector('input[type=submit]');
             const formData = new FormData(this.post_form);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('post_form[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('post_form[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -36,7 +36,7 @@ export class Posts {
                         addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
                     }
                     else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     buttonToggle(button);
                 }
@@ -49,7 +49,7 @@ export class Posts {
                 const id = this.deletePostButton.getAttribute('data-post') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deletePostButton);
-                    ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                    ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', AJAX_TIMEOUT, true)
                         .then((response) => {
                         const data = response;
                         if (data.data === true) {
@@ -57,7 +57,7 @@ export class Posts {
                             window.location.href = data.location;
                         }
                         else {
-                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
                         if (this.deletePostButton) {
                             buttonToggle(this.deletePostButton);

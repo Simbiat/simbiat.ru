@@ -35,7 +35,7 @@ export class ffEntity
                                 addSnackbar('Data updated. Reloading page...', 'success');
                                 pageRefresh();
                             } else {
-                                addSnackbar('Failed to update data', 'failure', snackbarFailLife);
+                                addSnackbar('Failed to update data', 'failure', SNACKBAR_FAIL_LIFE);
                             }
                         });
                 }, 500);

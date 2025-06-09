@@ -12,14 +12,14 @@ export class EditFFLinks {
         if (this.form && this.button) {
             const formData = new FormData(this.form);
             buttonToggle(this.button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/fflink`, formData, 'json', 'POST', ajaxTimeout, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/fflink`, formData, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     addSnackbar('Character linked successfully. Reloading page...', 'success');
                     pageRefresh();
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
                 if (this.button) {
                     buttonToggle(this.button);

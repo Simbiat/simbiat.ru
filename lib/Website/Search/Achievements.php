@@ -8,7 +8,7 @@ use Simbiat\Website\Abstracts\Search;
 class Achievements extends Search
 {
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'achievement';
+    protected string $entity_type = 'achievement';
     #Name of the table to search use
     protected string $table = 'ffxiv__achievement';
     #List of fields

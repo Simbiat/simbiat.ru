@@ -107,7 +107,7 @@ class Register extends Api
                     'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES ((SELECT `user_id` FROM `uc__users` WHERE `username`=:username), :group_id)',
                     [
                         ':username' => $_POST['signinup']['username'],
-                        ':group_id' => [Config::groupsIDs['Unverified'], 'int'],
+                        ':group_id' => [Config::GROUP_IDS['Unverified'], 'int'],
                     ]
                 ],
             ];

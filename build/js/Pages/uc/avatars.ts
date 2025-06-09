@@ -43,25 +43,25 @@ export class EditAvatars
     {
         if (this.form) {
             if (this.avatarFile?.files && this.avatarFile.files.length === 0) {
-                addSnackbar('No file selected', 'failure', snackbarFailLife);
+                addSnackbar('No file selected', 'failure', SNACKBAR_FAIL_LIFE);
                 return;
             }
             if (this.avatarFile?.files && this.avatarFile.files[0] && this.avatarFile.files[0].size === 0) {
-                addSnackbar('Selected file is empty', 'failure', snackbarFailLife);
+                addSnackbar('Selected file is empty', 'failure', SNACKBAR_FAIL_LIFE);
                 return;
             }
             //Get form data
             const formData = new FormData(this.form);
             const button = this.form.querySelector('#avatar_submit');
             buttonToggle(button as HTMLInputElement);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', ajaxTimeout, true).
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', AJAX_TIMEOUT, true).
                 then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
                         //Add avatar to the list
                         this.addToList(data.location);
                     } else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     //Remove file and preview
                     if (this.avatarFile) {
@@ -81,16 +81,16 @@ export class EditAvatars
         if (li) {
             const formData = new FormData();
             formData.append('avatar', (li as HTMLElement).id);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    //Update avatar on page
-                    this.refresh(data.location);
-                } else {
-                    avatar.checked = false;
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
-                }
-            });
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        //Update avatar on page
+                        this.refresh(data.location);
+                    } else {
+                        avatar.checked = false;
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                    }
+                });
         }
     }
     
@@ -177,17 +177,17 @@ export class EditAvatars
         if (li) {
             const formData = new FormData();
             formData.append('avatar', (li as HTMLElement).id);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, formData, 'json', 'DELETE', ajaxTimeout, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    //Delete from list
-                    (li as HTMLElement).remove();
-                    //Update avatar on page
-                    this.refresh(data.location);
-                } else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
-                }
-            });
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, formData, 'json', 'DELETE', AJAX_TIMEOUT, true).then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        //Delete from list
+                        (li as HTMLElement).remove();
+                        //Update avatar on page
+                        this.refresh(data.location);
+                    } else {
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                    }
+                });
         }
     }
 }

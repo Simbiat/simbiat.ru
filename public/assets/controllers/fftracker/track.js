@@ -28,20 +28,20 @@ export class ffTrack {
             if (this.idInput) {
                 const button = document.querySelector('#ff_track_submit');
                 buttonToggle(button);
-                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}`, null, 'json', 'POST', ajaxTimeout, true).
+                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}`, null, 'json', 'POST', AJAX_TIMEOUT, true).
                     then((response) => {
                     const data = response;
                     if (data.data === true) {
                         addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was registered. Check <a href="${data.location}" target="_blank">here</a>.`, 'success', 0);
                     }
                     else if (data.status === 404) {
-                        addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was not found on Lodestone.`, 'failure', snackbarFailLife);
+                        addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was not found on Lodestone.`, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     else if ((/^ID `.*` is already registered$/ui).exec(data.reason)) {
                         addSnackbar(`${data.reason}. Check <a href="${data.location}" target="_blank">here</a>.`, 'warning', 0);
                     }
                     else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     buttonToggle(button);
                 });

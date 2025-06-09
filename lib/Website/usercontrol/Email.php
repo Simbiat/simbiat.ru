@@ -187,9 +187,9 @@ class Email extends Entity
             #Remove the code from DB
             ['UPDATE `uc__emails` SET `activation`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$user_id, 'int'], ':email' => $this->id]],
             #Add user to register users
-            ['INSERT IGNORE INTO `uc__user_to_group`(`user_id`, `group_id`) VALUES (:user_id, :group_id)', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::groupsIDs['Users'], 'int']]],
+            ['INSERT IGNORE INTO `uc__user_to_group`(`user_id`, `group_id`) VALUES (:user_id, :group_id)', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Users'], 'int']]],
             #Remove user from unverified users
-            ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::groupsIDs['Unverified'], 'int']]],
+            ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Unverified'], 'int']]],
         ];
         try {
             $result = Query::query($queries);
@@ -275,14 +275,14 @@ class Email extends Entity
             $transport = new \SendGrid($_ENV['SENDGRID_API_KEY'], ['verify_ssl' => true,]);
             #Create basic email
             $email = new Mail();
-            $email->setFrom(Config::from, Config::siteName);
-            $email->setReplyTo(Config::from, Config::siteName);
+            $email->setFrom(Config::FROM, Config::SITE_NAME);
+            $email->setReplyTo(Config::FROM, Config::SITE_NAME);
             #Add receiver
             if (Config::$PROD) {
                 $email->addTo($this->id, $username ?? null);
             } else {
                 #On test always use admin mail
-                $email->addTo(Config::adminMail);
+                $email->addTo(Config::ADMIN_MAIL);
             }
             #Set priority for alerts
             if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
@@ -290,7 +290,7 @@ class Email extends Entity
                 $email->addHeader('Importance', 'High');
             }
             #Add content
-            $email->setSubject(Config::siteName.': '.$subject);
+            $email->setSubject(Config::SITE_NAME.': '.$subject);
             $email->addContent(
                 'text/html', EnvironmentGenerator::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($this->id)]))
             );

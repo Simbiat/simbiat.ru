@@ -10,7 +10,7 @@ class Threads extends Search
     #Items to display per page for lists
     public int $listItems = 25;
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'thread';
+    protected string $entity_type = 'thread';
     #Name of the table to search use
     protected string $table = 'talks__threads';
     #List of fields

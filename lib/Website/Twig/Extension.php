@@ -50,7 +50,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
     public function getGlobals(): array
     {
         $defaults = [
-            'site_name' => Config::siteName,
+            'site_name' => Config::SITE_NAME,
             'domain' => Config::$baseUrl,
             'url' => Config::$baseUrl.'/'.($_SERVER['REQUEST_URI'] ?? ''),
             'maintenance' => 1,

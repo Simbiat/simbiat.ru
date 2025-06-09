@@ -19,7 +19,7 @@ use function is_array;
  */
 class Section extends Entity
 {
-    protected const string entityType = 'section';
+    protected const string ENTITY_TYPE = 'section';
     protected string $idFormat = '/^top|\d+$/mi';
     public string $name = '';
     public string $type = 'Category';
@@ -75,9 +75,9 @@ class Section extends Entity
                 'private' => false,
                 'closed' => 'now',
                 'created' => null,
-                'author' => Config::userIDs['System user'],
+                'author' => Config::USER_IDS['System user'],
                 'updated' => null,
-                'editor' => Config::userIDs['System user'],
+                'editor' => Config::USER_IDS['System user'],
                 'icon' => '/assets/images/talks/category.svg',
                 'parents' => [],
                 'threads' => [],
@@ -228,9 +228,9 @@ class Section extends Entity
         $this->owned = $fromDB['owned'];
         $this->closed = $fromDB['closed'] !== null ? strtotime($fromDB['closed']) : null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->author = $fromDB['author'] ?? Config::userIDs['Deleted user'];
+        $this->author = $fromDB['author'] ?? Config::USER_IDS['Deleted user'];
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->editor = $fromDB['editor'] ?? Config::userIDs['Deleted user'];
+        $this->editor = $fromDB['editor'] ?? Config::USER_IDS['Deleted user'];
         $this->icon = $fromDB['icon'] ?? '/assets/images/talks/category.svg';
         $this->parents = $fromDB['parents'];
         $this->parent_id = (int)($fromDB['parent_id'] ?? 0);

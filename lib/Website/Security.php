@@ -17,7 +17,7 @@ use function is_array, function_exists;
  */
 class Security
 {
-    public const string eMailRegex = '/^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/';
+    public const string EMAIL_REGEX = '/^[a-zA-Z0-9.!#$%&’*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/';
     
     /**
      * Function to hash password. Used mostly as a wrapper in case of future changes
@@ -205,7 +205,7 @@ class Security
         #Get IP
         $ip = $_SESSION['IP'] ?? null;
         #Get username
-        $user_id = (int)($_SESSION['user_id'] ?? $user_id ?? Config::userIDs['Unknown user']);
+        $user_id = (int)($_SESSION['user_id'] ?? $user_id ?? Config::USER_IDS['Unknown user']);
         #Get User Agent
         $ua = $_SESSION['UA']['full'] ?? null;
         try {

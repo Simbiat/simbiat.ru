@@ -9,7 +9,7 @@ use Simbiat\Website\Abstracts\Search;
 class PVP extends Search
 {
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'pvpteam';
+    protected string $entity_type = 'pvpteam';
     #Name of the table to search use
     protected string $table = 'ffxiv__pvpteam';
     #List of fields

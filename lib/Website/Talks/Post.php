@@ -17,7 +17,7 @@ use function is_array;
  */
 class Post extends Entity
 {
-    protected const string entityType = 'post';
+    protected const string ENTITY_TYPE = 'post';
     public string $name = '';
     public string $type = 'Blog';
     public bool $system = true;
@@ -90,11 +90,11 @@ class Post extends Entity
         $this->locked = (bool)$fromDB['locked'];
         $this->closed = $fromDB['thread']['closed'] ?? null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->author = $fromDB['author'] ?? Config::userIDs['Deleted user'];
+        $this->author = $fromDB['author'] ?? Config::USER_IDS['Deleted user'];
         $this->owned = ($this->author === $_SESSION['user_id']);
         $this->author_name = $fromDB['author_name'] ?? 'Deleted user';
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->editor = $fromDB['editor'] ?? Config::userIDs['Deleted user'];
+        $this->editor = $fromDB['editor'] ?? Config::USER_IDS['Deleted user'];
         $this->editor_name = $fromDB['editor_name'] ?? 'Deleted user';
         $this->parents = $fromDB['thread']['parents'];
         $this->reply_to = $fromDB['reply_to'];

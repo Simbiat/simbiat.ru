@@ -8,7 +8,7 @@ namespace Simbiat\Website;
  */
 class Errors
 {
-    public const array phpErrorTypes = [
+    public const array PHP_ERROR_TYPES = [
         E_ERROR => 'PHP Error',
         E_WARNING => 'PHP Warning',
         E_PARSE => 'PHP Parsing Error',
@@ -85,7 +85,7 @@ class Errors
         ) {
             return false;
         }
-        self::write(self::phpErrorTypes[$level], $file, $line, $message);
+        self::write(self::PHP_ERROR_TYPES[$level], $file, $line, $message);
         return true;
     }
     
@@ -100,7 +100,7 @@ class Errors
         #Log only time and memory exhaustion to avoid duplicates
         if (!empty($error) && $error['type'] === E_ERROR && preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
             #Determine page link
-            self::write(self::phpErrorTypes[$error['type']], $error['file'], $error['line'], $error['message']);
+            self::write(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
         }
     }
     

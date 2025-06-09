@@ -17,5 +17,5 @@ class CrossworldLinkshell extends Linkshell
     protected string $h1 = 'Crossworld Linkshell';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Crossworld Linkshell';
-    protected const bool crossworld = true;
+    protected const bool CROSSWORLD = true;
 }

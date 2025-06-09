@@ -36,7 +36,7 @@ class Tests extends Router
         switch ($path[0]) {
             case 'mail':
                 if (!empty($path[1]) && $path[1] === 'send') {
-                    echo (new Email(Config::adminMail))->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
+                    echo new Email(Config::ADMIN_MAIL)->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
                 } else {
                     try {
                         $output = EnvironmentGenerator::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);

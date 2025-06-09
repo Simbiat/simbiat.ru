@@ -15,7 +15,7 @@ abstract class Search
     public int $listItems = 100;
     #Settings required for subclasses
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = '';
+    protected string $entity_type = '';
     #Name of the table to search use
     protected string $table = '';
     #List of fields
@@ -54,7 +54,7 @@ abstract class Search
     final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
     {
         #Check that subclass has set appropriate properties, except $where, which is ok to inherit
-        foreach (['entityType', 'table', 'fields', 'orderDefault', 'orderList'] as $property) {
+        foreach (['entity_type', 'table', 'fields', 'orderDefault', 'orderList'] as $property) {
             if (empty($this->{$property})) {
                 throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
             }
@@ -204,7 +204,7 @@ abstract class Search
                     $like = false;
                 }
                 #String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
-                $exactlyLike = 'SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ');
+                $exactlyLike = 'SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ');
                 #Prepare results array
                 $results = [];
                 #Get exact comparison results
@@ -220,7 +220,7 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
+                    return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
                 }
                 if (empty($this->like)) {
                     return [];
@@ -228,7 +228,7 @@ abstract class Search
                 #Search using LIKE
                 return $this->postProcess(Query::query($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]), return: 'all'));
             }
-            return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entityType.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
+            return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];

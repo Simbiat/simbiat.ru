@@ -63,9 +63,9 @@ export class Threads
             //Get form data
             const formData = new FormData(this.add_post_form);
             //Add time zone
-            formData.append('post_form[timezone]', timezone);
+            formData.append('post_form[timezone]', TIMEZONE);
             buttonToggle(button as HTMLInputElement);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
@@ -81,7 +81,7 @@ export class Threads
                         if (data.location) {
                             addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
                         } else {
-                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
                     }
                     buttonToggle(button as HTMLInputElement);
@@ -96,14 +96,14 @@ export class Threads
                 const id = this.deleteThreadButton.getAttribute('data-thread') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deleteThreadButton);
-                    ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                    ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete`, null, 'json', 'DELETE', AJAX_TIMEOUT, true)
                         .then((response) => {
                             const data = response as ajaxJSONResponse;
                             if (data.data === true) {
                                 addSnackbar('Thread removed. Redirecting to parent...', 'success');
                                 window.location.href = data.location;
                             } else {
-                                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                             }
                             if (this.deleteThreadButton) {
                                 buttonToggle(this.deleteThreadButton);
@@ -121,7 +121,7 @@ export class Threads
             const verb = this.closeThreadButton.value.toLowerCase();
             if (!empty(id)) {
                 buttonToggle(this.closeThreadButton);
-                ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+                ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
                     .then((response) => {
                         const data = response as ajaxJSONResponse;
                         if (data.data === true) {
@@ -132,7 +132,7 @@ export class Threads
                             }
                             pageRefresh();
                         } else {
-                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
                         if (this.closeThreadButton) {
                             buttonToggle(this.closeThreadButton);
@@ -157,7 +157,7 @@ export class Threads
                 formData.append('current_thread[og_image]', 'false');
             }
             buttonToggle(button as HTMLInputElement);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('current_thread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('current_thread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
@@ -167,7 +167,7 @@ export class Threads
                         if (data.location) {
                             addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
                         } else {
-                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
                         buttonToggle(button as HTMLInputElement);
                     }

@@ -1,4 +1,4 @@
-const customColorMap: Record<string, string> = {
+const CUSTOM_COLOR_MAP: Record<string, string> = {
     '#17141F': 'body',
     '#19424D': 'dark-border',
     '#231F2E': 'block',
@@ -12,7 +12,7 @@ const customColorMap: Record<string, string> = {
     '#F5F0F0': 'text',
 };
 
-const tinySettings = {
+const TINY_SETTINGS = {
     'automatic_uploads': true,
     'autosave_ask_before_unload': true,
     'autosave_interval': '5s',
@@ -22,9 +22,9 @@ const tinySettings = {
     'block_unsupported_drop': true,
     'branding': true,
     'browser_spellcheck': true,
-    'color_map': Object.keys(customColorMap)
+    'color_map': Object.keys(CUSTOM_COLOR_MAP)
                        .map((key) => {
-                           return [key, customColorMap[key]];
+                           return [key, CUSTOM_COLOR_MAP[key]];
                        })
                        .flat(),
     'content_css': '/assets/styles/tinymce.css',
@@ -64,7 +64,7 @@ const tinySettings = {
                 // @ts-expect-error: I do not remember where I've taken this code example and what type `value` is supposed to be
                 'class': (value): string => {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    return `tiny-color-${String(customColorMap[value.value])}`;
+                    return `tiny-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
@@ -75,7 +75,7 @@ const tinySettings = {
                 // @ts-expect-error: I do not remember where I've taken this code example and what type `value` is supposed to be
                 'class': (value): string => {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    return `tiny-bg-color-${String(customColorMap[value.value])}`;
+                    return `tiny-bg-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
@@ -434,7 +434,7 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
     }
     const textarea = document.querySelector(`#${id}`);
     if (textarea) {
-        const settings = tinySettings;
+        const settings = TINY_SETTINGS;
         settings.selector = `#${id}`;
         if (noMedia) {
             //Remove plugins that allow upload of images

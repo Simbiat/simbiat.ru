@@ -37,9 +37,9 @@ declare function empty(variable: unknown): boolean;
 declare function pageRefresh(): void;
 declare function copyQuote(target: HTMLElement): string;
 declare function is_file(url: string): Promise<boolean>;
-declare const timezone: string;
-declare const ajaxTimeout = 60000;
-declare const snackbarFailLife = 10000;
+declare const TIMEZONE: string;
+declare const AJAX_TIMEOUT = 60000;
+declare const SNACKBAR_FAIL_LIFE = 10000;
 declare function init(): void;
 declare const configUrlElement: Element | null;
 declare let sharedWithPHP: {};
@@ -52,8 +52,8 @@ declare function pasteAndMove(input: HTMLInputElement, text: string): void;
 declare function formEnter(event: KeyboardEvent): boolean;
 declare function inputBackSpace(event: Event): void;
 declare function autoNext(event: Event): void;
-declare const customColorMap: Record<string, string>;
-declare const tinySettings: {
+declare const CUSTOM_COLOR_MAP: Record<string, string>;
+declare const TINY_SETTINGS: {
     automatic_uploads: boolean;
     autosave_ask_before_unload: boolean;
     autosave_interval: string;

@@ -72,7 +72,7 @@ export class Sections {
         }
         buttonToggle(checkbox);
         const section_id = checkbox.getAttribute('data-section') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/mark${verb}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
             .then((response) => {
             const data = response;
             if (data.data === true) {
@@ -86,7 +86,7 @@ export class Sections {
                 }
             }
             else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
             }
             buttonToggle(checkbox);
         });
@@ -104,7 +104,7 @@ export class Sections {
         }
         buttonToggle(checkbox);
         const section_id = checkbox.getAttribute('data-section') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/${verb}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
             .then((response) => {
             const data = response;
             if (data.data === true) {
@@ -118,7 +118,7 @@ export class Sections {
                 }
             }
             else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
             }
             buttonToggle(checkbox);
         });
@@ -134,7 +134,7 @@ export class Sections {
             const section_id = orderInput.getAttribute('data-section') ?? '';
             const formData = new FormData();
             formData.append('order', newValue);
-            ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/order`, formData, 'json', 'PATCH', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${section_id}/order`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -144,7 +144,7 @@ export class Sections {
                 }
                 else {
                     orderInput.value = initialValue;
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
                 buttonToggle(orderInput);
             });
@@ -191,9 +191,9 @@ export class Sections {
             else {
                 formData.append('newSection[icon]', 'false');
             }
-            formData.append('newSection[timezone]', timezone);
+            formData.append('newSection[timezone]', TIMEZONE);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -205,7 +205,7 @@ export class Sections {
                         addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
                     }
                     else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                 }
                 buttonToggle(button);
@@ -224,7 +224,7 @@ export class Sections {
                 formData.append('curSection[icon]', 'false');
             }
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[section_id]') ?? '0')}/edit`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[section_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -236,7 +236,7 @@ export class Sections {
                         addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
                     }
                     else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     buttonToggle(button);
                 }
@@ -249,7 +249,7 @@ export class Sections {
                 const id = this.deleteSectionButton.getAttribute('data-section') ?? '';
                 if (!empty(id)) {
                     buttonToggle(this.deleteSectionButton);
-                    ajax(`${location.protocol}//${location.host}/api/talks/sections/${id}/delete`, null, 'json', 'DELETE', ajaxTimeout, true)
+                    ajax(`${location.protocol}//${location.host}/api/talks/sections/${id}/delete`, null, 'json', 'DELETE', AJAX_TIMEOUT, true)
                         .then((response) => {
                         const data = response;
                         if (data.data === true) {
@@ -257,7 +257,7 @@ export class Sections {
                             window.location.href = data.location;
                         }
                         else {
-                            addSnackbar(data.reason, 'failure', snackbarFailLife);
+                            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
                         if (this.deleteSectionButton) {
                             buttonToggle(this.deleteSectionButton);
@@ -278,9 +278,9 @@ export class Sections {
             else {
                 formData.append('new_thread[og_image]', 'false');
             }
-            formData.append('new_thread[timezone]', timezone);
+            formData.append('new_thread[timezone]', TIMEZONE);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', ajaxTimeout, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -298,7 +298,7 @@ export class Sections {
                         addSnackbar(data.reason + ` View the thread <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
                     }
                     else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                 }
                 buttonToggle(button);
@@ -318,7 +318,7 @@ export class Sections {
         }
         buttonToggle(checkbox);
         const thread_id = checkbox.getAttribute('data-thread') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/threads/${thread_id}/mark${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        ajax(`${location.protocol}//${location.host}/api/talks/threads/${thread_id}/mark${verb}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
             .then((response) => {
             const data = response;
             if (data.data === true) {
@@ -332,7 +332,7 @@ export class Sections {
                 }
             }
             else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
             }
             buttonToggle(checkbox);
         });
@@ -350,7 +350,7 @@ export class Sections {
         }
         buttonToggle(checkbox);
         const thread_id = checkbox.getAttribute('data-thread') ?? '';
-        ajax(`${location.protocol}//${location.host}/api/talks/threads/${thread_id}/${verb}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        ajax(`${location.protocol}//${location.host}/api/talks/threads/${thread_id}/${verb}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
             .then((response) => {
             const data = response;
             if (data.data === true) {
@@ -364,7 +364,7 @@ export class Sections {
                 }
             }
             else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
             }
             buttonToggle(checkbox);
         });

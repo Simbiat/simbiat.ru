@@ -7,7 +7,7 @@ use Simbiat\Website\Abstracts\Search;
 class Linkshells extends Search
 {
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'linkshell';
+    protected string $entity_type = 'linkshell';
     #Name of the table to search use
     protected string $table = 'ffxiv__linkshell';
     #List of fields

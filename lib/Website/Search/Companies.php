@@ -8,7 +8,7 @@ use Simbiat\Website\Abstracts\Search;
 class Companies extends Search
 {
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'freecompany';
+    protected string $entity_type = 'freecompany';
     #Name of the table to search use
     protected string $table = 'ffxiv__freecompany';
     #List of fields

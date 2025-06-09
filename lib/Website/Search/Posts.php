@@ -9,7 +9,7 @@ class Posts extends Search
     #Items to display per page for lists
     public int $listItems = 50;
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'post';
+    protected string $entity_type = 'post';
     #Name of the table to search use
     protected string $table = 'talks__posts';
     #List of fields

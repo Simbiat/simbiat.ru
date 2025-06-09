@@ -10,7 +10,7 @@ class Sections extends Search
     #Items to display per page for lists
     public int $listItems = 25;
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'section';
+    protected string $entity_type = 'section';
     #Name of the table to search use
     protected string $table = 'talks__sections';
     #List of fields

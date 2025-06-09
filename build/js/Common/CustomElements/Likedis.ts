@@ -37,17 +37,17 @@ class Likedis extends HTMLElement
             action = 'dislike';
         }
         if (this.post_id === 0) {
-            addSnackbar('No post ID', 'failure', snackbarFailLife);
+            addSnackbar('No post ID', 'failure', SNACKBAR_FAIL_LIFE);
             return;
         }
         buttonToggle(button);
-        ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.post_id}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.post_id}/${action}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
             .then((response) => {
                 const data = response as ajaxJSONResponse;
                 if (data.data === 0 || data.data === 1 || data.data === -1) {
                     this.updateCounts(data.data);
                 } else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
                 buttonToggle(button);
             });

@@ -3698,7 +3698,7 @@
         }
         catch (e) { } })(GB);
 }();
-async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = ajaxTimeout, skipError = false) {
+async function ajax(url, formData = null, type = 'json', method = 'GET', timeout = AJAX_TIMEOUT, skipError = false) {
     let result;
     const controller = new AbortController();
     window.setTimeout(() => {
@@ -3721,7 +3721,7 @@ async function ajax(url, formData = null, type = 'json', method = 'GET', timeout
             'signal': controller.signal,
         });
         if (!response.ok && !skipError) {
-            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', snackbarFailLife);
+            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', SNACKBAR_FAIL_LIFE);
             return false;
         }
         switch (type) {
@@ -3745,10 +3745,10 @@ async function ajax(url, formData = null, type = 'json', method = 'GET', timeout
     }
     catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
-            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', snackbarFailLife);
+            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', SNACKBAR_FAIL_LIFE);
         }
         else {
-            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', snackbarFailLife);
+            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', SNACKBAR_FAIL_LIFE);
         }
         return false;
     }
@@ -4204,10 +4204,10 @@ async function is_file(url) {
         });
     });
 }
-const timezone = Intl.DateTimeFormat()
+const TIMEZONE = Intl.DateTimeFormat()
     .resolvedOptions().timeZone;
-const ajaxTimeout = 60000;
-const snackbarFailLife = 10000;
+const AJAX_TIMEOUT = 60000;
+const SNACKBAR_FAIL_LIFE = 10000;
 function init() {
     const inputs = document.querySelectorAll('input');
     if (!empty(inputs)) {
@@ -4529,7 +4529,7 @@ function autoNext(event) {
         }
     }
 }
-const customColorMap = {
+const CUSTOM_COLOR_MAP = {
     '#17141F': 'body',
     '#19424D': 'dark-border',
     '#231F2E': 'block',
@@ -4542,7 +4542,7 @@ const customColorMap = {
     '#F3A0B6': 'failure',
     '#F5F0F0': 'text',
 };
-const tinySettings = {
+const TINY_SETTINGS = {
     'automatic_uploads': true,
     'autosave_ask_before_unload': true,
     'autosave_interval': '5s',
@@ -4552,9 +4552,9 @@ const tinySettings = {
     'block_unsupported_drop': true,
     'branding': true,
     'browser_spellcheck': true,
-    'color_map': Object.keys(customColorMap)
+    'color_map': Object.keys(CUSTOM_COLOR_MAP)
         .map((key) => {
-        return [key, customColorMap[key]];
+        return [key, CUSTOM_COLOR_MAP[key]];
     })
         .flat(),
     'content_css': '/assets/styles/tinymce.css',
@@ -4592,7 +4592,7 @@ const tinySettings = {
         'forecolor': {
             'attributes': {
                 'class': (value) => {
-                    return `tiny-color-${String(customColorMap[value.value])}`;
+                    return `tiny-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
@@ -4601,7 +4601,7 @@ const tinySettings = {
         'hilitecolor': {
             'attributes': {
                 'class': (value) => {
-                    return `tiny-bg-color-${String(customColorMap[value.value])}`;
+                    return `tiny-bg-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
@@ -4947,7 +4947,7 @@ function loadTinyMCE(id, noMedia = true, noRestoreOnEmpty = false) {
     }
     const textarea = document.querySelector(`#${id}`);
     if (textarea) {
-        const settings = tinySettings;
+        const settings = TINY_SETTINGS;
         settings.selector = `#${id}`;
         if (noMedia) {
             settings.plugins = String(settings.plugins)
@@ -5540,18 +5540,18 @@ class Likedis extends HTMLElement {
             action = 'dislike';
         }
         if (this.post_id === 0) {
-            addSnackbar('No post ID', 'failure', snackbarFailLife);
+            addSnackbar('No post ID', 'failure', SNACKBAR_FAIL_LIFE);
             return;
         }
         buttonToggle(button);
-        ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.post_id}/${action}`, null, 'json', 'PATCH', ajaxTimeout, true)
+        ajax(`${location.protocol}//${location.host}/api/talks/posts/${this.post_id}/${action}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
             .then((response) => {
             const data = response;
             if (data.data === 0 || data.data === 1 || data.data === -1) {
                 this.updateCounts(data.data);
             }
             else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
+                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
             }
             buttonToggle(button);
         });
@@ -5633,10 +5633,10 @@ class LoginForm extends HTMLElement {
             if (empty(formData.get('signinup[type]'))) {
                 formData.set('signinup[type]', 'logout');
             }
-            formData.set('signinup[timezone]', timezone);
+            formData.set('signinup[timezone]', TIMEZONE);
             const button = this.loginForm.querySelector('#signinup_submit');
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', ajaxTimeout, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     if (formData.get('signinup[type]') === 'remind') {
@@ -5647,7 +5647,7 @@ class LoginForm extends HTMLElement {
                     }
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
                 buttonToggle(button);
             });

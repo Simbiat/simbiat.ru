@@ -34,7 +34,7 @@ class Homepage extends Page
     protected function generate(array $path): array
     {
         $outputArray = ['h1' => 'Home', 'serviceName' => 'homepage'];
-        $outputArray['posts'] = new User(Config::userIDs['Owner'])->getTalksStarters(true);
+        $outputArray['posts'] = new User(Config::USER_IDS['Owner'])->getTalksStarters(true);
         #Add ogimages to H2 push
         foreach ($outputArray['posts'] as $post) {
             $this->h2pushExtra[] = $post['og_image']['og_image'];

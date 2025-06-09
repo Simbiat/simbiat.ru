@@ -7,7 +7,7 @@ use Simbiat\Website\Abstracts\Search;
 class Characters extends Search
 {
     #Type of entity to return as static value in results (required for frontend routing)
-    protected string $entityType = 'character';
+    protected string $entity_type = 'character';
     #Name of the table to search use
     protected string $table = 'ffxiv__character';
     #List of fields

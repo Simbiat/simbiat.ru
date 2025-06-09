@@ -22,7 +22,7 @@ use function is_array;
  */
 class Thread extends Entity
 {
-    protected const string entityType = 'thread';
+    protected const string ENTITY_TYPE = 'thread';
     public string $name = '';
     public string $type = 'Blog';
     public bool $system = false;
@@ -119,13 +119,13 @@ class Thread extends Entity
         $this->pinned = (bool)$fromDB['pinned'];
         $this->og_image = $fromDB['og_image'] ?? null;
         $this->last_post = $fromDB['last_post'] !== null ? strtotime($fromDB['last_post']) : null;
-        $this->last_poster = $fromDB['last_poster'] ?? Config::userIDs['Deleted user'];
+        $this->last_poster = $fromDB['last_poster'] ?? Config::USER_IDS['Deleted user'];
         $this->closed = $fromDB['closed'] !== null ? strtotime($fromDB['closed']) : null;
         $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->author = $fromDB['author'] ?? Config::userIDs['Deleted user'];
+        $this->author = $fromDB['author'] ?? Config::USER_IDS['Deleted user'];
         $this->owned = ($this->author === $_SESSION['user_id']);
         $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->editor = $fromDB['editor'] ?? Config::userIDs['Deleted user'];
+        $this->editor = $fromDB['editor'] ?? Config::USER_IDS['Deleted user'];
         $this->parents = array_merge($fromDB['section']['parents'], [['section_id' => $fromDB['section']['id'], 'name' => $fromDB['section']['name'], 'type' => $fromDB['section']['type'], 'parent_id' => $fromDB['section']['parents'][0]['section_id']]]);
         $this->parent = $fromDB['section'];
         $this->parent_id = (int)$fromDB['section']['id'];

@@ -32,7 +32,7 @@ export class EditSessions
             type = 'sessions';
             buttons = this.sessionButtons;
         } else {
-            addSnackbar('Unknown button type', 'failure', snackbarFailLife);
+            addSnackbar('Unknown button type', 'failure', SNACKBAR_FAIL_LIFE);
             return;
         }
         //Traverse in reverse, because of numeric row IDs used for rows removal
@@ -58,21 +58,21 @@ export class EditSessions
             typeSingular = 'Session';
             formData.set('session', String(button.getAttribute('data-session')));
         } else {
-            addSnackbar('Unknown button type', 'failure', snackbarFailLife);
+            addSnackbar('Unknown button type', 'failure', SNACKBAR_FAIL_LIFE);
             return;
         }
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete`, formData, 'json', 'DELETE', ajaxTimeout, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                deleteRow(button);
-                if (singular) {
-                    addSnackbar(`${typeSingular} removed`, 'success');
+        void ajax(`${location.protocol}//${location.host}/api/uc/${type}/delete`, formData, 'json', 'DELETE', AJAX_TIMEOUT, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    deleteRow(button);
+                    if (singular) {
+                        addSnackbar(`${typeSingular} removed`, 'success');
+                    }
+                } else {
+                    buttonToggle(button);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
-            } else {
-                buttonToggle(button);
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
-            }
-        });
+            });
     }
 }

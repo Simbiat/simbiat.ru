@@ -38,7 +38,7 @@ class Talks
     public function cleanAvatars(): bool
     {
         try {
-            $limit = User::avatarLimit;
+            $limit = User::AVATAR_LIMIT;
             #Get users with more than 10 unused avatars
             $users = Query::query('SELECT `user_id`, COUNT(*) as `count` FROM `uc__avatars` WHERE `current`=0 GROUP BY `user_id` HAVING `count`>:limit;', [':limit' => [$limit, 'int']], return: 'pair');
             #Iterate over the list
@@ -111,7 +111,7 @@ class Talks
                     #Get a directory tree for the file
                     $dirs = [dirname($file), dirname($file, 2), dirname($file, 3)];
                     #Log the removal
-                    Security::log('File upload', 'Automatically deleted file', basename($file), user_id: Config::userIDs['System user']);
+                    Security::log('File upload', 'Automatically deleted file', basename($file), user_id: Config::USER_IDS['System user']);
                     #Remove the file
                     /** @noinspection PhpUsageOfSilenceOperatorInspection */
                     @unlink($file);

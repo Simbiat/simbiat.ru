@@ -234,7 +234,7 @@ abstract class Api
                         #If origins are limited, check if origin is present
                         (!empty($origin) &&
                             #Check if it's a valid origin and is allowed
-                            (preg_match('/'.Headers::originRegex.'/i', $origin) === 1 || in_array($origin, $allowOrigins, true))
+                            (preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || in_array($origin, $allowOrigins, true))
                         )
                     ) {
                         #All checks passed

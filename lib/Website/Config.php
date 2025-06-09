@@ -18,11 +18,11 @@ final class Config
 {
     public static bool $PROD = false;
     public static string $workDir = '';
-    public const string adminMail = 'support@simbiat.dev';
-    public const string adminName = 'Dmitrii Kustov';
-    public const string siteName = 'Simbiat Software';
+    public const string ADMIN_MAIL = 'support@simbiat.dev';
+    public const string ADMIN_NAME = 'Dmitrii Kustov';
+    public const string SITE_NAME = 'Simbiat Software';
     #Mail to use to send emails from
-    public const string from = 'noreply@simbiat.dev';
+    public const string FROM = 'noreply@simbiat.dev';
     public static string $http_host = 'www.simbiat.dev';
     public static string $baseUrl = 'https://www.simbiat.dev';
     public static string $htmlCache = '';
@@ -50,14 +50,14 @@ final class Config
     public static string $icons = '';
     public static string $statistics = '';
     #List of system user IDs
-    public const array userIDs = [
+    public const array USER_IDS = [
         'Unknown user' => 1,
         'System user' => 2,
         'Deleted user' => 3,
         'Owner' => 4,
     ];
     #List of system group IDs
-    public const array groupsIDs = [
+    public const array GROUP_IDS = [
         'Administrators' => 1,
         'Unverified' => 2,
         'Users' => 3,

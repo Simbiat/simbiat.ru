@@ -26,7 +26,7 @@ use function is_string;
 class User extends Entity
 {
     #Maximum number of unused avatars per user
-    public const int avatarLimit = 10;
+    public const int AVATAR_LIMIT = 10;
     #Entity's properties
     public string $username;
     #System flag, if true, user can't be deleted
@@ -105,7 +105,7 @@ class User extends Entity
             #System users need to be treated as not activated
             $dbData['activated'] = false;
         } else {
-            $dbData['activated'] = !in_array(Config::groupsIDs['Unverified'], $dbData['groups'], true);
+            $dbData['activated'] = !in_array(Config::GROUP_IDS['Unverified'], $dbData['groups'], true);
         }
         $dbData['currentAvatar'] = $this->getAvatar();
         return $dbData;
@@ -237,8 +237,8 @@ class User extends Entity
             }
             #Check if we are not trying to add an excessive avatar (compare the number of non-current avatars to the limit).
             #If we are setting one for a character - ignore this limitation, though, because it is possible that this character is being used as the current avatar, which we will need to update
-            if ($character === null && $counts[0] === self::avatarLimit) {
-                return ['http_error' => 413, 'reason' => 'Maximum of '.self::avatarLimit.' unused avatars reached'];
+            if ($character === null && $counts[0] === self::AVATAR_LIMIT) {
+                return ['http_error' => 413, 'reason' => 'Maximum of '.self::AVATAR_LIMIT.' unused avatars reached'];
             }
             $upload = new Curl()->upload($link, true);
             if (!empty($upload['http_error'])) {
@@ -662,7 +662,7 @@ class User extends Entity
             $pass = bin2hex(random_bytes(128));
             $hashedPass = Security::passHash($pass);
             #Write cookie data to DB
-            if (!empty($this->id) || (!empty($_SESSION['user_id']) && !in_array($_SESSION['user_id'], [Config::userIDs['Unknown user'], Config::userIDs['System user'], Config::userIDs['Deleted user']], true))) {
+            if (!empty($this->id) || (!empty($_SESSION['user_id']) && !in_array($_SESSION['user_id'], [Config::USER_IDS['Unknown user'], Config::USER_IDS['System user'], Config::USER_IDS['Deleted user']], true))) {
                 #Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
                 $currentPass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                     [
@@ -1012,39 +1012,39 @@ class User extends Entity
                 $queries = [
                     [
                         'UPDATE `talks__sections` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__sections` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `last_poster`=:deleted WHERE `last_poster`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__posts` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__posts` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `talks__posts_history` SET `user_id`=:deleted WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'UPDATE `sys__files` SET `user_id`=:deleted WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::userIDs['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
                     ],
                     [
                         'DELETE FROM `talks__likes` WHERE `user_id`=:user_id;',
@@ -1066,7 +1066,7 @@ class User extends Entity
                         'INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES (:user_id, :group_id);',
                         [
                             ':user_id' => [$this->id, 'int'],
-                            ':group_id' => [Config::groupsIDs['Deleted'], 'int'],
+                            ':group_id' => [Config::GROUP_IDS['Deleted'], 'int'],
                         ]
                     ],
                 ];
@@ -1092,7 +1092,7 @@ class User extends Entity
             $result = false;
         }
         #Log
-        Security::log('User removal', 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? Config::userIDs['Deleted user'] : $this->id));
+        Security::log('User removal', 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? Config::USER_IDS['Deleted user'] : $this->id));
         return $result;
     }
 }

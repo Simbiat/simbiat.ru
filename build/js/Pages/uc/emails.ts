@@ -46,7 +46,7 @@ export class Emails
             }
             const email = String(formData.get('email'));
             buttonToggle(this.submit);
-            void ajax(`${location.protocol}//${location.host}/api/uc/emails/add`, formData, 'json', 'POST', ajaxTimeout, true).
+            void ajax(`${location.protocol}//${location.host}/api/uc/emails/add`, formData, 'json', 'POST', AJAX_TIMEOUT, true).
                 then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
@@ -59,7 +59,7 @@ export class Emails
                         }
                         addSnackbar(`${email} added`, 'success');
                     } else {
-                        addSnackbar(data.reason, 'failure', snackbarFailLife);
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     if (this.submit) {
                         buttonToggle(this.submit);
@@ -131,19 +131,19 @@ export class Emails
         const email = button.getAttribute('data-email') ?? '';
         formData.set('email', email);
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/emails/delete`, formData, 'json', 'DELETE', ajaxTimeout, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                deleteRow(button);
-                Emails.blockDelete();
-                addSnackbar(`${email} removed`, 'success');
-            } else {
-                buttonToggle(button);
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
-            }
-        });
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/delete`, formData, 'json', 'DELETE', AJAX_TIMEOUT, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    deleteRow(button);
+                    Emails.blockDelete();
+                    addSnackbar(`${email} removed`, 'success');
+                } else {
+                    buttonToggle(button);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                }
+            });
     }
-
+    
     //Function to block button for mail removal if we have less than 2 confirmed mails
     private static blockDelete(): void
     {
@@ -197,21 +197,21 @@ export class Emails
         const formData = new FormData();
         formData.set('verb', verb);
         formData.set('email', email);
-        void ajax(`${location.protocol}//${location.host}/api/uc/emails/${verb}`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                if ((checkbox as HTMLInputElement).checked) {
-                    (checkbox as HTMLInputElement).checked = false;
-                    addSnackbar(`${email} unsubscribed`, 'success');
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/${verb}`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    if ((checkbox as HTMLInputElement).checked) {
+                        (checkbox as HTMLInputElement).checked = false;
+                        addSnackbar(`${email} unsubscribed`, 'success');
+                    } else {
+                        (checkbox as HTMLInputElement).checked = true;
+                        addSnackbar(`${email} subscribed`, 'success');
+                    }
                 } else {
-                    (checkbox as HTMLInputElement).checked = true;
-                    addSnackbar(`${email} subscribed`, 'success');
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
-            } else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
-            }
-            buttonToggle(checkbox as HTMLInputElement);
-        });
+                buttonToggle(checkbox as HTMLInputElement);
+            });
     }
     
     private static activate(button: HTMLInputElement): void
@@ -222,14 +222,14 @@ export class Emails
         formData.set('verb', 'activate');
         formData.set('email', email);
         buttonToggle(button);
-        void ajax(`${location.protocol}//${location.host}/api/uc/emails/activate`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
-            const data = response as ajaxJSONResponse;
-            if (data.data === true) {
-                addSnackbar(`Activation email sent to ${email}`, 'success');
-            } else {
-                addSnackbar(data.reason, 'failure', snackbarFailLife);
-            }
-            buttonToggle(button);
-        });
+        void ajax(`${location.protocol}//${location.host}/api/uc/emails/activate`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
+                const data = response as ajaxJSONResponse;
+                if (data.data === true) {
+                    addSnackbar(`Activation email sent to ${email}`, 'success');
+                } else {
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                }
+                buttonToggle(button);
+            });
     }
 }

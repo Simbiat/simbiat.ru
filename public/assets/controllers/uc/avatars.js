@@ -32,24 +32,24 @@ export class EditAvatars {
     upload() {
         if (this.form) {
             if (this.avatarFile?.files && this.avatarFile.files.length === 0) {
-                addSnackbar('No file selected', 'failure', snackbarFailLife);
+                addSnackbar('No file selected', 'failure', SNACKBAR_FAIL_LIFE);
                 return;
             }
             if (this.avatarFile?.files && this.avatarFile.files[0] && this.avatarFile.files[0].size === 0) {
-                addSnackbar('Selected file is empty', 'failure', snackbarFailLife);
+                addSnackbar('Selected file is empty', 'failure', SNACKBAR_FAIL_LIFE);
                 return;
             }
             const formData = new FormData(this.form);
             const button = this.form.querySelector('#avatar_submit');
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', ajaxTimeout, true).
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', AJAX_TIMEOUT, true).
                 then((response) => {
                 const data = response;
                 if (data.data === true) {
                     this.addToList(data.location);
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
                 if (this.avatarFile) {
                     this.avatarFile.value = '';
@@ -64,14 +64,14 @@ export class EditAvatars {
         if (li) {
             const formData = new FormData();
             formData.append('avatar', li.id);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     this.refresh(data.location);
                 }
                 else {
                     avatar.checked = false;
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
             });
         }
@@ -142,14 +142,14 @@ export class EditAvatars {
         if (li) {
             const formData = new FormData();
             formData.append('avatar', li.id);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, formData, 'json', 'DELETE', ajaxTimeout, true).then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, formData, 'json', 'DELETE', AJAX_TIMEOUT, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     li.remove();
                     this.refresh(data.location);
                 }
                 else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                 }
             });
         }

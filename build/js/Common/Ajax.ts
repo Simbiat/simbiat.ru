@@ -13,7 +13,7 @@ async function ajax(
     formData: FormData | null = null,
     type = 'json',
     method = 'GET',
-    timeout = ajaxTimeout,
+    timeout = AJAX_TIMEOUT,
     skipError = false
 ): Promise<ajaxJSONResponse | ArrayBuffer | Blob | FormData | boolean | string>
 {
@@ -42,7 +42,7 @@ async function ajax(
             'signal': controller.signal,
         });
         if (!response.ok && !skipError) {
-            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', snackbarFailLife);
+            addSnackbar(`Request to "${url}" returned code ${response.status}`, 'failure', SNACKBAR_FAIL_LIFE);
             return false;
         }
         switch (type) {
@@ -65,9 +65,9 @@ async function ajax(
         return result;
     } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
-            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', snackbarFailLife);
+            addSnackbar(`Request to "${url}" timed out after ${timeout} milliseconds`, 'failure', SNACKBAR_FAIL_LIFE);
         } else {
-            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', snackbarFailLife);
+            addSnackbar(`Request to "${url}" failed on fetch operation`, 'failure', SNACKBAR_FAIL_LIFE);
         }
         return false;
     }

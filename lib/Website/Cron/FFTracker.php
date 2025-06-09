@@ -39,7 +39,7 @@ class FFTracker
             return true;
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            new Email(Config::ADMIN_MAIL)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
             return $error;
         }
     }
@@ -140,7 +140,7 @@ class FFTracker
             return Query::query($queries);
         } catch (\Throwable $e) {
             $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            new Email(Config::adminMail)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+            new Email(Config::ADMIN_MAIL)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
             return $error;
         }
     }

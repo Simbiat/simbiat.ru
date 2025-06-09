@@ -278,7 +278,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 header('X-CSRF-Token: '.$data['CSRF']);
             }
             if (empty($data['user_id'])) {
-                $data['user_id'] = Config::userIDs['Unknown user'];
+                $data['user_id'] = Config::USER_IDS['Unknown user'];
                 $data['username'] = $data['UA']['bot'] ?? null;
                 $data['timezone'] = null;
                 $data['groups'] = [];
@@ -297,12 +297,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['avatar'] = $user->currentAvatar;
                     $data['sections'] = $user->sections;
                 } else {
-                    $data['user_id'] = Config::userIDs['Unknown user'];
+                    $data['user_id'] = Config::USER_IDS['Unknown user'];
                     $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
                 }
             }
         } catch (\Throwable) {
-            $data['user_id'] = Config::userIDs['Unknown user'];
+            $data['user_id'] = Config::USER_IDS['Unknown user'];
             $data['username'] = (!empty($data['UA']['bot']) ? $data['UA']['bot'] : null);
         }
     }
@@ -429,7 +429,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `user_id` IN ('.Config::userIDs['System user'].', '.Config::userIDs['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
+            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `user_id` IN ('.Config::USER_IDS['System user'].', '.Config::USER_IDS['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

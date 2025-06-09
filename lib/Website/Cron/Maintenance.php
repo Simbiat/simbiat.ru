@@ -220,7 +220,7 @@ class Maintenance
                 $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
-                    new Email(Config::adminMail)->send('[Alert]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
+                    new Email(Config::ADMIN_MAIL)->send('[Alert]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
                     #Generate flag
                     file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
@@ -228,7 +228,7 @@ class Maintenance
         } elseif (is_file($dir.'/noSpace.flag')) {
             @unlink($dir.'/noSpace.flag');
             #Send mail
-            new Email(Config::adminMail)->send('[Resolved]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
+            new Email(Config::ADMIN_MAIL)->send('[Resolved]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
         }
     }
     
@@ -244,7 +244,7 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail
-                new Email(Config::adminMail)->send('[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
+                new Email(Config::ADMIN_MAIL)->send('[Alert]: Database is down', ['errors' => print_r(Pool::$errors, true)], 'Simbiat');
                 #Generate flag
                 file_put_contents($dir.'/noDB.flag', 'Database is down');
             }
@@ -258,11 +258,11 @@ class Maintenance
             @unlink(Config::$workDir.'/data/backups/crash.flag');
             @unlink($dir.'/noDB.flag');
             #Send mail
-            new Email(Config::adminMail)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');
+            new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');
         } elseif (is_file($dir.'/noDB.flag')) {
             @unlink($dir.'/noDB.flag');
             #Send mail
-            new Email(Config::adminMail)->send('[Resolved]: Database is down', username: 'Simbiat');
+            new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', username: 'Simbiat');
         }
     }
     

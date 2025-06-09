@@ -39,7 +39,7 @@ class Unsubscribe extends Page
             return ['http_error' => 400, 'reason' => 'No email token provided'];
         }
         $email = Security::decrypt($_GET['token']);
-        if (preg_match(Security::eMailRegex, $email) !== 1) {
+        if (preg_match(Security::EMAIL_REGEX, $email) !== 1) {
             return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
         }
         $outputArray = [];

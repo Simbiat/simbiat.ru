@@ -54,8 +54,8 @@ class Feeds
                 if ($format === 'atom') {
                     $settings = [
                         'authors' => [[
-                            'name' => Config::adminName,
-                            'email' => Config::adminMail,
+                            'name' => Config::ADMIN_NAME,
+                            'email' => Config::ADMIN_MAIL,
                             'uri' => Config::$baseUrl.'/',
                         ]],
                         'icon' => Config::$baseUrl.'/assets/images/favicons/simbiat.png',
@@ -63,8 +63,8 @@ class Feeds
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [
-                        'webMaster' => Config::adminMail,
-                        'managingEditor' => Config::adminMail,
+                        'webMaster' => Config::ADMIN_MAIL,
+                        'managingEditor' => Config::ADMIN_MAIL,
                         'language' => 'en-us',
                         'ttl' => 3600,
                         'image' => [
@@ -107,9 +107,9 @@ class Feeds
                 #Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
-                        Atom::Atom(Config::siteName.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
+                        Atom::Atom(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     } elseif ($format === 'rss') {
-                        RSS::RSS(Config::siteName.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
+                        RSS::RSS(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     }
                 }
             }

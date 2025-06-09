@@ -51,7 +51,7 @@ class Curl
     #cURL Handle is static to allow reuse of a single instance, if possible and needed
     public static \CurlHandle|null|false $curlHandle = null;
     #Allowed MIME types
-    public const array allowedMime = [
+    public const array ALLOWED_MIME = [
         #For now only images
         'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'
     ];
@@ -129,7 +129,7 @@ class Curl
         }
         #Rename the file to give it a proper extension
         $mime = mime_content_type($filepath);
-        $newName = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::extToMime, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
+        $newName = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::EXTENSION_TO_MIME, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
         rename($filepath, sys_get_temp_dir().'/'.$newName);
         $filepath = sys_get_temp_dir().'/'.$newName;
         return [
@@ -266,7 +266,7 @@ class Curl
             if (Query::$dbh === null) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['user_id'] ?? Config::userIDs['System user']);
+            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['user_id'] ?? Config::USER_IDS['System user']);
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
@@ -298,7 +298,7 @@ class Curl
                 $upload = $upload[0];
             }
             #Check if a file is one of the allowed types
-            if (!in_array($upload['type'], self::allowedMime, true)) {
+            if (!in_array($upload['type'], self::ALLOWED_MIME, true)) {
                 @unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
             }
@@ -353,7 +353,7 @@ class Curl
                 'INSERT IGNORE INTO `sys__files`(`file_id`, `user_id`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :user_id, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],
-                    ':user_id' => $_SESSION['user_id'] ?? Config::userIDs['System user'],
+                    ':user_id' => $_SESSION['user_id'] ?? Config::USER_IDS['System user'],
                     ':filename' => $upload['user_name'],
                     ':extension' => $upload['extension'],
                     ':mime' => $upload['type'],

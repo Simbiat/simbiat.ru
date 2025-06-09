@@ -19,14 +19,14 @@ export class RemoveProfile {
                 const formData = new FormData();
                 formData.append('hard', (this.checkbox.checked ? 'true' : 'false'));
                 buttonToggle(this.button);
-                void ajax(`${location.protocol}//${location.host}/api/uc/remove`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
+                void ajax(`${location.protocol}//${location.host}/api/uc/remove`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
                     const data = response;
                     if (data.data === true) {
-                        addSnackbar('Sad to see you go 😭', 'success', snackbarFailLife);
+                        addSnackbar('Sad to see you go 😭', 'success', SNACKBAR_FAIL_LIFE);
                         pageRefresh();
                     }
                     else {
-                        addSnackbar('Gods gave you another chance with this failure. 😇 Time to rethink your decision, maybe? 🤔', 'failure', snackbarFailLife);
+                        addSnackbar('Gods gave you another chance with this failure. 😇 Time to rethink your decision, maybe? 🤔', 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     if (this.button) {
                         buttonToggle(this.button);

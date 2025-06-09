@@ -35,19 +35,19 @@
             <th>Server or Data Center</th>
             <th>Duplicates</th>
         </tr></thead>
-        {% for entityType, servers in ffstats.data.bugs.duplicateNames %}
+        {% for entity_type, servers in ffstats.data.bugs.duplicateNames %}
             {% for server, names in servers %}
                 {% for duplicates in names %}
                     <tr>
                         <td>
-                            {% if entityType == 'freecompany' %}
+                            {% if entity_type == 'freecompany' %}
                                 Free Company
-                            {% elseif entityType == 'pvpteam' %}
+                            {% elseif entity_type == 'pvpteam' %}
                                 PvP Team
-                            {% elseif entityType == 'crossworldlinkshell' %}
+                            {% elseif entity_type == 'crossworldlinkshell' %}
                                 Crossworld Linkshell
                             {% else %}
-                                {{ entityType|capitalize }}
+                                {{ entity_type|capitalize }}
                             {% endif %}
                         </td>
                         <td>{{ server }}</td>

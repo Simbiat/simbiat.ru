@@ -55,29 +55,29 @@ export class EditProfile
         if (this.profileForm) {
             //Get form data
             const formData = new FormData(this.profileForm);
-            void ajax(`${location.protocol}//${location.host}/api/uc/profile`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    this.profileFormData = JSON.stringify([...formData.entries()]);
-                    this.profileOnChange();
-                    addSnackbar('Profile updated', 'success');
-                    //If auto-save, update the time
-                    if (auto) {
-                        this.autoTime?.classList.remove('hidden');
-                        if (this.timeTag) {
-                            const time = new Date();
-                            this.timeTag.setAttribute('datetime', time.toISOString());
-                            this.timeTag.innerHTML = time.toLocaleTimeString();
+            void ajax(`${location.protocol}//${location.host}/api/uc/profile`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        this.profileFormData = JSON.stringify([...formData.entries()]);
+                        this.profileOnChange();
+                        addSnackbar('Profile updated', 'success');
+                        //If auto-save, update the time
+                        if (auto) {
+                            this.autoTime?.classList.remove('hidden');
+                            if (this.timeTag) {
+                                const time = new Date();
+                                this.timeTag.setAttribute('datetime', time.toISOString());
+                                this.timeTag.innerHTML = time.toLocaleTimeString();
+                            }
                         }
+                        //Notify TinyMCE, that data was saved
+                        if (this.aboutValue && !empty(this.aboutValue.id)) {
+                            saveTinyMCE(this.aboutValue.id);
+                        }
+                    } else {
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
-                    //Notify TinyMCE, that data was saved
-                    if (this.aboutValue && !empty(this.aboutValue.id)) {
-                        saveTinyMCE(this.aboutValue.id);
-                    }
-                } else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
-                }
-            });
+                });
         }
     }
     
@@ -112,19 +112,19 @@ export class EditProfile
             //Get form data
             const formData = new FormData(this.usernameForm);
             buttonToggle(this.usernameSubmit);
-            void ajax(`${location.protocol}//${location.host}/api/uc/username`, formData, 'json', 'PATCH', ajaxTimeout, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    (this.usernameField as HTMLInputElement).setAttribute('data-original', (this.usernameField as HTMLInputElement).value);
-                    this.usernameOnChange();
-                    addSnackbar('Username changed', 'success');
-                } else {
-                    addSnackbar(data.reason, 'failure', snackbarFailLife);
-                }
-                if (this.usernameSubmit) {
-                    buttonToggle(this.usernameSubmit);
-                }
-            });
+            void ajax(`${location.protocol}//${location.host}/api/uc/username`, formData, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        (this.usernameField as HTMLInputElement).setAttribute('data-original', (this.usernameField as HTMLInputElement).value);
+                        this.usernameOnChange();
+                        addSnackbar('Username changed', 'success');
+                    } else {
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                    }
+                    if (this.usernameSubmit) {
+                        buttonToggle(this.usernameSubmit);
+                    }
+                });
         }
     }
 }
