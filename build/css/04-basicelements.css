@@ -223,42 +223,47 @@ blockquote::after {
 blockquote > .quoteAuthor,
 samp > .codeDesc,
 code > .codeDesc {
-    color:         var(--color-disabled);
-    position:      absolute;
-    top:           -0.25rem;
-    left:          1.5rem;
-    font-size:     1rem;
-    font-style:    italic;
+    color: var(--color-disabled);
+    position: absolute;
+    top: -0.25rem;
+    left: 1.5rem;
+    font-size: 1rem;
+    font-style: italic;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: fit-content;
-    height: var(--line-height-base);
+    text-wrap: wrap;
 }
+
 blockquote > .quoteAuthor:after,
 samp > .codeDesc:after,
 code > .codeDesc:after {
     content: ':';
 }
+
 samp > .codeDesc,
 code > .codeDesc {
-    left:          0.5rem;
+    left: 0.5rem;
 }
+
 blockquote > .quoteSource,
 samp > .quoteSource,
 code > .quoteSource {
-    color:         var(--color-disabled);
-    position:      absolute;
-    bottom:           -0.25rem;
-    right:          3.5rem;
-    font-size:     1rem;
-    font-style:    italic;
+    color: var(--color-disabled);
+    text-wrap: wrap;
+    margin-bottom: -1rem;
+    display: block;
+    position: static;
+    bottom: -0.25rem;
+    right: 3.5rem;
+    font-size: 1rem;
+    font-style: italic;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     text-align: right;
     width: fit-content;
-    height: var(--line-height-base);
 }
 blockquote > .quoteSource:before,
 samp > .quoteSource:before,
