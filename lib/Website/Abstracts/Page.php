@@ -299,7 +299,7 @@ abstract class Page
         $cleanedHtml = $html->saveHTML();
         #Strip the excessive HTML tags if we added them
         $cleanedHtml = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
-        $newDesc = strip_tags(Cut::Cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
+        $newDesc = strip_tags(Cut::cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
         #Update description only if it's not empty
         if (preg_match('/^\s*$/u', $newDesc) === 0) {
             $this->ogdesc = $newDesc;

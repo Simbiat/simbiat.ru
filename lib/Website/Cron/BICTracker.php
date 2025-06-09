@@ -18,7 +18,7 @@ class BICTracker
      * Update the BIC library
      * @return bool|string
      */
-    public function LibraryUpdate(): bool|string
+    public function libraryUpdate(): bool|string
     {
         $result = new Library()->update(true);
         #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now

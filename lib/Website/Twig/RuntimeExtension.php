@@ -163,7 +163,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function htmlCut(string $string, int $length = 250): string
     {
-        return Cut::Cut($string, $length, 3);
+        return Cut::cut($string, $length, 3);
     }
     
     /**

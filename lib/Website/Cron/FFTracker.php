@@ -30,7 +30,7 @@ class FFTracker
      * Update statistics
      * @return bool|string
      */
-    public function UpdateStatistics(): bool|string
+    public function updateStatistics(): bool|string
     {
         try {
             foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
@@ -51,7 +51,7 @@ class FFTracker
      *
      * @return bool|string
      */
-    public function UpdateEntity(string|int $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
+    public function updateEntity(string|int $id, #[ExpectedValues(['character', 'freecompany', 'pvpteam', 'linkshell', 'crossworldlinkshell', 'crossworld_linkshell', 'achievement'])] string $type): bool|string
     {
         return match ($type) {
             'character' => new Character($id)->update(true),
@@ -72,7 +72,7 @@ class FFTracker
      *
      * @return bool|string
      */
-    public function UpdateOld(int $limit = 1, int $instance = 1): bool|string
+    public function updateOld(int $limit = 1, int $instance = 1): bool|string
     {
         #Sanitize entities number
         if ($limit < 1) {
@@ -99,7 +99,7 @@ class FFTracker
             );
             foreach ($entities as $entity) {
                 $extraForError = $entity['type'].' ID '.$entity['id'];
-                $result = $this->UpdateEntity($entity['id'], $entity['type']);
+                $result = $this->updateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
                     #If we were throttled, means we already slept and can continue, instead of breaking the whole instance
                     if (preg_match('/Request throttled by Lodestone/', $result) === 1) {
@@ -121,7 +121,7 @@ class FFTracker
      * Update the list of servers
      * @return bool|string
      */
-    public function UpdateServers(): bool|string
+    public function updateServers(): bool|string
     {
         try {
             $Lodestone = (new Lodestone());

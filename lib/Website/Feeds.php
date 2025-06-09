@@ -107,9 +107,9 @@ class Feeds
                 #Generate the feed
                 if (!empty($query)) {
                     if ($format === 'atom') {
-                        Atom::Atom(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
+                        Atom::atom(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     } elseif ($format === 'rss') {
-                        RSS::RSS(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
+                        RSS::rss(Config::SITE_NAME.': '.$title, Query::query($query, return: 'all'), feed_settings: $settings);
                     }
                 }
             }
