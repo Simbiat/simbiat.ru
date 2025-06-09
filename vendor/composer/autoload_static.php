@@ -138,6 +138,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
             1 => __DIR__ . '/../..' . '/lib/Database/Manager/src',
             2 => __DIR__ . '/../..' . '/lib/Database/Pool/src',
             3 => __DIR__ . '/../..' . '/lib/Database/Query/src',
+            4 => __DIR__ . '/../..' . '/lib/Database/Installer/src',
         ),
         'Simbiat\\Cron\\' => 
         array (
@@ -550,6 +551,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\DDCIcons' => __DIR__ . '/../..' . '/lib/DDCIcons/src/DDCIcons.php',
         'Simbiat\\Database\\Bind' => __DIR__ . '/../..' . '/lib/Database/Binder/src/Bind.php',
         'Simbiat\\Database\\Connection' => __DIR__ . '/../..' . '/lib/Database/Pool/src/Connection.php',
+        'Simbiat\\Database\\Installer' => __DIR__ . '/../..' . '/lib/Database/Installer/src/Installer.php',
         'Simbiat\\Database\\Maintainer\\Analyzer' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Analyzer.php',
         'Simbiat\\Database\\Maintainer\\Commander' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Commander.php',
         'Simbiat\\Database\\Maintainer\\Installer' => __DIR__ . '/../..' . '/lib/Database/Maintainer/src/Installer.php',

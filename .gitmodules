@@ -76,3 +76,6 @@
 [submodule "lib/Database/Maintainer"]
 	path = lib/Database/Maintainer
 	url = https://github.com/Simbiat/db-maintainer
+[submodule "lib/Database/Installer"]
+	path = lib/Database/Installer
+	url = https://github.com/Simbiat/db-installer

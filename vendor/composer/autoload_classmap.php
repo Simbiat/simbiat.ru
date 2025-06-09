@@ -319,6 +319,7 @@ return array(
     'Simbiat\\DDCIcons' => $baseDir . '/lib/DDCIcons/src/DDCIcons.php',
     'Simbiat\\Database\\Bind' => $baseDir . '/lib/Database/Binder/src/Bind.php',
     'Simbiat\\Database\\Connection' => $baseDir . '/lib/Database/Pool/src/Connection.php',
+    'Simbiat\\Database\\Installer' => $baseDir . '/lib/Database/Installer/src/Installer.php',
     'Simbiat\\Database\\Maintainer\\Analyzer' => $baseDir . '/lib/Database/Maintainer/src/Analyzer.php',
     'Simbiat\\Database\\Maintainer\\Commander' => $baseDir . '/lib/Database/Maintainer/src/Commander.php',
     'Simbiat\\Database\\Maintainer\\Installer' => $baseDir . '/lib/Database/Maintainer/src/Installer.php',
