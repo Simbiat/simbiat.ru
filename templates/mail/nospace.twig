@@ -1,5 +1,5 @@
 {% if subject == '[Alert]: Low space' %}
-    <p>{{ percentage }}% of space left! Check ASAP!</p>
+    <p>{{ free }} out of {{ total }} ({{ percentage }}%) space left! Check ASAP!</p>
 {% else %}
-    <p>{{ percentage }}% of space is now free. Alert resolved.</p>
+    <p>{{ free }} out of {{ total }} ({{ percentage }}%) space is now free. Alert resolved.</p>
 {% endif %}

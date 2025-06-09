@@ -5,6 +5,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
+use Simbiat\CuteBytes;
 use Simbiat\Database\Maintainer\Analyzer;
 use Simbiat\Database\Maintainer\Settings;
 use Simbiat\Database\Manage;
@@ -219,7 +220,7 @@ class Maintenance
                 $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
-                    new Email(Config::adminMail)->send('[Alert]: Low space', ['percentage' => $percentage], 'Simbiat');
+                    new Email(Config::adminMail)->send('[Alert]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
                     #Generate flag
                     file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
@@ -227,7 +228,7 @@ class Maintenance
         } elseif (is_file($dir.'/noSpace.flag')) {
             @unlink($dir.'/noSpace.flag');
             #Send mail
-            new Email(Config::adminMail)->send('[Resolved]: Low space', ['percentage' => $percentage], 'Simbiat');
+            new Email(Config::adminMail)->send('[Resolved]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
         }
     }
     
