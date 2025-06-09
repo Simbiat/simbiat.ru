@@ -12,7 +12,7 @@ class Character extends Redirect
         ['href' => '/fftracker/characters', 'name' => 'Characters']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/fftracker\/character[^s](.*)';
+    protected string $search_for = '\/fftracker\/character[^s](.*)';
     #Regex replace pattern
     protected string $replaceWith = '/fftracker/characters/$1';
 }

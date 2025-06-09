@@ -20,7 +20,7 @@ class Search extends Page
     #Linking types to classes
     protected array $types = [];
     #Items to display per page for search results per type
-    protected int $searchItems = 15;
+    protected int $search_items = 15;
     #Regex to sanitize search value (remove disallowed characters)
     protected string $regexSearch = '/[^\p{L}\p{N} _\'\-,!%]/iu';
     #Short title to be used for <title> and <h1> when having a search value
@@ -28,7 +28,7 @@ class Search extends Page
     #Full title to be used for description metatags when having a search value
     protected string $fullTitle = 'Search for `%s`';
     #Search value
-    protected string $searchFor = '';
+    protected string $search_for = '';
     
     /**
      * Generation of the page data
@@ -52,23 +52,23 @@ class Search extends Page
         #Get search results
         $outputArray = [];
         foreach ($this->types as $type => $class) {
-            $outputArray['searchResult'][$type] = new $class['class']()->Search($this->searchFor, $this->searchItems);
+            $outputArray['search_result'][$type] = new $class['class']()->Search($this->search_for, $this->search_items);
         }
         #Get the freshest date
-        $date = $this->getDate($outputArray['searchResult']);
+        $date = $this->getDate($outputArray['search_result']);
         #Attempt to exit a bit earlier with Last Modified header
         if (!empty($date)) {
             $this->lastModified($date);
         }
-        if (!empty($this->searchFor)) {
+        if (!empty($this->search_for)) {
             #Continue breadcrumbs
-            $this->attachCrumb('?search='.rawurlencode($this->searchFor), sprintf($this->shortTitle, $this->searchFor));
+            $this->attachCrumb('?search='.rawurlencode($this->search_for), sprintf($this->shortTitle, $this->search_for));
             #Set search value, if available
-            $outputArray['searchValue'] = $this->searchFor;
+            $outputArray['search_value'] = $this->search_for;
             #Set titles
-            $this->title = sprintf($this->shortTitle, $this->searchFor);
+            $this->title = sprintf($this->shortTitle, $this->search_for);
             $this->h1 = $this->title;
-            $this->ogdesc = sprintf($this->fullTitle, $this->searchFor);
+            $this->ogdesc = sprintf($this->fullTitle, $this->search_for);
         }
         #Merge with extra fields and return the result
         return array_merge($outputArray, $this->extras());
@@ -131,7 +131,7 @@ class Search extends Page
         }
         #If the value is empty, ensure it's an empty string
         if (!empty($decodedSearch)) {
-            $this->searchFor = $decodedSearch;
+            $this->search_for = $decodedSearch;
         }
         return true;
     }

@@ -23,7 +23,7 @@
     flex-basis: 45%;
     padding: 0.1rem;
 }
-.ff_char_page .searchResults {
+.ff_char_page .search_result {
     justify-content: flex-start;
 }
 .ff_crest {

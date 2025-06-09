@@ -12,7 +12,7 @@ class Linkshell extends Redirect
         ['href' => '/fftracker/linkshells', 'name' => 'Linkshells']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/fftracker\/linkshell[^s](.*)';
+    protected string $search_for = '\/fftracker\/linkshell[^s](.*)';
     #Regex replace pattern
     protected string $replaceWith = '/fftracker/linkshells/$1';
 }

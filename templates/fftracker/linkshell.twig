@@ -18,7 +18,7 @@
     {% endif %}
     {% if linkshell.members|length > 0 %}
         <p>Current members:</p>
-        <div class="searchResults">
+        <div class="search_results">
             {% for entity in linkshell.members %}
                 {{ include('common/elements/entitycard.twig', entity) }}
             {% endfor %}

@@ -81,7 +81,7 @@
         {% if character.achievements|length > 0 %}
             <section class="ff_char_block">
                 <h2>Last achievements</h2>
-                <div class="searchResults">
+                <div class="search_results">
                     {% for entity in character.achievements|slice(0,10) %}
                         {{ include('common/elements/entitycard.twig', entity) }}
                     {% endfor %}

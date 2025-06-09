@@ -34,7 +34,7 @@ class Search extends \Simbiat\Website\Abstracts\Pages\Search
         'achievements' => ['name' => 'Achievements', 'class' => Achievements::class],
     ];
     #Items to display per page for search results per type
-    protected int $searchItems = 6;
+    protected int $search_items = 6;
     #Full title to be used for description metatags when having a search value
     protected string $fullTitle = 'Search for `%s` on Final Fantasy XIV Tracker';
     #List of permissions, from which at least 1 is required to have access to the page

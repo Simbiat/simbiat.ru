@@ -220,7 +220,7 @@ blockquote::after {
     font-size: 2rem;
     font-style: italic;
 }
-blockquote > .quoteAuthor,
+blockquote > .quote_author,
 samp > .codeDesc,
 code > .codeDesc {
     color: var(--color-disabled);
@@ -236,7 +236,7 @@ code > .codeDesc {
     text-wrap: wrap;
 }
 
-blockquote > .quoteAuthor:after,
+blockquote > .quote_author:after,
 samp > .codeDesc:after,
 code > .codeDesc:after {
     content: ':';
@@ -247,9 +247,9 @@ code > .codeDesc {
     left: 0.5rem;
 }
 
-blockquote > .quoteSource,
-samp > .quoteSource,
-code > .quoteSource {
+blockquote > .quote_source,
+samp > .quote_source,
+code > .quote_source {
     color: var(--color-disabled);
     text-wrap: wrap;
     margin-bottom: -1rem;
@@ -265,14 +265,14 @@ code > .quoteSource {
     text-align: right;
     width: fit-content;
 }
-blockquote > .quoteSource:before,
-samp > .quoteSource:before,
-code > .quoteSource:before {
+blockquote > .quote_source:before,
+samp > .quote_source:before,
+code > .quote_source:before {
     content: 'From \2760';
 }
-blockquote > .quoteSource:after,
-samp > .quoteSource:after,
-code > .quoteSource:after {
+blockquote > .quote_source:after,
+samp > .quote_source:after,
+code > .quote_source:after {
     content: '❝';
 }
 q {

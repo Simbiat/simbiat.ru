@@ -6,9 +6,9 @@
 {% if fftracker.characters %}
     <section>
         <div class="middle">Linked FFXIV characters:</div>
-        <div class="searchResults">
+        <div class="search_results">
             {% for character in fftracker.characters %}
-                    {{ include('common/elements/entitycard.twig', character) }}
+                {{ include('common/elements/entitycard.twig', character) }}
             {% endfor %}
         </div>
     </section>
@@ -16,7 +16,7 @@
 {% if threads %}
     <section>
         <div class="middle">Last created threads:</div>
-        <div class="searchResults">
+        <div class="search_results">
             {% for thread in threads %}
                 {{ include('common/elements/entitycard.twig', thread) }}
             {% endfor %}

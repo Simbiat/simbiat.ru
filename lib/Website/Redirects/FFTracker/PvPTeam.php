@@ -12,7 +12,7 @@ class PvPTeam extends Redirect
         ['href' => '/fftracker/pvpteams', 'name' => 'PvP Teams']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/fftracker\/pvpteam[^s](.*)';
+    protected string $search_for = '\/fftracker\/pvpteam[^s](.*)';
     #Regex replace pattern
     protected string $replaceWith = '/fftracker/pvpteams/$1';
 }

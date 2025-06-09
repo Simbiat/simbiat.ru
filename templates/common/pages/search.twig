@@ -7,23 +7,23 @@
     {% set actionURL = '/search' %}
 {% endif %}
 {# Render the form itself #}
-<section>
+<search>
     {% if serviceName == 'bictracker' %}
         <p>Введите БИК, SWIFT, название банка, его адрес, регистрационный номер или номер счёта.</p>
     {% elseif serviceName == 'fftracker' %}
         <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
-    <form role="search" class="searchForm" action="{{ actionURL }}" method="get">
-        <span class="float_label_div" id="searchLabel"><input id="searchField" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if searchValue is defined %} value="{{ searchValue }}"{% else %} autofocus{% endif %}><label for="searchField">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+    <form role="search" class="search_form" action="{{ actionURL }}" method="get">
+        <span class="float_label_div" id="search_label"><input id="search_field" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
         <input role="button" type="submit" id="search_button" data-noname value="{% if serviceName == 'bictracker' %}Поиск{% else %}Search{% endif %}">
     </form>
-</section>
+</search>
 <section>
     {% if serviceName == 'bictracker' %}
         <p class="relative warning">Начиная с апреля 2025ого года ЦБ использует DDoS-Guard, который блокирует запросы с сервера в большинстве случаев, судя по всему, по IP, так как на тесте проблем нет вовсе. Обновления библиотеки больше не гарантируются.</p>
         <p class="relative">Библиотека обновлена {{ timeTag(bicDate, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/assets/images/refresh.svg"></p>
     {% endif %}
-    {% for type, subResult in searchResult %}
+    {% for type, subResult in search_result %}
         <p>
             {% if type == 'openbics' %}
                 Открытых БИК:
@@ -62,12 +62,12 @@
                     {% set listURL = '/fftracker/crossworld_linkshells/' %}
                 {% endif %}
                 {# Show link itself #}
-                <a href="{{ listURL }}{% if searchValue %}?search={{ searchValue|url_encode }}{% endif %}">{{ subResult.count }}</a>
+                <a href="{{ listURL }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ subResult.count }}</a>
             {% else %}
                 {{ subResult.count }}
             {% endif %}
         </p>
-        <div class="searchResults">
+        <div class="search_results">
             {% for entity in subResult.results %}
                 {{ include('common/elements/entitycard.twig', entity) }}
             {% endfor %}

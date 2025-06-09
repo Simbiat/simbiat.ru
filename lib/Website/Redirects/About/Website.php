@@ -12,7 +12,7 @@ class Website extends Redirect
         ['href' => '/about/website', 'name' => 'Website']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '(\/about\/website)';
+    protected string $search_for = '(\/about\/website)';
     #Regex replace pattern
     protected string $replaceWith = '/about/tech';
 }

@@ -3841,7 +3841,7 @@ function sampInit(samp) {
     }
     const source = samp.getAttribute('data-source') ?? '';
     if (!empty(source)) {
-        samp.innerHTML = `${samp.innerHTML}<span class="quoteSource">${source}</span>`;
+        samp.innerHTML = `${samp.innerHTML}<span class="quote_source">${source}</span>`;
     }
     samp.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
 }
@@ -3853,7 +3853,7 @@ function codeInit(code) {
     }
     const source = code.getAttribute('data-source') ?? '';
     if (!empty(source)) {
-        code.innerHTML = `${code.innerHTML}<span class="quoteSource">${source}</span>`;
+        code.innerHTML = `${code.innerHTML}<span class="quote_source">${source}</span>`;
     }
     code.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
 }
@@ -3861,11 +3861,11 @@ function blockquoteInit(quote) {
     quote.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${quote.innerHTML}`;
     const author = quote.getAttribute('data-author') ?? '';
     if (!empty(author)) {
-        quote.innerHTML = `<span class="quoteAuthor">${author}</span>${quote.innerHTML}`;
+        quote.innerHTML = `<span class="quote_author">${author}</span>${quote.innerHTML}`;
     }
     const source = quote.getAttribute('data-source') ?? '';
     if (!empty(source)) {
-        quote.innerHTML = `${quote.innerHTML}<span class="quoteSource">${source}</span>`;
+        quote.innerHTML = `${quote.innerHTML}<span class="quote_source">${source}</span>`;
     }
     quote.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
 }

@@ -129,7 +129,7 @@ function sampInit(samp: HTMLElement): void
     //Add source
     const source = samp.getAttribute('data-source') ?? '';
     if (!empty(source)) {
-        samp.innerHTML = `${samp.innerHTML}<span class="quoteSource">${source}</span>`;
+        samp.innerHTML = `${samp.innerHTML}<span class="quote_source">${source}</span>`;
     }
     //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
     samp.querySelector('.copyQuote')?.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });
@@ -147,7 +147,7 @@ function codeInit(code: HTMLElement): void
     //Add source
     const source = code.getAttribute('data-source') ?? '';
     if (!empty(source)) {
-        code.innerHTML = `${code.innerHTML}<span class="quoteSource">${source}</span>`;
+        code.innerHTML = `${code.innerHTML}<span class="quote_source">${source}</span>`;
     }
     //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
     code.querySelector('.copyQuote')?.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });
@@ -160,12 +160,12 @@ function blockquoteInit(quote: HTMLElement): void
     //Add author
     const author = quote.getAttribute('data-author') ?? '';
     if (!empty(author)) {
-        quote.innerHTML = `<span class="quoteAuthor">${author}</span>${quote.innerHTML}`;
+        quote.innerHTML = `<span class="quote_author">${author}</span>${quote.innerHTML}`;
     }
     //Add source
     const source = quote.getAttribute('data-source') ?? '';
     if (!empty(source)) {
-        quote.innerHTML = `${quote.innerHTML}<span class="quoteSource">${source}</span>`;
+        quote.innerHTML = `${quote.innerHTML}<span class="quote_source">${source}</span>`;
     }
     //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
     quote.querySelector('.copyQuote')?.addEventListener('click', (event: MouseEvent) => { copyQuote(event.target as HTMLElement); });

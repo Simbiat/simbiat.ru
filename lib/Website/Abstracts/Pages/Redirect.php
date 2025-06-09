@@ -13,7 +13,7 @@ class Redirect extends StaticPage
 {
     protected string $subServiceName = 'redirect';
     #Regex match pattern with / and flags
-    protected string $searchFor = '';
+    protected string $search_for = '';
     #Regex replace pattern
     protected string $replaceWith = '';
     
@@ -26,7 +26,7 @@ class Redirect extends StaticPage
     #[\Override]
     protected function generate(array $path): array
     {
-        $newUri = preg_replace('/'.$this->searchFor.'/ui', $this->replaceWith, Config::$canonical);
+        $newUri = preg_replace('/'.$this->search_for.'/ui', $this->replaceWith, Config::$canonical);
         Headers::redirect($newUri);
         return [];
     }

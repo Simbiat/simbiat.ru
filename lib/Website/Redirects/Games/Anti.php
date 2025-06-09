@@ -12,7 +12,7 @@ class Anti extends Redirect
         ['href' => '/games/anti', 'name' => 'AntiI']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '(\/games\/anti)';
+    protected string $search_for = '(\/games\/anti)';
     #Regex replace pattern
     protected string $replaceWith = '/games/radicalresonance';
 }

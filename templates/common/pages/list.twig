@@ -1,10 +1,10 @@
 {% if serviceName == 'bictracker' %}
-    <p>Показано {{ searchResult.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} по {{ searchResult.entities|length+((pagination.current-1)*100) }}) записей из {{ searchResult.count }}.</p>
+    <p>Показано {{ search_result.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} по {{ search_result.entities|length+((pagination.current-1)*100) }}) записей из {{ search_result.count }}.</p>
 {% else %}
-    <p>Showing {{ searchResult.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} to {{ searchResult.entities|length+((pagination.current-1)*100) }}) from total of {{ searchResult.count }}.</p>
+    <p>Showing {{ search_result.entities|length }} ({{ 1+((pagination.current-1)*pagination.per) }} to {{ search_result.entities|length+((pagination.current-1)*100) }}) from total of {{ search_result.count }}.</p>
 {% endif %}
-<{% if numbered %}ol{% else %}div{% endif %} class="searchResults">
-    {% for entity in searchResult.entities %}
+<{% if numbered %}ol{% else %}div{% endif %} class="search_results">
+    {% for entity in search_result.entities %}
         {% if numbered %}<li><span class="no-select">{{ loop.index+((pagination.current-1)*pagination.per) }}.</span>{% endif %}
         {{ include('common/elements/entitycard.twig', entity) }}
         {% if numbered %}</li>{% endif %}

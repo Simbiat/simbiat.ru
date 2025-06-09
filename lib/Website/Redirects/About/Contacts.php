@@ -12,7 +12,7 @@ class Contacts extends Redirect
         ['href' => '/about/contacts', 'name' => 'Contacts']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '(\/about\/contacts)';
+    protected string $search_for = '(\/about\/contacts)';
     #Regex replace pattern
     protected string $replaceWith = '#footerContacts';
 }

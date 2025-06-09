@@ -12,7 +12,7 @@ class Resume extends Redirect
         ['href' => '/about/resume', 'name' => 'Resume']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '(\/about\/resume)';
+    protected string $search_for = '(\/about\/resume)';
     #Regex replace pattern
     protected string $replaceWith = '/about/me';
 }

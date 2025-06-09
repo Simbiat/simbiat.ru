@@ -12,7 +12,7 @@ class FreeCompany extends Redirect
         ['href' => '/fftracker/freecompanies', 'name' => 'Free Companies']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/fftracker\/freecompany\/(.*)';
+    protected string $search_for = '\/fftracker\/freecompany\/(.*)';
     #Regex replace pattern
     protected string $replaceWith = '/fftracker/freecompanies/$1';
 }

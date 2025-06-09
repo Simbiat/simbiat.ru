@@ -27,7 +27,7 @@ class FileListing extends StaticPage
     #List of files that should be excluded
     protected array $exclude = [];
     #String to search for in file names
-    protected string $searchFor = '';
+    protected string $search_for = '';
     #Page number
     protected int $page = 1;
     
@@ -42,7 +42,7 @@ class FileListing extends StaticPage
         $outputArray = [];
         #Set the page number
         $this->page = (int)($_GET['page'] ?? 1);
-        $this->searchFor = SafeFileName::sanitize($_GET['search'] ?? '', true, true);
+        $this->search_for = SafeFileName::sanitize($_GET['search'] ?? '', true, true);
         if (empty($this->dirs)) {
             return ['http_error' => 503, 'reason' => 'No directories are setup for this endpoint'];
         }
@@ -139,7 +139,7 @@ class FileListing extends StaticPage
         $totalPages = (int)ceil($outputArray['files'][$path]['count'] / $this->listItems);
         if ($totalPages > 0 && $this->page > $totalPages) {
             #Redirect to last page
-            Headers::redirect(Config::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->searchFor) ? '?search='.rawurlencode($this->searchFor).'&page='.$totalPages : '?page='.$totalPages), false);
+            Headers::redirect(Config::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$totalPages : '?page='.$totalPages), false);
         }
         if ($outputArray['files'][$path]['count'] > $this->listItems) {
             #Generate pagination data
@@ -160,13 +160,13 @@ class FileListing extends StaticPage
             #Add the path to breadcrumbs
             $this->attachCrumb($path, $this->dirs[$path]['name']);
         }
-        if (empty($this->searchFor)) {
+        if (empty($this->search_for)) {
             if ($this->page > 1) {
                 #Add the path to breadcrumbs
                 $this->attachCrumb('?page='.$this->page, 'Page '.$this->page);
             }
         } else {
-            $this->attachCrumb('?search='.rawurlencode($this->searchFor), 'Search for `'.$this->searchFor.'`');
+            $this->attachCrumb('?search='.rawurlencode($this->search_for), 'Search for `'.$this->search_for.'`');
             if ($this->page > 1) {
                 #Add the path to breadcrumbs
                 $this->attachCrumb('page='.$this->page, 'Page '.$this->page, true);
@@ -244,7 +244,7 @@ class FileListing extends StaticPage
         } else {
             $id = 1;
             foreach ($iterator as $key => $file) {
-                if (!in_array($key, $this->exclude, true) && (empty($this->searchFor) || mb_stripos($key, $this->searchFor, 0, 'UTF-8') !== false)) {
+                if (!in_array($key, $this->exclude, true) && (empty($this->search_for) || mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false)) {
                     if ($id >= (($this->page - 1) * $this->listItems + 1) && $id <= ($this->page * $this->listItems)) {
                         $fileDetails = [
                             'filename' => $file->getFilename(),

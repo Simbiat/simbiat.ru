@@ -12,7 +12,7 @@ class Legacy extends Redirect
         ['href' => '/bictracker/bics', 'name' => 'Legacy']
     ];
     #Regex match pattern with / and flags
-    protected string $searchFor = '\/bic\/(.*)';
+    protected string $search_for = '\/bic\/(.*)';
     #Regex replace pattern
     protected string $replaceWith = '/bictracker/search?search=$1';
 }
