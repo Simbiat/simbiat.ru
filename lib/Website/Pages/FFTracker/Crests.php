@@ -31,7 +31,7 @@ class Crests extends FileListing
     #List of prohibited extensions, files with which should be excluded
     protected array $exclude = ['LICENSE', 'README.md', '.git'];
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewFF'];
+    protected array $requiredPermission = ['view_ff'];
     
     protected function extra(array &$fileDetails): void
     {

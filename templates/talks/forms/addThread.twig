@@ -5,19 +5,19 @@
         <input form="add_thread_form" type="text" aria-required="true" required name="new_thread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
         <label for="new_thread_name">Name</label>
     </div>
-    {% if 'postPrivate' in session_data.permissions %}
+    {% if 'post_private' in session_data.permissions %}
         <span class="radio_and_label">
             <input form="addSThreadForm" id="new_thread_private" class="thread_private" name="new_thread[private]" type="checkbox">
             <label for="new_thread_private" data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
         </span>
     {% endif %}
-    {% if 'closeOwnThreads' in session_data.permissions %}
+    {% if 'close_own_threads' in session_data.permissions %}
         <span class="radio_and_label">
             <input form="add_thread_form" id="new_thread_closed" class="thread_closed" name="new_thread[closed]" type="checkbox">
             <label for="new_thread_closed" data-tooltip="Open threads allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
         </span>
     {% endif %}
-    {% if 'canPin' in session_data.permissions %}
+    {% if 'can_pin' in session_data.permissions %}
         <span class="radio_and_label">
             <input form="add_thread_form" id="new_thread_pin" class="thread_pin" name="new_thread[pinned]" type="checkbox">
             <label for="new_thread_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change."></label>
@@ -34,7 +34,7 @@
             <label for="new_thread_language" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>
         </div>
         {{ include('common/elements/imageupload.twig', {'formName': 'add_thread_form', 'placeholder': 'Custom banner', 'inputName': 'new_thread[og_image]', 'previewClasses': 'middle', 'required': false, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link.<br>If not set no banner will be shown on page, and social media will show a general one.<br>Only PNG files accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
-        {% if 'postScheduled' in session_data.permissions %}
+        {% if 'post_scheduled' in session_data.permissions %}
             <div class="float_label_div">
                 <input form="add_thread_form" id="new_thread_time" name="new_thread[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
                 <label for="new_thread_time" data-tooltip="You can select a future time at which, the thread and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>

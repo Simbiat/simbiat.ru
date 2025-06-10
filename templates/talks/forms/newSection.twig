@@ -38,7 +38,7 @@
     {% endif %}
     {{ include('common/elements/imageupload.twig', {'formName': 'addSectionForm', 'placeholder': 'Custom icon', 'inputName': 'newSection[icon]', 'previewClasses': 'middle', 'required': false}, with_context = false) }}
     {% if not startingNewBlog and not startingNewChangelog and not startingNewKB %}
-        {% if 'postScheduled' in session_data.permissions %}
+        {% if 'post_scheduled' in session_data.permissions %}
             <div class="float_label_div">
                 <input form="addSectionForm" id="new_section_time" name="newSection[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
                 <label for="new_section_time" data-tooltip="You can select a future time at which, the section and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>

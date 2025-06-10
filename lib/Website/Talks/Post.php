@@ -117,7 +117,7 @@ class Post extends Entity
         $posts = [];
         try {
             #Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':thread_id' => [$thread, 'int']], return: 'column');
+            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':thread_id' => [$thread, 'int']], return: 'column');
         } catch (\Throwable) {
             #Do nothing
         }
@@ -139,7 +139,7 @@ class Post extends Entity
     public function getHistory(int $time = 0): array
     {
         try {
-            if (in_array('viewPostsHistory', $_SESSION['permissions'], true)) {
+            if (in_array('view_posts_history', $_SESSION['permissions'], true)) {
                 $data = Query::query('SELECT UNIX_TIMESTAMP(`time`) as `time`, IF(`time`=:time, `text`, null) as `text` FROM `talks__posts_history` WHERE `post_id`=:post_id ORDER BY `time` DESC;', [':post_id' => [$this->id, 'int'], ':time' => [$time, 'datetime']], return: 'pair');
             } else {
                 $data = [];
@@ -163,8 +163,8 @@ class Post extends Entity
     public function like(bool $dislike = false): array
     {
         #Check permission
-        if (!in_array('canLike', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `canLike` permission'];
+        if (!in_array('can_like', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `can_like` permission'];
         }
         #Get the current value (if any)
         $isLiked = (int)(Query::query('SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
@@ -205,8 +205,8 @@ class Post extends Entity
     public function add(): array
     {
         #Check permission
-        if (!in_array('canPost', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
+        if (!in_array('can_post', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
         #Sanitize data
         $data = $_POST['post_form'] ?? [];
@@ -328,22 +328,22 @@ class Post extends Entity
     {
         $success = ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.'/'.($this->page > 1 ? '?page='.$this->page : '').'#post_'.$this->id];
         #Check permission
-        if (!in_array('canPost', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `canPost` permission'];
+        if (!in_array('can_post', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
         #Ensure we have current data to check ownership
         if (!$this->attempted) {
             $this->get();
         }
         #Check permissions
-        if ($this->owned && !in_array('editOwnPosts', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `editOwnPosts` permission'];
+        if ($this->owned && !in_array('edit_own_posts', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_own_posts` permission'];
         }
-        if (!$this->owned && !in_array('editOthersPosts', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `editOthersPosts` permission'];
+        if (!$this->owned && !in_array('edit_others_posts', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_others_posts` permission'];
         }
-        if ($this->locked && !in_array('editLocked', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'Post is locked and no `editLocked` permission'];
+        if ($this->locked && !in_array('edit_locked', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'Post is locked and no `edit_locked` permission'];
         }
         #Sanitize data
         $data = $_POST['post_form'] ?? [];
@@ -352,8 +352,8 @@ class Post extends Entity
             return $sanitize;
         }
         #Check if we are moving post and have permission for that
-        if ($this->thread_id !== $data['thread_id'] && !in_array('movePosts', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `movePosts` permission'];
+        if ($this->thread_id !== $data['thread_id'] && !in_array('move_posts', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `move_posts` permission'];
         }
         #Check if the text is different
         if ($this->text === $data['text']) {
@@ -374,7 +374,7 @@ class Post extends Entity
                 ]
             ];
             #Update time
-            if (!$data['hideUpdate']) {
+            if (!$data['hide_update']) {
                 $queries[] = [
                     'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP() WHERE `post_id`=:post_id;',
                     [
@@ -443,11 +443,11 @@ class Post extends Entity
             return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parent_id'].'` does not exist'];
         }
         #Check if the parent is closed
-        if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to post in closed thread.'];
+        if ($parent->closed && !in_array('post_in_closed', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to post in closed thread.'];
         }
         #Check if the thread is private, and we can post in it
-        if ($parent->private && !$parent->owned && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
+        if ($parent->private && !$parent->owned && !in_array('view_private', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'Cannot post in private and not owned thread'];
         }
         #Check if duplicate post
@@ -475,7 +475,7 @@ class Post extends Entity
         }
         #If time was set, convert to UTC
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
-        $data['hideUpdate'] = Sanitization::checkboxToBoolean($data['hideUpdate']);
+        $data['hide_update'] = Sanitization::checkboxToBoolean($data['hide_update']);
         return true;
     }
     
@@ -486,8 +486,8 @@ class Post extends Entity
     public function delete(): array
     {
         #Check permission
-        if (!in_array('removePosts', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `removePosts` permission'];
+        if (!in_array('remove_posts', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `remove_posts` permission'];
         }
         #Deletion is critical, so ensure that we get the actual data, even if this function is somehow called outside API
         if (!$this->attempted) {

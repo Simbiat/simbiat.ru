@@ -27,7 +27,7 @@ class Keying extends Page
     #Link to JS module for preload
     protected string $jsModule = 'bictracker/keying';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewBic'];
+    protected array $requiredPermission = ['view_bic'];
 
     #This is actual page generation based on further details of the $path
     protected function generate(array $path): array

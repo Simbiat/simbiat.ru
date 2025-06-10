@@ -38,5 +38,5 @@ class Listing extends \Simbiat\Website\Abstracts\Pages\Listing
     #Language override, to be sent in header (if present)
     protected string $language = 'ru-RU';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewBic'];
+    protected array $requiredPermission = ['view_bic'];
 }

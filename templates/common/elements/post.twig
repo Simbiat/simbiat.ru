@@ -47,30 +47,30 @@
     {% endif %}
     <section class="post_footer">
         <like-dis data-post_id="{{ post.id }}" data-liked="{% if post.isLiked is null %}0{% else %}{{ post.isLiked }}{% endif %}">
-            <input type="button" value="👍" class="like_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked > 0 %}Remove like{% else %}Like{% endif %}">
+            <input type="button" value="👍" class="like_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked > 0 %}Remove like{% else %}Like{% endif %}">
             <span class="likes_count{% if post.isLiked > 0 %} success{% endif %}">{{ post.likes }}</span>
-            <input type="button" value="👎" class="dislike_button"{% if 'canLike' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
+            <input type="button" value="👎" class="dislike_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
             <span class="dislikes_count{% if post.isLiked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
             <img loading="lazy" decoding="async" class="hidden inline spinner" src="/assets/images/spinner.svg" alt="Registering preference...">
         </like-dis>
         <div class="post_icons">
-            {% if allowReplyTo and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+            {% if allowReplyTo and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
                 <input type="button" class="reply_to_button" data-post_id="{{ post.id }}" data-tooltip="Reply to this post" value="📩">
             {% endif %}
             {% if post.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled post">⏲</span>{% endif %}
             {% if post.locked %}
                 {% if owned %}
-                    {% if 'editLocked' in session_data.permissions and 'editOwnPosts' in session_data.permissions %}
+                    {% if 'edit_locked' in session_data.permissions and 'edit_own_posts' in session_data.permissions %}
                         <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
                     {% endif %}
                     <span data-tooltip="Locked post">🔒</span>
                 {% else %}
-                    {% if 'editLocked' in session_data.permissions and 'editOthersPosts' in session_data.permissions %}
+                    {% if 'edit_locked' in session_data.permissions and 'edit_others_posts' in session_data.permissions %}
                         <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a><span data-tooltip="Locked post">🔒</span>
                     {% endif %}
                 {% endif %}
             {% else %}
-                {% if (owned and 'editOwnPosts' in session_data.permissions) or (not owned and 'editOthersPosts' in session_data.permissions) %}
+                {% if (owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions) %}
                     <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
                 {% endif %}
             {% endif %}
@@ -100,7 +100,7 @@
             </details>
         {% endif %}
         {% if post.noeditedtime != true %}
-            <div class="post_edited">{% if post.updated > post.created %}{% if 'viewPostsHistory' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
+            <div class="post_edited">{% if post.updated > post.created %}{% if 'view_posts_history' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
         {% endif %}
     </section>
 </article>

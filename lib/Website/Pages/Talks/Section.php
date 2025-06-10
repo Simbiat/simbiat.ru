@@ -24,7 +24,7 @@ class Section extends Page
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Talks: forums, blogs and other ways of communication';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewPosts'];
+    protected array $requiredPermission = ['view_posts'];
     #Flag to indicate editor mode
     protected bool $editMode = false;
     #Link to JS module for preload
@@ -46,11 +46,11 @@ class Section extends Page
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($outputArray['private'] && $outputArray['author'] !== $_SESSION['user_id'] && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'This section is private and you lack `viewPrivate` permission'];
+        if ($outputArray['private'] && $outputArray['author'] !== $_SESSION['user_id'] && !in_array('view_private', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'This section is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'], true)) {
+        if ($outputArray['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Generate pagination data
@@ -101,11 +101,11 @@ class Section extends Page
         #Set flag indicating that we are in edit mode
         $outputArray['editMode'] = $this->editMode;
         #Get section types
-        if ($outputArray['owned'] || in_array('addSections', $_SESSION['permissions'], true)) {
+        if ($outputArray['owned'] || in_array('add_sections', $_SESSION['permissions'], true)) {
             $outputArray['section_types'] = \Simbiat\Website\Talks\Section::getSectionTypes($outputArray['inheritedType']);
         }
         #Get stuff for threads
-        if ($outputArray['owned'] || in_array('canPost', $_SESSION['permissions'], true)) {
+        if ($outputArray['owned'] || in_array('can_post', $_SESSION['permissions'], true)) {
             $outputArray['thread_languages'] = \Simbiat\Website\Talks\Thread::getLanguages();
             $outputArray['thread_link_types'] = \Simbiat\Website\Talks\Thread::getAltLinkTypes();
         }

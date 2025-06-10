@@ -25,7 +25,7 @@ class Thread extends Page
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewPosts'];
+    protected array $requiredPermission = ['view_posts'];
     #Link to JS module for preload
     protected string $jsModule = 'talks/threads';
     
@@ -44,11 +44,11 @@ class Thread extends Page
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($outputArray['private'] && $outputArray['author'] !== $_SESSION['user_id'] && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'This thread is private and you lack `viewPrivate` permission'];
+        if ($outputArray['private'] && $outputArray['author'] !== $_SESSION['user_id'] && !in_array('view_private', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'], true)) {
+        if ($outputArray['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Collect times
@@ -126,8 +126,8 @@ class Thread extends Page
         $this->language = $outputArray['language'];
         #Get stuff for thread's editing
         if (
-            ($outputArray['owned'] && in_array('editOwnThreads', $_SESSION['permissions'], true)) ||
-            (!$outputArray['owned'] && in_array('editOthersThreads', $_SESSION['permissions'], true))
+            ($outputArray['owned'] && in_array('edit_own_threads', $_SESSION['permissions'], true)) ||
+            (!$outputArray['owned'] && in_array('edit_others_threads', $_SESSION['permissions'], true))
         ) {
             $outputArray['thread_languages'] = \Simbiat\Website\Talks\Thread::getLanguages();
             $outputArray['thread_link_types'] = \Simbiat\Website\Talks\Thread::getAltLinkTypes();

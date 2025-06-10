@@ -5,7 +5,7 @@
         <input form="editSectionForm" type="text" aria-required="true" required name="curSection[name]" id="cur_section_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64" value="{{ name }}">
         <label for="cur_section_name">Name</label>
     </div>
-    {% if 'moveSections' in session_data.permissions %}
+    {% if 'move_sections' in session_data.permissions %}
         <div class="float_label_div">
             <input form="editSectionForm" type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="curSection[parent_id]" id="cur_section_parent" placeholder="Parent ID">
             <label for="cur_section_parent" data-tooltip="ID of parent section.<br>Change it to move the section.">Parent ID</label>

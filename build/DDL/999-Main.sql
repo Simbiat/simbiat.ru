@@ -308,86 +308,86 @@ INSERT INTO `uc__groups` (`group_id`, `group_name`, `description`) VALUES
 (6, 'Linked to FF', 'Group for users, who linked their profiles to any FFXIV characters');
 
 INSERT INTO `uc__permissions` (`permission`, `description`) VALUES
-('addSections', 'Can create new sections'),
-('canLike', 'Can like posts'),
-('canLogin', 'Can login to the website'),
-('canPost', 'Can create posts'),
-('closeOthersThreads', 'Can close threads created by others'),
-('closeOwnThreads', 'Can close own threads'),
-('editLocked', 'Can edit locked posts'),
-('editOthersPosts', 'Can edit posts created by others'),
-('editOthersThreads', 'Can edit threads created by others'),
-('editOwnPosts', 'Can edit own posts'),
-('editOwnThreads', 'Can edit own posts'),
-('editSections', 'Can edit sections'),
-('linkFF', 'Can link Final Fantasy XIV characters'),
-('markPrivate', 'Can (un)mark threads as private'),
-('postFF', 'Can post on pages of FF entities'),
-('postPrivate', 'Can create private threads (besides support)'),
-('postScheduled', 'Can create scheduled threads'),
+('add_sections', 'Can create new sections'),
+('can_like', 'Can like posts'),
+('can_login', 'Can login to the website'),
+('can_post', 'Can create posts'),
+('close_others_threads', 'Can close threads created by others'),
+('close_own_threads', 'Can close own threads'),
+('edit_locked', 'Can edit locked posts'),
+('edit_others_posts', 'Can edit posts created by others'),
+('edit_others_threads', 'Can edit threads created by others'),
+('edit_own_posts', 'Can edit own posts'),
+('edit_own_threads', 'Can edit own posts'),
+('edit_sections', 'Can edit sections'),
+('link_ff', 'Can link Final Fantasy XIV characters'),
+('mark_private', 'Can (un)mark threads as private'),
+('post_ff', 'Can post on pages of FF entities'),
+('post_private', 'Can create private threads (besides support)'),
+('post_scheduled', 'Can create scheduled threads'),
 ('premoderate', 'Threads created need pre-moderation'),
-('refreshAllFF', 'Can force update of all FF entities'),
-('refreshOwnedFF', 'Can force update of owned FF entities'),
-('removePosts', 'Can remove posts'),
-('removeSections', 'Can delete sections'),
-('removeThreads', 'Can remove threads'),
-('viewBic', 'Can view BIC tracker pages'),
-('viewFF', 'Can view FF Tracker pages'),
-('viewPosts', 'Can view regular posts'),
-('viewPostsHistory', 'Can view historical versions of posts\' text'),
-('viewPrivate', 'Can view private posts created by others'),
-('viewScheduled', 'Can view scheduled posts');
+('refresh_all_ff', 'Can force update of all FF entities'),
+('refresh_owned_ff', 'Can force update of owned FF entities'),
+('remove_posts', 'Can remove posts'),
+('remove_sections', 'Can delete sections'),
+('remove_threads', 'Can remove threads'),
+('view_bic', 'Can view BIC tracker pages'),
+('view_ff', 'Can view FF Tracker pages'),
+('view_posts', 'Can view regular posts'),
+('view_posts_history', 'Can view historical versions of posts\' text'),
+('view_private', 'Can view private posts created by others'),
+('view_scheduled', 'Can view scheduled posts');
 
 INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES
-(0, 'viewBic'),
-(0, 'viewFF'),
-(0, 'viewPosts'),
-(1, 'addSections'),
-(1, 'canLike'),
-(1, 'canLogin'),
-(1, 'canPost'),
-(1, 'closeOthersThreads'),
-(1, 'closeOwnThreads'),
-(1, 'editLocked'),
-(1, 'editOthersPosts'),
-(1, 'editOthersThreads'),
-(1, 'editOwnPosts'),
-(1, 'editOwnThreads'),
-(1, 'editSections'),
-(1, 'linkFF'),
-(1, 'markPrivate'),
-(1, 'postFF'),
-(1, 'postPrivate'),
-(1, 'postScheduled'),
-(1, 'refreshAllFF'),
-(1, 'removePosts'),
-(1, 'removeSections'),
-(1, 'viewBic'),
-(1, 'viewFF'),
-(1, 'viewPosts'),
-(1, 'viewPostsHistory'),
-(1, 'viewPrivate'),
-(1, 'viewScheduled'),
-(2, 'canLogin'),
-(2, 'viewBic'),
-(2, 'viewFF'),
-(2, 'viewPosts'),
-(3, 'canLike'),
-(3, 'canLogin'),
-(3, 'canPost'),
-(3, 'closeOwnThreads'),
-(3, 'editOwnPosts'),
-(3, 'editOwnThreads'),
-(3, 'linkFF'),
-(3, 'viewBic'),
-(3, 'viewFF'),
-(3, 'viewPosts'),
-(4, 'viewBic'),
-(4, 'viewFF'),
-(4, 'viewPosts'),
-(5, 'canLogin'),
-(6, 'postFF'),
-(6, 'refreshOwnedFF');
+(0, 'view_bic'),
+(0, 'view_ff'),
+(0, 'view_posts'),
+(1, 'add_sections'),
+(1, 'can_like'),
+(1, 'can_login'),
+(1, 'can_post'),
+(1, 'close_others_threads'),
+(1, 'close_own_threads'),
+(1, 'edit_locked'),
+(1, 'edit_others_posts'),
+(1, 'edit_others_threads'),
+(1, 'edit_own_posts'),
+(1, 'edit_own_threads'),
+(1, 'edit_sections'),
+(1, 'link_ff'),
+(1, 'mark_private'),
+(1, 'post_ff'),
+(1, 'post_private'),
+(1, 'post_scheduled'),
+(1, 'refresh_all_ff'),
+(1, 'remove_posts'),
+(1, 'remove_sections'),
+(1, 'view_bic'),
+(1, 'view_ff'),
+(1, 'view_posts'),
+(1, 'view_posts_history'),
+(1, 'view_private'),
+(1, 'view_scheduled'),
+(2, 'can_login'),
+(2, 'view_bic'),
+(2, 'view_ff'),
+(2, 'view_posts'),
+(3, 'can_like'),
+(3, 'can_login'),
+(3, 'can_post'),
+(3, 'close_own_threads'),
+(3, 'edit_own_posts'),
+(3, 'edit_own_threads'),
+(3, 'link_ff'),
+(3, 'view_bic'),
+(3, 'view_ff'),
+(3, 'view_posts'),
+(4, 'view_bic'),
+(4, 'view_ff'),
+(4, 'view_posts'),
+(5, 'can_login'),
+(6, 'post_ff'),
+(6, 'refresh_owned_ff');
 
 INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES
 (1, 0),
@@ -395,9 +395,9 @@ INSERT INTO `uc__user_to_group` (`user_id`, `group_id`) VALUES
 (3, 0);
 
 INSERT INTO `uc__user_to_permission` (`user_id`, `permission`) VALUES
-(1, 'viewBic'),
-(1, 'viewFF'),
-(1, 'viewPosts');
+(1, 'view_bic'),
+(1, 'view_ff'),
+(1, 'view_posts');
 
 /*Stuff added or changed after initial setup above*/
 INSERT INTO `sys__files` (`file_id`, `user_id`, `name`, `extension`, `mime`, `size`, `added`) VALUES
@@ -416,22 +416,22 @@ UPDATE `talks__types` SET `icon` = 'c754408745db0714ea79c4dffdf76635e9a8ea38d3e7
 UPDATE `talks__types` SET `icon` = '36c4b98fcbbbdbdcaf7f4173e55b796f742510d55ac02a972c900907b3e098402e87f65d22b468c6352e5f490928b62a096a0343e61c7fab582ea5dfe1dc3927' WHERE `talks__types`.`type_id` = 6;
 UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`section_id` = 6;
 UPDATE `talks__sections` SET `icon` = 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac' WHERE `talks__sections`.`section_id` = 7;
-INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('postInClosed', 'Can create sections/threads/posts in closed sections/threads');
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'postInClosed');
-INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('hideUpdate', 'Has option to not change post\'s update date (text change will still be recorded to history)');
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'hideUpdate');
-UPDATE `uc__permissions` SET `permission` = 'canPin', `description` = 'Can pin threads' WHERE `uc__permissions`.`permission` = 'premoderate';
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'canPin');
-INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('postBacklog', 'Can post with creation time set in the past');
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'postBacklog');
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'removeThreads');
-INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveThreads', 'Can move threads to different sections');
-INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('movePosts', 'Can move posts to different threads');
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'moveThreads'), ('1', 'movePosts');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('post_in_closed', 'Can create sections/threads/posts in closed sections/threads');
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'post_in_closed');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('hide_update', 'Has option to not change post\'s update date (text change will still be recorded to history)');
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'hide_update');
+UPDATE `uc__permissions` SET `permission` = 'can_pin', `description` = 'Can pin threads' WHERE `uc__permissions`.`permission` = 'premoderate';
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'can_pin');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('post_backlog', 'Can post with creation time set in the past');
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'post_backlog');
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'remove_threads');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('move_threads', 'Can move threads to different sections');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('move_posts', 'Can move posts to different threads');
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'move_threads'), ('1', 'move_posts');
 UPDATE `talks__sections` SET `author` = '2' WHERE `talks__sections`.`section_id` = 6;
 UPDATE `talks__sections` SET `editor` = '2' WHERE `talks__sections`.`section_id` = 6;
-INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('moveSections', 'Can move and order sections');
-INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'moveSections');
+INSERT INTO `uc__permissions` (`permission`, `description`) VALUES ('move_sections', 'Can move and order sections');
+INSERT INTO `uc__group_to_permission` (`group_id`, `permission`) VALUES ('1', 'move_sections');
 INSERT INTO `talks__sections` (`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `system`, `closed`, `private`, `created`, `author`, `updated`, `editor`, `icon`) VALUES ('8', 'simbiat.dev', 'Help articles related to the simbiat.dev website', '4', '0', '6', '1', NULL, '0', current_timestamp(), '2', current_timestamp(), '2', 'd073ac38d95227a3fffe0c9da4939ff394e5907419a8842a71fb4fab83318a03394d59ea34db1cc8548dbb4cfcea1d28bf7afc71dc54daedf2c3fff12432ddac');
 UPDATE `talks__sections` SET `sequence` = '99' WHERE `talks__sections`.`section_id` IN (6, 7, 8);
 UPDATE `talks__sections` SET `description` = 'Personal blog of simbiat.dev\'s owner' WHERE `talks__sections`.`section_id` = 6;

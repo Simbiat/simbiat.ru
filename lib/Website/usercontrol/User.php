@@ -76,7 +76,7 @@ class User extends Entity
     #Groups
     public array $groups = [];
     #Permissions
-    public array $permissions = ['viewPosts', 'viewBic', 'viewFF'];
+    public array $permissions = ['view_posts', 'view_bic', 'view_ff'];
     #Whether the account is activated
     public bool $activated = false;
     #Emails
@@ -620,8 +620,8 @@ class User extends Entity
         }
         #Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
-        if (!in_array('canLogin', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `canLogin` permission'];
+        if (!in_array('can_login', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `can_login` permission'];
         }
         #Add username and user_id to the session
         $_SESSION['username'] = $credentials['username'];
@@ -862,10 +862,10 @@ class User extends Entity
     {
         $where = '`talks__threads`.`author`=:user_id';
         $bindings = [':user_id' => [$this->id, 'int'],];
-        if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
+        if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()';
         }
-        if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
+        if (!in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
@@ -887,10 +887,10 @@ class User extends Entity
     {
         $where = '`talks__posts`.`author`=:author';
         $bindings = [':author' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int'],];
-        if (!$this->id !== $_SESSION['user_id'] && !in_array('viewScheduled', $_SESSION['permissions'], true)) {
+        if (!$this->id !== $_SESSION['user_id'] && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()';
         }
-        if (!$this->id !== $_SESSION['user_id'] && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
+        if (!$this->id !== $_SESSION['user_id'] && !in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`private`=0';
         }
         $posts = new Posts($bindings, $where, '`talks__posts`.`created` DESC')->listEntities();
@@ -940,10 +940,10 @@ class User extends Entity
         #Get posts
         $where = '';
         $bindings = [':user_id' => [$_SESSION['user_id'], 'int']];
-        if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
+        if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()';
         }
-        if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
+        if (!in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }

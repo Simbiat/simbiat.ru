@@ -17,7 +17,7 @@
                 <td></td><td>Section name</td><td>Threads</td><td>Posts</td>
                 {% if editMode %}
                     <td>ID</td>
-                    {% if 'editSections' in session_data.permissions %}
+                    {% if 'edit_sections' in session_data.permissions %}
                         <td data-tooltip="Optional order for sorting.<br>The higher the value, the higher in the list a section will be.<br>After that name sorting is expected.">Order</td>
                         <td data-tooltip="Flag indicating if section is closed.<br>Click the icon to toggle.">Closed</td>
                         <td data-tooltip="Flag indicating if section is private.<br>Click the icon to toggle.">Private</td>
@@ -39,10 +39,10 @@
             <td>Thread name</td><td>Created</td><td>Last post</td><td>Posts</td>
             {% if editMode %}
                 <td>ID</td>
-                {% if 'canPin' in session_data.permissions %}
+                {% if 'can_pin' in session_data.permissions %}
                     <td data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change.">Pinned</td>
                 {% endif %}
-                {% if type != 'Support' and 'markPrivate' in session_data.permissions %}
+                {% if type != 'Support' and 'mark_private' in session_data.permissions %}
                     <td data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change.">Private</td>
                 {% endif %}
             {% endif %}

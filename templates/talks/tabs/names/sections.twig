@@ -10,19 +10,19 @@
 {% if id == 4 and not session_data.sections.knowledgebase %}
     <tab-name class="nav_tab">Start knowledgebase</tab-name>
 {% endif %}
-{% if type != 'Category' and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+{% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
         <tab-name class="nav_tab">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</tab-name>
     {% endif %}
 {% endif %}
 {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
-    {% if inheritedType != 'Blog' and (owned or ('addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions))) %}
+    {% if inheritedType != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
         <tab-name class="nav_tab">Add subsection</tab-name>
     {% endif %}
 {% endif %}
-{% if owned or 'editSections' in session_data.permissions %}
+{% if owned or 'edit_sections' in session_data.permissions %}
     <tab-name class="nav_tab">Edit</tab-name>
 {% endif %}
-{% if (owned or 'removeSections' in session_data.permissions) and not system %}
+{% if (owned or 'remove_sections' in session_data.permissions) and not system %}
     <tab-name class="nav_tab danger">Delete</tab-name>
 {% endif %}

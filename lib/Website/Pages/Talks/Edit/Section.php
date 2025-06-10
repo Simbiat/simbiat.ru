@@ -7,7 +7,7 @@ namespace Simbiat\Website\Pages\Talks\Edit;
 class Section extends \Simbiat\Website\Pages\Talks\Section
 {
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['editSections', 'addSections', 'removeSections'];
+    protected array $requiredPermission = ['edit_sections', 'add_sections', 'remove_sections'];
     #Flag to indicate editor mode
     protected bool $editMode = true;
 }

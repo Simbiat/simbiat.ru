@@ -1,10 +1,10 @@
-{% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+{% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     <tab-content>
         <!--suppress HtmlUnknownAnchorTarget -->
         <a class="button" href="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</a>
     </tab-content>
 {% endif %}
-{% if (owned and 'editOwnThreads' in session_data.permissions) or (not owned and 'editOthersThreads' in session_data.permissions) %}
+{% if (owned and 'edit_own_threads' in session_data.permissions) or (not owned and 'edit_others_threads' in session_data.permissions) %}
     <tab-content>
         <form role="form" id="editThreadForm" name="editThreadForm" autocomplete="off" class="middle">
             <input form="editThreadForm" type="hidden" name="verb" value="edit" required>
@@ -13,7 +13,7 @@
                 <input form="editThreadForm" type="text" value="{{ name }}" aria-required="true" required name="current_thread[name]" id="new_thread_name" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
                 <label for="new_thread_name">Name</label>
             </div>
-            {% if 'moveThreads' in session_data.permissions %}
+            {% if 'move_threads' in session_data.permissions %}
                 <div class="float_label_div">
                     <input form="editThreadForm" type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="current_thread[parent_id]" id="cur_thread_parent" placeholder="Parent ID">
                     <label for="cur_thread_parent" data-tooltip="ID of parent section.<br>Change it to move the thread.">Parent ID</label>
@@ -21,13 +21,13 @@
             {% else %}
                 <input type="hidden" name="current_thread[parent_id]" value="{{ parent_id }}" required>
             {% endif %}
-            {% if 'markPrivate' in session_data.permissions %}
+            {% if 'mark_private' in session_data.permissions %}
                 <span class="radio_and_label">
                     <input form="editThreadForm" id="new_thread_private" class="thread_private" name="current_thread[private]" type="checkbox"{% if private %} checked{% endif %}>
                     <label for="new_thread_private" data-tooltip="Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
                 </span>
             {% endif %}
-            {% if 'canPin' in session_data.permissions %}
+            {% if 'can_pin' in session_data.permissions %}
                 <span class="radio_and_label">
                     <input form="editThreadForm" id="new_thread_pin" class="thread_pin" name="current_thread[pinned]" type="checkbox"{% if pinned %} checked{% endif %}>
                     <label for="new_thread_pin" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change."></label>
@@ -64,14 +64,14 @@
         </form>
     </tab-content>
 {% endif %}
-{% if (type == 'Support' and (owned or (not owned and 'closeOthersThreads' in session_data.permissions))) or (type != 'Support' and ((owned and 'closeOwnThreads' in session_data.permissions) or (not owned and 'closeOthersThreads' in session_data.permissions))) %}
+{% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions) or (not owned and 'close_others_threads' in session_data.permissions))) %}
     <tab-content>
         <p>Pressing below button will {% if closed %}reopen{% else %}close{% endif %} the current thread <b class="warning">{% if closed %}allowing{% else %}preventing{% endif %}</b> users to post in it.</p>
         <input role="button" type="button" id="close_thread" value="{% if closed %}Open{% else %}Close{% endif %}" data-thread="{{ id }}">
         <img loading="lazy" decoding="async" id="thread_close_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if closed %}Reopening{% else %}Closing{% endif %} thread...">
     </tab-content>
 {% endif %}
-{% if 'removeThreads' in session_data.permissions %}
+{% if 'remove_threads' in session_data.permissions %}
     <tab-content>
         {% if posts.entities %}
             <p>This thread has posts in it. Removal is not possible.</p>

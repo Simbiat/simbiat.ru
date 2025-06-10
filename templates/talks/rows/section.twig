@@ -6,7 +6,7 @@
         <div class="section_name">
             <div class="section_icons">
                 {% if section.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
-                {% if 'editSections' not in permissions %}
+                {% if 'edit_sections' not in permissions %}
                     {% if section.closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
                     {% if section.private %}<span data-tooltip="Private section">🚷</span>{% endif %}
                 {% endif %}
@@ -19,7 +19,7 @@
     <td>{{ section.posts|default('0') }}</td>
     {% if editMode %}
         <td>{{ section.section_id|default('section_id') }}</td>
-        {% if 'editSections' in permissions %}
+        {% if 'edit_sections' in permissions %}
             <td>
                 <span class="float_label_div">
                     <input id="section_sequence_{{ section.section_id|default('section_id') }}" class="section_sequence number_spinner" type="number" inputmode="decimal" min="0" max="99" step="1" value="{{ section.sequence }}" data-section="{{ section.section_id|default('section_id') }}" data-initial="{{ section.sequence }}">

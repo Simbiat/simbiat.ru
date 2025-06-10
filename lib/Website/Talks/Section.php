@@ -85,7 +85,7 @@ class Section extends Entity
             ];
             #Get children
             if (!$this->forThread) {
-                $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
+                $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
             }
         } else {
             $data = new Sections([':section_id' => [$this->id, 'int']], '`talks__sections`.`section_id`=:section_id')->listEntities();
@@ -131,10 +131,10 @@ class Section extends Entity
             #Get children
             $where = '';
             $bindings = [':section_id' => [$this->id, 'int']];
-            if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
+            if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
                 $where .= ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()';
             }
-            if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
+            if (!in_array('view_private', $_SESSION['permissions'], true)) {
                 $where .= ' AND (`talks__sections`.`private`=0 OR `talks__sections`.`author`=:user_id)';
                 $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
             }
@@ -156,10 +156,10 @@ class Section extends Entity
                 #If the user is not an admin, also limit the selection to non-private threads or those created by the user
                 $where = '`talks__threads`.`section_id`=:section_id';
                 $bindings = [':section_id' => [$this->id, 'int']];
-                if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
+                if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
                     $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()';
                 }
-                if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
+                if (!in_array('view_private', $_SESSION['permissions'], true)) {
                     $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:user_id)';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
@@ -173,10 +173,10 @@ class Section extends Entity
             if (!empty($data['children']['entities'])) {
                 $where = '';
                 $bindings = [];
-                if (!in_array('viewScheduled', $_SESSION['permissions'], true)) {
+                if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
                     $where .= '`t`.`created`<=CURRENT_TIMESTAMP() AND ';
                 }
-                if (!in_array('viewPrivate', $_SESSION['permissions'], true)) {
+                if (!in_array('view_private', $_SESSION['permissions'], true)) {
                     $where .= '(`t`.`private`=0 OR `t`.`author`=:user_id) AND ';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
@@ -205,7 +205,7 @@ class Section extends Entity
             #Count posts
             if (!empty($data['threads']['entities'])) {
                 foreach ($data['threads']['entities'] as &$thread) {
-                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('viewScheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
+                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
                 }
             }
         }
@@ -274,8 +274,8 @@ class Section extends Entity
     public function setPrivate(bool $private = false): array
     {
         #Check permission
-        if (!in_array('editSections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        if (!in_array('edit_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         try {
             Query::query('UPDATE `talks__sections` SET `private`=:private WHERE `section_id`=:section_id;', [':private' => [$private, 'int'], ':section_id' => [$this->id, 'int']]);
@@ -295,8 +295,8 @@ class Section extends Entity
     public function setClosed(bool $closed = false): array
     {
         #Check permission
-        if (!in_array('editSections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        if (!in_array('edit_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         try {
             Query::query('UPDATE `talks__sections` SET `closed`=:closed WHERE `section_id`=:section_id;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':section_id' => [$this->id, 'int']]);
@@ -314,8 +314,8 @@ class Section extends Entity
     public function order(): array
     {
         #Check permission
-        if (!in_array('editSections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+        if (!in_array('edit_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
         }
         #Check value
         if (!isset($_POST['order'])) {
@@ -518,12 +518,12 @@ class Section extends Entity
         }
         #Check permission
         if ($edit) {
-            if (!$this->owned && !in_array('editSections', $_SESSION['permissions'], true)) {
-                return ['http_error' => 403, 'reason' => 'No `editSections` permission'];
+            if (!$this->owned && !in_array('edit_sections', $_SESSION['permissions'], true)) {
+                return ['http_error' => 403, 'reason' => 'No `edit_sections` permission'];
             }
-        } elseif (!$parent->owned && !in_array('addSections', $_SESSION['permissions'], true)) {
+        } elseif (!$parent->owned && !in_array('add_sections', $_SESSION['permissions'], true)) {
             #Check permission
-            return ['http_error' => 403, 'reason' => 'No `addSections` permission'];
+            return ['http_error' => 403, 'reason' => 'No `add_sections` permission'];
         }
         #Check that type is allowed in the current section
         $allowedTypes = self::getSectionTypes($parent->inheritedType);
@@ -581,8 +581,8 @@ class Section extends Entity
                 break;
         }
         #Check if the parent is closed
-        if ($parent->closed && !in_array('postInClosed', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `postInClosed` permission to create subsection in closed section.'];
+        if ($parent->closed && !in_array('post_in_closed', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to create subsection in closed section.'];
         }
         #Check if the name is duplicated
         $sectionExists = Query::query('SELECT `section_id` FROM `talks__sections` WHERE `parent_id`=:section_id AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int']], return: 'value');
@@ -626,8 +626,8 @@ class Section extends Entity
             $this->get();
         }
         #Check permission
-        if (!$this->owned && !in_array('removeSections', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'No `removeSections` permission'];
+        if (!$this->owned && !in_array('remove_sections', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'No `remove_sections` permission'];
         }
         if ($this->id === null) {
             return ['http_error' => 404, 'reason' => 'Section not found'];

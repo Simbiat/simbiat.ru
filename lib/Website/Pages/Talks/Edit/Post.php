@@ -14,7 +14,7 @@ class Post extends \Simbiat\Website\Pages\Talks\Post
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewPosts'];
+    protected array $requiredPermission = ['view_posts'];
     #Flag to indicate editor mode
     protected bool $editMode = true;
 }

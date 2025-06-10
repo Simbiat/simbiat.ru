@@ -137,7 +137,7 @@ class Sanitization
      */
     public static function scheduledTime(string|int|null &$time, ?string &$timezone = null): ?int
     {
-        if (in_array('postScheduled', $_SESSION['permissions'], true)) {
+        if (in_array('post_scheduled', $_SESSION['permissions'], true)) {
             if (empty($time)) {
                 $time = null;
             } else {
@@ -148,7 +148,7 @@ class Sanitization
                 $time = $datetime->getTimestamp();
                 $curTime = time();
                 #Sections should not be created in the past, so if time is less than the current one - correct it
-                if ($time < $curTime && !in_array('postBacklog', $_SESSION['permissions'], true)) {
+                if ($time < $curTime && !in_array('post_backlog', $_SESSION['permissions'], true)) {
                     $time = $curTime;
                 }
             }

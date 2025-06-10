@@ -23,7 +23,7 @@ class Post extends Page
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $ogdesc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewPosts'];
+    protected array $requiredPermission = ['view_posts'];
     #Flag to indicate editor mode
     protected bool $editMode = false;
     
@@ -41,24 +41,24 @@ class Post extends Page
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($outputArray['private'] && $outputArray['owned'] !== true && !in_array('viewPrivate', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'This post is private and you lack `viewPrivate` permission'];
+        if ($outputArray['private'] && $outputArray['owned'] !== true && !in_array('view_private', $_SESSION['permissions'], true)) {
+            return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($outputArray['created'] >= time() && !in_array('viewScheduled', $_SESSION['permissions'], true)) {
+        if ($outputArray['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if we are trying to edit a post, that we can't edit
         if ($this->editMode) {
-            if ($post->locked && !in_array('editLocked', $_SESSION['permissions'], true)) {
-                return ['http_error' => 403, 'reason' => 'Post is locked and no `editLocked` permission'];
+            if ($post->locked && !in_array('edit_locked', $_SESSION['permissions'], true)) {
+                return ['http_error' => 403, 'reason' => 'Post is locked and no `edit_locked` permission'];
             }
             if ($post->owned) {
-                if (!in_array('editOwnPosts', $_SESSION['permissions'], true)) {
-                    return ['http_error' => 403, 'reason' => 'No `editOwnPosts` permission'];
+                if (!in_array('edit_own_posts', $_SESSION['permissions'], true)) {
+                    return ['http_error' => 403, 'reason' => 'No `edit_own_posts` permission'];
                 }
-            } elseif (!in_array('editOthersPosts', $_SESSION['permissions'], true)) {
-                return ['http_error' => 403, 'reason' => 'No `editOthersPosts` permission'];
+            } elseif (!in_array('edit_others_posts', $_SESSION['permissions'], true)) {
+                return ['http_error' => 403, 'reason' => 'No `edit_others_posts` permission'];
             }
         }
         #Try to exit early based on modification date
@@ -72,8 +72,8 @@ class Post extends Page
         $time = 0;
         if ($this->editMode) {
             $time = (int)($path[1] ?? 0);
-            if ($time > 0 && !in_array('viewPostsHistory', $_SESSION['permissions'], true)) {
-                return ['http_error' => 403, 'reason' => 'No `viewPostsHistory` permission'];
+            if ($time > 0 && !in_array('view_posts_history', $_SESSION['permissions'], true)) {
+                return ['http_error' => 403, 'reason' => 'No `view_posts_history` permission'];
             }
             $outputArray['history'] = $post->getHistory($time);
             #Check if any history was returned

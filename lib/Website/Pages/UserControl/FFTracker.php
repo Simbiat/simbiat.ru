@@ -25,7 +25,7 @@ class FFTracker extends Page
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['linkFF'];
+    protected array $requiredPermission = ['link_ff'];
     #Link to JS module for preload
     protected string $jsModule = 'uc/fftracker';
     

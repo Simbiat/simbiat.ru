@@ -1,12 +1,12 @@
-{% if 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+{% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     <tab-name class="nav_tab" data-url="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</tab-name>
 {% endif %}
-{% if (owned and 'editOwnThreads' in session_data.permissions) or (not owned and 'editOthersThreads' in session_data.permissions) %}
+{% if (owned and 'edit_own_threads' in session_data.permissions) or (not owned and 'edit_others_threads' in session_data.permissions) %}
     <tab-name class="nav_tab">Edit</tab-name>
 {% endif %}
-{% if (type == 'Support' and (owned or (not owned and 'closeOthersThreads' in session_data.permissions))) or (type != 'Support' and ((owned and 'closeOwnThreads' in session_data.permissions) or (not owned and 'closeOthersThreads' in session_data.permissions))) %}
+{% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions) or (not owned and 'close_others_threads' in session_data.permissions))) %}
     <tab-name class="nav_tab danger">{% if closed %}Reopen{% else %}Close{% endif %}</tab-name>
 {% endif %}
-{% if 'removeThreads' in session_data.permissions %}
+{% if 'remove_threads' in session_data.permissions %}
     <tab-name class="nav_tab danger">Delete</tab-name>
 {% endif %}

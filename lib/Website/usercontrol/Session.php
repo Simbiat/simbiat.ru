@@ -282,7 +282,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 $data['username'] = $data['UA']['bot'] ?? null;
                 $data['timezone'] = null;
                 $data['groups'] = [];
-                $data['permissions'] = ['viewPosts', 'viewBic', 'viewFF'];
+                $data['permissions'] = ['view_posts', 'view_bic', 'view_ff'];
                 $data['activated'] = false;
                 $data['avatar'] = null;
             } else {

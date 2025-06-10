@@ -21,7 +21,7 @@ class General extends Page
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $ogdesc = 'Statistics';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['viewFF'];
+    protected array $requiredPermission = ['view_ff'];
     protected bool $static = true;
     #Name of JSON file to attempt to ingest
     protected string $jsonToIngest = '';

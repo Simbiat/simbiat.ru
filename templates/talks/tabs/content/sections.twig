@@ -19,7 +19,7 @@
         {{ include('talks/forms/newSection.twig', {'startingNewKB': true}) }}
     </tab-content>
 {% endif %}
-{% if type != 'Category' and 'canPost' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions) %}
+{% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
         <tab-content>
             <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
@@ -28,14 +28,14 @@
     {% endif %}
 {% endif %}
 {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
-    {% if inheritedType != 'Blog' and (owned or ('addSections' in session_data.permissions and (not closed or 'postInClosed' in session_data.permissions))) %}
+    {% if inheritedType != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
         <tab-content>
             <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
             {{ include('talks/forms/newSection.twig') }}
         </tab-content>
     {% endif %}
 {% endif %}
-{% if owned or 'editSections' in session_data.permissions %}
+{% if owned or 'edit_sections' in session_data.permissions %}
     <tab-content>
         {% if editMode %}
             {{ include('talks/forms/editSection.twig') }}
@@ -45,7 +45,7 @@
         {% endif %}
     </tab-content>
 {% endif %}
-{% if (owned or 'removeSections' in session_data.permissions) and not system %}
+{% if (owned or 'remove_sections' in session_data.permissions) and not system %}
     <tab-content>
         {% if children.entities or threads.entities %}
             <p>This section has subsections or/and threads. Removal is not possible.</p>
