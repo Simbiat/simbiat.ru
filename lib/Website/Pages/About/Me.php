@@ -36,6 +36,16 @@ class Me extends StaticPage
         $outputArray['feedbacks'] =
             [
                 [
+                    'href' => '/resume/Signant/20250610_1.webp',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                ],
+                [
+                    'href' => '/resume/Signant/20250610_2.webp',
+                    'alt' => 'Feedback from Mika Nuutilainen',
+                    'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
+                ],
+                [
                     'href' => '/resume/Signant/20241111.webp',
                     'alt' => 'Feedback from Mika Nuutilainen',
                     'caption' => 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>',
