@@ -14,18 +14,18 @@ class Emails extends Api
     protected array $methods = ['POST' => 'add', 'DELETE' => 'delete', 'PATCH' => ['activate', 'subscribe', 'unsubscribe']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add email',
-                                'delete' => 'Delete mail',
-                                'activate' => 'Request activation email for an email address',
-                                'subscribe' => 'Subscribe to email notifications',
-                                'unsubscribe' => 'Unsubscribe from email notifications',
+        'delete' => 'Delete mail',
+        'activate' => 'Request activation email for an email address',
+        'subscribe' => 'Subscribe to email notifications',
+        'unsubscribe' => 'Unsubscribe from email notifications',
     ];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
         if (empty($path[0])) {
@@ -36,16 +36,16 @@ class Emails extends Api
         }
         switch ($path[0]) {
             case 'activate':
-                (new Email($_POST['email']))->confirm();
+                new Email($_POST['email'])->confirm();
                 return ['response' => true];
             case 'add':
-                return (new Email($_POST['email']))->add();
+                return new Email($_POST['email'])->add();
             case 'delete':
-                return ['response' => (new Email($_POST['email']))->delete()];
+                return ['response' => new Email($_POST['email'])->delete()];
             case 'subscribe':
-                return ['response' => (new Email($_POST['email']))->subscribe()];
+                return ['response' => new Email($_POST['email'])->subscribe()];
             case 'unsubscribe':
-                return ['response' => (new Email($_POST['email']))->unsubscribe()];
+                return ['response' => new Email($_POST['email'])->unsubscribe()];
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported verb'];
         }

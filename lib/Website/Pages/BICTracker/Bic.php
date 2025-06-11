@@ -23,14 +23,14 @@ class Bic extends Page
     protected string $language = 'ru-RU';
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $requiredPermission = ['view_bic'];
-
-    #This is actual page generation based on further details of the $path
+    
+    #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
         #Sanitize BIC
-        $BIC = $path[0] ?? '';
+        $bic = $path[0] ?? '';
         #Try to get details
-        $outputArray['bicdetails'] = (new \Simbiat\BIC\BIC($BIC))->getArray();
+        $outputArray['bicdetails'] = new \Simbiat\BIC\BIC($bic)->getArray();
         #Check if ID was found
         if ($outputArray['bicdetails']['id'] === null) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
@@ -42,20 +42,22 @@ class Bic extends Page
         #Continue breadcrumbs
         if (!empty($outputArray['bicdetails']['PrntBIC'])) {
             foreach(array_reverse($outputArray['bicdetails']['PrntBIC']) as $bank) {
-                $this->breadCrumb = [['href' => '/bictracker/bics/' . $bank['id'], 'name' => $bank['name']]];
+                $this->breadCrumb = [['href' => '/bictracker/bics/'.$bank['id'], 'name' => $bank['name']]];
             }
-            $this->breadCrumb[] = ['href' => '/bictracker/bics/' . $BIC, 'name' => $outputArray['bicdetails']['NameP']];
+            $this->breadCrumb[] = ['href' => '/bictracker/bics/'.$bic, 'name' => $outputArray['bicdetails']['NameP']];
         } else {
-            $this->breadCrumb = [['href' => '/bictracker/bics/' . $BIC, 'name' => $outputArray['bicdetails']['NameP']]];
+            $this->breadCrumb = [['href' => '/bictracker/bics/'.$bic, 'name' => $outputArray['bicdetails']['NameP']]];
         }
         #Update meta
-        $this->h1 = $this->title = $outputArray['bicdetails']['NameP'];
-        $this->ogdesc = $outputArray['bicdetails']['NameP'] . ' (' . $outputArray['bicdetails']['BIC'] . ') в БИК трекере';
+        $this->title = $outputArray['bicdetails']['NameP'];
+        $this->h1 = $this->title;
+        $this->ogdesc = $outputArray['bicdetails']['NameP'].' ('.$outputArray['bicdetails']['BIC'].') в БИК трекере';
         #Link header/tag for API
-        $this->altLinks = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/' . $BIC]];
-        if (in_array($outputArray['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ'])) {
+        $this->altLinks = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/'.$bic]];
+        if (\in_array($outputArray['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ'])) {
             $outputArray['bicdetails']['Ukraine'] = true;
-            $this->h1 = $this->title = 'Це Україна! Іди додому, окупанте!';
+            $this->title = 'Це Україна! Іди додому, окупанте!';
+            $this->h1 = 'Це Україна! Іди додому, окупанте!';
         } else {
             $outputArray['bicdetails']['Ukraine'] = false;
         }

@@ -18,17 +18,17 @@ class Upload extends Api
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = false;
+    protected bool $csrf = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = false;
-
+    
     protected function genData(array $path): array
     {
         #Headers required for TinyMCE
         header('Access-Control-Allow-Credentials: true');
         header('P3P: CP="There is no P3P policy."');
         try {
-            $upload = (new Curl())->upload();
+            $upload = new Curl()->upload();
             if (!empty($upload['http_error'])) {
                 return $upload;
             }

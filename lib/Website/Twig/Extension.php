@@ -72,7 +72,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
         }
         return array_merge($defaults, [
             #PROD flag
-            'isPROD' => Config::$PROD,
+            'is_prod' => Config::$prod,
             #List of LINK tags
             'link_tags' => Config::$links,
             #Time used as a version of the JS file for cache busting
@@ -81,7 +81,7 @@ class Extension extends AbstractExtension implements GlobalsInterface
             'save_data' => $save_data,
             'unsupported' => false,
             #Flag whether GET is present
-            'hasGet' => !empty($_GET),
+            'has_get' => !empty($_GET),
             'http_method' => HomePage::$method,
         ]);
     }

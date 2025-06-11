@@ -443,3 +443,4 @@ UPDATE `talks__alt_links` SET `url`=REPLACE(`url`, 'kitsu.io', 'kitsu.app');
 
 UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.(app|io)' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
 SET FOREIGN_KEY_CHECKS = 1;
+UPDATE `talks__sections` SET `author` = '4', `editor` = '4' WHERE `talks__sections`.`section_id` IN (6, 7, 8);

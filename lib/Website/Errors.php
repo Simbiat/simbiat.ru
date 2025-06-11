@@ -131,7 +131,7 @@ class Errors
      */
     private static function getPage(): string
     {
-        if (Config::$CLI) {
+        if (Config::$cli) {
             $page = 'CLI';
         } elseif (empty(Config::$canonical)) {
             $page = 'index.php';

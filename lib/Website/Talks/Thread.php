@@ -347,7 +347,7 @@ class Thread extends Entity
             $queries[] = [
                 'UPDATE `talks__threads` SET `name`=:name, `section_id`=:parent_id, `language`=:language, `pinned`=COALESCE(:pinned, `pinned`), `closed`=COALESCE(:closed, `closed`), `private`=COALESCE(:private, `private`), `editor`=:user_id, `og_image`=COALESCE(:og_image, `og_image`) WHERE `thread_id`=:thread_id;',
                 [
-                    ':thread' => [$this->id, 'int'],
+                    ':thread_id' => [$this->id, 'int'],
                     ':name' => mb_trim($data['name'], null, 'UTF-8'),
                     ':parent_id' => [$data['parent_id'], 'int'],
                     ':language' => $data['language'],

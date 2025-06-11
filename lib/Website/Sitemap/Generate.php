@@ -28,11 +28,10 @@ class Generate
             foreach ($this->index_files as $index_file) {
                 $twigVars = $router->route([$index_file]);
                 $index[$index_file] = EnvironmentGenerator::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
-                $DomDocument = new \DOMDocument();
-                $DomDocument->preserveWhiteSpace = false;
-                $DomDocument->loadXML($index[$index_file]);
-                $DomNodeList = $DomDocument->getElementsByTagName('loc');
-                foreach($DomNodeList as $url) {
+                $dom_document = new \DOMDocument();
+                $dom_document->preserveWhiteSpace = false;
+                $dom_document->loadXML($index[$index_file]);
+                foreach($dom_document->getElementsByTagName('loc') as $url) {
                     $links[] = $url->nodeValue;
                 }
             }

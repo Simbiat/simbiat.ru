@@ -16,7 +16,7 @@ use function in_array;
 class Curl
 {
     #cURL options
-    protected array $CURL_OPTIONS = [
+    protected array $curl_options = [
         CURLOPT_POST => false,
         CURLOPT_HEADER => true,
         CURLOPT_RETURNTRANSFER => true,
@@ -61,7 +61,7 @@ class Curl
         #Check if cURL handle already created and create it if not
         if (!self::$curlHandle instanceof \CurlHandle) {
             self::$curlHandle = curl_init();
-            if (self::$curlHandle !== false && !curl_setopt_array(self::$curlHandle, $this->CURL_OPTIONS) && !curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers)) {
+            if (self::$curlHandle !== false && !curl_setopt_array(self::$curlHandle, $this->curl_options) && !curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers)) {
                 #Set default headers
                 self::$curlHandle = false;
             }

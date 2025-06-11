@@ -16,7 +16,7 @@ use Simbiat\Database\Pool;
  */
 final class Config
 {
-    public static bool $PROD = false;
+    public static bool $prod = false;
     public static string $workDir = '';
     public const string ADMIN_MAIL = 'support@simbiat.dev';
     public const string ADMIN_NAME = 'Dmitrii Kustov';
@@ -39,7 +39,7 @@ final class Config
     #Path to uploaded images
     public static string $uploadedImg = '';
     #Folder to dump DDLs to
-    public static string $DDLDir = '';
+    public static string $ddl_dir = '';
     #GeoIP folder
     public static string $geoip = '';
     #Set of general LINKs to be sent both in HTML and in HEADER
@@ -68,7 +68,7 @@ final class Config
     ];
     public static array $argonSettings = [];
     #Flag indicating whether we are in CLI
-    public static bool $CLI = false;
+    public static bool $cli = false;
     #Allow access to canonical value of the host
     public static string $canonical = '';
     #Track if the DB connection is up
@@ -84,9 +84,9 @@ final class Config
     {
         #Check if we are in CLI
         if (preg_match('/^cli(-server)?$/i', PHP_SAPI) === 1) {
-            self::$CLI = true;
+            self::$cli = true;
         } else {
-            self::$CLI = false;
+            self::$cli = false;
         }
         self::$workDir = '/app';
         $dotenv = Dotenv::createImmutable(self::$workDir, '.env');
@@ -96,8 +96,8 @@ final class Config
         $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_SOCKET'])->notEmpty();
         #Other settings
         $dotenv->required(['WEB_SERVER_TEST', 'SENDGRID_API_KEY', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
-        self::$PROD = ($_ENV['WEB_SERVER_TEST'] === 'false');
-        self::$http_host = (self::$PROD ? 'www.simbiat.dev' : 'localhost');
+        self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
+        self::$http_host = (self::$prod ? 'www.simbiat.dev' : 'localhost');
         self::$baseUrl = 'https://'.self::$http_host;
         self::$htmlCache = self::$workDir.'/data/cache/html/';
         self::$securitySettings = self::$workDir.'/data/security.json';
@@ -107,7 +107,7 @@ final class Config
         self::$imgDir = self::$workDir.'/public/assets/images';
         self::$uploaded = self::$workDir.'/data/uploaded';
         self::$uploadedImg = self::$workDir.'/data/uploadedimages';
-        self::$DDLDir = self::$workDir.'/build/DDL';
+        self::$ddl_dir = self::$workDir.'/build/DDL';
         self::$crestsComponents = self::$workDir.'/lib/FFXIV/CrestComponents/';
         self::$mergedCrestsCache = self::$workDir.'/data/mergedcrests/';
         self::$icons = self::$workDir.'/lib/FFXIV/Icons/';
@@ -121,14 +121,14 @@ final class Config
         self::$cookieSettings = [
             'expires' => time() + 60,
             'path' => '/',
-            'domain' => (self::$PROD ? 'simbiat.dev' : 'localhost'),
+            'domain' => (self::$prod ? 'simbiat.dev' : 'localhost'),
             'secure' => true,
             'httponly' => true,
             #Adding "Partitioned" to enable CHIPS. This is a "hack" until PHP supports the setting natively. https://github.com/php/php-src/issues/12646
             'samesite' => 'Strict; Partitioned',
         ];
         #These are required only if we are outside CLI mode
-        if (!self::$CLI) {
+        if (!self::$cli) {
             $this->canonical();
             $this->nonApiLinks();
         }

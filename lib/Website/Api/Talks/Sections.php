@@ -15,12 +15,12 @@ class Sections extends Api
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['close', 'open', 'markprivate', 'markpublic', 'order']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add section', 'delete' => 'Delete section', 'edit' => 'Edit section', 'close' => 'Close section', 'open' => 'Open section',
-                                'markprivate' => 'Mark the section as private', 'markpublic' => 'Mark the section as public', 'order' => 'Change order of the section',
+        'markprivate' => 'Mark the section as private', 'markpublic' => 'Mark the section as public', 'order' => 'Change order of the section',
     ];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = false;
     

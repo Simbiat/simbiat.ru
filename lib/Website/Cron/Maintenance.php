@@ -135,13 +135,13 @@ class Maintenance
      */
     public function forBackup(): bool|string
     {
-        if (!is_dir(Config::$DDLDir) && !mkdir(Config::$DDLDir, recursive: true) && !is_dir(Config::$DDLDir)) {
+        if (!is_dir(Config::$ddl_dir) && !mkdir(Config::$ddl_dir, recursive: true) && !is_dir(Config::$ddl_dir)) {
             return 'Failed to create DDL directory';
         }
         $dumpOrder = '';
         try {
             #Clean up SQL files
-            array_map('unlink', glob(Config::$DDLDir.'/*.sql'));
+            array_map('unlink', glob(Config::$ddl_dir.'/*.sql'));
             #Get tables in order
             foreach (Manage::showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
                 #Get DDL statement
@@ -151,12 +151,12 @@ class Maintenance
                 }
                 #Get DDL statement
                 if (preg_match('/^(cron|maintainer)__/ui', $table['table']) !== 1) {
-                    file_put_contents(Config::$DDLDir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
+                    file_put_contents(Config::$ddl_dir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
                 }
                 #Add item to the file with dump order
                 $dumpOrder .= $table['table'].' ';
             }
-            file_put_contents(Config::$DDLDir.'/000-recommended_table_order.txt', $dumpOrder);
+            file_put_contents(Config::$ddl_dir.'/000-recommended_table_order.txt', $dumpOrder);
             $this->dbOptimize();
         } catch (\Throwable $e) {
             Errors::error_log($e);
@@ -211,7 +211,7 @@ class Maintenance
         $free = disk_free_space($dir);
         $total = disk_total_space($dir);
         $percentage = $free * 100 / $total;
-        if (Config::$PROD && $percentage < 5) {
+        if (Config::$prod && $percentage < 5) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noSpace.flag')) {
                 #Clean files
@@ -240,7 +240,7 @@ class Maintenance
     {
         #Get directory
         $dir = sys_get_temp_dir();
-        if (Config::$PROD && !Config::$dbup) {
+        if (Config::$prod && !Config::$dbup) {
             #Do not do anything if mail has already been sent
             if (!is_file($dir.'/noDB.flag')) {
                 #Send mail

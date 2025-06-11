@@ -39,7 +39,7 @@ abstract class Api
     #List of permissions, from which at least 1 is required to have access the node
     protected array $requiredPermission = [];
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = false;
+    protected bool $csrf = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = false;
     #List of allowed origins, if we want to limit them
@@ -76,7 +76,7 @@ abstract class Api
         } elseif ($this->authenticationNeeded && $_SESSION['user_id'] === 1) {
             #User is not authenticated
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
-        } elseif ($this->CSRF && !$this->antiCSRF($this->allowedOrigins)) {
+        } elseif ($this->csrf && !$this->antiCSRF($this->allowedOrigins)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {

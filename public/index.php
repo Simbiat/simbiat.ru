@@ -8,5 +8,5 @@ use Simbiat\Website\HomePage;
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
 
-$HomePage = new HomePage();
+$home_page = new HomePage();
 exit;

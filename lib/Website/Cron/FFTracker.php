@@ -124,9 +124,9 @@ class FFTracker
     public function updateServers(): bool|string
     {
         try {
-            $Lodestone = (new Lodestone());
+            $lodestone = (new Lodestone());
             #Get server
-            $worlds = $Lodestone->getWorldStatus()->getResult()['worlds'];
+            $worlds = $lodestone->getWorldStatus()->getResult()['worlds'];
             #Prepare queries
             $queries = [];
             foreach ($worlds as $data_center => $servers) {
@@ -177,7 +177,7 @@ class FFTracker
     public function registerNewLinkshells(): bool|string
     {
         try {
-            $Lodestone = (new Lodestone());
+            $lodestone = (new Lodestone());
             $cron = new TaskInstance();
             #Generate a list of worlds for linkshells
             $worlds = Query::query(
@@ -205,15 +205,15 @@ class FFTracker
                             ) {
                                 $pagesParsed++;
                                 #Get linkshells
-                                $Lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
+                                $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
                                 #Get data
-                                $data = $Lodestone->getResult();
+                                $data = $lodestone->getResult();
                                 $pageTotal = (int)($data['linkshells']['pageTotal'] ?? 0);
                                 if ($pageTotal === 0) {
                                     continue 2;
                                 }
                                 #Reset Lodestone
-                                $Lodestone->resetResult();
+                                $lodestone->resetResult();
                                 if (!empty($data['linkshells'])) {
                                     #Clean data
                                     unset($data['linkshells']['pageCurrent'], $data['linkshells']['pageTotal'], $data['linkshells']['total']);

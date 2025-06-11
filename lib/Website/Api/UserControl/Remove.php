@@ -18,7 +18,7 @@ class Remove extends Api
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
     

@@ -15,18 +15,18 @@ class Threads extends Api
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['close', 'open', 'markprivate', 'markpublic', 'pin', 'unpin']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add thread', 'delete' => 'Delete thread', 'edit' => 'Edit thread', 'close' => 'Close thread', 'open' => 'Open thread',
-                                'markprivate' => 'Mark the thread as private', 'markpublic' => 'Mark the thread as public', 'pin' => 'Pin the thread', 'unpin' => 'Unpin the thread',
+        'markprivate' => 'Mark the thread as private', 'markpublic' => 'Mark the thread as public', 'pin' => 'Pin the thread', 'unpin' => 'Unpin the thread',
     ];
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = false;
+    protected bool $csrf = false;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = false;
     
     protected function genData(array $path): array
     {
-        #Reset verb for consistency, if it's not set
+        #Reset verb for consistency if it's not set
         if (empty($path[1])) {
             $path[1] = 'add';
         }
@@ -37,7 +37,7 @@ class Threads extends Api
                 return ['http_error' => 405, 'reason' => 'Incorrect method or verb used'];
             }
             #Only support adding a new post here
-            return (new Thread)->add();
+            return new Thread()->add();
         } else {
             if (!is_numeric($path[0])) {
                 return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` is not numeric'];
@@ -46,11 +46,11 @@ class Threads extends Api
             if (!$this->antiCSRF($this->allowedOrigins)) {
                 return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
             }
-            $thread = (new Thread($path[0]))->get();
-            if (is_null($thread->id)) {
+            $thread = new Thread($path[0])->get();
+            if ($thread->id === null) {
                 return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
             }
-            return match($path[1]) {
+            return match ($path[1]) {
                 'edit' => $thread->edit(),
                 'delete' => $thread->delete(),
                 'markprivate' => $thread->setPrivate(true),

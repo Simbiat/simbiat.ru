@@ -28,7 +28,7 @@ class Tests extends Router
         $outputArray = [];
         #Forbid if on PROD
         if (!empty($path[0]) && $path[0] !== 'styling') {
-            if (Config::$PROD === true || empty($path)) {
+            if (Config::$prod === true || empty($path)) {
                 $outputArray['http_error'] = 403;
                 return $outputArray;
             }

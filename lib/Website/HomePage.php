@@ -233,7 +233,7 @@ class HomePage
                 session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if (Config::$PROD && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
+            if (Config::$prod && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
                 self::$dataCache->write($twigVars, age: (int)$twigVars['cacheAge']);
             }
             if (self::$staleReturn) {

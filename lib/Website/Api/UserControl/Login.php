@@ -17,12 +17,12 @@ class Login extends Api
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = false;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
-
+    
     protected function genData(array $path): array
     {
-        return (new User)->login();
+        return new User()->login();
     }
 }

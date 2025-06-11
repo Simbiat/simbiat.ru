@@ -19,7 +19,7 @@ class Password extends Api
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PATCH' => ''];
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
     

@@ -18,14 +18,14 @@ class Avatars extends Api
     #Flag indicating that authentication is required
     protected bool $authenticationNeeded = true;
     #Flag to indicate need to validate CSRF
-    protected bool $CSRF = true;
+    protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
     protected bool $sessionChange = true;
     
     protected function genData(array $path): array
     {
         #We do not really care for verbs here, only methods
-        return match(HomePage::$method) {
+        return match (HomePage::$method) {
             'POST' => new User($_SESSION['user_id'])->addAvatar(true),
             'DELETE' => new User($_SESSION['user_id'])->delAvatar(),
             'PATCH' => new User($_SESSION['user_id'])->setAvatar(),

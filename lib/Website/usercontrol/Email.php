@@ -278,7 +278,7 @@ class Email extends Entity
             $email->setFrom(Config::FROM, Config::SITE_NAME);
             $email->setReplyTo(Config::FROM, Config::SITE_NAME);
             #Add receiver
-            if (Config::$PROD) {
+            if (Config::$prod) {
                 $email->addTo($this->id, $username ?? null);
             } else {
                 #On test always use admin mail
