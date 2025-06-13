@@ -15,7 +15,7 @@ require_once dirname(__DIR__).'/bin/Bootstrap.php';
 Config::dbConnect();
 #Run cron
 try {
-    if (Config::$dbup && !Config::$dbUpdate) {
+    if (Config::$dbup && !Config::$db_update) {
         new Agent()->process(50);
     }
 } catch (Throwable $e) {
