@@ -86,7 +86,7 @@ class Talks
             foreach ($dbFiles as $file) {
                 #Get the expected full path of the file
                 if (preg_match('/^image\/.+$/ui', $file['mime']) === 1) {
-                    $fullPath = Config::$uploadedImg;
+                    $fullPath = Config::$uploaded_img;
                 } else {
                     $fullPath = Config::$uploaded;
                 }
@@ -102,7 +102,7 @@ class Talks
             #Get all files from the drive
             $allFiles = new \AppendIterator();
             $allFiles->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
-            $allFiles->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploadedImg, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
+            $allFiles->append(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(Config::$uploaded_img, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST));
             #Now get only the file IDs from DB. We need to do it a 2nd time in the function and AFTER directory iterators, to minimize the chances of removing a file that is in the process of being uploaded
             $dbFiles = Query::query('SELECT `file_id` FROM `sys__files`;', return: 'column');
             foreach ($allFiles as $file) {

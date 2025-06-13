@@ -21,8 +21,8 @@ class Tests
     #Function to test file upload using PUT
     public function uploadPut(string $filepath): void
     {
-        $curl = (new Curl)::$curlHandle;
-        curl_setopt($curl, CURLOPT_URL, Simbiat\Website\Config::$baseUrl);
+        $curl = (new Curl)::$curl_handle;
+        curl_setopt($curl, CURLOPT_URL, Simbiat\Website\Config::$base_url);
         curl_setopt($curl, CURLOPT_UPLOAD, true);
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_PUT, 1);
@@ -38,7 +38,7 @@ class Tests
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $output = '
-            <form enctype="multipart/form-data" action="'.Simbiat\Website\Config::$baseUrl.'" method="POST">
+            <form enctype="multipart/form-data" action="'.Simbiat\Website\Config::$base_url.'" method="POST">
                 <!-- MAX_FILE_SIZE must precede the file input field -->
                 <input type="hidden" name="MAX_FILE_SIZE" value="'.$max_file_size.'" />
                 <!-- Name of input element determines name in $_FILES array -->

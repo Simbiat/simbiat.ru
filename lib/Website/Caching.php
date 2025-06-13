@@ -14,7 +14,7 @@ class Caching
     public function __construct(private string $cacheDir = '')
     {
         if (empty($this->cacheDir)) {
-            $this->cacheDir = Config::$htmlCache;
+            $this->cacheDir = Config::$html_cache;
         } elseif (!is_dir($this->cacheDir)) {
             @mkdir($this->cacheDir, recursive: true);
             if (preg_match('/\/$/', $this->cacheDir) !== 1) {

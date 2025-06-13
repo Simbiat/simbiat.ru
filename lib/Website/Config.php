@@ -17,27 +17,27 @@ use Simbiat\Database\Pool;
 final class Config
 {
     public static bool $prod = false;
-    public static string $workDir = '';
+    public static string $work_dir = '';
     public const string ADMIN_MAIL = 'support@simbiat.dev';
     public const string ADMIN_NAME = 'Dmitrii Kustov';
     public const string SITE_NAME = 'Simbiat Software';
     #Mail to use to send emails from
     public const string FROM = 'noreply@simbiat.dev';
     public static string $http_host = 'www.simbiat.dev';
-    public static string $baseUrl = 'https://www.simbiat.dev';
-    public static string $htmlCache = '';
-    public static string $securitySettings = '';
+    public static string $base_url = 'https://www.simbiat.dev';
+    public static string $html_cache = '';
+    public static string $security_settings = '';
     public static string $sitemap = '';
     #Path where JS files are stored
-    public static string $jsDir = '';
+    public static string $js_dir = '';
     #Path where CSS files are stored
-    public static string $cssDir = '';
+    public static string $css_dir = '';
     #Path where images stored
-    public static string $imgDir = '';
+    public static string $img_dir = '';
     #Path to uploaded files
     public static string $uploaded = '';
     #Path to uploaded images
-    public static string $uploadedImg = '';
+    public static string $uploaded_img = '';
     #Folder to dump DDLs to
     public static string $ddl_dir = '';
     #GeoIP folder
@@ -45,8 +45,8 @@ final class Config
     #Set of general LINKs to be sent both in HTML and in HEADER
     public static array $links = [];
     #FFTracker directories
-    public static string $crestsComponents = '';
-    public static string $mergedCrestsCache = '';
+    public static string $crests_components = '';
+    public static string $merged_crests_cache = '';
     public static string $icons = '';
     public static string $statistics = '';
     #List of system user IDs
@@ -66,7 +66,7 @@ final class Config
         'Linked to FF' => 6,
         'Bots' => 7,
     ];
-    public static array $argonSettings = [];
+    public static array $argon_settings = [];
     #Flag indicating whether we are in CLI
     public static bool $cli = false;
     #Allow access to canonical value of the host
@@ -74,11 +74,11 @@ final class Config
     #Track if the DB connection is up
     public static bool $dbup = false;
     #Maintenance flag
-    public static bool $dbUpdate = false;
+    public static bool $db_update = false;
     #Default cookie settings
-    public static array $cookieSettings = [];
+    public static array $cookie_settings = [];
     #Settings shared by PHP and JS code
-    public static array $sharedWithJS = [];
+    public static array $shared_with_js = [];
     
     public function __construct()
     {
@@ -88,8 +88,8 @@ final class Config
         } else {
             self::$cli = false;
         }
-        self::$workDir = '/app';
-        $dotenv = Dotenv::createImmutable(self::$workDir, '.env');
+        self::$work_dir = '/app';
+        $dotenv = Dotenv::createImmutable(self::$work_dir, '.env');
         /** @noinspection UnusedFunctionResultInspection */
         $dotenv->load();
         #Database settings
@@ -98,27 +98,27 @@ final class Config
         $dotenv->required(['WEB_SERVER_TEST', 'SENDGRID_API_KEY', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
         self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
         self::$http_host = (self::$prod ? 'www.simbiat.dev' : 'localhost');
-        self::$baseUrl = 'https://'.self::$http_host;
-        self::$htmlCache = self::$workDir.'/data/cache/html/';
-        self::$securitySettings = self::$workDir.'/data/security.json';
-        self::$sitemap = self::$workDir.'/data/sitemap/';
-        self::$jsDir = self::$workDir.'/public/assets';
-        self::$cssDir = self::$workDir.'/public/assets/styles/';
-        self::$imgDir = self::$workDir.'/public/assets/images';
-        self::$uploaded = self::$workDir.'/data/uploaded';
-        self::$uploadedImg = self::$workDir.'/data/uploadedimages';
-        self::$ddl_dir = self::$workDir.'/build/DDL';
-        self::$crestsComponents = self::$workDir.'/lib/FFXIV/CrestComponents/';
-        self::$mergedCrestsCache = self::$workDir.'/data/mergedcrests/';
-        self::$icons = self::$workDir.'/lib/FFXIV/Icons/';
-        self::$statistics = self::$workDir.'/data/ffstatistics/';
-        self::$geoip = self::$workDir.'/data/geoip/';
+        self::$base_url = 'https://'.self::$http_host;
+        self::$html_cache = self::$work_dir.'/data/cache/html/';
+        self::$security_settings = self::$work_dir.'/data/security.json';
+        self::$sitemap = self::$work_dir.'/data/sitemap/';
+        self::$js_dir = self::$work_dir.'/public/assets';
+        self::$css_dir = self::$work_dir.'/public/assets/styles/';
+        self::$img_dir = self::$work_dir.'/public/assets/images';
+        self::$uploaded = self::$work_dir.'/data/uploaded';
+        self::$uploaded_img = self::$work_dir.'/data/uploadedimages';
+        self::$ddl_dir = self::$work_dir.'/build/DDL';
+        self::$crests_components = self::$work_dir.'/lib/FFXIV/CrestComponents/';
+        self::$merged_crests_cache = self::$work_dir.'/data/mergedcrests/';
+        self::$icons = self::$work_dir.'/lib/FFXIV/Icons/';
+        self::$statistics = self::$work_dir.'/data/ffstatistics/';
+        self::$geoip = self::$work_dir.'/data/geoip/';
         #Generate Argon settings
-        if (empty(self::$argonSettings)) {
-            self::$argonSettings = Security::argonCalc();
+        if (empty(self::$argon_settings)) {
+            self::$argon_settings = Security::argonCalc();
         }
         #Set default cookie settings
-        self::$cookieSettings = [
+        self::$cookie_settings = [
             'expires' => time() + 60,
             'path' => '/',
             'domain' => (self::$prod ? 'simbiat.dev' : 'localhost'),
@@ -134,7 +134,7 @@ final class Config
         }
         #Load shared config
         try {
-            self::$sharedWithJS = json_decode(file_get_contents(self::$workDir.'/public/assets/config.json'), true, 512, JSON_THROW_ON_ERROR);
+            self::$shared_with_js = json_decode(file_get_contents(self::$work_dir.'/public/assets/config.json'), true, 512, JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             #For now just logging, at the moment of writing there should not be anything critical here
             Errors::error_log($exception);
@@ -183,7 +183,7 @@ final class Config
     {
         $uri = explode('/', $_SERVER['REQUEST_URI'], 100);
         if ($uri[0] !== 'api') {
-            array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(self::$cssDir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(self::$jsDir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.filemtime(self::$jsDir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
+            array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.filemtime(self::$js_dir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
         }
     }
     
@@ -215,10 +215,10 @@ final class Config
                 );
                 #Check for maintenance
                 try {
-                    self::$dbUpdate = (bool)Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');
+                    self::$db_update = (bool)Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');
                 } catch (\Throwable $exception) {
                     #The most likely cause of the maintenance check to fail is if the table does not exist. If it does not - consider that we are under maintenance.
-                    self::$dbUpdate = true;
+                    self::$db_update = true;
                     Errors::error_log($exception);
                 }
                 Query::query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');

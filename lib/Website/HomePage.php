@@ -79,7 +79,7 @@ class HomePage
                 #Show an error page if DB is down
                 if (!Config::$dbup) {
                     self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
-                } elseif (Config::$dbUpdate) {
+                } elseif (Config::$db_update) {
                     #Show an error page if maintenance is running
                     self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
                 }
@@ -93,7 +93,7 @@ class HomePage
                     Page::headers();
                 }
                 #Try to start a session if it's not started yet and DB is up
-                if (Config::$dbup && !Config::$dbUpdate && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
+                if (Config::$dbup && !Config::$db_update && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
                     session_start();
                     #Show that the client is unsupported

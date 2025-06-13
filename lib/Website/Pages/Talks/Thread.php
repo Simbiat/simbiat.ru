@@ -70,7 +70,7 @@ class Thread extends Page
         $outputArray['pagination'] = ['current' => $page, 'total' => $outputArray['posts']['pages'] ?? 1, 'prefix' => '?page='];
         if ($outputArray['pagination']['current'] > $outputArray['pagination']['total'] && $outputArray['pagination']['total'] !== 0) {
             #Redirect to last page
-            Headers::redirect(Config::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/threads/'.$id.'?page='.$outputArray['pagination']['total'], false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/threads/'.$id.'?page='.$outputArray['pagination']['total'], false);
             return [];
         }
         #Changelogs have Unix timestamp for names, need to convert those to the desired format
@@ -112,8 +112,8 @@ class Thread extends Page
         $outputArray['ogextra'] =
             '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />
             <meta property="article:modified_time" content="'.date('c', $outputArray['updated']).'" />'.
-            ($outputArray['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$baseUrl.'/talks/user/'.$outputArray['author'].'" />').
-            ($outputArray['editor'] !== 1 && $outputArray['editor'] !== $outputArray['author'] ? '<meta property="article:author" content="'.Config::$baseUrl.'/talks/user/'.$outputArray['author'].'" />' : '').
+            ($outputArray['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$outputArray['author'].'" />').
+            ($outputArray['editor'] !== 1 && $outputArray['editor'] !== $outputArray['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$outputArray['author'].'" />' : '').
             '<meta property="article:section" content="'.$outputArray['parents'][array_key_last($outputArray['parents'])]['name'].'" />';
         foreach ($outputArray['tags'] as $tag) {
             $outputArray['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';

@@ -94,8 +94,8 @@ abstract class Page
             header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
             header('Allow: GET, HEAD, OPTIONS');
             header('Content-Type: text/html; charset=utf-8');
-            header('SourceMap: /assets/'.filemtime(Config::$jsDir.'/app.js').'.js.map', false);
-            header('SourceMap: /assets/styles/'.filemtime(Config::$cssDir.'/app.css').'.css.map', false);
+            header('SourceMap: /assets/'.filemtime(Config::$js_dir.'/app.js').'.js.map', false);
+            header('SourceMap: /assets/styles/'.filemtime(Config::$css_dir.'/app.css').'.css.map', false);
             header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
             header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
             header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
@@ -184,7 +184,7 @@ abstract class Page
         }
         if (!empty($this->altLinks) || !empty($this->jsModule)) {
             if (!empty($this->jsModule)) {
-                $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->jsModule.'.'.filemtime(Config::$jsDir.'/controllers/'.$this->jsModule.'.js').'.js', 'as' => 'script']]);
+                $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->jsModule.'.'.filemtime(Config::$js_dir.'/controllers/'.$this->jsModule.'.js').'.js', 'as' => 'script']]);
             }
             #Send HTTP header
             if (!HomePage::$staleReturn) {

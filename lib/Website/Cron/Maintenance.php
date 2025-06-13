@@ -31,9 +31,9 @@ class Maintenance
     public function filesClean(): bool
     {
         #Clean HTML cache
-        $this->recursiveClean(Config::$htmlCache, 1440, 2048);
+        $this->recursiveClean(Config::$html_cache, 1440, 2048);
         #Clean merged crests cache
-        $this->recursiveClean(Config::$mergedCrestsCache, 14400);
+        $this->recursiveClean(Config::$merged_crests_cache, 14400);
         #Clean temp directory
         $this->recursiveClean(sys_get_temp_dir(), 4320, 0);
         return true;
@@ -192,7 +192,7 @@ class Maintenance
             }
         }
         #Dump commands to file
-        file_put_contents(Config::$workDir.'/data/backups/optimization_commands.sql', implode(PHP_EOL, $commands));
+        file_put_contents(Config::$work_dir.'/data/backups/optimization_commands.sql', implode(PHP_EOL, $commands));
         return true;
     }
     
@@ -248,14 +248,14 @@ class Maintenance
                 #Generate flag
                 file_put_contents($dir.'/noDB.flag', 'Database is down');
             }
-        } elseif (is_file(Config::$workDir.'/data/backups/crash.flag')) {
-            $error_text = file_get_contents(Config::$workDir.'/data/backups/crash.flag');
+        } elseif (is_file(Config::$work_dir.'/data/backups/crash.flag')) {
+            $error_text = file_get_contents(Config::$work_dir.'/data/backups/crash.flag');
             try {
                 $result = Query::query('UPDATE `sys__settings` SET `value` = 0 WHERE `setting` = \'maintenance\';');
             } catch (\Throwable) {
                 $result = false;
             }
-            @unlink(Config::$workDir.'/data/backups/crash.flag');
+            @unlink(Config::$work_dir.'/data/backups/crash.flag');
             @unlink($dir.'/noDB.flag');
             #Send mail
             new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');

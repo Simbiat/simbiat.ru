@@ -215,7 +215,7 @@ abstract class Api
     {
         #By default, allow only our own origin
         if (empty($allowOrigins)) {
-            $allowOrigins = [Config::$baseUrl];
+            $allowOrigins = [Config::$base_url];
         }
         #Get CSRF token
         $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;

@@ -49,7 +49,7 @@ class Curl
         'Sec-Fetch-Mode: cors',
     ];
     #cURL Handle is static to allow reuse of a single instance, if possible and needed
-    public static \CurlHandle|null|false $curlHandle = null;
+    public static \CurlHandle|null|false $curl_handle = null;
     #Allowed MIME types
     public const array ALLOWED_MIME = [
         #For now only images
@@ -59,11 +59,11 @@ class Curl
     final public function __construct()
     {
         #Check if cURL handle already created and create it if not
-        if (!self::$curlHandle instanceof \CurlHandle) {
-            self::$curlHandle = curl_init();
-            if (self::$curlHandle !== false && !curl_setopt_array(self::$curlHandle, $this->curl_options) && !curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers)) {
+        if (!self::$curl_handle instanceof \CurlHandle) {
+            self::$curl_handle = curl_init();
+            if (self::$curl_handle !== false && !curl_setopt_array(self::$curl_handle, $this->curl_options) && !curl_setopt(self::$curl_handle, CURLOPT_HTTPHEADER, self::$headers)) {
                 #Set default headers
-                self::$curlHandle = false;
+                self::$curl_handle = false;
             }
         }
     }
@@ -76,26 +76,26 @@ class Curl
      */
     public function getPage(string $link): string|false|int
     {
-        if (!self::$curlHandle instanceof \CurlHandle) {
+        if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
         #Get page contents
-        curl_setopt(self::$curlHandle, CURLOPT_HEADER, true);
+        curl_setopt(self::$curl_handle, CURLOPT_HEADER, true);
         #Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to the browser directly even with CURLOPT_RETURNTRANSFER set to true
-        curl_setopt(self::$curlHandle, CURLOPT_FILE, tmpfile());
+        curl_setopt(self::$curl_handle, CURLOPT_FILE, tmpfile());
         #For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
-        curl_setopt(self::$curlHandle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
+        curl_setopt(self::$curl_handle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt(self::$curl_handle, CURLOPT_URL, $link);
         #Get a response
-        $response = curl_exec(self::$curlHandle);
-        $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
+        $response = curl_exec(self::$curl_handle);
+        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
         if ($response === false) {
             return false;
         }
-        if ($httpCode !== 200) {
-            return $httpCode;
+        if ($http_code !== 200) {
+            return $http_code;
         }
-        return mb_substr($response, curl_getinfo(self::$curlHandle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
+        return mb_substr($response, curl_getinfo(self::$curl_handle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
     }
     
     /**
@@ -108,23 +108,23 @@ class Curl
     {
         #Set the temp filepath
         $filepath = tempnam(sys_get_temp_dir(), 'download');
-        if (!self::$curlHandle instanceof \CurlHandle) {
+        if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
         #Get a file
-        curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
+        curl_setopt(self::$curl_handle, CURLOPT_URL, $link);
         $fp = fopen($filepath, 'wb');
         if ($fp === false) {
             return false;
         }
-        curl_setopt(self::$curlHandle, CURLOPT_HEADER, false);
-        curl_setopt(self::$curlHandle, CURLOPT_FILE, $fp);
+        curl_setopt(self::$curl_handle, CURLOPT_HEADER, false);
+        curl_setopt(self::$curl_handle, CURLOPT_FILE, $fp);
         #Get a response
-        $response = curl_exec(self::$curlHandle);
-        $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
+        $response = curl_exec(self::$curl_handle);
+        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
         #Close file
         @fclose($fp);
-        if ($response === false || $httpCode !== 200) {
+        if ($response === false || $http_code !== 200) {
             return false;
         }
         #Rename the file to give it a proper extension
@@ -151,15 +151,15 @@ class Curl
      */
     public function post(string $link, mixed $payload): bool
     {
-        if (!self::$curlHandle instanceof \CurlHandle) {
+        if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
-        curl_setopt(self::$curlHandle, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt(self::$curlHandle, CURLOPT_URL, $link);
+        curl_setopt(self::$curl_handle, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt(self::$curl_handle, CURLOPT_URL, $link);
         #Get a response
-        $response = curl_exec(self::$curlHandle);
-        $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
-        return !($response === false || !in_array($httpCode, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
+        $response = curl_exec(self::$curl_handle);
+        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
+        return !($response === false || !in_array($http_code, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
     }
     
     /**
@@ -171,7 +171,7 @@ class Curl
      */
     public function postJson(string $link, mixed $payload): bool
     {
-        if (!self::$curlHandle instanceof \CurlHandle) {
+        if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
         $this->removeHeader('Content-type: text/html; charset=utf-8');
@@ -194,7 +194,7 @@ class Curl
         if (!in_array(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true)) {
             #Add it, if not
             self::$headers[] = $header;
-            curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
+            curl_setopt(self::$curl_handle, CURLOPT_HTTPHEADER, self::$headers);
         }
         return $this;
     }
@@ -212,7 +212,7 @@ class Curl
         if ($key !== false) {
             #Remove it, if yes
             unset(self::$headers[$key]);
-            curl_setopt(self::$curlHandle, CURLOPT_HTTPHEADER, self::$headers);
+            curl_setopt(self::$curl_handle, CURLOPT_HTTPHEADER, self::$headers);
         }
         return $this;
     }
@@ -226,7 +226,7 @@ class Curl
      */
     public function changeSetting(int $option, mixed $value): self
     {
-        curl_setopt(self::$curlHandle, $option, $value);
+        curl_setopt(self::$curl_handle, $option, $value);
         return $this;
     }
     
@@ -238,17 +238,17 @@ class Curl
      */
     public function ifExists($remoteFile): bool
     {
-        if (!self::$curlHandle instanceof \CurlHandle) {
+        if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
         #Initialize cUrl
-        curl_setopt(self::$curlHandle, CURLOPT_NOBODY, true);
-        curl_setopt(self::$curlHandle, CURLOPT_URL, $remoteFile);
-        curl_exec(self::$curlHandle);
-        $httpCode = curl_getinfo(self::$curlHandle, CURLINFO_HTTP_CODE);
-        curl_close(self::$curlHandle);
+        curl_setopt(self::$curl_handle, CURLOPT_NOBODY, true);
+        curl_setopt(self::$curl_handle, CURLOPT_URL, $remoteFile);
+        curl_exec(self::$curl_handle);
+        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
+        curl_close(self::$curl_handle);
         #Check code
-        return $httpCode === 200;
+        return $http_code === 200;
     }
     
     /**
@@ -320,7 +320,7 @@ class Curl
                 } else {
                     $upload['new_name'] = $upload['server_name'];
                 }
-                $upload['new_path'] = Config::$uploadedImg;
+                $upload['new_path'] = Config::$uploaded_img;
                 $upload['location'] = '/assets/images/uploaded/';
             } else {
                 if ($onlyImages) {

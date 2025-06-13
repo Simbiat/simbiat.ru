@@ -37,7 +37,7 @@ class Listing extends Search
         #If int is returned, we have a bad page
         if (is_int($outputArray['search_result'])) {
             #Redirect
-            Headers::redirect(Config::$baseUrl . ($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/'.$this->serviceName . '/' . $this->subServiceName . '/' . (!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$outputArray['search_result'] : '?page='.$outputArray['search_result']), false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] != 443 ? ':' . $_SERVER['SERVER_PORT'] : '') . '/'.$this->serviceName . '/' . $this->subServiceName . '/' . (!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$outputArray['search_result'] : '?page='.$outputArray['search_result']), false);
             return [];
         }
         #Get the freshest date

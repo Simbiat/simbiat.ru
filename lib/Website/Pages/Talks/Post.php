@@ -131,8 +131,8 @@ class Post extends Page
         $outputArray['ogextra'] =
             '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />
             <meta property="article:modified_time" content="'.date('c', $outputArray['updated']).'" />'.
-            ($outputArray['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$baseUrl.'/talks/user/'.$outputArray['author'].'" />').
-            ($outputArray['editor'] !== 1 && $outputArray['editor'] !== $outputArray['author'] ? '<meta property="article:author" content="'.Config::$baseUrl.'/talks/user/'.$outputArray['author'].'" />' : '').
+            ($outputArray['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$outputArray['author'].'" />').
+            ($outputArray['editor'] !== 1 && $outputArray['editor'] !== $outputArray['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$outputArray['author'].'" />' : '').
             '<meta property="article:section" content="'.$outputArray['name'].'" />';
         #Set flag indicating that we are in edit mode
         $outputArray['editMode'] = $this->editMode;

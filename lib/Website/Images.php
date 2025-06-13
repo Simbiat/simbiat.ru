@@ -260,7 +260,7 @@ class Images
      */
     #[NoReturn] private static function errorImage(): void
     {
-        $file = Config::$imgDir.'/noimage.svg';
+        $file = Config::$img_dir.'/noimage.svg';
         header('Content-Type: image/svg+xml');
         header('Content-Length: '.filesize($file));
         readfile($file);
@@ -277,7 +277,7 @@ class Images
     public static function ogImage(string $file_id, bool $isPath = false): array
     {
         if ($isPath) {
-            $file = Config::$imgDir.$file_id;
+            $file = Config::$img_dir.$file_id;
             if (!is_file($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
@@ -285,7 +285,7 @@ class Images
             $hashTree = Sanitization::hashTree($file_id);
             #Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = glob(Config::$uploadedImg.'/'.$hashTree.'/'.$file_id.'.*');
+            $file = glob(Config::$uploaded_img.'/'.$hashTree.'/'.$file_id.'.*');
             if (empty($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }

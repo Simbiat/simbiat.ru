@@ -38,7 +38,7 @@ class Generate
             $xmlFiles = array_merge(glob( Config::$sitemap.'*.xml'), glob( Config::$sitemap.'*/*.xml'), glob( Config::$sitemap.'*/*/*.xml'));
             #Remove XML files, which are no longer exist as per new index
             foreach ($xmlFiles as $file) {
-                if (!in_array(basename($file, '.xml'), $this->index_files, true) && !in_array(str_replace('.xml', '',Config::$baseUrl.'/sitemap/'.str_replace(Config::$sitemap, '', $file)), $links, true)) {
+                if (!in_array(basename($file, '.xml'), $this->index_files, true) && !in_array(str_replace('.xml', '',Config::$base_url.'/sitemap/'.str_replace(Config::$sitemap, '', $file)), $links, true)) {
                     @unlink($file);
                 }
             }
@@ -47,7 +47,7 @@ class Generate
             foreach ($links as $link) {
                 if (!empty($link)) {
                     #Get path to use for router function (without format)
-                    $path = explode('/', mb_trim(str_replace(Config::$baseUrl.'/sitemap/', '', $link), '/', 'UTF-8'));
+                    $path = explode('/', mb_trim(str_replace(Config::$base_url.'/sitemap/', '', $link), '/', 'UTF-8'));
                     #Strip trailing .xml extension
                     $path[array_key_last($path)] = str_replace('.xml', '', $path[array_key_last($path)]);
                     #Get filepath and filename
@@ -80,7 +80,7 @@ class Generate
                     file_put_contents(Config::$sitemap.$index_file.'.xml', $index[$index_file]);
                     #Ping Google about index update
                     try {
-                        $curl->getPage('https://www.google.com/ping?sitemap='.urlencode(Config::$baseUrl.'/sitemap/'.$index_file.'.xml'));
+                        $curl->getPage('https://www.google.com/ping?sitemap='.urlencode(Config::$base_url.'/sitemap/'.$index_file.'.xml'));
                     } catch (\Throwable) {
                         #Do nothing, it's not critical
                     }

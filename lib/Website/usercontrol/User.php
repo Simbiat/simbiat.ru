@@ -705,7 +705,7 @@ class User extends Entity
                     if ($currentPass === $hashedPass) {
                         setcookie('rememberme_'.Config::$http_host,
                             json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION),
-                            array_merge(Config::$cookieSettings, ['expires' => time() + 2592000]),
+                            array_merge(Config::$cookie_settings, ['expires' => time() + 2592000]),
                         );
                     }
                 }
@@ -733,7 +733,7 @@ class User extends Entity
         try {
             if (password_verify($password, $hash)) {
                 #Check if it needs rehashing
-                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, Config::$argonSettings)) {
+                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, Config::$argon_settings)) {
                     #Rehash password and reset strikes (if any)
                     $this->passChange($password);
                 } else {
@@ -971,7 +971,7 @@ class User extends Entity
         #Remove rememberme cookie
         #From browser
         setcookie('rememberme_'.Config::$http_host, '',
-            array_merge(Config::$cookieSettings, ['expires' => time() - 3600])
+            array_merge(Config::$cookie_settings, ['expires' => time() - 3600])
         );
         #From DB
         if (!empty($_SESSION['cookie_id'])) {

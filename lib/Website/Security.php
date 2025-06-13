@@ -27,7 +27,7 @@ class Security
      */
     public static function passHash(#[\SensitiveParameter] string $password): string
     {
-        return password_hash($password, PASSWORD_ARGON2ID, Config::$argonSettings);
+        return password_hash($password, PASSWORD_ARGON2ID, Config::$argon_settings);
     }
     
     /**
@@ -111,9 +111,9 @@ class Security
     public static function argonCalc(bool $forceRefresh = false, float $max_time_spent = 0.005, string $stringToTest = 'rel@t!velyl0ngte$t5tr1ng'): array
     {
         #Load Argon settings if argon.json exists
-        if (!$forceRefresh && is_file(Config::$securitySettings)) {
+        if (!$forceRefresh && is_file(Config::$security_settings)) {
             #Read the file
-            $argon = json_decode(file_get_contents(Config::$securitySettings), true);
+            $argon = json_decode(file_get_contents(Config::$security_settings), true);
             if (is_array($argon)) {
                 #Update the settings if they are present and comply with minimum requirements
                 if (!isset($argon['memory_cost']) || $argon['memory_cost'] < 1024) {
@@ -155,7 +155,7 @@ class Security
         } while (($end - $start) <= $max_time_spent);
         $argonSettings = ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory];
         #Write a config file
-        file_put_contents(Config::$securitySettings, json_encode($argonSettings, JSON_PRETTY_PRINT));
+        file_put_contents(Config::$security_settings, json_encode($argonSettings, JSON_PRETTY_PRINT));
         return $argonSettings;
     }
     
@@ -321,7 +321,7 @@ class Security
         parse_str($parsedUrl['query'] ?? '', $queryParams);
         #Remove tracking parameters
         foreach ($queryParams as $param => $value) {
-            if (\in_array($param, Config::$sharedWithJS['trackingQueryParameters'], true)) {
+            if (\in_array($param, Config::$shared_with_js['trackingQueryParameters'], true)) {
                 unset($queryParams[$param]);
             }
         }

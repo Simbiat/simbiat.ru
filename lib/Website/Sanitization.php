@@ -181,7 +181,7 @@ class Sanitization
         #Get hash tree
         $hashTree = self::hashTree($filename);
         #Check if the file exists in images
-        if (file_exists(Config::$uploadedImg.'/'.$hashTree.'/'.$filename)) {
+        if (file_exists(Config::$uploaded_img.'/'.$hashTree.'/'.$filename)) {
             return '/assets/images/uploaded/'.$hashTree.'/'.$filename;
         }
         if (file_exists(Config::$uploaded.'/'.$hashTree.'/'.$filename)) {

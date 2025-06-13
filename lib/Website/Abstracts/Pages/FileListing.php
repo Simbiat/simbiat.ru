@@ -50,13 +50,13 @@ class FileListing extends StaticPage
             #Get files' counts
             foreach ($this->dirs as $key => $dir) {
                 #Check if a directory exists
-                if (!is_dir(Config::$workDir.$dir['path'])) {
+                if (!is_dir(Config::$work_dir.$dir['path'])) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$dir['path'].'` does not exist.'];
                 }
                 if (!empty($dir['depth']) && $dir['depth'] >= 1) {
-                    $outputArray['files'][$key] = $this->getDirs(Config::$workDir.$dir['path'], true);
+                    $outputArray['files'][$key] = $this->getDirs(Config::$work_dir.$dir['path'], true);
                 } else {
-                    $outputArray['files'][$key] = $this->getFiles(Config::$workDir.$dir['path'], true);
+                    $outputArray['files'][$key] = $this->getFiles(Config::$work_dir.$dir['path'], true);
                 }
                 $outputArray['files'][$key]['name'] = $dir['name'];
             }
@@ -67,12 +67,12 @@ class FileListing extends StaticPage
             if (empty($this->dirs[$path[0]]['depth'])) {
                 $outputArray = $this->listFiles($path[0]);
             } else {
-                if (!is_dir(Config::$workDir.$this->dirs[$path[0]]['path'])) {
+                if (!is_dir(Config::$work_dir.$this->dirs[$path[0]]['path'])) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
                 }
                 #Update breadcrumbs
                 $this->attachCrumb($path[0], $this->dirs[$path[0]]['name']);
-                $subDir = $this->getRealSubDirPath(Config::$workDir.$this->dirs[$path[0]]['path'], array_slice($path, 1));
+                $subDir = $this->getRealSubDirPath(Config::$work_dir.$this->dirs[$path[0]]['path'], array_slice($path, 1));
                 if (!$subDir) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'/'.implode('/', array_slice($path, 1)).'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
                 }
@@ -88,7 +88,7 @@ class FileListing extends StaticPage
                     $outputArray = $this->listFiles($path[0], $subDir);
                 } else {
                     #Get the list of directories
-                    $outputArray['files'][$path[0]] = $this->getDirs(Config::$workDir.$this->dirs[$path[0]]['path'].$subDir);
+                    $outputArray['files'][$path[0]] = $this->getDirs(Config::$work_dir.$this->dirs[$path[0]]['path'].$subDir);
                 }
                 $outputArray['files'][$path[0]]['name'] = $this->dirs[$path[0]]['name'];
                 $outputArray['files'][$path[0]]['parent'] = array_slice($this->breadCrumb, -2, 1)[0];
@@ -134,12 +134,12 @@ class FileListing extends StaticPage
      */
     private function listFiles(string $path, string $subDir = ''): array
     {
-        $outputArray['files'][$path] = $this->getFiles(Config::$workDir.$this->dirs[$path]['path'].$subDir);
+        $outputArray['files'][$path] = $this->getFiles(Config::$work_dir.$this->dirs[$path]['path'].$subDir);
         #Process pagination
         $totalPages = (int)ceil($outputArray['files'][$path]['count'] / $this->listItems);
         if ($totalPages > 0 && $this->page > $totalPages) {
             #Redirect to last page
-            Headers::redirect(Config::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$totalPages : '?page='.$totalPages), false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$totalPages : '?page='.$totalPages), false);
         }
         if ($outputArray['files'][$path]['count'] > $this->listItems) {
             #Generate pagination data
@@ -203,7 +203,7 @@ class FileListing extends StaticPage
                     $fileDetails = [
                         'dirname' => $file->getFilename(),
                         #Path relative to the working directory
-                        'path' => str_replace(Config::$workDir, '', $file->getPath()),
+                        'path' => str_replace(Config::$work_dir, '', $file->getPath()),
                         'time' => $file->getMTime(),
                     ];
                     $result['dirs'][] = $fileDetails;
@@ -250,7 +250,7 @@ class FileListing extends StaticPage
                             'filename' => $file->getFilename(),
                             'basename' => $file->getBasename('.'.$file->getExtension()),
                             #Path relative to the working directory
-                            'path' => str_replace(Config::$workDir, '', $file->getPath()),
+                            'path' => str_replace(Config::$work_dir, '', $file->getPath()),
                             'mime' => mime_content_type($file->getPathname()),
                             'size' => $file->getSize(),
                             'time' => $file->getMTime(),

@@ -56,10 +56,10 @@ class Feeds
                         'authors' => [[
                             'name' => Config::ADMIN_NAME,
                             'email' => Config::ADMIN_MAIL,
-                            'uri' => Config::$baseUrl.'/',
+                            'uri' => Config::$base_url.'/',
                         ]],
-                        'icon' => Config::$baseUrl.'/assets/images/favicons/simbiat.png',
-                        'logo' => Config::$baseUrl.'/assets/images/ogimages/default.png',
+                        'icon' => Config::$base_url.'/assets/images/favicons/simbiat.png',
+                        'logo' => Config::$base_url.'/assets/images/ogimages/default.png',
                     ];
                 } elseif ($format === 'rss') {
                     $settings = [
@@ -68,7 +68,7 @@ class Feeds
                         'language' => 'en-us',
                         'ttl' => 3600,
                         'image' => [
-                            'url' => Config::$baseUrl.'/assets/images/favicons/android/144x144.png',
+                            'url' => Config::$base_url.'/assets/images/favicons/android/144x144.png',
                             'width' => 144,
                             'height' => 144,
                         ],
@@ -95,13 +95,13 @@ class Feeds
                 #Set a query for the feed
                 if ($format === 'atom') {
                     $query = match ($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(\''.Config::$baseUrl.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(\''.Config::$baseUrl.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
+                        'bicchanged' => 'SELECT CONCAT(\''.Config::$base_url.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
+                        'bicdeleted' => 'SELECT CONCAT(\''.Config::$base_url.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `updated`, \'Центральный Банк Российской Федерации\' AS `author_name`, \'https://cbr.ru/\' AS `author_uri`, `NameP` as `summary`, `Updated` as `published`, \'Центральный Банк Российской Федерации\' AS `source_title`, \'https://cbr.ru/\' AS `source_id`, `Updated` as `source_updated` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
                 } elseif ($format === 'rss') {
                     $query = match ($uri[0]) {
-                        'bicchanged' => 'SELECT CONCAT(\''.Config::$baseUrl.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
-                        'bicdeleted' => 'SELECT CONCAT(\''.Config::$baseUrl.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
+                        'bicchanged' => 'SELECT CONCAT(\''.Config::$base_url.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NULL ORDER BY `Updated` DESC LIMIT 25',
+                        'bicdeleted' => 'SELECT CONCAT(\''.Config::$base_url.'/bictracker/bics/\', `BIC`) as `link`, `NameP` as `title`, `Updated` as `pubDate`, \'BICs\' AS `category` FROM `bic__list` a WHERE `DateOut` IS NOT NULL ORDER BY `DateOut` DESC LIMIT 25',
                     };
                 }
                 #Generate the feed

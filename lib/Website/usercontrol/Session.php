@@ -27,10 +27,10 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
             #Set session cookie parameters
             ini_set('session.cookie_lifetime', $this->sessionLife);
-            ini_set('session.cookie_secure', Config::$cookieSettings['secure']);
-            ini_set('session.cookie_httponly', Config::$cookieSettings['httponly']);
-            ini_set('session.cookie_path', Config::$cookieSettings['path']);
-            ini_set('session.cookie_samesite', Config::$cookieSettings['samesite']);
+            ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
+            ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
+            ini_set('session.cookie_path', Config::$cookie_settings['path']);
+            ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
             ini_set('session.use_strict_mode', true);
             ini_set('session.use_only_cookies', true);
         }

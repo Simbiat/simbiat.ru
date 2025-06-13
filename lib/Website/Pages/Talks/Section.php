@@ -39,7 +39,7 @@ class Section extends Page
         $id = $path[0] ?? 'top';
         if ($id !== 'top' && (int)$id < 1) {
             #Redirect to top page
-            Headers::redirect(Config::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/', false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/', false);
         }
         $outputArray = new \Simbiat\Website\Talks\Section($id)->getArray();
         if (empty($outputArray['id'])) {
@@ -58,7 +58,7 @@ class Section extends Page
         $outputArray['pagination'] = ['current' => $page, 'total' => max($outputArray['threads']['pages'] ?? 1, $outputArray['children']['pages'] ?? 1), 'prefix' => '?page='];
         if ($outputArray['pagination']['current'] > $outputArray['pagination']['total'] && $outputArray['pagination']['total'] !== 0) {
             #Redirect to last page
-            Headers::redirect(Config::$baseUrl.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/'.($id === 'top' ? '' : $id).'?page='.$outputArray['pagination']['total'], false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/'.($id === 'top' ? '' : $id).'?page='.$outputArray['pagination']['total'], false);
             return [];
         }
         #Collect times
