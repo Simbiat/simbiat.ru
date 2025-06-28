@@ -36,8 +36,7 @@ db_config:
   flush:
     max_items: 10000
     max_age: 30d
-    #fixed in new release, uncomment when published
-    #metrics_max_age: 365d
+    metrics_max_age: 365d
     bouncers_autodelete:
       cert: 30d
       api_key: 30d

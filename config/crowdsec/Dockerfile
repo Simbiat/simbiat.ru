@@ -1,4 +1,4 @@
-FROM crowdsecurity/crowdsec:v1.6.8-debian
+FROM crowdsecurity/crowdsec:v1.6.9-debian
 
 ARG CRS_RELEASE="4.15.0"
 

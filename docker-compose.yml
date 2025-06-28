@@ -11,6 +11,7 @@ networks:
         - subnet: 2001:db8:1::/64
 
 volumes:
+  node_modules: { }
   mariadb_socket:
     driver: local
 
@@ -18,6 +19,8 @@ services:
   phpmyadmin:
     container_name: phpmyadmin
     image: phpmyadmin:5.2.2-apache
+    profiles:
+      - dev_only
     restart: unless-stopped
     environment:
       PMA_ARBITRARY: 0
@@ -51,6 +54,28 @@ services:
     command: >
       /bin/sh -c "rm -f -r /sessions/* &
                   /docker-entrypoint.sh apache2-foreground"
+
+  #Currently unused due to https://youtrack.jetbrains.com/issue/WI-81738
+  node:
+    container_name: nodejs
+    image: node:latest
+    profiles:
+      - dev_only
+    restart: no
+    networks:
+      - webserver
+    security_opt:
+      - no-new-privileges=true
+    volumes:
+      - ./package.json:/usr/app/package.json:ro
+      - ./package-lock.json:/usr/app/package-lock.json:rw
+      - ./build/js:/usr/app/js:rw
+      - node_modules:/usr/app/node_modules:rw
+      - ./build/css:/usr/app/css:ro
+      - ./public/assets/:/usr/app/output:rw
+    working_dir: /usr/app
+    #Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run")
+    #command: tail -f /dev/null
 
   geoip:
     container_name: geoip
