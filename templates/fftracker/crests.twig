@@ -36,7 +36,7 @@
 {% if path %}
     <section>
         {% if files[path].parent %}
-            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
+            <a class="middle block no_decor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
         {% endif %}
         {% if files[path].files %}
             {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
@@ -55,7 +55,7 @@
             </ul>
         {% endif %}
         {% if files[path].parent %}
-            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
+            <a class="middle block no_decor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
         {% endif %}
     </section>
 {% endif %}

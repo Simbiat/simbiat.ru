@@ -59,16 +59,10 @@
             {% endif %}
             {% if post.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled post">⏲</span>{% endif %}
             {% if post.locked %}
-                {% if owned %}
-                    {% if 'edit_locked' in session_data.permissions and 'edit_own_posts' in session_data.permissions %}
-                        <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
-                    {% endif %}
-                    <span data-tooltip="Locked post">🔒</span>
-                {% else %}
-                    {% if 'edit_locked' in session_data.permissions and 'edit_others_posts' in session_data.permissions %}
-                        <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a><span data-tooltip="Locked post">🔒</span>
-                    {% endif %}
+                {% if 'edit_locked' in session_data.permissions and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
+                    <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
                 {% endif %}
+                <span class="no_decor" data-tooltip="Locked post">🔒</span>
             {% else %}
                 {% if (owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions) %}
                     <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
