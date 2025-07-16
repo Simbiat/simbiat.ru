@@ -1,0 +1,139 @@
+/* Styling input types that are text-like */
+input[type='color' i],
+input[type='datetime-local' i],
+input[type='date' i],
+input[type='email' i],
+input[type='month' i],
+input[type='password' i],
+input[type='range' i],
+input[type='search' i],
+input[type='tel' i],
+input[type='text' i],
+input[type='time' i],
+input[type='url' i],
+input[type='week' i] {
+    & + label {
+        color: var(--color_interactive);
+        cursor: text;
+        display: block;
+        position: absolute;
+        touch-action: manipulation;
+        transition: transform 0.2s ease;
+        user-select: none;
+    }
+
+    /* Visually hide placeholder since we are using label instead of it */
+
+    &::placeholder {
+        opacity: 0%;
+    }
+
+    &:placeholder-shown + label {
+        transform: translate(0.5rem, -1.7rem) scale(1.25);
+        transform-origin: left bottom;
+    }
+
+    &:not(:placeholder-shown) + label,
+    &:focus + label {
+        cursor: default;
+        filter: var(--border_shadow);
+        transform: translate(0.5rem, -2.75rem) scale(1);
+    }
+
+    &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        filter: invert(75%) sepia(66%) saturate(203%) hue-rotate(161deg) brightness(95%) contrast(93%);
+    }
+}
+
+input[type='search' i] {
+    appearance: textfield; /* Correct the odd appearance in Chrome, Edge, and Safari */
+    outline-offset: -2px; /*  Correct the outline style in Safari */
+}
+
+/* Styling input type range */
+input[type='range' i] {
+    border-width: 0;
+    color: var(--color_interactive);
+    padding: 0;
+
+    &:disabled {
+        color: var(--color_disabled);
+    }
+
+    &:not(:placeholder-shown) + label,
+    &:focus + label {
+        cursor: default;
+        filter: var(--border_shadow);
+        transform: translate(0.5rem, -3.2rem) scale(1);
+    }
+
+    &::-webkit-slider-runnable-track {
+        border-radius: var(--border_radius);
+        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        cursor: pointer;
+    }
+
+    &::-webkit-slider-thumb,
+    &::-moz-range-thumb {
+        background-color: var(--color_interactive);
+        block-size: 1rem;
+        border: none;
+        border-radius: var(--border_radius);
+        cursor: pointer;
+        display: block;
+        inline-size: 1rem;
+        margin-block-start: -0.25rem;
+    }
+
+    &::-moz-range-track {
+        block-size: 0.5rem;
+        border-radius: var(--border_radius);
+        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        cursor: pointer;
+    }
+
+    &::-moz-range-progress {
+        background-color: var(--color_interactive);
+        cursor: pointer;
+    }
+}
+
+/* Styling input type color */
+input[type='color' i] {
+    cursor: pointer;
+    min-inline-size: 15ch;
+    padding: 0;
+    position: relative;
+
+    &:not(:placeholder-shown) + label,
+    &:focus + label {
+        cursor: default;
+        filter: var(--border_shadow);
+        transform: translate(0.5rem, -3rem) scale(1);
+    }
+
+    &::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    /* For some reason this NEEDS to be separate from -moz-color-swatch or a border appears */
+
+    &::-webkit-color-swatch {
+        border: none;
+        border-radius: var(--border_radius);
+    }
+
+    &::-moz-color-swatch {
+        border: none;
+        border-radius: var(--border_radius);
+        padding: 0;
+    }
+
+    &::after {
+        content: attr(value);
+        inset-block-start: 0.25rem;
+        inset-inline-end: 0.1rem;
+        position: absolute;
+    }
+}

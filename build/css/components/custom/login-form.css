@@ -1,0 +1,59 @@
+/* Center form content */
+login-form {
+    text-align: center;
+}
+
+/* Limit width */
+login-form .float_label,
+#signinup_email,
+#signinup_username,
+#signinup_password {
+    display: block;
+    /* Width corresponds to characters.
+    10 looks the lowest number that makes placeholders more or less readable.
+    Longer than 65 characters is unnecessary, since we limit username at 64. 65 is used since with 64 there is a higher chance of truncation */
+    inline-size: clamp(calc(10ch + var(--show_password_width)), calc(20ch + var(--show_password_width)), calc(65ch + var(--show_password_width)));
+}
+
+login-form #radio_signinup .float_label {
+    display: inline-block;
+    inline-size: fit-content;
+}
+
+login-form .float_label#rememberme_div {
+    inline-size: fit-content;
+}
+
+/* Override global highlights since form is present on all pages by default */
+/* Border for valid/invalid input */
+#signinup_email,
+#signinup_password {
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    box-shadow: none;
+}
+
+#signinup_email:valid:focus,
+#signinup_password:valid:focus {
+    border-color: var(--color_success);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color_success), -0.1rem -0.1rem 0.75rem var(--color_success);
+}
+
+#signinup_email:user-invalid:not(:placeholder-shown),
+#signinup_email[required]:user-invalid:placeholder-shown,
+#signinup_password:user-invalid:not(:placeholder-shown),
+#signinup_password[required]:user-invalid:placeholder-shown {
+    border-color: var(--color_failure);
+    box-shadow: 0.1rem 0.1rem 0.75rem var(--color_failure), -0.1rem -0.1rem 0.75rem var(--color_failure);
+}
+
+/* Adjust submit button width based on text */
+#signinup_submit {
+    inline-size: auto;
+}
+
+#rememberme_div {
+    display: flex;
+}

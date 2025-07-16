@@ -1,0 +1,49 @@
+/* Styling of button elements. Includes native button, input types button, submit, reset, and anchors styled as button */
+button,
+input[type='button' i],
+input[type='reset' i],
+input[type='submit' i],
+a.button {
+    background-color: var(--color_article);
+    block-size: clamp(1.5rem, 2rem, 2.5rem);
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    /* Border colors are reversed to make the elements "popup" */
+    border-style: solid;
+    border-width: var(--border_width);
+    box-sizing: border-box;
+    color: var(--color_interactive);
+    cursor: pointer;
+    display: inline-block;
+    font: inherit; /* Add typography inheritance in all browsers */
+    font-size: 100%;
+    font-weight: 700;
+    letter-spacing: inherit; /* Add typography inheritance in all browsers */
+    line-height: 1.15rem;
+    margin: 0.5rem;
+    max-inline-size: 100%;
+    outline: none;
+    padding: 0.1875em 0.375em 0.3125em;
+    text-decoration: none;
+    text-transform: none;
+
+    &::-moz-focus-inner {
+        border-style: none;
+        padding: 0;
+    }
+
+    &:-moz-focusring {
+        outline: 1px dotted ButtonText;
+    }
+
+    &:active {
+        border-color: var(--border_color_inset);
+        filter: brightness(0.7);
+    }
+
+    &:focus,
+    &:hover {
+        border-color: var(--border_color_outset);
+        filter: var(--border_shadow);
+    }
+}

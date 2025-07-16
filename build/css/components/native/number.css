@@ -1,0 +1,50 @@
+/* Styling input type number */
+input[type='number' i] + label {
+    color: var(--color_interactive);
+    cursor: text;
+    display: block;
+    position: absolute;
+    touch-action: manipulation;
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+input[type='number' i]::placeholder {
+    opacity: 0%;
+}
+
+input[type='number' i]:placeholder-shown + label {
+    transform: translate(0.5rem, -1.7rem) scale(1.25);
+    transform-origin: left bottom;
+}
+
+input[type='number' i]:not(:placeholder-shown) + label,
+input[type='number' i]:focus + label {
+    cursor: default;
+    filter: var(--border_shadow);
+    transform: translate(0.5rem, -2.75rem) scale(1);
+}
+
+/* Hide incremental buttons for number field. You can't style them (only replace), thus better remove completely by default for consistent look */
+input[type='number' i]:not(.number_spinner) {
+    appearance: textfield;
+    margin: 0;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+    }
+}
+
+input[type='number' i].number_spinner {
+    appearance: auto;
+    margin: unset;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        appearance: auto;
+        margin: unset;
+        opacity: 100%;
+    }
+}

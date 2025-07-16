@@ -1,0 +1,24 @@
+/* Color unicode emojis with plain color. This allows a bit more standardization across systems */
+[class^='emoji' i], [class*=' emoji' i] {
+    color: transparent;
+}
+
+.emoji_green {
+    text-shadow: 0 0 0 var(--color_success);
+}
+
+.emoji_red {
+    text-shadow: 0 0 0 var(--color_failure);
+}
+
+.emoji_orange {
+    text-shadow: 0 0 0 var(--color_warning);
+}
+
+.emoji_blue {
+    text-shadow: 0 0 0 var(--color_interactive);
+}
+
+.emoji_white {
+    text-shadow: 0 0 0 var(--color_text);
+}

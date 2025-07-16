@@ -1,0 +1,11 @@
+#uc_cookies_table,
+#uc_sessions_table,
+#uc_logs_table {
+    margin-block-end: 1rem;
+
+    & tfoot {
+        font-size: smaller;
+        font-style: italic;
+        font-weight: 400;
+    }
+}

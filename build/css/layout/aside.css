@@ -1,0 +1,37 @@
+/* Styling of sidebar stuff */
+#aside_buttons {
+    align-items: center;
+    display: flex;
+    flex-flow: column nowrap;
+    inset-block-start: 50%;
+    inset-inline-end: 0;
+    justify-content: center;
+    position: fixed;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+aside.sidebar {
+    block-size: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem;
+}
+
+#no_db_section img {
+    block-size: 3rem;
+    display: block;
+    inline-size: 3rem;
+    margin: .25rem auto;
+}
+
+#own_profile_link {
+    padding-block: 0 0;
+    text-decoration: none;
+}
+
+#uc_settings {
+    display: block;
+    text-align: center;
+}

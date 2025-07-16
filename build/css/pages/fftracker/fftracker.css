@@ -1,0 +1,27 @@
+/* Styling elements common for FFXIV Tracker pages */
+#se_copyright {
+    font-style: italic;
+    margin: 3rem auto 1rem auto;
+    text-align: center;
+}
+
+.ff_crest {
+    block-size: 4rem;
+    inline-size: 4rem;
+    margin: 0.25rem;
+}
+
+.ff_owned {
+    box-shadow: 0.1rem 0.1rem 0.25rem var(--color_success), -0.1rem -0.1rem 0.25rem var(--color_success);
+}
+
+#ff_refresh {
+    cursor: pointer;
+    display: block;
+    margin: 0.25rem auto;
+}
+
+.ff_achievement_points {
+    block-size: 1rem;
+    inline-size: 1rem;
+}

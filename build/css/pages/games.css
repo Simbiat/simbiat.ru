@@ -1,0 +1,92 @@
+/* Styling related to GameMaker objects */
+#gm4html5_div_id #canvas {
+    inset: 50% -50% -50% 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+}
+
+#gm4html5_div_id canvas {
+    border: 0;
+    image-rendering: optimizespeed;
+    margin: 0;
+    padding: 0;
+}
+
+:fullscreen #gm4html5_div_id #canvas {
+    block-size: 100%;
+    inline-size: 100%;
+}
+
+div.gm4html5_div_class {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* START - Login Dialog Box */
+div.gm4html5_login {
+    background-color: oklch(37.1% 0 89.876deg);
+    border: solid 2px oklch(0% 0 0deg);
+    border-radius: 15px;
+    box-shadow: oklch(17.3% 0 89.876deg) 20px 20px 40px;
+    color: oklch(86.6% 0.295 142.495deg);
+    padding: 20px;
+    position: absolute;
+}
+
+div.gm4html5_cancel_button {
+    float: inline-end;
+}
+
+div.gm4html5_login_button {
+    float: inline-start;
+}
+
+div.gm4html5_login_header {
+    text-align: center;
+}
+
+/* END - Login Dialog Box */
+
+#game_start_button {
+    display: block;
+    inline-size: calc(100% - 1rem);
+}
+
+#banner_play {
+    position: relative;
+
+    & hide-banner {
+        display: none;
+    }
+
+    & og-image img {
+        border-end-end-radius: var(--border_radius);
+        border-end-start-radius: var(--border_radius);
+    }
+
+    & #play_overlay {
+        block-size: 49%;
+        cursor: pointer;
+        font-size: xxx-large;
+        inline-size: calc(100% - 1rem);
+        inset-block-start: 0;
+        inset-inline-start: 0.5rem;
+        opacity: 50%;
+        padding-block-start: 25%;
+        position: absolute;
+        text-align: center;
+        text-shadow: -4px -4px 0 var(--color_interactive), 4px -4px 0 var(--color_interactive), -4px 4px 0 var(--color_interactive), 4px 4px 0 var(--color_interactive);
+
+        &:hover,
+        &:active,
+        &:focus {
+            opacity: 100%;
+        }
+
+        &:active {
+            filter: brightness(.7);
+        }
+    }
+}

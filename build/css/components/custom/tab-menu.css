@@ -1,0 +1,94 @@
+/* Style tab menu's components */
+tab-names {
+    display: flex;
+    flex-flow: row wrap-reverse;
+    inline-size: fit-content;
+    justify-content: flex-end;
+    margin-block-end: -.65rem;
+    margin-inline: calc(var(--border_radius) * 2.25) calc(var(--border_radius) * 2.25);
+    min-block-size: 2rem;
+}
+
+a.tab_name {
+    background-color: var(--color_body);
+    block-size: 1.8rem;
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius) var(--border_radius) 0 0;
+    border-style: solid;
+    border-width: var(--border_width);
+    color: var(--color_interactive);
+    cursor: pointer;
+    display: block;
+    font-weight: 700;
+    line-height: 1.8rem;
+    margin-block-end: 0.025rem;
+    margin-inline-start: -0.15rem;
+    padding: .1rem .5rem;
+    text-decoration: underline;
+
+    &.active {
+        background-color: var(--color_article);
+        border-color: var(--border_color_inset);
+        cursor: default;
+        text-decoration: none;
+    }
+
+    &:hover {
+        background-color: var(--color_article);
+        border-color: var(--border_color_inset);
+        text-decoration: none;
+    }
+
+    &.danger {
+        color: var(--color_failure);
+        filter: brightness(0.7);
+        font-weight: 100;
+
+        &.active {
+            filter: none;
+        }
+
+        &:hover {
+            filter: none;
+        }
+    }
+}
+
+/* Styling of tab-menu content */
+tab-contents {
+    background-color: var(--color_article);
+    border-color: var(--border_color_inset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    display: block;
+    margin: .5rem;
+    padding: .5rem;
+}
+
+tab-content {
+    display: none;
+
+    &.active {
+        display: block;
+    }
+}
+
+a.tab_name:link {
+    text-decoration-line: underline;
+}
+
+a.tab_name:visited {
+    border-style: solid;
+    text-decoration: none;
+}
+
+a.tab_name:focus,
+a.tab_name:active {
+    border-color: var(--color_interactive);
+    text-decoration: none;
+}
+
+a.tab_name:active {
+    filter: brightness(0.7);
+}

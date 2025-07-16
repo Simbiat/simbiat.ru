@@ -1,0 +1,101 @@
+textarea {
+    background-color: var(--color_article);
+    block-size: auto;
+    border-color: var(--border_color_inset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    color: var(--color_text);
+    font: inherit; /* Add typography inheritance in all browsers */
+    font-size: 100%;
+    letter-spacing: inherit; /* Add typography inheritance in all browsers */
+    line-height: 1.15rem;
+    margin: 0;
+    max-inline-size: 100%;
+    padding: 0.25em 0.375em; /* Change the inconsistent appearance in all browsers */
+    resize: block; /* Change the resize direction in all browsers */
+    text-transform: none;
+
+    & + label {
+        color: var(--color_interactive);
+        cursor: text;
+        display: block;
+        position: absolute;
+        touch-action: manipulation;
+        transition: transform 0.2s ease;
+        user-select: none;
+    }
+
+    &::placeholder {
+        opacity: 0%;
+    }
+
+    &:disabled + label {
+        color: var(--color_disabled);
+        cursor: not-allowed;
+        user-select: none;
+    }
+
+    &:placeholder-shown + label {
+        transform: translate(0.5rem, -2.25rem) scale(1.25);
+        transform-origin: left bottom;
+    }
+}
+
+/* Move label to top on select and when placeholder is not shown */
+textarea:not(:placeholder-shown) + label,
+textarea:focus + label {
+    cursor: default;
+    filter: var(--border_shadow);
+    transform: translate(0.5rem, -3.9rem) scale(1);
+}
+
+textarea:hover {
+    filter: var(--border_shadow);
+    outline: none;
+}
+
+textarea:focus, textarea:active {
+    border-color: var(--border_color_inset);
+    filter: var(--border_shadow);
+    outline: none;
+}
+
+textarea::-webkit-resizer {
+    border-end-end-radius: var(--border_radius);
+    border-start-start-radius: var(--border_radius);
+}
+
+textarea + label[data-curlength]:not([data-curlength=''])::after {
+    content: attr(data-curlength);
+    margin-inline-start: 0.5rem;
+}
+
+textarea + label.close_to_limit::after {
+    color: var(--color_warning);
+    font-weight: 700;
+}
+
+textarea + label.at_the_limit::after {
+    color: var(--color_failure);
+    font-weight: 700;
+}
+
+textarea:disabled,
+textarea:disabled:active,
+textarea:disabled:hover,
+textarea:disabled:focus,
+textarea:disabled:focus-within {
+    border-color: var(--color_disabled);
+    color: var(--color_disabled);
+    cursor: not-allowed;
+    filter: blur(0.025rem) grayscale(1);
+    user-select: none;
+}
+
+::-webkit-resizer {
+    background-color: var(--color_article);
+    background-image: linear-gradient(135deg, var(--color_interactive) 16.67%, var(--color_block) 16.67%, var(--color_block) 50%, var(--color_interactive) 50%, var(--color_interactive) 66.67%, var(--color_block) 66.67%, var(--color_block) 100%);
+    background-size: 0.7rem 0.7rem;
+    color: var(--color_interactive);
+}

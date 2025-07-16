@@ -1,0 +1,14 @@
+/* Set the width to be roughly the same as other inputs on UC Profile page */
+#sex_value,
+#birthday_value {
+    inline-size: 11.75rem;
+}
+
+#about_value {
+    block-size: 5rem;
+    inline-size: 23.5rem;
+}
+
+textarea.tinymce {
+    display: none;
+}

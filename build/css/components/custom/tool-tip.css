@@ -1,0 +1,29 @@
+tool-tip {
+    background-color: var(--color_block);
+    block-size: fit-content;
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    color: var(--color_text);
+    display: none;
+    inline-size: fit-content;
+    inset-block-start: var(--cursor_y);
+    inset-inline-start: var(--cursor_x);
+    margin: 1rem auto;
+    max-inline-size: 100vi;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    padding: 0.25rem;
+    position: fixed;
+    text-align: justify;
+    text-overflow: clip;
+    word-break: keep-all;
+    z-index: 99;
+
+    &[data-tooltip] {
+        display: block;
+        text-decoration: none;
+        transform: translate3d(var(--cursor_x) px, var(--cursor_y) px, 0);
+    }
+}

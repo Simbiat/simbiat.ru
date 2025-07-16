@@ -1,0 +1,23 @@
+/* Styling of elements specific page where you view and merge crests */
+#crest_preview {
+    block-size: 128px;
+    inline-size: 128px;
+    margin: 0.5rem auto;
+    position: relative;
+
+    & img {
+        block-size: 128px;
+        inline-size: 128px;
+        position: absolute;
+        transform: translateX(-50%);
+
+        &[src='' i] {
+            display: none;
+        }
+    }
+}
+
+#ff_merge_crest_submit {
+    display: block;
+    margin: auto;
+}

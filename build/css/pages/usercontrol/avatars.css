@@ -1,0 +1,44 @@
+#avatars_list {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    list-style-type: none;
+    margin-block-start: 0;
+    padding: 0;
+
+    & .float_label {
+        block-size: 6rem;
+        inline-size: 6rem;
+    }
+
+    & .avatar {
+        block-size: 6rem;
+        inline-size: 6rem;
+    }
+
+    & li {
+        block-size: 7rem;
+        inline-size: 7rem;
+        margin: 0.5rem;
+        position: relative;
+    }
+
+    & .delete_avatar {
+        inset-block-start: 0;
+        inset-inline-end: 0;
+        position: absolute;
+    }
+
+    & input[type='radio' i] + label::before {
+        content: none;
+    }
+
+    & input[type='radio' i]:checked + label::before {
+        content: none;
+    }
+
+    & input[type='radio' i]:checked + label img {
+        border-color: var(--color_success);
+    }
+}

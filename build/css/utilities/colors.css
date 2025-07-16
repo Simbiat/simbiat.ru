@@ -1,0 +1,24 @@
+.failure, .error {
+    color: var(--color_failure);
+    font-weight: 700;
+}
+
+.warning, .notice, .attention {
+    color: var(--color_warning);
+}
+
+.success {
+    color: var(--color_success);
+}
+
+.disabled, *[disabled], *[aria-disabled] {
+    color: var(--color_disabled);
+}
+
+.gold {
+    color: oklch(88.7% 0.182 95.33deg);
+}
+
+.regular_text {
+    color: var(--color_text);
+}

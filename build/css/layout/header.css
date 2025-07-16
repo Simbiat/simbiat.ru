@@ -1,0 +1,81 @@
+header {
+    background-color: var(--color_block);
+    border-block-end: var(--border_width) solid var(--border_light);
+    border-radius: var(--border_radius);
+    border-start-end-radius: 0;
+    /* Reset common radius */
+    border-start-start-radius: 0;
+    inline-size: 100%;
+    margin-block-end: 0.25rem;
+    padding-block-start: 0.25rem;
+    text-align: center;
+}
+
+#header_logo {
+    block-size: 2rem;
+    color: var(--border_light);
+    display: flex;
+    font-family: var(--font_serif);
+    font-size: 2rem;
+    font-weight: 700;
+    justify-content: center;
+    letter-spacing: 0.25rem;
+    line-height: 2rem;
+
+    & img,
+    & div {
+        block-size: 2rem;
+        display: inline-block;
+        line-height: 2rem;
+        position: relative;
+    }
+
+    & img {
+        margin-block-end: 0.4rem;
+        position: absolute;
+    }
+
+    & div {
+        &:first-of-type {
+            text-align: end;
+        }
+
+        &:last-of-type {
+            text-align: start;
+        }
+    }
+}
+
+#h1_title {
+    block-size: 1.1rem;
+    cursor: unset;
+    display: inline-block;
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+    line-height: 1rem;
+    margin: 0;
+    max-inline-size: calc(100% - 0.5rem - 4rem);
+
+    /* Remove the anchor symbol for page title in header */
+
+    &::before {
+        content: unset;
+    }
+
+    & a {
+        border: unset;
+        color: unset;
+        font-weight: unset;
+        text-decoration: unset;
+    }
+}
+
+#h1_div {
+    inline-size: 100%;
+    margin-block-start: 0.5rem;
+}
+
+#logo_nav {
+    display: inline-block;
+    position: relative;
+}

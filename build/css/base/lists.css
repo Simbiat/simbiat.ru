@@ -1,0 +1,11 @@
+/* Styling of lists */
+/**
+ * Remove the margin on nested lists in Chrome, Edge, and Safari.
+ */
+:where(dl, ol, ul) :where(dl, ol, ul) {
+    margin-block: 0 0;
+}
+
+li {
+    min-block-size: 2rem;
+}

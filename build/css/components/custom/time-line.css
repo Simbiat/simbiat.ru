@@ -1,0 +1,155 @@
+time-line {
+    display: block;
+    margin: 1rem auto;
+    position: relative;
+    unicode-bidi: isolate;
+
+    /* The actual timeline (the vertical ruler) */
+
+    &::after {
+        background-color: var(--color_body);
+        border-radius: var(--border_radius);
+        content: '';
+        inline-size: 0.5rem;
+        inset-block: 0 0;
+        inset-inline-start: 50%;
+        margin-inline-start: -0.25rem;
+        position: absolute;
+    }
+
+    /* Container around content */
+
+    & .timeline_block {
+        background-color: var(--color_block);
+        border-radius: var(--border_radius);
+        inline-size: calc(50% - 2rem);
+        margin: 1rem 0 1rem 0;
+        position: relative;
+
+        /* The circles on the timeline */
+
+        &::after {
+            background-color: var(--color_block);
+            block-size: 1rem;
+            border-color: var(--border_light);
+            border-radius: 50%;
+            border-style: solid;
+            border-width: 0.25rem;
+            content: '';
+            inline-size: 1rem;
+            inset-block-start: 1rem;
+            inset-inline-end: -2.5rem;
+            position: absolute;
+            z-index: 1;
+        }
+
+        /* Flash on target */
+
+        &:target {
+            animation: timeline-flash 1.5s ease-in-out 0s;
+        }
+    }
+
+    /* Place the container to the left */
+
+    & .timeline_start {
+        inset-inline-start: 0;
+
+        & .timeline_time {
+            display: block;
+            inline-size: 100%;
+            margin-block-end: 0.5rem;
+            text-align: end;
+        }
+
+        /* Add arrows to the left container (pointing right) */
+
+        &::before {
+            border-color: transparent transparent transparent var(--color_text);
+            border-style: solid;
+            border-width: .75rem 0 .75rem .75rem;
+            inset-inline-end: -0.9rem;
+        }
+    }
+
+    /* Place the container to the right */
+
+    & .timeline_end {
+        inset-inline-start: calc(50% + 2rem);
+
+        & .timeline_time {
+            display: block;
+            inline-size: 100%;
+            margin-block-end: 0.5rem;
+            text-align: start;
+        }
+
+        /* Add arrows to the right container (pointing left) */
+
+        &::before {
+            border-color: transparent var(--color_text) transparent transparent;
+            border-style: solid;
+            border-width: .75rem .75rem .75rem 0;
+            inset-inline-start: -0.9rem;
+        }
+
+        /* Fix the circle for containers on the right side */
+
+        &::after {
+            inset-inline-start: -2.5rem;
+        }
+    }
+
+    & .timeline_start::before,
+    & .timeline_end::before {
+        block-size: 0;
+        content: ' ';
+        inline-size: 0;
+        inset-block-start: 1rem;
+        position: absolute;
+        z-index: 1;
+    }
+
+    /* The actual content */
+
+    & .timeline_content {
+        padding: 0.5rem;
+        position: relative;
+    }
+
+    & .timeline_header {
+        color: var(--color_text);
+        margin: 0 0 1rem 0;
+    }
+
+    & .timeline_icon {
+        block-size: 2.25rem;
+        inline-size: 2.25rem;
+        /* Negative margin to align with text */
+        margin: 0 0.25rem 0.25rem 0.25rem;
+    }
+
+    & .timeline_responsibilities_list {
+        list-style: '⚒';
+        margin-block-start: 0;
+    }
+
+    & .timeline_achievements_list {
+        list-style: '🏆';
+        margin-block-start: 0;
+    }
+
+    & .timeline_shortcut {
+        text-align: center;
+    }
+
+    & .timeline_current {
+        border-color: var(--color_success);
+        border-style: dashed;
+        border-width: 0.1rem;
+    }
+
+    & .timeline_elapsed {
+        margin-block-end: 1rem;
+    }
+}

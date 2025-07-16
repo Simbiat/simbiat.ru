@@ -1,0 +1,123 @@
+.no_select {
+    user-select: none;
+}
+
+.no_outline {
+    /* noinspection Stylelint */
+    outline: none !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: transparent;
+    }
+}
+
+.about_section {
+    font-size: small;
+    text-align: center;
+}
+
+.avatar {
+    block-size: 4rem;
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    inline-size: 4rem;
+}
+
+.copy_quote {
+    block-size: 1.5em;
+    border-color: transparent;
+    border-radius: 25%;
+    border-style: solid;
+    border-width: var(--border_width);
+    /* Need to force pointer, otherwise it gets overridden by tooltip styling */
+    /* noinspection Stylelint */
+    cursor: pointer !important;
+    inline-size: 1.5em;
+    inset-block-start: -0.25rem;
+    inset-inline-end: -0.25rem;
+    margin-inline-end: 0.25em;
+    padding: 0.25em;
+    position: absolute;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: var(--color_interactive);
+    }
+
+    &:active {
+        border-color: var(--color_interactive);
+        filter: brightness(70%);
+    }
+}
+
+.search_form {
+    text-align: center;
+}
+
+.relative {
+    position: relative;
+}
+
+.refresh.spin,
+.refresh.spin:hover,
+.refresh.focus,
+.refresh.active {
+    border: none;
+    cursor: wait;
+    filter: none;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.spinner {
+    block-size: 3rem;
+    display: block;
+    inline-size: 3rem;
+    margin: auto;
+}
+
+.nodecor {
+    /* noinspection Stylelint */
+    text-decoration: none !important;
+}
+
+.middle {
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.interactive_border {
+    border-color: var(--color_interactive);
+    border-radius: var(--border_radius);
+    border-style: outset;
+    border-width: var(--border_width);
+    cursor: pointer;
+    padding: 0.1rem;
+}
+
+.gallery_zoom {
+    border: none;
+    cursor: zoom-in;
+
+    & img {
+        cursor: zoom-in;
+    }
+
+    &:not(img, a:has(img)) {
+        border-color: var(--color_interactive);
+        cursor: zoom-in;
+        text-decoration: none;
+    }
+}
+
+.cursor_pointer {
+    /* noinspection Stylelint */
+    cursor: pointer !important;
+}

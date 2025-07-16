@@ -1,0 +1,13 @@
+time-line-shortcut {
+    display: block;
+    unicode-bidi: isolate;
+
+    /* noinspection CssUnusedSymbol */
+
+    & .timeline_icon_current {
+        block-size: 1.25rem;
+        inline-size: 1.25rem;
+        /* Negative margin to align with text */
+        margin: 0 0.25rem 0.25rem 0.25rem;
+    }
+}

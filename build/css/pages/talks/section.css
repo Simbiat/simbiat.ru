@@ -1,0 +1,148 @@
+.section_icon {
+    block-size: 2rem;
+    inline-size: 2rem;
+
+    &.disabled {
+        filter: grayscale(1);
+    }
+}
+
+.section_name {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    font-size: large;
+    font-weight: 700;
+    padding-inline-start: 0.5rem;
+    place-content: center flex-start;
+}
+
+.section_icons {
+    text-align: center;
+
+    & span[data-tooltip] {
+        /* Remove dotted line under the icons */
+        text-decoration: none;
+    }
+}
+
+.section_name a {
+    display: block;
+    flex-grow: 1;
+    overflow: hidden;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.section_description {
+    font-size: small;
+    padding-inline-start: 1.5rem;
+}
+
+#sections_list {
+    margin-block-end: 1rem;
+    table-layout: auto;
+
+    & .float_label {
+        white-space: normal;
+    }
+
+    & tr td:nth-child(6) {
+        inline-size: 4rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(5) {
+        inline-size: clamp(1rem, 2rem, 3rem);
+        text-align: center;
+    }
+
+    & tr td:nth-child(7),
+    & tr td:nth-child(8) {
+        max-inline-size: 5rem;
+        min-inline-size: 1rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(4) {
+        max-inline-size: 3rem;
+        min-inline-size: 1rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(3) {
+        max-inline-size: 4rem;
+        min-inline-size: 1rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(9),
+    & tr td:nth-child(10) {
+        inline-size: clamp(2rem, 3rem, 4rem);
+        text-align: center;
+    }
+
+    & tr td:first-child {
+        inline-size: 2rem;
+        padding: 0.5rem;
+    }
+}
+
+.section_private + label,
+.section_closed + label {
+    text-decoration-color: var(--color_interactive);
+}
+
+.section_private:not(:checked) + label::after {
+    content: 'Public';
+}
+
+.section_private:checked + label::after {
+    content: 'Private';
+}
+
+input[type='checkbox' i].section_private:not(:checked) + label::before {
+    content: '🚶';
+}
+
+input[type='checkbox' i].section_private:checked + label::before {
+    content: '🚷';
+}
+
+.section_closed:not(:checked) + label::after {
+    content: 'Open';
+}
+
+.section_closed:checked + label::after {
+    content: 'Closed';
+}
+
+input[type='checkbox' i].section_closed:not(:checked) + label::before {
+    content: '🔓';
+}
+
+input[type='checkbox' i].section_closed:checked + label::before {
+    content: '🔒';
+}
+
+#delete_section {
+    color: var(--color_failure);
+    display: block;
+    font-weight: 700;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Style textarea tags for section description */
+#new_section_description,
+#cur_section_description {
+    inline-size: calc(100% - .375em - .375em - .375em);
+    max-inline-size: 100ch;
+}
+
+#add_thread_submit {
+    display: block;
+    inline-size: 98%;
+    margin: 0 auto;
+}

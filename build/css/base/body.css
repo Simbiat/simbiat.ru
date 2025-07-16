@@ -1,0 +1,17 @@
+/* Main blocks styling */
+body {
+    background-color: var(--color_body);
+    block-size: 100vb;
+    color: var(--color_text);
+    display: block;
+    font-family: var(--font_sans);
+    inline-size: 100%;
+    margin: 0;
+    overflow: hidden auto;
+    scroll-behavior: smooth;
+    scrollbar-color: var(--color_block) var(--color_body);
+    scrollbar-width: auto;
+    /* If we do not disable it, Chrome adds an ugly color on clickable elements.
+    Not needed, since I adjust :active for them. */
+    -webkit-tap-highlight-color: transparent;
+}

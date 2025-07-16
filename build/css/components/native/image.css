@@ -1,0 +1,11 @@
+/* Styling input type image */
+input[type='image' i] {
+    cursor: pointer;
+    margin-block-end: -0.5rem;
+    padding: 0.2rem;
+
+    &:active {
+        border-color: var(--border_color_inset);
+        filter: brightness(0.7);
+    }
+}

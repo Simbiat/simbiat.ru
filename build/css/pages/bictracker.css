@@ -1,0 +1,17 @@
+.bic_chain {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    inline-size: 100%;
+    place-content: center center;
+}
+
+#bic_refresh {
+    inset-block-start: -0.5rem;
+    margin-inline-start: 1rem;
+    position: absolute;
+}
+
+#bic_spinner {
+    display: inline;
+}

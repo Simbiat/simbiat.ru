@@ -1,0 +1,40 @@
+/* Snackbar notifications */
+snack-bar {
+    inline-size: 100%;
+    inset-block-end: 1rem;
+    margin: 0 auto;
+    position: fixed;
+    /* Required for new dialog windows to be visible */
+    z-index: 99;
+}
+
+.snackbar {
+    background-color: var(--color_block);
+    block-size: 2rem;
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    color: var(--color_text);
+    /* visibility: visible; */
+    display: flex;
+    line-height: 2rem;
+    margin: 1rem auto;
+    padding: 0.25rem;
+    position: relative;
+    text-align: center;
+    z-index: 99;
+}
+
+.snack_text {
+    flex: 1;
+    overflow-block: auto;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+.snack_close {
+    display: inline-block;
+    float: inline-end;
+}

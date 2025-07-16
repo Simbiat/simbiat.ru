@@ -1,0 +1,52 @@
+/* Styling elements common for About section (including home page) */
+.about_showcase {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Wrapper is needed so that the anchor icon for header is after the image, and not before it */
+.about_h_wrapper {
+    align-items: flex-end;
+    display: flex;
+    flex-flow: row nowrap;
+
+    & img {
+        margin-block-end: 1.5rem;
+    }
+}
+
+.about_banner {
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    /* Using `important` because in the past some browsers were applying styling to the banner if it was visited link */
+    /* noinspection Stylelint */
+    border-style: solid !important;
+    border-width: var(--border_width);
+    display: block;
+    inline-size: 40%;
+    margin: 0.25rem;
+    position: relative;
+
+    &:hover,
+    &:focus,
+    &:active {
+        border-color: var(--color_interactive);
+    }
+
+    & img {
+        border-radius: var(--border_radius);
+        inline-size: 100%;
+    }
+
+    & div {
+        background-color: oklch(0% 0 0deg / 75%);
+        border-end-end-radius: var(--border_radius);
+        border-end-start-radius: var(--border_radius);
+        inline-size: calc(100% - 2 * var(--border_width) - 0.1rem);
+        inset-block-end: 0;
+        padding: 0.1rem;
+        position: absolute;
+    }
+}

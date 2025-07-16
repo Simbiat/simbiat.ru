@@ -1,0 +1,12 @@
+/* Styling of elements on bugs page */
+.ff_duplicate_names th:nth-child(1),
+.ff_duplicate_names td:nth-child(1),
+.ff_duplicate_names th:nth-child(2),
+.ff_duplicate_names td:nth-child(2) {
+    inline-size: 20%;
+}
+
+.ff_duplicate_names th:nth-child(3),
+.ff_duplicate_names td:nth-child(3) {
+    inline-size: 60%;
+}

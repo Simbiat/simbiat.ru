@@ -1,0 +1,10 @@
+/* This is for GameMaker pages */
+game-canvas {
+    display: block;
+    margin-block-start: 1rem;
+
+    & .sound_warning {
+        font-size: small;
+        text-align: center;
+    }
+}

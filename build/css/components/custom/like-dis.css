@@ -1,0 +1,8 @@
+like-dis {
+    grid-area: post_likes;
+    text-align: start;
+
+    & input {
+        text-decoration: none;
+    }
+}

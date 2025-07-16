@@ -1,0 +1,33 @@
+og-image {
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    cursor: pointer;
+    display: block;
+    inline-size: calc(100% - 1rem - 2 * var(--border_width));
+    margin: 0.5rem;
+
+    & img {
+        border-start-end-radius: var(--border_radius);
+        border-start-start-radius: var(--border_radius);
+        inline-size: 100%;
+    }
+
+    & .gallery_zoom {
+        display: inline-block;
+        inline-size: fit-content;
+    }
+
+    & hide-banner {
+        block-size: 1rem;
+        border-end-end-radius: var(--border_radius);
+        border-end-start-radius: var(--border_radius);
+        color: var(--color_interactive);
+        display: block;
+        font-size: x-small;
+        inline-size: 100%;
+        line-height: 1rem;
+        text-align: center;
+    }
+}

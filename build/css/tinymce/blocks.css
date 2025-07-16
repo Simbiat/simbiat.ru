@@ -1,66 +1,69 @@
-/*Styling of blocks (or objects in more general sense) inserted by TinyMCE*/
+/* Styling of blocks (or objects in more general sense) inserted by TinyMCE */
 figure.image {
     display: grid;
     grid-template-areas:
             'image'
             'caption';
-}
-figure.image br {
-    display: none;
-}
-figure.image img {
-    grid-area: image;
-}
-figure.image figcaption {
-    grid-area: caption;
-    height: 1rem;
-    line-height: 1rem;
-    overflow: clip;
-    text-overflow: ellipsis;
-    text-align: center;
-    font-style: italic;
+
+    & br {
+        display: none;
+    }
+
+    & img {
+        grid-area: image;
+    }
+
+    & figcaption {
+        block-size: 1rem;
+        font-style: italic;
+        grid-area: caption;
+        line-height: 1rem;
+        overflow: clip;
+        text-align: center;
+        text-overflow: ellipsis;
+    }
 }
 
-/*When aligning left or right, we need to limit width of the block and also align using the margin. Text-align is reset, because otherwise it is applied to text inside the block*/
-blockquote.tiny-align-right {
+/* When aligning left or right, we need to limit width of the block and also align using the margin. Text-align is reset, because otherwise it is applied to text inside the block */
+blockquote.tiny_align_right {
+    inline-size: calc(50% - 0.5rem);
+    margin-inline: calc(50%) .5rem;
     text-align: unset;
-    margin-left: calc(50%);
-    margin-right: .5rem;
-    width: calc(50% - 0.5rem);
 }
-blockquote.tiny-align-left {
-    text-align:   unset;
-    margin-right: calc(50%);
-    margin-left:  .5rem;
-    width: calc(50% - 0.5rem);
-}
-/*For center and justify alignment, we essentially use logic from w100pc override*/
-blockquote.tiny-align-center,
-blockquote.tiny-align-justify {
+
+blockquote.tiny_align_left {
+    inline-size: calc(50% - 0.5rem);
+    margin-inline: .5rem calc(50%);
     text-align: unset;
-    width: calc(100% - 1rem);
 }
-img.w25pc.tiny-align-right {
-    margin-left: calc(75%);
-    margin-right: 0;
+
+/* For center and justify alignment, we essentially use logic from w100pc override */
+blockquote.tiny_align_center,
+blockquote.tiny_align_justify {
+    inline-size: calc(100% - 1rem);
+    text-align: unset;
 }
-img.w50pc.tiny-align-right {
-    margin-left: calc(50%);
-    margin-right: 0;
+
+img.w25pc.tiny_align_right {
+    margin-inline: calc(75%) 0;
 }
-img.w75pc.tiny-align-right {
-    margin-left: calc(25%);
-    margin-right: 0;
+
+img.w50pc.tiny_align_right {
+    margin-inline: calc(50%) 0;
 }
-img.w25pc.tiny-align-left {
-    margin-right: calc(75%);
-    margin-left: 0;
+
+img.w75pc.tiny_align_right {
+    margin-inline: calc(25%) 0;
 }
-img.w50pc.tiny-align-left {
-    margin-right: calc(50%);
-    margin-left: 0;
+
+img.w25pc.tiny_align_left {
+    margin-inline: 0 calc(75%);
 }
-img.w75pc.tiny-align-left {
-    margin-right: calc(25%);
-    margin-left: 0;
+
+img.w50pc.tiny_align_left {
+    margin-inline: 0 calc(50%);
+}
+
+img.w75pc.tiny_align_left {
+    margin-inline: 0 calc(25%);
 }

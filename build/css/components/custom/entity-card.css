@@ -1,0 +1,78 @@
+entity-card {
+    & > a {
+        align-items: center;
+        background-color: var(--color_block);
+        block-size: 2rem;
+        border-color: var(--border_color_outset);
+        display: inline-flex;
+        flex-flow: row wrap;
+        inline-size: 12rem;
+        margin: 0.2rem;
+        padding: 0;
+        place-content: center space-evenly;
+
+        &:active,
+        &:focus,
+        &:hover {
+            border-color: var(--color_interactive);
+        }
+    }
+
+    & .entity_icon {
+        block-size: 2rem;
+        display: block;
+        float: inline-start;
+        inline-size: 2rem;
+        line-height: 2rem;
+        text-align: center;
+
+        & img {
+            block-size: 100%;
+            border-end-start-radius: calc(var(--border_radius) - var(--border_width));
+            border-start-start-radius: calc(var(--border_radius) - var(--border_width));
+            inline-size: 100%;
+            object-fit: cover;
+            object-position: left top;
+            overflow: hidden;
+            vertical-align: top;
+        }
+    }
+
+    & .entity_arrow {
+        block-size: 2rem;
+        display: block;
+        float: inline-start;
+        font-size: 1.5rem;
+        inline-size: 1.2rem;
+        line-height: 2rem;
+        text-align: end;
+    }
+
+    & .entity_name {
+        block-size: 2rem;
+        border-inline-end: 0.1rem solid var(--border_dark);
+        border-inline-start: 0.1rem solid var(--border_light);
+        color: var(--color_text);
+        display: block;
+        float: inline-start;
+        font-size: smaller;
+        font-weight: 400;
+        inline-size: calc(100% - 3.5rem);
+        line-height: 1.025rem;
+        overflow: hidden;
+        padding-inline-start: 0.1rem;
+        text-overflow: clip;
+        word-break: normal;
+    }
+
+    & .entity_rank {
+        block-size: 1.5rem;
+        display: block;
+        float: inline-start;
+        font-size: smaller;
+        line-height: 1.025rem;
+        overflow: hidden;
+        padding-inline-start: 0.1rem;
+        text-overflow: clip;
+    }
+}

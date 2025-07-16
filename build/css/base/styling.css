@@ -1,0 +1,36 @@
+/* Styling for elements that are used (mostly) for styling purposes */
+b, strong {
+    font-weight: 700;
+}
+
+small {
+    font-size: 80%;
+}
+
+del, s {
+    text-decoration: line-through;
+}
+
+del {
+    background-color: var(--color_failure);
+    color: var(--color_article);
+}
+
+mark {
+    background-color: var(--color_warning);
+    color: var(--color_article);
+}
+
+ins {
+    background-color: var(--color_success);
+    color: var(--color_article);
+}
+
+time, em {
+    font-style: italic;
+}
+
+output {
+    font-family: var(--font_mono);
+    text-decoration: underline dotted 0.1rem var(--color_success);
+}

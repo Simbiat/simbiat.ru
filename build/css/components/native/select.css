@@ -1,0 +1,101 @@
+/* Styling select, optgroup and option elements */
+select {
+    appearance: none;
+    background-color: var(--color_article);
+    block-size: auto;
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    color: var(--color_text);
+    cursor: pointer;
+    font: inherit; /* Add typography inheritance in all browsers */
+    font-size: 100%;
+    letter-spacing: inherit; /* Add typography inheritance in all browsers */
+    line-height: 1.15rem;
+    margin: 0.5rem 0 0;
+    max-inline-size: 100%;
+    min-inline-size: 15ch;
+    padding: 0.25em 0.5em;
+    text-transform: none;
+}
+
+/**
+ * Don't show the arrow for multiple choice selects
+ */
+:where(select[multiple]) {
+    background-image: none;
+}
+
+/* Visually hide placeholder since we are using label instead of it */
+select::placeholder {
+    opacity: 0%;
+}
+
+/* Style label when placeholder is shown. Essentially place it instead of placeholder. */
+select + label {
+    color: var(--color_interactive);
+    cursor: text;
+    display: block;
+    position: absolute;
+    touch-action: manipulation;
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+select:placeholder-shown + label {
+    inset-inline-start: 1rem;
+    transform: translate(0.5rem, -1.75rem) scale(1.25);
+    transform-origin: left bottom;
+}
+
+select:not(:placeholder-shown) + label,
+select:focus + label {
+    inset-block-start: -0.25rem;
+    inset-inline-start: 1rem;
+}
+
+select:disabled + label {
+    color: var(--color_disabled);
+    cursor: not-allowed;
+    user-select: none;
+}
+
+select:not(:placeholder-shown) + label {
+    cursor: default;
+    filter: var(--border_shadow);
+    transform: translate(-0.5rem, -0.1rem) scale(1);
+}
+
+select:active,
+select:focus,
+select:focus-within,
+select:hover {
+    border-color: var(--border_color_outset);
+    filter: var(--border_shadow);
+    outline: none;
+}
+
+option {
+    border-radius: calc(var(--border_radius) / 2);
+}
+
+optgroup {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15rem;
+    margin: 0;
+    text-transform: none;
+}
+
+select:disabled,
+select:disabled:active,
+select:disabled:hover,
+select:disabled:focus,
+select:disabled:focus-within {
+    border-color: var(--color_disabled);
+    color: var(--color_disabled);
+    cursor: not-allowed;
+    filter: blur(0.025rem) grayscale(1);
+    user-select: none;
+}

@@ -1,0 +1,15 @@
+/* Classes controlling floating */
+.float_left {
+    float: inline-start;
+}
+
+.float_right {
+    float: inline-end;
+}
+
+.clear::after {
+    block-size: 0;
+    clear: both;
+    content: ' ';
+    display: block;
+}

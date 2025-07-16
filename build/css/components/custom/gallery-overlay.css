@@ -1,0 +1,33 @@
+gallery-overlay {
+    background-color: var(--color_body);
+    margin: 0;
+
+    & #gallery_grid {
+        display: grid;
+        gap: 0;
+        grid-template:
+        'gallery_previous gallery_name_block gallery_next' 3rem
+        'gallery_previous gallery_image gallery_next' calc(100vb - 9rem)
+        'gallery_previous gallery_counter gallery_next' 3rem
+        / 5rem calc(100vi - 15rem) 5rem;
+        opacity: 90%;
+    }
+
+    & #gallery_counter,
+    & #gallery_name_block {
+        background-color: var(--color_body);
+        line-height: 3rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    & #gallery_name_block {
+        font-weight: 700;
+        grid-area: gallery_name_block;
+    }
+
+    & #gallery_counter {
+        font-style: italic;
+        grid-area: gallery_counter;
+    }
+}

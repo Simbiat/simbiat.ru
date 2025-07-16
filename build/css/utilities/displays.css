@@ -1,0 +1,29 @@
+.inline {
+    display: inline;
+}
+
+.inline_block {
+    display: inline-block;
+}
+
+.block {
+    /* noinspection Stylelint */
+    display: block !important;
+}
+
+.flex {
+    /* noinspection Stylelint */
+    display: flex !important;
+}
+
+/* Hide visually and from screen readers */
+.hidden,
+[hidden] {
+    /* noinspection Stylelint */
+    display: none !important;
+}
+
+/* Hide visually and from screen readers, but maintain layout */
+.invisible {
+    visibility: hidden;
+}

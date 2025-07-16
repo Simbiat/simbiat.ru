@@ -1,0 +1,7 @@
+.mail_subscription:not(:checked) + label::after {
+    content: 'Subscribe';
+}
+
+.mail_subscription:checked + label::after {
+    content: 'Unsubscribe';
+}

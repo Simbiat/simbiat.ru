@@ -1,0 +1,66 @@
+/* Pagination styling */
+pagi-nation {
+    display: block;
+    unicode-bidi: isolate;
+
+    & ol {
+        display: block;
+        margin: auto;
+        text-align: center;
+    }
+
+    & li {
+        display: inline-block;
+    }
+
+    & a,
+    & span {
+        block-size: 2rem;
+        border-color: var(--color_interactive);
+        border-radius: var(--border_radius);
+        border-style: outset;
+        border-width: var(--border_width);
+        color: var(--color_interactive);
+        cursor: pointer;
+        display: inline-block;
+        line-height: 2rem;
+        margin: 0.25rem;
+        min-inline-size: 2rem;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    & a {
+        &:hover,
+        &:focus {
+            background-color: var(--color_block);
+        }
+    }
+
+    & li.pagination_current > a,
+    & li.pagination_current > span {
+        border-color: var(--color_success);
+        border-style: inset;
+        color: var(--color_success);
+        cursor: not-allowed;
+    }
+
+    & li.pagination_prev > a,
+    & li.pagination_next > a,
+    & li.pagination_first > a,
+    & li.pagination_last > a {
+        border-color: var(--color_interactive);
+        color: var(--color_interactive);
+        cursor: pointer;
+    }
+
+    & li.pagination_prev > span,
+    & li.pagination_next > span,
+    & li.pagination_first > span,
+    & li.pagination_last > span {
+        border-color: var(--color_disabled);
+        border-style: inset;
+        color: var(--color_disabled);
+        cursor: not-allowed;
+    }
+}

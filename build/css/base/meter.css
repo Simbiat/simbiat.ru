@@ -1,0 +1,40 @@
+meter {
+    block-size: 2rem;
+    position: relative;
+    -moz-user-modify: read-only;
+    -webkit-user-modify: read-only;
+
+    &::-webkit-meter-optimum-value,
+    &::-webkit-meter-suboptimum-value,
+    &::-webkit-meter-even-less-good-value {
+        border-radius: var(--border_radius);
+    }
+
+    &[value]::after {
+        color: var(--color_text);
+        content: attr(value) attr(data-unit);
+        filter: var(--border_shadow);
+        font-weight: 700;
+        inline-size: inherit;
+        inset-block-start: 0.25rem;
+        position: absolute;
+        text-align: center;
+    }
+
+    &::-webkit-meter-bar {
+        background-color: var(--color_article);
+        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+    }
+
+    &::-webkit-meter-optimum-value {
+        background-image: linear-gradient(to right, oklch(100% 0 89.876deg), var(--color_success), oklch(86.8% 0.156 144.088deg));
+    }
+
+    &::-webkit-meter-suboptimum-value {
+        background-image: linear-gradient(to right, oklch(100% 0 89.876deg), var(--color_warning), oklch(79.3% 0.171 70.67deg));
+    }
+
+    &::-webkit-meter-even-less-good-value {
+        background-image: linear-gradient(to right, oklch(100% 0 89.876deg), var(--color_failure), oklch(72.5% 0.138 21.029deg));
+    }
+}

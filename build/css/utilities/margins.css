@@ -1,0 +1,16 @@
+/* Classes controlling margins */
+.zero_margin {
+    margin: 0;
+}
+
+.bottom_margin {
+    margin-block-end: 2rem;
+}
+
+.margin_05rem {
+    margin: 0.5rem;
+}
+
+.margin_top_5rem {
+    margin-block-start: 5rem;
+}

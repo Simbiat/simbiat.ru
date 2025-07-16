@@ -1,0 +1,6 @@
+side-hide {
+    inset-block-start: 0.25rem;
+    inset-inline-end: 0;
+    position: absolute;
+    z-index: 4;
+}

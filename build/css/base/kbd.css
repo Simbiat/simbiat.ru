@@ -1,0 +1,24 @@
+/* Keyboard is based on https://github.com/auth0/kbd/blob/gh-pages/kbd.css */
+kbd {
+    background-color: var(--color_disabled);
+    border-radius: var(--border_radius);
+    box-shadow: 0.1rem 0.1rem 0.1rem oklch(56.9% 0 89.876deg);
+    color: var(--color_text);
+    cursor: default;
+    display: inline-block;
+    font-family: var(--font_mono);
+    font-size: 1rem;
+    font-variant: small-caps;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+    margin: 0.1rem;
+    padding: 0 0.25rem;
+    user-select: none;
+    vertical-align: text-bottom;
+
+    &:active,
+    &:active * {
+        box-shadow: 0.1rem 0.1rem 0 oklch(38.7% 0 89.876deg) inset;
+        color: oklch(0% 0 0deg);
+    }
+}

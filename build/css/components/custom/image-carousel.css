@@ -1,0 +1,142 @@
+/* Carousel of images */
+image-carousel {
+    background-color: var(--color_body);
+    block-size: 10rem;
+    border-radius: var(--border_radius);
+    display: grid;
+    gap: 0;
+    grid-template-areas:
+        'prev list next';
+    grid-template-columns: 4% 92% 4%;
+    place-content: center space-between;
+    place-items: center stretch;
+
+    & figure {
+        block-size: 10rem;
+        margin-inline: 0.25rem 0.25rem;
+
+        & > a {
+            block-size: 5rem;
+            border: none;
+            display: block;
+            position: relative;
+            text-decoration-line: underline;
+
+            & > img,
+            & > div {
+                block-size: 5rem;
+                inline-size: 10rem;
+                inset-block-start: 0.75rem;
+                inset-inline-start: 0;
+                position: absolute;
+            }
+
+            & > div {
+                background-color: var(--color_body);
+                color: var(--color_text);
+                filter: opacity(0.75);
+                font-weight: 700;
+                line-height: 5rem;
+                text-align: center;
+                vertical-align: middle;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    filter: opacity(.25);
+                }
+            }
+        }
+    }
+
+    /* `overflow` and `scrollbar-width` settings are required to hide scrollbar, but keep scroll functionality */
+
+    & > ul {
+        align-items: center;
+        display: flex;
+        flex-flow: row nowrap;
+        grid-area: list;
+        inline-size: 100%;
+        margin: 0;
+        overflow: auto hidden;
+        padding: 0;
+        place-content: center space-between;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        & li {
+            list-style: none;
+        }
+    }
+
+    & figcaption {
+        align-items: center;
+        block-size: 4rem;
+        display: flex;
+        flex-direction: column;
+        inline-size: 10rem;
+        justify-content: flex-start;
+        margin-block-start: 0.5rem;
+        overflow: clip;
+        text-align: center;
+        text-overflow: ellipsis;
+    }
+
+    & image-carousel-next {
+        border-end-end-radius: var(--border_radius);
+        border-start-end-radius: var(--border_radius);
+        grid-area: next;
+    }
+
+    & image-carousel-prev {
+        border-end-start-radius: var(--border_radius);
+        border-start-start-radius: var(--border_radius);
+        grid-area: prev;
+    }
+
+    & image-carousel-next,
+    & image-carousel-prev {
+        background-color: var(--color_body);
+        block-size: 10rem;
+        color: var(--color_interactive);
+        cursor: pointer;
+        display: block;
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: 10rem;
+        text-align: center;
+        user-select: none;
+
+        &:focus,
+        &:hover,
+        &:active {
+            background-color: var(--color_block);
+            border-color: var(--color_interactive);
+            border-style: solid;
+            border-width: var(--border_width);
+        }
+
+        &.disabled {
+            color: var(--color_disabled);
+            cursor: default;
+
+            &:active {
+                filter: brightness(1);
+            }
+
+            &:focus,
+            &:hover,
+            &:active {
+                background-color: var(--color_body);
+                border: none;
+            }
+        }
+
+        &:active {
+            filter: brightness(0.7);
+        }
+    }
+}

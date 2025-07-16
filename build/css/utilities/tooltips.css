@@ -1,0 +1,31 @@
+/* Style tooltips */
+[data-tooltip]:not(
+    [data-tooltip=''],
+    tool-tip,
+    q,
+    a.button,
+    input[type='button' i],
+    input[type='image' i],
+    h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+    .post_name a
+) {
+    cursor: help;
+    text-decoration: underline dotted 0.2rem;
+}
+
+/* This is to prevent use of help cursor for links and images inside links, unless it's intentionally setup */
+a[data-tooltip]:not([data-tooltip='']),
+a img[data-tooltip]:not([data-tooltip='']) {
+    cursor: revert;
+}
+
+/* This is for images that are used as kind of footnotes, that is they are normally next to text */
+img.tooltip_footnote {
+    block-size: 1rem;
+    color: var(--color_interactive);
+    cursor: pointer;
+    inline-size: 1rem;
+    inset-block-start: -0.3rem;
+    padding: 0.1rem;
+    position: relative;
+}

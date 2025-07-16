@@ -1,0 +1,21 @@
+dialog {
+    background-color: var(--color_body);
+    block-size: fit-content; /* Adjusting for Safari */
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    color: inherit;
+    inline-size: fit-content; /* Adjusting for Safari */
+    inset-inline: 0 0; /* Adjusting for Safari */
+    margin: auto; /* Adjusting for Safari */
+    padding: 0; /* Adjusting for Safari */
+
+    &::backdrop {
+        background-color: oklch(20% 0.022 296.868deg / 75%);
+    }
+
+    &:not([open]) {
+        display: none; /* Adjusting for Safari */
+    }
+}

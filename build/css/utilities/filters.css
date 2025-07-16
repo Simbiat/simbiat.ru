@@ -1,0 +1,42 @@
+/* Various classes changing filter attribute */
+.dimmed_70 {
+    filter: brightness(70%);
+
+    &:hover,
+    &:active,
+    &:focus {
+        filter: brightness(100%);
+    }
+
+    &.inverted_30 {
+        filter: brightness(70%) invert(30%);
+
+        &:hover,
+        &:active,
+        &:focus {
+            filter: brightness(100%) invert(100%);
+        }
+    }
+
+    &.inverted_100 {
+        filter: brightness(70%) invert(100%);
+
+        &:hover,
+        &:active,
+        &:focus {
+            filter: brightness(100%) invert(100%);
+        }
+    }
+}
+
+.inverted_30 {
+    filter: invert(30%);
+}
+
+.inverted_100 {
+    filter: invert(100%);
+}
+
+.sepia_100 {
+    filter: sepia(100%);
+}

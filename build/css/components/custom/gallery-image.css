@@ -1,0 +1,28 @@
+gallery-image {
+    grid-area: gallery_image;
+    overflow: auto;
+    position: relative;
+
+    & > #gallery_loaded_image {
+        block-size: auto;
+        cursor: zoom-in;
+        display: block;
+        inline-size: auto;
+        inset: 0 0 0 0;
+        margin: auto;
+        max-block-size: 100%;
+        max-inline-size: 100%;
+        position: absolute;
+
+        &.zoomed_in {
+            block-size: unset;
+            cursor: zoom-out;
+            max-block-size: unset;
+            max-inline-size: unset;
+        }
+
+        &.no_zoom {
+            cursor: default;
+        }
+    }
+}

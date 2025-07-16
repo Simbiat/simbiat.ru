@@ -1,0 +1,16 @@
+/* Widths in percents */
+.w100pc {
+    inline-size: 100%;
+}
+
+.w75pc {
+    inline-size: 75%;
+}
+
+.w50pc {
+    inline-size: 50%;
+}
+
+.w25pc {
+    inline-size: 25%;
+}

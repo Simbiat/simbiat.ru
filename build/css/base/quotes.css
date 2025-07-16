@@ -1,0 +1,106 @@
+/* Styling of quote-related elements: q, blockquote, cite, abbr */
+cite {
+    font-style: italic;
+
+    &::before {
+        content: '❠';
+        margin-inline-start: 0.25rem;
+        padding-inline-end: 0.1rem;
+    }
+
+    &::after {
+        content: '❝';
+        margin-inline-end: 0.25rem;
+        padding-inline-start: 0.1rem;
+    }
+}
+
+blockquote {
+    background-color: var(--color_block);
+    block-size: fit-content;
+    border: calc(var(--border_width) * 1.5) dashed;
+    border-color: var(--border_color_inset);
+    border-inline-start: calc(var(--border_width) * 2) solid var(--color_disabled);
+    border-radius: var(--border_radius);
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0.5rem;
+    overflow-wrap: anywhere;
+    padding: 1rem;
+    position: relative;
+    word-wrap: break-word;
+
+    /* If not doing this override the elements will create horizontal scrolling because of the margins */
+
+    &.w100pc {
+        inline-size: calc(100% - 1rem);
+    }
+
+    &::before {
+        color: var(--color_disabled);
+        content: '❠';
+        font-size: 2rem;
+        font-style: italic;
+        inset-block-start: -1.75rem;
+        inset-inline-start: 0.25rem;
+        padding-inline-end: 0.1rem;
+        position: absolute;
+    }
+
+    &::after {
+        color: var(--color_disabled);
+        content: '❝';
+        font-size: 2rem;
+        font-style: italic;
+        inset-block-end: -1.25rem;
+        inset-inline-end: 0.5rem;
+        padding-inline-start: 0.1rem;
+        position: absolute;
+    }
+
+    & > .quote_author {
+        color: var(--color_disabled);
+        font-size: 1rem;
+        font-style: italic;
+        inline-size: fit-content;
+        inset-block-start: -0.25rem;
+        inset-inline-start: 1.5rem;
+        overflow: hidden;
+        position: absolute;
+        text-overflow: ellipsis;
+        text-wrap: wrap;
+        white-space: nowrap;
+
+        &::after {
+            content: ':';
+        }
+    }
+}
+
+q {
+    background-color: var(--color_body);
+    border: calc(var(--border_width) * 2) dotted var(--color_disabled);
+    border-block-end: none;
+    border-block-start: none;
+    cursor: pointer;
+    font-style: italic;
+    padding-inline: 0.3rem 0.3rem;
+
+    &::before {
+        color: var(--color_disabled);
+        content: '❠';
+        padding-inline-end: 0.1rem;
+    }
+
+    &::after {
+        color: var(--color_disabled);
+        content: '❝';
+        padding-inline-start: 0.1rem;
+    }
+}
+
+/* Add the correct text decoration in Safari */
+:where(abbr[title]) {
+    text-decoration: underline dotted;
+}

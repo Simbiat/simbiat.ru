@@ -1,0 +1,27 @@
+gallery-next {
+    background-color: var(--color_body);
+    color: var(--color_interactive);
+    cursor: pointer;
+    font-size: 5rem;
+    font-weight: 900;
+    grid-area: gallery_next;
+    inline-size: 5rem;
+    line-height: calc(100vb - 5rem);
+    text-align: center;
+    user-select: none;
+    vertical-align: middle;
+
+    &:focus:not(.disabled),
+    &:hover:not(.disabled) {
+        filter: brightness(2);
+    }
+
+    &:active:not(.disabled) {
+        filter: brightness(0.7);
+    }
+
+    &.disabled {
+        color: var(--color_disabled);
+        cursor: default;
+    }
+}

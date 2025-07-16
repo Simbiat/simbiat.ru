@@ -1,0 +1,40 @@
+/* Styling of composition elements */
+article {
+    background-color: var(--color_article);
+    border-color: var(--border_color_inset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    padding: 0.5rem;
+    scroll-padding: 1rem 0 0; /* Helps with auto-scroll positioning (when using anchors) */
+
+    & + article {
+        margin-block-start: 1.5rem;
+    }
+}
+
+p {
+    margin: 0.25rem;
+    text-indent: 1.5rem;
+
+    & + p {
+        margin-block-start: 0.25rem;
+    }
+
+    &::first-letter {
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+}
+
+hr {
+    block-size: 1px;
+    border-color: var(--border_light);
+    border-radius: var(--border_radius);
+    border-width: var(--border_width);
+    box-sizing: content-box; /* Add the correct box sizing in Firefox */
+    color: inherit; /* Correct the inheritance of border color in Firefox */
+    display: block;
+    margin: 1em 0;
+    padding: 0;
+}

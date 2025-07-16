@@ -1,0 +1,69 @@
+progress {
+    background-color: var(--color_article);
+    block-size: 1.25rem;
+    border-color: var(--border_color_inset);
+    border-style: solid;
+    border-width: var(--border_width);
+    box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+    position: relative;
+    vertical-align: baseline;
+
+    &::-moz-progress-bar {
+        appearance: none;
+        background-color: var(--color_article);
+        background-image: linear-gradient(to right, var(--color_failure), var(--color_success));
+        border-radius: var(--border_radius);
+        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+    }
+
+    &:indeterminate::-moz-progress-bar {
+        background-image: none;
+    }
+
+    &:not(:indeterminate) {
+        border-color: var(--border_color_inset);
+        border-style: solid;
+        border-width: var(--border_width);
+    }
+
+    &:indeterminate {
+        block-size: 1.25rem;
+        border-color: transparent;
+    }
+
+    &[value],
+    &:not([value]),
+    &::-webkit-progress-bar,
+    &::-webkit-progress-value {
+        appearance: none;
+        border-radius: var(--border_radius);
+    }
+
+    &[value]::-webkit-progress-value {
+        background-image: linear-gradient(to right, var(--color_failure), var(--color_success));
+        /* Suppressing inspection for transition: progress-value is limited in styling and looks like only `width` can work with it */
+        /* noinspection Stylelint */
+        transition: inline-size 0.5s;
+    }
+
+    &[value]::after {
+        color: var(--color_text);
+        content: attr(value) '%';
+        filter: var(--border_shadow);
+        font-weight: 700;
+        inline-size: inherit;
+        inset-block-start: -0.25rem;
+        position: absolute;
+        text-align: center;
+    }
+
+    &::-webkit-progress-bar {
+        background-color: var(--color_article);
+        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        padding: 0.1rem;
+    }
+
+    &:not([value]) {
+        border-color: var(--color_disabled);
+    }
+}

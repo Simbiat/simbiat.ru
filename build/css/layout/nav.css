@@ -1,0 +1,202 @@
+/* Remove the list style on navigation lists in all browsers */
+nav ol,
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Prevent VoiceOver from ignoring list semantics in Safari */
+nav li::before {
+    content: '\200B';
+    float: inline-start;
+}
+
+#footer_contacts {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    font-size: 0.7rem;
+    margin-block-end: 3rem;
+    place-content: center center;
+
+    &.link_icon {
+        block-size: 1.5rem;
+        inline-size: 1.5rem;
+    }
+}
+
+#navigation {
+    block-size: 100vb;
+    border: solid var(--border_width);
+    border-block-end: none;
+    border-block-start: none;
+    border-color: var(--border_color_inset);
+    border-inline-start: none;
+    border-radius: 0 var(--border_radius) 0 var(--border_radius);
+    display: flex;
+    flex-direction: column;
+    inline-size: var(--sidebar_width);
+    inset-inline-start: 0;
+    margin-inline-end: var(--sidebar_margin);
+    position: fixed;
+    z-index: 1;
+}
+
+#nav_list {
+    align-items: flex-start;
+    block-size: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    inline-size: 100%;
+    list-style: none;
+    margin: 5rem 0 0;
+    overflow: hidden auto;
+    padding: 0;
+    position: relative;
+
+    & .nav_element.li_bread {
+        block-size: auto;
+    }
+}
+
+.nav_element {
+    border-color: transparent;
+    border-radius: var(--border_radius);
+    border-style: outset;
+    border-width: 0.1rem;
+    inline-size: calc(100% - 0.2rem);
+
+    &:hover, &:active, &:focus, &:focus-within {
+        border-color: var(--color_interactive);
+        outline: none;
+        text-decoration: none;
+    }
+}
+
+#nav_list .nav_element:hover,
+#nav_list .nav_element:active,
+#nav_list .nav_element:focus {
+    background-color: var(--color_article);
+}
+
+.nav_icon {
+    block-size: 2rem;
+    inline-size: 2rem;
+    margin: 0.1rem 0.4rem 0.4em 0.1rem;
+}
+
+.nav_element details {
+    display: inline-block;
+    inline-size: calc(100% - 0.2rem);
+}
+
+.nav_line {
+    cursor: pointer;
+}
+
+.nav_item {
+    display: inline-block;
+    inline-size: 100%;
+    min-block-size: 2rem;
+    vertical-align: middle;
+}
+
+.nav_cat {
+    border-radius: var(--border_radius);
+    padding: .1rem;
+    text-decoration: underline var(--color_interactive);
+
+    &:focus-within, &:hover, &:active, &[open] {
+        background-color: var(--color_article);
+        text-decoration: none;
+    }
+
+    & summary {
+        inline-size: calc(100% - 0.2rem);
+
+        &:hover, &:active, &:focus, &:focus-within {
+            outline: none;
+            text-decoration: none;
+        }
+    }
+
+    & ul {
+        list-style-type: '🍙';
+        padding-inline-start: 3.5rem;
+
+        & li .nav_item {
+            box-sizing: border-box;
+        }
+
+        & .current {
+            list-style-type: '🍘';
+
+            & a {
+                font-style: italic;
+                font-weight: 400;
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+.nav_line:hover .nav_icon,
+.nav_line:active .nav_icon,
+.nav_line:focus .nav_icon,
+.nav_line details[open] .nav_icon {
+    filter: brightness(200%) contrast(70%);
+}
+
+.nav_bread {
+    margin-block-start: -0.75rem;
+    margin-inline-start: 2.75rem;
+}
+
+.nav_bread:hover,
+.nav_bread:focus-within,
+.nav_bread:active,
+#nav_list .nav_element.li_bread:hover,
+#nav_list .nav_element.li_bread:focus-within,
+#nav_list .nav_element.li_bread:active {
+    background-color: inherit;
+    border-color: transparent;
+    cursor: default;
+}
+
+nav[aria-label='breadcrumb 1' i],
+#ol_breadcrumbs_1 li {
+    display: inline-block;
+}
+
+nav[aria-label='breadcrumb 1' i] {
+    font-size: 0.6rem;
+    inline-size: 100%;
+}
+
+#ol_breadcrumbs_1 {
+    display: inline-flex;
+    flex-flow: row wrap;
+    padding-inline-start: 0;
+
+    & li:first-child {
+        display: none;
+    }
+
+    & li:last-child a {
+        font-weight: 400;
+        text-decoration: none;
+    }
+
+    & li::before {
+        content: '❮';
+        display: inline-block;
+        font-weight: 700;
+        margin-inline-end: 0.1rem;
+    }
+
+    & li:nth-child(2)::before {
+        display: inline-block;
+        transform: rotate(90deg);
+    }
+}

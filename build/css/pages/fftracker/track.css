@@ -1,0 +1,16 @@
+/* Styling of elements specific page where you add entities to tracker */
+#ff_track_id,
+#ff_track_type {
+    inline-size: 22rem;
+}
+
+#ff_track_id_wrap,
+#ff_track_type_wrap {
+    display: block;
+    inline-size: 22rem;
+}
+
+#ff_track_submit {
+    display: block;
+    margin: auto;
+}

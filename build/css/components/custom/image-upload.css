@@ -1,0 +1,9 @@
+/* Styling custom image upload */
+image-upload {
+    display: block;
+
+    & img {
+        display: block;
+        inline-size: 10rem;
+    }
+}

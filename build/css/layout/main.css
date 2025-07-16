@@ -1,0 +1,19 @@
+main {
+    border-radius: var(--border_radius);
+    flex: 1;
+    inline-size: 100vi;
+    max-inline-size: var(--content_width);
+
+    &::-webkit-scrollbar {
+        margin-inline-start: 2rem;
+    }
+}
+
+#content {
+    align-items: center;
+    block-size: 100vb;
+    display: flex;
+    flex-flow: column nowrap;
+    margin: 0 auto;
+    position: relative;
+}

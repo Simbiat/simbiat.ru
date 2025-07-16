@@ -1,0 +1,61 @@
+/* Styling of table elements */
+table {
+    border-collapse: collapse; /* Collapse border spacing in all browsers */
+    border-color: currentcolor; /* Correct table border color in Chrome, Edge, and Safari. This more of a failback. */
+    border-spacing: 0;
+    inline-size: 100%;
+    overflow-wrap: anywhere;
+    table-layout: fixed;
+    text-indent: 0; /* Remove text indentation from table contents in Chrome, Edge, and Safari. */
+    word-break: normal;
+
+    & thead,
+    & tfoot,
+    & th {
+        background-color: var(--color_block);
+        font-weight: 700;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    & tr th,
+    & tr td {
+        border-block-end: var(--border_width) solid var(--border_light);
+        border-inline-end: var(--border_width) solid var(--border_light);
+
+        &:last-child {
+            border-inline-end: var(--border_width) solid var(--border_dark);
+        }
+
+        &:first-child {
+            border-inline-start: var(--border_width) solid var(--border_light);
+        }
+    }
+
+    & tr:first-child td,
+    & tr:first-child th {
+        border-block-start: var(--border_width) solid var(--border_light);
+    }
+
+    & tr:last-child td,
+    & tr:last-child th {
+        border-block-end: var(--border_width) solid var(--border_dark);
+    }
+
+    /* Handle thead and tfoot borders */
+
+    & thead tr:last-child th,
+    & thead tr:last-child td {
+        border-block-end: var(--border_width) solid var(--border_light);
+    }
+
+    & tfoot tr:first-child th,
+    & tfoot tr:first-child td {
+        border-block-start: var(--border_width) solid var(--border_light);
+    }
+
+    & caption {
+        font-style: italic;
+        font-weight: 700;
+    }
+}

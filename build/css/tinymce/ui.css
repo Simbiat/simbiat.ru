@@ -1,179 +1,245 @@
-/*Override for UI*/
+/* Override for UI */
 .tox:not(.tox-tinymce-inline) .tox-editor-header,
 .tox .tox-menubar,
 .tox .tox-toolbar,
 .tox .tox-toolbar__overflow,
 .tox .tox-toolbar__primary {
-    background-color: var(--color-block)!important;
+    background-color: var(--color_block) !important;
 }
+
+/* noinspection SpellCheckingInspection */
 .tox .tox-tbtn--bespoke,
 .tox .tox-menu {
-    background-color: var(--color-article)!important;
+    background-color: var(--color_article) !important;
 }
+
 .tox .tox-collection--list .tox-collection__item--active {
-    background-color: var(--color-block)!important;
+    background-color: var(--color_block) !important;
+
+    &:not(.tox-collection__item--state-disabled) {
+        color: var(--color_success) !important;
+    }
 }
-.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled) {
-    color: var(--color-success)!important;
-}
+
 .tox .tox-collection--list .tox-collection__item--enabled {
-    background-color: var(--color-block)!important;
-    color: var(--color-success)!important;
+    background-color: var(--color_block) !important;
+    color: var(--color_success) !important;
 }
+
 .tox-tinymce {
-    border-width: var(--border-width)!important;
-    border-radius: var(--border-radius)!important;
-    border-style: solid!important;
-    border-color: var(--border-color-inset)!important;
-    font-family: var(--font-sans)!important;
+    border-color: var(--border_color_inset) !important;
+    border-radius: var(--border_radius) !important;
+    border-style: solid !important;
+    border-width: var(--border_width) !important;
+    font-family: var(--font_sans) !important;
 }
-#tox-icon-text-color__color[fill='#000000'] {
-    fill: var(--color-text)!important;
+
+#tox-icon-text-color__color[fill='#000000' i] {
+    fill: var(--color_text) !important;
 }
-#tox-icon-highlight-bg-color__color[fill='#000000'] {
-    fill: var(--color-article)!important;
+
+#tox-icon-highlight-bg-color__color[fill='#000000' i] {
+    fill: var(--color_article) !important;
 }
-.tox .tox-mbtn:hover:not(:disabled):not(.tox-mbtn--active),
+
+/* noinspection SpellCheckingInspection */
+.tox .tox-mbtn {
+    color: var(--color_interactive) !important;
+}
+
+/* noinspection SpellCheckingInspection */
+.tox .tox-mbtn:hover:not(:disabled, .tox-mbtn--active),
 .tox .tox-mbtn--active,
 .tox .tox-tbtn:hover,
 .tox .tox-split-button:focus {
-    background: var(--color-block)!important;
-    color: var(--color-interactive)!important;
+    background: var(--color_block) !important;
+    color: var(--color_interactive) !important;
+    filter: var(--border_shadow) !important;
 }
-.tox .tox-split-button:hover {
-    box-shadow: 0 0 0 1px var(--border-light) inset!important;
+
+/* noinspection SpellCheckingInspection */
+.tox .tox-tbtn svg {
+    fill: var(--color_interactive) !important;
 }
-.tox .tox-split-button .tox-tbtn {
-    background-color: transparent!important;
+
+/* noinspection SpellCheckingInspection */
+.tox .tox-tbtn--enabled svg {
+    fill: var(--color_success) !important;
 }
-.tox .tox-tbtn--enabled,
-.tox .tox-tbtn--enabled:hover {
-    background: var(--color-article)!important;
-    color: var(--color-success)!important;
-}
+
+/* noinspection SpellCheckingInspection */
 .tox .tox-tbtn--enabled svg,
 .tox .tox-tbtn--enabled:hover svg {
-    fill: var(--color-success)!important;
+    fill: var(--color_success) !important;
 }
-.tox .tox-tbtn svg {
-    fill: var(--color-interactive)!important;
+
+.tox .tox-tbtn .tox-icon:hover,
+.tox .tox-tbtn .tox-icon svg:hover,
+.tox .tox-tbtn .tox-icon svg path:hover,
+.tox .tox-mbtn .tox-mbtn__select-label:hover,
+.tox .tox-mbtn .tox-mbtn__select-chevron:hover,
+.tox .tox-mbtn .tox-mbtn__select-chevron svg:hover,
+.tox .tox-mbtn .tox-mbtn__select-chevron svg path:hover {
+    filter: unset !important;
 }
-.tox .tox-mbtn {
-    color: var(--color-interactive)!important;
+
+.tox .tox-split-button:hover {
+    box-shadow: 0 0 0 1px var(--border_light) inset !important;
 }
-.tox .tox-tbtn--enabled svg {
-    fill: var(--color-success)!important;
+
+/* noinspection SpellCheckingInspection */
+.tox .tox-split-button .tox-tbtn {
+    background-color: transparent !important;
 }
+
+/* noinspection SpellCheckingInspection */
+.tox .tox-tbtn--enabled,
+.tox .tox-tbtn--enabled:hover {
+    background: var(--color_article) !important;
+    color: var(--color_success) !important;
+}
+
 .tox .tox-dialog {
-    background-color: var(--color-block)!important;
-    color: var(--color-text)!important;
-    border-width: var(--border-width)!important;
-    border-style: solid!important;
-    border-color: var(--border-color-outset)!important;
+    background-color: var(--color_block) !important;
+    border-color: var(--border_color_outset) !important;
+    border-style: solid !important;
+    border-width: var(--border_width) !important;
+    color: var(--color_text) !important;
 }
+
 .tox .tox-dialog__header,
 .tox-dialog__footer {
-    background-color: var(--color-body)!important;
-    color: var(--color-text)!important;
+    background-color: var(--color_body) !important;
+    color: var(--color_text) !important;
 }
+
+.tox button,
+.tox [role='button' i],
+.tox button span,
+.tox button div {
+    cursor: pointer !important;
+}
+
 .tox .tox-button {
-    background-color: var(--color-article)!important;
-    border-style: solid!important;
-    border-width: var(--border-width)!important;
-    border-radius: var(--border-radius)!important;
-    border-color: var(--border-color-outset)!important;
-    outline: none!important;
-    box-sizing: border-box!important;
-    height: clamp(1.5rem, 2rem, 2.5rem)!important;
-    color: var(--color-interactive)!important;
-    font-weight: bold!important;
-    margin: 0.5rem!important;
-    cursor: pointer!important;
-    line-height: unset!important;
+    background-color: var(--color_article) !important;
+    block-size: clamp(1.5rem, 2rem, 2.5rem) !important;
+    border-color: var(--border_color_outset) !important;
+    border-radius: var(--border_radius) !important;
+    border-style: solid !important;
+    border-width: var(--border_width) !important;
+    box-sizing: border-box !important;
+    color: var(--color_interactive) !important;
+    cursor: pointer !important;
+    font-weight: 700 !important;
+    line-height: unset !important;
+    margin: 0.5rem !important;
+    outline: none !important;
 }
+
 .tox .tox-dialog__body-nav-item {
-    color: var(--color-interactive)!important;
+    color: var(--color_interactive) !important;
 }
+
 .tox .tox-dialog__body-nav-item--active {
-    color: var(--color-success)!important;
-    border-bottom: var(--border-width) solid var(--color-success)!important;
+    border-block-end: var(--border_width) solid var(--color_success) !important;
+    color: var(--color_success) !important;
 }
+
 .tox .tox-dialog__body-content {
-    color: var(--color-text)!important;
+    color: var(--color_text) !important;
+
+    & a {
+        border-color: transparent !important;
+        border-radius: var(--border_radius) !important;
+        border-style: outset !important;
+        border-width: var(--border_width) !important;
+        color: var(--color_interactive) !important;
+        cursor: pointer !important;
+        font-weight: 700 !important;
+        outline: none !important;
+        padding: 0.1rem !important;
+        text-decoration: none !important;
+
+        &:link {
+            text-decoration-line: underline !important;
+        }
+
+        &:visited {
+            border-style: inset !important;
+            text-decoration: none !important;
+        }
+
+        &:hover,
+        &:focus,
+        &:active {
+            border-color: var(--color_interactive) !important;
+            text-decoration: none !important;
+        }
+
+        &:active {
+            filter: brightness(0.7) !important;
+        }
+    }
 }
-.tox .tox-dialog__body-content a {
-    color: var(--color-interactive)!important;
-    font-weight: bold!important;
-    text-decoration: none!important;
-    cursor: pointer!important;
-    border-style: outset!important;
-    border-radius: var(--border-radius)!important;
-    border-color: transparent!important;
-    padding: 0.1rem!important;
-    border-width: var(--border-width)!important;
-    outline: none!important;
-}
-.tox .tox-dialog__body-content a:link {
-    text-decoration-line: underline!important;
-}
-.tox .tox-dialog__body-content a:visited {
-    text-decoration: none!important;
-    border-style: inset!important;
-}
-.tox .tox-dialog__body-content a:hover,
-.tox .tox-dialog__body-content a:focus,
-.tox .tox-dialog__body-content a:active {
-    text-decoration: none!important;
-    border-color: var(--color-interactive)!important;
-}
-.tox .tox-dialog__body-content a:active {
-    filter: brightness(0.7)!important;
-}
+
 .tox-textarea {
-    background-color: var(--color-article)!important;
-    color: var(--color-text)!important;
-    border-width: var(--border-width)!important;
-    border-radius: var(--border-radius)!important;
-    border-style: solid!important;
-    border-color: var(--border-color-inset)!important;
+    background-color: var(--color_article) !important;
+    border-color: var(--border_color_inset) !important;
+    border-radius: var(--border_radius) !important;
+    border-style: solid !important;
+    border-width: var(--border_width) !important;
+    color: var(--color_text) !important;
+
+    &:hover {
+        filter: var(--border_shadow) !important;
+        outline: none !important;
+    }
+
+    &:focus, &:active {
+        border-color: var(--border_color_inset) !important;
+        filter: var(--border_shadow) !important;
+        outline: none !important;
+    }
+
+    &::-webkit-resizer {
+        border-end-end-radius: var(--border_radius) !important;
+        border-start-start-radius: var(--border_radius) !important;
+    }
 }
-.tox-textarea:hover {
-    outline: none!important;
-    filter: var(--border-shadow)!important;
+
+.mce-content-body [data-mce-selected='inline-boundary' i] {
+    background-color: var(--color_block) !important;
+    filter: brightness(1.25) !important;
 }
-.tox-textarea:focus, .tox-textarea:active {
-    outline: none!important;
-    border-color: var(--border-color-inset)!important;
-    filter: var(--border-shadow)!important;
-}
-.tox-textarea::-webkit-resizer {
-    border-bottom-right-radius: var(--border-radius)!important;
-    border-top-left-radius: var(--border-radius)!important;
-}
-.mce-content-body [data-mce-selected=inline-boundary] {
-    background-color: var(--color-block)!important;
-    filter: brightness(1.25)!important;
-}
+
 .mce-content-body audio[data-mce-selected],
 .mce-content-body embed[data-mce-selected],
 .mce-content-body img[data-mce-selected],
 .mce-content-body object[data-mce-selected],
 .mce-content-body table[data-mce-selected],
 .mce-content-body video[data-mce-selected] {
-    outline: none!important;
     filter: brightness(1.25);
+    outline: none !important;
 }
+
+/* noinspection SpellCheckingInspection */
 .mce-content-body div.mce-resizehandle {
-    background-color: var(--color-interactive)!important;
-    border-color:     var(--color-interactive)!important;
+    background-color: var(--color_interactive) !important;
+    border-color: var(--color_interactive) !important;
 }
+
 .tox-dropzone {
-    background-color: var(--color-article)!important;
-    border-color: var(--color-interactive)!important;
+    background-color: var(--color_article) !important;
+    border-color: var(--color_interactive) !important;
 }
-/*By default TineMCE spawns a block, that behaves badly with body having `display: grid`.
-Adding a `grid-area` seems to fix it. We also style the cursor here*/
-body>div.tox.tox-silver-sink.tox-tinymce-aux {
-    grid-area: tiny-sink;
+
+/* By default TineMCE spawns a block, that behaves badly with body having `display: grid`.
+Adding a `grid-area` seems to fix it. We also style the cursor here */
+body > div.tox.tox-silver-sink.tox-tinymce-aux {
     cursor: pointer;
+    grid-area: tiny-sink;
+}
+
+.tox-promotion {
+    background-color: transparent !important;
 }

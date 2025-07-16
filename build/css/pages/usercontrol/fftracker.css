@@ -1,0 +1,22 @@
+/* Styling of FFXIV characters' page */
+#linked_characters {
+    margin-block-start: 2rem;
+}
+
+.ff_owned_block {
+    display: grid;
+    grid-template-areas:
+            'char groups';
+}
+
+.ff_owned_char {
+    grid-area: char;
+}
+
+.ff_owned_groups {
+    grid-area: groups;
+}
+
+#ff_link_user {
+    text-align: center;
+}

@@ -1,0 +1,48 @@
+/* Styling input types checkbox and radio */
+input[type='checkbox' i],
+input[type='radio' i] {
+    cursor: pointer;
+    display: none;
+
+    & + label {
+        cursor: pointer;
+
+        &::before {
+            color: var(--color_interactive);
+            font-family: var(--font_mono);
+            font-weight: 900;
+            margin-inline-end: 0.25rem;
+            /* Maxes the symbol bolder */
+            text-shadow: 0.02rem 0.02rem var(--color_interactive);
+        }
+
+        &:focus::before,
+        &:hover::before,
+        &:active::before {
+            filter: var(--border_shadow);
+        }
+    }
+
+    &:disabled + label::before {
+        color: var(--color_disabled);
+        cursor: not-allowed;
+        filter: blur(0.025rem) grayscale(1);
+        user-select: none;
+    }
+}
+
+input[type='checkbox' i]:checked + label::before {
+    content: '☑';
+}
+
+input[type='checkbox' i]:not(:checked) + label::before {
+    content: '☐';
+}
+
+input[type='radio' i]:checked + label::before {
+    content: '⦿';
+}
+
+input[type='radio' i]:not(:checked) + label::before {
+    content: '◯';
+}

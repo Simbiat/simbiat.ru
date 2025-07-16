@@ -1,0 +1,42 @@
+/* Styling of elements for About Me page */
+#about_me_photo {
+    block-size: 8rem;
+    border-radius: 50%;
+    filter: var(--border_shadow);
+    inline-size: 8rem;
+    margin: 1rem;
+}
+
+#about_me_hi_there {
+    font-size: xx-large;
+    font-weight: 900;
+    padding: 1rem;
+}
+
+#about_me_intro {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+
+    /* For some reason without this the link with the image get squished by flex box. Needs to be applied to anchor, since image is one level below */
+
+    & > a {
+        flex-shrink: 0;
+    }
+}
+
+@counter-style medals_list {
+    suffix: ' ';
+    symbols: 🥇 🥈 🥉;
+    system: fixed;
+}
+
+.medals_list {
+    list-style-type: medals_list;
+}
+
+/* Required so to style the header used in details' summary, so that the arrow does not get to next line, and so that the color is different */
+#about_me_other_projects {
+    color: var(--color_text);
+    display: inline;
+}

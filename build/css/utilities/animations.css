@@ -1,0 +1,65 @@
+@keyframes anchor-flash {
+    from {
+        /* Do not see a better alternative for desired effect */
+        /* noinspection Stylelint */
+        background: var(--color_interactive);
+    }
+
+    to {
+        /* Do not see a better alternative for desired effect */
+        /* noinspection Stylelint */
+        background: inherit;
+    }
+}
+
+@keyframes timeline-flash {
+    from {
+        /* Do not see a better alternative for desired effect */
+        /* noinspection Stylelint */
+        background: var(--color_interactive);
+    }
+
+    to {
+        /* Do not see a better alternative for desired effect */
+        /* noinspection Stylelint */
+        background: var(--color_block);
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0%;
+    }
+
+    to {
+        opacity: 100%;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        opacity: 100%;
+    }
+
+    to {
+        opacity: 0%;
+    }
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.fade_in {
+    animation: fadein 0.5s;
+}
+
+.fade_out {
+    animation: fadeout 0.5s;
+}
+
+.spin {
+    animation: spin 4s linear infinite;
+}

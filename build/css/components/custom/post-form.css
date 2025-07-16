@@ -1,0 +1,33 @@
+post-form {
+    display: block;
+    margin-block-start: 1rem;
+
+    & #post_form_submit {
+        inline-size: 98%;
+    }
+
+    & #post_form_submit_wrapper {
+        position: relative;
+
+        &::after {
+            content: '📩';
+            inset-block-start: 0.75rem;
+            inset-inline-end: 4rem;
+            position: absolute;
+            z-index: 1;
+        }
+
+        &::before {
+            content: '📩';
+            inset-block-start: 0.75rem;
+            inset-inline-start: 4rem;
+            position: absolute;
+            /* Without z-index it disappears on hover for some reason */
+            z-index: 1;
+        }
+    }
+
+    & textarea {
+        display: none;
+    }
+}

@@ -1,0 +1,64 @@
+/* Properties do not work for colors due to use of `oklch` function.
+For lengths they do not work for unclear reason: they just do not get recognized by browsers for some reason.
+If changing colors, remember to adjust them in:
+manifest.webmanifest
+browserconfig.xml
+metatags.twig (MS Tile and theme-color)
+errors\teapot.twig */
+:root {
+    cursor: default; /* Use the default cursor in all browsers */
+    line-height: 1.4; /* Change the line height in all browsers */
+    overflow-wrap: break-word; /* Breaks words to prevent overflow in all browsers */
+    tab-size: 4; /* Use a 4-space tab width in all browsers */
+    -webkit-tap-highlight-color: transparent; /* Remove the grey highlight on links in iOS */
+    text-size-adjust: 100%; /* Prevent adjustments of font size after orientation changes in iOS */
+
+    /* Meant for main body */
+    --color_body: oklch(19% 0.03 297deg);
+    /* Slightly lighter color for more elevated blocks */
+    --color_block: oklch(25% 0.036 297deg);
+    /* Color for blocks where readable text is meant to be */
+    --color_article: oklch(30% 0.036 297deg);
+    /* Color for main text */
+    --color_text: oklch(95.9% 0.005 17.251deg);
+    /* Color for links */
+    --color_interactive: oklch(83.8% 0.067 223.439deg);
+    /* Color indicating success of some action */
+    --color_success: oklch(84.6% 0.134 149.2deg);
+    /* Color indicating failure of some action */
+    --color_failure: oklch(79.4% 0.102 2.398deg);
+    /* Color indicating a warning */
+    --color_warning: oklch(79.9% 0.143 86.206deg);
+    /* Color for disabled elements */
+    --color_disabled: oklch(60% 0 89.876deg);
+
+    /* Borders styling */
+    --border_dark: oklch(35% 0.067 218deg);
+    --border_light: oklch(50% 0.067 218deg);
+    --border_width: 0.125rem;
+    --border_radius: 0.75rem;
+    --border_shadow: drop-shadow(0.05rem 0.05rem 0.1rem var(--border_light)) drop-shadow(-0.05rem -0.05rem 0.1rem var(--border_light));
+    --border_color_inset: var(--border_dark) var(--border_light) var(--border_light) var(--border_dark);
+    --border_color_outset: var(--border_light) var(--border_dark) var(--border_dark) var(--border_light);
+
+    /* Sizes */
+    --footer_height: 5rem;
+    --header_height: 4rem;
+    --sidebar_width: 15rem;
+    --sidebar_margin: 1rem;
+    --content_width: 100ch;
+    --full_width: calc(var(--content_width) + var(--sidebar_width) + var(--sidebar_margin));
+    --grid_gap: 1rem;
+    --show_password_width: 2.5rem;
+
+    /* Fonts based on what StackExchange and GitHub use. Because less stuff to download in the client */
+    /* Emoji/Symbol fonts are for emojis, and we need them supported globally, so adding to all 3 variables */
+    --font_sans: system-ui, -apple-system, 'Segoe UI', roboto, ubuntu, cantarell, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font_serif: charter, 'Bitstream Charter', 'Sitka Text', cambria, georgia, serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font_mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', menlo, consolas, 'Roboto Mono', 'Ubuntu Monospace', 'Noto Mono', 'Oxygen Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --line_height_base: 1.4rem;
+
+    /* Coordinates for cursor. Updated through JS. Stored like this to avoid inline CSS for CSP. Intentionally set to 'none' to invalidate them by default. */
+    --cursor_x: none;
+    --cursor_y: none;
+}

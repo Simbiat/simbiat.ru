@@ -1,0 +1,9 @@
+/* Styling of elements on generic error pages */
+#http_error {
+    text-align: center;
+
+    & img {
+        max-block-size: 20rem;
+        max-inline-size: 20rem;
+    }
+}

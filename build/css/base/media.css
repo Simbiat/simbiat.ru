@@ -1,0 +1,30 @@
+/* Styling of embedded media content elements */
+audio,
+canvas,
+svg {
+    vertical-align: middle;
+}
+
+iframe {
+    block-size: auto;
+    border-style: none;
+    max-inline-size: 100%;
+    vertical-align: middle;
+}
+
+img {
+    block-size: auto;
+    max-inline-size: 100%;
+    vertical-align: middle;
+}
+
+video {
+    block-size: auto;
+    max-inline-size: 100%;
+    vertical-align: middle;
+}
+
+/* Change the fill color to match the text color in all browsers */
+svg:not([fill]) {
+    fill: currentcolor;
+}

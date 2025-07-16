@@ -1,0 +1,66 @@
+/* Normalization and styling of pseudo-elements */
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Safari.
+ */
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+    block-size: auto;
+}
+
+/**
+ * Correct the text style of placeholders in Chrome, Edge, and Safari.
+ */
+
+::placeholder {
+    color: inherit;
+    opacity: 54%;
+}
+
+/**
+ * Remove the inner padding in Chrome, Edge, and Safari on macOS.
+ */
+
+::-webkit-search-decoration {
+    appearance: none;
+}
+
+/**
+ * 2. Change font properties to `inherit` in Safari.
+ */
+
+::-webkit-file-upload-button {
+    font: inherit; /* 2 */
+}
+
+/**
+ * Remove the additional :invalid styles in Firefox.
+ */
+
+:where(:-moz-ui-invalid) {
+    box-shadow: none;
+}
+
+::before,
+::after {
+    background-repeat: no-repeat; /* Backgrounds do not repeat by default */
+    box-sizing: border-box; /* Add border box sizing in all browsers */
+    text-decoration: inherit; /* Add text decoration inheritance in all browsers */
+    vertical-align: inherit; /* Add vertical alignment inheritance in all browsers */
+}
+
+:focus {
+    outline-color: var(--color_interactive);
+}
+
+::selection {
+    background-color: var(--color_text);
+    color: var(--color_article);
+    text-shadow: none;
+}
+
+:fullscreen {
+    block-size: 100%;
+    inline-size: 100%;
+}

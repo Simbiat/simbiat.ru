@@ -1,0 +1,27 @@
+/* Style of source button */
+blockquote,
+code,
+samp {
+    & > .quote_source {
+        color: var(--color_disabled);
+        display: block;
+        font-size: 1rem;
+        font-style: italic;
+        inline-size: fit-content;
+        margin-block-end: -1rem;
+        overflow: hidden;
+        position: static;
+        text-align: end;
+        text-overflow: ellipsis;
+        text-wrap: wrap;
+        white-space: nowrap;
+
+        &::before {
+            content: 'From \2760';
+        }
+
+        &::after {
+            content: '❝';
+        }
+    }
+}

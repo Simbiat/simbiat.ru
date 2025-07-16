@@ -1,0 +1,97 @@
+/* Styling details and summary */
+summary {
+    color: var(--color_interactive);
+    cursor: pointer;
+    display: list-item;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Add the correct display in Safari */
+details > summary:first-of-type {
+    display: list-item;
+}
+
+/* Show details marker to right */
+details > .right_summary {
+    list-style: none;
+}
+
+.right_summary::-webkit-details-marker {
+    display: none;
+}
+
+details:not([open]) > .right_summary::after {
+    content: ' ▷';
+}
+
+details[open] > .right_summary::after {
+    content: ' ▼';
+}
+
+/* Spoiler and adult content blocks */
+details.spoiler > summary,
+details.adult > summary {
+    background-color: var(--color_block);
+    border-color: var(--border_color_inset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    color: var(--color_disabled);
+    list-style: none;
+    text-align: center;
+}
+
+details.no_marker > summary {
+    list-style: none;
+}
+
+details.spoiler > summary:hover,
+details.adult > summary:hover {
+    border-color: var(--color_warning);
+    border-style: inset;
+    color: var(--color_warning);
+}
+
+details.spoiler > summary::-webkit-details-marker,
+details.adult > summary::-webkit-details-marker,
+details.no_marker > summary::-webkit-details-marker {
+    display: none;
+}
+
+details[open].spoiler > summary,
+details[open].adult > summary {
+    display: none;
+}
+
+details[open].spoiler,
+details[open].adult {
+    border-color: var(--color_warning);
+    border-radius: var(--border_radius);
+    border-style: dotted;
+    border-width: var(--border_width);
+}
+
+details.spoiler > summary::before {
+    content: '📖 Here be spoilers 📺';
+}
+
+details.adult > summary::before {
+    content: '🍑 Here be adult content 🌶';
+}
+
+details.spoiler > summary:hover::before {
+    content: '🔎 I am ready for the truth 😲';
+}
+
+details.adult > summary:hover::before {
+    content: '😏 My body is ready 🍆';
+}
+
+details.spoiler.adult > summary::before {
+    content: '📖 Here be adult spoilers 🌶';
+}
+
+details.spoiler.adult > summary:hover::before {
+    content: '🔎 My body is ready 🍆';
+}

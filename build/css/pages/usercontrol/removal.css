@@ -1,0 +1,7 @@
+#remove_user.warning {
+    color: var(--color_warning);
+}
+
+#remove_user.failure {
+    color: var(--color_failure);
+}

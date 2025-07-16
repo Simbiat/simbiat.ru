@@ -1,0 +1,51 @@
+/* Styling of changelog list */
+.changelog_list {
+    margin: .25rem;
+}
+
+.changelog_sublist {
+    margin: 0;
+    padding-inline-start: 1.5rem;
+}
+
+.changelog_sublist_name {
+    list-style-position: outside;
+    list-style-type: '❖';
+
+    &::marker {
+        color: transparent;
+        font-size: x-large;
+        text-shadow: 0 0 0 var(--color_interactive);
+    }
+}
+
+.changelog_change {
+    list-style-position: outside;
+    list-style-type: '✱';
+
+    &::marker {
+        color: transparent;
+        font-size: x-large;
+        text-shadow: 0 0 0 var(--color_warning);
+    }
+}
+
+.changelog_addition {
+    list-style-position: outside;
+    list-style-type: '➕';
+
+    &::marker {
+        color: transparent;
+        text-shadow: 0 0 0 var(--color_success);
+    }
+}
+
+.changelog_removal {
+    list-style-position: outside;
+    list-style-type: '➖';
+
+    &::marker {
+        color: transparent;
+        text-shadow: 0 0 0 var(--color_failure);
+    }
+}

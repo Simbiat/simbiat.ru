@@ -1,0 +1,27 @@
+/* Styling custom select block */
+select-custom {
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    display: block;
+    inline-size: fit-content;
+    margin: 0.5rem auto;
+    padding: 0.5rem;
+}
+
+.select_wrapper {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    inline-size: fit-content;
+    margin: 0 auto;
+    place-content: center center;
+    text-align: center;
+}
+
+.select_icon {
+    block-size: 3.5rem;
+    inline-size: 3.5rem;
+    margin-inline-end: 0.5rem;
+}

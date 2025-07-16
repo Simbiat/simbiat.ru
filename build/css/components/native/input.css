@@ -1,0 +1,75 @@
+/* Common styling for all input elements */
+input {
+    background-color: var(--color_article);
+    block-size: clamp(1.5rem, 2rem, 2.5rem);
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    /* Border colors are reversed to make the elements "popup" */
+    border-style: solid;
+    border-width: var(--border_width);
+    box-sizing: border-box;
+    color: var(--color_text);
+    font: inherit; /* Add typography inheritance in all browsers */
+    font-size: 100%;
+    letter-spacing: inherit; /* Add typography inheritance in all browsers */
+    line-height: 1.15rem;
+    margin: 0;
+    max-inline-size: 100%;
+    outline: none;
+    padding: 0.25em 0.375em; /* Change the inconsistent appearance in all browsers */
+    text-transform: none;
+
+    &:focus,
+    &:hover,
+    &:active {
+        border-color: var(--border_color_outset);
+        filter: var(--border_shadow);
+    }
+
+    &:disabled {
+        border-color: var(--color_disabled);
+        color: var(--color_disabled);
+        cursor: not-allowed;
+        filter: blur(0.025rem) grayscale(1);
+        user-select: none;
+
+        & + label {
+            color: var(--color_disabled);
+            cursor: not-allowed;
+            filter: blur(0.025rem) grayscale(1);
+            user-select: none;
+        }
+    }
+
+    &[required] + label::after {
+        color: var(--color_failure);
+        content: '*';
+    }
+
+    &:user-invalid {
+        border-color: var(--color_failure);
+        box-shadow: 0.1rem 0.1rem 0.75rem var(--color_failure), -0.1rem -0.1rem 0.75rem var(--color_failure);
+    }
+
+    &:focus:valid {
+        border-color: var(--color_success);
+        box-shadow: 0.1rem 0.1rem 0.75rem var(--color_success), -0.1rem -0.1rem 0.75rem var(--color_success);
+    }
+}
+
+/* Used to adjust placement of labels */
+.float_label {
+    display: inline-block;
+    /* 0.5rem margin on bottom and top, yet center the element in parent */
+    margin: 0.5rem 0.25rem;
+    position: relative;
+    text-align: start;
+
+    &:has(input[type='search' i]) {
+        display: block;
+    }
+
+    & input[type='search' i] {
+        inline-size: 100%;
+    }
+}

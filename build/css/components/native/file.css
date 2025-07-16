@@ -1,0 +1,71 @@
+/* Styling input type file */
+
+input[type='file' i] {
+    /* Need to set a height, that will not cut the button */
+    block-size: 2.4rem;
+    cursor: pointer;
+    /* Better vertical alignment the file selector button */
+    padding: 0.05em 0.375em 0.45em;
+
+    &::file-selector-button {
+        background-color: var(--color_article);
+        block-size: clamp(1.5rem, 2rem, 2.5rem);
+        border-color: var(--border_color_outset);
+        border-radius: var(--border_radius);
+        /* Border colors are reversed to make the elements "popup" */
+        border-style: solid;
+        border-width: var(--border_width);
+        box-sizing: border-box;
+        color: var(--color_interactive);
+        cursor: pointer;
+        font-weight: 700;
+        margin: 0.1rem;
+        outline: none;
+        padding: 0.1875em 0.375em 0.3125em;
+
+        &:focus,
+        &:hover,
+        &:active {
+            border-color: var(--border_color_outset);
+            filter: var(--border_shadow);
+        }
+
+        &:active {
+            border-color: var(--border_color_inset);
+            filter: brightness(0.7);
+        }
+    }
+
+    & + label {
+        color: var(--color_interactive);
+        cursor: text;
+        display: block;
+        position: absolute;
+        touch-action: manipulation;
+        transition: transform 0.2s ease;
+        user-select: none;
+    }
+
+    &:placeholder-shown + label {
+        transform: translate(0.5rem, -1.7rem) scale(1.25);
+        transform-origin: left bottom;
+    }
+
+    &:not(:placeholder-shown) + label,
+    &:focus + label {
+        cursor: default;
+        filter: var(--border_shadow);
+        transform: translate(0.5rem, -3.2rem) scale(1);
+    }
+
+    &:disabled::file-selector-button,
+    &:disabled::file-selector-button:active,
+    &:disabled::file-selector-button:hover,
+    &:disabled::file-selector-button:focus,
+    &:disabled::file-selector-button:focus-within {
+        border-color: var(--color_disabled);
+        cursor: not-allowed;
+        filter: blur(0.025rem) grayscale(1);
+        user-select: none;
+    }
+}

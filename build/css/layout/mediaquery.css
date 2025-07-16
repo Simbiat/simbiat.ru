@@ -1,0 +1,187 @@
+/* Using em based on experiments from https://zellwk.com/blog/media-query-units/
+and https://medium.com/@barrypeng6/why-should-not-use-rem-unit-in-media-query-5645d0163ce5
+since they show em as most consistent */
+/* Adjust snackbars */
+/* Need to use calc, which is not compatible with range */
+/* noinspection Stylelint */
+@media (width <= calc(100ch + 15rem + 1rem)) {
+    .snackbar {
+        inline-size: 90vi;
+    }
+}
+
+/* Need to use calc, which is not compatible with range */
+/* noinspection Stylelint */
+@media (width >= calc(100ch + 15rem + 1rem)) {
+    .snackbar {
+        inline-size: 75vi;
+    }
+
+    #content {
+        margin-inline: calc(var(--sidebar_width) + var(--sidebar_margin)) auto;
+    }
+}
+
+/* Need to use calc, which is not compatible with range */
+/* noinspection Stylelint */
+@media (width <= calc(100ch + 15rem + 1rem)) {
+    #navigation {
+        background-color: var(--color_body);
+        display: none;
+        z-index: 3;
+    }
+}
+
+/* Adjust some buttons */
+/* Need to use calc, which is not compatible with range */
+/* noinspection Stylelint */
+@media (width <= calc(100ch + 15rem + 1rem)) {
+    nav-hide {
+        inset-block-start: 0;
+        inset-inline-start: 0;
+        position: fixed;
+    }
+}
+
+/* Need to use calc, which is not compatible with range */
+/* noinspection Stylelint */
+@media (width <= calc(100ch + 15rem + 1rem)) {
+    nav-show {
+        display: block;
+    }
+}
+
+/* Need to use calc, which is not compatible with range */
+/* noinspection Stylelint */
+@media (width >= calc(100ch + 15rem + 1rem)) {
+    nav-show, nav-hide {
+        display: none;
+    }
+}
+
+/* Adjust sidebar */
+@media (width <= 62em) {
+    #sidebar {
+        background-color: var(--color_body);
+        block-size: 100vb;
+        display: none;
+        inline-size: 100vi;
+        margin: auto;
+        z-index: 2;
+    }
+}
+
+@media (width <= 62em) {
+    #radio_signinup br {
+        display: none;
+    }
+}
+
+/* Adjust header elements on smaller screens to provide more space for main content */
+@media (height <= 20.6em) {
+    #h1_div {
+        display: inline-block;
+        inline-size: calc(100% - 3rem);
+    }
+
+    #header_logo {
+        display: inline-block;
+        inline-size: 2rem;
+        margin-block-start: 0.25rem;
+
+        & img {
+            display: inline-block;
+            inset-inline-start: 1rem;
+            /* Need to override cases, when width results in relative position */
+            /* noinspection Stylelint */
+            position: absolute !important;
+        }
+
+        & .header_text {
+            /* Need to override cases, when width results in relative displaying the text */
+            /* noinspection Stylelint */
+            display: none !important;
+        }
+    }
+
+    #logo_icon {
+        inset-block-start: -1.75rem;
+        inset-inline-start: -1.25rem;
+    }
+}
+
+@media (width <= 44.6em) {
+    #h1_div {
+        display: inline-block;
+        inline-size: calc(100% - 3rem);
+    }
+
+    #header_logo {
+        display: inline-block;
+        inline-size: 2rem;
+        margin-block-start: 0.25rem;
+
+        & img {
+            display: inline-block;
+            inset-block-start: -2rem;
+            inset-inline-start: 1rem;
+            position: absolute;
+        }
+
+        & .header_text {
+            display: none;
+        }
+    }
+
+    #logo_icon {
+        inset-block-start: -1.75rem;
+        inset-inline-start: -1.25rem;
+    }
+}
+
+@media (width <= 18.6em) {
+    #h1_title {
+        inline-size: calc(100% - 3rem);
+    }
+}
+
+@media (width >= 44.6em) {
+    #header_logo img,
+    #header_logo .header_text {
+        display: inline-block;
+        position: relative;
+    }
+}
+
+@media (width <= 55.6em) {
+    .ff_char_page {
+        flex-direction: column;
+    }
+}
+
+/*
+ * 1. Remove animations when motion is reduced (opinionated).
+ * 2. Remove fixed background attachments when motion is reduced (opinionated).
+ * 3. Remove timed scrolling behaviors when motion is reduced (opinionated).
+ * 4. Remove transitions when motion is reduced (opinionated).
+ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        /* noinspection Stylelint */
+        animation-delay: -1ms !important; /* 1 */
+        /* noinspection Stylelint */
+        animation-duration: 1ms !important; /* 1 */
+        /* noinspection Stylelint */
+        animation-iteration-count: 1 !important; /* 1 */
+        /* noinspection Stylelint */
+        background-attachment: initial !important; /* 2 */
+        /* noinspection Stylelint */
+        scroll-behavior: auto !important; /* 3 */
+        /* noinspection Stylelint */
+        transition-delay: 0s !important; /* 4 */
+        /* noinspection Stylelint */
+        transition-duration: 0s !important; /* 4 */
+    }
+}

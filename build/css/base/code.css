@@ -1,0 +1,82 @@
+/* Styling of code-related elements: code, samp, var, pre */
+pre {
+    font-family: var(--font_mono);
+    font-size: 1em;
+    overflow: auto; /* Prevent overflow of the container */
+}
+
+code,
+samp {
+    background-color: var(--color_block);
+    block-size: fit-content;
+    border: calc(var(--border_width) * 2) dashed;
+    border-color: var(--border_color_inset);
+    border-inline-start: calc(var(--border_width) * 3) solid var(--color_warning);
+    border-radius: var(--border_radius);
+    box-sizing: border-box;
+    display: block;
+    font-family: var(--font_mono);
+    /* Using em for font instead of rem, so that it will depend on parent's size, not on root size */
+    font-size: 0.9em;
+    line-height: 1.25rem;
+    margin: 0.5rem;
+    max-inline-size: calc(100% - 1rem);
+    min-block-size: 2.5rem;
+    padding: 0.2rem;
+    position: relative;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+
+    &[data-description] {
+        padding-block-start: 1rem;
+    }
+
+    & > .code_desc {
+        color: var(--color_disabled);
+        font-size: 1rem;
+        font-style: italic;
+        inline-size: fit-content;
+        inset-block-start: -0.25rem;
+        inset-inline-start: 0.5rem;
+        overflow: hidden;
+        position: absolute;
+        text-overflow: ellipsis;
+        text-wrap: wrap;
+        white-space: nowrap;
+
+        &::after {
+            content: ':';
+        }
+    }
+}
+
+samp,
+samp.success {
+    border-inline-start: calc(var(--border_width) * 3) solid var(--color_success);
+}
+
+samp.failure,
+samp.error {
+    border-inline-start: calc(var(--border_width) * 3) solid var(--color_failure);
+}
+
+samp.warning {
+    border-inline-start: calc(var(--border_width) * 3) solid var(--color_warning);
+}
+
+var {
+    background-color: var(--color_body);
+    border-color: var(--border_color_inset);
+    border-radius: calc(var(--border_radius) / 2);
+    border-style: dashed;
+    border-width: var(--border_width);
+    box-sizing: border-box;
+    color: var(--color_disabled);
+    display: inline;
+    font-family: var(--font_mono);
+    font-style: normal;
+    padding: .2rem;
+    position: relative;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

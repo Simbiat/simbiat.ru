@@ -1,0 +1,30 @@
+/* Styling of elements specific for character pages */
+#ff_portrait_img {
+    border-color: var(--border_color_outset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    inline-size: 95%;
+}
+
+.ff_char_page {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+
+    & > section {
+        flex-basis: 45%;
+        flex-grow: 1;
+        inline-size: fit-content;
+        max-inline-size: 100%;
+        padding: 0.1rem;
+    }
+
+    & .search_result {
+        justify-content: flex-start;
+    }
+}
+
+.ff_groups [data-tooltip] {
+    text-decoration: none;
+}

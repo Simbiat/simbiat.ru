@@ -1,0 +1,154 @@
+.thread_name {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    padding-inline-start: 0.5rem;
+    place-content: center flex-start;
+
+    & a {
+        display: block;
+        flex-grow: 1;
+        overflow: hidden;
+        text-decoration: none;
+        text-overflow: ellipsis;
+        white-space: normal;
+    }
+}
+
+#threads_list {
+    margin-block-end: 1rem;
+    table-layout: auto;
+
+    & tr td:nth-child(1) {
+        inline-size: auto;
+    }
+
+    & tr td:nth-child(2),
+    & tr td:nth-child(3) {
+        max-inline-size: 7rem;
+        min-inline-size: 4rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(4) {
+        inline-size: 3rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(5) {
+        inline-size: 2rem;
+        text-align: center;
+    }
+
+    & tr td:nth-child(6),
+    & tr td:nth-child(7) {
+        max-inline-size: 7rem;
+        min-inline-size: 1rem;
+        text-align: center;
+    }
+
+    & tbody tr td:nth-child(2),
+    & tbody tr td:nth-child(3) {
+        font-size: small;
+    }
+
+    & .float_label {
+        white-space: normal;
+    }
+}
+
+#alt_sources {
+    background-color: var(--color_article);
+    border-color: var(--border_color_inset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    display: grid;
+    grid-template-areas:
+        'block_header'
+        'block_content';
+    grid-template-columns: 100%;
+    margin: .5rem .5rem 1rem;
+    place-items: start stretch;
+
+    & .alt_source_header {
+        background-color: var(--color_block);
+        border-block-end: var(--border_light) calc(var(--border_width) / 2) solid;
+        border-start-end-radius: var(--border_radius);
+        border-start-start-radius: var(--border_radius);
+        font-weight: 700;
+        grid-area: block_header;
+        padding-inline: .25rem .25rem;
+        text-align: center;
+    }
+
+    & .alt_source_content {
+        grid-area: block_content;
+        margin: 0.25rem auto 0 auto;
+        text-align: center;
+        vertical-align: middle;
+    }
+}
+
+.thread_icons {
+    text-align: center;
+
+    & span[data-tooltip] {
+        /* Remove dotted line under the icons */
+        text-decoration: none;
+    }
+}
+
+.thread_private + label,
+.thread_closed + label,
+.thread_pin + label {
+    text-decoration-color: var(--color_interactive);
+}
+
+.thread_pin:not(:checked) + label::after {
+    content: 'Not pinned';
+}
+
+.thread_pin:checked + label::after {
+    content: 'Pinned';
+}
+
+input[type='checkbox' i].thread_pin:checked + label::before {
+    content: '📌';
+}
+
+input[type='checkbox' i].thread_pin:not(:checked) + label::before {
+    content: '·';
+}
+
+.thread_private:not(:checked) + label::after {
+    content: 'Public';
+}
+
+.thread_private:checked + label::after {
+    content: 'Private';
+}
+
+input[type='checkbox' i].thread_private:not(:checked) + label::before {
+    content: '🚶';
+}
+
+input[type='checkbox' i].thread_private:checked + label::before {
+    content: '🚷';
+}
+
+.thread_closed:not(:checked) + label::after {
+    content: 'Open';
+}
+
+.thread_closed:checked + label::after {
+    content: 'Closed';
+}
+
+input[type='checkbox' i].thread_closed:not(:checked) + label::before {
+    content: '🔓';
+}
+
+input[type='checkbox' i].thread_closed:checked + label::before {
+    content: '🔒';
+}

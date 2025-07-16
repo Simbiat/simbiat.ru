@@ -1,0 +1,16 @@
+#about_user {
+    border-color: var(--border_color_inset);
+    border-radius: var(--border_radius);
+    border-style: solid;
+    border-width: var(--border_width);
+    position: relative;
+
+    &::before {
+        color: var(--color_interactive);
+        content: 'About';
+        filter: var(--border_shadow);
+        inset-block-start: -.75rem;
+        inset-inline-start: .5rem;
+        position: absolute;
+    }
+}
