@@ -9,21 +9,21 @@ use Simbiat\Website\Abstracts\Page;
 class PvPTeam extends Page
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/fftracker/pvpteams', 'name' => 'PvP Teams']
     ];
     #Sub service name
-    protected string $subServiceName = 'pvpteam';
+    protected string $subservice_name = 'pvpteam';
     #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'PvP Team';
     #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'PvP Team';
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-    protected string $ogdesc = 'PvP Team';
+    protected string $og_desc = 'PvP Team';
     #Link to JS module for preload
-    protected string $jsModule = 'fftracker/entity';
+    protected string $js_module = 'fftracker/entity';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['view_ff'];
+    protected array $required_permission = ['view_ff'];
     
     #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -31,37 +31,37 @@ class PvPTeam extends Page
         #Sanitize ID
         $id = $path[0] ?? '';
         #Try to get details
-        $outputArray['pvpteam'] = new \Simbiat\FFXIV\PvPTeam($id)->getArray();
+        $output_array['pvpteam'] = new \Simbiat\FFXIV\PvPTeam($id)->getArray();
         #Check if ID was found
-        if (empty($outputArray['pvpteam']['id'])) {
+        if (empty($output_array['pvpteam']['id'])) {
             return ['http_error' => 404, 'suggested_link' => $this->getLastCrumb()];
         }
         #Try to exit early based on modification date
-        $this->lastModified($outputArray['pvpteam']['dates']['updated']);
+        $this->lastModified($output_array['pvpteam']['dates']['updated']);
         #Continue breadcrumbs
-        $this->breadCrumb[] = ['href' => '/fftracker/pvpteams/'.$id, 'name' => $outputArray['pvpteam']['name']];
+        $this->breadcrumb[] = ['href' => '/fftracker/pvpteams/'.$id, 'name' => $output_array['pvpteam']['name']];
         #Update meta
-        $this->title = $outputArray['pvpteam']['name'];
+        $this->title = $output_array['pvpteam']['name'];
         $this->h1 = $this->title;
-        $this->ogdesc = $outputArray['pvpteam']['name'].' on FFXIV Tracker';
+        $this->og_desc = $output_array['pvpteam']['name'].' on FFXIV Tracker';
         #Link header/tag for API
-        $this->altLinks = [
+        $this->alt_links = [
             ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Tracker data', 'href' => '/api/fftracker/pvpteams/'.$id],
         ];
-        if (empty($outputArray['pvpteam']['dates']['deleted'])) {
-            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/pvpteams/'.$id.'/lodestone'];
-            $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/pvpteam/'.$id];
-            if (!empty($outputArray['pvpteam']['community'])) {
-                $this->altLinks[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$outputArray['pvpteam']['community']];
+        if (empty($output_array['pvpteam']['dates']['deleted'])) {
+            $this->alt_links[] = ['rel' => 'alternate', 'type' => 'application/json', 'title' => 'JSON representation of Lodestone data', 'href' => '/api/fftracker/pvpteams/'.$id.'/lodestone'];
+            $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Lodestone EU page', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/pvpteam/'.$id];
+            if (!empty($output_array['pvpteam']['community'])) {
+                $this->alt_links[] = ['rel' => 'alternate', 'type' => 'text/html', 'title' => 'Group\'s community page on Lodestone EU', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/community_finder/'.$output_array['pvpteam']['community']];
             }
         }
         #Merge crest and update favicon
-        $outputArray['pvpteam']['crest'] = AbstractTrackerEntity::crestToFavicon($outputArray['pvpteam']['crest']);
-        $outputArray['favicon'] = $outputArray['pvpteam']['crest'];
+        $output_array['pvpteam']['crest'] = AbstractTrackerEntity::crestToFavicon($output_array['pvpteam']['crest']);
+        $output_array['favicon'] = $output_array['pvpteam']['crest'];
         #Check if linked to current user
-        if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], array_column($outputArray['pvpteam']['members'], 'user_id'), true)) {
-            $outputArray['pvpteam']['linked'] = true;
+        if ($_SESSION['user_id'] !== 1 && in_array($_SESSION['user_id'], array_column($output_array['pvpteam']['members'], 'user_id'), true)) {
+            $output_array['pvpteam']['linked'] = true;
         }
-        return $outputArray;
+        return $output_array;
     }
 }

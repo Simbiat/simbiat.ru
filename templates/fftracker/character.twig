@@ -1,14 +1,14 @@
 <section class="ff_char_page">
     <section class="ff_char_block">
-        {% if not character.avatarID or character.avatarID == 'defaultf' %}
-            <img loading="lazy" decoding="async" class="galleryZoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="/assets/images/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
+        {% if not character.avatar_id or character.avatar_id == 'defaultf' %}
+            <img loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="/assets/images/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
         {% else %}
-            <img loading="lazy" decoding="async" class="galleryZoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatarID }}l0.jpg">
+            <img loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatar_id }}l0.jpg">
         {% endif %}
     </section>
     <section class="ff_char_block">
         {% if not character.dates.hidden %}
-            <samp class="warning regularText">If you own this character account, and do not want to share the data, you can change private settings on <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/account/" target="_blank">Lodestone</a>, and a private flag will be applied on next update, preventing any further updates, hiding all details of the profile and applying <i>noindex</i> tag to the page. Visiting the page every 24 hours can help prioritize the update, but generally it happens within minutes. Once it's applied, you will see appropriate message. Note, that you may need to force-refresh the page (clear browser cache) to see the change. This also does <b>not</b> imply instant removal of the page from Google search results, and link to profile may still be present on groups' pages (same as with Lodestone).</samp>
+            <samp class="warning regular_text">If you own this character account, and do not want to share the data, you can change private settings on <a href="https://eu.finalfantasyxiv.com/lodestone/my/setting/account/" target="_blank">Lodestone</a>, and a private flag will be applied on next update, preventing any further updates, hiding all details of the profile and applying <i>noindex</i> tag to the page. Visiting the page every 24 hours can help prioritize the update, but generally it happens within minutes. Once it's applied, you will see appropriate message. Note, that you may need to force-refresh the page (clear browser cache) to see the change. This also does <b>not</b> imply instant removal of the page from Google search results, and link to profile may still be present on groups' pages (same as with Lodestone).</samp>
         {% endif %}
         <h2>General</h2>
         {% if character.owned.id and session_data.user_id == character.owned.id %}
@@ -21,10 +21,10 @@
             <p class="warning">Requested anonymity on {{ timeTag(character.dates.hidden, "d/m/Y") }}</p>
         {% else %}
             <p>
-                <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="linkIcon" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.oldNames|length > 0 %} Had also been known under <i>{{ character.biology.oldNames|length }}</i> other name{% if character.biology.oldNames|length > 1 %}s{% endif %}: {% for oldName in character.biology.oldNames %}{{ oldName }}{% if loop.last %}.{% else %}, {% endif %}{% endfor %}{% endif %}
+                <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.old_names|length > 0 %} Had also been known under <i>{{ character.biology.old_names|length }}</i> other name{% if character.biology.old_names|length > 1 %}s{% endif %}: {% for old_name in character.biology.old_names %}{{ old_name }}{% if loop.last %}.{% else %}, {% endif %}{% endfor %}{% endif %}
             </p>
             <p>
-                Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="linkIcon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} <span class="failure">🪦 Died on {{ timeTag(character.dates.deleted, "d/m/Y") }}.</span>{% endif %}
+                Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="link_icon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} <span class="failure">🪦 Died on {{ timeTag(character.dates.deleted, "d/m/Y") }}.</span>{% endif %}
             </p>
             <p>
                 {% if character.biology.incarnations %}
@@ -35,11 +35,11 @@
                 {% endif %}
             </p>
             <p>
-                {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="linkIcon" src="/assets/images/fftracker/cities/{{ character.location.city_id }}.webp"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.data_center }}{% endif %}.
-                {% if character.location.previousServers %}
+                {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="link_icon" src="/assets/images/fftracker/cities/{{ character.location.city_id }}.webp"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.data_center }}{% endif %}.
+                {% if character.location.previous_servers %}
                     Has also been seen on
-                    {% for server in character.location.previousServers %}
-                        {% if loop.last and character.location.previousServers|length > 1 %}and {% endif %}{{ server.server }} of {{ server.data_center }}{% if not loop.last %}, {% else %}.{% endif %}
+                    {% for server in character.location.previous_servers %}
+                        {% if loop.last and character.location.previous_servers|length > 1 %}and {% endif %}{{ server.server }} of {{ server.data_center }}{% if not loop.last %}, {% else %}.{% endif %}
                     {% endfor %}
                 {% endif %}
             </p>
@@ -47,7 +47,7 @@
                 <p>Participated in <i class="failure">{{ character.pvp }}</i> ⚔ battles.</p>
             {% endif %}
             {% if character.grand_company.name %}
-                <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grand_company.rank }}" class="linkIcon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp"><i>{{ character.grand_company.rank }}</i> in <i>{{ character.grand_company.name }}</i> Grand company.</p>
+                <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grand_company.rank }}" class="link_icon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp"><i>{{ character.grand_company.rank }}</i> in <i>{{ character.grand_company.name }}</i> Grand company.</p>
             {% endif %}
             {% if not character.dates.deleted %}
                 <p>
@@ -70,7 +70,7 @@
                     <div class="ff_groups">
                         {% for entity in character.groups %}
                             <div>
-                                {% if entity.current %}<span class="emojiGreen" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emojiRed" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
                                 {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
                             </div>
                         {% endfor %}
@@ -81,12 +81,12 @@
         {% if character.achievements|length > 0 %}
             <section class="ff_char_block">
                 <h2>Last achievements</h2>
-                <div class="search_results">
+                <ul class="search_results">
                     {% for entity in character.achievements|slice(0,10) %}
-                        {{ include('common/elements/entitycard.twig', entity) }}
+                        <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
                     {% endfor %}
-                </div>
-                <div>Total points: {{ character.achievementPoints }}</div>
+                </ul>
+                <div>Total points: {{ character.achievement_points }}</div>
             </section>
         {% endif %}
         <section class="ff_char_block">
@@ -95,7 +95,7 @@
                 <thead><tr><th>Job</th><th>Level</th><th>Last change</th></tr></thead>
                 {% for job in character.jobs %}
                     {% set sum = job.level + sum ?? 0 %}
-                    <tr><td><img loading="lazy" decoding="async" class="linkIcon" alt="{{ job.name }}" src="/assets/images/fftracker/jobs/{{ job.name }}.webp">{{ job.name }}</td><td>{{ job.level }}</td><td>{{ timeTag(job.last_change, "d/m/Y") }}</td></tr>
+                    <tr><td><img loading="lazy" decoding="async" class="link_icon" alt="{{ job.name }}" src="/assets/images/fftracker/jobs/{{ job.name }}.webp">{{ job.name }}</td><td>{{ job.level }}</td><td>{{ timeTag(job.last_change, "d/m/Y") }}</td></tr>
                     {% if loop.last %}
                         <tfoot><tr><td>Total:</td><td>{{ sum }}</td><td></td></tr></tfoot>
                     {% endif %}

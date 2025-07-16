@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\Pages\FFTracker;
+namespace Simbiat\Website\Routing;
 
 use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Pages\FFTracker\Statistics\Achievements;
@@ -12,20 +12,20 @@ use Simbiat\Website\Pages\FFTracker\Statistics\Other;
 use Simbiat\Website\Pages\FFTracker\Statistics\Raw;
 use Simbiat\Website\Pages\FFTracker\Statistics\Timelines;
 
-class Statistics extends Router
+class FFStatistics extends Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['raw', 'achievements', 'bugs', 'characters', 'groups', 'other', 'timelines'];
+    protected array $sub_routes = ['raw', 'achievements', 'bugs', 'characters', 'groups', 'other', 'timelines'];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/fftracker/statistics', 'name' => 'FFXIV Statistics']
     ];
     protected string $title = 'Final Fantasy XIV Statistics';
     protected string $h1 = 'Final Fantasy XIV Statistics';
     protected string $ogdesc = 'Final Fantasy XIV Statistics';
     protected string $og_image = '/ogimages/fftracker.png';
-    protected string $serviceName = 'fftracker';
-    protected string $redirectMain = '/fftracker/statistics/characters';
+    protected string $service_name = 'fftracker';
+    protected string $redirect_main = '/fftracker/statistics/characters';
     
     #This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array

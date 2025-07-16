@@ -84,7 +84,7 @@ class User extends Entity
     #Avatars
     public array $avatars = [];
     #Current avatar
-    public ?string $currentAvatar = null;
+    public ?string $current_avatar = null;
     
     /**
      * Function to get initial data from DB
@@ -93,58 +93,59 @@ class User extends Entity
     protected function getFromDB(): array
     {
         
-        $dbData = Query::query('SELECT `username`, `system`, `phone`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) as `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id OR `uc__users`.`user_id`=2', ['user_id' => [$this->id, 'int']], return: 'row');
-        if (empty($dbData)) {
+        $db_data = Query::query('SELECT `username`, `system`, `phone`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) as `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
+        if (empty($db_data)) {
             return [];
         }
         #Get user's groups
-        $dbData['groups'] = Query::query('SELECT `group_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'column');
+        $db_data['groups'] = Query::query('SELECT `group_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'column');
         #Get permissions
-        $dbData['permissions'] = $this->getPermissions();
+        $db_data['permissions'] = $this->getPermissions();
         if ($this->system) {
             #System users need to be treated as not activated
-            $dbData['activated'] = false;
+            $db_data['activated'] = false;
         } else {
-            $dbData['activated'] = !in_array(Config::GROUP_IDS['Unverified'], $dbData['groups'], true);
+            $db_data['activated'] = !in_array(Config::GROUP_IDS['Unverified'], $db_data['groups'], true);
         }
-        $dbData['currentAvatar'] = $this->getAvatar();
-        return $dbData;
+        $db_data['current_avatar'] = $this->getAvatar();
+        return $db_data;
     }
     
     /**
      * Function process database data
-     * @param array $fromDB
+     *
+     * @param array $from_db
      *
      * @return void
      */
-    protected function process(array $fromDB): void
+    protected function process(array $from_db): void
     {
         #Populate names
-        $this->name['first_name'] = $fromDB['first_name'];
-        $this->name['last_name'] = $fromDB['last_name'];
-        $this->name['middle_name'] = $fromDB['middle_name'];
-        $this->name['father_name'] = $fromDB['father_name'];
-        $this->name['prefix'] = $fromDB['prefix'];
-        $this->name['suffix'] = $fromDB['suffix'];
+        $this->name['first_name'] = $from_db['first_name'];
+        $this->name['last_name'] = $from_db['last_name'];
+        $this->name['middle_name'] = $from_db['middle_name'];
+        $this->name['father_name'] = $from_db['father_name'];
+        $this->name['prefix'] = $from_db['prefix'];
+        $this->name['suffix'] = $from_db['suffix'];
         #Populate dates
-        $this->dates['registered'] = $fromDB['registered'];
-        $this->dates['updated'] = $fromDB['updated'];
-        $this->dates['birthday'] = $fromDB['birthday'];
+        $this->dates['registered'] = $from_db['registered'];
+        $this->dates['updated'] = $from_db['updated'];
+        $this->dates['birthday'] = $from_db['birthday'];
         #Populate parent details
-        $this->parent['id'] = $fromDB['parent_id'];
-        $this->parent['name'] = $fromDB['parentname'];
+        $this->parent['id'] = $from_db['parent_id'];
+        $this->parent['name'] = $from_db['parentname'];
         #Pupulate personal sections
         $this->sections = [
-            'blog' => empty($fromDB['blog']) ? null : $fromDB['blog'],
-            'changelog' => empty($fromDB['changelog']) ? null : $fromDB['changelog'],
-            'knowledgebase' => empty($fromDB['knowledgebase']) ? null : $fromDB['knowledgebase'],
+            'blog' => empty($from_db['blog']) ? null : $from_db['blog'],
+            'changelog' => empty($from_db['changelog']) ? null : $from_db['changelog'],
+            'knowledgebase' => empty($from_db['knowledgebase']) ? null : $from_db['knowledgebase'],
         ];
-        $this->system = (bool)$fromDB['system'];
+        $this->system = (bool)$from_db['system'];
         #Clean up the array
-        unset($fromDB['system'], $fromDB['parent_id'], $fromDB['parentname'], $fromDB['first_name'], $fromDB['last_name'], $fromDB['middle_name'], $fromDB['father_name'], $fromDB['prefix'],
-            $fromDB['suffix'], $fromDB['registered'], $fromDB['updated'], $fromDB['birthday'], $fromDB['blog'], $fromDB['changelog'], $fromDB['knowledgebase']);
+        unset($from_db['system'], $from_db['parent_id'], $from_db['parentname'], $from_db['first_name'], $from_db['last_name'], $from_db['middle_name'], $from_db['father_name'], $from_db['prefix'],
+            $from_db['suffix'], $from_db['registered'], $from_db['updated'], $from_db['birthday'], $from_db['blog'], $from_db['changelog'], $from_db['knowledgebase']);
         #Populate the rest properties
-        Converters::arrayToProperties($this, $fromDB);
+        Converters::arrayToProperties($this, $from_db);
     }
     
     /**
@@ -215,13 +216,14 @@ class User extends Entity
     
     /**
      * Add avatar
-     * @param bool     $setActive Make avatar active right away
-     * @param string   $link      Link to avatar
-     * @param int|null $character FFXIV character, if avatar is from one
+     *
+     * @param bool     $set_active Make avatar active right away
+     * @param string   $link       Link to avatar
+     * @param int|null $character  FFXIV character, if avatar is from one
      *
      * @return array
      */
-    public function addAvatar(bool $setActive = false, string $link = '', ?int $character = null): array
+    public function addAvatar(bool $set_active = false, string $link = '', ?int $character = null): array
     {
         try {
             if ($this->system) {
@@ -258,7 +260,7 @@ class User extends Entity
                     ]
                 ]
             );
-            if ($setActive) {
+            if ($set_active) {
                 return $this->setAvatar($upload['hash']);
             }
             if ($character !== null && Query::query('SELECT `file_id` FROM `uc__avatars` WHERE `user_id`=:user_id AND `current`=1 AND `character_id`=:character;', [':user_id' => [$this->id, 'int'], ':character' => [$character, 'int']], return: 'check')) {
@@ -322,15 +324,15 @@ class User extends Entity
      */
     public function getFF(): array
     {
-        $outputArray = [];
+        $output_array = [];
         #Get token
-        $outputArray['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$this->id, 'int']], return: 'value');
+        $output_array['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$this->id, 'int']], return: 'value');
         #Get linked characters
-        $outputArray['characters'] = Query::query('SELECT \'character\' as `type`, `ffxiv__character`.`character_id` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `user_id`=:user_id ORDER BY `name`;', [':user_id' => [$this->id, 'int']], return: 'all');
+        $output_array['characters'] = Query::query('SELECT \'character\' as `type`, `ffxiv__character`.`character_id` as `id`, `name`, `avatar` as `icon` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `user_id`=:user_id ORDER BY `name`;', [':user_id' => [$this->id, 'int']], return: 'all');
         #Get linked groups
-        if (!empty($outputArray['characters'])) {
-            foreach ($outputArray['characters'] as $character) {
-                $outputArray['groups'][$character['id']] = AbstractTrackerEntity::cleanCrestResults(Query::query(
+        if (!empty($output_array['characters'])) {
+            foreach ($output_array['characters'] as $character) {
+                $output_array['groups'][$character['id']] = AbstractTrackerEntity::cleanCrestResults(Query::query(
                 /** @lang SQL */ '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` as `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` as `name`, null as `crest_part_1`, null as `crest_part_2`, null as `crest_part_3`, null as `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)
@@ -341,49 +343,50 @@ class User extends Entity
                 ));
             }
         }
-        return $outputArray;
+        return $output_array;
     }
     
     /**
      * Change username
-     * @param string $newName
+     *
+     * @param string $new_name
      *
      * @return array|true[]
      */
-    public function changeUsername(string $newName): array
+    public function changeUsername(string $new_name): array
     {
         if ($this->system) {
             return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
         }
-        $sanitizedName = Sanitization::removeNonPrintable($newName, true);
-        if (!is_string($sanitizedName)) {
+        $sanitized_name = Sanitization::removeNonPrintable($new_name, true);
+        if (!is_string($sanitized_name)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
         }
-        $newName = $sanitizedName;
+        $new_name = $sanitized_name;
         #Check if the new name is valid
-        if (empty($newName) || $this->bannedName($newName) || $this->usedName($newName)) {
+        if (empty($new_name) || $this->bannedName($new_name) || $this->usedName($new_name)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
         }
         #Check if we have the current username and get it if we do not
         if (empty($this->username)) {
             $this->get();
         }
-        if ($this->username === $newName) {
+        if ($this->username === $new_name) {
             return ['response' => true];
         }
         try {
             $result = Query::query('UPDATE `uc__users` SET `username`=:username WHERE `user_id`=:user_id;', [
                 ':user_id' => [$this->id, 'int'],
-                ':username' => $newName,
+                ':username' => $new_name,
             ]);
             if ($result) {
-                $_SESSION['username'] = $newName;
+                $_SESSION['username'] = $new_name;
             }
             if (session_status() === PHP_SESSION_ACTIVE) {
                 Security::session_regenerate_id(true);
             }
             #Log the change
-            Security::log('User details change', 'Changed name', ['name' => ['old' => $this->username, 'new' => $newName]]);
+            Security::log('User details change', 'Changed name', ['name' => ['old' => $this->username, 'new' => $new_name]]);
             return ['response' => $result];
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];
@@ -560,15 +563,16 @@ class User extends Entity
     
     /**
      * Login to the system
-     * @param bool $afterRegister Flag indicating if login is being done after initial registration
+     *
+     * @param bool $after_registration Flag indicating if login is being done after initial registration
      *
      * @return array|true[]
      */
-    public function login(bool $afterRegister = false): array
+    public function login(bool $after_registration = false): array
     {
         #Check if already logged in and return early
         if ($_SESSION['user_id'] !== 1) {
-            if ($afterRegister) {
+            if ($after_registration) {
                 return ['status' => 201, 'response' => true];
             }
             return ['response' => true];
@@ -583,10 +587,10 @@ class User extends Entity
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
-        $isEmail = filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
+        $is_email = filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
         if (
-            (!$isEmail && $this->bannedName($_POST['signinup']['email'])) ||
-            ($isEmail && new Email($_POST['signinup']['email'])->isBanned())
+            (!$is_email && $this->bannedName($_POST['signinup']['email'])) ||
+            ($is_email && new Email($_POST['signinup']['email'])->isBanned())
         ) {
             Security::log('Failed login', 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
@@ -636,7 +640,7 @@ class User extends Entity
         if (session_status() === PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
         }
-        if ($afterRegister) {
+        if ($after_registration) {
             return ['status' => 201, 'response' => true];
         }
         return ['response' => true];
@@ -660,21 +664,21 @@ class User extends Entity
             }
             #Generate cookie password
             $pass = bin2hex(random_bytes(128));
-            $hashedPass = Security::passHash($pass);
+            $hashed_pass = Security::passHash($pass);
             #Write cookie data to DB
             if (!empty($this->id) || (!empty($_SESSION['user_id']) && !in_array($_SESSION['user_id'], [Config::USER_IDS['Unknown user'], Config::USER_IDS['System user'], Config::USER_IDS['Deleted user']], true))) {
                 #Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
-                $currentPass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
+                $current_pass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                     [
                         ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
                         ':cookie' => $cookie_id
                     ], return: 'value'
                 );
-                if (empty($currentPass)) {
+                if (empty($current_pass)) {
                     $affected = Query::query('INSERT IGNORE INTO `uc__cookies` (`cookie_id`, `validator`, `user_id`) VALUES (:cookie, :pass, :id);',
                         [
                             ':cookie' => $cookie_id,
-                            ':pass' => $hashedPass,
+                            ':pass' => $hashed_pass,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
                         ]
                     );
@@ -682,9 +686,9 @@ class User extends Entity
                     $affected = Query::query('UPDATE `uc__cookies` SET `validator`=:pass, `time`=CURRENT_TIMESTAMP() WHERE `user_id`=:id AND `cookie_id`=:cookie AND `validator`=:validator;',
                         [
                             ':cookie' => $cookie_id,
-                            ':pass' => $hashedPass,
+                            ':pass' => $hashed_pass,
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
-                            ':validator' => $currentPass,
+                            ':validator' => $current_pass,
                         ], return: 'affected'
                     );
                 }
@@ -695,14 +699,14 @@ class User extends Entity
                         $_SESSION['cookie_id'] = $cookie_id;
                     }
                     #Set cookie
-                    $currentPass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
+                    $current_pass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                         [
                             ':id' => [$this->id ?? $_SESSION['user_id'], 'int'],
                             ':cookie' => $cookie_id
                         ], return: 'value'
                     );
                     #Another attempt to prevent race conditions
-                    if ($currentPass === $hashedPass) {
+                    if ($current_pass === $hashed_pass) {
                         setcookie('rememberme_'.Config::$http_host,
                             json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION),
                             array_merge(Config::$cookie_settings, ['expires' => time() + 2592000]),
@@ -711,8 +715,8 @@ class User extends Entity
                 }
             }
             return;
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
             #Do nothing, since not critical
         }
     }
@@ -870,9 +874,9 @@ class User extends Entity
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
         $threads = new Threads($bindings, $where, '`talks__threads`.`created` DESC')->listEntities();
-        #Clean any threads with empty `firstPost` (means the thread is either empty or is in progress of creation)
+        #Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
         foreach ($threads['entities'] as $key => $thread) {
-            if (empty($thread['firstPost'])) {
+            if (empty($thread['first_post'])) {
                 unset($threads['entities'][$key]);
             }
         }
@@ -902,18 +906,19 @@ class User extends Entity
     
     /**
      * Similar to getPosts(), but only gets posts, that are the first posts in threads
-     * @param bool $onlyWithBanner
+     *
+     * @param bool $only_with_banner
      *
      * @return array
      */
-    public function getTalksStarters(bool $onlyWithBanner = false): array
+    public function getTalksStarters(bool $only_with_banner = false): array
     {
         #Can't think of a good way to get this in 1 query, thus first getting the latest threads
         $threads = $this->getThreads();
         #Now we get post's details
         if (!empty($threads)) {
             #Keep only items with og_image
-            if ($onlyWithBanner) {
+            if ($only_with_banner) {
                 foreach ($threads as $key => $thread) {
                     if (empty($thread['og_image'])) {
                         unset($threads[$key]);
@@ -933,7 +938,7 @@ class User extends Entity
             #Convert regular 0, 1, ... n IDs to real thread IDs for later use
             $threads = Editors::digitToKey($threads, 'id');
             #Get the posts' IDs
-            $ids = array_column($threads, 'firstPost');
+            $ids = array_column($threads, 'first_post');
         } else {
             return [];
         }

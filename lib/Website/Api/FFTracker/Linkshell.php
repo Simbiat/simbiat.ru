@@ -6,11 +6,11 @@ namespace Simbiat\Website\Api\FFTracker;
 class Linkshell extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\FFXIV\Linkshell::class;
+    protected string $entity_class = \Simbiat\FFXIV\Linkshell::class;
     #Name to show in errors
-    protected string $nameForErrors = 'Linkshell';
+    protected string $name_for_errors = 'Linkshell';
     #Name for links
-    protected string $nameForLinks = 'linkshell';
+    protected string $name_for_links = 'linkshell';
     #Description of the node
     protected array $description = [
         'description' => 'JSON representation of Final Fantasy XIV Linkshell',

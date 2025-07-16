@@ -8,11 +8,11 @@ use Simbiat\Website\Abstracts\Pages\Redirect;
 class Linkshell extends Redirect
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/fftracker/linkshells', 'name' => 'Linkshells']
     ];
     #Regex match pattern with / and flags
     protected string $search_for = '\/fftracker\/linkshell[^s](.*)';
     #Regex replace pattern
-    protected string $replaceWith = '/fftracker/linkshells/$1';
+    protected string $replace_with = '/fftracker/linkshells/$1';
 }

@@ -1,21 +1,21 @@
-{% if serviceName == 'about' %}
+{% if service_name == 'about' %}
     {{ include('about/about.twig') }}
-{% elseif serviceName == 'fftracker' %}
+{% elseif service_name == 'fftracker' %}
     {{ include('fftracker/fftracker.twig') }}
-{% elseif serviceName == 'bictracker' %}
+{% elseif service_name == 'bictracker' %}
     {{ include('bictracker/bictracker.twig') }}
-{% elseif serviceName == 'simplepages' %}
+{% elseif service_name == 'simplepages' %}
     {{ include('simplepages/simplepages.twig') }}
-{% elseif serviceName == 'homepage' %}
+{% elseif service_name == 'homepage' %}
     {{ include('about/homepage.twig') }}
-{% elseif serviceName == 'uc' %}
+{% elseif service_name == 'uc' %}
     {{ include('usercontrol/usercontrol.twig') }}
-{% elseif serviceName == 'talks' %}
+{% elseif service_name == 'talks' %}
     {{ include('talks/talks.twig') }}
-{% elseif serviceName == 'games' %}
+{% elseif service_name == 'games' %}
     {{ include('games/games.twig') }}
-{% elseif serviceName == 'stylingTest' %}
-    {{ include('stylingTest.twig') }}
+{% elseif service_name == 'styling_test' %}
+    {{ include('styling_test.twig') }}
 {% else %}
     <article id="http_error">
         {{ include('errors/404.twig') }}

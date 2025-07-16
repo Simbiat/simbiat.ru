@@ -1,4 +1,4 @@
-<table id="emailsList">
+<table id="emails_list">
     <thead><tr><th>Email</th><th>Confirmed</th><th>Notifications</th><th>Delete</th></tr></thead>
     <tbody>
         {% for number, email in emails %}
@@ -6,11 +6,11 @@
         {% endfor %}
     </tbody>
 </table>
-<form role="form" id="addMailForm" name="addMailForm" autocomplete="on" class="middle">
-    <div class="float_label_div">
-        <input form="addMailForm" type="email" spellcheck="false" aria-required="false" name="email" id="addMail" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="320" pattern="^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
-        <label for="addMail">Email</label>
+<form role="form" id="add_mail_form" name="add_mail_form" autocomplete="on" class="middle">
+    <div class="float_label">
+        <input form="add_mail_form" type="email" spellcheck="false" aria-required="false" name="email" id="add_mail" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="320" pattern="^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
+        <label for="add_mail">Email</label>
     </div>
-    <input role="button" form="addMailForm" type="submit" name="addMail[submit]" id="addMail_submit" formaction="/api/uc/emails/add" formmethod="post" formtarget="_self" value="Add">
-    <img id="addMail_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Adding email...">
+    <input role="button" form="add_mail_form" type="submit" name="add_mail[submit]" id="add_mail_submit" formaction="/api/uc/emails/add" formmethod="post" formtarget="_self" value="Add">
+    <img id="add_mail_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Adding email...">
 </form>

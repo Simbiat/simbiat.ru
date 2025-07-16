@@ -20,43 +20,43 @@ use function in_array;
 abstract class Page
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [];
+    protected array $breadcrumb = [];
     #Alternative representations of the content
-    protected array $altLinks = [];
+    protected array $alt_links = [];
     #Sub service name
-    protected string $subServiceName = '';
+    protected string $subservice_name = '';
     #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = '';
     #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-    protected string $ogdesc = '';
+    protected string $og_desc = '';
     #Page's banner. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
     protected string $og_image = '';
     #Cache age, in case we prefer the generated page to be cached
-    protected int $cacheAge = 0;
+    protected int $cache_age = 0;
     #Time of last data modification (defaults to current time on initialization)
-    protected int $lastModified = 0;
+    protected int $last_modified = 0;
     #Flag to check if the Last Modified header was sent already
-    protected bool $headerSent = false;
+    protected bool $header_sent = false;
     #Language override, to be sent in header (if present)
     protected string $language = '';
     #Flag to indicate this is a static page
     protected bool $static = false;
     #Flag to indicate that session data change is possible on this page
-    protected bool $sessionChange = false;
+    protected bool $session_change = false;
     #Allowed methods
     protected array $methods = ['GET', 'POST', 'HEAD', 'OPTIONS'];
     #Cache strategy: aggressive, private, none, live, month, week, day, hour
-    protected string $cacheStrat = 'hour';
+    protected string $cache_strategy = 'hour';
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = false;
+    protected bool $authentication_needed = false;
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = [];
+    protected array $required_permission = [];
     #Link to JS module for preload
-    protected string $jsModule = '';
+    protected string $js_module = '';
     #Static list of images to H2 push, which are common for the page type
-    protected array $h2push = [
+    protected array $h2_push = [
         '/assets/images/logo.svg',
         '/assets/images/share.svg',
         '/assets/images/navigation/home.svg',
@@ -68,18 +68,18 @@ abstract class Page
         '/assets/images/navigation/gamepad.svg',
     ];
     #List of images to H2 push, which are dependent on data grabbed by the page during generation
-    protected array $h2pushExtra = [];
+    protected array $h2_push_extra = [];
     
     final public function __construct()
     {
         #Check that subclass has set appropriate properties
-        foreach (['subServiceName', 'breadCrumb'] as $property) {
+        foreach (['subservice_name', 'breadcrumb'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(get_class($this).' must have a non-empty `'.$property.'` property.');
             }
         }
         #Set last modified data
-        $this->lastModified = time();
+        $this->last_modified = time();
     }
     
     /**
@@ -112,7 +112,7 @@ abstract class Page
     final public function get(array $path): array
     {
         #Close session early, if we know, that its data will not be changed (default)
-        if (!$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+        if (!$this->session_change && session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
         #Send page language
@@ -120,22 +120,22 @@ abstract class Page
             header('Content-Language: '.$this->language);
         }
         #Check if user has required permission
-        if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
-            $page = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
+        if (!empty($this->required_permission) && empty(array_intersect($this->required_permission, $_SESSION['permissions']))) {
+            $page = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->required_permission).'` permission'];
         } elseif (empty(HomePage::$http_error) || $this->static) {
             #Generate the page only if no prior errors detected
             #Generate a list of allowed methods
-            $allowedMethods = array_unique(array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
+            $allowed_methods = array_unique(array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
             #Send headers
             if (!headers_sent()) {
-                header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
-                header('Allow: '.implode(', ', $allowedMethods));
+                header('Access-Control-Allow-Methods: '.implode(', ', $allowed_methods));
+                header('Allow: '.implode(', ', $allowed_methods));
             }
             #Check if allowed method is used
-            if (!in_array(HomePage::$method, $allowedMethods, true)) {
+            if (!in_array(HomePage::$method, $allowed_methods, true)) {
                 $page = ['http_error' => 405];
                 #Check that user is authenticated
-            } elseif ($this->authenticationNeeded && $_SESSION['user_id'] === 1) {
+            } elseif ($this->authentication_needed && $_SESSION['user_id'] === 1) {
                 $page = ['http_error' => 403, 'reason' => 'Authentication required'];
             } else {
                 #Generate the page
@@ -154,8 +154,8 @@ abstract class Page
                     }
                 }
                 #Send Last Modified header to potentially allow earlier exit
-                if (!$this->headerSent) {
-                    $this->lastModified($this->lastModified);
+                if (!$this->header_sent) {
+                    $this->lastModified($this->last_modified);
                 }
                 $page = array_merge($page, HomePage::$http_error);
             }
@@ -164,40 +164,39 @@ abstract class Page
         }
         #Ensure properties are included
         $page['http_method'] = HomePage::$method;
-        $page['breadcrumbs'] = $this->breadCrumb;
-        $page['subServiceName'] = $this->subServiceName;
+        $page['breadcrumbs'] = $this->breadcrumb;
+        $page['subservice_name'] = $this->subservice_name;
         $page['title'] = $this->title;
         $page['h1'] = $this->h1;
-        $page['ogdesc'] = $this->ogdesc;
+        $page['og_desc'] = $this->og_desc;
         if (!empty($this->og_image) && empty($page['og_image'])) {
             $page = array_merge($page, Images::ogImage($this->og_image, true));
         }
-        $page['cacheAge'] = $this->cacheAge;
-        $page['cacheStrat'] = $this->cacheStrat;
-        if (!empty($this->h2push) || !empty($this->h2pushExtra)) {
-            $this->h2push = array_merge($this->h2push, $this->h2pushExtra);
+        $page['cache_age'] = $this->cache_age;
+        $page['cache_strategy'] = $this->cache_strategy;
+        if (!empty($this->h2_push) || !empty($this->h2_push_extra)) {
+            $this->h2_push = array_merge($this->h2_push, $this->h2_push_extra);
             #Prepare a set of images to push
-            foreach ($this->h2push as $key => $image) {
-                $this->h2push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
+            foreach ($this->h2_push as $key => $image) {
+                $this->h2_push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
-            Links::links($this->h2push);
+            Links::links($this->h2_push);
         }
-        if (!empty($this->altLinks) || !empty($this->jsModule)) {
-            if (!empty($this->jsModule)) {
-                $this->altLinks = array_merge($this->altLinks, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->jsModule.'.'.filemtime(Config::$js_dir.'/controllers/'.$this->jsModule.'.js').'.js', 'as' => 'script']]);
+        if (!empty($this->alt_links) || !empty($this->js_module)) {
+            if (!empty($this->js_module)) {
+                $this->alt_links = array_merge($this->alt_links, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->js_module.'.'.filemtime(Config::$js_dir.'/controllers/'.$this->js_module.'.js').'.js', 'as' => 'script']]);
             }
             #Send HTTP header
-            if (!HomePage::$staleReturn) {
-                Links::links($this->altLinks);
+            if (!HomePage::$stale_return) {
+                Links::links($this->alt_links);
             }
             #Add a link to HTML
-            $page['link_extra'] = $this->altLinks;
+            $page['link_extra'] = $this->alt_links;
         }
         #Check if we are loading a static page
         $page['static_page'] = $this->static;
         #Set error for Twig
         if (!empty($page['http_error'])) {
-            //$page['h1'] .= ' ('.(HomePage::$dbup === false ? 'Database unavailable' : (HomePage::$dbUpdate === true ? 'Site maintenance' : 'Error '.$page['http_error'])).')';
             if (in_array($page['http_error'], ['database', 'maintenance'])) {
                 Headers::clientReturn(503, false);
             } else {
@@ -205,14 +204,14 @@ abstract class Page
             }
         }
         #Limit Ogdesc to 120 characters
-        $page['ogdesc'] = mb_substr($page['ogdesc'], 0, 120, 'UTF-8');
+        $page['og_desc'] = mb_substr($page['og_desc'], 0, 120, 'UTF-8');
         #Generate a link for cache reset if page uses cache
-        if ($this->cacheAge > 0 && !$this->static) {
+        if ($this->cache_age > 0 && !$this->static) {
             $query = IRI::parseUri(Config::$canonical);
-            if (\is_array($query)) {
-                $page['cacheReset'] = Config::$canonical.(empty($query['query']) ? '?cacheReset=true' : '&cacheReset=true');
+            if (is_array($query)) {
+                $page['cache_reset'] = Config::$canonical.(empty($query['query']) ? '?cache_reset=true' : '&cache_reset=true');
             } else {
-                $page['cacheReset'] = '';
+                $page['cache_reset'] = '';
             }
         }
         return $page;
@@ -227,21 +226,21 @@ abstract class Page
     final protected function lastModified(int|string|null $time = null): void
     {
         #Convert string to int
-        if (\is_string($time)) {
+        if (is_string($time)) {
             $time = strtotime($time);
         }
         #If time is less than 0, use the Last Modified set initially
         if ($time === null || $time <= 0) {
-            $time = $this->lastModified;
+            $time = $this->last_modified;
         }
         #Set Last Modified to the time
-        $this->lastModified = $time;
+        $this->last_modified = $time;
         #Send the header
-        if (!HomePage::$staleReturn) {
-            Headers::lastModified($this->lastModified, true);
+        if (!HomePage::$stale_return) {
+            Headers::lastModified($this->last_modified, true);
         }
         #Set the flag indicating, that header was sent, but we did not exit, so that the header will not be sent the 2nd time
-        $this->headerSent = true;
+        $this->header_sent = true;
     }
     
     /**
@@ -255,8 +254,8 @@ abstract class Page
     final protected function attachCrumb(string $path, string $name, bool $query = false): void
     {
         #Add a path to breadcrumbs
-        $this->breadCrumb[] = [
-            'href' => $this->breadCrumb[array_key_last($this->breadCrumb)]['href'].($query ? '&' : '/').$path,
+        $this->breadcrumb[] = [
+            'href' => $this->breadcrumb[array_key_last($this->breadcrumb)]['href'].($query ? '&' : '/').$path,
             'name' => $name,
         ];
     }
@@ -267,7 +266,7 @@ abstract class Page
      */
     final protected function getLastCrumb(): string
     {
-        return $this->breadCrumb[array_key_last($this->breadCrumb)]['href'];
+        return $this->breadcrumb[array_key_last($this->breadcrumb)]['href'];
     }
     
     /**
@@ -288,21 +287,18 @@ abstract class Page
         $html->preserveWhiteSpace = false;
         $html->formatOutput = false;
         $html->normalizeDocument();
-        #Get elements
-        $xpath = new \DOMXPath($html);
-        $elements = $xpath->query('//details');
-        #Actually remove the elements
-        foreach ($elements as $element) {
+        #Remove the elements
+        foreach (new \DOMXPath($html)->query('//details') as $element) {
             $element->parentNode->removeChild($element);
         }
         #Get the cleaned HTML
-        $cleanedHtml = $html->saveHTML();
+        $cleaned_html = $html->saveHTML();
         #Strip the excessive HTML tags if we added them
-        $cleanedHtml = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml);
-        $newDesc = strip_tags(Cut::cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleanedHtml), 160, 1));
+        $cleaned_html = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html);
+        $new_description = strip_tags(Cut::cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html), 160, 1));
         #Update description only if it's not empty
-        if (preg_match('/^\s*$/u', $newDesc) === 0) {
-            $this->ogdesc = $newDesc;
+        if (preg_match('/^\s*$/u', $new_description) === 0) {
+            $this->og_desc = $new_description;
         }
     }
     

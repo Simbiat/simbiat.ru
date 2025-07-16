@@ -6,11 +6,11 @@ namespace Simbiat\Website\Api\FFTracker;
 class Character extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\FFXIV\Character::class;
+    protected string $entity_class = \Simbiat\FFXIV\Character::class;
     #Name to show in errors
-    protected string $nameForErrors = 'Character';
+    protected string $name_for_errors = 'Character';
     #Name for links
-    protected string $nameForLinks = 'character';
+    protected string $name_for_links = 'character';
     #Description of the node
     protected array $description = [
         'description' => 'JSON representation of Final Fantasy XIV character',

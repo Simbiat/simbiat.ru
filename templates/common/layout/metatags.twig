@@ -1,7 +1,7 @@
 <meta charset="UTF-8" />
 <meta name="Content-Type" content="text/html; charset=UTF-8" />
 
-{% if has_get or serviceName == 'uc' or serviceName == 'admin' %}
+{% if has_get or service_name == 'uc' or service_name == 'admin' %}
     <meta name="robots" content="none" />
 {% endif %}
 
@@ -19,11 +19,11 @@
 <meta itemprop="description" content="{{ ogdesc|default('Official Simbiat Software website') }}" />
 <meta itemprop="image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
 
-<meta name="X-CSRF-Token" content="{{ session_data.CSRF }}" />
+<meta name="X-CSRF-Token" content="{{ session_data.csrf }}" />
 <!-- Custom meta tag to indicate whether Save-Data header was received -->
 <meta name="save_data" content="{{ save_data }}" />
 
-<!-- FaceBook IDs -->
+<!-- Facebook IDs -->
 <meta property="fb:app_id" content="288606374482851"/>
 <meta property="fb:admins" content="100002283569233"/>
 

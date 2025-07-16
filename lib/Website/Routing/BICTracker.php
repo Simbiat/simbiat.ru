@@ -14,16 +14,16 @@ use function array_slice;
 class BICTracker extends Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];
+    protected array $sub_routes = ['keying', 'search', 'bics', 'openbics', 'closedbics', 'bic'];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/bictracker/', 'name' => 'БИК Трекер']
     ];
     protected string $title = 'БИК Трекер';
     protected string $h1 = 'БИК Трекер';
     protected string $ogdesc = 'Трекер БИК предоставляемых Центральным Банком Российской Федерации';
     protected string $og_image = '/ogimages/bictracker.png';
-    protected string $serviceName = 'bictracker';
+    protected string $service_name = 'bictracker';
     
     #This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array
@@ -34,7 +34,7 @@ class BICTracker extends Router
             'search' => new Search()->get(array_slice($path, 1)),
             'keying' => new Keying()->get(array_slice($path, 1)),
             'openbics', 'closedbics' => new Listing()->get($path),
-            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->subRoutes).'`.'],
+            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->sub_routes).'`.'],
         };
         #}
     }

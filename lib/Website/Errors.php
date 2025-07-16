@@ -37,7 +37,7 @@ class Errors
     {
         #Determine page link
         $page = self::getPage();
-        if (!\is_string($extra)) {
+        if (!is_string($extra)) {
             try {
                 $extra = json_encode($extra, JSON_THROW_ON_ERROR);
             } catch (\Throwable) {
@@ -45,7 +45,7 @@ class Errors
             }
         }
         #Generate message
-        $message = '['.date('c').'] '.\get_class($error).' Exception:'."\r\n\t".
+        $message = '['.date('c').'] '.get_class($error).' Exception:'."\r\n\t".
             'Page: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".

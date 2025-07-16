@@ -12,7 +12,7 @@ use Simbiat\Website\Errors;
 abstract class Search
 {
     #Items to display per page for lists
-    public int $listItems = 100;
+    public int $list_items = 100;
     #Settings required for subclasses
     #Type of entity to return as static value in results (required for frontend routing)
     protected string $entity_type = '';
@@ -25,17 +25,17 @@ abstract class Search
     #Optional WHERE clause for every SELECT
     protected string $where = '';
     #Optional WHERE clause for SELECT where the search term is defined
-    protected string $whereSearch = '';
+    protected string $where_search = '';
     #Optional GROUP BY
-    protected string $groupBy = '';
+    protected string $group_by = '';
     #Optional bindings, in the case of more complex WHERE clauses. Needs to be set during construction, since this implies "unique" values
     protected array $bindings = [];
     #Count argument. In some cases you may want to count a certain column instead of using * (default).
-    protected string $countArgument = '*';
+    protected string $count_argument = '*';
     #Default order (for the main page, for example)
-    protected string $orderDefault = '';
+    protected string $order_default = '';
     #Order for list pages
-    protected string $orderList = '';
+    protected string $order_list = '';
     #The next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     #the more weight/relevancy condition with it will have (if true)
     #List of FULLTEXT columns
@@ -54,13 +54,13 @@ abstract class Search
     final public function __construct(array $bindings = [], ?string $where = null, ?string $order = null, ?string $group = null)
     {
         #Check that subclass has set appropriate properties, except $where, which is ok to inherit
-        foreach (['entity_type', 'table', 'fields', 'orderDefault', 'orderList'] as $property) {
+        foreach (['entity_type', 'table', 'fields', 'order_default', 'order_list'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(get_class($this).' must have a non-empty `'.$property.'` property.');
             }
         }
-        if (empty($this->countArgument)) {
-            $this->countArgument = '*';
+        if (empty($this->count_argument)) {
+            $this->count_argument = '*';
         }
         #Set bindings
         $this->bindings = $bindings;
@@ -70,12 +70,12 @@ abstract class Search
         }
         #Override ORDER BY
         if ($order !== null) {
-            $this->orderList = $order;
-            $this->orderDefault = $order;
+            $this->order_list = $order;
+            $this->order_default = $order;
         }
         #Override GROUP BY
         if ($group !== null) {
-            $this->groupBy = $group;
+            $this->group_by = $group;
         }
     }
     
@@ -120,7 +120,7 @@ abstract class Search
         #Count entities first
         $count = $this->countEntities($what);
         #Count pages
-        $pages = (int)ceil($count / $this->listItems);
+        $pages = (int)ceil($count / $this->list_items);
         if ($pages < 1) {
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
         }
@@ -129,7 +129,7 @@ abstract class Search
             return $pages;
         }
         try {
-            return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->listItems, $this->listItems * ($page - 1), true)];
+            return ['count' => $count, 'pages' => $pages, 'entities' => $this->selectEntities($what, $this->list_items, $this->list_items * ($page - 1), true)];
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return ['count' => $count, 'pages' => $pages, 'entities' => []];
@@ -153,12 +153,12 @@ abstract class Search
                     $like = false;
                 }
                 #String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
-                $exactlyLike = 'SELECT COUNT('.$this->countArgument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ');
+                $exactly_like = 'SELECT COUNT('.$this->count_argument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
                 #Prepare results
                 $results = 0;
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = Query::query($exactlyLike.$this->exact().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'count');
+                    $results = Query::query($exactly_like.$this->exact().')'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'count');
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -169,15 +169,15 @@ abstract class Search
                         return 0;
                     }
                     #Get fulltext results
-                    return Query::query($exactlyLike.$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'count');
+                    return Query::query($exactly_like.$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'count');
                 }
                 if (empty($this->like)) {
                     return 0;
                 }
                 #Search using LIKE
-                return Query::query($exactlyLike.$this->like().')'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]), return: 'count');
+                return Query::query($exactly_like.$this->like().')'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]), return: 'count');
             }
-            return Query::query('SELECT COUNT('.$this->countArgument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).';', $this->bindings, return: 'count');
+            return Query::query('SELECT COUNT('.$this->count_argument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).';', $this->bindings, return: 'count');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return 0;
@@ -204,12 +204,12 @@ abstract class Search
                     $like = false;
                 }
                 #String for exact and LIKE searches. Just so that PHPStorm does not complain about duplicates
-                $exactlyLike = 'SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ');
-                #Prepare results array
+                $exactly_like = 'SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ');
+                #Prepare the results array
                 $results = [];
                 #Get exact comparison results
                 if (!empty($this->exact) && !$like) {
-                    $results = $this->postProcess(Query::query($exactlyLike.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'all'));
+                    $results = $this->postProcess(Query::query($exactly_like.$this->exact().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string']]), return: 'all'));
                 }
                 #If something was found - return results
                 if (!empty($results)) {
@@ -220,15 +220,15 @@ abstract class Search
                         return [];
                     }
                     #Get fulltext results
-                    return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->whereSearch) ? '' : $this->whereSearch.' OR ').$this->relevancy().' > 0)'.(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
+                    return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` , '.$this->relevancy().' as `relevance` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).' WHERE '.(empty($this->where) ? '' : $this->where.' AND ').'('.(empty($this->where_search) ? '' : $this->where_search.' OR ').$this->relevancy().' > 0)'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY `relevance` DESC, `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'match']]), return: 'all'));
                 }
                 if (empty($this->like)) {
                     return [];
                 }
                 #Search using LIKE
-                return $this->postProcess(Query::query($exactlyLike.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]), return: 'all'));
+                return $this->postProcess(Query::query($exactly_like.$this->like().') ORDER BY `name` LIMIT '.$limit.' OFFSET '.$offset, array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'string']]), return: 'all'));
             }
-            return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->groupBy) ? '' : ' GROUP BY '.$this->groupBy).' ORDER BY '.($list ? $this->orderList : $this->orderDefault).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
+            return $this->postProcess(Query::query('SELECT '.$this->fields.', \''.$this->entity_type.'\' as `type` FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).' ORDER BY '.($list ? $this->order_list : $this->order_default).' LIMIT '.$limit.' OFFSET '.$offset.';', $this->bindings, return: 'all'));
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return [];
@@ -272,7 +272,7 @@ abstract class Search
     {
         $result = '(';
         #Add FULLTEXT comparisons.
-        $factor = \count($this->fulltext);
+        $factor = count($this->fulltext);
         foreach ($this->fulltext as $key => $field) {
             $result .= '(MATCH (`'.$field.'`) AGAINST (:what IN BOOLEAN MODE))*'.($factor - $key).' + ';
         }

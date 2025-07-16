@@ -1,7 +1,7 @@
-<article class="margin05rem">
+<article class="margin_05rem">
     <details>
-        <summary class="rightSummary aboutSection">{% if serviceName == 'bictracker' %}Помощь по поиску{% else %}Search help{% endif %}</summary>
-        {% if serviceName == 'bictracker' %}
+        <summary class="right_summary about_section">{% if service_name == 'bictracker' %}Помощь по поиску{% else %}Search help{% endif %}</summary>
+        {% if service_name == 'bictracker' %}
             <p>Поиск вначале осуществляется для точных совпадений, для ускорения выдачи по точным ID или именам. Если точных совпадений не найдено, то будет осуществлён полнотекстовый поиск.</p>
             <p>Вы можете использовать следующие контрольные символы для управления выдачей:</p>
             <ul>
@@ -15,7 +15,7 @@
                 <li><b>(&nbsp;)</b> позволяют группировать слова для создания сложных условий поиска</li>
             </ul>
             <p>Если вам всё равно не удаётся найти нужное, попробуйте использовать <b>%</b> символ для неточного поиска, но имейте в виду, что такой поиск может занять значительное время..</p>
-        {% elseif serviceName == 'fftracker' %}
+        {% elseif service_name == 'fftracker' %}
             <p>Search is first done for exact match of the value, to provide faster results for exact IDs or names. If no match is found, full text search is done searching for the whole word.</p>
             <p>You can try using these control symbols to adjust search:</p>
             <ul>

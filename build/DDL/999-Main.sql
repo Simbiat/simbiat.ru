@@ -250,7 +250,7 @@ INSERT INTO `sys__log_types` (`type_id`, `name`) VALUES
 
 INSERT INTO `sys__settings` (`setting`, `value`, `description`) VALUES
 ('maintenance', '0', 'Sets the site under maintenance if set to 1, forcing to show appropriate error messages.'),
-('ogdesc', 'Website of Simbiat Software providing services like Final Fantasy XIV Free Company Tracker and BIC Library.', 'General description of the website for meta-tags'),
+('og_desc', 'Website of Simbiat Software providing services like Final Fantasy XIV Free Company Tracker and BIC Library.', 'General description of the website for meta-tags'),
 ('registration', '1', 'Flag determining whether registration of new users is open or not.'),
 ('site_name', 'Simbiat Software', 'General name of the website for \"title\" and meta-tags');
 

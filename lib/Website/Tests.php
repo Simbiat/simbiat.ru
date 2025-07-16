@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use JetBrains\PhpStorm\NoReturn;
 use Simbiat;
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
@@ -17,9 +18,9 @@ class Tests
     #$data = $lodestone->getCharacterAchievements('6691027', false, 39, true, false)->getResult();
     #$data = $lodestone->getWorldStatus(true)->getResult();
     #$data = $lodestone->getDeepDungeon(2, '', '', '')->getResult();
-
+    
     #Function to test file upload using PUT
-    public function uploadPut(string $filepath): void
+    #[NoReturn] public function uploadPut(string $filepath): void
     {
         $curl = (new Curl)::$curl_handle;
         curl_setopt($curl, CURLOPT_URL, Simbiat\Website\Config::$base_url);
@@ -34,7 +35,7 @@ class Tests
     }
     
     #Function to test file upload using POST
-    public function uploadPost(string $uploadPath, int $max_file_size = 300000000): void
+    public function uploadPost(string $upload_path, int $max_file_size = 300000000): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $output = '
@@ -50,7 +51,7 @@ class Tests
             Common::zEcho($output);
         } else {
             try {
-                Tests::testDump(Sharing::upload($uploadPath, false, false, [], false));
+                Tests::testDump(Sharing::upload($upload_path, false, false, [], false));
             } catch (\Throwable $exception) {
                 echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
             }
@@ -59,7 +60,7 @@ class Tests
     }
     
     #Function to test download
-    public function downloadTest(string $filepath, string $bytes = ''): void
+    #[NoReturn] public function downloadTest(string $filepath, string $bytes = ''): void
     {
         if (!empty($bytes)) {
             $_SERVER['HTTP_RANGE'] = 'bytes='.$bytes;

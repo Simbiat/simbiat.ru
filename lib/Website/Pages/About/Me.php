@@ -11,17 +11,17 @@ use Simbiat\Website\Abstracts\Pages\StaticPage;
 class Me extends StaticPage
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/', 'name' => 'me']
     ];
     #Sub service name
-    protected string $subServiceName = 'me';
+    protected string $subservice_name = 'me';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'About me';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'About owner of Simbiat Software';
+    protected string $og_desc = 'About owner of Simbiat Software';
     #List of images to H2 push
-    protected array $h2pushExtra = [
+    protected array $h2_push_extra = [
         '/assets/images/ogimages/jiangshi.png',
         '/assets/images/ogimages/dden.png',
         '/assets/images/ogimages/RadicalResonance.png',
@@ -29,11 +29,17 @@ class Me extends StaticPage
         '/assets/images/ogimages/fftracker.png',
     ];
     
+    /**
+     * Page generation
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
-        $outputArray = ['yearsOfExperience' => ((int)date('Y') - 2009)];
+        $output_array = ['years_of_experience' => ((int)date('Y') - 2009)];
         #Feedback
-        $outputArray['feedbacks'] =
+        $output_array['feedbacks'] =
             [
                 [
                     'href' => '/resume/Signant/20250610_1.webp',
@@ -136,11 +142,11 @@ class Me extends StaticPage
                     'caption' => 'Feedback from <a href="https://www.linkedin.com/in/tatuvirtanen/" target="_blank">Tatu Virtanen</a>',
                 ],
             ];
-        $outputArray['timeline'] =
+        $output_array['timeline'] =
             [
                 [
-                    'startTime' => '1989-05-12 02:00:00',
-                    'endTime' => null,
+                    'start_time' => '1989-05-12 02:00:00',
+                    'end_time' => null,
                     'name' => 'Human',
                     'icon' => '/assets/images/icons/Earth.svg',
                     'href' => null,
@@ -148,13 +154,13 @@ class Me extends StaticPage
                     'responsibilities' => null,
                     'achievements' => [
                         'Blood donor',
-                        'Patron for <a href="https://sos-dd.ru/" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="linkIcon">SOS Children\'s Villages</a>'
+                        'Patron for <a href="https://sos-dd.ru/" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="link_icon">SOS Children\'s Villages</a>'
                     ],
                     'description' => null,
                 ],
                 [
-                    'startTime' => '1995-09-01',
-                    'endTime' => '2006-06-23',
+                    'start_time' => '1995-09-01',
+                    'end_time' => '2006-06-23',
                     'name' => 'School №1208',
                     'icon' => '/assets/images/icons/1208.webp',
                     'href' => 'https://sch1208uv.mskobr.ru/',
@@ -165,13 +171,13 @@ class Me extends StaticPage
                         'High level of English',
                         'Class president in grades 6 to 9',
                         'Participated in school theatre with noticeable roles of Famusov (<cite>Grief from the mind</cite>), Zvyagincev (<cite>They Were Fighting for Homeland</cite>), reindeer (<cite>Snow Queen</cite>), Carlo/Geppetto and Karabas-Barabas/Mangiafuoco/Stromboli (<cite>Buratino/Pinocchio</cite>)',
-                        '<a href="/resume/MiddleSchool.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                        '<a href="/resume/MiddleSchool.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
                     ],
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2002-01-07',
-                    'endTime' => null,
+                    'start_time' => '2002-01-07',
+                    'end_time' => null,
                     'name' => null,
                     'icon' => '/assets/images/logo.svg',
                     'href' => null,
@@ -188,19 +194,19 @@ class Me extends StaticPage
                         'Learn narrative design through gaming experiences',
                     ],
                     'achievements' => [
-                        'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img decoding="async" loading="lazy" class="linkIcon" src="/assets/images/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
-                        'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img decoding="async" loading="lazy" class="linkIcon" src="/assets/images/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
+                        'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img decoding="async" loading="lazy" class="link_icon" src="/assets/images/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
+                        'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img decoding="async" loading="lazy" class="link_icon" src="/assets/images/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
                         'Supported file storage of 8Tbs+',
                         'Administered and moderated a forum of 20,000+ users',
                         'Automated payments and donations via PayPal using vBulletin plugins',
-                        'Posted most of the game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/social/steam.svg" alt="Steam">Steam</a>',
-                        'Experimented with narrative in video by creating <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/social/youtube.svg" alt="Youtube">Welcome To My Crib</a> and <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/social/youtube.svg" alt="Youtube">Aqua Chronica</a> series',
+                        'Posted most of the game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/steam.svg" alt="Steam">Steam</a>',
+                        'Experimented with narrative in video by creating <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/youtube.svg" alt="Youtube">Welcome To My Crib</a> and <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/youtube.svg" alt="Youtube">Aqua Chronica</a> series',
                     ],
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2006-09-01',
-                    'endTime' => '2011-06-16',
+                    'start_time' => '2006-09-01',
+                    'end_time' => '2011-06-16',
                     'name' => 'Moscow Institute of Electronics and Mathematics',
                     'icon' => '/assets/images/icons/MIEM.svg',
                     'href' => 'https://miem.hse.ru/',
@@ -209,14 +215,14 @@ class Me extends StaticPage
                     'achievements' => [
                         'Class president since 2nd year',
                         'Graduate work: <cite>Testing of hardware and software solutions for 3-dimensional information representation in virtual reality system</cite>',
-                        '<a href="/resume/Specialist-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Diploma" class="linkIcon">Diploma</a>',
-                        '<a href="/resume/Specialist-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="GPA" class="linkIcon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.56',
+                        '<a href="/resume/Specialist-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Diploma" class="link_icon">Diploma</a>',
+                        '<a href="/resume/Specialist-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="GPA" class="link_icon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.56',
                     ],
                     'description' => 'Specialization: management and informatics in technical systems',
                 ],
                 [
-                    'startTime' => '2007-09-01',
-                    'endTime' => '2011-06-07',
+                    'start_time' => '2007-09-01',
+                    'end_time' => '2011-06-07',
                     'name' => 'Moscow Institute of Electronics and Mathematics',
                     'icon' => '/assets/images/icons/MIEM.svg',
                     'href' => 'https://miem.hse.ru/',
@@ -225,14 +231,14 @@ class Me extends StaticPage
                     'achievements' => [
                         'Class president',
                         'Graduate work: <cite>Hardware solutions for 3-dimensional information representation in virtual reality system</cite>',
-                        '<a href="/resume/Bachelor-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Diploma" class="linkIcon">Diploma</a>',
-                        '<a href="/resume/Bachelor-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="GPA" class="linkIcon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.52',
+                        '<a href="/resume/Bachelor-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Diploma" class="link_icon">Diploma</a>',
+                        '<a href="/resume/Bachelor-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="GPA" class="link_icon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.52',
                     ],
                     'description' => 'Specialization: automation and management',
                 ],
                 [
-                    'startTime' => '2009-02-02',
-                    'endTime' => '2009-03-27',
+                    'start_time' => '2009-02-02',
+                    'end_time' => '2009-03-27',
                     'name' => 'Windsor',
                     'icon' => '/assets/images/icons/Windsor.webp',
                     'href' => 'https://www.windsor.ru/',
@@ -246,8 +252,8 @@ class Me extends StaticPage
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2009-06-04',
-                    'endTime' => '2011-05-20',
+                    'start_time' => '2009-06-04',
+                    'end_time' => '2011-05-20',
                     'name' => 'IBS Datafort',
                     'icon' => '/assets/images/icons/IBS.svg',
                     'href' => 'https://www.datafort.ru/',
@@ -265,8 +271,8 @@ class Me extends StaticPage
                     'description' => 'Outsourced job for Citi Russia as evening operator.',
                 ],
                 [
-                    'startTime' => '2011-05-23',
-                    'endTime' => '2015-09-14',
+                    'start_time' => '2011-05-23',
+                    'end_time' => '2015-09-14',
                     'name' => 'Citi',
                     'icon' => '/assets/images/icons/Citi.svg',
                     'href' => 'https://www.citibank.ru/',
@@ -288,8 +294,8 @@ class Me extends StaticPage
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2015-09-15',
-                    'endTime' => '2018-05-15',
+                    'start_time' => '2015-09-15',
+                    'end_time' => '2018-05-15',
                     'name' => 'Citi',
                     'icon' => '/assets/images/icons/Citi.svg',
                     'href' => 'https://www.citibank.ru/',
@@ -317,8 +323,8 @@ class Me extends StaticPage
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2018-05-16',
-                    'endTime' => '2021-07-23',
+                    'start_time' => '2018-05-16',
+                    'end_time' => '2021-07-23',
                     'name' => 'Citi',
                     'icon' => '/assets/images/icons/Citi.svg',
                     'href' => 'https://www.citibank.ru/',
@@ -342,19 +348,19 @@ class Me extends StaticPage
                     'description' => null,
                 ],
                 [
-                    'startTime' => null,
-                    'endTime' => '2020-12-21',
+                    'start_time' => null,
+                    'end_time' => '2020-12-21',
                     'name' => 'Luxoft Training',
                     'icon' => '/assets/images/icons/Luxoft.svg',
                     'href' => 'https://www.luxoft-training.ru/',
                     'position' => 'Student',
                     'responsibilities' => null,
-                    'achievements' => '<a href="/resume/Web-Service_Certificate.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                    'achievements' => '<a href="/resume/Web-Service_Certificate.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
                     'description' => 'Customized course <cite>Basics of web-services support</cite>, 6 hours',
                 ],
                 [
-                    'startTime' => '2021-09-20',
-                    'endTime' => '2022-06-30',
+                    'start_time' => '2021-09-20',
+                    'end_time' => '2022-06-30',
                     'name' => 'Smartly.io',
                     'icon' => '/assets/images/icons/Smartly.svg',
                     'href' => 'https://www.smartly.io/',
@@ -367,35 +373,35 @@ class Me extends StaticPage
                     'achievements' => [
                         'Drove implementation of Support Handbook, internal collection of manuals and guidelines for customer support.',
                         'Participated in leadership training',
-                        '<a href="/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="linkIcon">Snapchat Essentials</a>'
+                        '<a href="/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Snapchat Essentials</a>'
                     ],
                     'description' => null,
                 ],
                 [
-                    'startTime' => null,
-                    'endTime' => '2021-10-28',
+                    'start_time' => null,
+                    'end_time' => '2021-10-28',
                     'name' => 'Snap Inc.',
                     'icon' => '/assets/images/social/snapchat.svg',
                     'href' => 'https://www.snapchat.com/',
                     'position' => 'Student',
                     'responsibilities' => null,
-                    'achievements' => '<a href="https://focus.snapchat.com/student/award/Mky9cibA5QqZFG6ESU3SQiEy" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                    'achievements' => '<a href="https://focus.snapchat.com/student/award/Mky9cibA5QqZFG6ESU3SQiEy" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
                     'description' => 'Snapchat Essentials',
                 ],
                 [
-                    'startTime' => null,
-                    'endTime' => '2022-01-18',
+                    'start_time' => null,
+                    'end_time' => '2022-01-18',
                     'name' => 'Smartly.io',
                     'icon' => '/assets/images/icons/Smartly.svg',
                     'href' => 'https://www.smartly.io/',
                     'position' => 'Student',
                     'responsibilities' => null,
-                    'achievements' => '<a href="https://www.credly.com/badges/746c851c-6bb2-4fc1-b3f4-e5902e789654/public_url" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="linkIcon">Certificate</a>',
+                    'achievements' => '<a href="https://www.credly.com/badges/746c851c-6bb2-4fc1-b3f4-e5902e789654/public_url" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
                     'description' => 'Creative Foundational certification',
                 ],
                 [
-                    'startTime' => '2022-10-26',
-                    'endTime' => null,
+                    'start_time' => '2022-10-26',
+                    'end_time' => null,
                     'name' => 'Support from Hel',
                     'icon' => '/assets/images/icons/SupportFromHel.svg',
                     'href' => 'https://supportfromhel.fi/',
@@ -405,30 +411,30 @@ class Me extends StaticPage
                     'description' => 'Group for professionals working in customer support to meet, network & learn with industry peers.',
                 ],
                 [
-                    'startTime' => '2023-01-24',
-                    'endTime' => '2023-05-11',
+                    'start_time' => '2023-01-24',
+                    'end_time' => '2023-05-11',
                     'name' => 'Arcada',
                     'icon' => '/assets/images/icons/Arcada.svg',
                     'href' => 'https://www.arcada.fi/en/study-arcada/continuing-education/course-calendar/game-design-and-production',
                     'position' => 'Student',
                     'responsibilities' => null,
-                    'achievements' => '<a href="/resume/ArcadaGameDesignTranscript.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Transcript of records" class="linkIcon">Transcript of records</a>',
+                    'achievements' => '<a href="/resume/ArcadaGameDesignTranscript.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Transcript of records" class="link_icon">Transcript of records</a>',
                     'description' => 'Game Design and Production',
                 ],
                 [
-                    'startTime' => '2023-10-09',
-                    'endTime' => '2024-01-26',
+                    'start_time' => '2023-10-09',
+                    'end_time' => '2024-01-26',
                     'name' => 'Security Journey',
                     'icon' => '/assets/images/icons/SecurityJourney.svg',
                     'href' => 'https://www.securityjourney.com/',
                     'position' => 'Student',
                     'responsibilities' => null,
-                    'achievements' => '<a href="/resume/SecurityJourney.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="20 certificates" class="linkIcon">20 certificates</a>',
+                    'achievements' => '<a href="/resume/SecurityJourney.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="20 certificates" class="link_icon">20 certificates</a>',
                     'description' => '19 Green Belts and Threat Modeling',
                 ],
                 [
-                    'startTime' => '2023-04-24',
-                    'endTime' => null,
+                    'start_time' => '2023-04-24',
+                    'end_time' => null,
                     'name' => 'Signant Health',
                     'icon' => '/assets/images/icons/SignantHealth.svg',
                     'href' => 'https://www.signanthealth.com/',
@@ -444,8 +450,8 @@ class Me extends StaticPage
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2024-09-12',
-                    'endTime' => '2024-12-28',
+                    'start_time' => '2024-09-12',
+                    'end_time' => '2024-12-28',
                     'name' => 'Far Far Games',
                     'icon' => '/assets/images/icons/Far Far Games.webp',
                     'href' => 'https://farfargames.com/',
@@ -453,8 +459,8 @@ class Me extends StaticPage
                     'description' => 'Beta-testing new game "Bylina" a.k.a "The Epic"',
                 ],
                 [
-                    'startTime' => '2024-10-07',
-                    'endTime' => null,
+                    'start_time' => '2024-10-07',
+                    'end_time' => null,
                     'name' => 'Green Sisu',
                     'icon' => '/assets/images/social/vihreät.svg',
                     'href' => 'https://www.greensisu.fi/',
@@ -462,8 +468,8 @@ class Me extends StaticPage
                     'description' => null,
                 ],
                 [
-                    'startTime' => '2024-11-06',
-                    'endTime' => '2024-11-27',
+                    'start_time' => '2024-11-06',
+                    'end_time' => '2024-11-27',
                     'name' => 'Carillon Games',
                     'icon' => '/assets/images/icons/Blue Berry.webp',
                     'href' => 'https://play.google.com/store/apps/details?id=com.carillongames.blueberry',
@@ -471,6 +477,6 @@ class Me extends StaticPage
                     'description' => 'Beta-testing new game "Blue Berry"',
                 ],
             ];
-        return $outputArray;
+        return $output_array;
     }
 }

@@ -2,43 +2,43 @@
 {% if id == 1 and not session_data.sections.blog %}
     <tab-content>
         <p>Fill in and submit the form below to create your personal blog.</p>
-        {{ include('talks/forms/newSection.twig', {'startingNewBlog': true}) }}
+        {{ include('talks/forms/new_section.twig', {'starting_new_blog': true}) }}
     </tab-content>
 {% endif %}
 {# Check if user does not have a changelog created and we are in a changelog root section #}
 {% if id == 3 and not session_data.sections.changelog %}
     <tab-content>
         <p>Fill in and submit the form below to create your changelog.</p>
-        {{ include('talks/forms/newSection.twig', {'startingNewChangelog': true}) }}
+        {{ include('talks/forms/new_section.twig', {'starting_new_changelog': true}) }}
     </tab-content>
 {% endif %}
 {# Check if user does not have a knowledgebase created and we are in a knowledgebase section #}
 {% if id == 4 and not session_data.sections.knowledgebase %}
     <tab-content>
         <p>Fill in and submit the form below to create your knowledgebase.</p>
-        {{ include('talks/forms/newSection.twig', {'startingNewKB': true}) }}
+        {{ include('talks/forms/new_section.twig', {'starting_new_kb': true}) }}
     </tab-content>
 {% endif %}
 {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
         <tab-content>
             <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
-            {{ include('talks/forms/addThread.twig') }}
+            {{ include('talks/forms/add_thread.twig') }}
         </tab-content>
     {% endif %}
 {% endif %}
 {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
-    {% if inheritedType != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
+    {% if inherited_type != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
         <tab-content>
             <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
-            {{ include('talks/forms/newSection.twig') }}
+            {{ include('talks/forms/new_section.twig') }}
         </tab-content>
     {% endif %}
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <tab-content>
-        {% if editMode %}
-            {{ include('talks/forms/editSection.twig') }}
+        {% if edit_mode %}
+            {{ include('talks/forms/edit_section.twig') }}
         {% else %}
             <p>For editing this section, please, use the edit mode using the button below.</p>
             <a class="button" href="/talks/edit/sections/{{ section_id }}">Edit mode</a>

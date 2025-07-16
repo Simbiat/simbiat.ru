@@ -16,17 +16,17 @@ use function sprintf;
 class Search extends Page
 {
     #Cache age, in case we prefer the generated page to be cached
-    protected int $cacheAge = 1440;
+    protected int $cache_age = 1440;
     #Linking types to classes
     protected array $types = [];
     #Items to display per page for search results per type
     protected int $search_items = 15;
     #Regex to sanitize search value (remove disallowed characters)
-    protected string $regexSearch = '/[^\p{L}\p{N} _\'\-,!%]/iu';
+    protected string $regex_search = '/[^\p{L}\p{N} _\'\-,!%]/iu';
     #Short title to be used for <title> and <h1> when having a search value
-    protected string $shortTitle = 'Search for `%s`';
+    protected string $short_title = 'Search for `%s`';
     #Full title to be used for description metatags when having a search value
-    protected string $fullTitle = 'Search for `%s`';
+    protected string $full_title = 'Search for `%s`';
     #Search value
     protected string $search_for = '';
     
@@ -50,28 +50,28 @@ class Search extends Page
             return ['http_error' => 400, 'reason' => 'Bad search term'];
         }
         #Get search results
-        $outputArray = [];
+        $output_array = [];
         foreach ($this->types as $type => $class) {
-            $outputArray['search_result'][$type] = new $class['class']()->Search($this->search_for, $this->search_items);
+            $output_array['search_result'][$type] = new $class['class']()->Search($this->search_for, $this->search_items);
         }
         #Get the freshest date
-        $date = $this->getDate($outputArray['search_result']);
+        $date = $this->getDate($output_array['search_result']);
         #Attempt to exit a bit earlier with Last Modified header
         if (!empty($date)) {
             $this->lastModified($date);
         }
         if (!empty($this->search_for)) {
             #Continue breadcrumbs
-            $this->attachCrumb('?search='.rawurlencode($this->search_for), sprintf($this->shortTitle, $this->search_for));
+            $this->attachCrumb('?search='.rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
             #Set search value, if available
-            $outputArray['search_value'] = $this->search_for;
+            $output_array['search_value'] = $this->search_for;
             #Set titles
-            $this->title = sprintf($this->shortTitle, $this->search_for);
+            $this->title = sprintf($this->short_title, $this->search_for);
             $this->h1 = $this->title;
-            $this->ogdesc = sprintf($this->fullTitle, $this->search_for);
+            $this->og_desc = sprintf($this->full_title, $this->search_for);
         }
         #Merge with extra fields and return the result
-        return array_merge($outputArray, $this->extras());
+        return array_merge($output_array, $this->extras());
     }
     
     /**
@@ -124,14 +124,14 @@ class Search extends Page
         }
         $term = Sanitization::removeNonPrintable($term, true);
         #Remove not allowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
-        $decodedSearch = preg_replace([$this->regexSearch, '/:/'], '', $term);
+        $decoded_search = preg_replace([$this->regex_search, '/:/'], '', $term);
         #Check if the new value is just the set of operators and if it is - consider a bad request
-        if (preg_match('/^[+\-<>~()"*]+$/', $decodedSearch)) {
+        if (preg_match('/^[+\-<>~()"*]+$/', $decoded_search)) {
             return false;
         }
         #If the value is empty, ensure it's an empty string
-        if (!empty($decodedSearch)) {
-            $this->search_for = $decodedSearch;
+        if (!empty($decoded_search)) {
+            $this->search_for = $decoded_search;
         }
         return true;
     }

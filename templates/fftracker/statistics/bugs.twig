@@ -1,33 +1,33 @@
 <p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
 <h2>Characters with no clan</h2>
-{% if ffstats.data.bugs.noClan|length > 0 %}
+{% if ffstats.data.bugs.no_clan|length > 0 %}
     <p>These are either characters that are freshly added to the tracker (which is normal) or those that have <var>----</var> instead of race/clan on Lodestone itself (which is a bug).</p>
-    {% for character in ffstats.data.bugs.noClan %}
+    {% for character in ffstats.data.bugs.no_clan %}
         {{ include('common/elements/entitycard.twig', character) }}
     {% endfor %}
 {% else %}
     <p>No characters without a clan found.</p>
 {% endif %}
 <h2>Characters with no avatar</h2>
-{% if ffstats.data.bugs.noAvatar|length > 0 %}
+{% if ffstats.data.bugs.no_avatar|length > 0 %}
     <p>These are characters that for some reason do not have an avatar on Lodestone (and no jobs at all) and look corrupted.</p>
-    {% for character in ffstats.data.bugs.noClan %}
+    {% for character in ffstats.data.bugs.no_clan %}
         {{ include('common/elements/entitycard.twig', character) }}
     {% endfor %}
 {% else %}
     <p>No characters without an avatar found.</p>
 {% endif %}
 <h2>Groups with no members</h2>
-{% if ffstats.data.bugs.noMembers|length > 0 %}
+{% if ffstats.data.bugs.no_members|length > 0 %}
     <p>These are either groups that are freshly added to the tracker (which is normal) or those that do not have any members on Lodestone, which may mean, that these are groups pending removal from the game.</p>
-    {% for group in ffstats.data.bugs.noMembers %}
+    {% for group in ffstats.data.bugs.no_members %}
         {{ include('common/elements/entitycard.twig', group) }}
     {% endfor %}
 {% else %}
     <p>No active groups without members found.</p>
 {% endif %}
 <h2>Duplicate names</h2>
-{% if ffstats.data.bugs.duplicateNames|length > 0 %}
+{% if ffstats.data.bugs.duplicate_names|length > 0 %}
     <p>The game does not allow duplicate case-insensitive character names and duplicate case-sensitive group names on the same server or data center. If there are duplicates, most likely one of the copy has name changed, and needs an update on tracker.</p>
     <table class="ff_duplicate_names">
         <thead><tr>
@@ -35,7 +35,7 @@
             <th>Server or Data Center</th>
             <th>Duplicates</th>
         </tr></thead>
-        {% for entity_type, servers in ffstats.data.bugs.duplicateNames %}
+        {% for entity_type, servers in ffstats.data.bugs.duplicate_names %}
             {% for server, names in servers %}
                 {% for duplicates in names %}
                     <tr>

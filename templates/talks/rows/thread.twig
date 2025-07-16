@@ -7,17 +7,17 @@
                 {% if thread.closed %}<span data-tooltip="Closed thread">🔒</span>{% endif %}
                 {% if thread.private %}<span data-tooltip="Private thread">🚷</span>{% endif %}
             </div>
-            <a href="/talks/threads/{{ thread.id }}"{% if thread.detailedType != 'Changelog' or is_numeric(thread.name) == false %}"{% endif %}>{% if thread.detailedType == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
+            <a href="/talks/threads/{{ thread.id }}"{% if thread.detailed_type != 'Changelog' or is_numeric(thread.name) == false %}"{% endif %}>{% if thread.detailed_type == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
         </div>
     </td>
     <td>{{ timeTag(thread.created, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.author }}/{{ prettyURL(thread.author_name) }}">{{ thread.author_name }}</a></td>
     <td>{{ timeTag(thread.last_post, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.last_poster }}/{{ prettyURL(thread.last_poster_name) }}">{{ thread.last_poster_name }}</a></td>
     <td>{{ thread.posts }}</td>
-    {% if editMode %}
+    {% if edit_mode %}
         <td>{{ thread.id }}</td>
         {% if 'can_pin' in permissions %}
             <td>
-                <span class="radio_and_label">
+                <span class="float_label">
                     <input id="thread_pin_checkbox_{{ thread.id }}" class="thread_pin" data-thread="{{ thread.id }}" type="checkbox"{% if thread.pinned %} checked{% endif %}>
                     <label for="thread_pin_checkbox_{{ thread.id }}"></label>
                 <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Pinning...">
@@ -26,7 +26,7 @@
         {% endif %}
         {% if type != 'Support' and 'mark_private' in permissions %}
             <td>
-                <span class="radio_and_label">
+                <span class="float_label">
                     <input id="thread_private_checkbox_{{ thread.id }}" class="thread_private" data-thread="{{ thread.id }}" type="checkbox"{% if thread.private %} checked{% endif %}>
                     <label for="thread_private_checkbox_{{ thread.id }}"></label>
                 <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Changing privacy...">

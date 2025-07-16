@@ -129,11 +129,11 @@ class Curl
         }
         #Rename the file to give it a proper extension
         $mime = mime_content_type($filepath);
-        $newName = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::EXTENSION_TO_MIME, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
-        rename($filepath, sys_get_temp_dir().'/'.$newName);
-        $filepath = sys_get_temp_dir().'/'.$newName;
+        $new_name = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::EXTENSION_TO_MIME, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
+        rename($filepath, sys_get_temp_dir().'/'.$new_name);
+        $filepath = sys_get_temp_dir().'/'.$new_name;
         return [
-            'server_name' => $newName,
+            'server_name' => $new_name,
             'server_path' => sys_get_temp_dir(),
             'user_name' => preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$1$2', basename($link)),
             'size' => filesize($filepath),
@@ -232,18 +232,18 @@ class Curl
     
     /**
      * Check if a remote file exists
-     * @param $remoteFile
+     * @param $remote_file
      *
      * @return bool
      */
-    public function ifExists($remoteFile): bool
+    public function ifExists($remote_file): bool
     {
         if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
         #Initialize cUrl
         curl_setopt(self::$curl_handle, CURLOPT_NOBODY, true);
-        curl_setopt(self::$curl_handle, CURLOPT_URL, $remoteFile);
+        curl_setopt(self::$curl_handle, CURLOPT_URL, $remote_file);
         curl_exec(self::$curl_handle);
         $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
         curl_close(self::$curl_handle);
@@ -253,13 +253,13 @@ class Curl
     
     /**
      * Function to process file uploads either through POST/PUT or by using a provided link
-     * @param string $link       URL to process if we are to download a remote file
-     * @param bool   $onlyImages Flag to indicate that only images are allowed
-     * @param bool   $toWebp     Whether to convert images to WEBP (if possible)
+     * @param string $link        URL to process if we are to download a remote file
+     * @param bool   $only_images Flag to indicate that only images are allowed
+     * @param bool   $to_webp     Whether to convert images to WEBP (if possible)
      *
      * @return array
      */
-    public function upload(string $link = '', bool $onlyImages = false, bool $toWebp = true): array
+    public function upload(string $link = '', bool $only_images = false, bool $to_webp = true): array
     {
         try {
             #Check DB
@@ -274,7 +274,7 @@ class Curl
                 }
             } else {
                 $upload = Sharing::upload(Config::$uploaded, exit: false);
-                if (!\is_array($upload) || empty($upload[0]['server_name'])) {
+                if (!is_array($upload) || empty($upload[0]['server_name'])) {
                     return ['http_error' => $upload, 'reason' => match ($upload) {
                         405 => 'Unsupported method',
                         415 => 'Unsupported file format',
@@ -288,7 +288,7 @@ class Curl
                     }];
                 }
                 #If $upload had more than 1 file - remove all except the 1st one
-                if (\count($upload) > 1) {
+                if (count($upload) > 1) {
                     foreach ($upload as $key => $file) {
                         if ($key !== 0) {
                             @unlink($file['server_path'].'/'.$file['server_name']);
@@ -305,7 +305,7 @@ class Curl
             #Check if we have an image
             if (preg_match('/^image\/.+/ui', $upload['type']) === 1) {
                 #Convert to webp if it's a supported format, unless we chose not to
-                if ($toWebp) {
+                if ($to_webp) {
                     $converted = Images::toWebP($upload['server_path'].'/'.$upload['server_name']);
                 } else {
                     $converted = false;
@@ -323,7 +323,7 @@ class Curl
                 $upload['new_path'] = Config::$uploaded_img;
                 $upload['location'] = '/assets/images/uploaded/';
             } else {
-                if ($onlyImages) {
+                if ($only_images) {
                     #We do not accept non-images
                     return ['http_error' => 415, 'reason' => 'File is not an image'];
                 }

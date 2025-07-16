@@ -1,7 +1,7 @@
 {% if session_data.user_id != 1 %}
-    <a id="uc_settings" class="button" href="/uc/profile"><img loading="lazy" decoding="async" class="linkIcon" alt="Settings" src="/assets/images/cog.svg"></a>
+    <a id="uc_settings" class="button" href="/uc/profile"><img loading="lazy" decoding="async" class="link_icon" alt="Settings" src="/assets/images/cog.svg"></a>
     <div class="middle">Hi, <a href="/talks/users/{{ session_data.user_id }}" id="own_profile_link">{{ session_data.username }}</a>!</div>
-    <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebarAvatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}"></div>
+    <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebar_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}"></div>
     {% if session_data.activated == false %}
         <div class="warning">Pending <a href="/uc/emails">activation</a>.</div>
     {% endif %}
@@ -19,37 +19,39 @@
             {% endif %}
             <div id="radio_signinup" role="radiogroup">
                 <span>I am</span><br>
-                <span class="radio_and_label">
+                <span class="float_label">
                     <input type="radio" id="radio_existuser" name="signinup[type]" value="login" checked>
                     <label for="radio_existuser">member</label>
                 </span>
                 {% if registration == 1 %}
-                    <span class="radio_and_label">
+                    <span class="float_label">
                         <input type="radio" id="radio_newuser" name="signinup[type]" value="register">
                         <label for="radio_newuser">new</label>
                     </span>
                 {% endif %}
-                <span class="radio_and_label">
+                <span class="float_label">
                     <input type="radio" id="radio_forget" name="signinup[type]" value="remind">
                     <label for="radio_forget">forgetful</label>
                 </span>
             </div>
-            <div class="float_label_div">
+            <div class="float_label">
                 <input form="signinup" type="text" aria-required="false" spellcheck="false" name="signinup[username]" id="signinup_username" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
                 <label for="signinup_username">Username</label>
             </div>
-            <div class="float_label_div">
+            <div class="float_label">
                 <input form="signinup" type="email" required spellcheck="false" aria-required="true" name="signinup[email]" id="signinup_email" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="320" pattern="^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
                 <label for="signinup_email">Email</label>
             </div>
-            <div class="float_label_div">
-                <input form="signinup" type="password" spellcheck="false" required aria-required="true" name="signinup[password]" id="signinup_password" placeholder="Password" autocomplete="current-password" inputmode="text" minlength="8" pattern=".{8,}">
-                <label for="signinup_password">Password</label>
-                <password-show></password-show>
-                <password-requirements></password-requirements>
-                <password-strength></password-strength>
-            </div>
-            <div class="radio_and_label" id="rememberme_div">
+            <password-field>
+                <div class="float_label">
+                    <input form="signinup" type="password" spellcheck="false" required aria-required="true" name="signinup[password]" id="signinup_password" placeholder="Password" autocomplete="current-password" inputmode="text" minlength="8" pattern=".{8,}">
+                    <label for="signinup_password">Password</label>
+                    <password-show></password-show>
+                    <password-requirements></password-requirements>
+                    <password-strength></password-strength>
+                </div>
+            </password-field>
+            <div class="float_label" id="rememberme_div">
                 <input role="checkbox" aria-checked="false" form="signinup" type="checkbox" name="signinup[rememberme]" id="rememberme">
                 <label for="rememberme">Remember me</label>
             </div>

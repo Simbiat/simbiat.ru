@@ -1,23 +1,23 @@
 <section>
-    <article class="margin05rem">
-        <details {% if subServiceName == 'devicedetector' and path %}{% else %}class="persistent" open{% endif %}>
-            <summary class="rightSummary aboutSection">About</summary>
-            {% if not subServiceName %}
-            <p>This is the section, where I host some simple pages, that do not fit other categories and usually do not rely on database, thus expected to be always available. For now, it consists of only 1 page:</p>
-            <ul>
-                <li><a href="/simplepages/devicedetector" target="_self" itemprop="url"><span itemprop="name">Device Detector</span></a></li>
-            </ul>
+    <article class="margin_05rem">
+        <details {% if subservice_name == 'devicedetector' and path %}{% else %}class="persistent" open{% endif %}>
+            <summary class="right_summary about_section">About</summary>
+            {% if not subservice_name %}
+                <p>This is the section, where I host some simple pages, that do not fit other categories and usually do not rely on database, thus expected to be always available. For now, it consists of only 1 page:</p>
+                <ul>
+                    <li><a href="/simplepages/devicedetector" target="_self" itemprop="url"><span itemprop="name">Device Detector</span></a></li>
+                </ul>
             {% else %}
-                {% if subServiceName == 'devicedetector' %}
-                    <p>These are the icons for all {% if path %}{{ files[path].name }}{% else %}Operating Systems and applications{% endif %} detectable by <a href="https://github.com/matomo-org/device-detector/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/tech/Matomo.svg" alt="Matomo">Matomo's Device Detector</a>{% if not path or path=="app" %} except for <i>AFNetworking</i> applications{% endif %}.</p>
-                    <p>Full collection can be downloaded from respective repository on <a href="https://github.com/Simbiat/DeviceDetectorIcons" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/social/github.svg" alt="GitHub">GitHub</a>.</p>
+                {% if subservice_name == 'devicedetector' %}
+                    <p>These are the icons for all {% if path %}{{ files[path].name }}{% else %}Operating Systems and applications{% endif %} detectable by <a href="https://github.com/matomo-org/device-detector/" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/tech/Matomo.svg" alt="Matomo">Matomo's Device Detector</a>{% if not path or path=="app" %} except for <i>AFNetworking</i> applications{% endif %}.</p>
+                    <p>Full collection can be downloaded from respective repository on <a href="https://github.com/Simbiat/DeviceDetectorIcons" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/github.svg" alt="GitHub">GitHub</a>.</p>
                 {% endif %}
             {% endif %}
         </details>
     </article>
-    {% if subServiceName %}
-        <article class="margin05rem">
-            {% if subServiceName == 'devicedetector' %}
+    {% if subservice_name %}
+        <article class="margin_05rem">
+            {% if subservice_name == 'devicedetector' %}
                 {{ include('simplepages/devicedetector.twig') }}
             {% endif %}
         </article>

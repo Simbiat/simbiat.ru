@@ -17,13 +17,13 @@ use function in_array, is_array;
 abstract class Api
 {
     #Supported edges
-    protected array $subRoutes = [];
+    protected array $sub_routes = [];
     #Description of the nodes (need to be in the same order)
-    protected array $routesDesc = [];
+    protected array $routes_description = [];
     #Flag to indicate that this is a top level node (false by default)
-    protected bool $topLevel = false;
+    protected bool $top_level = false;
     #Flag to indicate that this is the lowest level
-    protected bool $finalNode = false;
+    protected bool $final_node = false;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['GET' => ''];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
@@ -31,19 +31,19 @@ abstract class Api
     #Flag to indicate, that no database is required for this node
     protected bool $static = false;
     #Cache age, in case we prefer the generated page to be cached
-    protected int $cacheAge = 0;
+    protected int $cache_age = 0;
     #Description of the node
     protected array $description = [];
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = false;
+    protected bool $authentication_needed = false;
     #List of permissions, from which at least 1 is required to have access the node
-    protected array $requiredPermission = [];
+    protected array $required_permission = [];
     #Flag to indicate need to validate CSRF
     protected bool $csrf = false;
     #Flag to indicate that session data change is possible on this page
-    protected bool $sessionChange = false;
+    protected bool $session_change = false;
     #List of allowed origins, if we want to limit them
-    protected array $allowedOrigins = [];
+    protected array $allowed_origins = [];
     
     /**
      * Send API headers
@@ -67,21 +67,21 @@ abstract class Api
      */
     final public function route(array $path): array
     {
-        if ($this->topLevel) {
+        if ($this->top_level) {
             self::headers();
         }
         #Check if proper endpoint
-        if (!empty($this->subRoutes) && (empty($path[0]) || (!$this->finalNode && !in_array($path[0], $this->subRoutes, true)))) {
-            $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->subRoutes, $this->routesDesc)];
-        } elseif ($this->authenticationNeeded && $_SESSION['user_id'] === 1) {
+        if (!empty($this->sub_routes) && (empty($path[0]) || (!$this->final_node && !in_array($path[0], $this->sub_routes, true)))) {
+            $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => array_combine($this->sub_routes, $this->routes_description)];
+        } elseif ($this->authentication_needed && $_SESSION['user_id'] === 1) {
             #User is not authenticated
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
-        } elseif ($this->csrf && !$this->antiCSRF($this->allowedOrigins)) {
+        } elseif ($this->csrf && !$this->antiCSRF($this->allowed_origins)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                if (!empty($this->requiredPermission) && empty(array_intersect($this->requiredPermission, $_SESSION['permissions']))) {
-                    $data = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->requiredPermission).'` permission'];
+                if (!empty($this->required_permission) && empty(array_intersect($this->required_permission, $_SESSION['permissions']))) {
+                    $data = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->required_permission).'` permission'];
                 } else {
                     $data = $this->getData($path);
                 }
@@ -94,13 +94,13 @@ abstract class Api
                 }
             }
         }
-        if ($this->topLevel) {
+        if ($this->top_level) {
             #Override template
             $result['template_override'] = 'common/pages/api.twig';
             #Prepare JSON output
             $result['json_ready'] = ['status' => 200];
-            if (!empty($data['cacheAge']) && !$this->static) {
-                $result['cacheAge'] = $data['cacheAge'];
+            if (!empty($data['cache_age']) && !$this->static) {
+                $result['cache_age'] = $data['cache_age'];
             }
             if (!empty($data['http_error'])) {
                 #Location is for returning a link for the already existing resource if we tried to create a new one or for links to which we should redirect after an action
@@ -194,28 +194,29 @@ abstract class Api
     final protected function methodCheck(): bool
     {
         #Generate a list of allowed methods
-        $allowedMethods = array_keys(array_merge(['HEAD' => '', 'OPTIONS' => '', 'GET' => ''], $this->methods));
+        $allowed_methods = array_keys(array_merge(['HEAD' => '', 'OPTIONS' => '', 'GET' => ''], $this->methods));
         #Send headers
         if (!headers_sent()) {
-            header('Access-Control-Allow-Methods: '.implode(', ', $allowedMethods));
-            header('Allow: '.implode(', ', $allowedMethods));
+            header('Access-Control-Allow-Methods: '.implode(', ', $allowed_methods));
+            header('Allow: '.implode(', ', $allowed_methods));
         }
-        #Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowedMethods is used in the whole method
+        #Check if allowed method is used. EA incorrectly suggests use of `array_key_exists`, which does not fit here, due to how $allowed_methods is used in the whole method
         /** @noinspection InArrayMissUseInspection */
-        return in_array(HomePage::$method, $allowedMethods, true);
+        return in_array(HomePage::$method, $allowed_methods, true);
     }
     
     /**
      * Function to help protect against CSRF. Suggested using for forms or APIs. Needs to be used before writing anything to `$_SESSION`
-     * @param array $allowOrigins
+     *
+     * @param array $allow_origins
      *
      * @return bool
      */
-    final protected function antiCSRF(array $allowOrigins = []): bool
+    final protected function antiCSRF(array $allow_origins = []): bool
     {
         #By default, allow only our own origin
-        if (empty($allowOrigins)) {
-            $allowOrigins = [Config::$base_url];
+        if (empty($allow_origins)) {
+            $allow_origins = [Config::$base_url];
         }
         #Get CSRF token
         $token = $_POST['X-CSRF-Token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? $_SERVER['HTTP_X_XSRF_TOKEN'] ?? null;
@@ -225,20 +226,20 @@ abstract class Api
         #Check if a token is provided
         if (!empty($token)) {
             #Check if CSRF token is present in session data
-            if (!empty($_SESSION['CSRF'])) {
+            if (!empty($_SESSION['csrf'])) {
                 #Check if they match. `hash_equals` helps mitigate timing attacks
-                if (hash_equals($_SESSION['CSRF'], $token)) {
+                if (hash_equals($_SESSION['csrf'], $token)) {
                     #Check if HTTP Origin is among allowed ones if we want to restrict them.
                     #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
-                    if (empty($allowOrigins) ||
+                    if (empty($allow_origins) ||
                         #If origins are limited, check if origin is present
                         (!empty($origin) &&
                             #Check if it's a valid origin and is allowed
-                            (preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || in_array($origin, $allowOrigins, true))
+                            (preg_match('/'.Headers::ORIGIN_REGEX.'/i', $origin) === 1 || in_array($origin, $allow_origins, true))
                         )
                     ) {
                         #All checks passed
-                        $_SESSION['CSRF'] = Security::genToken();
+                        $_SESSION['csrf'] = Security::genToken();
                         return true;
                     }
                     $reason = 'Bad origin';
@@ -259,10 +260,10 @@ abstract class Api
             'referer' => $_SERVER['HTTP_REFERER'] ?? null,
         ]);
         #Send `403` error code in header, with an option to force close connection
-        if (!HomePage::$staleReturn) {
+        if (!HomePage::$stale_return) {
             Headers::clientReturn(403, false);
         }
-        $_SESSION['CSRF'] = Security::genToken();
+        $_SESSION['csrf'] = Security::genToken();
         return false;
     }
     
@@ -274,14 +275,14 @@ abstract class Api
      */
     protected function getData(array $path): array
     {
-        if ($this->finalNode && !isset($path[0])) {
+        if ($this->final_node && !isset($path[0])) {
             $path[0] = '';
         }
         $result = [];
         #If this is a final node, "convert" methods to GET "actions" if such mapping is set. Required for consistency
-        if ($this->finalNode) {
+        if ($this->final_node) {
             #Close session early, if we know, that its data will not be changed (default)
-            if (!$this->sessionChange && session_status() === PHP_SESSION_ACTIVE) {
+            if (!$this->session_change && session_status() === PHP_SESSION_ACTIVE) {
                 session_write_close();
             }
             #Add description
@@ -297,7 +298,7 @@ abstract class Api
             $path[1] = $_POST['verb'] ?? $path[1] ?? '';
             #Override based on method only if method is not HEAD, OPTIONS or GET and if a respective method has a verb set for it
             if (!empty($this->methods[HomePage::$method]) && !in_array(HomePage::$method, ['HEAD', 'OPTIONS', 'GET'])) {
-                if (\is_string($this->methods[HomePage::$method])) {
+                if (is_string($this->methods[HomePage::$method])) {
                     $path[1] = $this->methods[HomePage::$method];
                     #If we have an array of possible verbs for method, check that proper verb is provided
                 } elseif (is_array($this->methods[HomePage::$method])) {
@@ -309,7 +310,7 @@ abstract class Api
                     }
                 }
             }
-            if (!empty($path[1]) && !\array_key_exists($path[1], $this->verbs)) {
+            if (!empty($path[1]) && !array_key_exists($path[1], $this->verbs)) {
                 return array_merge($result, ['http_error' => 405, 'reason' => 'Unsupported API verb used']);
             }
             if (!empty(HomePage::$http_error) && !$this->static) {
@@ -318,10 +319,10 @@ abstract class Api
         }
         $result = array_merge($result, $this->genData($path));
         #Add extra data if final node
-        if ($this->finalNode) {
+        if ($this->final_node) {
             #Add cache age if set
-            if (empty($result['cacheAge']) && !$this->static) {
-                $result['cacheAge'] = $this->cacheAge;
+            if (empty($result['cache_age']) && !$this->static) {
+                $result['cache_age'] = $this->cache_age;
             }
             #Close session if it's still open. Normally at this point all manipulations have been done.
             if (session_status() === PHP_SESSION_ACTIVE) {

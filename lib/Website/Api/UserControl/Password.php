@@ -15,13 +15,13 @@ use Simbiat\Website\usercontrol\User;
 class Password extends Api
 {
     #Flag to indicate that this is the lowest level
-    protected bool $finalNode = true;
+    protected bool $final_node = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['PATCH' => ''];
     #Flag to indicate need to validate CSRF
     protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
-    protected bool $sessionChange = true;
+    protected bool $session_change = true;
     
     /**
      * @param array $path
@@ -67,17 +67,17 @@ class Password extends Api
         } else {
             #Get activation code
             try {
-                $pwReset = Query::query('SELECT `password_reset` FROM `uc__users` WHERE `user_id`=:user_id',
+                $pw_reset = Query::query('SELECT `password_reset` FROM `uc__users` WHERE `user_id`=:user_id',
                     [':user_id' => $id], return: 'value'
                 );
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
-            if (empty($pwReset)) {
+            if (empty($pw_reset)) {
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate token
-            if (!password_verify($_POST['pass_reset'], $pwReset)) {
+            if (!password_verify($_POST['pass_reset'], $pw_reset)) {
                 return ['http_error' => 403, 'reason' => 'Bad password reset token'];
             }
         }

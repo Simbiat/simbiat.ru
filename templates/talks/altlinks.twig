@@ -1,6 +1,10 @@
-<div class="sidebar_block_header">Follow & Discuss</div>
-<div class="sidebar_block_content middle">
-    {% for link in externalLinks %}
-        <a href="{{ link.url }}" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="linkIcon dimmedIcon{% if link.type == 'Steam' %} colorInversion{% endif %}"></a>
-    {% endfor %}
-</div>
+<aside id="alt_sources">
+    <div class="alt_source_header">Follow & Discuss</div>
+    <div class="alt_source middle">
+        {% for link in external_links %}
+            <a href="{{ link.url }}" target="_blank" class="no_new_tab_icon no_outline">
+                <img loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="link_icon{% if link.type == 'Steam' %} inverted_100{% endif %}">
+            </a>
+        {% endfor %}
+    </div>
+</aside>

@@ -25,4 +25,4 @@ try {
     }
     return false;
 }
-exit;
+exit(0);

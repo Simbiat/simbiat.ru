@@ -109,7 +109,7 @@
         <th>Character</th>
         <th>Teams</th>
     </tr></thead>
-    {% for character in ffstats.data.characters.groups['simLinkshells'] %}
+    {% for character in ffstats.data.characters.groups['simultaneous_linkshells'] %}
         <tr>
             <td>{{ include('common/elements/entitycard.twig', character) }}</td>
             <td>{{ character.count }}</td>

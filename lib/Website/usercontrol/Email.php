@@ -36,7 +36,7 @@ class Email extends Entity
         #Validate that string is email
         if (filter_var($id, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE) === false) {
             #Not an email, something is wrong, protect ourselves
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
         return $this;
@@ -55,13 +55,14 @@ class Email extends Entity
     
     /**
      * Function process database data
-     * @param array $fromDB
+     *
+     * @param array $from_db
      *
      * @return void
      */
-    protected function process(array $fromDB): void
+    protected function process(array $from_db): void
     {
-        Converters::arrayToProperties($this, $fromDB);
+        Converters::arrayToProperties($this, $from_db);
     }
     
     /**

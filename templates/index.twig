@@ -22,9 +22,7 @@
         {{ include('errors/418.twig') }}
     {% else %}
         <body>
-            <nav id="navigation" aria-label="Primary" role="navigation" itemscope="" itemtype="https://schema.org/SiteNavigationElement">
-                {{ include('common/layout/navigation.twig') }}
-            </nav>
+            {{ include('common/layout/navigation.twig') }}
             <div id="content">
                 <header>
                     {{ include('common/layout/header.twig') }}
@@ -37,8 +35,8 @@
                                     <p>An error code <span class="error">{{ http_error }}</span> was encountered while processing your request{% if not('httperror/'~http_error in url) %} to</p><code data-description="Failed URL">{{ url }}</code><p>page{% endif %}. Here's what the server has to say in its defence:</p>
                                 {% endif %}
                                 {{ include('errors/'~http_error~'.twig') }}
-                                {% if http_error not in [503, 418] and session_data.prevPage %}
-                                    <p>You can try going back to previous <a href="{{ session_data.prevPage }}">page</a>.</p>
+                                {% if http_error not in [503, 418] and session_data.prev_page %}
+                                    <p>You can try going back to previous <a href="{{ session_data.prev_page }}">page</a>.</p>
                                 {% endif %}
                             {% else %}
                                 {{ include('errors/construction.twig') }}

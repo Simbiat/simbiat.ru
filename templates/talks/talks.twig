@@ -1,44 +1,44 @@
 <section>
-    <article class="margin05rem">
-        <details {% if not subServiceName %}class="persistent" open{% endif %}>
-            <summary class="rightSummary aboutSection">About</summary>
+    <article class="margin_05rem">
+        <details {% if not subservice_name %}class="persistent" open{% endif %}>
+            <summary class="right_summary about_section">About</summary>
             <p>Here you can find all forums, blogs and similar sections, that are meant for different types of communication.</p>
         </details>
     </article>
-    <vertical-tabs class="vertical_tabs">
+    <tab-menu>
         <tab-names>
-            {% if subServiceName == 'section' %}
+            {% if subservice_name == 'section' %}
                 {{ include('talks/tabs/names/sections.twig') }}
-            {% elseif subServiceName == 'thread' %}
+            {% elseif subservice_name == 'thread' %}
                 {{ include('talks/tabs/names/threads.twig') }}
             {% endif %}
         </tab-names>
         <tab-contents class="hidden">
-            {% if subServiceName == 'section' %}
+            {% if subservice_name == 'section' %}
                 {{ include('talks/tabs/content/sections.twig') }}
-            {% elseif subServiceName == 'thread' %}
+            {% elseif subservice_name == 'thread' %}
                 {{ include('talks/tabs/content/threads.twig') }}
             {% endif %}
         </tab-contents>
-    </vertical-tabs>
-    {% if subServiceName == 'search' %}
+    </tab-menu>
+    {% if subservice_name == 'search' %}
         {{ include('common/elements/search.twig') }}
     {% endif %}
-    {% if subServiceName %}
-        {% if subServiceName != 'thread' and subServiceName != 'post' %}
-            <article class="margin05rem">
-                {% if subServiceName == 'search' %}
+    {% if subservice_name %}
+        {% if subservice_name != 'thread' and subservice_name != 'post' %}
+            <article class="margin_05rem">
+                {% if subservice_name == 'search' %}
                     {{ include('common/pages/search.twig') }}
-                {% elseif subServiceName == 'section' %}
+                {% elseif subservice_name == 'section' %}
                     {{ include('talks/section.twig') }}
-                {% elseif subServiceName == 'user' %}
+                {% elseif subservice_name == 'user' %}
                     {{ include('talks/user.twig') }}
                 {% endif %}
             </article>
         {% else %}
-            {% if subServiceName == 'thread' %}
+            {% if subservice_name == 'thread' %}
                 {{ include('talks/thread.twig') }}
-            {% elseif subServiceName == 'post' %}
+            {% elseif subservice_name == 'post' %}
                 {{ include('talks/post.twig') }}
             {% endif %}
         {% endif %}

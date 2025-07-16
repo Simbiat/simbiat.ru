@@ -11,11 +11,11 @@ use Simbiat\http20\Headers;
  */
 class Redirect extends StaticPage
 {
-    protected string $subServiceName = 'redirect';
+    protected string $subservice_name = 'redirect';
     #Regex match pattern with / and flags
     protected string $search_for = '';
     #Regex replace pattern
-    protected string $replaceWith = '';
+    protected string $replace_with = '';
     
     /**
      * Unlike with parent class, we are just redirecting here
@@ -26,8 +26,8 @@ class Redirect extends StaticPage
     #[\Override]
     protected function generate(array $path): array
     {
-        $newUri = preg_replace('/'.$this->search_for.'/ui', $this->replaceWith, Config::$canonical);
-        Headers::redirect($newUri);
+        $new_uri = preg_replace('/'.$this->search_for.'/ui', $this->replace_with, Config::$canonical);
+        Headers::redirect($new_uri);
         return [];
     }
 }

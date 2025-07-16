@@ -10,16 +10,16 @@ use Simbiat\Website\Pages\Talks\Edit\User;
 class TalksEdit extends \Simbiat\Website\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['sections', 'posts', 'users'];
+    protected array $sub_routes = ['sections', 'posts', 'users'];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/talks/edit/', 'name' => 'Talks']
     ];
     protected string $title = 'Talks';
     protected string $h1 = 'Talks';
     protected string $ogdesc = 'Talks';
-    protected string $serviceName = 'talks';
-    protected string $redirectMain = '/talks/edit/sections/';
+    protected string $service_name = 'talks';
+    protected string $redirect_main = '/talks/edit/sections/';
 
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array

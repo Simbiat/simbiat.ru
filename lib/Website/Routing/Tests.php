@@ -13,24 +13,24 @@ use Simbiat\Website\usercontrol\Email;
 class Tests extends Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['mail', 'styling'];
+    protected array $sub_routes = ['mail', 'styling'];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/tests/', 'name' => 'Tests']
     ];
     protected string $title = 'Tests';
     protected string $h1 = 'Tests';
     protected string $ogdesc = 'Tests';
     
-    #This is actual page generation based on further details of the $path
+    #This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array
     {
-        $outputArray = [];
+        $output_array = [];
         #Forbid if on PROD
         if (!empty($path[0]) && $path[0] !== 'styling') {
-            if (Config::$prod === true || empty($path)) {
-                $outputArray['http_error'] = 403;
-                return $outputArray;
+            if (Config::$prod || empty($path)) {
+                $output_array['http_error'] = 403;
+                return $output_array;
             }
         }
         switch ($path[0]) {
@@ -48,7 +48,7 @@ class Tests extends Router
                 }
                 exit(0);
             case 'styling':
-                return ['serviceName' => 'stylingTest', 'static_page' => true];
+                return ['service_name' => 'styling_test', 'static_page' => true];
             default:
                 return ['http_error' => 400, 'reason' => 'Unsupported endpoint'];
         }

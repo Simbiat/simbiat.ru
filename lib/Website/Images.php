@@ -128,7 +128,7 @@ class Images
             return false;
         }
         #Set new name
-        $newName = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
+        $new_name = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
         #Create a GD object from a file
         $gd = self::open($image);
         if ($gd === false) {
@@ -141,12 +141,12 @@ class Images
         #Save the alpha data
         imagesavealpha($gd, true);
         #Save the file
-        if (imagewebp($gd, $newName, IMG_WEBP_LOSSLESS)) {
+        if (imagewebp($gd, $new_name, IMG_WEBP_LOSSLESS)) {
             #Remove source image if we did not just overwrite it
-            if ($image !== $newName) {
+            if ($image !== $new_name) {
                 @unlink($image);
             }
-            return $newName;
+            return $new_name;
         }
         return false;
     }
@@ -198,7 +198,7 @@ class Images
         }
         while (!$f->eof()) {
             $bytes = $f->fread(4);
-            if (\strlen($bytes) < 4) {
+            if (strlen($bytes) < 4) {
                 return false;
             }
             $length = unpack('N', $bytes);
@@ -207,8 +207,8 @@ class Images
             } else {
                 $length = 0;
             }
-            $chunkName = $f->fread(4);
-            switch ($chunkName) {
+            $chunk_name = $f->fread(4);
+            switch ($chunk_name) {
                 case 'acTL':
                     return true;
                 case 'IDAT':
@@ -270,22 +270,22 @@ class Images
     /**
      * Function to generate data for og:image using provided file ID
      * @param string $file_id File ID to use
-     * @param bool   $isPath If `true` ID is actually a path
+     * @param bool   $is_path If `true` ID is actually a path
      *
      * @return array|null[]
      */
-    public static function ogImage(string $file_id, bool $isPath = false): array
+    public static function ogImage(string $file_id, bool $is_path = false): array
     {
-        if ($isPath) {
+        if ($is_path) {
             $file = Config::$img_dir.$file_id;
             if (!is_file($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
         } else {
-            $hashTree = Sanitization::hashTree($file_id);
+            $hash_tree = Sanitization::hashTree($file_id);
             #Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = glob(Config::$uploaded_img.'/'.$hashTree.'/'.$file_id.'.*');
+            $file = glob(Config::$uploaded_img.'/'.$hash_tree.'/'.$file_id.'.*');
             if (empty($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
@@ -301,9 +301,9 @@ class Images
         if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width'] / $info['height'], 1) !== 1.9) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
-        if ($isPath) {
+        if ($is_path) {
             return ['og_image' => '/assets/images'.$file_id, 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
         }
-        return ['og_image' => '/assets/images/uploaded/'.$hashTree.'/'.$info['basename'], 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
+        return ['og_image' => '/assets/images/uploaded/'.$hash_tree.'/'.$info['basename'], 'og_image_width' => $info['width'], 'og_image_height' => $info['height']];
     }
 }

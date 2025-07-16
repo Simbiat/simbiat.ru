@@ -6,11 +6,11 @@ namespace Simbiat\Website\Api\FFTracker;
 class PvPTeam extends General
 {
     #Entity class name
-    protected string $entityClass = \Simbiat\FFXIV\PvPTeam::class;
+    protected string $entity_class = \Simbiat\FFXIV\PvPTeam::class;
     #Name to show in errors
-    protected string $nameForErrors = 'PvP Team';
+    protected string $name_for_errors = 'PvP Team';
     #Name for links
-    protected string $nameForLinks = 'pvpteam';
+    protected string $name_for_links = 'pvpteam';
     #Description of the node
     protected array $description = [
         'description' => 'JSON representation of Final Fantasy XIV PvP Team',

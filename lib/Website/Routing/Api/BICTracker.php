@@ -8,19 +8,19 @@ use Simbiat\Website\Abstracts\Api;
 class BICTracker extends Api
 {
     #Supported edges
-    protected array $subRoutes = [
+    protected array $sub_routes = [
         'bics', 'keying', 'dbupdate'
     ];
     #Description of the nodes (need to be in same order)
-    protected array $routesDesc = [
+    protected array $routes_description = [
         'Node representing details of Russian organizations based on Bank Identification Code',
         'Node for checking Russian account keying against a Russian Bank Identification Code',
         'Node to force BIC database update',
     ];
     #Flag to indicate, that this is a top level node (false by default)
-    protected bool $topLevel = false;
+    protected bool $top_level = false;
     #Flag to indicate, that this is the lowest level
-    protected bool $finalNode = false;
+    protected bool $final_node = false;
 
     protected function genData(array $path): array
     {

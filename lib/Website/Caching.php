@@ -9,16 +9,16 @@ namespace Simbiat\Website;
 class Caching
 {
     /**
-     * @param string $cacheDir Directory to use for cache files
+     * @param string $cache_dir Directory to use for cache files
      */
-    public function __construct(private string $cacheDir = '')
+    public function __construct(private string $cache_dir = '')
     {
-        if (empty($this->cacheDir)) {
-            $this->cacheDir = Config::$html_cache;
-        } elseif (!is_dir($this->cacheDir)) {
-            @mkdir($this->cacheDir, recursive: true);
-            if (preg_match('/\/$/', $this->cacheDir) !== 1) {
-                $this->cacheDir .= '/';
+        if (empty($this->cache_dir)) {
+            $this->cache_dir = Config::$html_cache;
+        } elseif (!is_dir($this->cache_dir)) {
+            @mkdir($this->cache_dir, recursive: true);
+            if (preg_match('/\/$/', $this->cache_dir) !== 1) {
+                $this->cache_dir .= '/';
             }
         }
     }
@@ -54,13 +54,13 @@ class Caching
             #Generate key
             $key = $this->key($key);
             #Generate subdirectory name
-            $subDir = mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/';
+            $sub_dir = mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/';
             #Create folder if missing
-            if (!is_dir($this->cacheDir.$subDir)) {
-                @mkdir($this->cacheDir.$subDir, recursive: true);
+            if (!is_dir($this->cache_dir.$sub_dir)) {
+                @mkdir($this->cache_dir.$sub_dir, recursive: true);
             }
             #Write the file. We do not care much if it fails
-            if (@file_put_contents($this->cacheDir.$subDir.$key.'.json', $data)) {
+            if (@file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {
                 @header('X-Server-Cached: true');
                 @header('X-Server-Cache-Hit: false');
                 return true;
@@ -82,7 +82,7 @@ class Caching
         #Generate key
         $key = $this->key($key);
         #Generate file name
-        $file = $this->cacheDir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
+        $file = $this->cache_dir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
         $data = $this->getArrayFromFile($file);
         if (empty($data)) {
             @header('X-Server-Cached: false');
@@ -120,17 +120,17 @@ class Caching
     }
     
     /**
-     * Gets JSON decoded array from file
-     * @param string $cachePath
+     * Gets JSON decoded array from a file
+     * @param string $cache_path
      *
      * @return array
      */
-    public function getArrayFromFile(string $cachePath): array
+    public function getArrayFromFile(string $cache_path): array
     {
-        #Check if cache file exists
-        if (is_file($cachePath)) {
+        #Check if the cache file exists
+        if (is_file($cache_path)) {
             #Read the cache
-            $json = file_get_contents($cachePath);
+            $json = file_get_contents($cache_path);
             if ($json !== false && $json !== '') {
                 try {
                     $json = json_decode($json, true, 512, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR);
@@ -138,7 +138,7 @@ class Caching
                     $json = [];
                 }
                 if ($json !== NULL) {
-                    if (!\is_array($json)) {
+                    if (!is_array($json)) {
                         return [];
                     }
                 } else {

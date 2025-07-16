@@ -8,11 +8,11 @@ use Simbiat\Website\Abstracts\Pages\Redirect;
 class Resume extends Redirect
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/about/resume', 'name' => 'Resume']
     ];
     #Regex match pattern with / and flags
     protected string $search_for = '(\/about\/resume)';
     #Regex replace pattern
-    protected string $replaceWith = '/about/me';
+    protected string $replace_with = '/about/me';
 }

@@ -1,11 +1,11 @@
 <image-carousel>
-    <div class="imageCarouselPrev">❰</div>
-    <ul class="imageCarouselList">
+    <image-carousel-prev>❰</image-carousel-prev>
+    <ul class="image_carousel_list">
         {% for image in images %}
-            {%  if image.href %}
+            {% if image.href %}
                 <li>
                     <figure>
-                        <a class="galleryZoom noNewTabIcon" href="{{ image.href }}" target="_blank">
+                        <a class="gallery_zoom no_new_tab_icon" href="{{ image.href }}" target="_blank">
                             <img loading="lazy" decoding="async" src="{% if image.thumb %}{{ image.thumb }}{% else %}{{ image.href }}{% endif %}" alt="{% if image.alt %}{{ image.alt }}{% else %}{{ basename(image.href) }}{% endif %}">
                             <div>{{ loop.index }}/{{ images|length }}</div>
                         </a>
@@ -15,5 +15,5 @@
             {% endif %}
         {% endfor %}
     </ul>
-    <div class="imageCarouselNext">❱</div>
+    <image-carousel-next>❱</image-carousel-next>
 </image-carousel>

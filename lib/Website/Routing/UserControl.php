@@ -16,16 +16,16 @@ use Simbiat\Website\Pages\UserControl\Unsubscribe;
 class UserControl extends \Simbiat\Website\Abstracts\Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
+    protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/uc/', 'name' => 'User Cabinet']
     ];
     protected string $title = 'User Cabinet';
     protected string $h1 = 'User Cabinet';
     protected string $ogdesc = 'User Cabinet';
-    protected string $serviceName = 'uc';
-    protected string $redirectMain = '/uc/profile/';
+    protected string $service_name = 'uc';
+    protected string $redirect_main = '/uc/profile/';
 
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array
@@ -40,7 +40,7 @@ class UserControl extends \Simbiat\Website\Abstracts\Router
             'sessions' => (new Sessions)->get(array_slice($path, 1)),
             'fftracker' => (new FFTracker)->get(array_slice($path, 1)),
             'avatars' => (new Avatars)->get(array_slice($path, 1)),
-            'register' => ['subServiceName' => 'registration'],
+            'register' => ['subservice_name' => 'registration'],
         };
     }
 }

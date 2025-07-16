@@ -17,7 +17,7 @@ class Sanitization
 {
     
     #Static sanitizer config for a little bit of performance
-    public static ?HtmlSanitizerConfig $sanitizerConfig = null;
+    public static ?HtmlSanitizerConfig $sanitizer_config = null;
     
     /**
      * Sanitize HTML string
@@ -29,8 +29,8 @@ class Sanitization
     public static function sanitizeHTML(string $string, bool $head = false): string
     {
         #Check if config has been created already
-        if (self::$sanitizerConfig) {
-            $config = self::$sanitizerConfig;
+        if (self::$sanitizer_config) {
+            $config = self::$sanitizer_config;
         } else {
             $config = new HtmlSanitizerConfig()->withMaxInputLength(-1)->allowSafeElements()
                 ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
@@ -57,7 +57,7 @@ class Sanitization
             #TinyMCE adds the `border` attribute to tables, which we do not use, so dropping it for cleaner code
             $config = $config->dropAttribute('border', '*');
             #Save config to static for future reuse
-            self::$sanitizerConfig = $config;
+            self::$sanitizer_config = $config;
         }
         #Allow some property attributes for meta-tags
         if ($head) {
@@ -77,14 +77,14 @@ class Sanitization
     
     /**
      * Remove controls characters from strings and arrays.
-     * @param string|array $string   String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
-     * @param bool         $fullList Flag whether newlines and tabs should also be removed
+     * @param string|array $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
+     * @param bool         $full_list Flag whether newlines and tabs should also be removed
      *
      * @return string|array
      */
-    public static function removeNonPrintable(string|array $string, bool $fullList = false): string|array
+    public static function removeNonPrintable(string|array $string, bool $full_list = false): string|array
     {
-        if ($fullList) {
+        if ($full_list) {
             return preg_replace('/[[:cntrl:]]/iu', '', $string);
         }
         return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
@@ -92,16 +92,16 @@ class Sanitization
     
     /**
      * Remove control characters from strings in an array.
-     * @param array $array    Array to sanitize
-     * @param bool  $fullList Flag whether newlines and tabs should also be removed
+     * @param array $array     Array to sanitize
+     * @param bool  $full_list Flag whether newlines and tabs should also be removed
      *
      * @return void
      */
-    public static function carefulArraySanitization(array &$array, bool $fullList = false): void
+    public static function carefulArraySanitization(array &$array, bool $full_list = false): void
     {
         foreach ($array as &$item) {
-            if (\is_string($item)) {
-                $item = self::removeNonPrintable($item, $fullList);
+            if (is_string($item)) {
+                $item = self::removeNonPrintable($item, $full_list);
             }
         }
     }
@@ -122,7 +122,7 @@ class Sanitization
         if (!isset($checkbox)) {
             return false;
         }
-        if (\is_string($checkbox)) {
+        if (is_string($checkbox)) {
             return mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
         return (bool)$checkbox;
@@ -146,10 +146,10 @@ class Sanitization
                 }
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
-                $curTime = time();
+                $cur_time = time();
                 #Sections should not be created in the past, so if time is less than the current one - correct it
-                if ($time < $curTime && !in_array('post_backlog', $_SESSION['permissions'], true)) {
-                    $time = $curTime;
+                if ($time < $cur_time && !in_array('post_backlog', $_SESSION['permissions'], true)) {
+                    $time = $cur_time;
                 }
             }
         } else {
@@ -179,13 +179,13 @@ class Sanitization
     #[Pure(true)] public static function getUploadedFileLink(string $filename): string
     {
         #Get hash tree
-        $hashTree = self::hashTree($filename);
+        $hash_tree = self::hashTree($filename);
         #Check if the file exists in images
-        if (file_exists(Config::$uploaded_img.'/'.$hashTree.'/'.$filename)) {
-            return '/assets/images/uploaded/'.$hashTree.'/'.$filename;
+        if (file_exists(Config::$uploaded_img.'/'.$hash_tree.'/'.$filename)) {
+            return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
         }
-        if (file_exists(Config::$uploaded.'/'.$hashTree.'/'.$filename)) {
-            return '/assets/uploaded/'.$hashTree.'/'.$filename;
+        if (file_exists(Config::$uploaded.'/'.$hash_tree.'/'.$filename)) {
+            return '/assets/uploaded/'.$hash_tree.'/'.$filename;
         }
         return '/assets/images/noimage.svg';
     }

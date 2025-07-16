@@ -1,7 +1,7 @@
 {% if not path %}
-    <section class="bottomMargin">
+    <section class="bottom_margin">
         <details class="persistent" open>
-            <summary class="rightSummary aboutSection">About crests' page</summary>
+            <summary class="right_summary about_section">About crests' page</summary>
             <p>This page provides
                 <a href="https://github.com/Simbiat/FFXIV-Crests-Components" target="_blank">components</a> used by FFXIV for creating crests: backgrounds, frames, emblems, - as well as "merged" crests, where all 3 components were merged into 1 image (storage is temporary for these, acting as cache).
             </p>
@@ -19,9 +19,9 @@
         <form id="ff_merge_crest">
             <p>You can merge crests components into 1 image, like what you can see in the folder with merged crests. Add names of the files, that you want to merge into the fields below: they can be seen in the folders' listing. Only emblem is, technically, mandatory, same as in-game, but use only it would not make much sense.</p>
             <div class="middle">
-                <span class="float_label_div"><input id="crest_emblem" name="crest_emblem" type="text" inputmode="text" required pattern="^S[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_emblem">Emblem</label></span>
-                <span class="float_label_div"><input id="crest_frame" name="crest_frame" type="text" inputmode="text" pattern="^F[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_frame">Frame</label></span>
-                <span class="float_label_div"><input id="crest_background" name="crest_background" type="text" inputmode="text" pattern="^(B[a-fA-F0-9]{2}|F00)_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_background">Background</label></span>
+                <span class="float_label"><input id="crest_emblem" name="crest_emblem" type="text" inputmode="text" required pattern="^S[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_emblem">Emblem</label></span>
+                <span class="float_label"><input id="crest_frame" name="crest_frame" type="text" inputmode="text" pattern="^F[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_frame">Frame</label></span>
+                <span class="float_label"><input id="crest_background" name="crest_background" type="text" inputmode="text" pattern="^(B[a-fA-F0-9]{2}|F00)_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_background">Background</label></span>
                 <div id="crest_preview" data-tooltip="Crest preview">
                     <img src="" alt="Background" id="preview_background">
                     <img src="" alt="Frame" id="preview_frame">
@@ -36,26 +36,26 @@
 {% if path %}
     <section>
         {% if files[path].parent %}
-            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
+            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
         {% endif %}
         {% if files[path].files %}
             {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
         {% else %}
             <ul>
                 {% if files[path].name == 'Backgrounds' %}
-                    {% set subDirName = 'background' %}
+                    {% set sub_directory_name = 'background' %}
                 {% elseif files[path].name == 'Emblems' %}
-                    {% set subDirName = 'emblem' %}
+                    {% set sub_directory_name = 'emblem' %}
                 {% elseif files[path].name == 'Merged crests (cached)' %}
-                    {% set subDirName = 'merged' %}
+                    {% set sub_directory_name = 'merged' %}
                 {% endif %}
                 {% for dir in files[path].dirs %}
-                    <li><a href="/fftracker/crests/{{ subDirName }}/{{ dir.dirname }}">{{ dir.dirname }}</a></li>
+                    <li><a href="/fftracker/crests/{{ sub_directory_name }}/{{ dir.dirname }}">{{ dir.dirname }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
         {% if files[path].parent %}
-            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folderUp.svg" class="linkIcon">{{ files[path].parent.name }}</a>
+            <a class="middle block nodecor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
         {% endif %}
     </section>
 {% endif %}

@@ -1,29 +1,29 @@
 <section lang="ru-RU">
-    <article class="margin05rem">
-        <details {% if not subServiceName %}class="persistent" open{% endif %}>
-            <summary class="rightSummary aboutSection">О сервисе</summary>
-            <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
+    <article class="margin_05rem">
+        <details {% if not subservice_name %}class="persistent" open{% endif %}>
+            <summary class="right_summary about_section">О сервисе</summary>
+            <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
             <p>Библиотека содержит различную информацию, использующейся в банковских расчётах. Трекер предназначен для визуального отображения этой информации, а также отслеживания некоторых изменений.</p>
-            <p>У сервиса есть "официальная" страница на форуме <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/icons/banki.ru.svg" alt="banki.ru">banki.ru</a></p>
-            {% if not subServiceName %}
+            <p>У сервиса есть "официальная" страница на форуме <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/icons/banki.ru.svg" alt="banki.ru">banki.ru</a></p>
+            {% if not subservice_name %}
                 <p>Вы находитесь на главной странице сервиса. Для поиска банков используйте <a href="/bictracker/search" target="_self" itemprop="url"><span itemprop="name">поиск</span></a>. Если вы хотите проверить ключевание счёта, то можете использовать эту <a href="/bictracker/keying" target="_self" itemprop="url"><span itemprop="name">страницу</span></a>.</p>
             {% endif %}
         </details>
     </article>
-    {% if subServiceName == 'search' %}
+    {% if subservice_name == 'search' %}
         {{ include('common/elements/search.twig') }}
     {% endif %}
-    {% if subServiceName %}
-        <article class="margin05rem">
-            {% if subServiceName == 'keying' %}
+    {% if subservice_name %}
+        <article class="margin_05rem">
+            {% if subservice_name == 'keying' %}
                 {{ include('bictracker/keying.twig') }}
-            {% elseif subServiceName == 'search' %}
+            {% elseif subservice_name == 'search' %}
                 {{ include('common/pages/search.twig') }}
-            {% elseif subServiceName == 'bic' %}
+            {% elseif subservice_name == 'bic' %}
                 {{ include('bictracker/bic.twig') }}
-            {% elseif subServiceName == 'openbics' %}
+            {% elseif subservice_name == 'openbics' %}
                 {{ include('common/pages/list.twig') }}
-            {% elseif subServiceName == 'closedbics' %}
+            {% elseif subservice_name == 'closedbics' %}
                 {{ include('common/pages/list.twig') }}
             {% endif %}
         </article>

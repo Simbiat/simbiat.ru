@@ -1,6 +1,5 @@
 <?php
-#Suppressing unhandled exceptions, since they are meant to be handled inside respective functions
-/** @noinspection PhpUnhandledExceptionInspection */
+#Suppressing unhandled exceptions, since they are meant to be handled inside the respective functions
 declare(strict_types = 1);
 
 use Simbiat\Website\Config;

@@ -17,7 +17,7 @@ class AchievementPoints extends Search
     #Optional WHERE clause for every SELECT
     protected string $where = '`achievement_points`>0';
     #Default order (for the main page, for example)
-    protected string $orderDefault = '`achievement_points` DESC, `name` ASC';
+    protected string $order_default = '`achievement_points` DESC, `name` ASC';
     #Order for list pages
-    protected string $orderList = '`achievement_points` DESC, `name` ASC';
+    protected string $order_list = '`achievement_points` DESC, `name` ASC';
 }

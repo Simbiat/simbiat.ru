@@ -6,18 +6,18 @@
         {% if not new_thread %}
             <input form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" type="hidden" name="post_form[thread_id]" value="{{ thread_id }}" required>
             {% if verb == 'add' %}
-                <input form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" type="hidden" id="replyingTo" name="post_form[reply_to]" value="">
+                <input form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" type="hidden" id="replying_to" name="post_form[reply_to]" value="">
             {% endif %}
         {% endif %}
         {% if verb == 'edit' %}
             <input form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" type="hidden" name="post_form[post_id]" value="{{ post_id }}">
         {% endif %}
-        <div class="float_label_div wrapper_for_tinymce">
-            <textarea form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" id="postText" name="post_form[text]" placeholder="Text" spellcheck="true" wrap="soft">{{ text }}</textarea>
-            <label for="postText" class="label_for_tinymce">{% if verb == 'add' %}{% if new_thread %}Text{% else %}Replying to thread{% endif %}{% else %}Updating post{% endif %}</label>
+        <div class="wrapper_for_tinymce">
+            <textarea form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" id="post_text" name="post_form[text]" placeholder="Text" spellcheck="true" wrap="soft">{{ text }}</textarea>
+            <label for="post_text" class="label_for_tinymce">{% if verb == 'add' %}{% if new_thread %}Text{% else %}Replying to thread{% endif %}{% else %}Updating post{% endif %}</label>
         </div>
         {% if 'hide_update' in permissions %}
-            <div class="radio_and_label">
+            <div class="float_label">
                 <input form="{% if new_thread %}add_thread_form{% else %}post_form{% endif %}" id="post_hide_update" name="post_form[hide_update]" type="checkbox">
                 <label for="post_hide_update" data-tooltip="If checked and there is a text change, the `updated` time of the post will not be changed.">Hide update</label>
             </div>

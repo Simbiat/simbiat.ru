@@ -4,7 +4,7 @@
     <details{% if characters is empty %} open{% endif %}>
         <summary>Instructions</summary>
         <ol>
-            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank"><img loading="lazy" decoding="async" alt="Lodestone" class="linkIcon" src="/assets/images/icons/lodestone.svg">Lodestone</a></li>
+            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank"><img loading="lazy" decoding="async" alt="Lodestone" class="link_icon" src="/assets/images/icons/lodestone.svg">Lodestone</a></li>
             <li>Go to the profile of the character you want to link.</li>
             <li>Scroll the page to "Character profile" section and click the edit button.</li>
             <li>Paste this token <code>fftracker:{{ token }}</code> anywhere in the text field and save the changes.</li>
@@ -14,7 +14,7 @@
         </ol>
     </details>
     <form id="ff_link_user">
-        <div class="float_label_div" data-tooltip="Character ID as seen on Lodestone (in URL)">
+        <div class="float_label" data-tooltip="Character ID as seen on Lodestone (in URL)">
             <input autofocus form="ff_link_user" type="text" required aria-required="true" name="character_id" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
             <label for="ff_link_id">Character ID</label>
         </div>

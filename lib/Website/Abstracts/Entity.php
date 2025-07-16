@@ -17,7 +17,7 @@ abstract class Entity
     #If ID was retrieved, this needs to not be null
     public ?string $id = null;
     #Format for IDs
-    protected string $idFormat = '/^\d+$/m';
+    protected string $id_format = '/^\d+$/m';
     #Debug flag
     protected bool $debug = false;
     
@@ -47,7 +47,7 @@ abstract class Entity
     {
         #Convert to string for consistency
         $id = (string)$id;
-        if (preg_match($this->idFormat, $id) !== 1) {
+        if (preg_match($this->id_format, $id) !== 1) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
@@ -94,11 +94,11 @@ abstract class Entity
     
     /**
      * Function process database data
-     * @param array $fromDB
+     * @param array $from_db
      *
      * @return void
      */
-    abstract protected function process(array $fromDB): void;
+    abstract protected function process(array $from_db): void;
     
     /**
      * Get the data in an array
@@ -107,7 +107,7 @@ abstract class Entity
     final public function getArray(): array
     {
         #If data was not retrieved yet - attempt to
-        if ($this->attempted === false) {
+        if (!$this->attempted) {
             try {
                 $this->get();
             } catch (\Throwable) {

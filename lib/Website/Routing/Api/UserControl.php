@@ -20,11 +20,11 @@ use Simbiat\Website\Api\UserControl\Username;
 class UserControl extends \Simbiat\Website\Abstracts\Api
 {
     #Supported edges
-    protected array $subRoutes = [
+    protected array $sub_routes = [
         'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove'
     ];
     #Description of the nodes (need to be in same order)
-    protected array $routesDesc = [
+    protected array $routes_description = [
         'Register on the website',
         'Login to the website',
         'Password reset',
@@ -40,7 +40,7 @@ class UserControl extends \Simbiat\Website\Abstracts\Api
         'Remove the user',
     ];
     #Flag to indicate, that this is a top level node (false by default)
-    protected bool $topLevel = false;
+    protected bool $top_level = false;
 
     protected function genData(array $path): array
     {

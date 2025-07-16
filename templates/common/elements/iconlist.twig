@@ -1,8 +1,8 @@
-<ul class="iconList">
+<ul class="icon_list">
     {% for icon in icons %}
         <li>
             <figure>
-                <a class="galleryZoom noNewTabIcon" href="{{ icon.icon }}" target="_blank">
+                <a class="gallery_zoom no_new_tab_icon" href="{{ icon.icon }}" target="_blank">
                     <img loading="lazy" decoding="async" src="{{ icon.icon }}" alt="{{ icon.name|default(basename(icon.icon)) }}">
                 </a>
                 <figcaption class="middle">{{ icon.name|default(basename(icon.icon)) }}</figcaption>

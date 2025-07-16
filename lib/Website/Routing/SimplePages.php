@@ -9,15 +9,15 @@ use Simbiat\Website\Pages\DeviceDetector;
 class SimplePages extends Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
-    protected array $subRoutes = ['devicedetector'];
+    protected array $sub_routes = ['devicedetector'];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/simplepages/', 'name' => 'Simple Pages']
     ];
     protected string $title = 'Simple Pages';
     protected string $h1 = 'Simple Pages';
     protected string $ogdesc = 'Various simple pages hosted by Simbiat Software';
-    protected string $serviceName = 'simplepages';
+    protected string $service_name = 'simplepages';
     
     #This is actual page generation based on further details of the $path
     protected function pageGen(array $path): array

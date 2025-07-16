@@ -17,11 +17,11 @@ use Simbiat\Website\usercontrol\User;
 class Register extends Api
 {
     #Flag to indicate that this is the lowest level
-    protected bool $finalNode = true;
+    protected bool $final_node = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ''];
     #Flag to indicate that session data change is possible on this page
-    protected bool $sessionChange = true;
+    protected bool $session_change = true;
     
     /**
      *
@@ -48,7 +48,7 @@ class Register extends Api
         }
         #Get time zone
         $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
-        if (!\in_array($timezone, timezone_identifiers_list(), true)) {
+        if (!in_array($timezone, timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
         #Check if banned or in use
@@ -74,7 +74,7 @@ class Register extends Api
         $ff_token = Security::genToken();
         #Try to read country and city for IP
         try {
-            $geoIp = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($_SESSION['IP']);
+            $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($_SESSION['ip']);
         } catch (\Throwable) {
             #Do nothing, not critical
         }
@@ -88,9 +88,9 @@ class Register extends Api
                         ':password' => $password,
                         ':ff_token' => $ff_token,
                         ':timezone' => $timezone,
-                        ':country' => $geoIp->country->name ?? '',
-                        ':city' => $geoIp->city->name ?? '',
-                        ':ip' => $_SESSION['IP'] ?? '',
+                        ':country' => $geoip->country->name ?? '',
+                        ':city' => $geoip->city->name ?? '',
+                        ':ip' => $_SESSION['ip'] ?? '',
                     ],
                 ],
                 #Insert into mails database

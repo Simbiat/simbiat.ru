@@ -1,6 +1,6 @@
 <form class="middle" id="profile_username">
-    <div class="float_label_div">
-        <input form="profile_username" spellcheck="false" data-original="{{ userData.username }}" value="{{ userData.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
+    <div class="float_label">
+        <input form="profile_username" spellcheck="false" data-original="{{ user_data.username }}" value="{{ user_data.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
         <label for="username_value">Username</label>
     </div>
     <input role="button" form="profile_username" type="submit" name="submit" id="username_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Change">
@@ -9,56 +9,56 @@
 <hr/>
 <form class="middle" id="profile_details">
     <p>Form below auto-saves 10 seconds after any changes.</p>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.first_name }}" type="text" aria-required="false" name="details[name][first_name]" id="first_name_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.name.first_name }}" type="text" aria-required="false" name="details[name][first_name]" id="first_name_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
         <label for="first_name_value">First name</label>
     </div>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.last_name }}" type="text" aria-required="false" name="details[name][last_name]" id="last_name_value" placeholder="Last name" autocomplete="family-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.name.last_name }}" type="text" aria-required="false" name="details[name][last_name]" id="last_name_value" placeholder="Last name" autocomplete="family-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
         <label for="last_name_value">Last name</label>
     </div>
     <br/>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.middle_name }}" type="text" aria-required="false" name="details[name][middle_name]" id="middle_name_value" placeholder="Middle name" autocomplete="additional-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.name.middle_name }}" type="text" aria-required="false" name="details[name][middle_name]" id="middle_name_value" placeholder="Middle name" autocomplete="additional-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
         <label for="middle_name_value">Middle name</label>
     </div>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.father_name }}" type="text" aria-required="false" name="details[name][father_name]" id="father_name_value" placeholder="Father's name" autocomplete="on" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.name.father_name }}" type="text" aria-required="false" name="details[name][father_name]" id="father_name_value" placeholder="Father's name" autocomplete="on" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
         <label for="father_name_value">Father's name</label>
     </div>
     <br/>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.prefix }}" type="text" aria-required="false" name="details[name][prefix]" id="prefix_value" placeholder="Prefix" autocomplete="honorific-prefix" spellcheck="true" inputmode="text" minlength="0" maxlength="25" pattern="[\p{L}\d\x27 \.,]{0,25}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.name.prefix }}" type="text" aria-required="false" name="details[name][prefix]" id="prefix_value" placeholder="Prefix" autocomplete="honorific-prefix" spellcheck="true" inputmode="text" minlength="0" maxlength="25" pattern="[\p{L}\d\x27 \.,]{0,25}">
         <label for="prefix_value">Prefix</label>
     </div>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.name.suffix }}" type="text" aria-required="false" name="details[name][suffix]" id="suffix_value" placeholder="Suffix" autocomplete="honorific-suffix" spellcheck="true" inputmode="text" minlength="0" maxlength="25" pattern="[\p{L}\d\x27 \.,]{0,25}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.name.suffix }}" type="text" aria-required="false" name="details[name][suffix]" id="suffix_value" placeholder="Suffix" autocomplete="honorific-suffix" spellcheck="true" inputmode="text" minlength="0" maxlength="25" pattern="[\p{L}\d\x27 \.,]{0,25}">
         <label for="suffix_value">Suffix</label>
     </div>
     <br/>
-    <div class="float_label_div">
+    <div class="float_label">
         <select form="profile_details" id="sex_value" autocomplete="sex" name="details[sex]">
-            <option value="null"{% if userData.sex is null %} selected{% endif %}>None or other</option>
-            <option value="0"{% if userData.sex is same as(0) %} selected{% endif %}>Female</option>
-            <option value="1"{% if userData.sex == 1 %} selected{% endif %}>Male</option>
+            <option value="null"{% if user_data.sex is null %} selected{% endif %}>None or other</option>
+            <option value="0"{% if user_data.sex is same as(0) %} selected{% endif %}>Female</option>
+            <option value="1"{% if user_data.sex == 1 %} selected{% endif %}>Male</option>
         </select>
         <label for="sex_value">Sex</label>
     </div>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.dates.birthday }}" type="date" aria-required="false" name="details[dates][birthday]" id="birthday_value" placeholder="Birthday" autocomplete="bday" inputmode="numeric">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.dates.birthday }}" type="date" aria-required="false" name="details[dates][birthday]" id="birthday_value" placeholder="Birthday" autocomplete="bday" inputmode="numeric">
         <label for="birthday_value">Birthday</label>
     </div>
     <br/>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.country }}" type="text" aria-required="false" name="details[country]" id="country_value" placeholder="Country" autocomplete="country-name" inputmode="text" minlength="0" maxlength="60" pattern="[\p{L}\d\x27 \.,]{0,60}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.country }}" type="text" aria-required="false" name="details[country]" id="country_value" placeholder="Country" autocomplete="country-name" inputmode="text" minlength="0" maxlength="60" pattern="[\p{L}\d\x27 \.,]{0,60}">
         <label for="country_value">Country</label>
     </div>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.city }}" type="text" aria-required="false" name="details[city]" id="city_value" placeholder="City" autocomplete="address-level2" inputmode="text" minlength="0" maxlength="200" pattern="[\p{L}\d\x27 \.,]{0,200}">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.city }}" type="text" aria-required="false" name="details[city]" id="city_value" placeholder="City" autocomplete="address-level2" inputmode="text" minlength="0" maxlength="200" pattern="[\p{L}\d\x27 \.,]{0,200}">
         <label for="city_value">City</label>
     </div>
     <br/>
-    <div class="float_label_div">
+    <div class="float_label">
         <select form="profile_details" id="timezone_value" name="details[timezone]">
             {% for timezone, details in timezones %}
                 <option value="{{ timezone }}"{% if details.current %} selected{% endif %}>{{ timezone }} (GMT{{ details.offset }})</option>
@@ -67,17 +67,17 @@
         <label for="timezone_value">Time zone</label>
     </div>
     <br/>
-    <div class="float_label_div">
-        <input form="profile_details" value="{{ userData.website }}" type="url" aria-required="false" name="details[website]" id="website_value" placeholder="Website" autocomplete="url" inputmode="text" minlength="0" maxlength="255" pattern="https://[^<>]*">
+    <div class="float_label">
+        <input form="profile_details" value="{{ user_data.website }}" type="url" aria-required="false" name="details[website]" id="website_value" placeholder="Website" autocomplete="url" inputmode="text" minlength="0" maxlength="255" pattern="https://[^<>]*">
         <label for="website_value">Website</label>
     </div>
     <br/>
-    <div class="float_label_div wrapper_for_tinymce">
-        <textarea class="tinymce nomedia" form="profile_details" id="about_value" name="details[about]" placeholder="About" spellcheck="true" wrap="soft" maxlength="250">{{ userData.about }}</textarea>
+    <div class="wrapper_for_tinymce">
+        <textarea class="tinymce nomedia" form="profile_details" id="about_value" name="details[about]" placeholder="About" spellcheck="true" wrap="soft" maxlength="250">{{ user_data.about }}</textarea>
         <label for="about_value" class="label_for_tinymce">About</label>
     </div>
     <br/>
     <input role="button" form="profile_details" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">
-    <p id="lastAutoSave" class="hidden">Last auto save: {{ timeTag("now", "H:i") }}</p>
+    <p id="last_auto_save" class="hidden">Last auto save: {{ timeTag("now", "H:i") }}</p>
     <img loading="lazy" decoding="async" id="details_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Updating details...">
 </form>

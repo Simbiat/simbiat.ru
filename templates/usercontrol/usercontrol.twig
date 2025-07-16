@@ -1,36 +1,36 @@
-<vertical-tabs class="vertical_tabs_links">
+<tab-menu>
     <tab-names>
-        <tab-name {% if subServiceName == 'profile' %}class="active" {% endif %}data-url="/uc/profile">Profile</tab-name>
-        <tab-name {% if subServiceName == 'avatars' %}class="active" {% endif %}data-url="/uc/avatars">Avatars</tab-name>
-        <tab-name {% if subServiceName == 'fftracker' %}class="active" {% endif %}data-url="/uc/fftracker">FFXIV</tab-name>
-        <tab-name {% if subServiceName == 'emails' %}class="active" {% endif %}data-url="/uc/emails">Emails</tab-name>
-        <tab-name {% if subServiceName == 'password' %}class="active" {% endif %}data-url="/uc/password">Password</tab-name>
-        <tab-name {% if subServiceName == 'sessions' %}class="active" {% endif %}data-url="/uc/sessions">Sessions</tab-name>
-        <tab-name class="danger{% if subServiceName == 'removal' %} active{% endif %}" data-url="/uc/removal">Removal</tab-name>
+        <a class="tab_name{% if subservice_name == 'profile' %} active{% endif %}" href="/uc/profile">Profile</a>
+        <a class="tab_name{% if subservice_name == 'avatars' %} active{% endif %}" href="/uc/avatars">Avatars</a>
+        <a class="tab_name{% if subservice_name == 'fftracker' %} active{% endif %}" href="/uc/fftracker">FFXIV</a>
+        <a class="tab_name{% if subservice_name == 'emails' %} active{% endif %}" href="/uc/emails">Emails</a>
+        <a class="tab_name{% if subservice_name == 'password' %} active{% endif %}" href="/uc/password">Password</a>
+        <a class="tab_name{% if subservice_name == 'sessions' %} active{% endif %}" href="/uc/sessions">Sessions</a>
+        <a class="tab_name danger{% if subservice_name == 'removal' %} active{% endif %}" href="/uc/removal">Removal</a>
     </tab-names>
-</vertical-tabs>
+</tab-menu>
 <section>
-    {% if subServiceName %}
-        <article class="margin05rem">
-            {% if subServiceName == 'registration' %}
+    {% if subservice_name %}
+        <article class="margin_05rem">
+            {% if subservice_name == 'registration' %}
                 {{ include('usercontrol/registration.twig') }}
-            {% elseif subServiceName == 'activation' %}
+            {% elseif subservice_name == 'activation' %}
                 {{ include('usercontrol/activation.twig') }}
-            {% elseif subServiceName == 'emails' %}
+            {% elseif subservice_name == 'emails' %}
                 {{ include('usercontrol/emails.twig') }}
-            {% elseif subServiceName == 'unsubscribe' %}
+            {% elseif subservice_name == 'unsubscribe' %}
                 {{ include('usercontrol/unsubscribe.twig') }}
-            {% elseif subServiceName == 'profile' %}
+            {% elseif subservice_name == 'profile' %}
                 {{ include('usercontrol/profile.twig') }}
-            {% elseif subServiceName == 'password' %}
+            {% elseif subservice_name == 'password' %}
                 {{ include('usercontrol/password.twig') }}
-            {% elseif subServiceName == 'removal' %}
+            {% elseif subservice_name == 'removal' %}
                 {{ include('usercontrol/removal.twig') }}
-            {% elseif subServiceName == 'avatars' %}
+            {% elseif subservice_name == 'avatars' %}
                 {{ include('usercontrol/avatars.twig') }}
-            {% elseif subServiceName == 'fftracker' %}
+            {% elseif subservice_name == 'fftracker' %}
                 {{ include('usercontrol/fftracker.twig') }}
-            {% elseif subServiceName == 'sessions' %}
+            {% elseif subservice_name == 'sessions' %}
                 {{ include('usercontrol/sessions.twig') }}
             {% endif %}
         </article>

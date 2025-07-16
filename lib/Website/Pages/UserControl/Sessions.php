@@ -18,23 +18,23 @@ use Simbiat\Website\Config;
 class Sessions extends Page
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/uc/sessions', 'name' => 'Sessions']
     ];
     #Sub service name
-    protected string $subServiceName = 'sessions';
+    protected string $subservice_name = 'sessions';
     #Page title. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $title = 'Sessions';
     #Page's H1 tag. Practically needed only for the main pages of the segment, since will be overridden otherwise
     protected string $h1 = 'Active sessions';
     #Page's description. Practically needed only for the main pages of the segment, since will be overridden otherwise
-    protected string $ogdesc = 'Page to manage active sessions';
+    protected string $og_desc = 'Page to manage active sessions';
     #Cache strategy: aggressive, private, live, month, week, day, hour
-    protected string $cacheStrat = 'private';
+    protected string $cache_strategy = 'private';
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = true;
+    protected bool $authentication_needed = true;
     #Link to JS module for preload
-    protected string $jsModule = 'uc/sessions';
+    protected string $js_module = 'uc/sessions';
     
     /**
      * Generation of the page data
@@ -44,13 +44,13 @@ class Sessions extends Page
      */
     protected function generate(array $path): array
     {
-        $outputArray = [];
+        $output_array = [];
         #Get sessions
-        $outputArray['sessions'] = Query::query('SELECT `time`, `cookie_id`, `session_id`, `uc__sessions`.`ip`, `user_agent` FROM `uc__sessions` WHERE `user_id`=:user_id ORDER BY `time` DESC', [':user_id' => $_SESSION['user_id']], return: 'all');
+        $output_array['sessions'] = Query::query('SELECT `time`, `cookie_id`, `session_id`, `uc__sessions`.`ip`, `user_agent` FROM `uc__sessions` WHERE `user_id`=:user_id ORDER BY `time` DESC', [':user_id' => $_SESSION['user_id']], return: 'all');
         #Get cookies
-        $outputArray['cookies'] = Query::query('SELECT `time`, `cookie_id`, `uc__cookies`.`ip`, `user_agent` FROM `uc__cookies` WHERE `user_id`=:user_id ORDER BY `time` DESC', [':user_id' => $_SESSION['user_id']], return: 'all');
+        $output_array['cookies'] = Query::query('SELECT `time`, `cookie_id`, `uc__cookies`.`ip`, `user_agent` FROM `uc__cookies` WHERE `user_id`=:user_id ORDER BY `time` DESC', [':user_id' => $_SESSION['user_id']], return: 'all');
         #Get logs
-        $outputArray['logs'] = Query::query('SELECT `time`, `action`, `sys__logs`.`ip`, `user_agent` FROM `sys__logs` WHERE `user_id`=:user_id AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':user_id' => $_SESSION['user_id']], return: 'all');
+        $output_array['logs'] = Query::query('SELECT `time`, `action`, `sys__logs`.`ip`, `user_agent` FROM `sys__logs` WHERE `user_id`=:user_id AND `type` IN (1, 2, 3, 6, 7, 8, 9) ORDER BY `time` DESC LIMIT 50', [':user_id' => $_SESSION['user_id']], return: 'all');
         #Create user_agent object
         #Force full string versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
@@ -60,39 +60,39 @@ class Sessions extends Page
         $ips = [];
         #Expand user_agent
         foreach (['sessions', 'cookies', 'logs'] as $type) {
-            foreach ($outputArray[$type] as $key => $item) {
+            foreach ($output_array[$type] as $key => $item) {
                 if (!isset($ips[$item['ip']])) {
                     try {
                         $ips[$item['ip']] = [];
-                        $geoIp = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($item['ip']);
+                        $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($item['ip']);
                     } catch (\Throwable) {
                         #Do nothing, not critical
                     } finally {
-                        $ips[$item['ip']] = ['country' => $geoIp->country->name ?? null, 'city' => $geoIp->city->name ?? null];
+                        $ips[$item['ip']] = ['country' => $geoip->country->name ?? null, 'city' => $geoip->city->name ?? null];
                     }
                 }
-                $outputArray[$type][$key]['country'] = $ips[$item['ip']]['country'];
-                $outputArray[$type][$key]['city'] = $ips[$item['ip']]['city'];
+                $output_array[$type][$key]['country'] = $ips[$item['ip']]['country'];
+                $output_array[$type][$key]['city'] = $ips[$item['ip']]['city'];
                 $dd->setUserAgent((string)$item['user_agent']);
                 $dd->parse();
                 #Get OS
-                $outputArray[$type][$key]['os'] = $dd->getOs();
+                $output_array[$type][$key]['os'] = $dd->getOs();
                 #Get client
-                $outputArray[$type][$key]['client'] = $dd->getClient();
+                $output_array[$type][$key]['client'] = $dd->getClient();
                 #Set OS and client icon if they exist
-                if (!empty($outputArray[$type][$key]['os'])) {
-                    $outputArray[$type][$key]['os']['icon'] = DDCIcons::getOS($outputArray[$type][$key]['os']['name'], $outputArray[$type][$key]['os']['family']);
+                if (!empty($output_array[$type][$key]['os'])) {
+                    $output_array[$type][$key]['os']['icon'] = DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']);
                 }
-                if (!empty($outputArray[$type][$key]['client'])) {
-                    $outputArray[$type][$key]['client']['icon'] = DDCIcons::getClient($outputArray[$type][$key]['client']['name'], $outputArray[$type][$key]['client']['type']);
+                if (!empty($output_array[$type][$key]['client'])) {
+                    $output_array[$type][$key]['client']['icon'] = DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type']);
                 }
                 #Set country icon, if a flag exists
-                if (!empty($outputArray[$type][$key]['country']) && is_file(Config::$img_dir.'/flags/'.$outputArray[$type][$key]['country'].'.svg')) {
-                    $outputArray[$type][$key]['countryIcon'] = '/assets/images/flags/'.$outputArray[$type][$key]['country'].'.svg';
+                if (!empty($output_array[$type][$key]['country']) && is_file(Config::$img_dir.'/flags/'.$output_array[$type][$key]['country'].'.svg')) {
+                    $output_array[$type][$key]['country_icon'] = '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg';
                 }
             }
         }
-        $outputArray['current_session'] = session_id();
-        return $outputArray;
+        $output_array['current_session'] = session_id();
+        return $output_array;
     }
 }

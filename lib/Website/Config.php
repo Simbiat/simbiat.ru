@@ -211,7 +211,7 @@ final class Config
                                                                                     SESSION character_set_results = \'utf8mb4\',
                                                                                     SESSION character_set_server = \'utf8mb4\',
                                                                                     SESSION time_zone=\'+00:00\';')
-                        ->setOption(\PDO::ATTR_TIMEOUT, 1), maxTries: 5)
+                        ->setOption(\PDO::ATTR_TIMEOUT, 1), max_tries: 5)
                 );
                 #Check for maintenance
                 try {

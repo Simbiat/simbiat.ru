@@ -3,19 +3,18 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
-use Simbiat\About;
-use Simbiat\Abstracts;
-use Simbiat\bictracker;
-use Simbiat\fftracker;
-use Simbiat\Sitemap;
-use Simbiat\usercontrol;
+use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Feeds;
 use Simbiat\Website\Pages\About\Homepage;
 
-class MainRouter extends \Simbiat\Website\Abstracts\Router
+use Simbiat\Website\Redirects\BICTracker\Legacy;
+
+use function array_slice;
+
+class MainRouter extends Router
 {
     #Supported
-    protected array $subRoutes = [
+    protected array $sub_routes = [
         #Empty string implies homepage
         '',
         'api',
@@ -34,10 +33,10 @@ class MainRouter extends \Simbiat\Website\Abstracts\Router
         'error', 'errors', 'httperror', 'httperrors'
     ];
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/', 'name' => 'Home page'],
     ];
-
+    
     /**
      * @throws \Exception
      */
@@ -50,43 +49,43 @@ class MainRouter extends \Simbiat\Website\Abstracts\Router
         return match($path[0]) {
             'api' => array_merge(['template_override' => 'common/pages/api.twig'], (new Api)->route(array_slice($path, 1))),
             #Forum/Articles
-            'talks' => (new \Simbiat\Website\Routing\Talks())->route(array_slice($path, 1)),
+            'talks' => new Talks()->route(array_slice($path, 1)),
             #Pages routing
-            'about' => (new \Simbiat\Website\Routing\About)->route(array_slice($path, 1)),
-            'bictracker' => (new \Simbiat\Website\Routing\BICTracker)->route(array_slice($path, 1)),
-            'bic' => (new \Simbiat\Website\Redirects\BICTracker\Legacy)->get(array_slice($path, 1)),
-            'fftracker' => (new \Simbiat\Website\Routing\FFTracker)->route(array_slice($path, 1)),
-            'uc' => (new \Simbiat\Website\Routing\UserControl)->route(array_slice($path, 1)),
-            'tests' => (new Tests)->route(array_slice($path, 1)),
+            'about' => new About()->route(array_slice($path, 1)),
+            'bictracker' => new BICTracker()->route(array_slice($path, 1)),
+            'bic' => new Legacy()->get(array_slice($path, 1)),
+            'fftracker' => new FFTracker()->route(array_slice($path, 1)),
+            'uc' => new UserControl()->route(array_slice($path, 1)),
+            'tests' => new Tests()->route(array_slice($path, 1)),
             #Simple pages
-            'simplepages' => (new \Simbiat\Website\Routing\SimplePages)->route(array_slice($path, 1)),
+            'simplepages' => new SimplePages()->route(array_slice($path, 1)),
             #Games
-            'games' => (new \Simbiat\Website\Routing\Games)->route(array_slice($path, 1)),
+            'games' => new Games()->route(array_slice($path, 1)),
             #Feeds
-            'sitemap' => (new \Simbiat\Website\Routing\Sitemap)->route(array_slice($path, 1)),
-            'rss', 'atom' => (new Feeds)->uriParse($path),
+            'sitemap' => new Sitemap()->route(array_slice($path, 1)),
+            'rss', 'atom' => new Feeds()->uriParse($path),
             #Errors
             'error', 'errors', 'httperror', 'httperrors' => $this->error(array_slice($path, 1)),
             '' => $this->homepage(),
             default => $this->error(['404']),
         };
     }
-
+    
     #Temporary function for landing page
     private function homepage(): array
     {
-        return (new Homepage)->get([]);
+        return new Homepage()->get([]);
     }
-
+    
     #Function to help route error pages on frontend
     private function error(array $uri): array {
-        if (empty($uri[0]) || !in_array((int)$uri[0], [300, 301, 302, 303, 305, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505])) {
-            $outputArray['http_error'] = 404;
+        if (empty($uri[0]) || !in_array((int)$uri[0], [300, 301, 302, 303, 305, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505], true)) {
+            $output_array['http_error'] = 404;
         } else {
-            $outputArray['http_error'] = (int)$uri[0];
+            $output_array['http_error'] = (int)$uri[0];
         }
-        $outputArray['suggested_link'] = '/'.dirname($_SERVER['REQUEST_URI'] ?? '');
-        $outputArray['error_page'] = true;
-        return $outputArray;
+        $output_array['suggested_link'] = '/'.dirname($_SERVER['REQUEST_URI'] ?? '');
+        $output_array['error_page'] = true;
+        return $output_array;
     }
 }

@@ -10,17 +10,17 @@ use Simbiat\Website\Talks\Post;
 class Posts extends Api
 {
     #Flag to indicate, that this is the lowest level
-    protected bool $finalNode = true;
+    protected bool $final_node = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => ['add', 'edit'], 'DELETE' => 'delete', 'PATCH' => ['like', 'dislike']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
     protected array $verbs = ['add' => 'Add post', 'delete' => 'Delete post', 'edit' => 'Edit post', 'like' => 'Like a post', 'dislike' => 'Dislike a post'];
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = true;
+    protected bool $authentication_needed = true;
     #Flag to indicate need to validate CSRF
     protected bool $csrf = false;
     #Flag to indicate that session data change is possible on this page
-    protected bool $sessionChange = false;
+    protected bool $session_change = false;
     
     protected function genData(array $path): array
     {
@@ -48,7 +48,7 @@ class Posts extends Api
             #Adding and editing a post can take a lot of time, thus CSRF will easily expire. Since these operations do not change user data - not so critical.
             #Liking and disliking is even less critical.
             if ($path[1] === 'delete') {
-                if (!$this->antiCSRF($this->allowedOrigins)) {
+                if (!$this->antiCSRF($this->allowed_origins)) {
                     return ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
                 }
             }

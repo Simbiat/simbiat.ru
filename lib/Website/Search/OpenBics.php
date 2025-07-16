@@ -15,11 +15,11 @@ class OpenBics extends Search
     #Optional WHERE clause for every SELECT
     protected string $where = '`DateOut` IS NULL';
     #Optional WHERE clause for SELECT where search term is defined
-    protected string $whereSearch = '`BIC` IN (SELECT `BIC` FROM `bic__swift` WHERE `SWBIC`=:what) OR `BIC` IN (SELECT `BIC` FROM `bic__accounts` WHERE `Account`=:what)';
+    protected string $where_search = '`BIC` IN (SELECT `BIC` FROM `bic__swift` WHERE `SWBIC`=:what) OR `BIC` IN (SELECT `BIC` FROM `bic__accounts` WHERE `Account`=:what)';
     #Default order (for main page, for example)
-    protected string $orderDefault = '`Updated` DESC';
+    protected string $order_default = '`Updated` DESC';
     #Order for list pages
-    protected string $orderList = '`NameP` ASC';
+    protected string $order_list = '`NameP` ASC';
     #Next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     #the more weight/relevancy condition with it will have (if true)
     #List of FULLTEXT columns

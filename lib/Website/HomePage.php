@@ -13,17 +13,19 @@ use Simbiat\Website\Routing\MainRouter;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 use Simbiat\Website\usercontrol\Session;
 
+use function in_array;
+
 /**
  * Class to generate pages. "HomePage" is a legacy name
  */
 class HomePage
 {
     #Cache object
-    public static ?Caching $dataCache = null;
+    public static ?Caching $data_cache = null;
     #HTTP headers object
     public static ?Headers $headers = NULL;
     #Flag indicating that cached view has been served already
-    public static bool $staleReturn = false;
+    public static bool $stale_return = false;
     #HTTP method being used
     public static ?string $method = null;
     #Array that can contain variables indicating common HTTP errors
@@ -33,12 +35,12 @@ class HomePage
     {
         #Cache headers object
         self::$headers = new Headers();
-        self::$dataCache ??= new Caching();
+        self::$data_cache ??= new Caching();
         #Set method
         self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
         #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
         Headers::multiPartFormParse();
-        if (\in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
+        if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
             $_POST = array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
             $_FILES = Headers::$_FILES;
         }
@@ -67,8 +69,8 @@ class HomePage
                 Headers::redirect(preg_replace('/\\?page=-?\d+/ui', '', Config::$canonical));
             }
             #Process requests to file or cache
-            $fileResult = $this->filesRequests($_SERVER['REQUEST_URI']);
-            if ($fileResult === 200) {
+            $file_result = $this->filesRequests($_SERVER['REQUEST_URI']);
+            if ($file_result === 200) {
                 exit(0);
             }
             #Exploding further processing
@@ -93,18 +95,18 @@ class HomePage
                     Page::headers();
                 }
                 #Try to start a session if it's not started yet and DB is up
-                if (Config::$dbup && !Config::$db_update && !self::$staleReturn && session_status() === PHP_SESSION_NONE) {
+                if (Config::$dbup && !Config::$db_update && !self::$stale_return && session_status() === PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
                     session_start();
                     #Show that the client is unsupported
-                    if (isset($_SESSION['UA']['unsupported']) && $_SESSION['UA']['unsupported'] === true) {
-                        self::$http_error = ['client' => $_SESSION['UA']['client'] ?? 'unknown', 'http_error' => 418, 'reason' => 'Teapot'];
+                    if (isset($_SESSION['useragent']['unsupported']) && $_SESSION['useragent']['unsupported'] === true) {
+                        self::$http_error = ['client' => $_SESSION['useragent']['client'] ?? 'unknown', 'http_error' => 418, 'reason' => 'Teapot'];
                         #Check if banned IP
-                    } elseif (!empty($_SESSION['bannedIP'])) {
+                    } elseif (!empty($_SESSION['banned_ip'])) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                     }
                     #Handle Sec-Fetch. Use strict mode if a request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
-                    Headers::secFetch(strict: (empty($_SESSION['UA']['bot']) && $_SESSION['UA']['browser']));
+                    Headers::secFetch(strict: (empty($_SESSION['useragent']['bot']) && $_SESSION['useragent']['browser']));
                 } else {
                     $ua = Security::getUA();
                     #Show that the client is unsupported
@@ -115,7 +117,7 @@ class HomePage
                     Headers::secFetch(strict: (empty($ua['bot']) && $ua['browser']));
                 }
                 #Check if we have cached the results already
-                self::$staleReturn = $this->twigProc(self::$dataCache->read(), true);
+                self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
                 #Check if there was an internal redirect to a custom error page
                 if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
                     if (preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
@@ -130,8 +132,8 @@ class HomePage
                 } else {
                     $vars = self::$http_error;
                 }
-            } catch (\Throwable $e) {
-                Errors::error_log($e);
+            } catch (\Throwable $exception) {
+                Errors::error_log($exception);
                 $vars = ['http_error' => 500];
             }
             if ($uri[0] === 'api' && empty($vars['template_override'])) {
@@ -139,8 +141,8 @@ class HomePage
             }
             #Generate page
             $this->twigProc($vars);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
         }
     }
     
@@ -169,38 +171,38 @@ class HomePage
     
     /**
      * Twig processing of the generated page
-     * @param array $twigVars List of Twig variables
-     * @param bool  $cache    Indicates if this is a cache pass
+     * @param array $twig_vars List of Twig variables
+     * @param bool  $cache     Indicates if this is a cache pass
      *
      * @return bool
      */
-    final public function twigProc(array $twigVars = [], bool $cache = false): bool
+    final public function twigProc(array $twig_vars = [], bool $cache = false): bool
     {
         if ($cache) {
-            if (empty($twigVars) || self::$method !== 'GET' || isset($_GET['cachereset']) || isset($_POST['cachereset'])) {
+            if (empty($twig_vars) || self::$method !== 'GET' || isset($_GET['cachereset']) || isset($_POST['cachereset'])) {
                 return false;
             }
             try {
                 #Update CSRF token
                 if (session_status() === PHP_SESSION_ACTIVE) {
-                    $_SESSION['CSRF'] = Security::genToken();
+                    $_SESSION['csrf'] = Security::genToken();
                 }
-                $twigVars = array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-                if (isset($twigVars['http_error'])) {
-                    Headers::clientReturn($twigVars['http_error'], false);
+                $twig_vars = array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
+                if (isset($twig_vars['http_error'])) {
+                    Headers::clientReturn($twig_vars['http_error'], false);
                 }
                 ob_end_clean();
                 ignore_user_abort(true);
                 ob_start();
-                $output = EnvironmentGenerator::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
+                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
                 #Output data
-                Common::zEcho($output, $twigVars['cacheStrat'] ?? 'hour', false);
+                Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_end_flush();
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_flush();
                 flush();
-                if (!empty($twigVars['cache_expires_at']) && ($twigVars['cache_expires_at'] - time()) > 0) {
+                if (!empty($twig_vars['cache_expires_at']) && ($twig_vars['cache_expires_at'] - time()) > 0) {
                     exit(0);
                 }
                 return true;
@@ -212,13 +214,13 @@ class HomePage
             try {
                 #Update CSRF token
                 if (session_status() === PHP_SESSION_ACTIVE) {
-                    $_SESSION['CSRF'] = Security::genToken();
+                    $_SESSION['csrf'] = Security::genToken();
                 }
-                $twigVars = array_merge($twigVars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-                if (isset($twigVars['http_error'])) {
-                    Headers::clientReturn($twigVars['http_error'], false);
+                $twig_vars = array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
+                if (isset($twig_vars['http_error'])) {
+                    Headers::clientReturn($twig_vars['http_error'], false);
                 }
-                $output = EnvironmentGenerator::getTwig()->render($twigVars['template_override'] ?? 'index.twig', $twigVars);
+                $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
@@ -233,15 +235,15 @@ class HomePage
                 session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if (Config::$prod && !empty($twigVars['cacheAge']) && is_numeric($twigVars['cacheAge']) && empty($twigVars['http_error']) && self::$method === 'GET') {
-                self::$dataCache->write($twigVars, age: (int)$twigVars['cacheAge']);
+            if (Config::$prod && !empty($twig_vars['cache_age']) && is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
+                self::$data_cache->write($twig_vars, age: (int)$twig_vars['cache_age']);
             }
-            if (self::$staleReturn) {
+            if (self::$stale_return) {
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
                 @ob_end_clean();
             } else {
                 #Output data
-                Common::zEcho($output, $twigVars['cacheStrat'] ?? 'hour', false);
+                Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
             }
             exit(0);
         }

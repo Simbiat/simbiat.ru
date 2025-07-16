@@ -11,21 +11,21 @@ use function in_array;
 class Post extends Page
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/talks/sections/', 'name' => 'Sections']
     ];
     #Sub service name
-    protected string $subServiceName = 'post';
+    protected string $subservice_name = 'post';
     #Page title. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $title = 'Talks';
     #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = 'Talks';
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-    protected string $ogdesc = 'Talks';
+    protected string $og_desc = 'Talks';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['view_posts'];
+    protected array $required_permission = ['view_posts'];
     #Flag to indicate editor mode
-    protected bool $editMode = false;
+    protected bool $edit_mode = false;
     
     #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
@@ -36,20 +36,20 @@ class Post extends Page
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
         $post = new \Simbiat\Website\Talks\Post($id);
-        $outputArray = $post->getArray();
-        if (empty($outputArray['id']) || empty($outputArray['text'])) {
+        $output_array = $post->getArray();
+        if (empty($output_array['id']) || empty($output_array['text'])) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($outputArray['private'] && $outputArray['owned'] !== true && !in_array('view_private', $_SESSION['permissions'], true)) {
+        if ($output_array['private'] && $output_array['owned'] !== true && !in_array('view_private', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($outputArray['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if ($output_array['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if we are trying to edit a post, that we can't edit
-        if ($this->editMode) {
+        if ($this->edit_mode) {
             if ($post->locked && !in_array('edit_locked', $_SESSION['permissions'], true)) {
                 return ['http_error' => 403, 'reason' => 'Post is locked and no `edit_locked` permission'];
             }
@@ -62,80 +62,80 @@ class Post extends Page
             }
         }
         #Try to exit early based on modification date
-        $this->lastModified($outputArray['updated']);
+        $this->lastModified($output_array['updated']);
         #Changelogs have Unix timestamp for names, need to convert those to the desired format
-        if ($outputArray['type'] === 'Changelog' && is_numeric($outputArray['name'])) {
-            $outputArray['name'] = date('Y.m.d', (int)$outputArray['name']);
+        if ($output_array['type'] === 'Changelog' && is_numeric($output_array['name'])) {
+            $output_array['name'] = date('Y.m.d', (int)$output_array['name']);
         }
         #Get history
         $history = false;
         $time = 0;
-        if ($this->editMode) {
+        if ($this->edit_mode) {
             $time = (int)($path[1] ?? 0);
             if ($time > 0 && !in_array('view_posts_history', $_SESSION['permissions'], true)) {
                 return ['http_error' => 403, 'reason' => 'No `view_posts_history` permission'];
             }
-            $outputArray['history'] = $post->getHistory($time);
+            $output_array['history'] = $post->getHistory($time);
             #Check if any history was returned
-            if (!empty($outputArray['history'])) {
+            if (!empty($output_array['history'])) {
                 #Check if we are requesting a historical version, and it does exist in the array
-                if (!empty($time) && isset($outputArray['history'][$time])) {
+                if (!empty($time) && isset($output_array['history'][$time])) {
                     #Update the text of the post to show
-                    $outputArray['text'] = $outputArray['history'][$time];
+                    $output_array['text'] = $output_array['history'][$time];
                     #Mark the item as "selected"
-                    $outputArray['history'][$time] = true;
+                    $output_array['history'][$time] = true;
                     $history = true;
                     #Disable caching for the page, since history is not meant to be seen by regular users
-                    $this->cacheStrat = 'private';
-                    $this->cacheAge = 0;
+                    $this->cache_strategy = 'private';
+                    $this->cache_age = 0;
                 } else {
                     #Set the first item as "selected" (it's the latest one)
-                    $outputArray['history'][array_key_first($outputArray['history'])] = true;
+                    $output_array['history'][array_key_first($output_array['history'])] = true;
                 }
             }
         }
         #Add parents to breadcrumbs
-        foreach ($outputArray['parents'] as $parent) {
-            $this->breadCrumb[] = ['href' => '/talks/sections/'.$parent['section_id'], 'name' => $parent['name']];
+        foreach ($output_array['parents'] as $parent) {
+            $this->breadcrumb[] = ['href' => '/talks/sections/'.$parent['section_id'], 'name' => $parent['name']];
         }
         #Add thread
-        $this->breadCrumb[] = ['href' => '/talks/threads/'.$outputArray['thread_id'].'/'.($outputArray['page'] > 1 ? '?page='.$outputArray['page'] : '').'#post_'.$id, 'name' => $outputArray['name']];
+        $this->breadcrumb[] = ['href' => '/talks/threads/'.$output_array['thread_id'].'/'.($output_array['page'] > 1 ? '?page='.$output_array['page'] : '').'#post_'.$id, 'name' => $output_array['name']];
         #Add current page
-        $this->breadCrumb[] = ['href' => '/talks/posts/'.$id, 'name' => '#'.$id];
-        if ($this->editMode) {
+        $this->breadcrumb[] = ['href' => '/talks/posts/'.$id, 'name' => '#'.$id];
+        if ($this->edit_mode) {
             #Add edit mode to breadcrumb
-            $this->breadCrumb[] = ['href' => '/talks/edit/posts/'.$id, 'name' => 'Edit mode'];
+            $this->breadcrumb[] = ['href' => '/talks/edit/posts/'.$id, 'name' => 'Edit mode'];
         }
         #Add a version link to breadcrumb
         if ($history) {
-            $this->breadCrumb[] = ['href' => '/talks/edit/posts/'.$id.'/'.$time, 'name' => date('d/m/Y H:i', $time)];
+            $this->breadcrumb[] = ['href' => '/talks/edit/posts/'.$id.'/'.$time, 'name' => date('d/m/Y H:i', $time)];
             #We do not allow editing history
-            $this->editMode = false;
+            $this->edit_mode = false;
         }
-        #Update title, h1 and ogdesc
-        if ($this->editMode) {
+        #Update title, h1 and og_desc
+        if ($this->edit_mode) {
             $this->h1 = 'Editing post #'.$id;
         } else {
             $this->h1 = 'Post #'.$id;
         }
         $this->title = $this->h1;
-        $this->setOgDesc($outputArray['text']);
+        $this->setOgDesc($output_array['text']);
         #Duplicate the array to `post` key (required for Twig template and consistency with other pages)
-        $outputArray['post'] = $outputArray;
+        $output_array['post'] = $output_array;
         #Add a flag to hide the post's ID
-        $outputArray['post']['noPostId'] = true;
+        $output_array['post']['no_post_id'] = true;
         #Set ogtype
-        $outputArray['ogtype'] = 'article';
+        $output_array['ogtype'] = 'article';
         #Add article open graph tags
         /** @noinspection DuplicatedCode */
-        $outputArray['ogextra'] =
-            '<meta property="article:published_time" content="'.date('c', $outputArray['created']).'" />
-            <meta property="article:modified_time" content="'.date('c', $outputArray['updated']).'" />'.
-            ($outputArray['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$outputArray['author'].'" />').
-            ($outputArray['editor'] !== 1 && $outputArray['editor'] !== $outputArray['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$outputArray['author'].'" />' : '').
-            '<meta property="article:section" content="'.$outputArray['name'].'" />';
+        $output_array['ogextra'] =
+            '<meta property="article:published_time" content="'.date('c', $output_array['created']).'" />
+            <meta property="article:modified_time" content="'.date('c', $output_array['updated']).'" />'.
+            ($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />').
+            ($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '').
+            '<meta property="article:section" content="'.$output_array['name'].'" />';
         #Set flag indicating that we are in edit mode
-        $outputArray['editMode'] = $this->editMode;
-        return $outputArray;
+        $output_array['edit_mode'] = $this->edit_mode;
+        return $output_array;
     }
 }

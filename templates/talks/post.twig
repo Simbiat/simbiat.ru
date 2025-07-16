@@ -1,9 +1,9 @@
-{% if editMode %}
+{% if edit_mode %}
     {{ include('common/elements/postform.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions}, with_context = false) }}
 {% else %}
     {{ include('common/elements/post.twig', post) }}
 {% endif %}
-{% if (editMode or history) and 'view_posts_history' in session_data.permissions %}
+{% if (edit_mode or history) and 'view_posts_history' in session_data.permissions %}
     <h2>Version History</h2>
     {% if history|length > 1 %}
         <ol class="post_history" reversed>
@@ -19,7 +19,7 @@
         <p>There have been no edits to the text of this post.</p>
     {% endif %}
 {% endif %}
-{% if editMode and 'remove_posts' in session_data.permissions %}
+{% if edit_mode and 'remove_posts' in session_data.permissions %}
     <br><br><br>
     <details>
         <summary class="failure middle">Post removal</summary>

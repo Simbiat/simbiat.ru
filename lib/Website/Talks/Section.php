@@ -20,10 +20,10 @@ use function is_array;
 class Section extends Entity
 {
     protected const string ENTITY_TYPE = 'section';
-    protected string $idFormat = '/^top|\d+$/mi';
+    protected string $id_format = '/^top|\d+$/mi';
     public string $name = '';
     public string $type = 'Category';
-    public string $inheritedType = 'Category';
+    public string $inherited_type = 'Category';
     public bool $system = true;
     public bool $private = false;
     public ?int $closed = null;
@@ -44,17 +44,18 @@ class Section extends Entity
     #List of threads
     public array $threads = [];
     #Flag indicating if we are getting data for a thread and can skip some details
-    private bool $forThread = false;
+    private bool $for_thread = false;
     
     /**
      * Function to set a flag to return only the data required for a thread (for the sake of optimization)
-     * @param bool $forThread
+     *
+     * @param bool $for_thread
      *
      * @return $this
      */
-    public function setForThread(bool $forThread): self
+    public function setForThread(bool $for_thread): self
     {
-        $this->forThread = $forThread;
+        $this->for_thread = $for_thread;
         return $this;
     }
     
@@ -84,7 +85,7 @@ class Section extends Entity
                 'owned' => false,
             ];
             #Get children
-            if (!$this->forThread) {
+            if (!$this->for_thread) {
                 $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
             }
         } else {
@@ -95,35 +96,35 @@ class Section extends Entity
             }
             $data = $data['entities'][0];
             #Get parents
-            $inheritedOwnership = false;
+            $inherited_ownership = false;
             if (empty($data['parent_id'])) {
                 $data['parents'] = [];
-                $data['inheritedType'] = match ($this->id) {
+                $data['inherited_type'] = match ($this->id) {
                     '1' => 'Blog',
                     '2' => 'Forum',
                     '3' => 'Changelog',
                     '4' => 'Knowledgebase',
                     '5' => 'Support',
-                    default => $data['detailedType'],
+                    default => $data['detailed_type'],
                 };
             } else {
                 $data['parents'] = array_reverse($this->getParents((int)$data['parent_id']));
                 foreach ($data['parents'] as $parent) {
                     if ($parent['author'] === $_SESSION['user_id']) {
-                        $inheritedOwnership = true;
+                        $inherited_ownership = true;
                         break;
                     }
                 }
-                $data['inheritedType'] = match ($data['parents'][0]['section_id']) {
+                $data['inherited_type'] = match ($data['parents'][0]['section_id']) {
                     1 => 'Blog',
                     2 => 'Forum',
                     3 => 'Changelog',
                     4 => 'Knowledgebase',
                     5 => 'Support',
-                    default => $data['detailedType'],
+                    default => $data['detailed_type'],
                 };
             }
-            if ($inheritedOwnership || $data['author'] === $_SESSION['user_id']) {
+            if ($inherited_ownership || $data['author'] === $_SESSION['user_id']) {
                 $data['owned'] = true;
             } else {
                 $data['owned'] = false;
@@ -138,16 +139,16 @@ class Section extends Entity
                 $where .= ' AND (`talks__sections`.`private`=0 OR `talks__sections`.`author`=:user_id)';
                 $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
             }
-            if (!$this->forThread) {
+            if (!$this->for_thread) {
                 $data['children'] = new Sections($bindings, '`talks__sections`.`parent_id`=:section_id'.$where)->listEntities($page);
             }
             #Get threads
-            if ($data['detailedType'] === 'Category') {
+            if ($data['detailed_type'] === 'Category') {
                 #Categories are not meant to have threads in them
                 $data['threads'] = [];
             } else {
                 #If we have a blog or changelog - order by creation date, if we have a forum or support - by update date, if a knowledgebase - by name
-                $orderBy = match ($data['detailedType']) {
+                $order_by = match ($data['detailed_type']) {
                     'Blog', 'Changelog' => '`created` DESC, `last_post` DESC, `name` ASC',
                     'Forum' => '`last_post` DESC, `name` ASC',
                     'Support' => '`closed` IS NOT NULL, `closed` DESC, `last_post` DESC, `name` ASC',
@@ -163,12 +164,12 @@ class Section extends Entity
                     $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:user_id)';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
-                if (!$this->forThread) {
-                    $data['threads'] = new Threads($bindings, $where, $orderBy)->listEntities($page);
+                if (!$this->for_thread) {
+                    $data['threads'] = new Threads($bindings, $where, $order_by)->listEntities($page);
                 }
             }
         }
-        if (!$this->forThread) {
+        if (!$this->for_thread) {
             #Count grandchildren
             if (!empty($data['children']['entities'])) {
                 $where = '';
@@ -214,30 +215,31 @@ class Section extends Entity
     
     /**
      * Function process database data
-     * @param array $fromDB
+     *
+     * @param array $from_db
      *
      * @return void
      */
-    protected function process(array $fromDB): void
+    protected function process(array $from_db): void
     {
-        $this->name = $fromDB['name'];
-        $this->type = $fromDB['detailedType'] ?? $fromDB['type'] ?? 'Category';
-        $this->inheritedType = $fromDB['inheritedType'] ?? 'Category';
-        $this->system = (bool)$fromDB['system'];
-        $this->private = (bool)$fromDB['private'];
-        $this->owned = $fromDB['owned'];
-        $this->closed = $fromDB['closed'] !== null ? strtotime($fromDB['closed']) : null;
-        $this->created = $fromDB['created'] !== null ? strtotime($fromDB['created']) : null;
-        $this->author = $fromDB['author'] ?? Config::USER_IDS['Deleted user'];
-        $this->updated = $fromDB['updated'] !== null ? strtotime($fromDB['updated']) : null;
-        $this->editor = $fromDB['editor'] ?? Config::USER_IDS['Deleted user'];
-        $this->icon = $fromDB['icon'] ?? '/assets/images/talks/category.svg';
-        $this->parents = $fromDB['parents'];
-        $this->parent_id = (int)($fromDB['parent_id'] ?? 0);
-        $this->description = $fromDB['description'] ?? '';
-        if (!$this->forThread) {
-            $this->children = (is_array($fromDB['children']) ? $fromDB['children'] : ['pages' => $fromDB['children'], 'entities' => []]);
-            $this->threads = (is_array($fromDB['threads']) ? $fromDB['threads'] : ['pages' => $fromDB['threads'], 'entities' => []]);
+        $this->name = $from_db['name'];
+        $this->type = $from_db['detailed_type'] ?? $from_db['type'] ?? 'Category';
+        $this->inherited_type = $from_db['inherited_type'] ?? 'Category';
+        $this->system = (bool)$from_db['system'];
+        $this->private = (bool)$from_db['private'];
+        $this->owned = $from_db['owned'];
+        $this->closed = $from_db['closed'] !== null ? strtotime($from_db['closed']) : null;
+        $this->created = $from_db['created'] !== null ? strtotime($from_db['created']) : null;
+        $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
+        $this->updated = $from_db['updated'] !== null ? strtotime($from_db['updated']) : null;
+        $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
+        $this->icon = $from_db['icon'] ?? '/assets/images/talks/category.svg';
+        $this->parents = $from_db['parents'];
+        $this->parent_id = (int)($from_db['parent_id'] ?? 0);
+        $this->description = $from_db['description'] ?? '';
+        if (!$this->for_thread) {
+            $this->children = (is_array($from_db['children']) ? $from_db['children'] : ['pages' => $from_db['children'], 'entities' => []]);
+            $this->threads = (is_array($from_db['threads']) ? $from_db['threads'] : ['pages' => $from_db['threads'], 'entities' => []]);
         }
     }
     
@@ -344,13 +346,13 @@ class Section extends Entity
     public function add(): array
     {
         #Sanitize data
-        $data = $_POST['newSection'] ?? [];
+        $data = $_POST['new_section'] ?? [];
         $sanitize = $this->sanitizeInput($data);
         if (is_array($sanitize)) {
             return $sanitize;
         }
         try {
-            $newID = Query::query(
+            $new_id = Query::query(
                 'INSERT INTO `talks__sections`(`section_id`, `name`, `description`, `parent_id`, `sequence`, `type`, `closed`, `private`, `created`, `author`, `editor`, `icon`) VALUES (NULL,:name,:description,:parent_id,:sequence,:type,:closed,:private,:time,:user_id,:user_id,:icon);',
                 [
                     ':name' => mb_trim($data['name'], null, 'UTF-8'),
@@ -378,13 +380,13 @@ class Section extends Entity
                 ], return: 'increment'
             );
             #Link the section to the user, if it's required
-            if (!empty($data['linkType'])) {
-                switch ($data['linkType']) {
+            if (!empty($data['link_type'])) {
+                switch ($data['link_type']) {
                     case 2:
                         Query::query('INSERT INTO `uc__user_to_section` (`user_id`, `blog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `blog`=:section_id;',
                             [
                                 ':user_id' => [$_SESSION['user_id'], 'int'],
-                                ':section_id' => [$newID, 'int'],
+                                ':section_id' => [$new_id, 'int'],
                             ]
                         );
                         break;
@@ -392,7 +394,7 @@ class Section extends Entity
                         Query::query('INSERT INTO `uc__user_to_section` (`user_id`, `changelog`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `changelog`=:section_id;',
                             [
                                 ':user_id' => [$_SESSION['user_id'], 'int'],
-                                ':section_id' => [$newID, 'int'],
+                                ':section_id' => [$new_id, 'int'],
                             ]
                         );
                         break;
@@ -400,13 +402,13 @@ class Section extends Entity
                         Query::query('INSERT INTO `uc__user_to_section` (`user_id`, `knowledgebase`) VALUES (:user_id, :section_id) ON DUPLICATE KEY UPDATE `knowledgebase`=:section_id;',
                             [
                                 ':user_id' => [$_SESSION['user_id'], 'int'],
-                                ':section_id' => [$newID, 'int'],
+                                ':section_id' => [$new_id, 'int'],
                             ]
                         );
                         break;
                 }
             }
-            return ['response' => true, 'location' => '/talks/sections/'.$newID];
+            return ['response' => true, 'location' => '/talks/sections/'.$new_id];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to create new section'];
@@ -420,7 +422,7 @@ class Section extends Entity
     public function edit(): array
     {
         #Sanitize data
-        $data = $_POST['curSection'] ?? [];
+        $data = $_POST['cur_section'] ?? [];
         $sanitize = $this->sanitizeInput($data, true);
         if (is_array($sanitize)) {
             return $sanitize;
@@ -455,8 +457,8 @@ class Section extends Entity
                     ],
                 ]
             ];
-            #Nullify the icon if the `clearIcon` flag was set
-            if ($data['clearIcon']) {
+            #Nullify the icon if the `clear_icon` flag was set
+            if ($data['clear_icon']) {
                 $queries[] = [
                     'UPDATE `talks__sections` SET `icon`=NULL, `updated`=`updated` WHERE `section_id`=:section_id;',
                     [
@@ -486,7 +488,7 @@ class Section extends Entity
         }
         $data['closed'] = Sanitization::checkboxToBoolean($data['closed']);
         $data['private'] = Sanitization::checkboxToBoolean($data['private']);
-        $data['clearIcon'] = Sanitization::checkboxToBoolean($data['clearIcon']);
+        $data['clear_icon'] = Sanitization::checkboxToBoolean($data['clear_icon']);
         $data['icon'] = !(mb_strtolower($data['icon'], 'UTF-8') === 'false');
         $data['type'] = (int)$data['type'];
         $data['order'] = (int)$data['order'];
@@ -526,8 +528,8 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `add_sections` permission'];
         }
         #Check that type is allowed in the current section
-        $allowedTypes = self::getSectionTypes($parent->inheritedType);
-        if (!in_array($data['type'], array_column($allowedTypes, 'value'), true)) {
+        $allowed_types = self::getSectionTypes($parent->inherited_type);
+        if (!in_array($data['type'], array_column($allowed_types, 'value'), true)) {
             return ['http_error' => 400, 'reason' => 'Can\'t create this type in current section'];
         }
         #Check if the section is being created in the appropriate parent
@@ -542,16 +544,16 @@ class Section extends Entity
                     if (!empty($_SESSION['sections']['blog'])) {
                         return ['http_error' => 400, 'reason' => 'User already has a personal blog'];
                     }
-                    $data['linkType'] = 2;
+                    $data['link_type'] = 2;
                 }
                 break;
             case 3:
-                if ($data['parent_id'] !== 2 && $parent->inheritedType !== 'Forum') {
+                if ($data['parent_id'] !== 2 && $parent->inherited_type !== 'Forum') {
                     return ['http_error' => 400, 'reason' => 'Forums can only be created inside root `Forums` section or its subsections'];
                 }
                 break;
             case 4:
-                if ($data['parent_id'] !== 3 && $parent->inheritedType !== 'Changelog') {
+                if ($data['parent_id'] !== 3 && $parent->inherited_type !== 'Changelog') {
                     return ['http_error' => 400, 'reason' => 'Changelogs can only be created inside root `Changelogs` section or its subsections'];
                 }
                 #Empty $this->name implies creation of a new section
@@ -559,16 +561,16 @@ class Section extends Entity
                     if (!empty($_SESSION['sections']['changelog'])) {
                         return ['http_error' => 400, 'reason' => 'User already has a personal changelog'];
                     }
-                    $data['linkType'] = 4;
+                    $data['link_type'] = 4;
                 }
                 break;
             case 5:
-                if ($data['parent_id'] !== 5 && $parent->inheritedType !== 'Support') {
+                if ($data['parent_id'] !== 5 && $parent->inherited_type !== 'Support') {
                     return ['http_error' => 400, 'reason' => 'Support sections can only be created inside root `Support` section or its subsections'];
                 }
                 break;
             case 6:
-                if ($data['parent_id'] !== 4 && $parent->inheritedType !== 'Knowledgebase') {
+                if ($data['parent_id'] !== 4 && $parent->inherited_type !== 'Knowledgebase') {
                     return ['http_error' => 400, 'reason' => 'Knowledgebases can only be created inside root `Knowledgebases` section or its subsections'];
                 }
                 #Empty $this->name implies creation of a new section
@@ -576,7 +578,7 @@ class Section extends Entity
                     if (!empty($_SESSION['sections']['knowledgebase'])) {
                         return ['http_error' => 400, 'reason' => 'User already has a personal knowledgebase'];
                     }
-                    $data['linkType'] = 6;
+                    $data['link_type'] = 6;
                 }
                 break;
         }
@@ -585,7 +587,7 @@ class Section extends Entity
             return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to create subsection in closed section.'];
         }
         #Check if the name is duplicated
-        $sectionExists = Query::query('SELECT `section_id` FROM `talks__sections` WHERE `parent_id`=:section_id AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int']], return: 'value');
+        $section_exists = Query::query('SELECT `section_id` FROM `talks__sections` WHERE `parent_id`=:section_id AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int']], return: 'value');
         if (
             (
                 #If the name is empty (a new section is being created)
@@ -593,18 +595,18 @@ class Section extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            \is_int($sectionExists)
+            is_int($section_exists)
         ) {
-            return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section.', 'location' => '/talks/sections/'.$sectionExists];
+            return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section.', 'location' => '/talks/sections/'.$section_exists];
         }
         #Check if a section type exists
         if (!Query::query('SELECT `type_id` FROM `talks__types` WHERE `type_id`=:type;', [':type' => [$data['type'], 'int']], return: 'check')) {
             return ['http_error' => 400, 'reason' => 'Unknown section type ID `'.$data['type'].'`'];
         }
-        #Check if the image for the icon was sent and try to process it, unless `clearIcon` is set
-        if ($data['icon'] && !$data['clearIcon']) {
+        #Check if the image for the icon was sent and try to process it, unless `clear_icon` is set
+        if ($data['icon'] && !$data['clear_icon']) {
             #Attempt to upload the image
-            $upload = new Curl()->upload(onlyImages: true);
+            $upload = new Curl()->upload(only_images: true);
             if (!empty($upload['http_error'])) {
                 return $upload;
             }

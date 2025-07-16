@@ -1,24 +1,24 @@
 {% if http_error != 'database' and http_error != 'maintenance' %}
-    <side-show data-sidebar="loginForm">
-        <input class="navIcon" alt="{% if session_data.user_id != 1 %}User profile{% else %}Login{% endif %}" data-tooltip="{% if session_data.user_id != 1 %}User profile{% else %}Login{% endif %}" type="image" src="{% if session_data.user_id != 1 %}{{ session_data.avatar|default('/assets/images/avatar.svg') }}{% else %}/assets/images/navigation/login.svg{% endif %}">
+    <side-show data-sidebar="login_form">
+        <input class="nav_icon" alt="{% if session_data.user_id != 1 %}User profile{% else %}Login{% endif %}" data-tooltip="{% if session_data.user_id != 1 %}User profile{% else %}Login{% endif %}" type="image" src="{% if session_data.user_id != 1 %}{{ session_data.avatar|default('/assets/images/avatar.svg') }}{% else %}/assets/images/navigation/login.svg{% endif %}">
     </side-show>
 {% else %}
     <side-show data-sidebar="sidebar_no_db">
-        <input class="navIcon" alt="{% if http_error == 'database' %}No database{% else %}Maintenance{% endif %}" data-tooltip="{% if http_error == 'database' %}No database{% else %}Maintenance{% endif %}" type="image" src="/assets/images/errors/{% if http_error == 'database' %}database.svg{% else %}maintenance.svg{% endif %}">
+        <input class="nav_icon" alt="{% if http_error == 'database' %}No database{% else %}Maintenance{% endif %}" data-tooltip="{% if http_error == 'database' %}No database{% else %}Maintenance{% endif %}" type="image" src="/assets/images/errors/{% if http_error == 'database' %}database.svg{% else %}maintenance.svg{% endif %}">
     </side-show>
 {% endif %}
 <side-show>
     <web-share>
-        <input class="navIcon" alt="Share page" data-tooltip="Share page" type="image" src="/assets/images/share.svg">
+        <input class="nav_icon" alt="Share page" data-tooltip="Share page" type="image" src="/assets/images/share.svg">
     </web-share>
 </side-show>
 {% if is_prod == false %}
-    <side-show id="prodLink">
-        <input class="navIcon" alt="Open PROD version" data-tooltip="Open PROD version" type="image" src="/assets/images/newtab.svg">
+    <side-show id="prod_link" class="sepia_100">
+        <input class="nav_icon" alt="Open PROD version" data-tooltip="Open PROD version" type="image" src="/assets/images/newtab.svg">
     </side-show>
 {% endif %}
 <side-show id="back-to-top">
     <back-to-top class="hidden" role="button">
-        <input class="navIcon" alt="Back to top" data-tooltip="Back to top" type="image" src="/assets/images/navigation/up.svg">
+        <input class="nav_icon" alt="Back to top" data-tooltip="Back to top" type="image" src="/assets/images/navigation/up.svg">
     </back-to-top>
 </side-show>

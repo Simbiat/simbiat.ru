@@ -9,7 +9,7 @@ use Simbiat\Website\usercontrol\Email;
 class Emails extends Api
 {
     #Flag to indicate, that this is the lowest level
-    protected bool $finalNode = true;
+    protected bool $final_node = true;
     #Allowed methods (besides GET, HEAD and OPTIONS) with optional mapping to GET functions
     protected array $methods = ['POST' => 'add', 'DELETE' => 'delete', 'PATCH' => ['activate', 'subscribe', 'unsubscribe']];
     #Allowed verbs, that can be added after an ID as an alternative to HTTP Methods or to get alternative representation
@@ -20,11 +20,11 @@ class Emails extends Api
         'unsubscribe' => 'Unsubscribe from email notifications',
     ];
     #Flag indicating that authentication is required
-    protected bool $authenticationNeeded = true;
+    protected bool $authentication_needed = true;
     #Flag to indicate need to validate CSRF
     protected bool $csrf = true;
     #Flag to indicate that session data change is possible on this page
-    protected bool $sessionChange = true;
+    protected bool $session_change = true;
     
     protected function genData(array $path): array
     {

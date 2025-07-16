@@ -1,13 +1,13 @@
 <section>
-    <article class="margin05rem">
-        <details {% if not subServiceName %}class="persistent" open{% endif %}>
-            <summary class="rightSummary aboutSection">About</summary>
-            <p>Service to track different information for Free Companies (guilds), PvP Teams, Linkshells (chat groups) and individual characters for <b>Final Fantasy XIV</b> online game developed and published by <a href="https://www.square-enix.com" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/icons/SquareEnix.svg" alt="Square Enix">Square Enix</a>. Utilizes data grabbed from official <a href="https://eu.finalfantasyxiv.com/lodestone" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/icons/lodestone.svg" alt="Lodestone">Lodestone</a> with special <a href="https://github.com/Simbiat/lodestone-php" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/social/github.svg" alt="Github">parser</a>.</p>
-            <p>Service has an official <a href="https://forum.square-enix.com/ffxiv/threads/304191-Free-Company-Tracker-Page" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/icons/lodestone.svg" alt="Lodestone Forum">thread</a> on Lodestone forum.</p>
+    <article class="margin_05rem">
+        <details {% if not subservice_name %}class="persistent" open{% endif %}>
+            <summary class="right_summary about_section">About</summary>
+            <p>The service to track different information for Free Companies (guilds), PvP Teams, Linkshells (chat groups) and individual characters for <b>Final Fantasy XIV</b> online game developed and published by <a href="https://www.square-enix.com" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/icons/SquareEnix.svg" alt="Square Enix">Square Enix</a>. Utilizes data grabbed from official <a href="https://eu.finalfantasyxiv.com/lodestone" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/icons/lodestone.svg" alt="Lodestone">Lodestone</a> with special <a href="https://github.com/Simbiat/lodestone-php" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/github.svg" alt="Github">parser</a>.</p>
+            <p>The service has an official <a href="https://forum.square-enix.com/ffxiv/threads/304191-Free-Company-Tracker-Page" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/icons/lodestone.svg" alt="Lodestone Forum">thread</a> on Lodestone forum.</p>
             <div id="se_copyright">"(C) SQUARE ENIX CO., LTD. All Rights Reserved. FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd. All material used under license."</div>
-            {% if not subServiceName %}
+            {% if not subservice_name %}
                 <p>Check statistics <a href="/fftracker/statistics" target="_self" itemprop="url"><span itemprop="name">here</span></a>.</p>
-                <p>Browse different entities using links below:</p>
+                <p>Browse different entities using the links below:</p>
                 <ul>
                     <li><a href="/fftracker/characters" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
                     <li><a href="/fftracker/freecompanies" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
@@ -21,45 +21,45 @@
             {% endif %}
         </details>
     </article>
-    {% if subServiceName == 'search' %}
+    {% if subservice_name == 'search' %}
         {{ include('common/elements/search.twig') }}
     {% endif %}
-    {% if subServiceName %}
-        {% if subServiceName == 'statistics' %}
+    {% if subservice_name %}
+        {% if subservice_name == 'statistics' %}
             {{ include('fftracker/statistics.twig') }}
         {% else %}
-            <article class="margin05rem">
-                {% if subServiceName == 'search' %}
+            <article class="margin_05rem">
+                {% if subservice_name == 'search' %}
                     {{ include('common/pages/search.twig') }}
-                {% elseif subServiceName == 'characters' %}
+                {% elseif subservice_name == 'characters' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'freecompanies' %}
+                {% elseif subservice_name == 'freecompanies' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'pvpteams' %}
+                {% elseif subservice_name == 'pvpteams' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'linkshells' %}
+                {% elseif subservice_name == 'linkshells' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'crossworld_linkshells' %}
+                {% elseif subservice_name == 'crossworld_linkshells' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'achievements' %}
+                {% elseif subservice_name == 'achievements' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'points' %}
+                {% elseif subservice_name == 'points' %}
                     {{ include('common/pages/list.twig') }}
-                {% elseif subServiceName == 'character' %}
+                {% elseif subservice_name == 'character' %}
                     {{ include('fftracker/character.twig') }}
-                {% elseif subServiceName == 'linkshell' %}
+                {% elseif subservice_name == 'linkshell' %}
                     {{ include('fftracker/linkshell.twig') }}
-                {% elseif subServiceName == 'crossworld_linkshell' %}
+                {% elseif subservice_name == 'crossworld_linkshell' %}
                     {{ include('fftracker/linkshell.twig') }}
-                {% elseif subServiceName == 'pvpteam' %}
+                {% elseif subservice_name == 'pvpteam' %}
                     {{ include('fftracker/pvpteam.twig') }}
-                {% elseif subServiceName == 'achievement' %}
+                {% elseif subservice_name == 'achievement' %}
                     {{ include('fftracker/achievement.twig') }}
-                {% elseif subServiceName == 'freecompany' %}
+                {% elseif subservice_name == 'freecompany' %}
                     {{ include('fftracker/freecompany.twig') }}
-                {% elseif subServiceName == 'track' %}
+                {% elseif subservice_name == 'track' %}
                     {{ include('fftracker/track.twig') }}
-                {% elseif subServiceName == 'crests' %}
+                {% elseif subservice_name == 'crests' %}
                     {{ include('fftracker/crests.twig') }}
                 {% endif %}
             </article>

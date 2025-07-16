@@ -1,5 +1,5 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ freecompany.name }}"
+    <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ freecompany.name }}"
         {% if freecompany.crest %}
             src="{{ freecompany.crest }}"
         {% else %}
@@ -24,7 +24,7 @@
         <blockquote class="w100pc">{{ sanitize(freecompany.slogan) }}</blockquote>
     {% endif %}
     <p>
-        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.data_center }}</i>{% if freecompany.grand_company %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="linkIcon galleryZoom" alt="{{ freecompany.grand_company }}"
+        Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.data_center }}</i>{% if freecompany.grand_company %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="link_icon gallery_zoom" alt="{{ freecompany.grand_company }}"
         {% if freecompany.grand_company == 'Order of the Twin Adder' %}
             src="/assets/images/fftracker/cities/2.webp"
         {% elseif freecompany.grand_company == 'Immortal Flames' %}
@@ -47,7 +47,7 @@
             {% else %}
                 land
             {% endif %}
-            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/assets/images/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a>.
+            on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a>.
         {% endif %}
     </p>
     {% if freecompany.location.estate.message %}
@@ -56,9 +56,9 @@
     {% endif %}
     {% if freecompany.focus['role-playing'] or freecompany.focus.leveling or freecompany.focus.casual or freecompany.focus.hardcore or freecompany.focus.dungeons or freecompany.focus.guildhests or freecompany.focus.trials or freecompany.focus.raids or freecompany.focus.PvP %}
         <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
-        <ul class="flexList">
+        <ul class="flex_list">
             {% for focus, value in freecompany.focus %}
-                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="linkIcon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus|capitalize }}</li>{% endif %}
+                {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="link_icon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus|capitalize }}</li>{% endif %}
             {% endfor %}
         </ul>
     {% endif %}
@@ -67,18 +67,18 @@
         {% if freecompany.recruiting == 1 %}
             <p>Is recruiting{% if freecompany.seeking.Tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
             {% if freecompany.seeking.tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}
-                <ul class="flexList">
+                <ul class="flex_list">
                     {% for seeking, value in freecompany.seeking %}
-                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="linkIcon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking|capitalize }}</li>{% endif %}
+                        {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="link_icon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking|capitalize }}</li>{% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}
         {% endif %}
     {% endif %}
-    {% if freecompany.oldNames|length > 0 %}
-        <p>Had also been known under <i>{{ freecompany.oldNames|length }}</i> other name{% if freecompany.oldNames|length > 1 %}s{% endif %}:</p>
+    {% if freecompany.old_names|length > 0 %}
+        <p>Had also been known under <i>{{ freecompany.old_names|length }}</i> other name{% if freecompany.old_names|length > 1 %}s{% endif %}:</p>
         <ul>
-            {% for name in freecompany.oldNames %}
+            {% for name in freecompany.old_names %}
                 <li>{{ name }}</li>
             {% endfor %}
         </ul>
@@ -106,10 +106,10 @@
     {% endif %}
     {% if freecompany.members|length > 0 %}
         <p>Current members:</p>
-        <div class="search_results">
+        <ul class="search_results">
             {% for entity in freecompany.members %}
-                {{ include('common/elements/entitycard.twig', entity) }}
+                <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
             {% endfor %}
-        </div>
+        </ul>
     {% endif %}
 </section>

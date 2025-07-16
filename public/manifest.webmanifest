@@ -1,11 +1,11 @@
 {
-	"name": "Simbiat Software",
-	"short_name": "simbiat.dev",
-	"theme_color": "#2e293d",
-	"background_color": "#17141f",
-	"display": "browser",
-	"scope": "/",
-	"start_url": "/",
+    "name": "Simbiat Software",
+    "short_name": "simbiat.dev",
+    "theme_color": "#2e293d",
+    "background_color": "#17141f",
+    "display": "browser",
+    "scope": "/",
+    "start_url": "/",
     "icons": [
         {
             "src": "/assets/images/favicons/android/36x36.png",

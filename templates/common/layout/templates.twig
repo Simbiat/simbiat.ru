@@ -1,11 +1,11 @@
 <html-templates>
     {{ include('common/elements/snackbar.twig') }}
-    {% if serviceName == 'uc' %}
-        {% if subServiceName == 'emails' %}
+    {% if service_name == 'uc' %}
+        {% if subservice_name == 'emails' %}
             <template id="email_row">
                 {{ include('usercontrol/emailrow.twig', with_context = false) }}
             </template>
-        {% elseif subServiceName == 'avatars' %}
+        {% elseif subservice_name == 'avatars' %}
             <template id="avatar_item">
                 {{ include('usercontrol/avataritem.twig', with_context = false) }}
             </template>

@@ -10,19 +10,19 @@ use Simbiat\Website\Api\Talks\Threads;
 class Talks extends \Simbiat\Website\Abstracts\Api
 {
     #Supported edges
-    protected array $subRoutes = [
+    protected array $sub_routes = [
         'sections',
         'threads',
         'posts',
     ];
     #Description of the nodes (need to be in same order)
-    protected array $routesDesc = [
+    protected array $routes_description = [
         'Endpoint to manage sections',
         'Endpoint to manage threads',
         'Endpoint to manage posts',
     ];
     #Flag to indicate, that this is a top level node (false by default)
-    protected bool $topLevel = false;
+    protected bool $top_level = false;
 
     protected function genData(array $path): array
     {

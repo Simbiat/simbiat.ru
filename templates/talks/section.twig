@@ -1,5 +1,5 @@
 {% if not children.entities and not threads.entities %}
-    <article class="margin05rem">
+    <article class="margin_05rem">
         <p class="middle">Looks like we've got nothing in here</p>
         <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
     </article>
@@ -13,22 +13,22 @@
 {% if children.entities %}
     <table id="sections_list">
         <thead>
-            <tr>
-                <td></td><td>Section name</td><td>Threads</td><td>Posts</td>
-                {% if editMode %}
-                    <td>ID</td>
-                    {% if 'edit_sections' in session_data.permissions %}
-                        <td data-tooltip="Optional order for sorting.<br>The higher the value, the higher in the list a section will be.<br>After that name sorting is expected.">Order</td>
-                        <td data-tooltip="Flag indicating if section is closed.<br>Click the icon to toggle.">Closed</td>
-                        <td data-tooltip="Flag indicating if section is private.<br>Click the icon to toggle.">Private</td>
-                    {% endif %}
+        <tr>
+            <td></td><td>Section name</td><td>Threads</td><td>Posts</td>
+            {% if edit_mode %}
+                <td>ID</td>
+                {% if 'edit_sections' in session_data.permissions %}
+                    <td data-tooltip="Optional order for sorting.<br>The higher the value, the higher in the list a section will be.<br>After that name sorting is expected.">Order</td>
+                    <td data-tooltip="Flag indicating if section is closed.<br>Click the icon to toggle.">Closed</td>
+                    <td data-tooltip="Flag indicating if section is private.<br>Click the icon to toggle.">Private</td>
                 {% endif %}
-            </tr>
+            {% endif %}
+        </tr>
         </thead>
         <tbody>
-            {% for section in children.entities %}
-                {{ include('talks/rows/section.twig', {'section': section, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
-            {% endfor %}
+        {% for section in children.entities %}
+            {{ include('talks/rows/section.twig', {'section': section, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
+        {% endfor %}
         </tbody>
     </table>
 {% endif %}
@@ -37,7 +37,7 @@
         <thead>
         <tr>
             <td>Thread name</td><td>Created</td><td>Last post</td><td>Posts</td>
-            {% if editMode %}
+            {% if edit_mode %}
                 <td>ID</td>
                 {% if 'can_pin' in session_data.permissions %}
                     <td data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change.">Pinned</td>
@@ -50,7 +50,7 @@
         </thead>
         <tbody>
         {% for thread in threads.entities %}
-            {{ include('talks/rows/thread.twig', {'thread': thread, 'editMode': editMode, 'permissions': session_data.permissions}, with_context = false) }}
+            {{ include('talks/rows/thread.twig', {'thread': thread, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
         {% endfor %}
         </tbody>
     </table>

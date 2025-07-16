@@ -8,11 +8,11 @@ use Simbiat\Website\Abstracts\Pages\Redirect;
 class FreeCompany extends Redirect
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/fftracker/freecompanies', 'name' => 'Free Companies']
     ];
     #Regex match pattern with / and flags
     protected string $search_for = '\/fftracker\/freecompany\/(.*)';
     #Regex replace pattern
-    protected string $replaceWith = '/fftracker/freecompanies/$1';
+    protected string $replace_with = '/fftracker/freecompanies/$1';
 }

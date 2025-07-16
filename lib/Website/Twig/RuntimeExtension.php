@@ -54,14 +54,14 @@ class RuntimeExtension implements RuntimeExtensionInterface
     
     /**
      * Generate timeline
-     * @param array $items   Array of items
-     * @param int   $brLimit Maximum number of `<br>` elements between items
+     * @param array $items    Array of items
+     * @param int   $br_limit Maximum number of `<br>` elements between items
      *
      * @return string
      */
-    public function timeline(array $items, int $brLimit = 0): string
+    public function timeline(array $items, int $br_limit = 0): string
     {
-        return HTML::timeline($items, brLimit: $brLimit);
+        return HTML::timeline($items, br_limit: $br_limit);
     }
     
     /**
@@ -74,7 +74,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function pagination(int $current, int $total, string $prefix): string
     {
-        return HTML::pagination($current, $total, prefix: $prefix, tooltip: 'data-tooltip');
+        return HTML::pagination($current, $total, 7, prefix: $prefix, tooltip: 'data-tooltip');
     }
     
     /**
@@ -90,9 +90,11 @@ class RuntimeExtension implements RuntimeExtensionInterface
     
     /**
      * PHP's is_numeric function
+     *
      * @param mixed $string
      *
      * @return bool
+     * @noinspection PhpMethodNamingConventionInspection
      */
     public function is_numeric(mixed $string): bool
     {
@@ -108,7 +110,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
     public function nl2p(string $string): string
     {
         $nl2tag = (new NL2Tag());
-        $nl2tag->preserveNonBreakingSpace = true;
+        $nl2tag->preserve_non_breaking_space = true;
         return $nl2tag->nl2p($string);
     }
     
@@ -121,25 +123,27 @@ class RuntimeExtension implements RuntimeExtensionInterface
     public function changelog(string $string): string
     {
         $nl2tag = (new NL2Tag());
-        $nl2tag->preserveNonBreakingSpace = true;
+        $nl2tag->preserve_non_breaking_space = true;
         return $nl2tag->changelog($string);
     }
     
     /**
      * PHP's preg_replace
+     *
      * @param string $string
      * @param string $pattern
      * @param string $replace
      *
      * @return string
+     * @noinspection PhpMethodNamingConventionInspection
      */
     public function preg_replace(string $string, string $pattern, string $replace): string
     {
-        $newString = preg_replace($pattern, $replace, $string);
-        if (!\is_string($newString)) {
+        $new_string = preg_replace($pattern, $replace, $string);
+        if (!is_string($new_string)) {
             return $string;
         }
-        return $newString;
+        return $new_string;
     }
     
     /**
@@ -179,24 +183,13 @@ class RuntimeExtension implements RuntimeExtensionInterface
     {
         #Set time zone
         $timezone = $_SESSION['timezone'] ?? 'UTC';
-        if (!\in_array($timezone, timezone_identifiers_list(), true)) {
+        if (!in_array($timezone, timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
         #Create DateTime object while converting the time
         $datetime = SandClock::convertTimezone($string, 'UTC', $timezone);
         $datetime->setTimezone(new \DateTimeZone($timezone));
         return '<time datetime="'.$datetime->format('c').'"'.(empty($classes) ? '' : 'class="'.$classes.'"').'>'.$datetime->format($format).'</time>';
-    }
-    
-    /**
-     * Generate tooltip
-     * @param string $string
-     *
-     * @return string
-     */
-    public function tooltip(string $string): string
-    {
-        return '<img class="tooltipFootnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="'.$string.'">';
     }
     
     /**

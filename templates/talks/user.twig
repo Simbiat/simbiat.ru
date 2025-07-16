@@ -1,33 +1,33 @@
-<div class="middle"><img loading="lazy" decoding="async" class="avatar galleryZoom" alt="User's avatar" id="currentAvatar" src="{{ userData.currentAvatar|default('/assets/images/avatar.svg') }}"></div>
-<div class="middle">{{ userData.username }}</div>
-{% if userData.about %}
-    <div id="about_user">{{ sanitize(userData.about) }}</div>
+<div class="middle"><img loading="lazy" decoding="async" class="avatar gallery_zoom" alt="User's avatar" id="current_avatar" src="{{ user_data.current_avatar|default('/assets/images/avatar.svg') }}"></div>
+<div class="middle">{{ user_data.username }}</div>
+{% if user_data.about %}
+    <div id="about_user">{{ sanitize(user_data.about) }}</div>
 {% endif %}
 {% if fftracker.characters %}
     <section>
         <div class="middle">Linked FFXIV characters:</div>
-        <div class="search_results">
+        <ul class="search_results">
             {% for character in fftracker.characters %}
-                {{ include('common/elements/entitycard.twig', character) }}
+                <li>{{ include('common/elements/entitycard.twig', character) }}</li>
             {% endfor %}
-        </div>
+        </ul>
     </section>
 {% endif %}
 {% if threads %}
     <section>
         <div class="middle">Last created threads:</div>
-        <div class="search_results">
+        <ul class="search_results">
             {% for thread in threads %}
-                {{ include('common/elements/entitycard.twig', thread) }}
+                <li>{{ include('common/elements/entitycard.twig', thread) }}</li>
             {% endfor %}
-        </div>
+        </ul>
     </section>
 {% endif %}
 {% if posts %}
     <section>
         <div class="middle">Last posts:</div>
         {% for post in posts %}
-            {% set post = post|merge({'nouser': true, 'noeditedtime': true, 'htmlcut': true}) %}
+            {% set post = post|merge({'no_user': true, 'noeditedtime': true, 'htmlcut': true}) %}
             {{ include('common/elements/post.twig', post) }}
         {% endfor %}
     </section>

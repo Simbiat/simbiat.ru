@@ -14,19 +14,19 @@ use Simbiat\Website\Search\PVP;
 class Listing extends \Simbiat\Website\Abstracts\Pages\Listing
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/fftracker/search', 'name' => 'Search']
     ];
     #Service name for breadcrumbs
-    protected string $serviceName = 'fftracker';
+    protected string $service_name = 'fftracker';
     #Sub service name
-    protected string $subServiceName = 'search';
+    protected string $subservice_name = 'search';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'FFXIV Tracker Search';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'FFXIV Tracker Search';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'FFXIV Tracker Search';
+    protected string $og_desc = 'FFXIV Tracker Search';
     #Linking types to classes
     protected array $types = [
         'characters' => ['name' => 'Characters', 'class' => Characters::class],
@@ -38,7 +38,7 @@ class Listing extends \Simbiat\Website\Abstracts\Pages\Listing
         'points' => ['name' => 'Achievements Leaderboard', 'class' => AchievementPoints::class, 'numbered' => true],
     ];
     #Full title to be used for description metatags when having a search value
-    protected string $fullTitle = 'Search for `%s` on Final Fantasy XIV Tracker';
+    protected string $full_title = 'Search for `%s` on Final Fantasy XIV Tracker';
     #List of permissions, from which at least 1 is required to have access to the page
-    protected array $requiredPermission = ['view_ff'];
+    protected array $required_permission = ['view_ff'];
 }

@@ -1,7 +1,7 @@
 <image-upload>
-    <div class="float_label_div">
-        <input form="{{ formName }}" type="file"{% if mime %} accept="{{ mime }}"{% endif%} aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} id="{{ formName }}_file" name="{{ inputName }}">
-        <label for="{{ formName }}_file" data-tooltip="{{ tooltip }}">{{ placeholder }}</label>
+    <div class="float_label">
+        <input form="{{ form_name }}" type="file"{% if mime %} accept="{{ mime }}"{% endif%} aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} id="{{ form_name }}_file" name="{{ input_name }}">
+        <label for="{{ form_name }}_file" data-tooltip="{{ tooltip }}">{{ placeholder }}</label>
     </div>
-    <img loading="lazy" decoding="async" alt="Preview of " src="/assets/images/noimage.svg" data-current="{{ imageUrl }}" class="{{ previewClasses }} hidden" id="{{ formName }}_preview">
+    <img loading="lazy" decoding="async" alt="Preview of " src="/assets/images/noimage.svg" data-current="{{ image_url }}" class="{{ preview_classes }} hidden" id="{{ form_name }}_preview">
 </image-upload>

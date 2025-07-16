@@ -1,9 +1,9 @@
 <section>
-    <article class="margin05rem">
-        <details {% if not subServiceName %}class="persistent" open{% endif %}>
-            <summary class="rightSummary aboutSection">About</summary>
+    <article class="margin_05rem">
+        <details {% if not subservice_name %}class="persistent" open{% endif %}>
+            <summary class="right_summary about_section">About</summary>
             <p>This is the section, where you can learn about {{ site_name }}.</p>
-            {% if not subServiceName %}
+            {% if not subservice_name %}
                 <p>Select one of the links below to learn more about:</p>
                 <ul>
                     <li><a href="/about/me" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
@@ -16,17 +16,17 @@
             {% endif %}
         </details>
     </article>
-    {% if subServiceName %}
-        <article class="margin05rem">
-            {% if subServiceName == 'me' %}
+    {% if subservice_name %}
+        <article class="margin_05rem">
+            {% if subservice_name == 'me' %}
                 {{ include('about/me.twig') }}
-            {% elseif subServiceName == 'tech' %}
+            {% elseif subservice_name == 'tech' %}
                 {{ include('about/tech.twig') }}
-            {% elseif subServiceName == 'tos' %}
+            {% elseif subservice_name == 'tos' %}
                 {{ include('about/tos.twig') }}
-            {% elseif subServiceName == 'privacy' %}
+            {% elseif subservice_name == 'privacy' %}
                 {{ include('about/privacy.twig') }}
-            {% elseif subServiceName == 'security' %}
+            {% elseif subservice_name == 'security' %}
                 {{ include('about/security.twig') }}
             {% endif %}
         </article>

@@ -29,4 +29,4 @@ try {
 } catch (Throwable $e) {
     Errors::error_log($e);
 }
-exit;
+exit(0);

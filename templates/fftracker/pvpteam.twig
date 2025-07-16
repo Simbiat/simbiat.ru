@@ -1,5 +1,5 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
+    <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
     {% if freecompany.linked %}
         <p>
             You are a linked member of this PvP team. Press this button to force update the data.
@@ -8,20 +8,20 @@
     {% endif %}
     <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, "d/m/Y") }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {{ timeTag(pvpteam.dates.updated, "d/m/Y H:i") }}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
     <p>Operate{% if pvpteam.dates.deleted %}d{% else %}s{% endif %} on <i>{{ pvpteam.data_center }}</i>.{% if not pvpteam.dates.deleted %}{% if pvpteam.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ pvpteam.community }}" target="_blank">community</a>.{% endif %}{% endif %}</p>
-    {% if pvpteam.oldNames|length > 0 %}
-        <p>Had also been known under <i>{{ pvpteam.oldNames|length }}</i> other name{% if pvpteam.oldNames|length > 1 %}s{% endif %}:</p>
+    {% if pvpteam.old_names|length > 0 %}
+        <p>Had also been known under <i>{{ pvpteam.old_names|length }}</i> other name{% if pvpteam.old_names|length > 1 %}s{% endif %}:</p>
         <ul>
-            {% for name in pvpteam.oldNames %}
+            {% for name in pvpteam.old_names %}
                 <li>{{ name }}</li>
             {% endfor %}
         </ul>
     {% endif %}
     {% if pvpteam.members|length > 0 %}
         <p>Current members:</p>
-        <div class="search_results">
+        <ul class="search_results">
             {% for entity in pvpteam.members %}
-                {{ include('common/elements/entitycard.twig', entity) }}
+                <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
             {% endfor %}
-        </div>
+        </ul>
     {% endif %}
 </section>

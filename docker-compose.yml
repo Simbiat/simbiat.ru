@@ -55,7 +55,7 @@ services:
       /bin/sh -c "rm -f -r /sessions/* &
                   /docker-entrypoint.sh apache2-foreground"
 
-  #Currently unused due to https://youtrack.jetbrains.com/issue/WI-81738
+  #Currently unused due to https://youtrack.jetbrains.com/issue/WEB-73725
   node:
     container_name: nodejs
     image: node:latest

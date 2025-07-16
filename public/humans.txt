@@ -12,6 +12,6 @@
     From: Moscow, Russia
 
 # TECHNOLOGY COLOPHON
-	Language: English
-	Doctype: HTML5, CSS3
-	IDE: PHPStorm, FileZilla, Photoshop, Normalize.css, Twig, PHPMailer, DeviceDetector, Boilerplate, Apache, JavaScript
+    Language: English
+    Doctype: HTML5, CSS3, PHP
+    IDE: PHPStorm, Twig, DeviceDetector, Caddy, JavaScript, TypeScript, FrankenPHP

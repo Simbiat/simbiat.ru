@@ -1,50 +1,50 @@
-<div class="homePage hWrapper">
-    <img loading="lazy" decoding="async" class="navIcon" alt="Track" data-tooltip="Track" src="/assets/images/navigation/projects.svg">
-    <h2 id="Track" class="homePage blockTitle">Track</h2>
+<div class="about_h_wrapper">
+    <img loading="lazy" decoding="async" class="nav_icon" alt="Track" data-tooltip="Track" src="/assets/images/navigation/projects.svg">
+    <h2 id="Track" class="home_page block_title">Track</h2>
 </div>
 <section>
-    <div class="homePage showcase">
-        <a href="/fftracker" class="homePage banner noNewTabIcon">
+    <div class="about_showcase">
+        <a href="/fftracker" class="about_banner no_new_tab_icon">
             <img loading="lazy" decoding="async" alt="Final Fantasy XIV Tracker" src="/assets/images/ogimages/fftracker.png">
             <div>Final Fantasy XIV Tracker</div>
         </a>
-        <a href="/bictracker" class="homePage banner noNewTabIcon">
+        <a href="/bictracker" class="about_banner no_new_tab_icon">
             <img loading="lazy" decoding="async" alt="BIC Tracker" src="/assets/images/ogimages/bictracker.png">
             <div>BIC Tracker</div>
         </a>
     </div>
 </section>
 
-<div class="homePage hWrapper">
-    <img loading="lazy" decoding="async" class="navIcon" alt="Play" data-tooltip="Play" src="/assets/images/navigation/gamepad.svg">
-    <h2 id="Play" class="homePage blockTitle">Play</h2>
+<div class="about_h_wrapper">
+    <img loading="lazy" decoding="async" class="nav_icon" alt="Play" data-tooltip="Play" src="/assets/images/navigation/gamepad.svg">
+    <h2 id="Play" class="home_page block_title">Play</h2>
 </div>
 <section>
-    <div class="homePage showcase">
-        <a href="/games/jiangshi" class="homePage banner noNewTabIcon">
+    <div class="about_showcase">
+        <a href="/games/jiangshi" class="about_banner no_new_tab_icon">
             <img loading="lazy" decoding="async" alt="Jiangshi" src="/assets/images/ogimages/jiangshi.png">
             <div>Jiangshi</div>
         </a>
-        <a href="/games/radicalresonance" class="homePage banner noNewTabIcon">
+        <a href="/games/radicalresonance" class="about_banner no_new_tab_icon">
             <img loading="lazy" decoding="async" alt="Radical Resonance" src="/assets/images/ogimages/RadicalResonance.png">
             <div>Radical Resonance</div>
         </a>
-        <a href="/games/dden" class="homePage banner noNewTabIcon">
+        <a href="/games/dden" class="about_banner no_new_tab_icon">
             <img loading="lazy" decoding="async" alt="Dangerous Dave: Endless Nightmare" src="/assets/images/ogimages/dden.png">
             <div>Dangerous Dave: Endless Nightmare</div>
         </a>
     </div>
 </section>
 
-<div class="homePage hWrapper">
-    <img loading="lazy" decoding="async" class="navIcon" alt="Read" data-tooltip="Read" src="/assets/images/navigation/talks.svg">
-    <h2 id="Read" class="homePage blockTitle">Read</h2>
+<div class="about_h_wrapper">
+    <img loading="lazy" decoding="async" class="nav_icon" alt="Read" data-tooltip="Read" src="/assets/images/navigation/talks.svg">
+    <h2 id="Read" class="home_page block_title">Read</h2>
 </div>
 <div>
     {% for post in posts %}
-        <article class="post hasbanner nouser">
+        <article class="post has_banner no_user">
             <section class="post_header">
-                {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
+                {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
                     <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
                 {% else %}
                     <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
@@ -56,7 +56,7 @@
                 </section>
             {% endif %}
             <section class="post_text">
-                {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+                {% if post.type == 'Changelog' or post.detailed_type == 'Changelog' %}
                     {{ sanitize(preg_replace(htmlCut(changelog(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
                 {% else %}
                     {{ sanitize(preg_replace(htmlCut(nl2p(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}

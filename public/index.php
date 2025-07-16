@@ -1,6 +1,4 @@
 <?php
-#Suppressing unhandled exceptions, since they are meant to be handled inside respective functions
-/** @noinspection PhpUnhandledExceptionInspection */
 declare(strict_types = 1);
 
 use Simbiat\Website\HomePage;
@@ -9,4 +7,4 @@ use Simbiat\Website\HomePage;
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
 
 $home_page = new HomePage();
-exit;
+exit(0);

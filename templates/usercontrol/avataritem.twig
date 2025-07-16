@@ -1,5 +1,5 @@
 <li id="{{ avatar.file_id|default('hash') }}">
-    <span class="radio_and_label">
+    <span class="float_label">
         <input id="avatar_{{ avatar.file_id|default('hash') }}" type="radio"{% if avatar.current %} checked{% endif %}>
         <label for="avatar_{{ avatar.file_id|default('hash') }}">
             <img loading="lazy" decoding="async" alt="Avatar {{ number }}" src="{{ avatar.url }}" class="avatar">

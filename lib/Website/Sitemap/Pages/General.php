@@ -8,21 +8,21 @@ use Simbiat\Website\Abstracts\Pages\StaticPage;
 class General extends StaticPage
 {
     #Current breadcrumb for navigation
-    protected array $breadCrumb = [
+    protected array $breadcrumb = [
         ['href' => '/sitemap/general.xml', 'name' => 'Static pages']
     ];
     #Sub service name
-    protected string $subServiceName = 'sitemap';
+    protected string $subservice_name = 'sitemap';
     #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $title = 'Static pages';
     #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $h1 = 'Static pages';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
-    protected string $ogdesc = 'Static pages';
+    protected string $og_desc = 'Static pages';
     
     protected function generate(array $path): array
     {
-        $this->h2push = [];
+        $this->h2_push = [];
         return [
             'sitemap_links' => [
                 ['loc' => '', 'name' => 'Home Page'],

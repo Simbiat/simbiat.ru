@@ -9,7 +9,6 @@ use Simbiat\CuteBytes;
 use Simbiat\Database\Maintainer\Analyzer;
 use Simbiat\Database\Maintainer\Settings;
 use Simbiat\Database\Manage;
-use Simbiat\Database\Optimize;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
@@ -113,8 +112,8 @@ class Maintenance
         $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
         try {
             $result = Query::query($queries);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
             $result = false;
         }
         return $result;
@@ -138,14 +137,14 @@ class Maintenance
         if (!is_dir(Config::$ddl_dir) && !mkdir(Config::$ddl_dir, recursive: true) && !is_dir(Config::$ddl_dir)) {
             return 'Failed to create DDL directory';
         }
-        $dumpOrder = '';
+        $dump_order = '';
         try {
             #Clean up SQL files
             array_map('unlink', glob(Config::$ddl_dir.'/*.sql'));
             #Get tables in order
             foreach (Manage::showOrderedTables($_ENV['DATABASE_NAME']) as $order => $table) {
                 #Get DDL statement
-                $create = Manage::showCreateTable($table['schema'], $table['table'], ifNotExist: true, addUse: true);
+                $create = Manage::showCreateTable($table['schema'], $table['table'], if_not_exist: true, add_use: true);
                 if ($create === null) {
                     throw new \UnexpectedValueException('Failed to get CREATE statement for table `'.$table['table'].'`;');
                 }
@@ -154,9 +153,9 @@ class Maintenance
                     file_put_contents(Config::$ddl_dir.'/'.mb_str_pad((string)($order + 1), 3, '0', STR_PAD_LEFT, 'UTF-8').'-'.$table['table'].'.sql', mb_trim($create, null, 'UTF-8'));
                 }
                 #Add item to the file with dump order
-                $dumpOrder .= $table['table'].' ';
+                $dump_order .= $table['table'].' ';
             }
-            file_put_contents(Config::$ddl_dir.'/000-recommended_table_order.txt', $dumpOrder);
+            file_put_contents(Config::$ddl_dir.'/000-recommended_table_order.txt', $dump_order);
             $this->dbOptimize();
         } catch (\Throwable $e) {
             Errors::error_log($e);
@@ -205,7 +204,7 @@ class Maintenance
         #Get directory
         $dir = sys_get_temp_dir();
         if (!is_dir($dir) && !mkdir($dir) && !is_dir($dir)) {
-            throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
         }
         #Get free space in percentage
         $free = disk_free_space($dir);
@@ -268,73 +267,73 @@ class Maintenance
     
     /**
      * Clean temp folder
-     * @param string $path    Path to clean
-     * @param int    $maxAge  Oldest age of a file in minutes
-     * @param int    $maxSize Maximum size to remove
+     * @param string $path     Path to clean
+     * @param int    $max_age  Oldest age of a file in minutes
+     * @param int    $max_size Maximum size to remove
      *
      * @return void
      */
-    private function recursiveClean(string $path, int $maxAge = 60, int $maxSize = 1024): void
+    private function recursiveClean(string $path, int $max_age = 60, int $max_size = 1024): void
     {
         #Get current maximum execution time
-        $curMaxTime = (int)\ini_get('max_execution_time');
+        $cur_max_time = (int)ini_get('max_execution_time');
         #Iterration can take a long time, so let it run its course
         set_time_limit(0);
         #Restore execution time
-        set_time_limit($curMaxTime);
+        set_time_limit($cur_max_time);
         #Sanitize values
-        if ($maxAge < 0) {
+        if ($max_age < 0) {
             #Reset to default 1 hour cache
-            $maxAge = 60 * 60;
+            $max_age = 60 * 60;
         } else {
             #Otherwise, convert into minutes (seconds do not make sense here at all)
-            $maxAge *= 60;
+            $max_age *= 60;
         }
-        if ($maxSize < 0) {
+        if ($max_size < 0) {
             #Consider that the size limit was removed
-            $maxSize = 0;
+            $max_size = 0;
         } else {
             #Otherwise, convert to megabytes (lower than 1 MB does not make sense)
-            $maxSize *= 1024 * 1024;
+            $max_size *= 1024 * 1024;
         }
         #Set a list of empty folders (removing within iteration seems to cause a fatal error)
-        $emptyDirs = [];
-        if ($maxAge > 0) {
+        $empty_dirs = [];
+        if ($max_age > 0) {
             #Get the oldest allowed time
-            $oldest = time() - $maxAge;
+            $oldest = time() - $max_age;
             #Garbage collector for old files, if the file pool is used
-            $sizeToRemove = 0;
+            $size_to_remove = 0;
             #Initiate iterator
-            $fileSI = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
+            $file_iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \FilesystemIterator::CURRENT_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
             #List of files to remove
-            $toDelete = [];
+            $to_delete = [];
             #List of fresh files with their sizes
             $fresh = [];
             #Iterate the files to get size and date first
             #Using catch to handle potential race condition, when a file gets removed by a different process before the check gets called
             try {
-                foreach ($fileSI as $file) {
+                foreach ($file_iterator as $file) {
                     if (is_dir($file)) {
                         #Check if empty
                         if (!new \RecursiveDirectoryIterator($file, \FilesystemIterator::SKIP_DOTS)->valid()) {
                             #Remove directory
-                            $emptyDirs[] = $file;
+                            $empty_dirs[] = $file;
                         }
                     } elseif (is_file($file)) {
                         #If we have age restriction, check if the age
                         $time = filemtime($file);
-                        if ($maxSize > 0) {
+                        if ($max_size > 0) {
                             $size = filesize($file);
                         } else {
                             $size = 0;
                         }
-                        if ($maxAge > 0 && \is_int($time) && $time <= $oldest) {
+                        if ($max_age > 0 && is_int($time) && $time <= $oldest) {
                             #Add to a list of files to delete
-                            $toDelete[] = $file;
-                            if ($maxSize > 0) {
-                                $sizeToRemove += $size;
+                            $to_delete[] = $file;
+                            if ($max_size > 0) {
+                                $size_to_remove += $size;
                             }
-                        } elseif ($maxSize > 0) {
+                        } elseif ($max_size > 0) {
                             $fresh[] = ['path' => $file, 'time' => $time, 'size' => $size];
                         }
                     }
@@ -344,27 +343,27 @@ class Maintenance
                 #Do nothing
             }
             #If we have size limitation and a list of fresh items is not empty
-            if ($maxSize > 0 && !empty($fresh)) {
+            if ($max_size > 0 && !empty($fresh)) {
                 #Calclate total size
-                $totalSize = array_sum(array_column($fresh, 'size')) + $sizeToRemove;
+                $total_size = array_sum(array_column($fresh, 'size')) + $size_to_remove;
                 #Check if we are already removing enough. If so - skip further checks
-                if ($totalSize - $sizeToRemove >= $maxSize) {
+                if ($total_size - $size_to_remove >= $max_size) {
                     #Sort files by time from oldest to newest
                     usort($fresh, static function ($a, $b) {
                         return $a['time'] <=> $b['time'];
                     });
                     #Iterrate list
                     foreach ($fresh as $file) {
-                        $toDelete[] = $file['path'];
-                        $sizeToRemove += $file['size'];
+                        $to_delete[] = $file['path'];
+                        $size_to_remove += $file['size'];
                         #Check if removing this file will be enough and break the cycle if it is
-                        if ($totalSize - $sizeToRemove < $maxSize) {
+                        if ($total_size - $size_to_remove < $max_size) {
                             break;
                         }
                     }
                 }
             }
-            foreach ($toDelete as $file) {
+            foreach ($to_delete as $file) {
                 #Using catch to handle potential race condition, when a file gets removed by a different process before the check gets called
                 try {
                     #Check if the file is old enough
@@ -374,7 +373,7 @@ class Maintenance
                         @unlink($file);
                         #Remove the parent directory if empty
                         if (!new \RecursiveDirectoryIterator(dirname($file), \FilesystemIterator::SKIP_DOTS)->valid()) {
-                            $emptyDirs[] = $file;
+                            $empty_dirs[] = $file;
                         }
                     }
                     #Catching Throwable, instead of \Error or \Exception, since we can't predict what exactly will happen here
@@ -384,7 +383,7 @@ class Maintenance
             }
         }
         #Garbage collector for empty directories
-        foreach ($emptyDirs as $dir) {
+        foreach ($empty_dirs as $dir) {
             if ($dir !== $path) {
                 #Using catch to handle potential race condition, when a directory gets removed by a different process before the check gets called
                 try {
@@ -399,6 +398,6 @@ class Maintenance
             }
         }
         #Restore execution time
-        set_time_limit($curMaxTime);
+        set_time_limit($cur_max_time);
     }
 }

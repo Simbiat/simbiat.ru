@@ -2,7 +2,7 @@
     {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
 {% endif %}
 {% if not posts.entities %}
-    <article class="margin05rem">
+    <article class="margin_05rem">
         <p class="middle">Looks like we've got nothing in here</p>
         <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
     </article>
@@ -15,12 +15,10 @@
         {% if system %}<span data-tooltip="System thread">⚠</span>{% endif %}
     </div>
     {% for post in posts.entities %}
-        {% set post = post|merge({'noname': true, 'allowReplyTo': true}) %}
+        {% set post = post|merge({'noname': true, 'allow_reply_to': true}) %}
         {{ include('common/elements/post.twig', post) }}
-        {% if loop.index == 1 and externalLinks|length > 0 %}
-            <aside id="alt_sources" class="sidebar_block">
-                {{ include('talks/altlinks.twig') }}
-            </aside>
+        {% if loop.index == 1 and external_links|length > 0 %}
+            {{ include('talks/altlinks.twig') }}
         {% endif %}
     {% endfor %}
 {% endif %}

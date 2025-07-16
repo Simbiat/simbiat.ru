@@ -1,7 +1,7 @@
-<article class="post{% if post.showbanner == true and post.og_image %} hasbanner{% endif %}{% if post.nouser %} nouser{% endif %}">
+<article class="post{% if post.showbanner == true and post.og_image %} has_banner{% endif %}{% if post.no_user %} no_user{% endif %}">
     <section class="post_header">
         {% if post.noname != true %}
-            {% if post.detailedType == 'Changelog' and is_numeric(post.name) %}
+            {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
                 <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></div>
             {% else %}
                 <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></div>
@@ -9,7 +9,7 @@
         {% endif %}
         <div class="post_time_id">
             {{ timeTag(post.created, "d/m/Y H:i", "post_time") }}
-            {% if post.noPostId != true %}
+            {% if post.no_post_id != true %}
                 <div class="post_id_wrapper">
                     <h2 class="post_id" id="post_{{ post.id }}">#{{ post.id }}</h2>
                     <a class="post_id_link" target="_blank" href="/talks/posts/{{ post.id }}"></a>
@@ -24,7 +24,7 @@
     {% endif %}
     {% if post.htmlcut == true %}
         <section class="post_text">
-            {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+            {% if post.type == 'Changelog' or post.detailed_type == 'Changelog' %}
                 {{ sanitize(preg_replace(htmlCut(changelog(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
             {% else %}
                 {{ sanitize(preg_replace(htmlCut(nl2p(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
@@ -32,13 +32,13 @@
         </section>
     {% else %}
         <section class="post_text">
-            {% if post.nouser != true %}
+            {% if post.no_user != true %}
                 <section class="post_user">
                     <div class="post_username"><a href="/talks/users/{{ post.author }}">{{ post.author_name }}</a></div>
                     <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.author_name }}" src="{{ post.avatar }}" class="avatar"></div>
                 </section>
             {% endif %}
-            {% if post.type == 'Changelog' or post.detailedType == 'Changelog' %}
+            {% if post.type == 'Changelog' or post.detailed_type == 'Changelog' %}
                 {{ sanitize(changelog(post.text)) }}
             {% else %}
                 {{ sanitize(nl2p(post.text)) }}
@@ -46,15 +46,15 @@
         </section>
     {% endif %}
     <section class="post_footer">
-        <like-dis data-post_id="{{ post.id }}" data-liked="{% if post.isLiked is null %}0{% else %}{{ post.isLiked }}{% endif %}">
-            <input type="button" value="👍" class="like_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked > 0 %}Remove like{% else %}Like{% endif %}">
-            <span class="likes_count{% if post.isLiked > 0 %} success{% endif %}">{{ post.likes }}</span>
-            <input type="button" value="👎" class="dislike_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.isLiked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
-            <span class="dislikes_count{% if post.isLiked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
+        <like-dis data-post_id="{{ post.id }}" data-liked="{% if post.is_liked is null %}0{% else %}{{ post.is_liked }}{% endif %}">
+            <input type="button" value="👍" class="like_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.is_liked > 0 %}Remove like{% else %}Like{% endif %}">
+            <span class="likes_count{% if post.is_liked > 0 %} success{% endif %}">{{ post.likes }}</span>
+            <input type="button" value="👎" class="dislike_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.is_liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
+            <span class="dislikes_count{% if post.is_liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
             <img loading="lazy" decoding="async" class="hidden inline spinner" src="/assets/images/spinner.svg" alt="Registering preference...">
         </like-dis>
         <div class="post_icons">
-            {% if allowReplyTo and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
+            {% if allow_reply_to and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
                 <input type="button" class="reply_to_button" data-post_id="{{ post.id }}" data-tooltip="Reply to this post" value="📩">
             {% endif %}
             {% if post.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled post">⏲</span>{% endif %}
@@ -81,7 +81,7 @@
             {% if post.system %}<span data-tooltip="System post">⚠</span>{% endif %}
         </div>
         {% if post.attachments|length > 0 %}
-            <details class="noMarker post_attachments" id="post_attachments_{{ post.id }}">
+            <details class="no_marker post_attachments" id="post_attachments_{{ post.id }}">
                 <summary></summary>
                 <table>
                     <tr>
@@ -100,7 +100,7 @@
             </details>
         {% endif %}
         {% if post.noeditedtime != true %}
-            <div class="post_edited">{% if post.updated > post.created %}{% if 'view_posts_history' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
+            <div class="post_edited">{% if post.updated > post.created %}{% if 'view_posts_history' in session_data.permissions %}<a href="/talks/edit/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
         {% endif %}
     </section>
 </article>

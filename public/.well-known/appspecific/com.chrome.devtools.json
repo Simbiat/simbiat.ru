@@ -1,1 +1,3 @@
-{"To prevent Chromium Workspaces requests from breaking CRSF logic"}
+{
+    "workspace": "To prevent Chromium Workspaces requests from breaking CSRF logic"
+}

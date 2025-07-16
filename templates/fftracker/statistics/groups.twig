@@ -7,7 +7,7 @@
     </tr></thead>
     {% for estate in ffstats.data.freecompany.estate.top %}
         <tr>
-            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
+            <td>{{ estate.value }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
             <td>{{ estate.count }}</td>
         </tr>
     {% endfor %}
@@ -20,7 +20,7 @@
     </tr></thead>
     {% for estate in ffstats.data.freecompany.estate.bottom %}
         <tr>
-            <td>{{ estate.value }} <a class="galleryZoom noNewTabIcon interactiveBorder" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="linkIcon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
+            <td>{{ estate.value }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
             <td>{{ estate.count }}</td>
         </tr>
     {% endfor %}
@@ -48,7 +48,7 @@
         <th>Class</th>
         <th>Searched by, %</th>
     </tr></thead>
-    {% for item, value in ffstats.data.freecompany.jobDemand %}
+    {% for item, value in ffstats.data.freecompany.job_demand %}
         <tr>
             <td>{{ item }}</td>
             <td>{{ value }}</td>
@@ -134,7 +134,7 @@
     </tr></thead>
     {% for datapoint in ffstats.data.freecompany.crests %}
         <tr>
-            <td><img loading="lazy" decoding="async" class="ff_crest galleryZoom" alt="Crest used by {{ datapoint.count }} Free Companies" src="{{ datapoint.icon }}"></td>
+            <td><img loading="lazy" decoding="async" class="ff_crest gallery_zoom" alt="Crest used by {{ datapoint.count }} Free Companies" src="{{ datapoint.icon }}"></td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}
@@ -147,7 +147,7 @@
     </tr></thead>
     {% for datapoint in ffstats.data.pvpteam.crests %}
         <tr>
-            <td><img loading="lazy" decoding="async" class="ff_crest galleryZoom" alt="Crest used by {{ datapoint.count }} PvP Teams" src="{{ datapoint.icon }}"></td>
+            <td><img loading="lazy" decoding="async" class="ff_crest gallery_zoom" alt="Crest used by {{ datapoint.count }} PvP Teams" src="{{ datapoint.icon }}"></td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}

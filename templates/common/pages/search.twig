@@ -1,29 +1,29 @@
 {# Set link variable based on type #}
-{% if serviceName == 'bictracker' %}
-    {% set actionURL = '/bictracker/search' %}
-{% elseif serviceName == 'fftracker' %}
-    {% set actionURL = '/fftracker/search' %}
+{% if service_name == 'bictracker' %}
+    {% set action_url = '/bictracker/search' %}
+{% elseif service_name == 'fftracker' %}
+    {% set action_url = '/fftracker/search' %}
 {% else %}
-    {% set actionURL = '/search' %}
+    {% set action_url = '/search' %}
 {% endif %}
 {# Render the form itself #}
 <search>
-    {% if serviceName == 'bictracker' %}
+    {% if service_name == 'bictracker' %}
         <p>Введите БИК, SWIFT, название банка, его адрес, регистрационный номер или номер счёта.</p>
-    {% elseif serviceName == 'fftracker' %}
+    {% elseif service_name == 'fftracker' %}
         <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
-    <form role="search" class="search_form" action="{{ actionURL }}" method="get">
-        <span class="float_label_div" id="search_label"><input id="search_field" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if serviceName == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
-        <input role="button" type="submit" id="search_button" data-noname value="{% if serviceName == 'bictracker' %}Поиск{% else %}Search{% endif %}">
+    <form role="search" class="search_form" action="{{ action_url }}" method="get">
+        <span class="float_label" id="search_label"><input id="search_field" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+        <input role="button" type="submit" id="search_button" data-noname value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
     </form>
 </search>
 <section>
-    {% if serviceName == 'bictracker' %}
+    {% if service_name == 'bictracker' %}
         <p class="relative warning">Начиная с апреля 2025ого года ЦБ использует DDoS-Guard, который блокирует запросы с сервера в большинстве случаев, судя по всему, по IP, так как на тесте проблем нет вовсе. Обновления библиотеки больше не гарантируются.</p>
-        <p class="relative">Библиотека обновлена {{ timeTag(bicDate, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bicRefresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/assets/images/refresh.svg"></p>
+        <p class="relative">Библиотека обновлена {{ timeTag(bic_date, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bic_refresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/assets/images/refresh.svg"></p>
     {% endif %}
-    {% for type, subResult in search_result %}
+    {% for type, sub_result in search_result %}
         <p>
             {% if type == 'openbics' %}
                 Открытых БИК:
@@ -42,35 +42,35 @@
             {% elseif type == 'crossworld_linkshells' %}
                 Crossworld Linkshells:
             {% endif %}
-            {% if subResult.count>subResult.results|length %}
+            {% if sub_result.count>sub_result.results|length %}
                 {# Set list link #}
                 {% if type == 'openbics' %}
-                    {% set listURL = '/bictracker/openbics/' %}
+                    {% set list_url = '/bictracker/openbics/' %}
                 {% elseif type == 'closedbics' %}
-                    {% set listURL = '/bictracker/closedbics/' %}
+                    {% set list_url = '/bictracker/closedbics/' %}
                 {% elseif type == 'achievements' %}
-                    {% set listURL = '/fftracker/achievements/' %}
+                    {% set list_url = '/fftracker/achievements/' %}
                 {% elseif type == 'characters' %}
-                    {% set listURL = '/fftracker/characters/' %}
+                    {% set list_url = '/fftracker/characters/' %}
                 {% elseif type == 'freecompanies' %}
-                    {% set listURL = '/fftracker/freecompanies/' %}
+                    {% set list_url = '/fftracker/freecompanies/' %}
                 {% elseif type == 'pvpteams' %}
-                    {% set listURL = '/fftracker/pvpteams/' %}
+                    {% set list_url = '/fftracker/pvpteams/' %}
                 {% elseif type == 'linkshells' %}
-                    {% set listURL = '/fftracker/linkshells/' %}
+                    {% set list_url = '/fftracker/linkshells/' %}
                 {% elseif type == 'crossworld_linkshells' %}
-                    {% set listURL = '/fftracker/crossworld_linkshells/' %}
+                    {% set list_url = '/fftracker/crossworld_linkshells/' %}
                 {% endif %}
                 {# Show link itself #}
-                <a href="{{ listURL }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ subResult.count }}</a>
+                <a href="{{ list_url }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ sub_result.count }}</a>
             {% else %}
-                {{ subResult.count }}
+                {{ sub_result.count }}
             {% endif %}
         </p>
-        <div class="search_results">
-            {% for entity in subResult.results %}
-                {{ include('common/elements/entitycard.twig', entity) }}
+        <ul class="search_results">
+            {% for entity in sub_result.results %}
+                <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
             {% endfor %}
-        </div>
+        </ul>
     {% endfor %}
 </section>

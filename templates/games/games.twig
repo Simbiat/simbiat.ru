@@ -1,10 +1,10 @@
 <section>
-    {% if not subServiceName %}
-        <article class="margin05rem">
+    {% if not subservice_name %}
+        <article class="margin_05rem">
             <details class="persistent" open>
-                <summary class="rightSummary aboutSection">About</summary>
+                <summary class="right_summary about_section">About</summary>
                 <p>HTML5 versions of games created by me or with my direct participation.</p>
-                {% if not subServiceName %}
+                {% if not subservice_name %}
                     <ul>
                         <li><a href="/games/jiangshi" target="_self" itemprop="url"><span itemprop="name">Jiangshi</span></a></li>
                         <li><a href="/games/dden" target="_self" itemprop="url"><span itemprop="name">Dangerous Dave: Endless Nightmare</span></a></li>
@@ -14,13 +14,13 @@
             </details>
         </article>
     {% endif %}
-    {% if subServiceName %}
-        <article class="margin05rem">
-            {% if subServiceName == 'jiangshi' %}
+    {% if subservice_name %}
+        <article class="margin_05rem">
+            {% if subservice_name == 'jiangshi' %}
                 {{ include('games/jiangshi.twig') }}
-            {% elseif subServiceName == 'dden' %}
+            {% elseif subservice_name == 'dden' %}
                 {{ include('games/dden.twig') }}
-            {% elseif subServiceName == 'radicalresonance' %}
+            {% elseif subservice_name == 'radicalresonance' %}
                 {{ include('games/radicalresonance.twig') }}
             {% endif %}
         </article>

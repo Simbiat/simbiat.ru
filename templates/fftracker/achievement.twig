@@ -1,5 +1,5 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest galleryZoom" alt="{{ achievement.name }}" src="/assets/images/fftracker/icons/{{ achievement.icon }}">
+    <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ achievement.name }}" src="/assets/images/fftracker/icons/{{ achievement.icon }}">
     <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, "d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {{ timeTag(achievement.updated, "d/m/Y") }}{% endif %}.</p>
     <p>By achieving it, one can receive:</p>
     <ul>
@@ -10,7 +10,7 @@
             <li><i class="gold">"{{ achievement.rewards.title }}"</i> title</li>
         {% endif %}
         {% if achievement.rewards.item.name %}
-            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="linkIcon" src="/assets/images/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
+            <li><a class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
         {% endif %}
     </ul>
     {% if achievement.how_to %}
@@ -23,11 +23,11 @@
         <p>Achievement has been earned by <i class="success">{{ achievement.characters.total }}</i> {% if achievement.characters.total > 1 %}people{% else %}person{% endif %}.</p>
         {% if achievement.characters.last|length > 0 %}
             <p>{% if achievement.characters.total > 1 %}Some of the people who recently earned the achievement{% else %}That person is{% endif %}:</p>
-            <div class="search_results">
+            <ul class="search_results">
                 {% for entity in achievement.characters.last %}
-                    {{ include('common/elements/entitycard.twig', entity) }}
+                    <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
                 {% endfor %}
-            </div>
+            </ul>
         {% endif %}
     {% endif %}
 </section>

@@ -22,9 +22,9 @@ final class EnvironmentGenerator
     public static function getTwig(): Environment
     {
         if (!self::$environment) {
-            $templatesDir = Config::$work_dir.'/templates/';
+            $templates_dir = Config::$work_dir.'/templates/';
             #Initiate Twig
-            self::$environment = new Environment(new FilesystemLoader($templatesDir), ['cache' => Config::$work_dir.'/data/cache/twig/', 'auto_reload' => true, 'autoescape' => 'html', 'use_yield' => true]);
+            self::$environment = new Environment(new FilesystemLoader($templates_dir), ['cache' => Config::$work_dir.'/data/cache/twig/', 'auto_reload' => true, 'autoescape' => 'html', 'use_yield' => true]);
             self::$environment->addExtension(new Extension());
         }
         return self::$environment;

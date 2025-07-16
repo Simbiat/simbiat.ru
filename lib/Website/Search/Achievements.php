@@ -14,9 +14,9 @@ class Achievements extends Search
     #List of fields
     protected string $fields = '`achievement_id` as `id`, `name`, `icon`, `updated`';
     #Default order (for the main page, for example)
-    protected string $orderDefault = '`Updated` DESC';
+    protected string $order_default = '`Updated` DESC';
     #Order for list pages
-    protected string $orderList = '`name` ASC';
+    protected string $order_list = '`name` ASC';
     #The next 3 values are lists of columns to use in search. The order is important, since the higher in the list a field is,
     #the more weight/relevancy condition with it will have (if true)
     #List of FULLTEXT columns

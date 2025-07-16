@@ -1,109 +1,185 @@
-<nav-hide><input id="hideNavIcon" class="navIcon" alt="Close navigation" type="image" src="/assets/images/menu.svg"></nav-hide>
-<ul id="navList">
-    <li class="navElement">
-        <div class="navLine">
-            <a class="navItem" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="navIcon" alt="Home Page" data-tooltip="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></a>
-        </div>
-    </li>
-    {% if serviceName != 'homepage' and breadcrumbs and breadcrumbs|length > 1 %}
-        <li class="navElement liBread">
-            <div class="navLine navBread">
-                {{ genBread(breadcrumbs) }}
+<nav id="navigation" aria-label="Primary" role="navigation" itemtype="https://schema.org/SiteNavigationElement">
+    <nav-hide>
+        <input id="hide_nav_icon" class="nav_icon" alt="Close navigation" type="image" src="/assets/images/menu.svg">
+    </nav-hide>
+    <ul id="nav_list">
+        <li class="nav_element">
+            <div class="nav_line">
+                <a class="nav_item" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="nav_icon" alt="Home Page" data-tooltip="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></a>
             </div>
         </li>
-    {% endif %}
-    <li class="navElement">
-        <div class="navLine">
-            <details class="navCat{% if serviceName == 'talks' %} persistent{% endif %}" {% if serviceName == 'talks' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Talks" src="/assets/images/navigation/talks.svg"><span itemprop="name">Talks</span></summary>
-                <ul>
-                    <li{% if type == 'Blog' or detailedType == 'Blog' or section_id == 1 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/1" target="_self" itemprop="url"><span itemprop="name">Blogs</span></a></li>
-                    <li{% if type == 'Forum' or detailedType == 'Forum' or section_id == 2 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/2" target="_self" itemprop="url"><span itemprop="name">Forums</span></a></li>
-                    <li{% if type == 'Changelog' or detailedType == 'Changelog' or section_id == 3 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/3" target="_self" itemprop="url"><span itemprop="name">Changelogs</span></a></li>
-                    <li{% if type == 'Knowledgebase' or detailedType == 'Knowledgebase' or section_id == 4 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/4" target="_self" itemprop="url"><span itemprop="name">Knowledgebases</span></a></li>
-                    <li{% if type == 'Support' or detailedType == 'Support' or section_id == 5 %} class="current"{% endif %}><a class="navItem" href="/talks/sections/5" target="_self" itemprop="url"><span itemprop="name">Support</span></a></li>
-                </ul>
-            </details>
-        </div>
-    </li>
-    <li class="navElement">
-        <div class="navLine">
-            <details class="navCat{% if serviceName == 'fftracker' %} persistent{% endif %}" {% if serviceName == 'fftracker' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="FFXIV Tracker" data-tooltip="FFXIV Tracker" src="/assets/images/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span></summary>
-                <ul>
-                    <li{% if subServiceName == 'statistics' %} class="current"{% endif %}><a class="navItem" href="/fftracker/statistics" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a></li>
-                    <li{% if serviceName == 'fftracker' and (subServiceName == 'search' or search_value is defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/search" target="_self" itemprop="url"><span itemprop="name">Search</span></a></li>
-                    <li{% if subServiceName == 'character' or (subServiceName == 'characters' and search_value is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/characters" target="_self" itemprop="url"><span itemprop="name">Characters</span></a></li>
-                    <li{% if subServiceName == 'freecompany' or (subServiceName == 'freecompanies' and search_value is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/freecompanies" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a></li>
-                    <li{% if subServiceName == 'pvpteam' or (subServiceName == 'pvpteams' and search_value is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/pvpteams" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a></li>
-                    <li{% if subServiceName == 'linkshell' or (subServiceName == 'linkshells' and search_value is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/linkshells" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a></li>
-                    <li{% if subServiceName == 'crossworld_linkshell' or (subServiceName == 'crossworld_linkshells' and search_value is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/crossworld_linkshells" target="_self" itemprop="url"><span itemprop="name">Crossworld Linkshells</span></a></li>
-                    <li{% if subServiceName == 'achievement' or (subServiceName == 'achievements' and search_value is not defined) %} class="current"{% endif %}><a class="navItem" href="/fftracker/achievements" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a></li>
-                    <li{% if subServiceName == 'points' %} class="current"{% endif %}><a class="navItem" href="/fftracker/points" target="_self" itemprop="url"><span itemprop="name">Leaderboard</span></a></li>
-                    <li{% if subServiceName == 'track' %} class="current"{% endif %}><a class="navItem" href="/fftracker/track" target="_self" itemprop="url"><span itemprop="name">Track entity</span></a></li>
-                    <li{% if subServiceName == 'crests' %} class="current"{% endif %}><a class="navItem" href="/fftracker/crests" target="_self" itemprop="url"><span itemprop="name">Crests</span></a></li>
-                </ul>
-            </details>
-        </div>
-    </li>
-    <li class="navElement" lang="ru-RU">
-        <div class="navLine">
-            <details class="navCat{% if serviceName == 'bictracker' %} persistent{% endif %}" {% if serviceName == 'bictracker' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="БИК Трекер" data-tooltip="БИК Трекер" src="/assets/images/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span></summary>
-                <ul>
-                    <li{% if serviceName == 'bictracker' and (subServiceName == 'search' or search_value is defined) %} class="current"{% endif %}><a class="navItem" href="/bictracker/search" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a></li>
-                    <li{% if (subServiceName == 'openbics' and search_value is not defined) or (subServiceName == 'bic' and not bicdetails.DateOut) %} class="current"{% endif %}><a class="navItem" href="/bictracker/openbics" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a></li>
-                    <li{% if (subServiceName == 'closedbics' and search_value is not defined) or (subServiceName == 'bic' and bicdetails.DateOut) %} class="current"{% endif %}><a class="navItem" href="/bictracker/closedbics" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a></li>
-                    <li{% if subServiceName == 'keying' %} class="current"{% endif %}><a class="navItem" href="/bictracker/keying" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a></li>
-                </ul>
-            </details>
-        </div>
-    </li>
-    <li class="navElement">
-        <div class="navLine">
-            <details class="navCat{% if serviceName == 'games' %} persistent{% endif %}" {% if serviceName == 'games' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="Games" data-tooltip="Games" src="/assets/images/navigation/gamepad.svg"><span itemprop="name">Games</span></summary>
-                <ul>
-                    <li{% if subServiceName == 'jiangshi' %} class="current"{% endif %}><a class="navItem" href="/games/jiangshi" target="_self" itemprop="url"><span itemprop="name">Jiangshi</span></a></li>
-                    <li{% if subServiceName == 'radicalresonance' %} class="current"{% endif %}><a class="navItem" href="/games/radicalresonance" target="_self" itemprop="url"><span itemprop="name">Radical Resonance</span></a></li>
-                    <li{% if subServiceName == 'dden' %} class="current"{% endif %}><a class="navItem" href="/games/dden" target="_self" itemprop="url"><span itemprop="name">Dangerous Dave: Endless Nightmare</span></a></li>
-                </ul>
-            </details>
-        </div>
-    </li>
-    <li class="navElement">
-        <div class="navLine">
-            <details class="navCat{% if serviceName == 'simplepages' %} persistent{% endif %}" {% if serviceName == 'simplepages' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="Simple Pages" src="/assets/images/navigation/simplepages.svg"><span itemprop="name">Simple Pages</span></summary>
-                <ul>
-                    <li{% if subServiceName == 'devicedetector' %} class="current"{% endif %}><a class="navItem" href="/simplepages/devicedetector" target="_self" itemprop="url"><span itemprop="name">Device Detector</span></a></li>
-                </ul>
-            </details>
-        </div>
-    </li>
-    <li class="navElement">
-        <div class="navLine">
-            <details class="navCat{% if serviceName == 'about' %} persistent{% endif %}" {% if serviceName == 'about' %}open{% endif %}>
-                <summary class="rightSummary"><img loading="lazy" decoding="async" class="navIcon" alt="About" data-tooltip="About" src="/assets/images/navigation/about.svg"><span itemprop="name">About</span></summary>
-                <ul>
-                    <li{% if subServiceName == 'me' %} class="current"{% endif %}><a class="navItem" href="/about/me" target="_self" itemprop="url"><span itemprop="name">Me</span></a></li>
-                    <li{% if subServiceName == 'tech' %} class="current"{% endif %}><a class="navItem" href="/about/tech" target="_self" itemprop="url"><span itemprop="name">Technology</span></a></li>
-                    <li{% if subServiceName == 'tos' %} class="current"{% endif %}><a class="navItem" href="/about/tos" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a></li>
-                    <li{% if subServiceName == 'privacy' %} class="current"{% endif %}><a class="navItem" href="/about/privacy" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
-                    <li{% if subServiceName == 'security' %} class="current"{% endif %}><a class="navItem" href="/about/security" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a></li>
-                    <li><a class="navItem" href="/talks/sections/7" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
-                </ul>
-            </details>
-        </div>
-    </li>
-</ul>
-<address id="footerContacts">
-    <a href="mailto:support@simbiat.dev" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/email.svg" alt="Email"></a>
-    <a href="https://facebook.com/SimbiatSoftware/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/facebook.svg" alt="Facebook"></a>
-    <a href="https://vk.com/simbiat19" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/VK.svg" alt="VK"></a>
-    <a href="https://kitsu.io/users/Simbiat" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/kitsu.svg" alt="Kitsu"></a>
-    <a href="https://www.linkedin.com/in/simbiat19/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/linkedin.svg" alt="LinkedIn"></a>
-    <a href="https://www.instagram.com/simbiat19/" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/instagram.svg" alt="Instagram"></a>
-    <a href="https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon dimmedIcon" src="/assets/images/social/youtube.svg" alt="Youtube"></a>
-    <a href="https://github.com/Simbiat" target="_blank" class="noNewTabIcon noOutline"><img loading="lazy" decoding="async" class="linkIcon" id="gitHubIcon" src="/assets/images/social/github.svg" alt="GitHub"></a>
-</address>
+        {% if service_name != 'homepage' and breadcrumbs and breadcrumbs|length > 1 %}
+            <li class="nav_element li_bread">
+                <div class="nav_line nav_bread">
+                    {{ genBread(breadcrumbs) }}
+                </div>
+            </li>
+        {% endif %}
+        <li class="nav_element">
+            <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'talks' %} persistent{% endif %}" {% if service_name == 'talks' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="Talks" src="/assets/images/navigation/talks.svg"><span itemprop="name">Talks</span>
+                    </summary>
+                    <ul>
+                        <li{% if type == 'Blog' or detailed_type == 'Blog' or section_id == 1 %} class="current"{% endif %}>
+                            <a class="nav_item" href="/talks/sections/1" target="_self" itemprop="url"><span itemprop="name">Blogs</span></a>
+                        </li>
+                        <li{% if type == 'Forum' or detailed_type == 'Forum' or section_id == 2 %} class="current"{% endif %}>
+                            <a class="nav_item" href="/talks/sections/2" target="_self" itemprop="url"><span itemprop="name">Forums</span></a>
+                        </li>
+                        <li{% if type == 'Changelog' or detailed_type == 'Changelog' or section_id == 3 %} class="current"{% endif %}>
+                            <a class="nav_item" href="/talks/sections/3" target="_self" itemprop="url"><span itemprop="name">Changelogs</span></a>
+                        </li>
+                        <li{% if type == 'Knowledgebase' or detailed_type == 'Knowledgebase' or section_id == 4 %} class="current"{% endif %}>
+                            <a class="nav_item" href="/talks/sections/4" target="_self" itemprop="url"><span itemprop="name">Knowledgebases</span></a>
+                        </li>
+                        <li{% if type == 'Support' or detailed_type == 'Support' or section_id == 5 %} class="current"{% endif %}>
+                            <a class="nav_item" href="/talks/sections/5" target="_self" itemprop="url"><span itemprop="name">Support</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+        <li class="nav_element">
+            <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'fftracker' %} persistent{% endif %}" {% if service_name == 'fftracker' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="FFXIV Tracker" data-tooltip="FFXIV Tracker" src="/assets/images/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span>
+                    </summary>
+                    <ul>
+                        <li{% if subservice_name == 'statistics' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/statistics" target="_self" itemprop="url"><span itemprop="name">Statistics</span></a>
+                        </li>
+                        <li{% if service_name == 'fftracker' and (subservice_name == 'search' or search_value is defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/search" target="_self" itemprop="url"><span itemprop="name">Search</span></a>
+                        </li>
+                        <li{% if subservice_name == 'character' or (subservice_name == 'characters' and search_value is not defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/characters" target="_self" itemprop="url"><span itemprop="name">Characters</span></a>
+                        </li>
+                        <li{% if subservice_name == 'freecompany' or (subservice_name == 'freecompanies' and search_value is not defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/freecompanies" target="_self" itemprop="url"><span itemprop="name">Free Companies</span></a>
+                        </li>
+                        <li{% if subservice_name == 'pvpteam' or (subservice_name == 'pvpteams' and search_value is not defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/pvpteams" target="_self" itemprop="url"><span itemprop="name">PvP Teams</span></a>
+                        </li>
+                        <li{% if subservice_name == 'linkshell' or (subservice_name == 'linkshells' and search_value is not defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/linkshells" target="_self" itemprop="url"><span itemprop="name">Linkshells</span></a>
+                        </li>
+                        <li{% if subservice_name == 'crossworld_linkshell' or (subservice_name == 'crossworld_linkshells' and search_value is not defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/crossworld_linkshells" target="_self" itemprop="url"><span itemprop="name">Crossworld Linkshells</span></a>
+                        </li>
+                        <li{% if subservice_name == 'achievement' or (subservice_name == 'achievements' and search_value is not defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/achievements" target="_self" itemprop="url"><span itemprop="name">Achievements</span></a>
+                        </li>
+                        <li{% if subservice_name == 'points' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/points" target="_self" itemprop="url"><span itemprop="name">Leaderboard</span></a>
+                        </li>
+                        <li{% if subservice_name == 'track' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/track" target="_self" itemprop="url"><span itemprop="name">Track entity</span></a>
+                        </li>
+                        <li{% if subservice_name == 'crests' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/fftracker/crests" target="_self" itemprop="url"><span itemprop="name">Crests</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+        <li class="nav_element" lang="ru-RU">
+            <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'bictracker' %} persistent{% endif %}" {% if service_name == 'bictracker' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="БИК Трекер" data-tooltip="БИК Трекер" src="/assets/images/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span>
+                    </summary>
+                    <ul>
+                        <li{% if service_name == 'bictracker' and (subservice_name == 'search' or search_value is defined) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/bictracker/search" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a>
+                        </li>
+                        <li{% if (subservice_name == 'openbics' and search_value is not defined) or (subservice_name == 'bic' and not bicdetails.DateOut) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/bictracker/openbics" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a>
+                        </li>
+                        <li{% if (subservice_name == 'closedbics' and search_value is not defined) or (subservice_name == 'bic' and bicdetails.DateOut) %} class="current"{% endif %}>
+                            <a class="nav_item" href="/bictracker/closedbics" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a>
+                        </li>
+                        <li{% if subservice_name == 'keying' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/bictracker/keying" target="_self" itemprop="url"><span itemprop="name">Ключевание</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+        <li class="nav_element">
+            <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'games' %} persistent{% endif %}" {% if service_name == 'games' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="Games" data-tooltip="Games" src="/assets/images/navigation/gamepad.svg"><span itemprop="name">Games</span>
+                    </summary>
+                    <ul>
+                        <li{% if subservice_name == 'jiangshi' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/games/jiangshi" target="_self" itemprop="url"><span itemprop="name">Jiangshi</span></a>
+                        </li>
+                        <li{% if subservice_name == 'radicalresonance' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/games/radicalresonance" target="_self" itemprop="url"><span itemprop="name">Radical Resonance</span></a>
+                        </li>
+                        <li{% if subservice_name == 'dden' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/games/dden" target="_self" itemprop="url"><span itemprop="name">Dangerous Dave: Endless Nightmare</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+        <li class="nav_element">
+            <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'simplepages' %} persistent{% endif %}" {% if service_name == 'simplepages' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="About" data-tooltip="Simple Pages" src="/assets/images/navigation/simplepages.svg"><span itemprop="name">Simple Pages</span>
+                    </summary>
+                    <ul>
+                        <li{% if subservice_name == 'devicedetector' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/simplepages/devicedetector" target="_self" itemprop="url"><span itemprop="name">Device Detector</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+        <li class="nav_element">
+            <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'about' %} persistent{% endif %}" {% if service_name == 'about' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="About" data-tooltip="About" src="/assets/images/navigation/about.svg"><span itemprop="name">About</span>
+                    </summary>
+                    <ul>
+                        <li{% if subservice_name == 'me' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/about/me" target="_self" itemprop="url"><span itemprop="name">Me</span></a>
+                        </li>
+                        <li{% if subservice_name == 'tech' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/about/tech" target="_self" itemprop="url"><span itemprop="name">Technology</span></a>
+                        </li>
+                        <li{% if subservice_name == 'tos' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/about/tos" target="_self" itemprop="url"><span itemprop="name">Terms of Service</span></a>
+                        </li>
+                        <li{% if subservice_name == 'privacy' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/about/privacy" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a>
+                        </li>
+                        <li{% if subservice_name == 'security' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/about/security" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a>
+                        </li>
+                        <li>
+                            <a class="nav_item" href="/talks/sections/7" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+    </ul>
+    <address id="footer_contacts">
+        <a href="mailto:support@simbiat.dev" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/email.svg" alt="Email"></a>
+        <a href="https://facebook.com/SimbiatSoftware/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/facebook.svg" alt="Facebook"></a>
+        <a href="https://vk.com/simbiat19" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/VK.svg" alt="VK"></a>
+        <a href="https://kitsu.io/users/Simbiat" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/kitsu.svg" alt="Kitsu"></a>
+        <a href="https://www.linkedin.com/in/simbiat19/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/linkedin.svg" alt="LinkedIn"></a>
+        <a href="https://www.instagram.com/simbiat19/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/instagram.svg" alt="Instagram"></a>
+        <a href="https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/youtube.svg" alt="Youtube"></a>
+        <a href="https://github.com/Simbiat" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 inverted_30 cursor_pointer" src="/assets/images/social/github.svg" alt="GitHub"></a>
+    </address>
+</nav>
