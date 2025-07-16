@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectTasksOptions">
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="-o ../public/assets/styles/app.css --source-map --source-map-inline-sources ./css/01-normalize.css ./css/02-boilerplate.css ./css/03-variables.css ./css/04-basicelements.css ./css/05-interactions.css ./css/06-common.css ./css/07-firefox.css ./css/08-footer.css ./css/09-header.css ./css/10-sidebar.css ./css/11-navigation.css ./css/12-about.css ./css/13-timeline.css ./css/14-pagination.css ./css/15-animation.css ./css/bictracker.css ./css/fftracker.css ./css/gallery.css ./css/mediaquery.css ./css/usercontrol.css ./css/simplepages.css ./css/tinymce/formats.css ./css/tinymce/ui.css ./css/tinymce/blocks.css ./css/talks.css ./css/gamemaker.css" />
+      <option name="arguments" value="build/js/PostCSS.js" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -14,31 +14,31 @@
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="$PROJECT_DIR$/build/node_modules/.bin/cleancss" />
+      <option name="program" value="node" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="CSS" />
       <option name="trackOnlyRoot" value="false" />
-      <option name="workingDir" value="$PROJECT_DIR$/build/" />
+      <option name="workingDir" value="$ProjectFileDir$" />
       <envs />
     </TaskOptions>
-    <TaskOptions isEnabled="true">
-      <option name="arguments" value="-o ../public/assets/styles/tinymce.css --source-map --source-map-inline-sources ./css/01-normalize.css ./css/02-boilerplate.css ./css/03-variables.css ./css/04-basicelements.css  ./css/05-interactions.css  ./css/06-common.css ./css/tinymce/formats.css  ./css/tinymce/ui.css ./css/tinymce/blocks.css ./css/tinymce/overrides.css" />
+    <TaskOptions isEnabled="false">
+      <option name="arguments" value="compose -f &quot;$ProjectFileDir$/docker-compose.yml&quot; run --rm --remove-orphans node node js/PostCSS.js &amp;echo %errorlevel%" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="css" />
       <option name="immediateSync" value="true" />
-      <option name="name" value="TinyMCE" />
+      <option name="name" value="CSS Combine Docker" />
       <option name="output" value="" />
       <option name="outputFilters">
         <array />
       </option>
       <option name="outputFromStdout" value="false" />
-      <option name="program" value="$PROJECT_DIR$/build/node_modules/.bin/cleancss" />
+      <option name="program" value="docker" />
       <option name="runOnExternalChanges" value="true" />
       <option name="scopeName" value="CSS" />
       <option name="trackOnlyRoot" value="false" />
-      <option name="workingDir" value="$PROJECT_DIR$/build/" />
+      <option name="workingDir" value="$ProjectFileDir$" />
       <envs />
     </TaskOptions>
   </component>

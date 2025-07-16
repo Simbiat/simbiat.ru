@@ -7,9 +7,6 @@
           <resourceRoots>
             <path value="file://$PROJECT_DIR$" />
             <path value="file://$PROJECT_DIR$/public" />
-            <path value="file://$PROJECT_DIR$/public/assets/images/fftracker/crests-components" />
-            <path value="file://$PROJECT_DIR$/public/assets/images/fftracker/icons" />
-            <path value="file://$PROJECT_DIR$/public/assets/images/fftracker/maps" />
             <path value="file://$PROJECT_DIR$/templates" />
             <path value="file://$PROJECT_DIR$/build/css" />
             <path value="file://$PROJECT_DIR$/build/js" />

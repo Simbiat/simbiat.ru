@@ -19,6 +19,8 @@
       <option name="SPACE_AFTER_GENERATOR_MULT" value="false" />
       <option name="VAR_DECLARATION_WRAP" value="2" />
       <option name="OBJECT_LITERAL_WRAP" value="2" />
+      <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
+      <option name="SPACES_WITHIN_IMPORTS" value="true" />
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </JSCodeStyleSettings>
     <Markdown>
@@ -41,6 +43,9 @@
       <option name="FORCE_EMPTY_METHODS_IN_ONE_LINE" value="true" />
       <option name="PHPDOC_USE_FQCN" value="true" />
     </PHPCodeStyleSettings>
+    <PostCssCodeStyleSettings>
+      <option name="COMMENTS_INLINE_STYLE" value="false" />
+    </PostCssCodeStyleSettings>
     <SqlCodeStyleSettings version="7">
       <option name="KEYWORD_CASE" value="2" />
       <option name="IDENTIFIER_CASE" value="1" />
@@ -62,6 +67,7 @@
       <option name="SPACE_AFTER_GENERATOR_MULT" value="false" />
       <option name="VAR_DECLARATION_WRAP" value="2" />
       <option name="OBJECT_LITERAL_WRAP" value="2" />
+      <option name="SPACES_WITHIN_IMPORTS" value="true" />
       <option name="IMPORT_SORT_MODULE_NAME" value="true" />
     </TypeScriptCodeStyleSettings>
     <editorconfig>
@@ -104,8 +110,6 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
-      <option name="CLASS_BRACE_STYLE" value="2" />
-      <option name="METHOD_BRACE_STYLE" value="2" />
       <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="2" />
       <option name="IF_BRACE_FORCE" value="3" />
@@ -113,7 +117,9 @@
       <option name="WHILE_BRACE_FORCE" value="3" />
       <option name="FOR_BRACE_FORCE" value="3" />
       <indentOptions>
-        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="LESS">
@@ -156,8 +162,6 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
-      <option name="CLASS_BRACE_STYLE" value="2" />
-      <option name="METHOD_BRACE_STYLE" value="2" />
       <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="2" />
       <option name="IF_BRACE_FORCE" value="3" />
@@ -165,7 +169,9 @@
       <option name="WHILE_BRACE_FORCE" value="3" />
       <option name="FOR_BRACE_FORCE" value="3" />
       <indentOptions>
-        <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
+        <option name="INDENT_SIZE" value="2" />
+        <option name="CONTINUATION_INDENT_SIZE" value="2" />
+        <option name="TAB_SIZE" value="2" />
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="XML">

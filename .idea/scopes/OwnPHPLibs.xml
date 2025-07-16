@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="OwnPHPLibs" pattern="file[simbiat.dev]:lib//*.php" />
+</component>

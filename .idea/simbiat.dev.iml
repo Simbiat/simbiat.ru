@@ -52,7 +52,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/sendgrid/php-http-client" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sendgrid/sendgrid" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
-      <excludeFolder url="file://$MODULE_DIR$/build/dbhelper" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/geoip2/geoip2" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind-db/reader" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind/web-service-common" />
@@ -78,6 +77,10 @@
       <excludeFolder url="file://$MODULE_DIR$/logs" />
       <excludeFolder url="file://$MODULE_DIR$/vendor" />
       <excludeFolder url="file://$MODULE_DIR$/data" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/controllers" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/html5games" />
+      <excludeFolder url="file://$MODULE_DIR$/public/assets/styles" />
+      <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
