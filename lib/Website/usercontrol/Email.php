@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\usercontrol;
 
-use SendGrid\Mail\Mail;
 use Simbiat\Arrays\Converters;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Entity;
@@ -11,6 +10,13 @@ use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
 use Simbiat\Website\Twig\EnvironmentGenerator;
+use Symfony\Bridge\Twig\Mime\BodyRenderer;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Mailer\EventListener\MessageListener;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mime\Address;
 
 /**
  * Class to handle emails
@@ -34,9 +40,9 @@ class Email extends Entity
         #Convert to string for consistency
         $id = (string)$id;
         #Validate that string is email
-        if (filter_var($id, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE) === false) {
+        if (\filter_var($id, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
             #Not an email, something is wrong, protect ourselves
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
         return $this;
@@ -103,7 +109,7 @@ class Email extends Entity
      */
     public function isBad(): bool
     {
-        if (empty($this->id)) {
+        if ($this->id === null || \preg_match('/^\s*$/u', $this->id) === 1) {
             return true;
         }
         #Ensure that we have the fresh data from DB
@@ -210,13 +216,13 @@ class Email extends Entity
      */
     public function confirm(string $username = '', string $activation = ''): bool
     {
-        if (empty($username)) {
+        if (\preg_match('/^\s*$/u', $username)) {
             try {
                 $data = Query::query('SELECT `uc__emails`.`user_id`, `username` FROM `uc__emails` LEFT JOIN `uc__users` ON `uc__emails`.`user_id`=`uc__users`.`user_id` WHERE `email`=:mail', [':mail' => $this->id], return: 'row');
             } catch (\Throwable) {
                 return false;
             }
-            if (empty($data)) {
+            if ($data === [] || $data === false) {
                 #Avoid potential abuse to get a list of registered mails
                 return true;
             }
@@ -230,12 +236,12 @@ class Email extends Entity
                 return false;
             }
         }
-        if (empty($user_id)) {
+        if ($user_id === null || $user_id === false || \preg_match('/^\s*$/u', $user_id)) {
             #Avoid potential abuse to get a list of registered mails
             return true;
         }
         #Generate activation code if none was provided (requested new activation mail)
-        if (empty($activation)) {
+        if (\preg_match('/^\s*$/u', $activation)) {
             $activation = Security::genToken();
             #Insert into mails database
             try {
@@ -251,7 +257,7 @@ class Email extends Entity
                 return false;
             }
         }
-        $this->send('Account Activation', compact('activation', 'user_id'), $username);
+        $this->send('Account Activation', \compact('activation', 'user_id'), $username);
         return true;
     }
     
@@ -262,42 +268,47 @@ class Email extends Entity
      * @param string $username Username to send to
      * @param bool   $debug    Debug mode
      *
-     * @return int|false
+     * @return bool
      */
-    public function send(string $subject, array $body = [], string $username = '', bool $debug = false): int|false
+    public function send(string $subject, array $body = [], string $username = '', bool $debug = false): bool
     {
-        if (empty($this->id)) {
+        if ($this->id === null || \preg_match('/^\s*$/u', $this->id)) {
             return false;
         }
         try {
             #Log email (no sensitive data is supposed to be sent in any emails)
             Security::log('Email', 'Attempted to send email', ['subject' => $subject, 'to' => $this->id, 'body' => $body]);
+            #Prepare Twig
+            $twig = EnvironmentGenerator::getTwig();
+            $message_listener = new MessageListener(null, new BodyRenderer($twig));
+            $event_dispatcher = new EventDispatcher();
+            $event_dispatcher->addSubscriber($message_listener);
             #Create transport
-            $transport = new \SendGrid($_ENV['SENDGRID_API_KEY'], ['verify_ssl' => true,]);
+            $transport = Transport::fromDsn($_ENV['PROTON_DSN'], $event_dispatcher);
+            $mailer = new Mailer($transport, null, $event_dispatcher);
             #Create basic email
-            $email = new Mail();
-            $email->setFrom(Config::FROM, Config::SITE_NAME);
-            $email->setReplyTo(Config::FROM, Config::SITE_NAME);
+            $email = new TemplatedEmail()
+                ->from(new Address(Config::FROM, Config::SITE_NAME))
+                ->replyTo(new Address(Config::FROM, Config::SITE_NAME));
             #Add receiver
             if (Config::$prod) {
-                $email->addTo($this->id, $username ?? null);
+                $email = $email->addTo(new Address($this->id, $username ?? ''));
             } else {
                 #On test always use admin mail
-                $email->addTo(Config::ADMIN_MAIL);
+                $email = $email->addTo(Config::ADMIN_MAIL);
             }
             #Set priority for alerts
-            if (preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
-                $email->addHeader('Priority', 'Urgent');
-                $email->addHeader('Importance', 'High');
+            if (\preg_match('/^\[Alert]: .*$/iu', $subject) === 1) {
+                $email->getHeaders()->addTextHeader('Priority', 'Urgent')->addTextHeader('Importance', 'High');
             }
             #Add content
-            $email->setSubject(Config::SITE_NAME.': '.$subject);
-            $email->addContent(
-                'text/html', EnvironmentGenerator::getTwig()->render('mail/index.twig', array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($this->id)]))
-            );
-            return $transport->send($email)->statusCode();
-        } catch (\Throwable $e) {
-            Errors::error_log($e, debug: $debug);
+            $email->subject(Config::SITE_NAME.': '.$subject)
+                ->htmlTemplate('mail/index.twig')
+                ->context(\array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($this->id)]));
+            $mailer->send($email);
+            return true;
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception, debug: $debug);
             return false;
         }
     }

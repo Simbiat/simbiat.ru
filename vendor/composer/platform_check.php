@@ -23,6 +23,7 @@ extension_loaded('libxml') || $missingExtensions[] = 'libxml';
 extension_loaded('openssl') || $missingExtensions[] = 'openssl';
 extension_loaded('pcre') || $missingExtensions[] = 'pcre';
 extension_loaded('pdo') || $missingExtensions[] = 'pdo';
+extension_loaded('xml') || $missingExtensions[] = 'xml';
 extension_loaded('zip') || $missingExtensions[] = 'zip';
 extension_loaded('zlib') || $missingExtensions[] = 'zlib';
 extension_loaded('zstd') || $missingExtensions[] = 'zstd';

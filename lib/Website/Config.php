@@ -95,7 +95,7 @@ final class Config
         #Database settings
         $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_SOCKET'])->notEmpty();
         #Other settings
-        $dotenv->required(['WEB_SERVER_TEST', 'SENDGRID_API_KEY', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
+        $dotenv->required(['WEB_SERVER_TEST', 'PROTON_DSN', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
         self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
         self::$http_host = (self::$prod ? 'www.simbiat.dev' : 'localhost');
         self::$base_url = 'https://'.self::$http_host;
