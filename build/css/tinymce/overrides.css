@@ -98,19 +98,3 @@ table caption {
     font-style: italic !important;
     font-weight: 700 !important;
 }
-
-/* Label for textarea which are replaced by TinyMCE */
-.wrapper_for_tinymce {
-    inline-size: 98%;
-    position: relative;
-
-    & .label_for_tinymce {
-        color: var(--color_interactive);
-        filter: var(--border_shadow);
-        inset-block-start: -.75rem;
-        inset-inline-start: .5rem;
-        position: absolute;
-        /* If no z-index, label gets covered by TinyMCE for some reason */
-        z-index: 2;
-    }
-}
