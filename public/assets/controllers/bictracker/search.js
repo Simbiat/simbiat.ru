@@ -1,7 +1,7 @@
 export class bicRefresh {
     refreshButton = null;
     constructor() {
-        this.refreshButton = document.querySelector('#bicRefresh');
+        this.refreshButton = document.querySelector('#bic_refresh');
         if (this.refreshButton) {
             this.refreshButton.addEventListener('click', (event) => {
                 this.refresh(event);

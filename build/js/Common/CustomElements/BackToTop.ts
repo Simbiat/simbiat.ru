@@ -2,7 +2,7 @@ class BackToTop extends HTMLElement
 {
     private readonly content: HTMLElement | null;
     private readonly BTTs: NodeListOf<HTMLElement>;
-    
+
     public constructor()
     {
         super();
@@ -19,7 +19,7 @@ class BackToTop extends HTMLElement
             });
         }
     }
-    
+
     private toggleButtons(): void
     {
         if (this.content && !empty(this.BTTs)) {
@@ -36,7 +36,7 @@ class BackToTop extends HTMLElement
         //Update URL hash based on position and available headings
         if (!window.location.hash.toLowerCase()
                    .startsWith('#gallery=')) {
-            const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+            const headings = document.querySelectorAll('h1:not(#h1_title), h2, h3, h4, h5, h6');
             for (let i = 0; i <= headings.length - 1; i++) {
                 const heading = headings[i] as HTMLHeadingElement;
                 const bottom = heading.getBoundingClientRect().bottom;

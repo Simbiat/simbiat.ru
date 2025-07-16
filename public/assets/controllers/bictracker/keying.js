@@ -6,7 +6,7 @@ export class bicKeying {
     spinner = null;
     constructor() {
         this.form = document.querySelector('#bic_keying');
-        this.result = document.querySelector('#accCheckResult');
+        this.result = document.querySelector('#acc_check_result');
         this.bicKeySample = document.querySelector('#bic_key_sample');
         this.accKeySample = document.querySelector('#account_key_sample');
         this.spinner = document.querySelector('#bic_spinner');

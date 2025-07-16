@@ -3,11 +3,11 @@ function cleanGET(): void
 {
     const url = new URL(document.location.href);
     //Flag for resetting cache on server side
-    url.searchParams.delete('cacheReset');
+    url.searchParams.delete('cache_reset');
     //Flag used to attempt to force proper reload (with cache clear) of a page.
     //window.location.reload seems to always hit browser cache, which results in, for example, page showing you as logged in/out, when in fact it's the reverse.
     //Thus, I am using direct window.location.replace with a flag instead of reload, but we need to clear the flag itself
-    url.searchParams.delete('forceReload');
+    url.searchParams.delete('force_reload');
     window.history.replaceState(document.title, document.title, url.toString());
 }
 
@@ -32,7 +32,7 @@ async function urlClean(event: ClipboardEvent): Promise<void>
 
 function urlCleanString(url: string): string
 {
-    const paramsToDelete = sharedWithPHP?.trackingQueryParameters || [];
+    const paramsToDelete = sharedWithPHP?.tracking_query_parameters || [];
     const urlNew = new URL(url);
     for (const param of paramsToDelete) {
         urlNew.searchParams.delete(param);

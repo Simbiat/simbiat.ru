@@ -3706,7 +3706,7 @@ async function ajax(url, formData = null, type = 'json', method = 'GET', timeout
     }, timeout);
     try {
         const response = await fetch(url, {
-            'body': ['POST', 'PUT', 'DELETE', 'PATCH',].includes(method) ? formData : null,
+            'body': ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method) ? formData : null,
             'cache': 'no-cache',
             'credentials': 'same-origin',
             'headers': {
@@ -3761,10 +3761,14 @@ function inputInit(input) {
     });
     ariaNation(input);
     if (input.getAttribute('type') === 'url' && !input.form) {
-        input.addEventListener('paste', (event) => { void urlClean(event); });
+        input.addEventListener('paste', (event) => {
+            void urlClean(event);
+        });
     }
     if (input.classList.contains('toggle_details')) {
-        input.addEventListener('click', () => { toggleDetailsButton(input); });
+        input.addEventListener('click', () => {
+            toggleDetailsButton(input);
+        });
     }
 }
 function textareaInit(textarea) {
@@ -3773,7 +3777,9 @@ function textareaInit(textarea) {
     }
     if (textarea.maxLength > 0) {
         ['change', 'keydown', 'keyup', 'input'].forEach((eventType) => {
-            textarea.addEventListener(eventType, (event) => { countInTextarea(event.target); });
+            textarea.addEventListener(eventType, (event) => {
+                countInTextarea(event.target);
+            });
         });
         countInTextarea(textarea);
     }
@@ -3783,12 +3789,13 @@ function textareaInit(textarea) {
 }
 function headingInit(heading) {
     if (!heading.hasAttribute('id')) {
-        let id = String(heading.textContent).replaceAll(/\s/gmu, '_').
-            replaceAll(/[^a-zA-Z0-9_-]/gmu, '').
-            replaceAll(/^\d+/gmu, '').
-            replaceAll(/_{2,}/gmu, '_').
-            replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`).
-            replaceAll(/^_+$/gmu, '');
+        let id = String(heading.textContent)
+            .replaceAll(/\s/gmu, '_')
+            .replaceAll(/[^a-zA-Z0-9_-]/gmu, '')
+            .replaceAll(/^\d+/gmu, '')
+            .replaceAll(/_{2,}/gmu, '_')
+            .replaceAll(/(?<beginning>^.{1,64})(?<theRest>.*$)/gmu, `$<beginning>`)
+            .replaceAll(/^_+$/gmu, '');
         if (empty(id)) {
             id = 'heading';
         }
@@ -3808,7 +3815,8 @@ function headingInit(heading) {
         const selection = window.getSelection();
         if (selection && selection.type !== 'Range') {
             const link = `${window.location.href.replaceAll(/(?<beforeSharp>^[^#]*)(?<afterSharp>#.*)?$/gmu, `$<beforeSharp>`)}#${event.target.getAttribute('id') ?? ''}`;
-            navigator.clipboard.writeText(link).then(() => {
+            navigator.clipboard.writeText(link)
+                .then(() => {
                 addSnackbar(`Anchor link for "${event.target.textContent ?? ''}" copied to clipboard`, 'success');
             }, () => {
                 addSnackbar(`Failed to copy anchor link for "${event.target.textContent ?? ''}"`, 'failure');
@@ -3817,48 +3825,60 @@ function headingInit(heading) {
     });
 }
 function formInit(form) {
-    form.addEventListener('keypress', (event) => { formEnter(event); });
-    form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea').forEach((item) => {
+    form.addEventListener('keypress', (event) => {
+        formEnter(event);
+    });
+    form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea')
+        .forEach((item) => {
         if (!item.hasAttribute('data-noname') && (!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
             item.setAttribute('name', item.id);
         }
     });
-    form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]').forEach((item) => {
+    form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')
+        .forEach((item) => {
         item.addEventListener('keydown', inputBackSpace);
         if (!empty(item.getAttribute('maxlength'))) {
             ['input', 'change',].forEach((eventType) => {
                 item.addEventListener(eventType, autoNext);
             });
-            item.addEventListener('paste', (event) => { void pasteSplit(event); });
+            item.addEventListener('paste', (event) => {
+                void pasteSplit(event);
+            });
         }
     });
 }
 function sampInit(samp) {
-    samp.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${samp.innerHTML}`;
+    samp.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${samp.innerHTML}`;
     const description = samp.getAttribute('data-description') ?? '';
     if (!empty(description)) {
-        samp.innerHTML = `<span class="codeDesc">${description}</span>${samp.innerHTML}`;
+        samp.innerHTML = `<span class="code_desc">${description}</span>${samp.innerHTML}`;
     }
     const source = samp.getAttribute('data-source') ?? '';
     if (!empty(source)) {
         samp.innerHTML = `${samp.innerHTML}<span class="quote_source">${source}</span>`;
     }
-    samp.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
+    samp.querySelector('.copy_quote')
+        ?.addEventListener('click', (event) => {
+        copyQuote(event.target);
+    });
 }
 function codeInit(code) {
-    code.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${code.innerHTML}`;
+    code.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${code.innerHTML}`;
     const description = code.getAttribute('data-description') ?? '';
     if (!empty(description)) {
-        code.innerHTML = `<span class="codeDesc">${description}</span>${code.innerHTML}`;
+        code.innerHTML = `<span class="code_desc">${description}</span>${code.innerHTML}`;
     }
     const source = code.getAttribute('data-source') ?? '';
     if (!empty(source)) {
         code.innerHTML = `${code.innerHTML}<span class="quote_source">${source}</span>`;
     }
-    code.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
+    code.querySelector('.copy_quote')
+        ?.addEventListener('click', (event) => {
+        copyQuote(event.target);
+    });
 }
 function blockquoteInit(quote) {
-    quote.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copyQuote">${quote.innerHTML}`;
+    quote.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${quote.innerHTML}`;
     const author = quote.getAttribute('data-author') ?? '';
     if (!empty(author)) {
         quote.innerHTML = `<span class="quote_author">${author}</span>${quote.innerHTML}`;
@@ -3867,11 +3887,16 @@ function blockquoteInit(quote) {
     if (!empty(source)) {
         quote.innerHTML = `${quote.innerHTML}<span class="quote_source">${source}</span>`;
     }
-    quote.querySelector('.copyQuote')?.addEventListener('click', (event) => { copyQuote(event.target); });
+    quote.querySelector('.copy_quote')
+        ?.addEventListener('click', (event) => {
+        copyQuote(event.target);
+    });
 }
 function qInit(quote) {
     quote.setAttribute('data-tooltip', 'Click to copy quote');
-    quote.addEventListener('click', (event) => { copyQuote(event.target); });
+    quote.addEventListener('click', (event) => {
+        copyQuote(event.target);
+    });
 }
 function detailsInit(details) {
     if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
@@ -3888,16 +3913,16 @@ function imgInit(img) {
     if (empty(img.alt)) {
         img.alt = basename(String(img.src));
     }
-    if (img.classList.contains('galleryZoom')) {
+    if (img.classList.contains('gallery_zoom')) {
         const parent = img.parentElement;
         if (parent && parent.nodeName.toLowerCase() !== 'a') {
             const link = document.createElement('a');
             link.href = img.src;
             link.target = '_blank';
             link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
-            link.classList.add('galleryZoom');
+            link.classList.add('gallery_zoom');
             const clone = img.cloneNode(true);
-            clone.classList.remove('galleryZoom');
+            clone.classList.remove('gallery_zoom');
             link.appendChild(clone);
             img.replaceWith(link);
         }
@@ -3905,8 +3930,8 @@ function imgInit(img) {
             parent.href = img.src;
             parent.target = '_blank';
             parent.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
-            parent.classList.add('galleryZoom');
-            img.classList.contains('galleryZoom');
+            parent.classList.add('gallery_zoom');
+            img.classList.contains('gallery_zoom');
         }
     }
 }
@@ -3924,18 +3949,19 @@ function dialogInit(dialog) {
 }
 function anchorInit(anchor) {
     if (empty(anchor.href)) {
-        anchor.href = window.location.href;
+        return;
     }
     const currentURL = new URL(anchor.href);
     if (currentURL.host !== window.location.host) {
         anchor.target = '_blank';
     }
-    if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('noNewTabIcon')) {
-        anchor.innerHTML += '<img class="newTabIcon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
+    if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
+        anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
     }
     else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
         anchor.addEventListener('click', () => {
-            if (!window.location.hash.toLowerCase().startsWith('#gallery=')) {
+            if (!window.location.hash.toLowerCase()
+                .startsWith('#gallery=')) {
                 history.replaceState(document.title, document.title, `${currentURL.hash}`);
             }
         });
@@ -4138,7 +4164,7 @@ function empty(variable) {
 }
 function pageRefresh() {
     const url = new URL(document.location.href);
-    url.searchParams.set('forceReload', String(Date.now()));
+    url.searchParams.set('force_reload', String(Date.now()));
     window.location.replace(url.toString());
 }
 function copyQuote(target) {
@@ -4227,7 +4253,7 @@ function init() {
             anchorInit(anchor);
         });
     }
-    const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+    const headings = document.querySelectorAll('h1:not(#h1_title), h2, h3, h4, h5, h6');
     if (!empty(headings)) {
         headings.forEach((heading) => {
             headingInit(heading);
@@ -4302,7 +4328,7 @@ function init() {
     customElements.define('password-requirements', PasswordRequirements);
     customElements.define('password-strength', PasswordStrength);
     customElements.define('like-dis', Likedis);
-    customElements.define('vertical-tabs', VerticalTabs);
+    customElements.define('tab-menu', TabMenu);
     customElements.define('image-upload', ImageUpload);
     customElements.define('select-custom', SelectCustom);
     customElements.define('post-form', PostForm);
@@ -4331,14 +4357,18 @@ if (configUrlElement && configUrlElement.getAttribute('href')) {
         .then(response => response.json())
         .then(config => {
         sharedWithPHP = config;
-    }).catch(() => {
+    })
+        .catch(() => {
         sharedWithPHP = {};
-    }).finally(() => {
+    })
+        .finally(() => {
         sharedWithPHP = Object.freeze(sharedWithPHP);
     });
 }
 document.addEventListener('DOMContentLoaded', init);
-window.addEventListener('hashchange', () => { hashCheck(); });
+window.addEventListener('hashchange', () => {
+    hashCheck();
+});
 function ariaNation(inputElement) {
     inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
     if (!inputElement.hasAttribute('placeholder')) {
@@ -4531,9 +4561,9 @@ function autoNext(event) {
 }
 const CUSTOM_COLOR_MAP = {
     '#17141F': 'body',
-    '#19424D': 'dark-border',
+    '#19424D': 'dark_border',
     '#231F2E': 'block',
-    '#266373': 'light-border',
+    '#266373': 'light_border',
     '#2E293D': 'article',
     '#808080': 'disabled',
     '#8AE59C': 'success',
@@ -4570,29 +4600,29 @@ const TINY_SETTINGS = {
     'fontsize_formats': '',
     'formats': {
         'aligncenter': {
-            'classes': 'tiny-align-center',
+            'classes': 'tiny_align_center',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignjustify': {
-            'classes': 'tiny-align-justify',
+            'classes': 'tiny_align_justify',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignleft': {
-            'classes': 'tiny-align-left',
+            'classes': 'tiny_align_left',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignright': {
-            'classes': 'tiny-align-right',
+            'classes': 'tiny_align_right',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'forecolor': {
             'attributes': {
                 'class': (value) => {
-                    return `tiny-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
+                    return `tiny_color_${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
@@ -4601,89 +4631,89 @@ const TINY_SETTINGS = {
         'hilitecolor': {
             'attributes': {
                 'class': (value) => {
-                    return `tiny-bg-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
+                    return `tiny_bg_color_${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
             'remove': 'none',
         },
-        'list-circle': {
-            'classes': 'tiny-list-circle',
+        'list_circle': {
+            'classes': 'tiny_list_circle',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-decimal': {
-            'classes': 'tiny-list-decimal',
+        'list_decimal': {
+            'classes': 'tiny_list_decimal',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-decimal-leading-zero': {
-            'classes': 'tiny-list-decimal-leading-zero',
+        'list_decimal_leading_zero': {
+            'classes': 'tiny_list_decimal_leading_zero',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-disc': {
-            'classes': 'tiny-list-disc',
+        'list_disc': {
+            'classes': 'tiny_list_disc',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-disclosure-closed': {
-            'classes': 'tiny-list-disclosure-closed',
+        'list_disclosure_closed': {
+            'classes': 'tiny_list_disclosure_closed',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-disclosure-open': {
-            'classes': 'tiny-list-disclosure-open',
+        'list_disclosure_open': {
+            'classes': 'iny_list_disclosure_open',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-lower-alpha': {
-            'classes': 'tiny-list-lower-alpha',
+        'list_lower_alpha': {
+            'classes': 'tiny_list_lower_alpha',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-lower-greek': {
-            'classes': 'tiny-list-lower-greek',
+        'list_lower_greek': {
+            'classes': 'tiny_list_lower_greek',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-lower-roman': {
-            'classes': 'tiny-list-lower-roman',
+        'list_lower_roman': {
+            'classes': 'tiny_list_lower_roman',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-square': {
-            'classes': 'tiny-list-square',
+        'list_square': {
+            'classes': 'tiny_list_square',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-upper-alpha': {
-            'classes': 'tiny-list-upper-alpha',
+        'list_upper_alpha': {
+            'classes': 'tiny_list_upper_alpha',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-upper-roman': {
-            'classes': 'tiny-list-upper-roman',
+        'list_upper_roman': {
+            'classes': 'tiny_list_upper_roman',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
         'underline': {
-            'classes': 'tiny-underline',
+            'classes': 'tiny_underline',
             'inline': 'span',
             'remove': 'none',
         },
         'valignbottom': {
-            'classes': 'tiny-valign-bottom',
+            'classes': 'tiny_valign_bottom',
             'remove': 'none',
             'selector': 'td,th,table',
         },
         'valignmiddle': {
-            'classes': 'tiny-valign-middle',
+            'classes': 'tiny_valign_middle',
             'remove': 'none',
             'selector': 'td,th,table',
         },
         'valigntop': {
-            'classes': 'tiny-valign-top',
+            'classes': 'tiny_valign_top',
             'remove': 'none',
             'selector': 'td,th,table',
         },
@@ -4694,25 +4724,25 @@ const TINY_SETTINGS = {
     'image_class_list': [
         {
             'title': 'Default',
-            'value': 'w50pc middle block galleryZoom'
+            'value': 'w50pc middle block gallery_zoom'
         },
         {
             'menu': [
                 {
                     'title': 'Quarter width',
-                    'value': 'w25pc middle block galleryZoom'
+                    'value': 'w25pc middle block gallery_zoom'
                 },
                 {
                     'title': 'Half width',
-                    'value': 'w50pc middle block galleryZoom'
+                    'value': 'w50pc middle block gallery_zoom'
                 },
                 {
                     'title': '3 quarters width',
-                    'value': 'w75pc middle block galleryZoom'
+                    'value': 'w75pc middle block gallery_zoom'
                 },
                 {
                     'title': 'Full width',
-                    'value': 'w100pc middle block galleryZoom'
+                    'value': 'w100pc middle block gallery_zoom'
                 }
             ],
             'title': 'Block'
@@ -4721,26 +4751,26 @@ const TINY_SETTINGS = {
             'menu': [
                 {
                     'title': 'Quarter width',
-                    'value': 'w25pc middle galleryZoom'
+                    'value': 'w25pc middle gallery_zoom'
                 },
                 {
                     'title': 'Half width',
-                    'value': 'w50pc middle galleryZoom'
+                    'value': 'w50pc middle gallery_zoom'
                 },
                 {
                     'title': '3 quarters width',
-                    'value': 'w75pc middle galleryZoom'
+                    'value': 'w75pc middle gallery_zoom'
                 },
                 {
                     'title': 'Full width',
-                    'value': 'w100pc middle galleryZoom'
+                    'value': 'w100pc middle gallery_zoom'
                 }
             ],
             'title': 'Inline'
         },
         {
             'title': 'Icon',
-            'value': 'linkIcon'
+            'value': 'link_icon'
         }
     ],
     'image_description': true,
@@ -4823,31 +4853,31 @@ const TINY_SETTINGS = {
         {
             'items': [
                 {
-                    'format': 'list-decimal',
+                    'format': 'list_decimal',
                     'title': 'Decimal (default)'
                 },
                 {
-                    'format': 'list-decimal-leading-zero',
+                    'format': 'list_decimal_leading_zero',
                     'title': 'Decimal, leading zero'
                 },
                 {
-                    'format': 'list-lower-alpha',
+                    'format': 'list_lower_alpha',
                     'title': 'Lower Latin'
                 },
                 {
-                    'format': 'list-lower-greek',
+                    'format': 'list_lower_greek',
                     'title': 'Lower Greek'
                 },
                 {
-                    'format': 'list-lower-roman',
+                    'format': 'list_lower_roman',
                     'title': 'Lower Roman'
                 },
                 {
-                    'format': 'list-upper-alpha',
+                    'format': 'list_upper_alpha',
                     'title': 'Upper Latin'
                 },
                 {
-                    'format': 'list-upper-roman',
+                    'format': 'list_upper_roman',
                     'title': 'Upper Roman'
                 },
             ],
@@ -4856,23 +4886,23 @@ const TINY_SETTINGS = {
         {
             'items': [
                 {
-                    'format': 'list-circle',
+                    'format': 'list_circle',
                     'title': 'Circle'
                 },
                 {
-                    'format': 'list-disc',
+                    'format': 'list_disc',
                     'title': 'Disc (default)'
                 },
                 {
-                    'format': 'list-disclosure-closed',
+                    'format': 'list_disclosure_closed',
                     'title': 'Disclosure closed'
                 },
                 {
-                    'format': 'list-disclosure-open',
+                    'format': 'list_disclosure_open',
                     'title': 'Disclosure open'
                 },
                 {
-                    'format': 'list-square',
+                    'format': 'list_square',
                     'title': 'Square'
                 },
             ],
@@ -5017,8 +5047,8 @@ function saveTinyMCE(id, textareaOnly = false) {
 }
 function cleanGET() {
     const url = new URL(document.location.href);
-    url.searchParams.delete('cacheReset');
-    url.searchParams.delete('forceReload');
+    url.searchParams.delete('cache_reset');
+    url.searchParams.delete('force_reload');
     window.history.replaceState(document.title, document.title, url.toString());
 }
 async function urlClean(event) {
@@ -5036,7 +5066,7 @@ async function urlClean(event) {
     }));
 }
 function urlCleanString(url) {
-    const paramsToDelete = sharedWithPHP?.trackingQueryParameters || [];
+    const paramsToDelete = sharedWithPHP?.tracking_query_parameters || [];
     const urlNew = new URL(url);
     for (const param of paramsToDelete) {
         urlNew.searchParams.delete(param);
@@ -5178,7 +5208,7 @@ class BackToTop extends HTMLElement {
         }
         if (!window.location.hash.toLowerCase()
             .startsWith('#gallery=')) {
-            const headings = document.querySelectorAll('h1:not(#h1title), h2, h3, h4, h5, h6');
+            const headings = document.querySelectorAll('h1:not(#h1_title), h2, h3, h4, h5, h6');
             for (let i = 0; i <= headings.length - 1; i++) {
                 const heading = headings[i];
                 const bottom = heading.getBoundingClientRect().bottom;
@@ -5196,11 +5226,11 @@ class Gallery extends HTMLElement {
     _current = 0;
     images = [];
     isOpened = false;
-    galleryName = null;
-    galleryNameLink = null;
-    galleryLoadedImage = null;
-    galleryTotal = null;
-    galleryCurrent = null;
+    gallery_name = null;
+    gallery_name_link = null;
+    gallery_loaded_image = null;
+    gallery_total = null;
+    gallery_current = null;
     get current() {
         return this._current;
     }
@@ -5220,12 +5250,12 @@ class Gallery extends HTMLElement {
     }
     constructor() {
         super();
-        this.images = Array.from(document.querySelectorAll('.galleryZoom'));
-        this.galleryName = document.querySelector('#galleryName');
-        this.galleryNameLink = document.querySelector('#galleryNameLink');
-        this.galleryLoadedImage = document.querySelector('#galleryLoadedImage');
-        this.galleryTotal = document.querySelector('#galleryTotal');
-        this.galleryCurrent = document.querySelector('#galleryCurrent');
+        this.images = Array.from(document.querySelectorAll('.gallery_zoom'));
+        this.gallery_name = document.querySelector('#gallery_name');
+        this.gallery_name_link = document.querySelector('#gallery_name_link');
+        this.gallery_loaded_image = document.querySelector('#gallery_loaded_image');
+        this.gallery_total = document.querySelector('#gallery_total');
+        this.gallery_current = document.querySelector('#gallery_current');
         if (this.images.length > 0) {
             this.images.forEach((item, index) => {
                 item.addEventListener('click', (event) => {
@@ -5244,23 +5274,23 @@ class Gallery extends HTMLElement {
         if (link instanceof HTMLAnchorElement) {
             const image = link.querySelector('img');
             if (image instanceof HTMLImageElement) {
-                image.classList.remove('zoomedIn');
+                image.classList.remove('zoomed_in');
                 const caption = link.parentElement?.querySelector('figcaption');
                 const name = link.getAttribute('data-tooltip') ?? link.getAttribute('title') ?? image.getAttribute('alt') ?? link.href.replace(/^.*[\\/]/u, '');
-                if (this.galleryName) {
-                    this.galleryName.innerHTML = caption ? caption.innerHTML : name;
+                if (this.gallery_name) {
+                    this.gallery_name.innerHTML = caption ? caption.innerHTML : name;
                 }
-                if (this.galleryNameLink) {
-                    this.galleryNameLink.href = link.href;
+                if (this.gallery_name_link) {
+                    this.gallery_name_link.href = link.href;
                 }
-                if (this.galleryLoadedImage) {
-                    this.galleryLoadedImage.src = link.href;
+                if (this.gallery_loaded_image) {
+                    this.gallery_loaded_image.src = link.href;
                 }
-                if (this.galleryTotal) {
-                    this.galleryTotal.innerText = this.images.length.toString();
+                if (this.gallery_total) {
+                    this.gallery_total.innerText = this.images.length.toString();
                 }
-                if (this.galleryCurrent) {
-                    this.galleryCurrent.innerText = (this.current + 1).toString();
+                if (this.gallery_current) {
+                    this.gallery_current.innerText = (this.current + 1).toString();
                 }
                 if (!this.parentElement.open) {
                     this.parentElement.showModal();
@@ -5312,54 +5342,54 @@ class Gallery extends HTMLElement {
         return true;
     }
     history() {
-        const url = new URL(document.location.href);
-        const newIndex = (this.current + 1).toString();
-        const newUrl = new URL(document.location.href);
-        let newTitle;
+        const url = new URL(document.location.href, window.location.origin);
+        const new_index = (this.current + 1).toString();
+        const new_url = new URL(document.location.href, window.location.origin);
+        let new_title;
         if (this.parentElement.open) {
-            newTitle = `${document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>')}, Image ${newIndex}`;
-            newUrl.hash = `gallery=${newIndex}`;
+            new_title = `${document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>')}, Image ${new_index}`;
+            new_url.hash = `gallery=${new_index}`;
         }
         else {
-            newTitle = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
-            newUrl.hash = '';
+            new_title = document.title.replace(/(?<pageTitle>.*)(?<imagePrefix>, Image )(?<imageNumber>\d+)/ui, '$<pageTitle>');
+            new_url.hash = '';
         }
-        if (url !== new URL(newUrl)) {
-            updateHistory(newUrl.href, newTitle);
+        if (url !== new URL(new_url, window.location.origin)) {
+            updateHistory(new_url.href, new_title);
         }
     }
 }
 class GalleryImage extends HTMLElement {
     image = null;
-    zoomListener;
+    zoom_listener;
     constructor() {
         super();
-        this.image = document.querySelector('#galleryLoadedImage');
-        this.zoomListener = this.zoom.bind(this);
+        this.image = document.querySelector('#gallery_loaded_image');
+        this.zoom_listener = this.zoom.bind(this);
         if (this.image) {
             this.image.addEventListener('load', this.checkZoom.bind(this));
         }
     }
     checkZoom() {
         if (this.image) {
-            this.image.classList.remove('zoomedIn');
+            this.image.classList.remove('zoomed_in');
             if (this.image.naturalHeight <= this.image.height) {
-                this.image.removeEventListener('click', this.zoomListener);
-                this.image.classList.add('noZoom');
+                this.image.removeEventListener('click', this.zoom_listener);
+                this.image.classList.add('no_zoom');
             }
             else {
-                this.image.classList.remove('noZoom');
-                this.image.addEventListener('click', this.zoomListener);
+                this.image.classList.remove('no_zoom');
+                this.image.addEventListener('click', this.zoom_listener);
             }
         }
     }
     zoom() {
         if (this.image) {
-            if (this.image.classList.contains('zoomedIn')) {
-                this.image.classList.remove('zoomedIn');
+            if (this.image.classList.contains('zoomed_in')) {
+                this.image.classList.remove('zoomed_in');
             }
             else {
-                this.image.classList.add('zoomedIn');
+                this.image.classList.add('zoomed_in');
             }
         }
     }
@@ -5416,9 +5446,9 @@ class CarouselList extends HTMLElement {
     maxScroll = 0;
     constructor() {
         super();
-        this.list = this.querySelector('.imageCarouselList');
-        this.next = this.querySelector('.imageCarouselNext');
-        this.previous = this.querySelector('.imageCarouselPrev');
+        this.list = this.querySelector('.image_carousel_list');
+        this.next = this.querySelector('image-carousel-next');
+        this.previous = this.querySelector('image-carousel-prev');
         if (this.list && this.next && this.previous) {
             this.maxScroll = this.list.scrollWidth - this.list.offsetWidth;
             this.list.addEventListener('scroll', () => {
@@ -5437,7 +5467,7 @@ class CarouselList extends HTMLElement {
             const scrollButton = event.target;
             const img = this.list.querySelector('img');
             if (img) {
-                if (scrollButton.classList.contains('imageCarouselPrev')) {
+                if (scrollButton.nodeName === 'IMAGE-CAROUSEL-PREV') {
                     this.list.scrollLeft -= img.width;
                 }
                 else {
@@ -5599,7 +5629,7 @@ class Likedis extends HTMLElement {
 class LoginForm extends HTMLElement {
     userRegex = '^[\\p{L}\\d.!$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
     emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`\\{\\|\\}~\\-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
-    loginForm = null;
+    login_form = null;
     existUser = null;
     newUser = null;
     forget = null;
@@ -5610,8 +5640,8 @@ class LoginForm extends HTMLElement {
     username = null;
     constructor() {
         super();
-        this.loginForm = document.querySelector('#signinup');
-        if (this.loginForm) {
+        this.login_form = document.querySelector('#signinup');
+        if (this.login_form) {
             this.existUser = document.querySelector('#radio_existuser');
             this.newUser = document.querySelector('#radio_newuser');
             this.forget = document.querySelector('#radio_forget');
@@ -5620,21 +5650,21 @@ class LoginForm extends HTMLElement {
             this.button = document.querySelector('#signinup_submit');
             this.rememberme = document.querySelector('#rememberme');
             this.username = document.querySelector('#signinup_username');
-            this.loginForm.querySelectorAll('#radio_signinup input[type=radio]').forEach((item) => {
+            this.login_form.querySelectorAll('#radio_signinup input[type=radio]').forEach((item) => {
                 item.addEventListener('change', this.loginRadioCheck.bind(this));
             });
             this.loginRadioCheck();
-            submitIntercept(this.loginForm, this.singInUpSubmit.bind(this));
+            submitIntercept(this.login_form, this.singInUpSubmit.bind(this));
         }
     }
     singInUpSubmit() {
-        if (this.loginForm) {
-            const formData = new FormData(this.loginForm);
+        if (this.login_form) {
+            const formData = new FormData(this.login_form);
             if (empty(formData.get('signinup[type]'))) {
                 formData.set('signinup[type]', 'logout');
             }
             formData.set('signinup[timezone]', TIMEZONE);
-            const button = this.loginForm.querySelector('#signinup_submit');
+            const button = this.login_form.querySelector('#signinup_submit');
             buttonToggle(button);
             void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
                 const data = response;
@@ -5735,10 +5765,10 @@ class SideShow extends HTMLElement {
         super();
         this.button = this.querySelector('input');
         this.sideHide = document.querySelector('side-hide');
-        if (this.id === 'prodLink') {
+        if (this.id === 'prod_link') {
             if (this.button) {
                 this.button.addEventListener('click', () => {
-                    window.open(document.location.href.replace('local.simbiat.dev', 'www.simbiat.dev'), '_blank');
+                    window.open(encodeURI(document.location.href.replace('local.simbiat.dev', 'www.simbiat.dev')), '_blank');
                 });
             }
         }
@@ -5961,7 +5991,7 @@ class PostForm extends HTMLElement {
     constructor() {
         super();
         this.textarea = this.querySelector('textarea');
-        this.reply_to_input = this.querySelector('#replyingTo');
+        this.reply_to_input = this.querySelector('#replying_to');
         this.label = this.querySelector('.label_for_tinymce');
         if (this.textarea && !empty(this.textarea.id)) {
             loadTinyMCE(this.textarea.id, false, true);
@@ -5974,7 +6004,7 @@ class PostForm extends HTMLElement {
                 this.label.innerHTML = `Replying to post #${post_id}`;
             }
         }
-        window.location.href = '#post_form';
+        window.location.assign(encodeURI('#post_form'));
     }
 }
 class SelectCustom extends HTMLElement {
@@ -6044,14 +6074,75 @@ class SnackbarClose extends HTMLElement {
         }
     }
     close() {
-        this.snack.classList.remove('fadeIn');
-        this.snack.classList.add('fadeOut');
+        this.snack.classList.remove('fade_in');
+        this.snack.classList.add('fade_out');
         this.snack.addEventListener('animationend', () => {
             this.snack.close();
             if ((this.snackbar?.contains(this.snack)) === true) {
                 this.snackbar.removeChild(this.snack);
             }
         });
+    }
+}
+class TabMenu extends HTMLElement {
+    tabs;
+    contents;
+    wrapper = null;
+    current_tab = null;
+    constructor() {
+        super();
+        this.wrapper = this.querySelector('tab-contents');
+        this.tabs = Array.from(this.querySelectorAll('a.tab_name'));
+        this.contents = Array.from(this.querySelectorAll('tab-content'));
+        for (const tab of this.tabs) {
+            tab.addEventListener('click', (event) => {
+                this.tabSwitch(event);
+            });
+        }
+        this.updateCurrentTab();
+        if (this.wrapper?.querySelector('.active')) {
+            this.wrapper.classList.remove('hidden');
+        }
+    }
+    tabSwitch(event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const target = event.target;
+        let tab_index = 0;
+        for (const [index, tab] of this.tabs.entries()) {
+            if (tab === target) {
+                tab_index = index;
+            }
+            tab.classList.remove('active');
+            if (this.contents[index]) {
+                this.contents[index].classList.remove('active');
+            }
+        }
+        this.wrapper?.classList.add('hidden');
+        if (this.current_tab !== tab_index) {
+            target.classList.add('active');
+            if (target.href !== '' && target.href !== window.location.href) {
+                window.location.assign(encodeURI(target.href));
+                return;
+            }
+            if (this.contents[tab_index]) {
+                this.contents[tab_index].classList.add('active');
+            }
+        }
+        if (this.wrapper) {
+            this.updateCurrentTab();
+            if (this.wrapper.querySelector('.active')) {
+                this.wrapper.classList.remove('hidden');
+            }
+        }
+    }
+    updateCurrentTab() {
+        this.current_tab = null;
+        for (const [index, tab] of this.tabs.entries()) {
+            if (tab.classList.contains('active')) {
+                this.current_tab = index;
+            }
+        }
     }
 }
 class Timer extends HTMLElement {
@@ -6128,8 +6219,8 @@ class Tooltip extends HTMLElement {
         if (this.y - this.height < 0) {
             this.y = this.height;
         }
-        document.documentElement.style.setProperty('--cursorX', `${this.x}px`);
-        document.documentElement.style.setProperty('--cursorY', `${this.y}px`);
+        document.documentElement.style.setProperty('--cursor_x', `${this.x}px`);
+        document.documentElement.style.setProperty('--cursor_y', `${this.y}px`);
     }
     update(element) {
         const parent = element.parentElement;
@@ -6142,65 +6233,6 @@ class Tooltip extends HTMLElement {
             this.removeAttribute('data-tooltip');
             this.innerHTML = '';
         }
-    }
-}
-class VerticalTabs extends HTMLElement {
-    tabs;
-    contents;
-    wrapper = null;
-    currentTab = null;
-    constructor() {
-        super();
-        this.wrapper = this.querySelector('tab-contents');
-        this.tabs = Array.from(this.querySelectorAll('tab-name'));
-        this.contents = Array.from(this.querySelectorAll('tab-content'));
-        this.tabs.forEach((item) => {
-            item.addEventListener('click', (event) => {
-                this.tabSwitch(event.target);
-            });
-        });
-        this.updateCurrentTab();
-        if (this.wrapper?.querySelector('.active')) {
-            this.wrapper.classList.remove('hidden');
-        }
-    }
-    tabSwitch(target) {
-        let tabIndex = 0;
-        this.tabs.forEach((item, index) => {
-            if (item === target) {
-                tabIndex = index;
-            }
-            item.classList.remove('active');
-            if (this.contents[index]) {
-                this.contents[index].classList.remove('active');
-            }
-        });
-        this.wrapper?.classList.add('hidden');
-        if (target.hasAttribute('data-url')) {
-            this.currentTab = null;
-            window.location.href = String(target.getAttribute('data-url'));
-            return;
-        }
-        if (this.currentTab !== tabIndex) {
-            target.classList.add('active');
-            if (this.contents[tabIndex]) {
-                this.contents[tabIndex].classList.add('active');
-            }
-        }
-        if (this.wrapper) {
-            this.updateCurrentTab();
-            if (this.wrapper.querySelector('.active')) {
-                this.wrapper.classList.remove('hidden');
-            }
-        }
-    }
-    updateCurrentTab() {
-        this.currentTab = null;
-        this.tabs.forEach((item, index) => {
-            if (item.classList.contains('active')) {
-                this.currentTab = index;
-            }
-        });
     }
 }
 class WebShare extends HTMLElement {

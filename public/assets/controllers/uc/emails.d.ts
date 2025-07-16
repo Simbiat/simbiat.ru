@@ -1,5 +1,5 @@
 export declare class Emails {
-    private readonly addMailForm;
+    private readonly add_mail_form;
     private readonly submit;
     private readonly template;
     private readonly tbody;

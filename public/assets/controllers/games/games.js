@@ -47,7 +47,7 @@ export class Games {
                 canvas.classList.remove('hidden');
                 GameMaker_Init();
                 document.querySelector('#play_overlay')?.classList.add('hidden');
-                document.querySelector('#gameStartButton')?.classList.add('hidden');
+                document.querySelector('#game_start_button')?.classList.add('hidden');
             };
             tag.onerror = () => {
                 addSnackbar(`Failed to load \`${String(this.jsPath)}\` script.`, 'failure');

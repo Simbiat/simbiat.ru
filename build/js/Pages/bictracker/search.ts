@@ -4,7 +4,7 @@ export class bicRefresh
 
     public constructor()
     {
-        this.refreshButton = document.querySelector('#bicRefresh');
+        this.refreshButton = document.querySelector('#bic_refresh');
         if (this.refreshButton) {
             this.refreshButton.addEventListener('click', (event: MouseEvent) => {
                 this.refresh(event);

@@ -2,7 +2,7 @@ export class Posts
 {
     private readonly post_form: HTMLFormElement | null = null;
     private readonly deletePostButton: HTMLInputElement | null = null;
-    
+
     public constructor()
     {
         this.post_form = document.querySelector('post-form form');
@@ -18,7 +18,7 @@ export class Posts
             });
         }
     }
-    
+
     private editPost(): void
     {
         if (this.post_form) {
@@ -40,7 +40,7 @@ export class Posts
                         }
                         addSnackbar('Post updated. Reloading...', 'success');
                         //pageRefresh();
-                        window.location.href = data.location;
+                        window.location.assign(encodeURI(data.location));
                     } else {
                         if (data.location) {
                             addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
@@ -52,7 +52,7 @@ export class Posts
                 });
         }
     }
-    
+
     private deletePost(): void
     {
         if (this.deletePostButton) {
@@ -65,7 +65,7 @@ export class Posts
                             const data = response as ajaxJSONResponse;
                             if (data.data === true) {
                                 addSnackbar('Post removed. Redirecting to thread...', 'success');
-                                window.location.href = data.location;
+                                window.location.assign(encodeURI(data.location));
                             } else {
                                 addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                             }

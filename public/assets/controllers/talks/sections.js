@@ -1,23 +1,23 @@
 export class Sections {
-    addSectionForm = null;
+    add_section_form = null;
     add_thread_form = null;
-    editSectionForm = null;
+    edit_section_form = null;
     sectionsList = null;
     deleteSectionButton = null;
     constructor() {
         this.sectionsList = document.querySelector('#sections_list');
-        this.addSectionForm = document.querySelector('#addSectionForm');
+        this.add_section_form = document.querySelector('#add_section_form');
         this.add_thread_form = document.querySelector('#add_thread_form');
-        this.editSectionForm = document.querySelector('#editSectionForm');
+        this.edit_section_form = document.querySelector('#edit_section_form');
         this.deleteSectionButton = document.querySelector('#delete_section');
-        if (this.addSectionForm) {
-            submitIntercept(this.addSectionForm, this.addSection.bind(this));
+        if (this.add_section_form) {
+            submitIntercept(this.add_section_form, this.addSection.bind(this));
         }
         if (this.add_thread_form) {
             submitIntercept(this.add_thread_form, this.addThread.bind(this));
         }
-        if (this.editSectionForm) {
-            submitIntercept(this.editSectionForm, this.editSection.bind(this));
+        if (this.edit_section_form) {
+            submitIntercept(this.edit_section_form, this.editSection.bind(this));
         }
         if (this.deleteSectionButton) {
             this.deleteSectionButton.addEventListener('click', () => {
@@ -181,17 +181,17 @@ export class Sections {
         }
     }
     addSection() {
-        if (this.addSectionForm) {
-            const button = this.addSectionForm.querySelector('input[type=submit]');
-            const formData = new FormData(this.addSectionForm);
-            const icon = this.addSectionForm.querySelector('input[type=file]');
+        if (this.add_section_form) {
+            const button = this.add_section_form.querySelector('input[type=submit]');
+            const formData = new FormData(this.add_section_form);
+            const icon = this.add_section_form.querySelector('input[type=file]');
             if (icon?.files?.[0]) {
-                formData.append('newSection[icon]', 'true');
+                formData.append('new_section[icon]', 'true');
             }
             else {
-                formData.append('newSection[icon]', 'false');
+                formData.append('new_section[icon]', 'false');
             }
-            formData.append('newSection[timezone]', TIMEZONE);
+            formData.append('new_section[timezone]', TIMEZONE);
             buttonToggle(button);
             ajax(`${location.protocol}//${location.host}/api/talks/sections`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
@@ -213,18 +213,18 @@ export class Sections {
         }
     }
     editSection() {
-        if (this.editSectionForm) {
-            const button = this.editSectionForm.querySelector('input[type=submit]');
-            const formData = new FormData(this.editSectionForm);
-            const icon = this.editSectionForm.querySelector('input[type=file]');
+        if (this.edit_section_form) {
+            const button = this.edit_section_form.querySelector('input[type=submit]');
+            const formData = new FormData(this.edit_section_form);
+            const icon = this.edit_section_form.querySelector('input[type=file]');
             if (icon?.files?.[0]) {
-                formData.append('curSection[icon]', 'true');
+                formData.append('cur_section[icon]', 'true');
             }
             else {
-                formData.append('curSection[icon]', 'false');
+                formData.append('cur_section[icon]', 'false');
             }
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('curSection[section_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/sections/${String(formData.get('cur_section[section_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -254,7 +254,7 @@ export class Sections {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Section removed. Redirecting to parent...', 'success');
-                            window.location.href = data.location;
+                            window.location.assign(encodeURI(data.location));
                         }
                         else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
@@ -291,7 +291,7 @@ export class Sections {
                         }
                     }
                     addSnackbar('Thread created. Reloading...', 'success');
-                    window.location.href = data.location;
+                    window.location.assign(encodeURI(data.location));
                 }
                 else {
                     if (data.location) {

@@ -29,7 +29,7 @@ export class Posts {
                         }
                     }
                     addSnackbar('Post updated. Reloading...', 'success');
-                    window.location.href = data.location;
+                    window.location.assign(encodeURI(data.location));
                 }
                 else {
                     if (data.location) {
@@ -54,7 +54,7 @@ export class Posts {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Post removed. Redirecting to thread...', 'success');
-                            window.location.href = data.location;
+                            window.location.assign(encodeURI(data.location));
                         }
                         else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);

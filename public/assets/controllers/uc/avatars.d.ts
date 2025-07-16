@@ -1,7 +1,7 @@
 export declare class EditAvatars {
     private readonly form;
-    private readonly currentAvatar;
-    private readonly sidebarAvatar;
+    private readonly current_avatar;
+    private readonly sidebar_avatar;
     private readonly avatarFile;
     private readonly avatarsList;
     private readonly template;

@@ -1,13 +1,13 @@
 export class EditAvatars {
     form = null;
-    currentAvatar = null;
-    sidebarAvatar = null;
+    current_avatar = null;
+    sidebar_avatar = null;
     avatarFile = null;
     avatarsList = null;
     template = null;
     constructor() {
-        this.currentAvatar = document.querySelector('#currentAvatar');
-        this.sidebarAvatar = document.querySelector('#sidebarAvatar');
+        this.current_avatar = document.querySelector('#current_avatar');
+        this.sidebar_avatar = document.querySelector('#sidebar_avatar');
         this.avatarFile = document.querySelector('#profile_avatar_file');
         this.form = document.querySelector('#profile_avatar');
         this.avatarsList = document.querySelector('#avatars_list');
@@ -94,11 +94,11 @@ export class EditAvatars {
                     close.disabled = false;
                 }
             });
-            if (this.currentAvatar) {
-                this.currentAvatar.src = avatar;
+            if (this.current_avatar) {
+                this.current_avatar.src = avatar;
             }
-            if (this.sidebarAvatar) {
-                this.sidebarAvatar.src = avatar;
+            if (this.sidebar_avatar) {
+                this.sidebar_avatar.src = avatar;
             }
         }
     }

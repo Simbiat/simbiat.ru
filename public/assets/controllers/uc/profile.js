@@ -12,7 +12,7 @@ export class EditProfile {
     constructor() {
         this.aboutValue = document.querySelector('#about_value');
         this.usernameForm = document.querySelector('#profile_username');
-        this.autoTime = document.querySelector('#lastAutoSave');
+        this.autoTime = document.querySelector('#last_auto_save');
         if (this.autoTime) {
             this.timeTag = this.autoTime.querySelector('time');
         }

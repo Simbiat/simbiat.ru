@@ -129,7 +129,7 @@ function empty(variable: unknown): boolean
 function pageRefresh(): void
 {
     const url = new URL(document.location.href);
-    url.searchParams.set('forceReload', String(Date.now()));
+    url.searchParams.set('force_reload', String(Date.now()));
     window.location.replace(url.toString());
 }
 

@@ -1,20 +1,20 @@
 export class Threads {
     add_post_form = null;
-    editThreadForm = null;
+    edit_thread_form = null;
     closeThreadButton = null;
     deleteThreadButton = null;
     post_form = null;
     constructor() {
         this.add_post_form = document.querySelector('#post_form');
-        this.editThreadForm = document.querySelector('#editThreadForm');
+        this.edit_thread_form = document.querySelector('#edit_thread_form');
         this.closeThreadButton = document.querySelector('#close_thread');
         this.deleteThreadButton = document.querySelector('#delete_thread');
         this.post_form = document.querySelector('post-form');
         if (this.add_post_form) {
             submitIntercept(this.add_post_form, this.addPost.bind(this));
         }
-        if (this.editThreadForm) {
-            submitIntercept(this.editThreadForm, this.editThread.bind(this));
+        if (this.edit_thread_form) {
+            submitIntercept(this.edit_thread_form, this.editThread.bind(this));
         }
         if (this.closeThreadButton) {
             this.closeThreadButton.addEventListener('click', () => {
@@ -59,7 +59,7 @@ export class Threads {
                         }
                     }
                     addSnackbar('Post created. Reloading...', 'success');
-                    window.location.href = data.location;
+                    window.location.assign(encodeURI(data.location));
                 }
                 else {
                     if (data.location) {
@@ -84,7 +84,7 @@ export class Threads {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Thread removed. Redirecting to parent...', 'success');
-                            window.location.href = data.location;
+                            window.location.assign(encodeURI(data.location));
                         }
                         else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
@@ -126,10 +126,10 @@ export class Threads {
         }
     }
     editThread() {
-        if (this.editThreadForm) {
-            const button = this.editThreadForm.querySelector('input[type=submit]');
-            const formData = new FormData(this.editThreadForm);
-            const og_image = this.editThreadForm.querySelector('input[type=file]');
+        if (this.edit_thread_form) {
+            const button = this.edit_thread_form.querySelector('input[type=submit]');
+            const formData = new FormData(this.edit_thread_form);
+            const og_image = this.edit_thread_form.querySelector('input[type=file]');
             if (og_image?.files?.[0]) {
                 formData.append('current_thread[og_image]', 'true');
             }

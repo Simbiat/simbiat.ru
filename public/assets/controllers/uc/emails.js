@@ -1,15 +1,15 @@
 export class Emails {
-    addMailForm = null;
+    add_mail_form = null;
     submit = null;
     template = null;
     tbody = null;
     constructor() {
-        this.addMailForm = document.querySelector('#addMailForm');
+        this.add_mail_form = document.querySelector('#add_mail_form');
         this.template = document.querySelector('#email_row');
-        this.tbody = document.querySelector('#emailsList tbody');
-        if (this.addMailForm) {
-            this.submit = this.addMailForm.querySelector('#addMail_submit');
-            submitIntercept(this.addMailForm, this.add.bind(this));
+        this.tbody = document.querySelector('#emails_list tbody');
+        if (this.add_mail_form) {
+            this.submit = this.add_mail_form.querySelector('#add_mail_submit');
+            submitIntercept(this.add_mail_form, this.add.bind(this));
             document.querySelectorAll('.mail_activation').forEach((item) => {
                 item.addEventListener('click', (event) => {
                     Emails.activate(event.target);
@@ -28,8 +28,8 @@ export class Emails {
         }
     }
     add() {
-        if (this.addMailForm && this.submit) {
-            const formData = new FormData(this.addMailForm);
+        if (this.add_mail_form && this.submit) {
+            const formData = new FormData(this.add_mail_form);
             if (empty(formData.get('email'))) {
                 addSnackbar('Please, enter a valid email address', 'failure');
                 return;
@@ -42,8 +42,8 @@ export class Emails {
                 if (data.data === true) {
                     this.addRow(email);
                     Emails.blockDelete();
-                    if (this.addMailForm) {
-                        this.addMailForm.reset();
+                    if (this.add_mail_form) {
+                        this.add_mail_form.reset();
                     }
                     addSnackbar(`${email} added`, 'success');
                 }

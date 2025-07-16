@@ -1,7 +1,7 @@
 export declare class Sections {
-    private readonly addSectionForm;
+    private readonly add_section_form;
     private readonly add_thread_form;
-    private readonly editSectionForm;
+    private readonly edit_section_form;
     private readonly sectionsList;
     private readonly deleteSectionButton;
     constructor();

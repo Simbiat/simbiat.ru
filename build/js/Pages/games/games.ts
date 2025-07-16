@@ -56,7 +56,7 @@ export class Games {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 GameMaker_Init();
                 document.querySelector('#play_overlay')?.classList.add('hidden');
-                document.querySelector('#gameStartButton')?.classList.add('hidden');
+                document.querySelector('#game_start_button')?.classList.add('hidden');
             };
             tag.onerror = (): void => {
                 addSnackbar(`Failed to load \`${String(this.jsPath)}\` script.`, 'failure');

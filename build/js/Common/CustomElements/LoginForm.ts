@@ -4,7 +4,7 @@ class LoginForm extends HTMLElement
     private readonly userRegex = '^[\\p{L}\\d.!$%&\'*+\\\\/=?^_`\\{\\|\\}~\\- ]{1,64}$';
     //Regex for proper email. This is NOT JS Regex, thus it has doubled slashes.
     private readonly emailRegex = '[\\p{L}\\d.!#$%&\'*+\\/=?^_`\\{\\|\\}~\\-]+@[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?(?:\\.[a-zA-Z\\d](?:[a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])?)*';
-    private readonly loginForm: HTMLFormElement | null = null;
+    private readonly login_form: HTMLFormElement | null = null;
     //Sub-elements
     private readonly existUser: HTMLInputElement | null = null;
     private readonly newUser: HTMLInputElement | null = null;
@@ -18,8 +18,8 @@ class LoginForm extends HTMLElement
     public constructor() {
         super();
         //Login form
-        this.loginForm = document.querySelector('#signinup');
-        if (this.loginForm) {
+        this.login_form = document.querySelector('#signinup');
+        if (this.login_form) {
             //Assign actual elements to variables
             this.existUser = document.querySelector('#radio_existuser');
             this.newUser = document.querySelector('#radio_newuser');
@@ -29,40 +29,40 @@ class LoginForm extends HTMLElement
             this.button = document.querySelector('#signinup_submit');
             this.rememberme = document.querySelector('#rememberme');
             this.username = document.querySelector('#signinup_username');
-            //Register function for radio buttons toggling on login form
-            this.loginForm.querySelectorAll('#radio_signinup input[type=radio]').forEach((item) => {
-                item.addEventListener('change', this.loginRadioCheck.bind(this));
-            });
+            //Register function for radio buttons toggling on the login form
+            this.login_form.querySelectorAll('#radio_signinup input[type=radio]').forEach((item) => {
+                    item.addEventListener('change', this.loginRadioCheck.bind(this));
+                });
             //Force loginRadioCheck for consistency
             this.loginRadioCheck();
-            submitIntercept(this.loginForm, this.singInUpSubmit.bind(this));
+            submitIntercept(this.login_form, this.singInUpSubmit.bind(this));
         }
     }
     
     private singInUpSubmit(): void
     {
-        if (this.loginForm) {
+        if (this.login_form) {
             //Get form data
-            const formData = new FormData(this.loginForm);
+            const formData = new FormData(this.login_form);
             if (empty(formData.get('signinup[type]'))) {
                 formData.set('signinup[type]', 'logout');
             }
             formData.set('signinup[timezone]', TIMEZONE);
-            const button = this.loginForm.querySelector('#signinup_submit');
+            const button = this.login_form.querySelector('#signinup_submit');
             buttonToggle(button as HTMLInputElement);
             void ajax(`${location.protocol}//${location.host}/api/uc/${String(formData.get('signinup[type]'))}`, formData, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
-                const data = response as ajaxJSONResponse;
-                if (data.data === true) {
-                    if (formData.get('signinup[type]') === 'remind') {
-                        addSnackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+                    const data = response as ajaxJSONResponse;
+                    if (data.data === true) {
+                        if (formData.get('signinup[type]') === 'remind') {
+                            addSnackbar('If respective account is registered an email has been sent with password reset link.', 'success');
+                        } else {
+                            pageRefresh();
+                        }
                     } else {
-                        pageRefresh();
+                        addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
-                } else {
-                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
-                }
-                buttonToggle(button as HTMLInputElement);
-            });
+                    buttonToggle(button as HTMLInputElement);
+                });
         }
     }
     

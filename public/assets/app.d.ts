@@ -110,62 +110,62 @@ declare const TINY_SETTINGS: {
             inline: string;
             remove: string;
         };
-        'list-circle': {
+        list_circle: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-decimal': {
+        list_decimal: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-decimal-leading-zero': {
+        list_decimal_leading_zero: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-disc': {
+        list_disc: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-disclosure-closed': {
+        list_disclosure_closed: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-disclosure-open': {
+        list_disclosure_open: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-lower-alpha': {
+        list_lower_alpha: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-lower-greek': {
+        list_lower_greek: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-lower-roman': {
+        list_lower_roman: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-square': {
+        list_square: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-upper-alpha': {
+        list_upper_alpha: {
             classes: string;
             remove: string;
             selector: string;
         };
-        'list-upper-roman': {
+        list_upper_roman: {
             classes: string;
             remove: string;
             selector: string;
@@ -328,11 +328,11 @@ declare class Gallery extends HTMLElement {
     private _current;
     images: HTMLElement[];
     isOpened: boolean;
-    private readonly galleryName;
-    private readonly galleryNameLink;
-    private readonly galleryLoadedImage;
-    private readonly galleryTotal;
-    private readonly galleryCurrent;
+    private readonly gallery_name;
+    private readonly gallery_name_link;
+    private readonly gallery_loaded_image;
+    private readonly gallery_total;
+    private readonly gallery_current;
     get current(): number;
     set current(value: number);
     constructor();
@@ -345,7 +345,7 @@ declare class Gallery extends HTMLElement {
 }
 declare class GalleryImage extends HTMLElement {
     private readonly image;
-    private readonly zoomListener;
+    private readonly zoom_listener;
     constructor();
     private checkZoom;
     private zoom;
@@ -391,7 +391,7 @@ declare class Likedis extends HTMLElement {
 declare class LoginForm extends HTMLElement {
     private readonly userRegex;
     private readonly emailRegex;
-    private readonly loginForm;
+    private readonly login_form;
     private readonly existUser;
     private readonly newUser;
     private readonly forget;
@@ -469,6 +469,15 @@ declare class SnackbarClose extends HTMLElement {
     constructor();
     private close;
 }
+declare class TabMenu extends HTMLElement {
+    private readonly tabs;
+    private readonly contents;
+    private readonly wrapper;
+    private current_tab;
+    constructor();
+    private tabSwitch;
+    private updateCurrentTab;
+}
 declare class Timer extends HTMLElement {
     private readonly interval;
     constructor();
@@ -483,15 +492,6 @@ declare class Tooltip extends HTMLElement {
     private onFocus;
     private tooltipCursor;
     private update;
-}
-declare class VerticalTabs extends HTMLElement {
-    private readonly tabs;
-    private readonly contents;
-    private readonly wrapper;
-    private currentTab;
-    constructor();
-    private tabSwitch;
-    private updateCurrentTab;
 }
 declare class WebShare extends HTMLElement {
     private readonly shareData;

@@ -1,23 +1,23 @@
 export class Threads
 {
     private readonly add_post_form: HTMLFormElement | null = null;
-    private readonly editThreadForm: HTMLFormElement | null = null;
+    private readonly edit_thread_form: HTMLFormElement | null = null;
     private readonly closeThreadButton: HTMLInputElement | null = null;
     private readonly deleteThreadButton: HTMLInputElement | null = null;
     private readonly post_form: PostForm | null = null;
-    
+
     public constructor()
     {
         this.add_post_form = document.querySelector('#post_form');
-        this.editThreadForm = document.querySelector('#editThreadForm');
+        this.edit_thread_form = document.querySelector('#edit_thread_form');
         this.closeThreadButton = document.querySelector('#close_thread');
         this.deleteThreadButton = document.querySelector('#delete_thread');
         this.post_form = document.querySelector('post-form');
         if (this.add_post_form) {
             submitIntercept(this.add_post_form, this.addPost.bind(this));
         }
-        if (this.editThreadForm) {
-            submitIntercept(this.editThreadForm, this.editThread.bind(this));
+        if (this.edit_thread_form) {
+            submitIntercept(this.edit_thread_form, this.editThread.bind(this));
         }
         //Listener for closure
         if (this.closeThreadButton) {
@@ -40,7 +40,7 @@ export class Threads
                     });
                 });
     }
-    
+
     private replyTo(button: HTMLInputElement): void
     {
         //Get the post's ID
@@ -49,7 +49,7 @@ export class Threads
             this.post_form.replyTo(reply_to);
         }
     }
-    
+
     private addPost(): void
     {
         if (this.add_post_form) {
@@ -76,7 +76,7 @@ export class Threads
                             }
                         }
                         addSnackbar('Post created. Reloading...', 'success');
-                        window.location.href = data.location;
+                        window.location.assign(encodeURI(data.location));
                     } else {
                         if (data.location) {
                             addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
@@ -88,7 +88,7 @@ export class Threads
                 });
         }
     }
-    
+
     private deleteThread(): void
     {
         if (this.deleteThreadButton) {
@@ -101,7 +101,7 @@ export class Threads
                             const data = response as ajaxJSONResponse;
                             if (data.data === true) {
                                 addSnackbar('Thread removed. Redirecting to parent...', 'success');
-                                window.location.href = data.location;
+                                window.location.assign(encodeURI(data.location));
                             } else {
                                 addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                             }
@@ -113,7 +113,7 @@ export class Threads
             }
         }
     }
-    
+
     private closeThread(): void
     {
         if (this.closeThreadButton) {
@@ -141,16 +141,16 @@ export class Threads
             }
         }
     }
-    
+
     private editThread(): void
     {
-        if (this.editThreadForm) {
+        if (this.edit_thread_form) {
             //Get submit button
-            const button = this.editThreadForm.querySelector('input[type=submit]');
+            const button = this.edit_thread_form.querySelector('input[type=submit]');
             //Get form data
-            const formData = new FormData(this.editThreadForm);
+            const formData = new FormData(this.edit_thread_form);
             //Check if custom icon is being attached
-            const og_image: HTMLInputElement | null = this.editThreadForm.querySelector('input[type=file]');
+            const og_image: HTMLInputElement | null = this.edit_thread_form.querySelector('input[type=file]');
             if (og_image?.files?.[0]) {
                 formData.append('current_thread[og_image]', 'true');
             } else {

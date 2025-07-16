@@ -1,18 +1,18 @@
 export class Emails
 {
-    private readonly addMailForm: HTMLFormElement | null = null;
+    private readonly add_mail_form: HTMLFormElement | null = null;
     private readonly submit: HTMLInputElement | null = null;
     private readonly template: HTMLTemplateElement | null = null;
     private readonly tbody: HTMLTableElement | null = null;
 
     public constructor()
     {
-        this.addMailForm = document.querySelector('#addMailForm');
+        this.add_mail_form = document.querySelector('#add_mail_form');
         this.template = document.querySelector('#email_row');
-        this.tbody = document.querySelector('#emailsList tbody');
-        if (this.addMailForm) {
-            this.submit = this.addMailForm.querySelector('#addMail_submit');
-            submitIntercept(this.addMailForm, this.add.bind(this));
+        this.tbody = document.querySelector('#emails_list tbody');
+        if (this.add_mail_form) {
+            this.submit = this.add_mail_form.querySelector('#add_mail_submit');
+            submitIntercept(this.add_mail_form, this.add.bind(this));
             //Listener for mail activation buttons
             document.querySelectorAll('.mail_activation').forEach((item) => {
                 item.addEventListener('click', (event: MouseEvent) => {
@@ -37,9 +37,9 @@ export class Emails
     
     private add(): void
     {
-        if (this.addMailForm && this.submit) {
+        if (this.add_mail_form && this.submit) {
             //Get form data
-            const formData = new FormData(this.addMailForm);
+            const formData = new FormData(this.add_mail_form);
             if (empty(formData.get('email'))) {
                 addSnackbar('Please, enter a valid email address', 'failure');
                 return;
@@ -54,8 +54,8 @@ export class Emails
                         this.addRow(email);
                         //Refresh delete buttons' status
                         Emails.blockDelete();
-                        if (this.addMailForm) {
-                            this.addMailForm.reset();
+                        if (this.add_mail_form) {
+                            this.add_mail_form.reset();
                         }
                         addSnackbar(`${email} added`, 'success');
                     } else {

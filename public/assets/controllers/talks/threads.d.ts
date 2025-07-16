@@ -1,6 +1,6 @@
 export declare class Threads {
     private readonly add_post_form;
-    private readonly editThreadForm;
+    private readonly edit_thread_form;
     private readonly closeThreadButton;
     private readonly deleteThreadButton;
     private readonly post_form;

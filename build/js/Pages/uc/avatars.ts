@@ -1,16 +1,16 @@
 export class EditAvatars
 {
     private readonly form: HTMLFormElement | null = null;
-    private readonly currentAvatar: HTMLImageElement | null = null;
-    private readonly sidebarAvatar: HTMLImageElement | null = null;
+    private readonly current_avatar: HTMLImageElement | null = null;
+    private readonly sidebar_avatar: HTMLImageElement | null = null;
     private readonly avatarFile: HTMLInputElement | null = null;
     private readonly avatarsList: HTMLUListElement | null = null;
     private readonly template: HTMLTemplateElement | null = null;
     
     public constructor()
     {
-        this.currentAvatar = document.querySelector('#currentAvatar');
-        this.sidebarAvatar = document.querySelector('#sidebarAvatar');
+        this.current_avatar = document.querySelector('#current_avatar');
+        this.sidebar_avatar = document.querySelector('#sidebar_avatar');
         this.avatarFile = document.querySelector('#profile_avatar_file');
         this.form = document.querySelector('#profile_avatar');
         this.avatarsList = document.querySelector('#avatars_list');
@@ -115,11 +115,11 @@ export class EditAvatars
                         (close as HTMLInputElement).disabled = false;
                     }
                 });
-            if (this.currentAvatar) {
-                this.currentAvatar.src = avatar;
+            if (this.current_avatar) {
+                this.current_avatar.src = avatar;
             }
-            if (this.sidebarAvatar) {
-                this.sidebarAvatar.src = avatar;
+            if (this.sidebar_avatar) {
+                this.sidebar_avatar.src = avatar;
             }
         }
     }

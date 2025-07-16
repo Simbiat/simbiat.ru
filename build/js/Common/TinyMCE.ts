@@ -1,8 +1,8 @@
 const CUSTOM_COLOR_MAP: Record<string, string> = {
     '#17141F': 'body',
-    '#19424D': 'dark-border',
+    '#19424D': 'dark_border',
     '#231F2E': 'block',
-    '#266373': 'light-border',
+    '#266373': 'light_border',
     '#2E293D': 'article',
     '#808080': 'disabled',
     '#8AE59C': 'success',
@@ -40,22 +40,22 @@ const TINY_SETTINGS = {
     'fontsize_formats': '',
     'formats': {
         'aligncenter': {
-            'classes': 'tiny-align-center',
+            'classes': 'tiny_align_center',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignjustify': {
-            'classes': 'tiny-align-justify',
+            'classes': 'tiny_align_justify',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignleft': {
-            'classes': 'tiny-align-left',
+            'classes': 'tiny_align_left',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
         'alignright': {
-            'classes': 'tiny-align-right',
+            'classes': 'tiny_align_right',
             'remove': 'none',
             'selector': 'strong,em,sub,sup,s,a,time,p,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img,audio,video,blockquote',
         },
@@ -64,7 +64,7 @@ const TINY_SETTINGS = {
                 // @ts-expect-error: I do not remember where I've taken this code example and what type `value` is supposed to be
                 'class': (value): string => {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    return `tiny-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
+                    return `tiny_color_${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
@@ -75,89 +75,89 @@ const TINY_SETTINGS = {
                 // @ts-expect-error: I do not remember where I've taken this code example and what type `value` is supposed to be
                 'class': (value): string => {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    return `tiny-bg-color-${String(CUSTOM_COLOR_MAP[value.value])}`;
+                    return `tiny_bg_color_${String(CUSTOM_COLOR_MAP[value.value])}`;
                 },
             },
             'inline': 'span',
             'remove': 'none',
         },
-        'list-circle': {
-            'classes': 'tiny-list-circle',
+        'list_circle': {
+            'classes': 'tiny_list_circle',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-decimal': {
-            'classes': 'tiny-list-decimal',
+        'list_decimal': {
+            'classes': 'tiny_list_decimal',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-decimal-leading-zero': {
-            'classes': 'tiny-list-decimal-leading-zero',
+        'list_decimal_leading_zero': {
+            'classes': 'tiny_list_decimal_leading_zero',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-disc': {
-            'classes': 'tiny-list-disc',
+        'list_disc': {
+            'classes': 'tiny_list_disc',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-disclosure-closed': {
-            'classes': 'tiny-list-disclosure-closed',
+        'list_disclosure_closed': {
+            'classes': 'tiny_list_disclosure_closed',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-disclosure-open': {
-            'classes': 'tiny-list-disclosure-open',
+        'list_disclosure_open': {
+            'classes': 'iny_list_disclosure_open',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-lower-alpha': {
-            'classes': 'tiny-list-lower-alpha',
+        'list_lower_alpha': {
+            'classes': 'tiny_list_lower_alpha',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-lower-greek': {
-            'classes': 'tiny-list-lower-greek',
+        'list_lower_greek': {
+            'classes': 'tiny_list_lower_greek',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-lower-roman': {
-            'classes': 'tiny-list-lower-roman',
+        'list_lower_roman': {
+            'classes': 'tiny_list_lower_roman',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-square': {
-            'classes': 'tiny-list-square',
+        'list_square': {
+            'classes': 'tiny_list_square',
             'remove': 'none',
             'selector': 'ul,ul>li'
         },
-        'list-upper-alpha': {
-            'classes': 'tiny-list-upper-alpha',
+        'list_upper_alpha': {
+            'classes': 'tiny_list_upper_alpha',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
-        'list-upper-roman': {
-            'classes': 'tiny-list-upper-roman',
+        'list_upper_roman': {
+            'classes': 'tiny_list_upper_roman',
             'remove': 'none',
             'selector': 'ol,ol>li'
         },
         'underline': {
-            'classes': 'tiny-underline',
+            'classes': 'tiny_underline',
             'inline': 'span',
             'remove': 'none',
         },
         'valignbottom': {
-            'classes': 'tiny-valign-bottom',
+            'classes': 'tiny_valign_bottom',
             'remove': 'none',
             'selector': 'td,th,table',
         },
         'valignmiddle': {
-            'classes': 'tiny-valign-middle',
+            'classes': 'tiny_valign_middle',
             'remove': 'none',
             'selector': 'td,th,table',
         },
         'valigntop': {
-            'classes': 'tiny-valign-top',
+            'classes': 'tiny_valign_top',
             'remove': 'none',
             'selector': 'td,th,table',
         },
@@ -168,25 +168,25 @@ const TINY_SETTINGS = {
     'image_class_list': [
         {
             'title': 'Default',
-            'value': 'w50pc middle block galleryZoom'
+            'value': 'w50pc middle block gallery_zoom'
         },
         {
             'menu': [
                 {
                     'title': 'Quarter width',
-                    'value': 'w25pc middle block galleryZoom'
+                    'value': 'w25pc middle block gallery_zoom'
                 },
                 {
                     'title': 'Half width',
-                    'value': 'w50pc middle block galleryZoom'
+                    'value': 'w50pc middle block gallery_zoom'
                 },
                 {
                     'title': '3 quarters width',
-                    'value': 'w75pc middle block galleryZoom'
+                    'value': 'w75pc middle block gallery_zoom'
                 },
                 {
                     'title': 'Full width',
-                    'value': 'w100pc middle block galleryZoom'
+                    'value': 'w100pc middle block gallery_zoom'
                 }
             ],
             'title': 'Block'
@@ -195,26 +195,26 @@ const TINY_SETTINGS = {
             'menu': [
                 {
                     'title': 'Quarter width',
-                    'value': 'w25pc middle galleryZoom'
+                    'value': 'w25pc middle gallery_zoom'
                 },
                 {
                     'title': 'Half width',
-                    'value': 'w50pc middle galleryZoom'
+                    'value': 'w50pc middle gallery_zoom'
                 },
                 {
                     'title': '3 quarters width',
-                    'value': 'w75pc middle galleryZoom'
+                    'value': 'w75pc middle gallery_zoom'
                 },
                 {
                     'title': 'Full width',
-                    'value': 'w100pc middle galleryZoom'
+                    'value': 'w100pc middle gallery_zoom'
                 }
             ],
             'title': 'Inline'
         },
         {
             'title': 'Icon',
-            'value': 'linkIcon'
+            'value': 'link_icon'
         }
     ],
     'image_description': true,
@@ -297,31 +297,31 @@ const TINY_SETTINGS = {
         {
             'items': [
                 {
-                    'format': 'list-decimal',
+                    'format': 'list_decimal',
                     'title': 'Decimal (default)'
                 },
                 {
-                    'format': 'list-decimal-leading-zero',
+                    'format': 'list_decimal_leading_zero',
                     'title': 'Decimal, leading zero'
                 },
                 {
-                    'format': 'list-lower-alpha',
+                    'format': 'list_lower_alpha',
                     'title': 'Lower Latin'
                 },
                 {
-                    'format': 'list-lower-greek',
+                    'format': 'list_lower_greek',
                     'title': 'Lower Greek'
                 },
                 {
-                    'format': 'list-lower-roman',
+                    'format': 'list_lower_roman',
                     'title': 'Lower Roman'
                 },
                 {
-                    'format': 'list-upper-alpha',
+                    'format': 'list_upper_alpha',
                     'title': 'Upper Latin'
                 },
                 {
-                    'format': 'list-upper-roman',
+                    'format': 'list_upper_roman',
                     'title': 'Upper Roman'
                 },
             ],
@@ -330,23 +330,23 @@ const TINY_SETTINGS = {
         {
             'items': [
                 {
-                    'format': 'list-circle',
+                    'format': 'list_circle',
                     'title': 'Circle'
                 },
                 {
-                    'format': 'list-disc',
+                    'format': 'list_disc',
                     'title': 'Disc (default)'
                 },
                 {
-                    'format': 'list-disclosure-closed',
+                    'format': 'list_disclosure_closed',
                     'title': 'Disclosure closed'
                 },
                 {
-                    'format': 'list-disclosure-open',
+                    'format': 'list_disclosure_open',
                     'title': 'Disclosure open'
                 },
                 {
-                    'format': 'list-square',
+                    'format': 'list_square',
                     'title': 'Square'
                 },
             ],
@@ -451,7 +451,6 @@ function loadTinyMCE(id: string, noMedia = true, noRestoreOnEmpty = false): void
             // As such I am suppressing a bunch of linters' errors here
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
             void tinymce.init(settings)
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                         .then(() => {
                             // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
                             // As such I am suppressing a bunch of linters' errors here
