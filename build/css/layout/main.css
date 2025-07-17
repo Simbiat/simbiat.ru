@@ -1,4 +1,5 @@
-main {
+main,
+#main {
     border-radius: var(--border_radius);
     flex: 1;
     inline-size: 100vi;

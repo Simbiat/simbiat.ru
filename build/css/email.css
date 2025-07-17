@@ -1,0 +1,47 @@
+/* Ordering is for logical purposes mostly, essentially for easier understanding of content flow */
+/* Typography should go first, since variables (in root) rely on it */
+@import url('./base/typography.css');
+/* Root should go second, since other elements rely on variables in it and inherit styling */
+@import url('./base/root.css');
+/* HTML and Body go next, since other elements will inherit their styling */
+@import url('./base/html.css');
+@import url('./base/body.css');
+/* Pseudo-elements and ARIA attributes can be part of any element, so they go next */
+@import url('./base/pseudo.css');
+@import url('./base/aria.css');
+/* Complex native HTML elements that will store other types of elements */
+@import url('./base/table.css');
+@import url('./base/lists.css');
+/* Order of the rest native HTML elements does not matter, especially since this is mostly for normalization */
+@import url('./base/code.css');
+@import url('./base/composition.css');
+@import url('./base/fieldset.css');
+@import url('./base/headings.css');
+@import url('./base/kbd.css');
+@import url('./base/media.css');
+@import url('./base/meter.css');
+@import url('./base/progress.css');
+@import url('./base/quotes.css');
+@import url('./base/scrollbar.css');
+@import url('./base/styling.css');
+/* Styling of the main site layout */
+@import url('./layout/footer.css');
+@import url('./layout/header.css');
+@import url('./layout/main.css');
+/* Styling of various native HTML elements, that are treated as components */
+@import url('./components/native/a.css');
+@import url('./components/native/button.css');
+@import url('./components/native/details.css');
+@import url('./components/native/text.css');
+/* Utility classes and shared styling */
+@import url('./utilities/assorted.css');
+@import url('./utilities/colors.css');
+@import url('./utilities/displays.css');
+@import url('./utilities/emojis.css');
+@import url('./utilities/filters.css');
+@import url('./utilities/margins.css');
+@import url('./utilities/widths.css');
+/* Styling of TinyMCE elements */
+@import url('./tinymce/formats.css');
+@import url('./tinymce/ui.css');
+@import url('./tinymce/blocks.css');

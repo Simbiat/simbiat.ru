@@ -89,17 +89,17 @@ abstract class Page
     public static function headers(): void
     {
         #Send headers
-        if (!headers_sent()) {
-            header('X-Dns-Prefetch-Control: off');
-            header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
-            header('Allow: GET, HEAD, OPTIONS');
-            header('Content-Type: text/html; charset=utf-8');
-            header('SourceMap: /assets/'.filemtime(Config::$js_dir.'/app.js').'.js.map', false);
-            header('SourceMap: /assets/styles/'.filemtime(Config::$css_dir.'/app.css').'.css.map', false);
-            header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
-            header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
-            header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
-            header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
+        if (!\headers_sent()) {
+            \header('X-Dns-Prefetch-Control: off');
+            \header('Access-Control-Allow-Methods: GET, HEAD, OPTIONS');
+            \header('Allow: GET, HEAD, OPTIONS');
+            \header('Content-Type: text/html; charset=utf-8');
+            \header('SourceMap: /assets/'.\filemtime(Config::$js_dir.'/app.js').'.js.map', false);
+            \header('SourceMap: /assets/styles/'.\filemtime(Config::$css_dir.'/app.css').'.css.map', false);
+            \header('NEL: {"report_to":"default","max_age":31536000,"include_subdomains":true}');
+            \header('feature-policy: accelerometer \'none\'; gyroscope \'none\'; magnetometer \'none\'; camera \'none\'; microphone \'none\'; midi \'none\'; usb \'none\'; encrypted-media \'self\'; publickey-credentials-get \'self\'; geolocation \'none\'; xr-spatial-tracking \'none\'; payment \'none\'; display-capture \'none\'; web-share \'none\'; sync-xhr \'none\'; autoplay \'none\'; fullscreen \'none\'; picture-in-picture \'none\'');
+            \header('permissions-policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), camera=(), cross-origin-isolated=(self), display-capture=(), document-domain=(), encrypted-media=(self), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(self), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(self), xr-spatial-tracking=(), clipboard-read=(self), clipboard-write=(self), gamepad=(self), speaker-selection=(), hid=(), idle-detection=(), interest-cohort=(), serial=()');
+            \header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
         }
     }
     
@@ -112,12 +112,12 @@ abstract class Page
     final public function get(array $path): array
     {
         #Close session early, if we know, that its data will not be changed (default)
-        if (!$this->session_change && session_status() === PHP_SESSION_ACTIVE) {
-            session_write_close();
+        if (!$this->session_change && \session_status() === PHP_SESSION_ACTIVE) {
+            \session_write_close();
         }
         #Send page language
-        if (!empty($this->language) && !headers_sent()) {
-            header('Content-Language: '.$this->language);
+        if (!empty($this->language) && !\headers_sent()) {
+            \header('Content-Language: '.$this->language);
         }
         #Check if user has required permission
         if (!empty($this->required_permission) && empty(array_intersect($this->required_permission, $_SESSION['permissions']))) {

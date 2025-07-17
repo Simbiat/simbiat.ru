@@ -4,7 +4,7 @@ If changing colors, remember to adjust them in:
 manifest.webmanifest
 browserconfig.xml
 metatags.twig (MS Tile and theme-color)
-errors\teapot.twig */
+ */
 :root {
     cursor: default; /* Use the default cursor in all browsers */
     line-height: 1.4; /* Change the line height in all browsers */

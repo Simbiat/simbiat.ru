@@ -1,4 +1,5 @@
-header {
+header,
+#header {
     background-color: var(--color_block);
     border-block-end: var(--border_width) solid var(--border_light);
     border-radius: var(--border_radius);
@@ -11,7 +12,8 @@ header {
     text-align: center;
 }
 
-#header_logo {
+#header_web,
+#header_mail {
     block-size: 2rem;
     color: var(--border_light);
     display: flex;
@@ -70,7 +72,8 @@ header {
     }
 }
 
-#h1_div {
+#h1_div,
+#h1_div_mail {
     inline-size: 100%;
     margin-block-start: 0.5rem;
 }

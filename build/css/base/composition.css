@@ -1,5 +1,6 @@
 /* Styling of composition elements */
-article {
+article,
+.article {
     background-color: var(--color_article);
     border-color: var(--border_color_inset);
     border-radius: var(--border_radius);
@@ -8,7 +9,8 @@ article {
     padding: 0.5rem;
     scroll-padding: 1rem 0 0; /* Helps with auto-scroll positioning (when using anchors) */
 
-    & + article {
+    & + article,
+    & + .article {
         margin-block-start: 1.5rem;
     }
 }

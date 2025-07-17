@@ -84,7 +84,7 @@ since they show em as most consistent */
         inline-size: calc(100% - 3rem);
     }
 
-    #header_logo {
+    #header_web {
         display: inline-block;
         inline-size: 2rem;
         margin-block-start: 0.25rem;
@@ -116,7 +116,7 @@ since they show em as most consistent */
         inline-size: calc(100% - 3rem);
     }
 
-    #header_logo {
+    #header_web {
         display: inline-block;
         inline-size: 2rem;
         margin-block-start: 0.25rem;
@@ -146,8 +146,8 @@ since they show em as most consistent */
 }
 
 @media (width >= 44.6em) {
-    #header_logo img,
-    #header_logo .header_text {
+    #header_web img,
+    #header_web .header_text {
         display: inline-block;
         position: relative;
     }

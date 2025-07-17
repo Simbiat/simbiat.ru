@@ -16,10 +16,12 @@
     "require": {
         "php": "^8.4",
         "matomo/device-detector": "^6",
-        "twig/twig": "^3",
         "symfony/html-sanitizer": "^7.3",
         "symfony/mailer": "^7.3",
         "symfony/twig-bundle": "^7.3",
+        "twig/twig": "^3",
+        "twig/extra-bundle": "^3",
+        "twig/cssinliner-extra": "^3",
         "league/html-to-markdown": "^5.1.1",
         "geoip2/geoip2": "^3",
         "tinymce/tinymce": "^7",

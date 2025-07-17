@@ -1,4 +1,5 @@
-footer {
+footer,
+#footer {
     background-color: var(--color_block);
     border-block-start: var(--border_width) solid var(--border_dark);
     border-end-end-radius: 0;

@@ -41,7 +41,9 @@
         "autoprefixer": "*",
         "postcss-preset-env": "*",
         "postcss-import": "*",
-        "cssnano": "*"
+        "cssnano": "*",
+        "postcss-var-replace": "*",
+        "@csstools/postcss-oklab-function": "*"
     },
     "browserslist": [
         "fully supports es6-module and supports custom-elementsv1 and fully supports css-nesting and fully supports css-has"

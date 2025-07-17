@@ -6,6 +6,7 @@ namespace Simbiat\Website\Twig;
 #Twig environment
 use Simbiat\Website\Config;
 use Twig\Environment;
+use Twig\Extra\CssInliner\CssInlinerExtension;
 use Twig\Loader\FilesystemLoader;
 
 /**
@@ -28,8 +29,10 @@ final class EnvironmentGenerator
             #Initiate Twig
             $loader = new FilesystemLoader($templates_dir);
             $loader->addPath(Config::$work_dir.'/public/assets/images/', 'images'); // this creates the @images namespace
+            $loader->addPath(Config::$work_dir.'/public/assets/styles/', 'styles'); // this creates the @styles namespace
             self::$environment = new Environment($loader, ['cache' => Config::$work_dir.'/data/cache/twig/', 'auto_reload' => true, 'autoescape' => 'html', 'use_yield' => true]);
             self::$environment->addExtension(new Extension());
+            self::$environment->addExtension(new CssInlinerExtension());
         }
         return self::$environment;
     }
