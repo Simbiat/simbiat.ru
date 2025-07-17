@@ -244,6 +244,9 @@ body > div.tox.tox-silver-sink.tox-tinymce-aux {
     background-color: transparent !important;
 }
 
+/* Block-size and padding are required to prevent a black line at the bottom */
 .mce-content-body {
+    block-size: auto;
     cursor: auto;
+    padding-block-end: 0.1rem;
 }
