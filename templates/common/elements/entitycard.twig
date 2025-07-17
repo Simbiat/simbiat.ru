@@ -22,7 +22,7 @@
 {% endif %}
 {# Actual card #}
 <entity-card>
-    <a class="entity_card{% if user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{% if rank %}{% if type == 'character' %}{{ rank }} {% else %}{{ rank }} in {% endif %}{% endif %}{{ name }}">
+    <a class="entity_card cursor_pointer{% if user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{% if rank %}{% if type == 'character' %}{{ rank }} {% else %}{{ rank }} in {% endif %}{% endif %}{{ name }}">
         <span class="entity_icon">
             {% if type == 'bic' %}
                 {% if DateOut %}
