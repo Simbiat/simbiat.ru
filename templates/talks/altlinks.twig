@@ -2,8 +2,8 @@
     <div class="alt_source_header">Follow & Discuss</div>
     <div class="alt_source middle">
         {% for link in external_links %}
-            <a href="{{ link.url }}" target="_blank" class="no_new_tab_icon no_outline">
-                <img loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="link_icon{% if link.type == 'Steam' %} inverted_100{% endif %}">
+            <a href="{{ link.url }}" target="_blank" class="no_new_tab_icon no_outline no_decor">
+                <img loading="lazy" decoding="async" alt="{{ link.type }}" data-tooltip="{{ link.type }}" src="{{ link.icon }}" class="cursor_pointer no_margin margin_bottom_02rem link_icon{% if link.type == 'Steam' %} inverted_100{% endif %}">
             </a>
         {% endfor %}
     </div>

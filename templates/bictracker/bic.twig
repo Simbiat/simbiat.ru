@@ -6,7 +6,7 @@
         <p class="failure"><span class="emoji_red">❌</span>Организация закрыта {{ timeTag(bicdetails.DateOut, "d/m/Y") }}<span class="emoji_red">❌</span></p>
     {% endif %}
     <table>
-        <caption><h2 class="zero_margin">Информация для расчётов</h2></caption>
+        <caption><h2 class="no_margin">Информация для расчётов</h2></caption>
         <tbody>
         <tr>
             <td>Наименование:</td><td>{{ bicdetails.NameP }}</td>
@@ -37,7 +37,7 @@
     </table>
     {% if bicdetails.SWIFTs|length > 1 %}
         <table>
-            <caption><h2 class="zero_margin">SWIFT коды</h2></caption>
+            <caption><h2 class="no_margin">SWIFT коды</h2></caption>
             <tbody>
             <tr>
                 <th><abbr data-tooltip="Банковский идентификационный код">БИК</abbr> системы <abbr data-tooltip="Society for Worldwide Interbank Financial Telecommunications">SWIFT</abbr></th><th>По умолчанию</th><th>Начало действия</th><th>Конец действия</th>
@@ -61,7 +61,7 @@
     {% endif %}
     {% if bicdetails.accounts|length > 0 %}
         <table>
-            <caption><h2 class="zero_margin">Счета</h2></caption>
+            <caption><h2 class="no_margin">Счета</h2></caption>
             <tbody>
             <tr>
                 <th>Счёт</th><th>Тип счёта</th><th>Контрольный ключ</th><th>Обслуживание</th><th>Начало действия</th><th>Конец действия</th>
@@ -84,7 +84,7 @@
         </table>
     {% endif %}
     <table>
-        <caption><h2 class="zero_margin">Контакты</h2></caption>
+        <caption><h2 class="no_margin">Контакты</h2></caption>
         <tbody>
         <tr>
             <td>Код страны:</td><td>{{ bicdetails.CntrCd|default('-') }}</td>
@@ -101,7 +101,7 @@
         </tbody>
     </table>
     <table>
-        <caption><h2 class="zero_margin">Служебная информация</h2></caption>
+        <caption><h2 class="no_margin">Служебная информация</h2></caption>
         <tbody>
         <tr>
             <td>Участник обмена:</td><td>{% if bicdetails.XchType == 1 %}Да{% else %}Нет{% endif %}</td>
@@ -176,7 +176,7 @@
     {% if bicdetails.DateIn is null or date(bicdetails.DateIn) <= date('2018-12-30') %}
         <br><br><br>
         <table>
-            <caption><h2 class="zero_margin">Старые наименования из DBF</h2></caption>
+            <caption><h2 class="no_margin">Старые наименования из DBF</h2></caption>
             <tbody>
             <tr>
                 <td>Фирменное (полное официальное) наименование кредитной организации:</td><td>{{ bicdetails.DBF.names.NAMEMAXB|default('-') }}</td>
@@ -190,7 +190,7 @@
             </tbody>
         </table>
         <table>
-            <caption><h2 class="zero_margin">Старые контакты из DBF</h2></caption>
+            <caption><h2 class="no_margin">Старые контакты из DBF</h2></caption>
             <tbody>
             <tr>
                 <td>Абонентский телеграф 1:</td><td>{{ bicdetails.DBF.contacts.AT1|default('-') }}</td>
@@ -215,7 +215,7 @@
             </tbody>
         </table>
         <table>
-            <caption><h2 class="zero_margin">Потенциально неактуальная информация из DBF</h2></caption>
+            <caption><h2 class="no_margin">Потенциально неактуальная информация из DBF</h2></caption>
             <tbody>
             <tr>
                 <td>Дата контроля:</td><td>{% if bicdetails.DBF.misc.DATE_CH %}{{ timeTag(bicdetails.DBF.misc.DATE_CH, "d/m/Y") }}{% else %}-{% endif %}</td>
@@ -269,7 +269,7 @@
         {% endif %}
         {% if bicdetails.DateOut %}
             <table>
-                <caption><h2 class="zero_margin">Информация о закрытии из DBF</h2></caption>
+                <caption><h2 class="no_margin">Информация о закрытии из DBF</h2></caption>
                 <tbody>
                 <tr>
                     <td>Причина закрытия счёта:</td><td>{{ bicdetails.DBF.removal.R_CLOSE|default('-') }}</td>
