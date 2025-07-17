@@ -248,5 +248,6 @@ body > div.tox.tox-silver-sink.tox-tinymce-aux {
 .mce-content-body {
     block-size: auto;
     cursor: auto;
+    min-block-size: 100vb;
     padding-block-end: 0.1rem;
 }
