@@ -71,16 +71,16 @@ class Images
         }
         try {
             #Create image object
-            $gd = imagecreatetruecolor($width, $height);
+            $gd = \imagecreatetruecolor($width, $height);
             #Set transparency
-            imagealphablending($gd, true);
-            imagesavealpha($gd, true);
-            imagecolortransparent($gd, imagecolorallocatealpha($gd, 255, 0, 0, 127));
-            imagefill($gd, 0, 0, imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            \imagealphablending($gd, true);
+            \imagesavealpha($gd, true);
+            \imagecolortransparent($gd, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
+            \imagefill($gd, 0, 0, \imagecolorallocatealpha($gd, 255, 0, 0, 127));
             #Copy each Lodestone image onto the image object
             foreach ($layers as $layer) {
                 if (!empty($layer)) {
-                    imagecopy($gd, $layer, 0, 0, 0, 0, $width, $height);
+                    \imagecopy($gd, $layer, 0, 0, 0, 0, $width, $height);
                 }
             }
         } catch (\Throwable) {
@@ -90,12 +90,12 @@ class Images
             return null;
         }
         if ($output) {
-            ob_start();
-            imagewebp($gd, null, IMG_WEBP_LOSSLESS);
-            $size = ob_get_length();
-            header('Content-Type: image/webp');
-            header('Content-Length: '.$size);
-            ob_end_flush();
+            \ob_start();
+            \imagewebp($gd, null, \IMG_WEBP_LOSSLESS);
+            $size = \ob_get_length();
+            \header('Content-Type: image/webp');
+            \header('Content-Length: '.$size);
+            \ob_end_flush();
             exit(0);
         }
         return $gd;
@@ -110,11 +110,11 @@ class Images
     public static function toWebP(string $image): string|false
     {
         #Check if a file exists
-        if (!is_file($image)) {
+        if (!\is_file($image)) {
             return false;
         }
         #Get MIME type
-        $mime = mime_content_type($image);
+        $mime = \mime_content_type($image);
         if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
             #Presume that this is not something to convert in the first place, which may be normal
             return false;
@@ -130,23 +130,23 @@ class Images
             return false;
         }
         #Set new name
-        $new_name = str_replace('.'.pathinfo($image, PATHINFO_EXTENSION), '.webp', $image);
+        $new_name = \str_replace('.'.\pathinfo($image, \PATHINFO_EXTENSION), '.webp', $image);
         #Create a GD object from a file
         $gd = self::open($image);
         if ($gd === false) {
             return false;
         }
         #Ensure that True Color is used
-        imagepalettetotruecolor($gd);
+        \imagepalettetotruecolor($gd);
         #Enable alpha blending
-        imagealphablending($gd, true);
+        \imagealphablending($gd, true);
         #Save the alpha data
-        imagesavealpha($gd, true);
+        \imagesavealpha($gd, true);
         #Save the file
-        if (imagewebp($gd, $new_name, IMG_WEBP_LOSSLESS)) {
+        if (\imagewebp($gd, $new_name, \IMG_WEBP_LOSSLESS)) {
             #Remove source image if we did not just overwrite it
             if ($image !== $new_name) {
-                @unlink($image);
+                @\unlink($image);
             }
             return $new_name;
         }
@@ -162,7 +162,7 @@ class Images
      */
     public static function isGIFAnimated(string $gif): bool
     {
-        if (!($fh = @fopen($gif, 'rb'))) {
+        if (!($fh = @\fopen($gif, 'rb'))) {
             return false;
         }
         $count = 0;
@@ -175,12 +175,12 @@ class Images
         // We read through the file til we reach the end of the file, or we've found
         // at least 2 frame headers
         $chunk = false;
-        while (!feof($fh) && $count < 2) {
+        while (!\feof($fh) && $count < 2) {
             //add the last 20 characters from the previous string, to make sure the searched pattern is not split.
-            $chunk = ($chunk ? mb_substr($chunk, -20, encoding: 'UTF-8') : '').fread($fh, 1024 * 100); //read 100 kb at a time
-            $count += preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
+            $chunk = ($chunk ? mb_substr($chunk, -20, encoding: 'UTF-8') : '').\fread($fh, 1024 * 100); //read 100 kb at a time
+            $count += \preg_match_all('/\x00\x21\xF9\x04.{4}\x00[\x2C\x21]/s', $chunk);
         }
-        fclose($fh);
+        \fclose($fh);
         return $count > 1;
     }
     
@@ -200,10 +200,10 @@ class Images
         }
         while (!$f->eof()) {
             $bytes = $f->fread(4);
-            if (strlen($bytes) < 4) {
+            if (\strlen($bytes) < 4) {
                 return false;
             }
-            $length = unpack('N', $bytes);
+            $length = \unpack('N', $bytes);
             if ($length) {
                 $length = $length[1];
             } else {
@@ -216,7 +216,7 @@ class Images
                 case 'IDAT':
                     return false;
             }
-            $f->fseek($length + 4, SEEK_CUR);
+            $f->fseek($length + 4, \SEEK_CUR);
         }
         return false;
     }
@@ -232,11 +232,11 @@ class Images
     public static function open(string $image): false|\GdImage
     {
         #Return false if a file is missing
-        if (!is_file($image)) {
+        if (!\is_file($image)) {
             return false;
         }
         #Get MIME type
-        $mime = mime_content_type($image);
+        $mime = \mime_content_type($image);
         if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
             #Unsuported format provided
             return false;
@@ -244,12 +244,12 @@ class Images
         #Create a GD object from a file
         try {
             return match ($mime) {
-                'image/avif' => @imagecreatefromavif($image),
-                'image/bmp' => @imagecreatefrombmp($image),
-                'image/gif' => @imagecreatefromgif($image),
-                'image/jpeg' => @imagecreatefromjpeg($image),
-                'image/png' => @imagecreatefrompng($image),
-                'image/webp' => @imagecreatefromwebp($image),
+                'image/avif' => @\imagecreatefromavif($image),
+                'image/bmp' => @\imagecreatefrombmp($image),
+                'image/gif' => @\imagecreatefromgif($image),
+                'image/jpeg' => @\imagecreatefromjpeg($image),
+                'image/png' => @\imagecreatefrompng($image),
+                'image/webp' => @\imagecreatefromwebp($image),
             };
         } catch (\Throwable) {
             return false;
@@ -263,9 +263,9 @@ class Images
     #[NoReturn] private static function errorImage(): void
     {
         $file = Config::$img_dir.'/noimage.svg';
-        header('Content-Type: image/svg+xml');
-        header('Content-Length: '.filesize($file));
-        readfile($file);
+        \header('Content-Type: image/svg+xml');
+        \header('Content-Length: '.\filesize($file));
+        \readfile($file);
         exit(0);
     }
     
@@ -280,27 +280,27 @@ class Images
     {
         if ($is_path) {
             $file = Config::$img_dir.$file_id;
-            if (!is_file($file)) {
+            if (!\is_file($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
         } else {
             $hash_tree = Sanitization::hashTree($file_id);
             #Use glob to get a real file path. We could simplify this by taking the extension from DB and using is_file,
             #but want to avoid reliance on DB here, especially since it won't provide that much of a speed boost, if any.
-            $file = glob(Config::$uploaded_img.'/'.$hash_tree.'/'.$file_id.'.*');
+            $file = \glob(Config::$uploaded_img.'/'.$hash_tree.'/'.$file_id.'.*');
             if (empty($file)) {
                 return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
             }
             $file = $file[0];
         }
         #Using array_merge to suppress PHPStorm's complaints about array keys
-        $info = array_merge(pathinfo($file));
-        $info['mime'] = mime_content_type($file);
+        $info = \array_merge(\pathinfo($file));
+        $info['mime'] = \mime_content_type($file);
         if ($info['mime'] !== 'image/png') {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
-        [$info['width'], $info['height']] = getimagesize($file);
-        if ($info['width'] < 1200 || $info['height'] < 630 || round($info['width'] / $info['height'], 1) !== 1.9) {
+        [$info['width'], $info['height']] = \getimagesize($file);
+        if ($info['width'] < 1200 || $info['height'] < 630 || \round($info['width'] / $info['height'], 1) !== 1.9) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         if ($is_path) {

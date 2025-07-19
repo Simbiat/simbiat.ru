@@ -39,11 +39,11 @@ class Sections extends Api
             #Only support adding a new post here
             return (new Section)->add();
         } else {
-            if (!is_numeric($path[0])) {
+            if (!\is_numeric($path[0])) {
                 return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` is not numeric'];
             }
             $section = (new Section($path[0]))->get();
-            if (is_null($section->id)) {
+            if (\is_null($section->id)) {
                 return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
             }
             return match($path[1]) {

@@ -87,12 +87,12 @@ class Sessions extends Page
                     $output_array[$type][$key]['client']['icon'] = DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type']);
                 }
                 #Set country icon, if a flag exists
-                if (!empty($output_array[$type][$key]['country']) && is_file(Config::$img_dir.'/flags/'.$output_array[$type][$key]['country'].'.svg')) {
+                if (!empty($output_array[$type][$key]['country']) && \is_file(Config::$img_dir.'/flags/'.$output_array[$type][$key]['country'].'.svg')) {
                     $output_array[$type][$key]['country_icon'] = '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg';
                 }
             }
         }
-        $output_array['current_session'] = session_id();
+        $output_array['current_session'] = \session_id();
         return $output_array;
     }
 }

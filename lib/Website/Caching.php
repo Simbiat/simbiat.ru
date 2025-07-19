@@ -40,13 +40,13 @@ class Caching
                 #Ensure we do not save CSRF
                 unset($data['X-CSRF-Token']);
                 #Add headers data
-                $data['http_headers'] = headers_list();
+                $data['http_headers'] = \headers_list();
                 #Set expiration date
                 if ($age > 0) {
-                    $data['cache_expires_at'] = time() + $age;
+                    $data['cache_expires_at'] = \time() + $age;
                 }
                 #JSON encode the data
-                $data = json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT);
+                $data = \json_encode($data, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT);
             }
         } catch (\Throwable) {
             $data = '';
@@ -61,14 +61,14 @@ class Caching
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
             }
             #Write the file. We do not care much if it fails
-            if (@file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {
-                @header('X-Server-Cached: true');
-                @header('X-Server-Cache-Hit: false');
+            if (@\file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {
+                @\header('X-Server-Cached: true');
+                @\header('X-Server-Cache-Hit: false');
                 return true;
             }
         }
-        @header('X-Server-Cached: false');
-        @header('X-Server-Cache-Hit: false');
+        @\header('X-Server-Cached: false');
+        @\header('X-Server-Cache-Hit: false');
         return true;
     }
     
@@ -86,18 +86,18 @@ class Caching
         $file = $this->cache_dir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
         $data = $this->getArrayFromFile($file);
         if (empty($data)) {
-            @header('X-Server-Cached: false');
-            @header('X-Server-Cache-Hit: false');
+            @\header('X-Server-Cached: false');
+            @\header('X-Server-Cache-Hit: false');
         } else {
             #Enforce cached page flag
             $data['cached_page'] = true;
             if (!empty($data['http_headers'])) {
                 #Send headers
-                array_map('header', $data['http_headers']);
+                \array_map('\header', $data['http_headers']);
             }
             #Send header indicating that cached response was sent
-            @header('X-Server-Cached: true');
-            @header('X-Server-Cache-Hit: true');
+            @\header('X-Server-Cached: true');
+            @\header('X-Server-Cache-Hit: true');
         }
         #Ensure we use fresh CSRF
         unset($data['X-CSRF-Token']);
@@ -113,9 +113,9 @@ class Caching
     public function key(string $key): string
     {
         if (empty($key)) {
-            $key = hash('sha3-512', Config::$canonical);
+            $key = \hash('sha3-512', Config::$canonical);
         } else {
-            $key = hash('sha3-512', $key);
+            $key = \hash('sha3-512', $key);
         }
         return $key;
     }
@@ -129,17 +129,17 @@ class Caching
     public function getArrayFromFile(string $cache_path): array
     {
         #Check if the cache file exists
-        if (is_file($cache_path)) {
+        if (\is_file($cache_path)) {
             #Read the cache
-            $json = file_get_contents($cache_path);
+            $json = \file_get_contents($cache_path);
             if ($json !== false && $json !== '') {
                 try {
-                    $json = json_decode($json, true, 512, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR);
+                    $json = \json_decode($json, true, 512, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
                 } catch (\Throwable) {
                     $json = [];
                 }
                 if ($json !== NULL) {
-                    if (!is_array($json)) {
+                    if (!\is_array($json)) {
                         return [];
                     }
                 } else {

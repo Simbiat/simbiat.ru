@@ -41,7 +41,7 @@ class Bic extends Page
         }
         #Continue breadcrumbs
         if (!empty($output_array['bicdetails']['PrntBIC'])) {
-            foreach(array_reverse($output_array['bicdetails']['PrntBIC']) as $bank) {
+            foreach(\array_reverse($output_array['bicdetails']['PrntBIC']) as $bank) {
                 $this->breadcrumb = [['href' => '/bictracker/bics/'.$bank['id'], 'name' => $bank['name']]];
             }
             $this->breadcrumb[] = ['href' => '/bictracker/bics/'.$bic, 'name' => $output_array['bicdetails']['NameP']];
@@ -54,7 +54,7 @@ class Bic extends Page
         $this->og_desc = $output_array['bicdetails']['NameP'].' ('.$output_array['bicdetails']['BIC'].') в БИК трекере';
         #Link header/tag for API
         $this->alt_links = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/'.$bic]];
-        if (in_array($output_array['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ'])) {
+        if (\in_array($output_array['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ'])) {
             $output_array['bicdetails']['Ukraine'] = true;
             $this->title = 'Це Україна! Іди додому, окупанте!';
             $this->h1 = 'Це Україна! Іди додому, окупанте!';

@@ -28,7 +28,7 @@ class User extends Page
     protected function generate(array $path): array
     {
         if (empty($path[0])) {
-            Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/profile/');
+            Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/profile/');
         }
         $user = new \Simbiat\Website\usercontrol\User($path[0]);
         $output_array = [];
@@ -48,10 +48,10 @@ class User extends Page
         #Setup OG profile for characters
         $output_array['ogtype'] = 'profile';
         $output_array['ogextra'] =
-            '<meta property="profile:username" content="'.htmlspecialchars($output_array['user_data']['username'], ENT_QUOTES | ENT_SUBSTITUTE).'" />'.
-            ($output_array['user_data']['name']['first_name'] === null ? '' : '<meta property="profile:first_name" content="'.htmlspecialchars($output_array['user_data']['name']['first_name'], ENT_QUOTES | ENT_SUBSTITUTE).'" />').
-            ($output_array['user_data']['name']['last_name'] === null ? '' : '<meta property="profile:last_name" content="'.htmlspecialchars($output_array['user_data']['name']['last_name'], ENT_QUOTES | ENT_SUBSTITUTE).'" />').
-            ($output_array['user_data']['sex'] === null ? '' : '<meta property="profile:gender" content="'.htmlspecialchars(($output_array['user_data']['sex'] === 1 ? 'male' : 'female'), ENT_QUOTES | ENT_SUBSTITUTE).'" />');
+            '<meta property="profile:username" content="'.\htmlspecialchars($output_array['user_data']['username'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />'.
+            ($output_array['user_data']['name']['first_name'] === null ? '' : '<meta property="profile:first_name" content="'.\htmlspecialchars($output_array['user_data']['name']['first_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />').
+            ($output_array['user_data']['name']['last_name'] === null ? '' : '<meta property="profile:last_name" content="'.\htmlspecialchars($output_array['user_data']['name']['last_name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />').
+            ($output_array['user_data']['sex'] === null ? '' : '<meta property="profile:gender" content="'.\htmlspecialchars(($output_array['user_data']['sex'] === 1 ? 'male' : 'female'), \ENT_QUOTES | \ENT_SUBSTITUTE).'" />');
         #Set flag indicating that we are in edit mode
         $output_array['edit_mode'] = $this->edit_mode;
         return $output_array;

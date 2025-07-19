@@ -51,12 +51,12 @@ class Character extends Page
         $this->og_desc = $output_array['character']['name'].' on FFXIV Tracker';
         #Setup OG profile for characters
         $output_array['ogtype'] = 'profile';
-        $prof_name = explode(' ', $output_array['character']['name']);
+        $prof_name = \explode(' ', $output_array['character']['name']);
         $output_array['ogextra'] = '
-            <meta property="profile:first_name" content="'.htmlspecialchars($prof_name[0], ENT_QUOTES | ENT_SUBSTITUTE).'" />
-            <meta property="profile:last_name" content="'.htmlspecialchars($prof_name[1], ENT_QUOTES | ENT_SUBSTITUTE).'" />
-            <meta property="profile:username" content="'.htmlspecialchars($output_array['character']['name'], ENT_QUOTES | ENT_SUBSTITUTE).'" />
-            <meta property="profile:gender" content="'.htmlspecialchars(($output_array['character']['biology']['gender'] === 1 ? 'male' : 'female'), ENT_QUOTES | ENT_SUBSTITUTE).'" />
+            <meta property="profile:first_name" content="'.\htmlspecialchars($prof_name[0], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />
+            <meta property="profile:last_name" content="'.\htmlspecialchars($prof_name[1], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />
+            <meta property="profile:username" content="'.\htmlspecialchars($output_array['character']['name'], \ENT_QUOTES | \ENT_SUBSTITUTE).'" />
+            <meta property="profile:gender" content="'.\htmlspecialchars(($output_array['character']['biology']['gender'] === 1 ? 'male' : 'female'), \ENT_QUOTES | \ENT_SUBSTITUTE).'" />
         ';
         #Link header/tag for API
         $this->alt_links = [

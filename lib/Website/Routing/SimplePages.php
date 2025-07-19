@@ -23,7 +23,7 @@ class SimplePages extends Router
     protected function pageGen(array $path): array
     {
         return match($path[0]) {
-            'devicedetector' => (new DeviceDetector())->get(array_slice($path, 1)),
+            'devicedetector' => (new DeviceDetector())->get(\array_slice($path, 1)),
         };
     }
 }

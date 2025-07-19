@@ -33,7 +33,7 @@ class Thread extends Page
     protected function generate(array $path): array
     {
         #Allow `blob:`
-        @header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
+        @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
         #Sanitize ID
         $id = $path[0] ?? null;
         if (empty($id) || (int)$id < 1) {
@@ -48,7 +48,7 @@ class Thread extends Page
             return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($output_array['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if ($output_array['created'] >= \time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Collect times
@@ -59,11 +59,11 @@ class Thread extends Page
         }
         #Add posts times
         if (!empty($output_array['posts']['entities'])) {
-            $times = array_merge($times, array_column($output_array['posts']['entities'], 'updated'));
+            $times = \array_merge($times, \array_column($output_array['posts']['entities'], 'updated'));
         }
         #Try to exit early based on modification date
         if (!empty($times)) {
-            $this->lastModified(max($times) ?? 0);
+            $this->lastModified(\max($times) ?? 0);
         }
         #Generate pagination data
         $page = (int)($_GET['page'] ?? 1);
@@ -75,8 +75,8 @@ class Thread extends Page
         }
         #Changelogs have Unix timestamp for names, need to convert those to the desired format
         /** @noinspection DuplicatedCode */
-        if ($output_array['type'] === 'Changelog' && is_numeric($output_array['name'])) {
-            $output_array['name'] = date('Y.m.d', (int)$output_array['name']);
+        if ($output_array['type'] === 'Changelog' && \is_numeric($output_array['name'])) {
+            $output_array['name'] = \date('Y.m.d', (int)$output_array['name']);
         }
         #Add parents to breadcrumbs if we have any
         foreach ($output_array['parents'] as $parent) {
@@ -98,7 +98,7 @@ class Thread extends Page
         }
         #Set og_image
         if (!empty($output_array['og_image'])) {
-            $output_array = array_merge($output_array, Images::ogImage($output_array['og_image']));
+            $output_array = \array_merge($output_array, Images::ogImage($output_array['og_image']));
             if (!empty($output_array['og_image'])) {
                 $this->og_image = $output_array['og_image'];
                 #Add to H2Push
@@ -110,11 +110,11 @@ class Thread extends Page
         #Add article open graph tags
         /** @noinspection DuplicatedCode */
         $output_array['ogextra'] =
-            '<meta property="article:published_time" content="'.date('c', $output_array['created']).'" />
-            <meta property="article:modified_time" content="'.date('c', $output_array['updated']).'" />'.
+            '<meta property="article:published_time" content="'.\date('c', $output_array['created']).'" />
+            <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'.
             ($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />').
             ($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '').
-            '<meta property="article:section" content="'.$output_array['parents'][array_key_last($output_array['parents'])]['name'].'" />';
+            '<meta property="article:section" content="'.$output_array['parents'][\array_key_last($output_array['parents'])]['name'].'" />';
         foreach ($output_array['tags'] as $tag) {
             $output_array['ogextra'] .= '<meta property="article:tag" content="'.$tag.'" />';
         }

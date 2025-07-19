@@ -25,8 +25,8 @@ class Upload extends Api
     protected function genData(array $path): array
     {
         #Headers required for TinyMCE
-        header('Access-Control-Allow-Credentials: true');
-        header('P3P: CP="There is no P3P policy."');
+        \header('Access-Control-Allow-Credentials: true');
+        \header('P3P: CP="There is no P3P policy."');
         try {
             $upload = new Curl()->upload();
             if (!empty($upload['http_error'])) {

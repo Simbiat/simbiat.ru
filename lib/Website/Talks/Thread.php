@@ -123,15 +123,15 @@ class Thread extends Entity
         $this->private = (bool)$from_db['private'];
         $this->pinned = (bool)$from_db['pinned'];
         $this->og_image = $from_db['og_image'] ?? null;
-        $this->last_post = $from_db['last_post'] !== null ? strtotime($from_db['last_post']) : null;
+        $this->last_post = $from_db['last_post'] !== null ? \strtotime($from_db['last_post']) : null;
         $this->last_poster = $from_db['last_poster'] ?? Config::USER_IDS['Deleted user'];
-        $this->closed = $from_db['closed'] !== null ? strtotime($from_db['closed']) : null;
-        $this->created = $from_db['created'] !== null ? strtotime($from_db['created']) : null;
+        $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
+        $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
         $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
         $this->owned = ($this->author === $_SESSION['user_id']);
-        $this->updated = $from_db['updated'] !== null ? strtotime($from_db['updated']) : null;
+        $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
         $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
-        $this->parents = array_merge($from_db['section']['parents'], [['section_id' => $from_db['section']['id'], 'name' => $from_db['section']['name'], 'type' => $from_db['section']['type'], 'parent_id' => $from_db['section']['parents'][0]['section_id']]]);
+        $this->parents = \array_merge($from_db['section']['parents'], [['section_id' => $from_db['section']['id'], 'name' => $from_db['section']['name'], 'type' => $from_db['section']['type'], 'parent_id' => $from_db['section']['parents'][0]['section_id']]]);
         $this->parent = $from_db['section'];
         $this->parent_id = (int)$from_db['section']['id'];
         $this->language = $from_db['language'];
@@ -203,7 +203,7 @@ class Thread extends Entity
         }
         try {
             Query::query('UPDATE `talks__threads` SET `closed`=:closed WHERE `thread_id`=:thread_id;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':thread_id' => [$this->id, 'int']]);
-            $this->closed = (!$closed ? null : time());
+            $this->closed = (!$closed ? null : \time());
             return ['response' => true];
         } catch (\Throwable) {
             return ['response' => false];
@@ -244,7 +244,7 @@ class Thread extends Entity
         if (!in_array('can_post', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
-        if ($with_post && (empty($_POST['post_form']) || empty($_POST['post_form']['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $_POST['post_form']['text']) === 1)) {
+        if ($with_post && (empty($_POST['post_form']) || empty($_POST['post_form']['text']) || \preg_match('/^(<p?)\s*(<\/p>)?$/ui', $_POST['post_form']['text']) === 1)) {
             return ['http_error' => 400, 'reason' => 'No post text provided'];
         }
         #Sanitize data
@@ -442,7 +442,7 @@ class Thread extends Entity
         if (empty($data['parent_id'])) {
             return ['http_error' => 400, 'reason' => 'No section ID provided'];
         }
-        if (is_numeric($data['parent_id'])) {
+        if (\is_numeric($data['parent_id'])) {
             $data['parent_id'] = (int)$data['parent_id'];
         } else {
             return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parent_id'].'` is not numeric'];
@@ -451,7 +451,7 @@ class Thread extends Entity
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         #Check if the name is empty or whitespaces
         $data['name'] = Sanitization::removeNonPrintable($data['name'], true);
-        if (preg_match('/^\s*$/u', $data['name']) === 1) {
+        if (\preg_match('/^\s*$/u', $data['name']) === 1) {
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
         #Check if parent exists
@@ -488,7 +488,7 @@ class Thread extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            is_int($thread_exists)
+            \is_int($thread_exists)
         ) {
             return ['http_error' => 409, 'reason' => 'Thread `'.$data['name'].'` already exists in section.', 'location' => '/talks/threads/'.$thread_exists];
         }
@@ -513,7 +513,7 @@ class Thread extends Entity
             $data['language'] = 'en';
         } else {
             $languages = self::getLanguages();
-            if (!in_array($data['language'], array_column($languages, 'value'), true)) {
+            if (!in_array($data['language'], \array_column($languages, 'value'), true)) {
                 $data['language'] = 'en';
             }
         }
@@ -532,7 +532,7 @@ class Thread extends Entity
                     continue;
                 }
                 #Check if a website (sent as a key) is supported and check the value against regex (to avoid using field for YouTube (as an example) for some random website that is not YouTube)
-                if (empty($link) || !array_key_exists($key, $alt_links) || preg_match('/^https:\/\/(www\.)?'.$alt_links[$key]['regex'].'.*$/ui', $link) !== 1) {
+                if (empty($link) || !\array_key_exists($key, $alt_links) || \preg_match('/^https:\/\/(www\.)?'.$alt_links[$key]['regex'].'.*$/ui', $link) !== 1) {
                     #Remove unsupported or possibly malicious website
                     unset($data['alt_links'][$key]);
                 } else {

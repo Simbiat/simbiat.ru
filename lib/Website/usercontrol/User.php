@@ -232,7 +232,7 @@ class User extends Entity
             #Get current avatars
             $avatars = $this->getAvatars();
             #Count values in `current` column
-            $counts = array_count_values(array_column($avatars, 'current'));
+            $counts = \array_count_values(\array_column($avatars, 'current'));
             #If a count of 0 values does not exist, then we set it to 0 properly
             if (empty($counts[0])) {
                 $counts[0] = 0;
@@ -382,7 +382,7 @@ class User extends Entity
             if ($result) {
                 $_SESSION['username'] = $new_name;
             }
-            if (session_status() === PHP_SESSION_ACTIVE) {
+            if (\session_status() === \PHP_SESSION_ACTIVE) {
                 Security::session_regenerate_id(true);
             }
             #Log the change
@@ -443,7 +443,7 @@ class User extends Entity
         }
         #Query for time zone
         $_POST['details']['timezone'] = Sanitization::removeNonPrintable($_POST['details']['timezone'] ?? 'UTC', true);
-        if ($this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], timezone_identifiers_list(), true)) {
+        if ($this->timezone !== $_POST['details']['timezone'] && in_array($_POST['details']['timezone'], \timezone_identifiers_list(), true)) {
             $log['timezone'] = ['old' => $this->timezone, 'new' => $_POST['details']['timezone']];
             $queries[] = [
                 'UPDATE `uc__users` SET `timezone`=:timezone WHERE `user_id`=:user_id;',
@@ -550,7 +550,7 @@ class User extends Entity
     public function bannedName(string $name): bool
     {
         #Check the format
-        if (preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
+        if (\preg_match('/^[\p{L}\d.!$%&\'*+\/=?_`{|}~\- ^]{1,64}$/ui', $name) !== 1) {
             return true;
         }
         #Check against DB table
@@ -587,7 +587,7 @@ class User extends Entity
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
-        $is_email = filter_var($_POST['signinup']['email'], FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
+        $is_email = \filter_var($_POST['signinup']['email'], \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);
         if (
             (!$is_email && $this->bannedName($_POST['signinup']['email'])) ||
             ($is_email && new Email($_POST['signinup']['email'])->isBanned())
@@ -637,7 +637,7 @@ class User extends Entity
         } else {
             Security::log('Login', 'Successful login');
         }
-        if (session_status() === PHP_SESSION_ACTIVE) {
+        if (\session_status() === \PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
         }
         if ($after_registration) {
@@ -660,10 +660,10 @@ class User extends Entity
             }
             #Generate cookie ID
             if (empty($cookie_id)) {
-                $cookie_id = bin2hex(random_bytes(64));
+                $cookie_id = \bin2hex(\random_bytes(64));
             }
             #Generate cookie password
-            $pass = bin2hex(random_bytes(128));
+            $pass = \bin2hex(\random_bytes(128));
             $hashed_pass = Security::passHash($pass);
             #Write cookie data to DB
             if (!empty($this->id) || (!empty($_SESSION['user_id']) && !in_array($_SESSION['user_id'], [Config::USER_IDS['Unknown user'], Config::USER_IDS['System user'], Config::USER_IDS['Deleted user']], true))) {
@@ -708,8 +708,8 @@ class User extends Entity
                     #Another attempt to prevent race conditions
                     if ($current_pass === $hashed_pass) {
                         setcookie('rememberme_'.Config::$http_host,
-                            json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION),
-                            array_merge(Config::$cookie_settings, ['expires' => time() + 2592000]),
+                            \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
+                            \array_merge(Config::$cookie_settings, ['expires' => \time() + 2592000]),
                         );
                     }
                 }
@@ -735,9 +735,9 @@ class User extends Entity
         }
         #Validate password
         try {
-            if (password_verify($password, $hash)) {
+            if (\password_verify($password, $hash)) {
                 #Check if it needs rehashing
-                if (password_needs_rehash($hash, PASSWORD_ARGON2ID, Config::$argon_settings)) {
+                if (\password_needs_rehash($hash, \PASSWORD_ARGON2ID, Config::$argon_settings)) {
                     #Rehash password and reset strikes (if any)
                     $this->passChange($password);
                 } else {
@@ -778,7 +778,7 @@ class User extends Entity
                 ':password' => [Security::passHash($password), 'string'],
             ]
         );
-        if (session_status() === PHP_SESSION_ACTIVE) {
+        if (\session_status() === \PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
         }
         Security::log('Password change', 'Attempted to change password', $result);
@@ -949,7 +949,7 @@ class User extends Entity
             #Convert regular 0, 1, ... n IDs to real thread IDs for later use
             $threads = Editors::digitToKey($threads, 'id');
             #Get the posts' IDs
-            $ids = array_column($threads, 'first_post');
+            $ids = \array_column($threads, 'first_post');
         } else {
             return [];
         }
@@ -990,7 +990,7 @@ class User extends Entity
         #Remove rememberme cookie
         #From browser
         setcookie('rememberme_'.Config::$http_host, '',
-            array_merge(Config::$cookie_settings, ['expires' => time() - 3600])
+            \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600])
         );
         #From DB
         if (!empty($_SESSION['cookie_id'])) {
@@ -998,11 +998,11 @@ class User extends Entity
             $this->deleteCookie(true);
         }
         #Clean session (affects $_SESSION only)
-        session_unset();
+        \session_unset();
         #Destroy session (destroys it storage)
-        $result = session_destroy();
-        if (!headers_sent()) {
-            header('Clear-Site-Data: "*"');
+        $result = \session_destroy();
+        if (!\headers_sent()) {
+            \header('Clear-Site-Data: "*"');
         }
         return $result;
     }
@@ -1023,7 +1023,7 @@ class User extends Entity
         try {
             #Close the session to avoid changing it in any way
             /** @noinspection PhpUsageOfSilenceOperatorInspection */
-            @session_write_close();
+            @\session_write_close();
             #Check if hard removal or regular one was requested
             if ($hard) {
                 #Hard removal means complete removal of the user entity, except for sections/threads/posts/files created, where we first update the user IDs

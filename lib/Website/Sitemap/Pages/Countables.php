@@ -42,10 +42,10 @@ class Countables extends Page
         $this->h2_push = [];
         #Remove potential file extension at the end of a path
         if (!empty($path[1])) {
-            $path[1] = preg_replace('/\.xml$/ui', '', $path[1]);
+            $path[1] = \preg_replace('/\.xml$/ui', '', $path[1]);
         }
         #Get page
-        if (empty($path[1]) || !is_numeric($path[1]) || $path[1] < 1) {
+        if (empty($path[1]) || !\is_numeric($path[1]) || $path[1] < 1) {
             $path[1] = 1;
         } else {
             $path[1] = (int)$path[1];

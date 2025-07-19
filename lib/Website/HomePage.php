@@ -41,13 +41,13 @@ class HomePage
         #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
         Headers::multiPartFormParse();
         if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
-            $_POST = array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
+            $_POST = \array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
             $_FILES = Headers::$_FILES;
         }
         #Get all POST and GET keys to the lower case
-        $_POST = array_change_key_case($_POST);
+        $_POST = \array_change_key_case($_POST);
         Sanitization::carefulArraySanitization($_POST);
-        $_GET = array_change_key_case($_GET);
+        $_GET = \array_change_key_case($_GET);
         Sanitization::carefulArraySanitization($_GET);
         $this->init();
     }
@@ -66,7 +66,7 @@ class HomePage
             #Redirect if the page number is set and is less than 1
             if (isset($_GET['page']) && (int)$_GET['page'] < 1) {
                 #Remove page (since we ignore page=1 in canonical)
-                Headers::redirect(preg_replace('/\\?page=-?\d+/ui', '', Config::$canonical));
+                Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', Config::$canonical));
             }
             #Process requests to file or cache
             $file_result = $this->filesRequests($_SERVER['REQUEST_URI']);
@@ -74,7 +74,7 @@ class HomePage
                 exit(0);
             }
             #Exploding further processing
-            $uri = explode('/', $_SERVER['REQUEST_URI']);
+            $uri = \explode('/', $_SERVER['REQUEST_URI']);
             try {
                 #Connect to DB
                 Config::dbConnect();
@@ -95,9 +95,9 @@ class HomePage
                     Page::headers();
                 }
                 #Try to start a session if it's not started yet and DB is up
-                if (Config::$dbup && !Config::$db_update && !self::$stale_return && session_status() === PHP_SESSION_NONE) {
+                if (Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
-                    session_start();
+                    \session_start();
                     #Show that the client is unsupported
                     if (isset($_SESSION['useragent']['unsupported']) && $_SESSION['useragent']['unsupported'] === true) {
                         self::$http_error = ['client' => $_SESSION['useragent']['client'] ?? 'unknown', 'http_error' => 418, 'reason' => 'Teapot'];
@@ -120,7 +120,7 @@ class HomePage
                 self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
                 #Check if there was an internal redirect to a custom error page
                 if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
-                    if (preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
+                    if (\preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
                         self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
                     } else {
                         self::$http_error = ['http_error' => 500, 'reason' => 'Failed on Caddy level and could not retrieve the error message'];
@@ -155,14 +155,14 @@ class HomePage
     public function filesRequests(string $request): int
     {
         #Remove query string, if present (that is everything after ?)
-        $request = preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
-        if (preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
+        $request = \preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
+        if (\preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
             #Send headers that will identify this as an actual file
-            if (!headers_sent()) {
-                header('Content-Type: text/plain; charset=utf-8');
-                header('Content-Disposition: inline; filename="security.txt"');
+            if (!\headers_sent()) {
+                \header('Content-Type: text/plain; charset=utf-8');
+                \header('Content-Disposition: inline; filename="security.txt"');
             }
-            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => date(DateTimeInterface::RFC3339_EXTENDED, strtotime('last monday of next month midnight'))]);
+            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last monday of next month midnight'))]);
             return 200;
         }
         #Return 0, since we did not hit anything
@@ -184,25 +184,25 @@ class HomePage
             }
             try {
                 #Update CSRF token
-                if (session_status() === PHP_SESSION_ACTIVE) {
+                if (\session_status() === \PHP_SESSION_ACTIVE) {
                     $_SESSION['csrf'] = Security::genToken();
                 }
-                $twig_vars = array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
+                $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
                 if (isset($twig_vars['http_error'])) {
                     Headers::clientReturn($twig_vars['http_error'], false);
                 }
-                ob_end_clean();
-                ignore_user_abort(true);
-                ob_start();
+                \ob_end_clean();
+                \ignore_user_abort(true);
+                \ob_start();
                 $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
                 #Output data
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                @ob_end_flush();
+                @\ob_end_flush();
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                @ob_flush();
-                flush();
-                if (!empty($twig_vars['cache_expires_at']) && ($twig_vars['cache_expires_at'] - time()) > 0) {
+                @\ob_flush();
+                \flush();
+                if (!empty($twig_vars['cache_expires_at']) && ($twig_vars['cache_expires_at'] - \time()) > 0) {
                     exit(0);
                 }
                 return true;
@@ -210,13 +210,13 @@ class HomePage
                 return false;
             }
         } else {
-            ob_start();
+            \ob_start();
             try {
                 #Update CSRF token
-                if (session_status() === PHP_SESSION_ACTIVE) {
+                if (\session_status() === \PHP_SESSION_ACTIVE) {
                     $_SESSION['csrf'] = Security::genToken();
                 }
-                $twig_vars = array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
+                $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
                 if (isset($twig_vars['http_error'])) {
                     Headers::clientReturn($twig_vars['http_error'], false);
                 }
@@ -231,16 +231,16 @@ class HomePage
                 }
             }
             #Close session
-            if (session_status() === PHP_SESSION_ACTIVE) {
-                session_write_close();
+            if (\session_status() === \PHP_SESSION_ACTIVE) {
+                \session_write_close();
             }
             #Cache page if cache age is set up, no errors, GET method is used, and we are on PROD
-            if (Config::$prod && !empty($twig_vars['cache_age']) && is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
+            if (Config::$prod && !empty($twig_vars['cache_age']) && \is_numeric($twig_vars['cache_age']) && empty($twig_vars['http_error']) && self::$method === 'GET') {
                 self::$data_cache->write($twig_vars, age: (int)$twig_vars['cache_age']);
             }
             if (self::$stale_return) {
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                @ob_end_clean();
+                @\ob_end_clean();
             } else {
                 #Output data
                 Common::zEcho($output, $twig_vars['cache_strategy'] ?? 'hour', false);

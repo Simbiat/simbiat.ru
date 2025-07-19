@@ -30,7 +30,7 @@ class Password extends Api
      */
     protected function genData(array $path): array
     {
-        if (!empty($_POST['pass_user_id']) && preg_match('/\d+/u', $_POST['pass_user_id']) === 1) {
+        if (!empty($_POST['pass_user_id']) && \preg_match('/\d+/u', $_POST['pass_user_id']) === 1) {
             $id = $_POST['pass_user_id'];
         } else {
             if ($_SESSION['user_id'] === 1) {
@@ -77,7 +77,7 @@ class Password extends Api
                 return ['http_error' => 500, 'reason' => 'Failed to get credentials from database'];
             }
             #Validate token
-            if (!password_verify($_POST['pass_reset'], $pw_reset)) {
+            if (!\password_verify($_POST['pass_reset'], $pw_reset)) {
                 return ['http_error' => 403, 'reason' => 'Bad password reset token'];
             }
         }

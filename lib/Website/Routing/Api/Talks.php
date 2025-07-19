@@ -27,9 +27,9 @@ class Talks extends \Simbiat\Website\Abstracts\Api
     protected function genData(array $path): array
     {
         return match($path[0]) {
-            'sections' => (new Sections())->route(array_slice($path, 1)),
-            'threads' => (new Threads())->route(array_slice($path, 1)),
-            'posts' => (new Posts())->route(array_slice($path, 1)),
+            'sections' => (new Sections())->route(\array_slice($path, 1)),
+            'threads' => (new Threads())->route(\array_slice($path, 1)),
+            'posts' => (new Posts())->route(\array_slice($path, 1)),
         };
     }
 }

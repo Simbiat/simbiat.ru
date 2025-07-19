@@ -23,17 +23,17 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         if ($this->session_life < 0) {
             $this->session_life = 300;
         }
-        if (!headers_sent()) {
+        if (!\headers_sent()) {
             #Set the session name for easier identification. '__Host-' prefix signals to the browser that both the Path=/ and Secure attributes are required, so that subdomains cannot modify the session cookie.
-            session_name('__Host-session_'.preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
+            \session_name('__Host-session_'.\preg_replace('/[^a-zA-Z\d\-_]/', '', Config::$http_host ?? 'simbiat'));
             #Set session cookie parameters
-            ini_set('session.cookie_lifetime', $this->session_life);
-            ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
-            ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
-            ini_set('session.cookie_path', Config::$cookie_settings['path']);
-            ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
-            ini_set('session.use_strict_mode', true);
-            ini_set('session.use_only_cookies', true);
+            \ini_set('session.cookie_lifetime', $this->session_life);
+            \ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
+            \ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
+            \ini_set('session.cookie_path', Config::$cookie_settings['path']);
+            \ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
+            \ini_set('session.use_strict_mode', true);
+            \ini_set('session.use_only_cookies', true);
         }
     }
     
@@ -98,14 +98,14 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Decrypt data
             $data = Security::decrypt($data);
             #Deserialize to check if UserAgent data is present
-            $data = unserialize($data, [false]);
+            $data = \unserialize($data, [false]);
         } else {
             $data = [];
         }
         #Login through cookie if it is present
-        $data = array_merge($data, $this->cookieLogin());
+        $data = \array_merge($data, $this->cookieLogin());
         $this->dataRefresh($data);
-        return serialize($data);
+        return \serialize($data);
     }
     
     /**
@@ -132,7 +132,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function write(string $id, string $data): bool
     {
         #Deserialize to check if UserAgent data is present
-        $data = unserialize($data, [false]);
+        $data = \unserialize($data, [false]);
         #Prepare an empty array
         $queries = [];
         #Update SEO-related tables if this was determined to be a new page view
@@ -155,7 +155,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     ],
                 ];
                 #Update page views
-                $page = mb_substr(preg_replace('/^.*:\/\/[^\/]*\//u', '', Config::$canonical), 0, 256, 'UTF-8');
+                $page = mb_substr(\preg_replace('/^.*:\/\/[^\/]*\//u', '', Config::$canonical), 0, 256, 'UTF-8');
                 if (empty($page)) {
                     $page = 'index.php';
                 }
@@ -206,7 +206,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr($_SERVER['REQUEST_URI'], 0, 256, 'UTF-8')),
                     #Actual session data
                     ':data' => [
-                        (empty($data) ? '' : Security::encrypt(serialize($data))),
+                        (empty($data) ? '' : Security::encrypt(\serialize($data))),
                         'string',
                     ],
                 ],
@@ -275,8 +275,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Add CSRF token, if missing
             if (empty($data['csrf'])) {
                 $data['csrf'] = Security::genToken();
-            } elseif (!headers_sent()) {
-                header('X-CSRF-Token: '.$data['csrf']);
+            } elseif (!\headers_sent()) {
+                \header('X-CSRF-Token: '.$data['csrf']);
             }
             if (empty($data['user_id'])) {
                 $data['user_id'] = Config::USER_IDS['Unknown user'];
@@ -322,22 +322,22 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         $forwarded = $_SERVER['HTTP_X_FORWARDED'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_FORWARDED'] ?? $_SERVER['HTTP_FORWARDED_FOR'] ?? '';
         if (!empty($forwarded)) {
             #Get a list of IPs that do validate as proper IP
-            $ips = array_filter(array_map('trim', explode(',', $forwarded)), static function ($value) {
-                return filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
+            $ips = \array_filter(\array_map('\trim', \explode(',', $forwarded)), static function ($value) {
+                return \filter_var($value, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
             });
             #Check if any are left
             if (!empty($ips)) {
                 #Get the right-most IP
-                $ip = array_pop($ips);
+                $ip = \array_pop($ips);
             }
         }
         #Check if REMOTE_ADDR is set (it's more appropriate and secure to use it)
         if (empty($ip) && !empty($_SERVER['REMOTE_ADDR'])) {
-            $ip = filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
+            $ip = \filter_var($_SERVER['REMOTE_ADDR'], \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
         }
         #Check if Client-IP is set. Can be easily spoofed, but it's not like we have a choice at this moment
         if (empty($ip) && !empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
+            $ip = \filter_var($_SERVER['HTTP_CLIENT_IP'], \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4 | \FILTER_FLAG_IPV6);
         }
         $data['ip'] = $ip ?? null;
     }
@@ -348,8 +348,8 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      */
     private function cookieLogin(): array
     {
-        $cookie_name = str_replace(['.', ' '], '_', 'rememberme_'.Config::$http_host);
-        if (!is_string($cookie_name)) {
+        $cookie_name = \str_replace(['.', ' '], '_', 'rememberme_'.Config::$http_host);
+        if (!\is_string($cookie_name)) {
             return [];
         }
         #Check if a cookie exists
@@ -359,7 +359,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
         #Validate cookie
         try {
             #Decode data
-            $data = json_decode($_COOKIE[$cookie_name], true, flags: JSON_THROW_ON_ERROR);
+            $data = \json_decode($_COOKIE[$cookie_name], true, flags: \JSON_THROW_ON_ERROR);
             if (empty($data['cookie_id']) || empty($data['pass'])) {
                 #No expected data found
                 return [];
@@ -376,7 +376,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 return [];
             }
             #Validate cookie password
-            if (!password_verify($data['pass'], $saved_data['validator'])) {
+            if (!\password_verify($data['pass'], $saved_data['validator'])) {
                 #Wrong password
                 return [];
             }
@@ -449,7 +449,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
      */
     public function create_sid(): string
     {
-        return session_create_id();
+        return \session_create_id();
     }
     
     #########################################
@@ -478,7 +478,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             return false;
         }
         #Validate session id using hash_equals to mitigate timing attacks
-        return hash_equals($session_id, $id);
+        return \hash_equals($session_id, $id);
     }
     
     /**

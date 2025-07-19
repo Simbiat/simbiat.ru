@@ -100,9 +100,9 @@ class FFTracker
             foreach ($entities as $entity) {
                 $extra_for_error = $entity['type'].' ID '.$entity['id'];
                 $result = $this->updateEntity($entity['id'], $entity['type']);
-                if (!in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
+                if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
                     #If we were throttled, means we already slept and can continue, instead of breaking the whole instance
-                    if (preg_match('/Request throttled by Lodestone/', $result) === 1) {
+                    if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
                         continue;
                     }
                     return $result;
@@ -156,7 +156,7 @@ class FFTracker
             #Try to register new characters
             $max_id = Query::query('SELECT MAX(`character_id`) as `character_id` FROM `ffxiv__character`;', return: 'value');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
-            $new_max_id = min($max_id + 100, 4294967295);
+            $new_max_id = \min($max_id + 100, 4294967295);
             if ((int)$max_id < (int)$new_max_id) {
                 for ($character = $max_id + 1; (int)$character <= (int)$new_max_id; $character++) {
                     $extra_for_error = 'character ID '.$character;
@@ -201,7 +201,7 @@ class FFTracker
                                 #Count of 0 may mean that the last attempt failed (rate limit or maintenance)
                                 $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
                                 #Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
-                                time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
+                                \time() - $json[$world['entity']][$world['world']][$order][$count][$page]['date'] > 432000
                             ) {
                                 $pages_parsed++;
                                 #Get linkshells
@@ -218,7 +218,7 @@ class FFTracker
                                     #Clean data
                                     unset($data['linkshells']['page_current'], $data['linkshells']['page_total'], $data['linkshells']['total']);
                                     #Get IDs
-                                    $data = array_keys($data['linkshells']);
+                                    $data = \array_keys($data['linkshells']);
                                     #Iterrate through found items
                                     foreach ($data as $linkshell) {
                                         $extra_for_error = 'linkshell ID '.$linkshell;
@@ -228,8 +228,8 @@ class FFTracker
                                         }
                                     }
                                     #Attempt to update cache
-                                    $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => time(), 'count' => count($data)];
-                                    file_put_contents($cache_path, json_encode($json, JSON_INVALID_UTF8_SUBSTITUTE | JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION | JSON_PRETTY_PRINT));
+                                    $json[$world['entity']][$world['world']][$order][$count][$page] = ['date' => \time(), 'count' => \count($data)];
+                                    \file_put_contents($cache_path, \json_encode($json, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT));
                                 }
                                 if ($pages_parsed === 500) {
                                     #Do not parse more than 200 pages at a time

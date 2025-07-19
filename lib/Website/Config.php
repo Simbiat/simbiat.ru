@@ -83,7 +83,7 @@ final class Config
     public function __construct()
     {
         #Check if we are in CLI
-        if (preg_match('/^cli(-server)?$/i', PHP_SAPI) === 1) {
+        if (\preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1) {
             self::$cli = true;
         } else {
             self::$cli = false;
@@ -119,7 +119,7 @@ final class Config
         }
         #Set default cookie settings
         self::$cookie_settings = [
-            'expires' => time() + 60,
+            'expires' => \time() + 60,
             'path' => '/',
             'domain' => (self::$prod ? 'simbiat.dev' : 'localhost'),
             'secure' => true,
@@ -134,7 +134,7 @@ final class Config
         }
         #Load shared config
         try {
-            self::$shared_with_js = json_decode(file_get_contents(self::$work_dir.'/public/assets/config.json'), true, 512, JSON_THROW_ON_ERROR);
+            self::$shared_with_js = \json_decode(\file_get_contents(self::$work_dir.'/public/assets/config.json'), true, 512, \JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             #For now just logging, at the moment of writing there should not be anything critical here
             Errors::error_log($exception);
@@ -148,29 +148,29 @@ final class Config
     private function canonical(): void
     {
         #Trim request URI from parameters, whitespace, slashes, and then whitespaces before slashes. Also lower the case.
-        self::$canonical = mb_strtolower(rawurldecode(mb_trim(mb_trim(mb_trim(preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), null, 'UTF-8'), '/', 'UTF-8'), null, 'UTF-8')), 'UTF-8');
+        self::$canonical = mb_strtolower(\rawurldecode(mb_trim(mb_trim(mb_trim(\preg_replace('/(.*)(\?.*$)/u', '$1', $_SERVER['REQUEST_URI'] ?? ''), null, 'UTF-8'), '/', 'UTF-8'), null, 'UTF-8')), 'UTF-8');
         #Remove bad UTF
         self::$canonical = mb_scrub(self::$canonical, 'UTF-8');
         #Remove the "friendly" portion of the links but exclude API
-        self::$canonical = preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
+        self::$canonical = \preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Update REQUEST_URI to ensure the data returned will be consistent
         $_SERVER['REQUEST_URI'] = self::$canonical;
         #For canonical, though, we need to ensure that it does have a trailing slash
-        if (preg_match('/\/\?/u', self::$canonical) !== 1) {
-            self::$canonical = preg_replace('/([^\/])$/u', '$1/', self::$canonical);
+        if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
+            self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
         }
         #And also return a page or search query, if present
-        self::$canonical .= '?'.http_build_query([
+        self::$canonical .= '?'.\http_build_query([
                 #Do not add the 1st page as a query (since it is excessive)
                 'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
                 'search' => $_GET['search'] ?? null,
-            ], encoding_type: PHP_QUERY_RFC3986);
+            ], encoding_type: \PHP_QUERY_RFC3986);
         #Trim the excessive question mark, in case no query was attached
         self::$canonical = mb_rtrim(self::$canonical, '?', 'UTF-8');
         #Trim trailing slashes if any
         self::$canonical = mb_rtrim(self::$canonical, '/', 'UTF-8');
         #Set a canonical link that may be used in the future
-        self::$canonical = 'https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', self::$http_host) === 1 ? 'www.' : '').self::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
+        self::$canonical = 'https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', self::$http_host) === 1 ? 'www.' : '').self::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.self::$canonical;
         #Update the list with dynamic values
         self::$links[] = ['rel' => 'canonical', 'href' => self::$canonical];
     }
@@ -181,9 +181,9 @@ final class Config
      */
     private function nonApiLinks(): void
     {
-        $uri = explode('/', $_SERVER['REQUEST_URI'], 100);
+        $uri = \explode('/', $_SERVER['REQUEST_URI'], 100);
         if ($uri[0] !== 'api') {
-            array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.filemtime(self::$js_dir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
+            \array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.\filemtime(self::$js_dir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
         }
     }
     
@@ -226,7 +226,7 @@ final class Config
                 #2002 error code means server is not listening on port
                 #2006 error code means server has gone away
                 #This will happen a lot, in case of database maintenance, during initial boot up or when shutting down. If they happen at this stage, though, logging is practically pointless
-                if (preg_match('/HY000.*\[(2002|2006)]/u', $exception->getMessage()) !== 1) {
+                if (\preg_match('/HY000.*\[(2002|2006)]/u', $exception->getMessage()) !== 1) {
                     Errors::error_log($exception);
                 }
                 self::$dbup = false;

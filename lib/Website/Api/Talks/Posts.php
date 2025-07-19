@@ -37,11 +37,11 @@ class Posts extends Api
             #Only support adding a new post here
             return (new Post)->add();
         } else {
-            if (!is_numeric($path[0])) {
+            if (!\is_numeric($path[0])) {
                 return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` is not numeric'];
             }
             $post = (new Post($path[0]))->get();
-            if (is_null($post->id)) {
+            if (\is_null($post->id)) {
                 return ['http_error' => 404, 'reason' => 'ID `'.$path[0].'` not found'];
             }
             #If post is being deleted - require CSRF. Deletion is final, so it's critical.

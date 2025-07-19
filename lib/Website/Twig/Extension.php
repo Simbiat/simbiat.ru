@@ -59,24 +59,24 @@ class Extension extends AbstractExtension implements GlobalsInterface
         if (Config::$dbup) {
             #Update default variables with values from database
             try {
-                $defaults = array_merge($defaults, Query::query('SELECT `setting`, `value` FROM `sys__settings`', return: 'pair'));
+                $defaults = \array_merge($defaults, Query::query('SELECT `setting`, `value` FROM `sys__settings`', return: 'pair'));
             } catch (\Throwable) {
                 #Do nothing, retain defaults
             }
         }
         #Flag for Save-Data header
-        if (preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA'] ?? '') === 1) {
+        if (\preg_match('/^on$/i', $_SERVER['HTTP_SAVE_DATA'] ?? '') === 1) {
             $save_data = 'true';
         } else {
             $save_data = 'false';
         }
-        return array_merge($defaults, [
+        return \array_merge($defaults, [
             #PROD flag
             'is_prod' => Config::$prod,
             #List of LINK tags
             'link_tags' => Config::$links,
             #Time used as a version of the JS file for cache busting
-            'js_version' => filemtime(Config::$js_dir.'/app.js'),
+            'js_version' => \filemtime(Config::$js_dir.'/app.js'),
             #Save data flag
             'save_data' => $save_data,
             'unsupported' => false,

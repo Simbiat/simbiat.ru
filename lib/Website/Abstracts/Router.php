@@ -49,8 +49,8 @@ abstract class Router
         #The main page of the segment is called
         if (empty($path)) {
             #If no path is provided, but we want to show a specific page, instead of a stub - redirect
-            if (!empty($this->redirect_main) && preg_match('/^\/.+?$/u', $this->redirect_main) === 1) {
-                Headers::redirect('https://'.(preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirect_main);
+            if (!empty($this->redirect_main) && \preg_match('/^\/.+?$/u', $this->redirect_main) === 1) {
+                Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== '443' ? ':'.$_SERVER['SERVER_PORT'] : '').$this->redirect_main);
             }
             $page_data['breadcrumbs'] = $this->breadcrumb;
         } elseif (in_array($path[0], $this->sub_routes, true)) {
@@ -58,7 +58,7 @@ abstract class Router
             $page_data = $this->pageGen($path);
             #Update breadcrumbs
             if (!empty($page_data['breadcrumbs'])) {
-                $page_data['breadcrumbs'] = array_merge($this->breadcrumb, $page_data['breadcrumbs']);
+                $page_data['breadcrumbs'] = \array_merge($this->breadcrumb, $page_data['breadcrumbs']);
             } else {
                 $page_data['breadcrumbs'] = $this->breadcrumb;
             }
@@ -85,7 +85,7 @@ abstract class Router
         }
         #Set custom og_image if available
         if (!empty($this->og_image) && empty($page_data['og_image'])) {
-            $page_data = array_merge($page_data, Images::ogImage($this->og_image, true));
+            $page_data = \array_merge($page_data, Images::ogImage($this->og_image, true));
         }
         return $page_data;
     }

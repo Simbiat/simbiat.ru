@@ -25,9 +25,9 @@ class TalksEdit extends \Simbiat\Website\Abstracts\Router
     protected function pageGen(array $path): array
     {
         return match($path[0]) {
-            'sections' => (new Section)->get(array_slice($path, 1)),
-            'posts' => (new Post)->get(array_slice($path, 1)),
-            'users' => (new User)->get(array_slice($path, 1)),
+            'sections' => (new Section)->get(\array_slice($path, 1)),
+            'posts' => (new Post)->get(\array_slice($path, 1)),
+            'users' => (new User)->get(\array_slice($path, 1)),
         };
     }
 }

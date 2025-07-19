@@ -22,7 +22,7 @@ class BICTracker
     {
         $result = new Library()->update(true);
         #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
-        if (is_string($result) && !is_numeric($result) && !str_contains($result, 'Не удалось скачать файл')) {
+        if (\is_string($result) && !\is_numeric($result) && !str_contains($result, 'Не удалось скачать файл')) {
             #Send email notification, this most likely means some change in UFEBS form
             new Email(Config::ADMIN_MAIL)->send('[Alert]: Cron task failed', ['errors' => $result], 'Simbiat');
         }

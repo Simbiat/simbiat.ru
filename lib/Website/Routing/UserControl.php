@@ -31,15 +31,15 @@ class UserControl extends \Simbiat\Website\Abstracts\Router
     protected function pageGen(array $path): array
     {
         return match($path[0]) {
-            'activate' => (new Activation)->get(array_slice($path, 1)),
-            'emails' => (new Emails)->get(array_slice($path, 1)),
-            'unsubscribe' => (new Unsubscribe)->get(array_slice($path, 1)),
-            'password' => (new Password)->get(array_slice($path, 1)),
-            'profile' => (new Profile)->get(array_slice($path, 1)),
-            'removal' => (new Removal)->get(array_slice($path, 1)),
-            'sessions' => (new Sessions)->get(array_slice($path, 1)),
-            'fftracker' => (new FFTracker)->get(array_slice($path, 1)),
-            'avatars' => (new Avatars)->get(array_slice($path, 1)),
+            'activate' => (new Activation)->get(\array_slice($path, 1)),
+            'emails' => (new Emails)->get(\array_slice($path, 1)),
+            'unsubscribe' => (new Unsubscribe)->get(\array_slice($path, 1)),
+            'password' => (new Password)->get(\array_slice($path, 1)),
+            'profile' => (new Profile)->get(\array_slice($path, 1)),
+            'removal' => (new Removal)->get(\array_slice($path, 1)),
+            'sessions' => (new Sessions)->get(\array_slice($path, 1)),
+            'fftracker' => (new FFTracker)->get(\array_slice($path, 1)),
+            'avatars' => (new Avatars)->get(\array_slice($path, 1)),
             'register' => ['subservice_name' => 'registration'],
         };
     }

@@ -108,7 +108,7 @@ class Section extends Entity
                     default => $data['detailed_type'],
                 };
             } else {
-                $data['parents'] = array_reverse($this->getParents((int)$data['parent_id']));
+                $data['parents'] = \array_reverse($this->getParents((int)$data['parent_id']));
                 foreach ($data['parents'] as $parent) {
                     if ($parent['author'] === $_SESSION['user_id']) {
                         $inherited_ownership = true;
@@ -182,7 +182,7 @@ class Section extends Entity
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
                 if (!empty($where)) {
-                    $where = preg_replace('/( AND $)/ui', '', $where);
+                    $where = \preg_replace('/( AND $)/ui', '', $where);
                 }
                 foreach ($data['children']['entities'] as &$category) {
                     $bindings[':section_id'] = [$category['section_id'], 'int'];
@@ -228,10 +228,10 @@ class Section extends Entity
         $this->system = (bool)$from_db['system'];
         $this->private = (bool)$from_db['private'];
         $this->owned = $from_db['owned'];
-        $this->closed = $from_db['closed'] !== null ? strtotime($from_db['closed']) : null;
-        $this->created = $from_db['created'] !== null ? strtotime($from_db['created']) : null;
+        $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
+        $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
         $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
-        $this->updated = $from_db['updated'] !== null ? strtotime($from_db['updated']) : null;
+        $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
         $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
         $this->icon = $from_db['icon'] ?? '/assets/images/talks/category.svg';
         $this->parents = $from_db['parents'];
@@ -259,9 +259,9 @@ class Section extends Entity
         }
         #If the parent has its own parent - get it and add to array
         if (!empty($parents[0]['parent_id'])) {
-            $parents = array_merge($parents, $this->getParents((int)$parents[0]['parent_id']));
+            $parents = \array_merge($parents, $this->getParents((int)$parents[0]['parent_id']));
         } else {
-            $parents = array_reverse($parents);
+            $parents = \array_reverse($parents);
         }
         #Reverse array to make it from top to bottom
         return $parents;
@@ -302,7 +302,7 @@ class Section extends Entity
         }
         try {
             Query::query('UPDATE `talks__sections` SET `closed`=:closed WHERE `section_id`=:section_id;', [':closed' => [($closed ? 'now' : null), ($closed ? 'datetime' : 'null')], ':section_id' => [$this->id, 'int']]);
-            $this->closed = ($closed ? time() : null);
+            $this->closed = ($closed ? \time() : null);
             return ['response' => true];
         } catch (\Throwable) {
             return ['response' => false];
@@ -323,7 +323,7 @@ class Section extends Entity
         if (!isset($_POST['order'])) {
             return ['http_error' => 400, 'reason' => 'No order provided'];
         }
-        if (!is_numeric($_POST['order'])) {
+        if (!\is_numeric($_POST['order'])) {
             return ['http_error' => 400, 'reason' => 'Order `'.$_POST['order'].'` is not a number'];
         }
         #Ensure it's an integer
@@ -499,7 +499,7 @@ class Section extends Entity
         }
         if (empty($data['parent_id']) || mb_strtolower($data['parent_id'], 'UTF-8') === 'top') {
             $data['parent_id'] = null;
-        } elseif (is_numeric($data['parent_id'])) {
+        } elseif (\is_numeric($data['parent_id'])) {
             $data['parent_id'] = (int)$data['parent_id'];
         } else {
             return ['http_error' => 400, 'reason' => 'Parent ID `'.$data['parent_id'].'` is not numeric'];
@@ -508,9 +508,9 @@ class Section extends Entity
         $data['time'] = Sanitization::scheduledTime($data['time'], $data['timezone']);
         #Strip tags from description, since we do not allow HTML here
         $data['name'] = Sanitization::removeNonPrintable($data['name'], true);
-        $data['description'] = Sanitization::removeNonPrintable(strip_tags($data['description'] ?? ''), true);
+        $data['description'] = Sanitization::removeNonPrintable(\strip_tags($data['description'] ?? ''), true);
         #Check if the name is empty or whitespaces
-        if (preg_match('/^\s*$/u', $data['name']) === 1) {
+        if (\preg_match('/^\s*$/u', $data['name']) === 1) {
             return ['http_error' => 400, 'reason' => 'Name cannot be empty'];
         }
         #Check if parent exists
@@ -529,7 +529,7 @@ class Section extends Entity
         }
         #Check that type is allowed in the current section
         $allowed_types = self::getSectionTypes($parent->inherited_type);
-        if (!in_array($data['type'], array_column($allowed_types, 'value'), true)) {
+        if (!in_array($data['type'], \array_column($allowed_types, 'value'), true)) {
             return ['http_error' => 400, 'reason' => 'Can\'t create this type in current section'];
         }
         #Check if the section is being created in the appropriate parent
@@ -595,7 +595,7 @@ class Section extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
-            is_int($section_exists)
+            \is_int($section_exists)
         ) {
             return ['http_error' => 409, 'reason' => 'Subsection `'.$data['name'].'` already exists in section.', 'location' => '/talks/sections/'.$section_exists];
         }

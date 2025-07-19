@@ -25,9 +25,9 @@ class BICTracker extends Api
     protected function genData(array $path): array
     {
         return match($path[0]){
-            'bics' => (new \Simbiat\Website\Api\BICTracker\Bic)->getData(array_slice($path, 1)),
-            'keying' => (new \Simbiat\Website\Api\BICTracker\Keying)->getData(array_slice($path, 1)),
-            'dbupdate' => (new \Simbiat\Website\Api\BICTracker\DBUpdate)->getData(array_slice($path, 1)),
+            'bics' => (new \Simbiat\Website\Api\BICTracker\Bic)->getData(\array_slice($path, 1)),
+            'keying' => (new \Simbiat\Website\Api\BICTracker\Keying)->getData(\array_slice($path, 1)),
+            'dbupdate' => (new \Simbiat\Website\Api\BICTracker\DBUpdate)->getData(\array_slice($path, 1)),
         };
     }
 }

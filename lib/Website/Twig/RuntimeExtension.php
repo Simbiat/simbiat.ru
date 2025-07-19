@@ -85,7 +85,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function basename(string $string): string
     {
-        return basename($string);
+        return \basename($string);
     }
     
     /**
@@ -98,7 +98,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function is_numeric(mixed $string): bool
     {
-        return is_numeric($string);
+        return \is_numeric($string);
     }
     
     /**
@@ -139,8 +139,8 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function preg_replace(string $string, string $pattern, string $replace): string
     {
-        $new_string = preg_replace($pattern, $replace, $string);
-        if (!is_string($new_string)) {
+        $new_string = \preg_replace($pattern, $replace, $string);
+        if (!\is_string($new_string)) {
             return $string;
         }
         return $new_string;
@@ -183,7 +183,7 @@ class RuntimeExtension implements RuntimeExtensionInterface
     {
         #Set time zone
         $timezone = $_SESSION['timezone'] ?? 'UTC';
-        if (!in_array($timezone, timezone_identifiers_list(), true)) {
+        if (!\in_array($timezone, \timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
         #Create DateTime object while converting the time

@@ -63,7 +63,7 @@ class Linkshell extends Page
             }
         }
         #Check if linked to current user
-        if ($_SESSION['user_id'] !== 1 && in_array($_SESSION['user_id'], array_column($output_array['linkshell']['members'], 'user_id'), true)) {
+        if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['linkshell']['members'], 'user_id'), true)) {
             $output_array['linkshell']['linked'] = true;
         }
         return $output_array;

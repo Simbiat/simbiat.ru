@@ -89,7 +89,7 @@ class Feeds
                     }
                 }
                 #Change language for BICs
-                if ($format === 'rss' && in_array($uri[0], ['bicchanged', 'bicdeleted'])) {
+                if ($format === 'rss' && \in_array($uri[0], ['bicchanged', 'bicdeleted'])) {
                     $settings['language'] = 'ru-ru';
                 }
                 #Set a query for the feed

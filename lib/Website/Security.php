@@ -27,7 +27,7 @@ class Security
      */
     public static function passHash(#[\SensitiveParameter] string $password): string
     {
-        return password_hash($password, PASSWORD_ARGON2ID, Config::$argon_settings);
+        return \password_hash($password, \PASSWORD_ARGON2ID, Config::$argon_settings);
     }
     
     /**
@@ -46,13 +46,13 @@ class Security
             return '';
         }
         #Generate IV
-        $iv = random_bytes(openssl_cipher_iv_length('AES-256-GCM'));
+        $iv = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
         #This is where the tag will be written by OpenSSL
         $tag = '';
         #Ecnrypt and als get the tag
-        $encrypted = openssl_encrypt($data, 'AES-256-GCM', hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), OPENSSL_RAW_DATA, $iv, $tag);
+        $encrypted = \openssl_encrypt($data, 'AES-256-GCM', \hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), \OPENSSL_RAW_DATA, $iv, $tag);
         #Ecnrypt and prepend IV and tag
-        return base64_encode($iv.$tag.$encrypted);
+        return \base64_encode($iv.$tag.$encrypted);
     }
     
     /**
@@ -69,14 +69,14 @@ class Security
             return '';
         }
         #Decode
-        $data = base64_decode($data);
+        $data = \base64_decode($data);
         #Get IV
-        $iv = substr($data, 0, 12);
+        $iv = \substr($data, 0, 12);
         #Get tag
-        $tag = substr($data, 12, 16);
+        $tag = \substr($data, 12, 16);
         #Strip them from data
-        $data = substr($data, 28);
-        return openssl_decrypt($data, 'AES-256-GCM', hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), OPENSSL_RAW_DATA, $iv, $tag);
+        $data = \substr($data, 28);
+        return \openssl_decrypt($data, 'AES-256-GCM', \hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), \OPENSSL_RAW_DATA, $iv, $tag);
     }
     
     /**
@@ -86,12 +86,12 @@ class Security
     public static function genToken(): string
     {
         try {
-            $token = bin2hex(random_bytes(32));
+            $token = \bin2hex(\random_bytes(32));
         } catch (\Throwable) {
             $token = '';
         }
-        if (!headers_sent()) {
-            header('X-CSRF-Token: '.$token);
+        if (!\headers_sent()) {
+            \header('X-CSRF-Token: '.$token);
         }
         return $token;
     }
@@ -111,9 +111,9 @@ class Security
     public static function argonCalc(bool $force_refresh = false, float $max_time_spent = 0.005, string $string_to_test = 'rel@t!velyl0ngte$t5tr1ng'): array
     {
         #Load Argon settings if argon.json exists
-        if (!$force_refresh && is_file(Config::$security_settings)) {
+        if (!$force_refresh && \is_file(Config::$security_settings)) {
             #Read the file
-            $argon = json_decode(file_get_contents(Config::$security_settings), true);
+            $argon = \json_decode(\file_get_contents(Config::$security_settings), true);
             if (is_array($argon)) {
                 #Update the settings if they are present and comply with minimum requirements
                 if (!isset($argon['memory_cost']) || $argon['memory_cost'] < 1024) {
@@ -134,28 +134,28 @@ class Security
         $iterations = 0;
         do {
             $iterations++;
-            $start = microtime(true);
+            $start = \microtime(true);
             #We do not store the results, and these are not real credentials, so suppressing the respective inspections
             /** @noinspection UnusedFunctionResultInspection */
             /** @noinspection HardcodedCredentialsInspection */
-            password_hash($string_to_test, PASSWORD_ARGON2ID, ['threads' => $threads, 'time_cost' => $iterations]);
-            $end = microtime(true);
+            \password_hash($string_to_test, \PASSWORD_ARGON2ID, ['threads' => $threads, 'time_cost' => $iterations]);
+            $end = \microtime(true);
         } while (($end - $start) <= $max_time_spent);
         #Calculate memory. We start from power = 9, because Argon supports a minimum value of 1024 (power = 10)
         $power = 9;
         do {
             $power++;
             $memory = 2 ** $power;
-            $start = microtime(true);
+            $start = \microtime(true);
             #We do not store the results, and these are not real credentials, so suppressing the respective inspections
             /** @noinspection UnusedFunctionResultInspection */
             /** @noinspection HardcodedCredentialsInspection */
-            password_hash($string_to_test, PASSWORD_ARGON2ID, ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory]);
-            $end = microtime(true);
+            \password_hash($string_to_test, \PASSWORD_ARGON2ID, ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory]);
+            $end = \microtime(true);
         } while (($end - $start) <= $max_time_spent);
         $argon_settings = ['threads' => $threads, 'time_cost' => $iterations, 'memory_cost' => $memory];
         #Write a config file
-        file_put_contents(Config::$security_settings, json_encode($argon_settings, JSON_PRETTY_PRINT));
+        \file_put_contents(Config::$security_settings, \json_encode($argon_settings, \JSON_PRETTY_PRINT));
         return $argon_settings;
     }
     
@@ -166,7 +166,7 @@ class Security
     private static function countCores(): int
     {
         if (function_exists('shell_exec')) {
-            $cores = (int)shell_exec((PHP_OS_FAMILY === 'Windows' ? 'echo %NUMBER_OF_PROCESSORS%' : 'nproc'));
+            $cores = (int)\shell_exec((\PHP_OS_FAMILY === 'Windows' ? 'echo %NUMBER_OF_PROCESSORS%' : 'nproc'));
         } else {
             $cores = 1;
         }
@@ -184,8 +184,8 @@ class Security
      */
     public static function genCrypto(): string
     {
-        $pass = random_bytes(openssl_cipher_iv_length('AES-256-GCM'));
-        return bin2hex($pass);
+        $pass = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
+        return \bin2hex($pass);
     }
     
     /**
@@ -199,8 +199,8 @@ class Security
      */
     public static function log(string $type, string $action, mixed $extras = NULL, ?int $user_id = null): bool
     {
-        if (!empty($extras) && !is_scalar($extras)) {
-            $extras = json_encode($extras, JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
+        if (!empty($extras) && !\is_scalar($extras)) {
+            $extras = \json_encode($extras, \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
         }
         #Get IP
         $ip = $_SESSION['ip'] ?? null;
@@ -272,17 +272,17 @@ class Security
         $browser = $dd->isBrowser();
         $client = $dd->getClient();
         #Check if a client is supported
-        if (preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
+        if (\preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
             (!empty($client['version']) && (
                     #Safari started supporting Sec-Fetch from 16.4
-                    (preg_match('/^(Safari)/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '16.4', 'lt')) ||
+                    (\preg_match('/^(Safari)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '16.4', 'lt')) ||
                     #Similar to Chrome and Edge, but full support started from 80
-                    (preg_match('/^(Chrome)/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
-                    (preg_match('/^(Edge)/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
+                    (\preg_match('/^(Chrome)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
+                    (\preg_match('/^(Edge)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '80.0', 'lt')) ||
                     #Version 90 for Firefox
-                    (preg_match('/^(Firefox)/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '90.0', 'lt')) ||
+                    (\preg_match('/^(Firefox)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '90.0', 'lt')) ||
                     #Version 67 for Opera
-                    (preg_match('/^(Opera)/ui', $client['name'] ?? '') === 1 && version_compare(mb_strtolower($client['version'], 'UTF-8'), '67.0', 'lt'))
+                    (\preg_match('/^(Opera)/ui', $client['name'] ?? '') === 1 && \version_compare(mb_strtolower($client['version'], 'UTF-8'), '67.0', 'lt'))
                 ))
         ) {
             $unsupported = true;
@@ -343,7 +343,7 @@ class Security
     public static function session_regenerate_id(bool $delete_old_session = false): bool
     {
         try {
-            session_regenerate_id($delete_old_session);
+            \session_regenerate_id($delete_old_session);
             $_SESSION['csrf'] = self::genToken();
             return true;
         } catch (\Throwable) {

@@ -91,11 +91,11 @@ class Post extends Entity
         $this->private = (bool)$from_db['thread']['private'];
         $this->locked = (bool)$from_db['locked'];
         $this->closed = $from_db['thread']['closed'] ?? null;
-        $this->created = $from_db['created'] !== null ? strtotime($from_db['created']) : null;
+        $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
         $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
         $this->owned = ($this->author === $_SESSION['user_id']);
         $this->author_name = $from_db['author_name'] ?? 'Deleted user';
-        $this->updated = $from_db['updated'] !== null ? strtotime($from_db['updated']) : null;
+        $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
         $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
         $this->editor_name = $from_db['editor_name'] ?? 'Deleted user';
         $this->parents = $from_db['thread']['parents'];
@@ -127,9 +127,9 @@ class Post extends Entity
             return 1;
         }
         #Get ordinal number of the post
-        $number = array_search($this->id, $posts, true);
+        $number = \array_search($this->id, $posts, true);
         #Get page
-        return (int)ceil(($number + 1) / 50);
+        return (int)\ceil(($number + 1) / 50);
     }
     
     /**
@@ -150,7 +150,7 @@ class Post extends Entity
             $data = [];
         }
         #If we have only 1 item, that means that a text has not changed, so treat this as "no history"
-        if (count($data) < 2) {
+        if (\count($data) < 2) {
             return [];
         }
         return $data;
@@ -412,17 +412,17 @@ class Post extends Entity
         if (empty($data['thread_id'])) {
             return ['http_error' => 400, 'reason' => 'No thread ID provided'];
         }
-        if (!is_numeric($data['thread_id'])) {
+        if (!\is_numeric($data['thread_id'])) {
             return ['http_error' => 400, 'reason' => 'Thread ID `'.$data['thread_id'].'` is not numeric'];
         }
         #Check the text is not empty
-        if (empty($data['text']) || preg_match('/^(<p?)\s*(<\/p>)?$/ui', $data['text']) === 1) {
+        if (empty($data['text']) || \preg_match('/^(<p?)\s*(<\/p>)?$/ui', $data['text']) === 1) {
             return ['http_error' => 400, 'reason' => $data['text']];
         }
         $data['text'] = Sanitization::sanitizeHTML($data['text']);
         #Get inline images
         $data['inline_files'] = [];
-        preg_match_all('/(<img[^>]*src="\/assets\/images\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'], $inline_images, PREG_PATTERN_ORDER);
+        \preg_match_all('/(<img[^>]*src="\/assets\/images\/uploaded\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/[a-zA-Z0-9]{2}\/)([^">.]+)(\.[^"]+"[^>]*>)/ui', $data['text'], $inline_images, \PREG_PATTERN_ORDER);
         #Remove any files that are not in DB from the array of inline files
         foreach ($inline_images[2] as $key => $image) {
             $filename = Query::query('SELECT `name` FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $image], return: 'value');
@@ -431,11 +431,11 @@ class Post extends Entity
                 #Add the file to the list
                 $data['inline_files'][] = $image;
                 #Check if the `alt` attribute is set for the original
-                if (preg_match('/ alt=".*\S.*"/ui', $inline_images[0][$key]) === 0) {
+                if (\preg_match('/ alt=".*\S.*"/ui', $inline_images[0][$key]) === 0) {
                     #Set `alt` to the human-readable name
-                    $new_img_string = preg_replace('/( alt(="\s*")?)/ui', ' alt="'.$filename.'"', $inline_images[0][$key]);
+                    $new_img_string = \preg_replace('/( alt(="\s*")?)/ui', ' alt="'.$filename.'"', $inline_images[0][$key]);
                     #Replace the original string in the text
-                    $data['text'] = str_replace($inline_images[0][$key], $new_img_string, $data['text']);
+                    $data['text'] = \str_replace($inline_images[0][$key], $new_img_string, $data['text']);
                 }
             }
         }
@@ -461,13 +461,13 @@ class Post extends Entity
                 #Or it's not empty and is different from the one we are trying to set
                 $this->text !== $data['text']
             ) &&
-            is_int($post_exists)
+            \is_int($post_exists)
         ) {
             return ['http_error' => 409, 'reason' => 'Post already exists in thread.', 'location' => '/talks/posts/'.$post_exists];
         }
         #Check if reply_to is set
         if (!empty($data['reply_to'])) {
-            if (!is_numeric($data['reply_to'])) {
+            if (!\is_numeric($data['reply_to'])) {
                 return ['http_error' => 400, 'reason' => 'Only numeric thread IDs allowed'];
             }
             #Check if the post exists

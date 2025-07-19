@@ -23,14 +23,14 @@ class Tests
     #[NoReturn] public function uploadPut(string $filepath): void
     {
         $curl = (new Curl)::$curl_handle;
-        curl_setopt($curl, CURLOPT_URL, Simbiat\Website\Config::$base_url);
-        curl_setopt($curl, CURLOPT_UPLOAD, true);
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_PUT, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-type: '.mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.basename($filepath).'"']);
-        curl_setopt($curl, CURLOPT_INFILE, fopen($filepath, 'rb'));
-        curl_setopt($curl, CURLOPT_INFILESIZE, filesize($filepath));
-        Tests::testDump(curl_exec($curl));
+        \curl_setopt($curl, \CURLOPT_URL, Simbiat\Website\Config::$base_url);
+        \curl_setopt($curl, \CURLOPT_UPLOAD, true);
+        \curl_setopt($curl, \CURLOPT_HEADER, false);
+        \curl_setopt($curl, \CURLOPT_PUT, 1);
+        \curl_setopt($curl, \CURLOPT_HTTPHEADER, ['Content-type: '.\mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.\basename($filepath).'"']);
+        \curl_setopt($curl, \CURLOPT_INFILE, \fopen($filepath, 'rb'));
+        \curl_setopt($curl, \CURLOPT_INFILESIZE, \filesize($filepath));
+        Tests::testDump(\curl_exec($curl));
         exit(0);
     }
     

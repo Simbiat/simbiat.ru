@@ -47,7 +47,7 @@ abstract class Entity
     {
         #Convert to string for consistency
         $id = (string)$id;
-        if (preg_match($this->id_format, $id) !== 1) {
+        if (\preg_match($this->id_format, $id) !== 1) {
             throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.get_class($this).'` has incorrect format.');
         }
         $this->id = $id;
@@ -114,10 +114,10 @@ abstract class Entity
                 return [];
             }
         }
-        $array = get_mangled_object_vars($this);
+        $array = \get_mangled_object_vars($this);
         #Remove private and protected properties
         foreach ($array as $key => $value) {
-            if (preg_match('/^\x00/u', $key) === 1) {
+            if (\preg_match('/^\x00/u', $key) === 1) {
                 unset($array[$key]);
             }
         }

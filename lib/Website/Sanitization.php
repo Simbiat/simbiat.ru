@@ -64,7 +64,7 @@ class Sanitization
             $config = $config->allowAttribute('property', 'meta');
         }
         #Remove excessive new lines
-        $string = preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
+        $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
         #Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
         if ($head) {
@@ -85,9 +85,9 @@ class Sanitization
     public static function removeNonPrintable(string|array $string, bool $full_list = false): string|array
     {
         if ($full_list) {
-            return preg_replace('/[[:cntrl:]]/iu', '', $string);
+            return \preg_replace('/[[:cntrl:]]/iu', '', $string);
         }
-        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
+        return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
     }
     
     /**
@@ -100,7 +100,7 @@ class Sanitization
     public static function carefulArraySanitization(array &$array, bool $full_list = false): void
     {
         foreach ($array as &$item) {
-            if (is_string($item)) {
+            if (\is_string($item)) {
                 $item = self::removeNonPrintable($item, $full_list);
             }
         }
@@ -122,7 +122,7 @@ class Sanitization
         if (!isset($checkbox)) {
             return false;
         }
-        if (is_string($checkbox)) {
+        if (\is_string($checkbox)) {
             return mb_strtolower($checkbox, 'UTF-8') !== 'off';
         }
         return (bool)$checkbox;
@@ -141,12 +141,12 @@ class Sanitization
             if (empty($time)) {
                 $time = null;
             } else {
-                if (empty($timezone) || !in_array($timezone, timezone_identifiers_list(), true)) {
+                if (empty($timezone) || !in_array($timezone, \timezone_identifiers_list(), true)) {
                     $timezone = 'UTC';
                 }
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
-                $cur_time = time();
+                $cur_time = \time();
                 #Sections should not be created in the past, so if time is less than the current one - correct it
                 if ($time < $cur_time && !in_array('post_backlog', $_SESSION['permissions'], true)) {
                     $time = $cur_time;
@@ -181,10 +181,10 @@ class Sanitization
         #Get hash tree
         $hash_tree = self::hashTree($filename);
         #Check if the file exists in images
-        if (file_exists(Config::$uploaded_img.'/'.$hash_tree.'/'.$filename)) {
+        if (\file_exists(Config::$uploaded_img.'/'.$hash_tree.'/'.$filename)) {
             return '/assets/images/uploaded/'.$hash_tree.'/'.$filename;
         }
-        if (file_exists(Config::$uploaded.'/'.$hash_tree.'/'.$filename)) {
+        if (\file_exists(Config::$uploaded.'/'.$hash_tree.'/'.$filename)) {
             return '/assets/uploaded/'.$hash_tree.'/'.$filename;
         }
         return '/assets/images/noimage.svg';

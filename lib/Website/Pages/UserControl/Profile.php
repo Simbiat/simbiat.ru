@@ -34,9 +34,9 @@ class Profile extends Page
         $output_array['user_data'] = new User($_SESSION['user_id'])->getArray();
         $now = new \DateTime();
         $output_array['timezones'] = [];
-        foreach (timezone_identifiers_list() as $timezone) {
+        foreach (\timezone_identifiers_list() as $timezone) {
             $now->setTimezone(new \DateTimeZone($timezone));
-            $output_array['timezones'][$timezone] = ['offset' => sprintf('%+03d:%02d', (int)($now->getOffset() / 3600), abs((int)($now->getOffset() % 3600 / 60))), 'current' => ($timezone === $output_array['user_data']['timezone'])];
+            $output_array['timezones'][$timezone] = ['offset' => \sprintf('%+03d:%02d', (int)($now->getOffset() / 3600), \abs((int)($now->getOffset() % 3600 / 60))), 'current' => ($timezone === $output_array['user_data']['timezone'])];
         }
         return $output_array;
     }

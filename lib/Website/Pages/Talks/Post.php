@@ -45,7 +45,7 @@ class Post extends Page
             return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($output_array['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if ($output_array['created'] >= \time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if we are trying to edit a post, that we can't edit
@@ -64,8 +64,8 @@ class Post extends Page
         #Try to exit early based on modification date
         $this->lastModified($output_array['updated']);
         #Changelogs have Unix timestamp for names, need to convert those to the desired format
-        if ($output_array['type'] === 'Changelog' && is_numeric($output_array['name'])) {
-            $output_array['name'] = date('Y.m.d', (int)$output_array['name']);
+        if ($output_array['type'] === 'Changelog' && \is_numeric($output_array['name'])) {
+            $output_array['name'] = \date('Y.m.d', (int)$output_array['name']);
         }
         #Get history
         $history = false;
@@ -90,7 +90,7 @@ class Post extends Page
                     $this->cache_age = 0;
                 } else {
                     #Set the first item as "selected" (it's the latest one)
-                    $output_array['history'][array_key_first($output_array['history'])] = true;
+                    $output_array['history'][\array_key_first($output_array['history'])] = true;
                 }
             }
         }
@@ -108,7 +108,7 @@ class Post extends Page
         }
         #Add a version link to breadcrumb
         if ($history) {
-            $this->breadcrumb[] = ['href' => '/talks/edit/posts/'.$id.'/'.$time, 'name' => date('d/m/Y H:i', $time)];
+            $this->breadcrumb[] = ['href' => '/talks/edit/posts/'.$id.'/'.$time, 'name' => \date('d/m/Y H:i', $time)];
             #We do not allow editing history
             $this->edit_mode = false;
         }
@@ -129,8 +129,8 @@ class Post extends Page
         #Add article open graph tags
         /** @noinspection DuplicatedCode */
         $output_array['ogextra'] =
-            '<meta property="article:published_time" content="'.date('c', $output_array['created']).'" />
-            <meta property="article:modified_time" content="'.date('c', $output_array['updated']).'" />'.
+            '<meta property="article:published_time" content="'.\date('c', $output_array['created']).'" />
+            <meta property="article:modified_time" content="'.\date('c', $output_array['updated']).'" />'.
             ($output_array['author'] === 1 ? '' : '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />').
             ($output_array['editor'] !== 1 && $output_array['editor'] !== $output_array['author'] ? '<meta property="article:author" content="'.Config::$base_url.'/talks/user/'.$output_array['author'].'" />' : '').
             '<meta property="article:section" content="'.$output_array['name'].'" />';

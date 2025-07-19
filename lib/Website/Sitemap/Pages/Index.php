@@ -69,7 +69,7 @@ class Index extends Page
             if ($link_type['count'] <= $this->max_elements) {
                 $links[] = ['loc' => $link_type['link'].'.xml', 'name' => $link_type['name']];
             } else {
-                $pages = (int)ceil($link_type['count'] / $this->max_elements);
+                $pages = (int)\ceil($link_type['count'] / $this->max_elements);
                 for ($page = 1; $page <= $pages; $page++) {
                     $links[] = ['loc' => $link_type['link'].'/'.$page.'.xml', 'name' => $link_type['name'].', Page '.$page];
                 }

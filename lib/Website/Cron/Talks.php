@@ -85,7 +85,7 @@ class Talks
             #Iterrate through the list
             foreach ($db_files as $file) {
                 #Get the expected full path of the file
-                if (preg_match('/^image\/.+$/ui', $file['mime']) === 1) {
+                if (\preg_match('/^image\/.+$/ui', $file['mime']) === 1) {
                     $full_path = Config::$uploaded_img;
                 } else {
                     $full_path = Config::$uploaded;
@@ -97,7 +97,7 @@ class Talks
                 Query::query('DELETE FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $file['file_id']]);
                 #Remove from drive
                 /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                @unlink($full_path);
+                @\unlink($full_path);
             }
             #Get all files from the drive
             $all_files = new \AppendIterator();
@@ -107,19 +107,19 @@ class Talks
             $db_files = Query::query('SELECT `file_id` FROM `sys__files`;', return: 'column');
             foreach ($all_files as $file) {
                 #Ignore directories and .gitignore and check if the file's ID is present in a database
-                if (!is_dir($file) && preg_match('/\.gitignore$/ui', $file) !== 1 && !in_array(pathinfo($file, PATHINFO_FILENAME), $db_files, true)) {
+                if (!\is_dir($file) && \preg_match('/\.gitignore$/ui', $file) !== 1 && !\in_array(\pathinfo($file, \PATHINFO_FILENAME), $db_files, true)) {
                     #Get a directory tree for the file
                     $dirs = [dirname($file), dirname($file, 2), dirname($file, 3)];
                     #Log the removal
-                    Security::log('File upload', 'Automatically deleted file', basename($file), user_id: Config::USER_IDS['System user']);
+                    Security::log('File upload', 'Automatically deleted file', \basename($file), user_id: Config::USER_IDS['System user']);
                     #Remove the file
                     /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                    @unlink($file);
+                    @\unlink($file);
                     #Remove a directory tree, if empty
                     foreach ($dirs as $dir) {
                         if (!new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS)->valid()) {
                             /** @noinspection PhpUsageOfSilenceOperatorInspection */
-                            @rmdir($dir);
+                            @\rmdir($dir);
                         }
                     }
                 }

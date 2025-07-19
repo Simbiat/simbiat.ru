@@ -17,25 +17,25 @@ class Curl
 {
     #cURL options
     protected array $curl_options = [
-        CURLOPT_POST => false,
-        CURLOPT_HEADER => true,
-        CURLOPT_RETURNTRANSFER => true,
+        \CURLOPT_POST => false,
+        \CURLOPT_HEADER => true,
+        \CURLOPT_RETURNTRANSFER => true,
         #Allow caching and reuse of already open connections
-        CURLOPT_FRESH_CONNECT => false,
-        CURLOPT_FORBID_REUSE => false,
+        \CURLOPT_FRESH_CONNECT => false,
+        \CURLOPT_FORBID_REUSE => false,
         #Let cURL determine appropriate HTTP version
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_NONE,
-        CURLOPT_CONNECTTIMEOUT => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_MAXREDIRS => 3,
-        CURLOPT_HTTPHEADER => [],
-        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.200',
-        CURLOPT_ENCODING => '',
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2 | CURL_SSLVERSION_MAX_TLSv1_3,
-        CURLOPT_DEFAULT_PROTOCOL => 'https',
-        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS,
+        \CURLOPT_HTTP_VERSION => \CURL_HTTP_VERSION_NONE,
+        \CURLOPT_CONNECTTIMEOUT => 10,
+        \CURLOPT_TIMEOUT => 30,
+        \CURLOPT_FOLLOWLOCATION => true,
+        \CURLOPT_MAXREDIRS => 3,
+        \CURLOPT_HTTPHEADER => [],
+        \CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.200',
+        \CURLOPT_ENCODING => '',
+        \CURLOPT_SSL_VERIFYPEER => true,
+        \CURLOPT_SSLVERSION => \CURL_SSLVERSION_TLSv1_2 | \CURL_SSLVERSION_MAX_TLSv1_3,
+        \CURLOPT_DEFAULT_PROTOCOL => 'https',
+        \CURLOPT_PROTOCOLS => \CURLPROTO_HTTPS,
         #These options are supposed to improve speed, but do not seem to work for websites that I parse at the moment
         #CURLOPT_SSL_FALSESTART => true,
         #CURLOPT_TCP_FASTOPEN => true,
@@ -60,8 +60,8 @@ class Curl
     {
         #Check if cURL handle already created and create it if not
         if (!self::$curl_handle instanceof \CurlHandle) {
-            self::$curl_handle = curl_init();
-            if (self::$curl_handle !== false && !curl_setopt_array(self::$curl_handle, $this->curl_options) && !curl_setopt(self::$curl_handle, CURLOPT_HTTPHEADER, self::$headers)) {
+            self::$curl_handle = \curl_init();
+            if (self::$curl_handle !== false && !\curl_setopt_array(self::$curl_handle, $this->curl_options) && !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers)) {
                 #Set default headers
                 self::$curl_handle = false;
             }
@@ -80,22 +80,22 @@ class Curl
             return false;
         }
         #Get page contents
-        curl_setopt(self::$curl_handle, CURLOPT_HEADER, true);
+        \curl_setopt(self::$curl_handle, \CURLOPT_HEADER, true);
         #Directing output to a temporary file, instead of STDOUT, because I've witnessed edge cases, where due to an error (or even a notice) the output is sent to the browser directly even with CURLOPT_RETURNTRANSFER set to true
-        curl_setopt(self::$curl_handle, CURLOPT_FILE, tmpfile());
+        \curl_setopt(self::$curl_handle, \CURLOPT_FILE, \tmpfile());
         #For some reason, if we set the CURLOPT_FILE, CURLOPT_RETURNTRANSFER gets reset to false
-        curl_setopt(self::$curl_handle, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(self::$curl_handle, CURLOPT_URL, $link);
+        \curl_setopt(self::$curl_handle, \CURLOPT_RETURNTRANSFER, true);
+        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $link);
         #Get a response
-        $response = curl_exec(self::$curl_handle);
-        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
+        $response = \curl_exec(self::$curl_handle);
+        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
         if ($response === false) {
             return false;
         }
         if ($http_code !== 200) {
             return $http_code;
         }
-        return mb_substr($response, curl_getinfo(self::$curl_handle, CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
+        return mb_substr($response, \curl_getinfo(self::$curl_handle, \CURLINFO_HEADER_SIZE), encoding: 'UTF-8');
     }
     
     /**
@@ -107,38 +107,38 @@ class Curl
     public function getFile(string $link): array|false
     {
         #Set the temp filepath
-        $filepath = tempnam(sys_get_temp_dir(), 'download');
+        $filepath = \tempnam(\sys_get_temp_dir(), 'download');
         if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
         #Get a file
-        curl_setopt(self::$curl_handle, CURLOPT_URL, $link);
-        $fp = fopen($filepath, 'wb');
+        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $link);
+        $fp = \fopen($filepath, 'wb');
         if ($fp === false) {
             return false;
         }
-        curl_setopt(self::$curl_handle, CURLOPT_HEADER, false);
-        curl_setopt(self::$curl_handle, CURLOPT_FILE, $fp);
+        \curl_setopt(self::$curl_handle, \CURLOPT_HEADER, false);
+        \curl_setopt(self::$curl_handle, \CURLOPT_FILE, $fp);
         #Get a response
-        $response = curl_exec(self::$curl_handle);
-        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
+        $response = \curl_exec(self::$curl_handle);
+        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
         #Close file
-        @fclose($fp);
+        @\fclose($fp);
         if ($response === false || $http_code !== 200) {
             return false;
         }
         #Rename the file to give it a proper extension
-        $mime = mime_content_type($filepath);
-        $new_name = pathinfo($filepath, PATHINFO_FILENAME).'.'.(array_search($mime, Common::EXTENSION_TO_MIME, true) ?? preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
-        rename($filepath, sys_get_temp_dir().'/'.$new_name);
-        $filepath = sys_get_temp_dir().'/'.$new_name;
+        $mime = \mime_content_type($filepath);
+        $new_name = \pathinfo($filepath, \PATHINFO_FILENAME).'.'.(\array_search($mime, Common::EXTENSION_TO_MIME, true) ?? \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
+        \rename($filepath, \sys_get_temp_dir().'/'.$new_name);
+        $filepath = \sys_get_temp_dir().'/'.$new_name;
         return [
             'server_name' => $new_name,
-            'server_path' => sys_get_temp_dir(),
-            'user_name' => preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$1$2', basename($link)),
-            'size' => filesize($filepath),
+            'server_path' => \sys_get_temp_dir(),
+            'user_name' => \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$1$2', \basename($link)),
+            'size' => \filesize($filepath),
             'type' => $mime,
-            'hash' => hash_file('sha3-512', $filepath),
+            'hash' => \hash_file('sha3-512', $filepath),
         ];
     }
     
@@ -154,11 +154,11 @@ class Curl
         if (!self::$curl_handle instanceof \CurlHandle) {
             return false;
         }
-        curl_setopt(self::$curl_handle, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt(self::$curl_handle, CURLOPT_URL, $link);
+        \curl_setopt(self::$curl_handle, \CURLOPT_POSTFIELDS, $payload);
+        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $link);
         #Get a response
-        $response = curl_exec(self::$curl_handle);
-        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
+        $response = \curl_exec(self::$curl_handle);
+        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
         return !($response === false || !in_array($http_code, [200, 201, 202, 203, 204, 205, 206, 207, 208, 226], true));
     }
     
@@ -191,10 +191,10 @@ class Curl
     public function addHeader(string $header): self
     {
         #Check if the header is already present
-        if (!in_array(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true)) {
+        if (!in_array(mb_strtolower($header, 'UTF-8'), \array_map('\strtolower', self::$headers), true)) {
             #Add it, if not
             self::$headers[] = $header;
-            curl_setopt(self::$curl_handle, CURLOPT_HTTPHEADER, self::$headers);
+            \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
         }
         return $this;
     }
@@ -208,11 +208,11 @@ class Curl
     public function removeHeader(string $header): self
     {
         #Check if the header is already present
-        $key = array_search(mb_strtolower($header, 'UTF-8'), array_map('strtolower', self::$headers), true);
+        $key = \array_search(mb_strtolower($header, 'UTF-8'), \array_map('\strtolower', self::$headers), true);
         if ($key !== false) {
             #Remove it, if yes
             unset(self::$headers[$key]);
-            curl_setopt(self::$curl_handle, CURLOPT_HTTPHEADER, self::$headers);
+            \curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers);
         }
         return $this;
     }
@@ -226,7 +226,7 @@ class Curl
      */
     public function changeSetting(int $option, mixed $value): self
     {
-        curl_setopt(self::$curl_handle, $option, $value);
+        \curl_setopt(self::$curl_handle, $option, $value);
         return $this;
     }
     
@@ -242,11 +242,11 @@ class Curl
             return false;
         }
         #Initialize cUrl
-        curl_setopt(self::$curl_handle, CURLOPT_NOBODY, true);
-        curl_setopt(self::$curl_handle, CURLOPT_URL, $remote_file);
-        curl_exec(self::$curl_handle);
-        $http_code = curl_getinfo(self::$curl_handle, CURLINFO_HTTP_CODE);
-        curl_close(self::$curl_handle);
+        \curl_setopt(self::$curl_handle, \CURLOPT_NOBODY, true);
+        \curl_setopt(self::$curl_handle, \CURLOPT_URL, $remote_file);
+        \curl_exec(self::$curl_handle);
+        $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
+        \curl_close(self::$curl_handle);
         #Check code
         return $http_code === 200;
     }
@@ -274,7 +274,7 @@ class Curl
                 }
             } else {
                 $upload = Sharing::upload(Config::$uploaded, exit: false);
-                if (!is_array($upload) || empty($upload[0]['server_name'])) {
+                if (!\is_array($upload) || empty($upload[0]['server_name'])) {
                     return ['http_error' => $upload, 'reason' => match ($upload) {
                         405 => 'Unsupported method',
                         415 => 'Unsupported file format',
@@ -288,10 +288,10 @@ class Curl
                     }];
                 }
                 #If $upload had more than 1 file - remove all except the 1st one
-                if (count($upload) > 1) {
+                if (\count($upload) > 1) {
                     foreach ($upload as $key => $file) {
                         if ($key !== 0) {
-                            @unlink($file['server_path'].'/'.$file['server_name']);
+                            @\unlink($file['server_path'].'/'.$file['server_name']);
                         }
                     }
                 }
@@ -299,11 +299,11 @@ class Curl
             }
             #Check if a file is one of the allowed types
             if (!in_array($upload['type'], self::ALLOWED_MIME, true)) {
-                @unlink($upload['server_path'].'/'.$upload['server_name']);
+                @\unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 400, 'reason' => 'Unsupported file type provided'];
             }
             #Check if we have an image
-            if (preg_match('/^image\/.+/ui', $upload['type']) === 1) {
+            if (\preg_match('/^image\/.+/ui', $upload['type']) === 1) {
                 #Convert to webp if it's a supported format, unless we chose not to
                 if ($to_webp) {
                     $converted = Images::toWebP($upload['server_path'].'/'.$upload['server_name']);
@@ -311,11 +311,11 @@ class Curl
                     $converted = false;
                 }
                 if ($converted) {
-                    $upload['hash'] = hash_file('sha3-512', $converted);
-                    $upload['size'] = filesize($converted);
-                    $upload['server_name'] = preg_replace('/(.+)(\..+$)/u', '$1.webp', $upload['server_name']);
+                    $upload['hash'] = \hash_file('sha3-512', $converted);
+                    $upload['size'] = \filesize($converted);
+                    $upload['server_name'] = \preg_replace('/(.+)(\..+$)/u', '$1.webp', $upload['server_name']);
                     $upload['new_name'] = $upload['hash'].'.webp';
-                    $upload['user_name'] = preg_replace('/(.+)(\..+$)/u', '$1.webp', $upload['user_name']);
+                    $upload['user_name'] = \preg_replace('/(.+)(\..+$)/u', '$1.webp', $upload['user_name']);
                     $upload['type'] = 'image/webp';
                 } else {
                     $upload['new_name'] = $upload['server_name'];
@@ -332,7 +332,7 @@ class Curl
                 $upload['location'] = '/data/uploaded/';
             }
             #Get extension
-            $upload['extension'] = pathinfo($upload['server_path'].'/'.$upload['server_name'], PATHINFO_EXTENSION);
+            $upload['extension'] = \pathinfo($upload['server_path'].'/'.$upload['server_name'], \PATHINFO_EXTENSION);
             #Get a path for hash-tree structure
             $upload['hash_tree'] = mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
             if (!\is_dir($upload['new_path'].'/'.$upload['hash_tree']) && !\mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true) && !\is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
@@ -341,11 +341,11 @@ class Curl
             #Set the file location to return in output
             $upload['location'] .= $upload['hash_tree'].$upload['new_name'];
             #Move to the hash-tree directory only if a file is not already present
-            if (is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
+            if (\is_file($upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
                 #Remove a newly downloaded copy
-                @unlink($upload['server_path'].'/'.$upload['server_name']);
-            } elseif (!@rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
-                @unlink($upload['server_path'].'/'.$upload['server_name']);
+                @\unlink($upload['server_path'].'/'.$upload['server_name']);
+            } elseif (!@\rename($upload['server_path'].'/'.$upload['server_name'], $upload['new_path'].'/'.$upload['hash_tree'].$upload['new_name'])) {
+                @\unlink($upload['server_path'].'/'.$upload['server_name']);
                 return ['http_error' => 500, 'reason' => 'Failed to move file to final destination'];
             }
             #Add to the database

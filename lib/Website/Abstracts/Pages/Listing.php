@@ -38,7 +38,7 @@ class Listing extends Search
         #If int is returned, we have a bad page
         if (is_int($output_array['search_result'])) {
             #Redirect
-            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name . '/' . $this->subservice_name . '/' . (!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/'.$this->service_name . '/' . $this->subservice_name . '/' . (!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$output_array['search_result'] : '?page='.$output_array['search_result']), false);
             return [];
         }
         #Get the freshest date
@@ -48,11 +48,11 @@ class Listing extends Search
             $this->lastModified($date);
         }
         #Generate pagination data
-        $output_array['pagination'] = ['current' => $page, 'total' => $output_array['search_result']['pages'], 'prefix' => '?'.(empty($this->search_for) ? '' : 'search='.rawurlencode($this->search_for).'&').'page=', 'per' => $listing_type->list_items];
+        $output_array['pagination'] = ['current' => $page, 'total' => $output_array['search_result']['pages'], 'prefix' => '?'.(empty($this->search_for) ? '' : 'search='.\rawurlencode($this->search_for).'&').'page=', 'per' => $listing_type->list_items];
         if (!empty($this->search_for)) {
             #Update breadcrumbs
-            $this->attachCrumb('?search='.rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
-            $this->breadcrumb[] = ['href' => '/'.$this->service_name.'/'.$this->subservice_name.'/?search='.rawurlencode($this->search_for), 'name' => $this->types[$this->subservice_name]['name']];
+            $this->attachCrumb('?search='.\rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
+            $this->breadcrumb[] = ['href' => '/'.$this->service_name.'/'.$this->subservice_name.'/?search='.\rawurlencode($this->search_for), 'name' => $this->types[$this->subservice_name]['name']];
             if ($page > 1) {
                 $this->attachCrumb('page=' . $page, mb_ucfirst($this->page_word, 'UTF-8').' '.$page, true);
             }
@@ -74,18 +74,18 @@ class Listing extends Search
             $this->h1 = $this->og_desc;
         }
         #Merge with extra fields and return the result
-        return array_merge($output_array, $this->extras());
+        return \array_merge($output_array, $this->extras());
     }
     
     #Get date from results
     final protected function getDate(array $results): int|string
     {
         #Prepare the array of dates
-        $dates = array_column($results['entities'], 'updated');
+        $dates = \array_column($results['entities'], 'updated');
         #Return max value if the dates' array is not empty or 0 otherwise
         if (empty($dates)) {
             return 0;
         }
-        return max($dates);
+        return \max($dates);
     }
 }

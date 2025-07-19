@@ -50,7 +50,7 @@ class FileListing extends StaticPage
             #Get files' counts
             foreach ($this->dirs as $key => $dir) {
                 #Check if a directory exists
-                if (!is_dir(Config::$work_dir.$dir['path'])) {
+                if (!\is_dir(Config::$work_dir.$dir['path'])) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$dir['path'].'` does not exist.'];
                 }
                 if (!empty($dir['depth']) && $dir['depth'] >= 1) {
@@ -61,20 +61,20 @@ class FileListing extends StaticPage
                 $output_array['files'][$key]['name'] = $dir['name'];
             }
         } else {
-            if (!array_key_exists($path[0], $this->dirs)) {
+            if (!\array_key_exists($path[0], $this->dirs)) {
                 return ['http_error' => 404, 'reason' => 'Unsupported path.', 'suggested_link' => $this->getLastCrumb()];
             }
             if (empty($this->dirs[$path[0]]['depth'])) {
                 $output_array = $this->listFiles($path[0]);
             } else {
-                if (!is_dir(Config::$work_dir.$this->dirs[$path[0]]['path'])) {
+                if (!\is_dir(Config::$work_dir.$this->dirs[$path[0]]['path'])) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
                 }
                 #Update breadcrumbs
                 $this->attachCrumb($path[0], $this->dirs[$path[0]]['name']);
                 $sub_dir = $this->getRealSubDirPath(Config::$work_dir.$this->dirs[$path[0]]['path'], array_slice($path, 1));
                 if (!$sub_dir) {
-                    return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'/'.implode('/', array_slice($path, 1)).'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
+                    return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'/'.\implode('/', array_slice($path, 1)).'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
                 }
                 if (count($path) - 1 > $this->dirs[$path[0]]['depth']) {
                     return ['http_error' => 400, 'reason' => 'You\'ve gone too deep.', 'suggested_link' => $this->getLastCrumb()];
@@ -111,8 +111,8 @@ class FileListing extends StaticPage
         $full_sub_dir = '/';
         foreach ($sub_dir as $sub_path) {
             $match = false;
-            foreach (scandir($path.$full_sub_dir, SCANDIR_SORT_NONE) as $path_entry) {
-                if (strcasecmp($path_entry, $sub_path) === 0) {
+            foreach (\scandir($path.$full_sub_dir, \SCANDIR_SORT_NONE) as $path_entry) {
+                if (\strcasecmp($path_entry, $sub_path) === 0) {
                     $match = true;
                     $full_sub_dir .= $path_entry.'/';
                     break;
@@ -137,10 +137,10 @@ class FileListing extends StaticPage
     {
         $output_array['files'][$path] = $this->getFiles(Config::$work_dir.$this->dirs[$path]['path'].$sub_dir);
         #Process pagination
-        $total_pages = (int)ceil($output_array['files'][$path]['count'] / $this->list_items);
+        $total_pages = (int)\ceil($output_array['files'][$path]['count'] / $this->list_items);
         if ($total_pages > 0 && $this->page > $total_pages) {
             #Redirect to last page
-            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.rawurlencode($this->search_for).'&page='.$total_pages : '?page='.$total_pages), false);
+            Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').$this->getLastCrumb().'/'.(!empty($this->search_for) ? '?search='.\rawurlencode($this->search_for).'&page='.$total_pages : '?page='.$total_pages), false);
         }
         if ($output_array['files'][$path]['count'] > $this->list_items) {
             #Generate pagination data
@@ -150,7 +150,7 @@ class FileListing extends StaticPage
         }
         #Get the freshest date
         if (!empty($output_array['files'][$path]['files'])) {
-            $date = max(array_column($output_array['files'][$path]['files'], 'time'));
+            $date = \max(\array_column($output_array['files'][$path]['files'], 'time'));
             #Attempt to exit a bit earlier with Last Modified header
             if (!empty($date)) {
                 $this->lastModified($date);
@@ -167,7 +167,7 @@ class FileListing extends StaticPage
                 $this->attachCrumb('?page='.$this->page, 'Page '.$this->page);
             }
         } else {
-            $this->attachCrumb('?search='.rawurlencode($this->search_for), 'Search for `'.$this->search_for.'`');
+            $this->attachCrumb('?search='.\rawurlencode($this->search_for), 'Search for `'.$this->search_for.'`');
             if ($this->page > 1) {
                 #Add the path to breadcrumbs
                 $this->attachCrumb('page='.$this->page, 'Page '.$this->page, true);
@@ -191,22 +191,22 @@ class FileListing extends StaticPage
     {
         #Order results
         /* @noinspection IteratorToArrayKeysCollisionInspection */
-        $iterator = iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function ($cur) {
+        $iterator = \iterator_to_array(new \CallbackFilterIterator(new \FilesystemIterator($path, \FilesystemIterator::KEY_AS_FILENAME | \FilesystemIterator::SKIP_DOTS), function ($cur) {
             return $cur->isDir();
         }));
-        ksort($iterator, SORT_NATURAL);
+        \ksort($iterator, \SORT_NATURAL);
         #Prepare the array
         $result = [];
         $result['dirs'] = [];
         if ($count_only) {
-            $result['count'] = iterator_count($iterator);
+            $result['count'] = \iterator_count($iterator);
         } else {
             foreach ($iterator as $key => $file) {
                 if (!in_array($key, $this->exclude, true)) {
                     $file_details = [
                         'dirname' => $file->getFilename(),
                         #Path relative to the working directory
-                        'path' => str_replace(Config::$work_dir, '', $file->getPath()),
+                        'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
                         'time' => $file->getMTime(),
                     ];
                     $result['dirs'][] = $file_details;
@@ -238,13 +238,13 @@ class FileListing extends StaticPage
         }
         #Order results
         /* @noinspection IteratorToArrayKeysCollisionInspection */
-        $iterator = iterator_to_array($iterator);
-        ksort($iterator, SORT_NATURAL);
+        $iterator = \iterator_to_array($iterator);
+        \ksort($iterator, \SORT_NATURAL);
         #Prepare the array
         $result = [];
         $result['files'] = [];
         if ($count_only) {
-            $result['count'] = iterator_count($iterator);
+            $result['count'] = \iterator_count($iterator);
         } else {
             $id = 1;
             foreach ($iterator as $key => $file) {
@@ -254,8 +254,8 @@ class FileListing extends StaticPage
                             'filename' => $file->getFilename(),
                             'basename' => $file->getBasename('.'.$file->getExtension()),
                             #Path relative to the working directory
-                            'path' => str_replace(Config::$work_dir, '', $file->getPath()),
-                            'mime' => mime_content_type($file->getPathname()),
+                            'path' => \str_replace(Config::$work_dir, '', $file->getPath()),
+                            'mime' => \mime_content_type($file->getPathname()),
                             'size' => $file->getSize(),
                             'time' => $file->getMTime(),
                             'key' => $id++,

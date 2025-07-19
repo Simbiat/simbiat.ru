@@ -59,7 +59,7 @@ class PvPTeam extends Page
         $output_array['pvpteam']['crest'] = AbstractTrackerEntity::crestToFavicon($output_array['pvpteam']['crest']);
         $output_array['favicon'] = $output_array['pvpteam']['crest'];
         #Check if linked to current user
-        if ($_SESSION['user_id'] !== 1 && in_array($_SESSION['user_id'], array_column($output_array['pvpteam']['members'], 'user_id'), true)) {
+        if ($_SESSION['user_id'] !== 1 && \in_array($_SESSION['user_id'], \array_column($output_array['pvpteam']['members'], 'user_id'), true)) {
             $output_array['pvpteam']['linked'] = true;
         }
         return $output_array;

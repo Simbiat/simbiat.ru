@@ -9,20 +9,20 @@ namespace Simbiat\Website;
 class Errors
 {
     public const array PHP_ERROR_TYPES = [
-        E_ERROR => 'PHP Error',
-        E_WARNING => 'PHP Warning',
-        E_PARSE => 'PHP Parsing Error',
-        E_NOTICE => 'PHP Notice',
-        E_CORE_ERROR => 'PHP Core Error',
-        E_CORE_WARNING => 'PHP Core Warning',
-        E_COMPILE_ERROR => 'PHP Compile Error',
-        E_COMPILE_WARNING => 'PHP Compile Warning',
-        E_USER_ERROR => 'PHP User Error',
-        E_USER_WARNING => 'PHP User Warning',
-        E_USER_NOTICE => 'PHP User Notice',
-        E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
-        E_DEPRECATED => 'PHP Deprecation Notice',
-        E_USER_DEPRECATED => 'PHP User Deprecation Notice',
+        \E_ERROR => 'PHP Error',
+        \E_WARNING => 'PHP Warning',
+        \E_PARSE => 'PHP Parsing Error',
+        \E_NOTICE => 'PHP Notice',
+        \E_CORE_ERROR => 'PHP Core Error',
+        \E_CORE_WARNING => 'PHP Core Warning',
+        \E_COMPILE_ERROR => 'PHP Compile Error',
+        \E_COMPILE_WARNING => 'PHP Compile Warning',
+        \E_USER_ERROR => 'PHP User Error',
+        \E_USER_WARNING => 'PHP User Warning',
+        \E_USER_NOTICE => 'PHP User Notice',
+        \E_RECOVERABLE_ERROR => 'PHP Recoverable Error',
+        \E_DEPRECATED => 'PHP Deprecation Notice',
+        \E_USER_DEPRECATED => 'PHP User Deprecation Notice',
     ];
     
     /**
@@ -37,15 +37,15 @@ class Errors
     {
         #Determine page link
         $page = self::getPage();
-        if (!is_string($extra)) {
+        if (!\is_string($extra)) {
             try {
-                $extra = json_encode($extra, JSON_THROW_ON_ERROR);
+                $extra = \json_encode($extra, \JSON_THROW_ON_ERROR);
             } catch (\Throwable) {
                 $extra = '';
             }
         }
         #Generate message
-        $message = '['.date('c').'] '.get_class($error).' Exception:'."\r\n\t".
+        $message = '['.\date('c').'] '.\get_class($error).' Exception:'."\r\n\t".
             'Page: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
@@ -57,7 +57,7 @@ class Errors
             echo '<pre>'.$message.'</pre>';
             exit(0);
         }
-        file_put_contents(Config::$work_dir.'/logs/php.log', $message, FILE_APPEND);
+        \file_put_contents(Config::$work_dir.'/logs/php.log', $message, \FILE_APPEND);
         return false;
     }
     
@@ -73,15 +73,15 @@ class Errors
     final public static function error_handler(int $level, string $message, string $file, int $line): bool
     {
         #Checking if @ was used to suppress error reporting
-        if (!(error_reporting() & $level)) {
+        if (!(\error_reporting() & $level)) {
             return false;
         }
         #Excluding some warnings from processing
         if (
             #Exclude Twig cache
-            ($level === E_DEPRECATED && preg_match('/twig[\\\\\/]cache/i', $file) === 1) ||
+            ($level === \E_DEPRECATED && \preg_match('/twig[\\\\\/]cache/i', $file) === 1) ||
             #Exclude GD color profile warning
-            ($level === E_WARNING && preg_match('/known incorrect sRGB profile/i', $file) === 1)
+            ($level === \E_WARNING && \preg_match('/known incorrect sRGB profile/i', $file) === 1)
         ) {
             return false;
         }
@@ -96,9 +96,9 @@ class Errors
     final public static function shutdown(): void
     {
         #Get error
-        $error = error_get_last();
+        $error = \error_get_last();
         #Log only time and memory exhaustion to avoid duplicates
-        if (!empty($error) && $error['type'] === E_ERROR && preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
+        if (!empty($error) && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
             #Determine page link
             self::write(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
         }
@@ -115,14 +115,14 @@ class Errors
      */
     private static function write(string $type, string $file, string|int $line, string $message): void
     {
-        file_put_contents(
+        \file_put_contents(
             Config::$work_dir.'/logs/php.log',
-            '['.date('c').'] '.$type.':'."\r\n\t".
+            '['.\date('c').'] '.$type.':'."\r\n\t".
             'Page: '.self::getPage()."\r\n\t".
             'File: '.$file."\r\n\t".
             'Line: '.$line."\r\n\t".
             $message."\r\n",
-            FILE_APPEND);
+            \FILE_APPEND);
     }
     
     /**

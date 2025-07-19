@@ -36,8 +36,8 @@ class General extends Page
                 return ['http_error' => 500, 'reason' => 'No JSON file defined for category'];
             }
             $output_array['ffstats']['category'] = $this->json_to_ingest;
-            if (is_file(Config::$statistics.$this->json_to_ingest.'.json')) {
-                $output_array['ffstats']['data'] = json_decode(file_get_contents(Config::$statistics.$this->json_to_ingest.'.json'), flags: JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_BIGINT_AS_STRING | JSON_OBJECT_AS_ARRAY);
+            if (\is_file(Config::$statistics.$this->json_to_ingest.'.json')) {
+                $output_array['ffstats']['data'] = \json_decode(\file_get_contents(Config::$statistics.$this->json_to_ingest.'.json'), flags: \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_BIGINT_AS_STRING | \JSON_OBJECT_AS_ARRAY);
                 $this->lastModified($output_array['ffstats']['data']['time'] ?? 0);
             } else {
                 return ['http_error' => 500, 'reason' => 'File `'.$this->json_to_ingest.'.json` not found'];

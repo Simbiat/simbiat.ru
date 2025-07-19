@@ -37,7 +37,7 @@ class Me extends StaticPage
      */
     protected function generate(array $path): array
     {
-        $output_array = ['years_of_experience' => ((int)date('Y') - 2009)];
+        $output_array = ['years_of_experience' => ((int)\date('Y') - 2009)];
         #Feedback
         $output_array['feedbacks'] =
             [

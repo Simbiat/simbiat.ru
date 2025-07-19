@@ -65,7 +65,7 @@ abstract class General extends Api
         if ($this->name_for_links === 'character' && isset($data['private']) && $data['private'] === true) {
             return ['http_error' => 403, 'reason' => 'Character marked as private on Lodestone'];
         }
-        if ($data === 403 && in_array($this->name_for_links, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])) {
+        if ($data === 403 && \in_array($this->name_for_links, ['linkshell', 'crossworld_linkshell', 'crossworldlinkshell'])) {
             return ['http_error' => 403, 'reason' => $this->name_for_errors.' has empty page on Lodestone'];
         }
         if ($data === 409) {

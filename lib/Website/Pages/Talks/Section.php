@@ -34,7 +34,7 @@ class Section extends Page
     protected function generate(array $path): array
     {
         #Allow `blob:`
-        @header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
+        @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' blob:; manifest-src \'self\'; media-src \'self\'; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
         #Sanitize ID
         $id = $path[0] ?? 'top';
         if ($id !== 'top' && (int)$id < 1) {
@@ -50,12 +50,12 @@ class Section extends Page
             return ['http_error' => 403, 'reason' => 'This section is private and you lack `view_private` permission'];
         }
         #Check if scheduled
-        if ($output_array['created'] >= time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
+        if ($output_array['created'] >= \time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Generate pagination data
         $page = (int)($_GET['page'] ?? 1);
-        $output_array['pagination'] = ['current' => $page, 'total' => max($output_array['threads']['pages'] ?? 1, $output_array['children']['pages'] ?? 1), 'prefix' => '?page='];
+        $output_array['pagination'] = ['current' => $page, 'total' => \max($output_array['threads']['pages'] ?? 1, $output_array['children']['pages'] ?? 1), 'prefix' => '?page='];
         if ($output_array['pagination']['current'] > $output_array['pagination']['total'] && $output_array['pagination']['total'] !== 0) {
             #Redirect to last page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/'.($id === 'top' ? '' : $id).'?page='.$output_array['pagination']['total'], false);
@@ -69,15 +69,15 @@ class Section extends Page
         }
         #Add children times
         if (!empty($output_array['children']['entities'])) {
-            $times = array_merge($times, array_column($output_array['children']['entities'], 'updated'));
+            $times = \array_merge($times, \array_column($output_array['children']['entities'], 'updated'));
         }
         #Add threads times
         if (!empty($output_array['threads']['entities'])) {
-            $times = array_merge($times, array_column($output_array['threads']['entities'], 'updated'));
+            $times = \array_merge($times, \array_column($output_array['threads']['entities'], 'updated'));
         }
         #Try to exit early based on modification date
         if (!empty($times)) {
-            $this->lastModified(max($times) ?? 0);
+            $this->lastModified(\max($times) ?? 0);
         }
         #Add section_id, to avoid ambiguity on Twig level
         $output_array['section_id'] = $output_array['id'];

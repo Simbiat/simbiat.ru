@@ -56,7 +56,7 @@ class Achievement extends Page
             $this->alt_links[] = ['type' => 'text/html', 'title' => 'Lodestone EU page of the reward item', 'href' => 'https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/'.$output_array['achievement']['rewards']['item']['id']];
         }
         #Set favicon
-        if (is_file(Config::$icons.$output_array['achievement']['icon'])) {
+        if (\is_file(Config::$icons.$output_array['achievement']['icon'])) {
             $output_array['favicon'] = '/assets/images/fftracker/icons/'.$output_array['achievement']['icon'];
         }
         return $output_array;

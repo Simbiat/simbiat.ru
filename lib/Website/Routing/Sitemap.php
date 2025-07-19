@@ -33,7 +33,7 @@ class Sitemap extends Router
         #Send 406 if format is not acceptable
         Headers::notAccept(['application/xml']);
         #Send content type header
-        @header('Content-Type: application/xml; charset=utf-8');
+        @\header('Content-Type: application/xml; charset=utf-8');
         #Ensure the path is set, even though it's empty
         if (empty($path[0])) {
             $path[0] = 'index';

@@ -26,7 +26,7 @@ class Redirect extends StaticPage
     #[\Override]
     protected function generate(array $path): array
     {
-        $new_uri = preg_replace('/'.$this->search_for.'/ui', $this->replace_with, Config::$canonical);
+        $new_uri = \preg_replace('/'.$this->search_for.'/ui', $this->replace_with, Config::$canonical);
         Headers::redirect($new_uri);
         return [];
     }

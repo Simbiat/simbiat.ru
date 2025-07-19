@@ -75,11 +75,11 @@ abstract class Page
         #Check that subclass has set appropriate properties
         foreach (['subservice_name', 'breadcrumb'] as $property) {
             if (empty($this->{$property})) {
-                throw new \LogicException(get_class($this).' must have a non-empty `'.$property.'` property.');
+                throw new \LogicException(\get_class($this).' must have a non-empty `'.$property.'` property.');
             }
         }
         #Set last modified data
-        $this->last_modified = time();
+        $this->last_modified = \time();
     }
     
     /**
@@ -112,7 +112,7 @@ abstract class Page
     final public function get(array $path): array
     {
         #Close session early, if we know, that its data will not be changed (default)
-        if (!$this->session_change && \session_status() === PHP_SESSION_ACTIVE) {
+        if (!$this->session_change && \session_status() === \PHP_SESSION_ACTIVE) {
             \session_write_close();
         }
         #Send page language
@@ -120,16 +120,16 @@ abstract class Page
             \header('Content-Language: '.$this->language);
         }
         #Check if user has required permission
-        if (!empty($this->required_permission) && empty(array_intersect($this->required_permission, $_SESSION['permissions']))) {
-            $page = ['http_error' => 403, 'reason' => 'No `'.implode('` or `', $this->required_permission).'` permission'];
+        if (!empty($this->required_permission) && empty(\array_intersect($this->required_permission, $_SESSION['permissions']))) {
+            $page = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
         } elseif (empty(HomePage::$http_error) || $this->static) {
             #Generate the page only if no prior errors detected
             #Generate a list of allowed methods
-            $allowed_methods = array_unique(array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
+            $allowed_methods = \array_unique(\array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
             #Send headers
-            if (!headers_sent()) {
-                header('Access-Control-Allow-Methods: '.implode(', ', $allowed_methods));
-                header('Allow: '.implode(', ', $allowed_methods));
+            if (!\headers_sent()) {
+                \header('Access-Control-Allow-Methods: '.\implode(', ', $allowed_methods));
+                \header('Allow: '.\implode(', ', $allowed_methods));
             }
             #Check if allowed method is used
             if (!in_array(HomePage::$method, $allowed_methods, true)) {
@@ -142,11 +142,11 @@ abstract class Page
                 try {
                     $page = $this->generate($path);
                     #Close session if it's still open. Normally at this point all manipulations have been done.
-                    if (session_status() === PHP_SESSION_ACTIVE) {
-                        session_write_close();
+                    if (\session_status() === \PHP_SESSION_ACTIVE) {
+                        \session_write_close();
                     }
                 } catch (\Throwable $exception) {
-                    if (preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
+                    if (\preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                         $page = ['http_error' => 400, 'reason' => $exception->getMessage()];
                     } else {
                         Errors::error_log($exception);
@@ -157,7 +157,7 @@ abstract class Page
                 if (!$this->header_sent) {
                     $this->lastModified($this->last_modified);
                 }
-                $page = array_merge($page, HomePage::$http_error);
+                $page = \array_merge($page, HomePage::$http_error);
             }
         } else {
             $page = HomePage::$http_error;
@@ -170,12 +170,12 @@ abstract class Page
         $page['h1'] = $this->h1;
         $page['og_desc'] = $this->og_desc;
         if (!empty($this->og_image) && empty($page['og_image'])) {
-            $page = array_merge($page, Images::ogImage($this->og_image, true));
+            $page = \array_merge($page, Images::ogImage($this->og_image, true));
         }
         $page['cache_age'] = $this->cache_age;
         $page['cache_strategy'] = $this->cache_strategy;
         if (!empty($this->h2_push) || !empty($this->h2_push_extra)) {
-            $this->h2_push = array_merge($this->h2_push, $this->h2_push_extra);
+            $this->h2_push = \array_merge($this->h2_push, $this->h2_push_extra);
             #Prepare a set of images to push
             foreach ($this->h2_push as $key => $image) {
                 $this->h2_push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
@@ -184,7 +184,7 @@ abstract class Page
         }
         if (!empty($this->alt_links) || !empty($this->js_module)) {
             if (!empty($this->js_module)) {
-                $this->alt_links = array_merge($this->alt_links, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->js_module.'.'.filemtime(Config::$js_dir.'/controllers/'.$this->js_module.'.js').'.js', 'as' => 'script']]);
+                $this->alt_links = \array_merge($this->alt_links, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->js_module.'.'.\filemtime(Config::$js_dir.'/controllers/'.$this->js_module.'.js').'.js', 'as' => 'script']]);
             }
             #Send HTTP header
             if (!HomePage::$stale_return) {
@@ -227,8 +227,8 @@ abstract class Page
     final protected function lastModified(int|string|null $time = null): void
     {
         #Convert string to int
-        if (is_string($time)) {
-            $time = strtotime($time);
+        if (\is_string($time)) {
+            $time = \strtotime($time);
         }
         #If time is less than 0, use the Last Modified set initially
         if ($time === null || $time <= 0) {
@@ -256,7 +256,7 @@ abstract class Page
     {
         #Add a path to breadcrumbs
         $this->breadcrumb[] = [
-            'href' => $this->breadcrumb[array_key_last($this->breadcrumb)]['href'].($query ? '&' : '/').$path,
+            'href' => $this->breadcrumb[\array_key_last($this->breadcrumb)]['href'].($query ? '&' : '/').$path,
             'name' => $name,
         ];
     }
@@ -267,7 +267,7 @@ abstract class Page
      */
     final protected function getLastCrumb(): string
     {
-        return $this->breadcrumb[array_key_last($this->breadcrumb)]['href'];
+        return $this->breadcrumb[\array_key_last($this->breadcrumb)]['href'];
     }
     
     /**
@@ -284,7 +284,7 @@ abstract class Page
         $html = new \DOMDocument(encoding: 'UTF-8');
         #`mb_convert_encoding` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
         #LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
-        $html->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOBLANKS | LIBXML_PARSEHUGE | LIBXML_COMPACT | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
+        $html->loadHTML(mb_convert_encoding($string, 'HTML-ENTITIES', 'UTF-8'), \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD | \LIBXML_NOBLANKS | \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET);
         $html->preserveWhiteSpace = false;
         $html->formatOutput = false;
         $html->normalizeDocument();
@@ -295,10 +295,10 @@ abstract class Page
         #Get the cleaned HTML
         $cleaned_html = $html->saveHTML();
         #Strip the excessive HTML tags if we added them
-        $cleaned_html = preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html);
-        $new_description = strip_tags(Cut::cut(preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html), 160, 1));
+        $cleaned_html = \preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html);
+        $new_description = \strip_tags(Cut::cut(\preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html), 160, 1));
         #Update description only if it's not empty
-        if (preg_match('/^\s*$/u', $new_description) === 0) {
+        if (\preg_match('/^\s*$/u', $new_description) === 0) {
             $this->og_desc = $new_description;
         }
     }

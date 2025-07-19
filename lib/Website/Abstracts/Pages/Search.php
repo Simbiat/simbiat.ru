@@ -43,7 +43,7 @@ class Search extends Page
         #Check if we got some old link (before GET implementation)
         if (empty($_GET['search']) && !empty($path[0])) {
             #Redirect to a proper version using GET value
-            Headers::redirect(preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', Config::$canonical));
+            Headers::redirect(\preg_replace('/(.*)(?>\/([^\/]+)\/?$)/u', '$1/?search=$2', Config::$canonical));
         }
         #Sanitize search value
         if (!$this->sanitize($_GET['search'] ?? '')) {
@@ -62,7 +62,7 @@ class Search extends Page
         }
         if (!empty($this->search_for)) {
             #Continue breadcrumbs
-            $this->attachCrumb('?search='.rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
+            $this->attachCrumb('?search='.\rawurlencode($this->search_for), sprintf($this->short_title, $this->search_for));
             #Set search value, if available
             $output_array['search_value'] = $this->search_for;
             #Set titles
@@ -71,7 +71,7 @@ class Search extends Page
             $this->og_desc = sprintf($this->full_title, $this->search_for);
         }
         #Merge with extra fields and return the result
-        return array_merge($output_array, $this->extras());
+        return \array_merge($output_array, $this->extras());
     }
     
     /**
@@ -86,7 +86,7 @@ class Search extends Page
         }
         #Check that classes are available
         foreach ($this->types as $type) {
-            if (!is_subclass_of($type['class'], \Simbiat\Website\Abstracts\Search::class)) {
+            if (!\is_subclass_of($type['class'], \Simbiat\Website\Abstracts\Search::class)) {
                 throw new \RuntimeException('`'.$type['class'].'` class does not extend `\Simbiat\Website\Abstracts\Search`');
             }
         }

@@ -45,19 +45,19 @@ class UserControl extends \Simbiat\Website\Abstracts\Api
     protected function genData(array $path): array
     {
         return match($path[0]) {
-            'remind' => (new Remind)->route(array_slice($path, 1)),
-            'login' => (new Login)->route(array_slice($path, 1)),
-            'logout' => (new Logout)->route(array_slice($path, 1)),
-            'register' => (new Register)->route(array_slice($path, 1)),
-            'emails' => (new Emails)->route(array_slice($path, 1)),
-            'password' => (new Password)->route(array_slice($path, 1)),
-            'username' => (new Username)->route(array_slice($path, 1)),
-            'profile' => (new Profile)->route(array_slice($path, 1)),
-            'fflink' => (new FFLink)->route(array_slice($path, 1)),
-            'cookies' => (new Cookies)->route(array_slice($path, 1)),
-            'sessions' => (new Sessions)->route(array_slice($path, 1)),
-            'avatars' => (new Avatars)->route(array_slice($path, 1)),
-            'remove' => (new Remove)->route(array_slice($path, 1)),
+            'remind' => (new Remind)->route(\array_slice($path, 1)),
+            'login' => (new Login)->route(\array_slice($path, 1)),
+            'logout' => (new Logout)->route(\array_slice($path, 1)),
+            'register' => (new Register)->route(\array_slice($path, 1)),
+            'emails' => (new Emails)->route(\array_slice($path, 1)),
+            'password' => (new Password)->route(\array_slice($path, 1)),
+            'username' => (new Username)->route(\array_slice($path, 1)),
+            'profile' => (new Profile)->route(\array_slice($path, 1)),
+            'fflink' => (new FFLink)->route(\array_slice($path, 1)),
+            'cookies' => (new Cookies)->route(\array_slice($path, 1)),
+            'sessions' => (new Sessions)->route(\array_slice($path, 1)),
+            'avatars' => (new Avatars)->route(\array_slice($path, 1)),
+            'remove' => (new Remove)->route(\array_slice($path, 1)),
         };
     }
 }

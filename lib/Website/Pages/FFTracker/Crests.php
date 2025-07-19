@@ -35,7 +35,7 @@ class Crests extends FileListing
     
     protected function extra(array &$file_details): void
     {
-        $file_details['icon'] = str_replace('/lib/FFXIV/CrestComponents', '/assets/images/fftracker/crests-components', str_replace('/public/assets/', '/assets/', str_replace('/data/mergedcrests', '/assets/images/fftracker/merged-crests', $file_details['path']))).'/'.$file_details['filename'];
+        $file_details['icon'] = \str_replace('/lib/FFXIV/CrestComponents', '/assets/images/fftracker/crests-components', \str_replace('/public/assets/', '/assets/', \str_replace('/data/mergedcrests', '/assets/images/fftracker/merged-crests', $file_details['path']))).'/'.$file_details['filename'];
         $file_details['name'] = (str_contains($file_details['path'], 'merged') ? $file_details['key'] : $file_details['filename']);
     }
 }

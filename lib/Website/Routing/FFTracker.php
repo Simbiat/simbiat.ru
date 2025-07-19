@@ -54,7 +54,7 @@ class FFTracker extends Router
             'linkshell' => new \Simbiat\Website\Redirects\FFTracker\Linkshell()->get(array_slice($path, 1)),
             'crossworld_linkshell', 'crossworldlinkshell', 'crossworldlinkshells' => new \Simbiat\Website\Redirects\FFTracker\CrossworldLinkshell()->get(array_slice($path, 1)),
             'achievement' => new \Simbiat\Website\Redirects\FFTracker\Achievement()->get(array_slice($path, 1)),
-            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->sub_routes).'`.'],
+            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
     }
 }

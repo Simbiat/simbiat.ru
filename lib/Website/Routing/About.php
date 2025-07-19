@@ -44,7 +44,7 @@ class About extends Router
             'me' => new Me()->get(array_slice($path, 1)),
             'resume' => new Resume()->get(array_slice($path, 1)),
             'contacts' => new Contacts()->get(array_slice($path, 1)),
-            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.implode('`, `', $this->sub_routes).'`.'],
+            default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
     }
 }

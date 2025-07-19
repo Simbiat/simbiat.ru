@@ -48,7 +48,7 @@ class Register extends Api
         }
         #Get time zone
         $timezone = $_POST['signinup']['timezone'] ?? 'UTC';
-        if (!in_array($timezone, timezone_identifiers_list(), true)) {
+        if (!\in_array($timezone, \timezone_identifiers_list(), true)) {
             $timezone = 'UTC';
         }
         #Check if banned or in use

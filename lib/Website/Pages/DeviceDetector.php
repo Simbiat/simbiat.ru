@@ -50,6 +50,6 @@ class DeviceDetector extends FileListing
             'ＡＵＸ' => 'AUX',
             default => $file_details['basename'],
         };
-        $file_details['icon'] = str_replace('/lib/DDCIcons/src/icons/', '/assets/images/devicedetector/', $file_details['path']).'/'.$file_details['filename'];
+        $file_details['icon'] = \str_replace('/lib/DDCIcons/src/icons/', '/assets/images/devicedetector/', $file_details['path']).'/'.$file_details['filename'];
     }
 }
