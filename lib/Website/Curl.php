@@ -129,7 +129,7 @@ class Curl
         }
         #Rename the file to give it a proper extension
         $mime = \mime_content_type($filepath);
-        $new_name = \pathinfo($filepath, \PATHINFO_FILENAME).'.'.(\array_search($mime, Common::EXTENSION_TO_MIME, true) ?? \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
+        $new_name = \pathinfo($filepath, \PATHINFO_FILENAME).'.'.(Common::getExtensionFromMime($mime) ?? \preg_replace('/(.+)(\.[^?#\s]+)([?#].+)?$/u', '$2', $link));
         \rename($filepath, \sys_get_temp_dir().'/'.$new_name);
         $filepath = \sys_get_temp_dir().'/'.$new_name;
         return [

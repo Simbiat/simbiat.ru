@@ -43,10 +43,15 @@
         "postcss-import": "*",
         "cssnano": "*",
         "postcss-var-replace": "*",
-        "@csstools/postcss-oklab-function": "*"
+        "@csstools/postcss-oklab-function": "*",
+        "mime-db": "*"
     },
     "browserslist": [
         "fully supports es6-module and supports custom-elementsv1 and fully supports css-nesting and fully supports css-has"
     ],
+    "scripts": {
+        "generate:mime": "node ./build/js/dev/generate-mime-files.js",
+        "postinstall": "npm run generate:mime"
+    },
     "author": "Dmitrii Kustov <support@simbiat.dev>"
 }

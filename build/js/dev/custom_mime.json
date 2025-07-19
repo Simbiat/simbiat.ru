@@ -1,0 +1,3005 @@
+{
+    "3d/vnd.adobe.dn+dcx": {
+        "extensions": [
+            "dn"
+        ]
+    },
+    "application-x/geogebra-file": {
+        "extensions": [
+            "ggb"
+        ]
+    },
+    "application/a2l": {
+        "extensions": [
+            "a2l"
+        ]
+    },
+    "application/abiword": {
+        "extensions": [
+            "zabw"
+        ]
+    },
+    "application/acad": {
+        "extensions": [
+            "dwt",
+            "dwg"
+        ]
+    },
+    "application/acrobat": {
+        "extensions": [
+            "pdf"
+        ]
+    },
+    "application/akn+xml": {
+        "extensions": [
+            "xml"
+        ]
+    },
+    "application/aml": {
+        "extensions": [
+            "aml"
+        ]
+    },
+    "application/annodex": {
+        "extensions": [
+            "anx"
+        ]
+    },
+    "application/arj": {
+        "extensions": [
+            "arj"
+        ]
+    },
+    "application/atf": {
+        "extensions": [
+            "atf"
+        ]
+    },
+    "application/atfx": {
+        "extensions": [
+            "atfx"
+        ]
+    },
+    "application/atomserv+xml": {
+        "extensions": [
+            "atomsrv"
+        ]
+    },
+    "application/atxml": {
+        "extensions": [
+            "atxml"
+        ]
+    },
+    "application/auth-policy+xml": {
+        "extensions": [
+            "apxml"
+        ]
+    },
+    "application/autocad_dwg": {
+        "extensions": [
+            "dwt",
+            "dwg"
+        ]
+    },
+    "application/bacnet-xdd+zip": {
+        "extensions": [
+            "xdd"
+        ]
+    },
+    "application/bbolin": {
+        "extensions": [
+            "lin"
+        ]
+    },
+    "application/binhex": {
+        "extensions": [
+            "hex",
+            "hcx",
+            "hqx"
+        ]
+    },
+    "application/bson": {
+        "extensions": [
+            "bson"
+        ]
+    },
+    "application/cbor": {
+        "extensions": [
+            "cbor"
+        ]
+    },
+    "application/cccex": {
+        "extensions": [
+            "c3ex"
+        ]
+    },
+    "application/ccmp+xml": {
+        "extensions": [
+            "ccmp"
+        ]
+    },
+    "application/cdf": {
+        "extensions": [
+            "cdf"
+        ]
+    },
+    "application/cdfv2": {
+        "extensions": [
+            "automaticdestinations-ms"
+        ]
+    },
+    "application/cea": {
+        "extensions": [
+            "cea"
+        ]
+    },
+    "application/cellml+xml": {
+        "extensions": [
+            "cellml",
+            "cml"
+        ]
+    },
+    "application/clr": {
+        "extensions": [
+            "1clr"
+        ]
+    },
+    "application/clue_info+xml": {
+        "extensions": [
+            "clue"
+        ]
+    },
+    "application/cms": {
+        "extensions": [
+            "cmsc"
+        ]
+    },
+    "application/compress": {
+        "extensions": [
+            "z"
+        ]
+    },
+    "application/csrattrs": {
+        "extensions": [
+            "csrattrs"
+        ]
+    },
+    "application/csv": {
+        "extensions": [
+            "csv"
+        ]
+    },
+    "application/cwl+json": {
+        "extensions": [
+            "cwl.json"
+        ]
+    },
+    "application/dashdelta": {
+        "extensions": [
+            "mpdd"
+        ]
+    },
+    "application/dbase": {
+        "extensions": [
+            "dat",
+            "dbf"
+        ]
+    },
+    "application/dbf": {
+        "extensions": [
+            "dat",
+            "dbf"
+        ]
+    },
+    "application/dcd": {
+        "extensions": [
+            "dcd"
+        ]
+    },
+    "application/ddoc": {
+        "extensions": [
+            "ddoc"
+        ]
+    },
+    "application/dec-dx.": {
+        "extensions": [
+            "dx"
+        ]
+    },
+    "application/dii": {
+        "extensions": [
+            "dii"
+        ]
+    },
+    "application/dit": {
+        "extensions": [
+            "dit"
+        ]
+    },
+    "application/dr-halo": {
+        "extensions": [
+            "cut"
+        ]
+    },
+    "application/dskpp+xml": {
+        "extensions": [
+            "xmls"
+        ]
+    },
+    "application/dsptype": {
+        "extensions": [
+            "tsp"
+        ]
+    },
+    "application/dvcs": {
+        "extensions": [
+            "dvc"
+        ]
+    },
+    "application/dwf": {
+        "extensions": [
+            "dwf",
+            "dwfx"
+        ]
+    },
+    "application/dwg": {
+        "extensions": [
+            "dwt",
+            "dwg"
+        ]
+    },
+    "application/efi": {
+        "extensions": [
+            "efi"
+        ]
+    },
+    "application/example": {
+        "extensions": [
+            "rdf"
+        ]
+    },
+    "application/fastinfoset": {
+        "extensions": [
+            "finf"
+        ]
+    },
+    "application/font-woff2": {
+        "extensions": [
+            "woff4"
+        ]
+    },
+    "application/futuresplash": {
+        "extensions": [
+            "spl"
+        ]
+    },
+    "application/geopackage+sqlite3": {
+        "extensions": [
+            "gpkg"
+        ]
+    },
+    "application/gltf-buffer": {
+        "extensions": [
+            "glbin",
+            "glbuf"
+        ]
+    },
+    "application/hta": {
+        "extensions": [
+            "hta"
+        ]
+    },
+    "application/jrd+json": {
+        "extensions": [
+            "jrd"
+        ]
+    },
+    "application/json-patch+json": {
+        "extensions": [
+            "json-patch"
+        ]
+    },
+    "application/link-format": {
+        "extensions": [
+            "wlnk"
+        ]
+    },
+    "application/lostsync+xml": {
+        "extensions": [
+            "lostsyncxml"
+        ]
+    },
+    "application/lpf+zip": {
+        "extensions": [
+            "lpf"
+        ]
+    },
+    "application/lxf": {
+        "extensions": [
+            "lxf"
+        ]
+    },
+    "application/m3g": {
+        "extensions": [
+            "m3g"
+        ]
+    },
+    "application/mathml+xml": {
+        "extensions": [
+            "mml"
+        ]
+    },
+    "application/mf4": {
+        "extensions": [
+            "mf4"
+        ]
+    },
+    "application/msaccess": {
+        "extensions": [
+            "mdb"
+        ]
+    },
+    "application/ocsp-request": {
+        "extensions": [
+            "orq"
+        ]
+    },
+    "application/ocsp-response": {
+        "extensions": [
+            "ors"
+        ]
+    },
+    "application/octet-stream": {
+        "extensions": [
+            "msu"
+        ]
+    },
+    "application/odx": {
+        "extensions": [
+            "odx"
+        ]
+    },
+    "application/p21": {
+        "extensions": [
+            "p21",
+            "stpnc",
+            "210",
+            "ifc"
+        ]
+    },
+    "application/pdx": {
+        "extensions": [
+            "pdx"
+        ]
+    },
+    "application/pem-certificate-chain": {
+        "extensions": [
+            "pem"
+        ]
+    },
+    "application/pkcs12": {
+        "extensions": [
+            "p12",
+            "pfx"
+        ]
+    },
+    "application/pkcs7-mime": {
+        "extensions": [
+            "p7z"
+        ]
+    },
+    "application/pkcs8-encrypted": {
+        "extensions": [
+            "p8e"
+        ]
+    },
+    "application/postscript": {
+        "extensions": [
+            "epsi",
+            "epsf",
+            "eps2",
+            "eps3"
+        ]
+    },
+    "application/prs.cww": {
+        "extensions": [
+            "cw"
+        ]
+    },
+    "application/prs.hpub+zip": {
+        "extensions": [
+            "hpub"
+        ]
+    },
+    "application/prs.nprend": {
+        "extensions": [
+            "rnd",
+            "rct"
+        ]
+    },
+    "application/prs.rdf-xml-crypt": {
+        "extensions": [
+            "rdf-crypt"
+        ]
+    },
+    "application/rfc+xml": {
+        "extensions": [
+            "rfcxml"
+        ]
+    },
+    "application/sarif+json": {
+        "extensions": [
+            "sarif",
+            "sarif.json"
+        ]
+    },
+    "application/sarif-external-properties+json": {
+        "extensions": [
+            "sarif-external-properties",
+            "sarif-external-properties.json"
+        ]
+    },
+    "application/scim+json": {
+        "extensions": [
+            "scim"
+        ]
+    },
+    "application/senml+cbor": {
+        "extensions": [
+            "senmlc"
+        ]
+    },
+    "application/senml+json": {
+        "extensions": [
+            "senml"
+        ]
+    },
+    "application/senml-etch+cbor": {
+        "extensions": [
+            "senml-etchc"
+        ]
+    },
+    "application/senml-etch+json": {
+        "extensions": [
+            "senml-etchj"
+        ]
+    },
+    "application/senml-exi": {
+        "extensions": [
+            "senmle"
+        ]
+    },
+    "application/sensml+cbor": {
+        "extensions": [
+            "sensmlc"
+        ]
+    },
+    "application/sensml+json": {
+        "extensions": [
+            "sensml"
+        ]
+    },
+    "application/sensml-exi": {
+        "extensions": [
+            "sensmle"
+        ]
+    },
+    "application/sgml-open-catalog": {
+        "extensions": [
+            "soc"
+        ]
+    },
+    "application/simple-filter+xml": {
+        "extensions": [
+            "cl"
+        ]
+    },
+    "application/smil+xml": {
+        "extensions": [
+            "sml"
+        ]
+    },
+    "application/spdx+json": {
+        "extensions": [
+            "spdx.json"
+        ]
+    },
+    "application/stix+json": {
+        "extensions": [
+            "stix"
+        ]
+    },
+    "application/swid+cbor": {
+        "extensions": [
+            "coswid"
+        ]
+    },
+    "application/tamp-apex-update": {
+        "extensions": [
+            "tau"
+        ]
+    },
+    "application/tamp-apex-update-confirm": {
+        "extensions": [
+            "auc"
+        ]
+    },
+    "application/tamp-community-update": {
+        "extensions": [
+            "tcu"
+        ]
+    },
+    "application/tamp-community-update-confirm": {
+        "extensions": [
+            "cuc"
+        ]
+    },
+    "application/tamp-error": {
+        "extensions": [
+            "ter"
+        ]
+    },
+    "application/tamp-sequence-adjust": {
+        "extensions": [
+            "tsa"
+        ]
+    },
+    "application/tamp-sequence-adjust-confirm": {
+        "extensions": [
+            "sac"
+        ]
+    },
+    "application/tamp-update": {
+        "extensions": [
+            "tur"
+        ]
+    },
+    "application/tamp-update-confirm": {
+        "extensions": [
+            "tuc"
+        ]
+    },
+    "application/tar+gz": {
+        "extensions": [
+            "tar.gz"
+        ]
+    },
+    "application/td+json": {
+        "extensions": [
+            "jsontd"
+        ]
+    },
+    "application/tei+xml": {
+        "extensions": [
+            "odd"
+        ]
+    },
+    "application/timestamp-query": {
+        "extensions": [
+            "tsq"
+        ]
+    },
+    "application/timestamp-reply": {
+        "extensions": [
+            "tsr"
+        ]
+    },
+    "application/tm+json": {
+        "extensions": [
+            "tm.jsonld",
+            "tm.json jsontm"
+        ]
+    },
+    "application/urc-grpsheet+xml": {
+        "extensions": [
+            "gsheet"
+        ]
+    },
+    "application/urc-uisocketdesc+xml": {
+        "extensions": [
+            "uis"
+        ]
+    },
+    "application/vnd.3gpp2.sms": {
+        "extensions": [
+            "sms"
+        ]
+    },
+    "application/vnd.3lightssoftware.imagescal": {
+        "extensions": [
+            "imgcal"
+        ]
+    },
+    "application/vnd.adobe.flash.movie": {
+        "extensions": [
+            "swf"
+        ]
+    },
+    "application/vnd.afpc.modca": {
+        "extensions": [
+            "list3820",
+            "listafp",
+            "afp",
+            "pseg3820"
+        ]
+    },
+    "application/vnd.afpc.modca-overlay": {
+        "extensions": [
+            "ovl"
+        ]
+    },
+    "application/vnd.afpc.modca-pagesegment": {
+        "extensions": [
+            "psg"
+        ]
+    },
+    "application/vnd.amazon.mobi8-ebook": {
+        "extensions": [
+            "azw3"
+        ]
+    },
+    "application/vnd.android.ota": {
+        "extensions": [
+            "ota"
+        ]
+    },
+    "application/vnd.anki": {
+        "extensions": [
+            "apkg"
+        ]
+    },
+    "application/vnd.apache.arrow.file": {
+        "extensions": [
+            "arrow"
+        ]
+    },
+    "application/vnd.apache.arrow.stream": {
+        "extensions": [
+            "arrows"
+        ]
+    },
+    "application/vnd.apexlang": {
+        "extensions": [
+            "apexlang",
+            "apex"
+        ]
+    },
+    "application/vnd.apple.installer+xml": {
+        "extensions": [
+            "dist",
+            "distz",
+            "pkg"
+        ]
+    },
+    "application/vnd.apple.keynote": {
+        "extensions": [
+            "keynote"
+        ]
+    },
+    "application/vnd.artisan+json": {
+        "extensions": [
+            "artisan"
+        ]
+    },
+    "application/vnd.autopackage": {
+        "extensions": [
+            "package"
+        ]
+    },
+    "application/vnd.balsamiq.bmpr": {
+        "extensions": [
+            "bmpr"
+        ]
+    },
+    "application/vnd.banana-accounting": {
+        "extensions": [
+            "ac2"
+        ]
+    },
+    "application/vnd.belightsoft.lhzd+zip": {
+        "extensions": [
+            "lhzd"
+        ]
+    },
+    "application/vnd.belightsoft.lhzl+zip": {
+        "extensions": [
+            "lhzl"
+        ]
+    },
+    "application/vnd.bluetooth.ep.oob": {
+        "extensions": [
+            "ep"
+        ]
+    },
+    "application/vnd.bluetooth.le.oob": {
+        "extensions": [
+            "le"
+        ]
+    },
+    "application/vnd.cendio.thinlinc.clientconf": {
+        "extensions": [
+            "tlclient"
+        ]
+    },
+    "application/vnd.chess-pgn": {
+        "extensions": [
+            "pgn"
+        ]
+    },
+    "application/vnd.coffeescript": {
+        "extensions": [
+            "coffee"
+        ]
+    },
+    "application/vnd.collabio.xodocuments.document": {
+        "extensions": [
+            "xodt"
+        ]
+    },
+    "application/vnd.collabio.xodocuments.document-template": {
+        "extensions": [
+            "xott"
+        ]
+    },
+    "application/vnd.collabio.xodocuments.presentation": {
+        "extensions": [
+            "xodp"
+        ]
+    },
+    "application/vnd.collabio.xodocuments.presentation-template": {
+        "extensions": [
+            "xotp"
+        ]
+    },
+    "application/vnd.collabio.xodocuments.spreadsheet": {
+        "extensions": [
+            "xods"
+        ]
+    },
+    "application/vnd.collabio.xodocuments.spreadsheet-template": {
+        "extensions": [
+            "xots"
+        ]
+    },
+    "application/vnd.comicbook+zip": {
+        "extensions": [
+            "cbz"
+        ]
+    },
+    "application/vnd.comicbook-rar": {
+        "extensions": [
+            "cbr"
+        ]
+    },
+    "application/vnd.commerce-battelle": {
+        "extensions": [
+            "icf",
+            "icd",
+            "ic0",
+            "ic1",
+            "ic2",
+            "ic3",
+            "ic4",
+            "ic5",
+            "ic6",
+            "ic7",
+            "ic8"
+        ]
+    },
+    "application/vnd.commonspace": {
+        "extensions": [
+            "cst"
+        ]
+    },
+    "application/vnd.coreos.ignition+json": {
+        "extensions": [
+            "ign",
+            "ignition"
+        ]
+    },
+    "application/vnd.crypto-shade-file": {
+        "extensions": [
+            "ssvc"
+        ]
+    },
+    "application/vnd.cryptomator.encrypted": {
+        "extensions": [
+            "c9r",
+            "c9s"
+        ]
+    },
+    "application/vnd.cryptomator.vault": {
+        "extensions": [
+            "cryptomator"
+        ]
+    },
+    "application/vnd.datalog": {
+        "extensions": [
+            "dl"
+        ]
+    },
+    "application/vnd.debian.binary-package": {
+        "extensions": [
+            "deb",
+            "ddeb",
+            "udeb"
+        ]
+    },
+    "application/vnd.desmume.movie": {
+        "extensions": [
+            "dsm"
+        ]
+    },
+    "application/vnd.document+json": {
+        "extensions": [
+            "docjson"
+        ]
+    },
+    "application/vnd.doremir.scorecloud-binary-document": {
+        "extensions": [
+            "scld"
+        ]
+    },
+    "application/vnd.dpgraph": {
+        "extensions": [
+            "mwc",
+            "dpgraph"
+        ]
+    },
+    "application/vnd.dtg.local.flash": {
+        "extensions": [
+            "fla"
+        ]
+    },
+    "application/vnd.dzr": {
+        "extensions": [
+            "dzr"
+        ]
+    },
+    "application/vnd.eln+zip": {
+        "extensions": [
+            "ELN"
+        ]
+    },
+    "application/vnd.ericsson.quickcall": {
+        "extensions": [
+            "qcall",
+            "qca"
+        ]
+    },
+    "application/vnd.espass-espass+zip": {
+        "extensions": [
+            "espass"
+        ]
+    },
+    "application/vnd.etsi.asic-e+zip": {
+        "extensions": [
+            "asice",
+            "sce"
+        ]
+    },
+    "application/vnd.etsi.asic-s+zip": {
+        "extensions": [
+            "asics"
+        ]
+    },
+    "application/vnd.etsi.timestamp-token": {
+        "extensions": [
+            "tst"
+        ]
+    },
+    "application/vnd.eu.kasparian.car+json": {
+        "extensions": [
+            "carjson"
+        ]
+    },
+    "application/vnd.evolv.ecig.profile": {
+        "extensions": [
+            "ecigprofile"
+        ]
+    },
+    "application/vnd.evolv.ecig.settings": {
+        "extensions": [
+            "ecig"
+        ]
+    },
+    "application/vnd.evolv.ecig.theme": {
+        "extensions": [
+            "ecigtheme"
+        ]
+    },
+    "application/vnd.exstream-empower+zip": {
+        "extensions": [
+            "mpw"
+        ]
+    },
+    "application/vnd.exstream-package": {
+        "extensions": [
+            "pub"
+        ]
+    },
+    "application/vnd.familysearch.gedcom+zip": {
+        "extensions": [
+            "gdz"
+        ]
+    },
+    "application/vnd.fastcopy-disk-image": {
+        "extensions": [
+            "dim"
+        ]
+    },
+    "application/vnd.fdsn.mseed": {
+        "extensions": [
+            "msd"
+        ]
+    },
+    "application/vnd.ficlab.flb+zip": {
+        "extensions": [
+            "flb"
+        ]
+    },
+    "application/vnd.filmit.zfc": {
+        "extensions": [
+            "zfc"
+        ]
+    },
+    "application/vnd.font-fontforge-sfd": {
+        "extensions": [
+            "sfd"
+        ]
+    },
+    "application/vnd.fujixerox.docuworks.container": {
+        "extensions": [
+            "xct"
+        ]
+    },
+    "application/vnd.genozip": {
+        "extensions": [
+            "genozip"
+        ]
+    },
+    "application/vnd.gentics.grd+json": {
+        "extensions": [
+            "grd"
+        ]
+    },
+    "application/vnd.gentoo.ebuild": {
+        "extensions": [
+            "ebuild"
+        ]
+    },
+    "application/vnd.gentoo.eclass": {
+        "extensions": [
+            "eclass"
+        ]
+    },
+    "application/vnd.gentoo.gpkg": {
+        "extensions": [
+            "gpkg.tar"
+        ]
+    },
+    "application/vnd.gentoo.xpak": {
+        "extensions": [
+            "xpak"
+        ]
+    },
+    "application/vnd.hbci": {
+        "extensions": [
+            "hbc",
+            "kom",
+            "upa",
+            "pkd",
+            "bpd"
+        ]
+    },
+    "application/vnd.hdt": {
+        "extensions": [
+            "hdt"
+        ]
+    },
+    "application/vnd.hp-hpid": {
+        "extensions": [
+            "hpi"
+        ]
+    },
+    "application/vnd.ibm.electronic-media": {
+        "extensions": [
+            "emm"
+        ]
+    },
+    "application/vnd.ieee.1905": {
+        "extensions": [
+            "1905.1"
+        ]
+    },
+    "application/vnd.imagemeter.folder+zip": {
+        "extensions": [
+            "imf"
+        ]
+    },
+    "application/vnd.imagemeter.image+zip": {
+        "extensions": [
+            "imi"
+        ]
+    },
+    "application/vnd.ims.imsccv1p1": {
+        "extensions": [
+            "imscc"
+        ]
+    },
+    "application/vnd.ipld.car": {
+        "extensions": [
+            "car"
+        ]
+    },
+    "application/vnd.kinar": {
+        "extensions": [
+            "sdf"
+        ]
+    },
+    "application/vnd.las": {
+        "extensions": [
+            "las"
+        ]
+    },
+    "application/vnd.las.las+json": {
+        "extensions": [
+            "lasjson"
+        ]
+    },
+    "application/vnd.logipipe.circuit+zip": {
+        "extensions": [
+            "lcs",
+            "lca"
+        ]
+    },
+    "application/vnd.loom": {
+        "extensions": [
+            "loom"
+        ]
+    },
+    "application/vnd.lotus-1-2-3": {
+        "extensions": [
+            "wk4",
+            "wk3",
+            "wk1"
+        ]
+    },
+    "application/vnd.lotus-approach": {
+        "extensions": [
+            "vew"
+        ]
+    },
+    "application/vnd.lotus-freelance": {
+        "extensions": [
+            "prz"
+        ]
+    },
+    "application/vnd.lotus-notes": {
+        "extensions": [
+            "ntf",
+            "ndl",
+            "ns4",
+            "ns3",
+            "ns2",
+            "nsh",
+            "nsg"
+        ]
+    },
+    "application/vnd.lotus-organizer": {
+        "extensions": [
+            "or3",
+            "or2"
+        ]
+    },
+    "application/vnd.lotus-wordpro": {
+        "extensions": [
+            "sam"
+        ]
+    },
+    "application/vnd.marlin.drm.mdcf": {
+        "extensions": [
+            "mdc"
+        ]
+    },
+    "application/vnd.maxar.archive.3tz+zip": {
+        "extensions": [
+            "3tz"
+        ]
+    },
+    "application/vnd.maxmind.maxmind-db": {
+        "extensions": [
+            "mmdb"
+        ]
+    },
+    "application/vnd.medicalholodeck.recordxr": {
+        "extensions": [
+            "rxt"
+        ]
+    },
+    "application/vnd.ms-3mfdocument": {
+        "extensions": [
+            "3mf"
+        ]
+    },
+    "application/vnd.ms-asf": {
+        "extensions": [
+            "asf"
+        ]
+    },
+    "application/vnd.ms-tnef": {
+        "extensions": [
+            "tnef",
+            "tnf"
+        ]
+    },
+    "application/vnd.ms-write": {
+        "extensions": [
+            "wri"
+        ]
+    },
+    "application/vnd.msa-disk-image": {
+        "extensions": [
+            "msa"
+        ]
+    },
+    "application/vnd.multiad.creator": {
+        "extensions": [
+            "crtr"
+        ]
+    },
+    "application/vnd.multiad.creator.cif": {
+        "extensions": [
+            "cif"
+        ]
+    },
+    "application/vnd.nebumind.line": {
+        "extensions": [
+            "nebul",
+            "line"
+        ]
+    },
+    "application/vnd.nervana": {
+        "extensions": [
+            "entity",
+            "request",
+            "bkm",
+            "kcm"
+        ]
+    },
+    "application/vnd.nimn": {
+        "extensions": [
+            "nimn"
+        ]
+    },
+    "application/vnd.nintendo.nitro.rom": {
+        "extensions": [
+            "nds"
+        ]
+    },
+    "application/vnd.nintendo.snes.rom": {
+        "extensions": [
+            "sfc",
+            "smc"
+        ]
+    },
+    "application/vnd.oasis.opendocument.base": {
+        "extensions": [
+            "odb"
+        ]
+    },
+    "application/vnd.onepager": {
+        "extensions": [
+            "tam"
+        ]
+    },
+    "application/vnd.onepagertamp": {
+        "extensions": [
+            "tamp"
+        ]
+    },
+    "application/vnd.onepagertamx": {
+        "extensions": [
+            "tamx"
+        ]
+    },
+    "application/vnd.onepagertat": {
+        "extensions": [
+            "tat"
+        ]
+    },
+    "application/vnd.onepagertatp": {
+        "extensions": [
+            "tatp"
+        ]
+    },
+    "application/vnd.onepagertatx": {
+        "extensions": [
+            "tatx"
+        ]
+    },
+    "application/vnd.openblox.game-binary": {
+        "extensions": [
+            "obg"
+        ]
+    },
+    "application/vnd.openeye.oeb": {
+        "extensions": [
+            "oeb"
+        ]
+    },
+    "application/vnd.osa.netdeploy": {
+        "extensions": [
+            "ndc"
+        ]
+    },
+    "application/vnd.oxli.countgraph": {
+        "extensions": [
+            "oxlicg"
+        ]
+    },
+    "application/vnd.panoply": {
+        "extensions": [
+            "plp"
+        ]
+    },
+    "application/vnd.patentdive": {
+        "extensions": [
+            "dive"
+        ]
+    },
+    "application/vnd.piaccess.application-licence": {
+        "extensions": [
+            "pil"
+        ]
+    },
+    "application/vnd.preminet": {
+        "extensions": [
+            "preminet"
+        ]
+    },
+    "application/vnd.previewsystems.box": {
+        "extensions": [
+            "vbox"
+        ]
+    },
+    "application/vnd.psfs": {
+        "extensions": [
+            "psfs"
+        ]
+    },
+    "application/vnd.qualcomm.brew-app-res": {
+        "extensions": [
+            "bar"
+        ]
+    },
+    "application/vnd.quobject-quoxdocument": {
+        "extensions": [
+            "quox",
+            "quiz"
+        ]
+    },
+    "application/vnd.rainstor.data": {
+        "extensions": [
+            "tree"
+        ]
+    },
+    "application/vnd.resilient.logic": {
+        "extensions": [
+            "rlm",
+            "reload"
+        ]
+    },
+    "application/vnd.sar": {
+        "extensions": [
+            "SAR"
+        ]
+    },
+    "application/vnd.scribus": {
+        "extensions": [
+            "scd",
+            "sla",
+            "slaz"
+        ]
+    },
+    "application/vnd.sealed.3df": {
+        "extensions": [
+            "s3df"
+        ]
+    },
+    "application/vnd.sealed.csf": {
+        "extensions": [
+            "scsf"
+        ]
+    },
+    "application/vnd.sealed.doc": {
+        "extensions": [
+            "sdoc",
+            "sdo",
+            "s1w"
+        ]
+    },
+    "application/vnd.sealed.eml": {
+        "extensions": [
+            "seml",
+            "sem"
+        ]
+    },
+    "application/vnd.sealed.mht": {
+        "extensions": [
+            "smht",
+            "smh"
+        ]
+    },
+    "application/vnd.sealed.ppt": {
+        "extensions": [
+            "sppt",
+            "s1p"
+        ]
+    },
+    "application/vnd.sealed.tiff": {
+        "extensions": [
+            "stif"
+        ]
+    },
+    "application/vnd.sealed.xls": {
+        "extensions": [
+            "sxls",
+            "sxl",
+            "s1e"
+        ]
+    },
+    "application/vnd.sealedmedia.softseal.html": {
+        "extensions": [
+            "stml",
+            "s1h"
+        ]
+    },
+    "application/vnd.sealedmedia.softseal.pdf": {
+        "extensions": [
+            "spdf",
+            "spd",
+            "s1a"
+        ]
+    },
+    "application/vnd.shade-save-file": {
+        "extensions": [
+            "ssv"
+        ]
+    },
+    "application/vnd.shp": {
+        "extensions": [
+            "shp"
+        ]
+    },
+    "application/vnd.shx": {
+        "extensions": [
+            "shx"
+        ]
+    },
+    "application/vnd.sigrok.session": {
+        "extensions": [
+            "sr"
+        ]
+    },
+    "application/vnd.smart.notebook": {
+        "extensions": [
+            "notebook"
+        ]
+    },
+    "application/vnd.snesdev-page-table": {
+        "extensions": [
+            "ptrom",
+            "pt"
+        ]
+    },
+    "application/vnd.software602.filler.form-xml-zip": {
+        "extensions": [
+            "zfo"
+        ]
+    },
+    "application/vnd.sqlite3": {
+        "extensions": [
+            "sqlite",
+            "sqlite3"
+        ]
+    },
+    "application/vnd.stardivision.chart": {
+        "extensions": [
+            "sds"
+        ]
+    },
+    "application/vnd.sybyl.mol2": {
+        "extensions": [
+            "ml2",
+            "mol2",
+            "sy2"
+        ]
+    },
+    "application/vnd.sycle+xml": {
+        "extensions": [
+            "scl"
+        ]
+    },
+    "application/vnd.syft+json": {
+        "extensions": [
+            "syft.json"
+        ]
+    },
+    "application/vnd.theqvd": {
+        "extensions": [
+            "qvd"
+        ]
+    },
+    "application/vnd.think-cell.ppttc+json": {
+        "extensions": [
+            "ppttc"
+        ]
+    },
+    "application/vnd.tml": {
+        "extensions": [
+            "vfr",
+            "viaframe"
+        ]
+    },
+    "application/vnd.ufdl": {
+        "extensions": [
+            "frm"
+        ]
+    },
+    "application/vnd.uri-map": {
+        "extensions": [
+            "urim",
+            "urimap"
+        ]
+    },
+    "application/vnd.valve.source.material": {
+        "extensions": [
+            "vmt"
+        ]
+    },
+    "application/vnd.vd-study": {
+        "extensions": [
+            "mxi",
+            "study-inter",
+            "model-inter"
+        ]
+    },
+    "application/vnd.vectorworks": {
+        "extensions": [
+            "vwx"
+        ]
+    },
+    "application/vnd.veritone.aion+json": {
+        "extensions": [
+            "aion",
+            "vtnstd"
+        ]
+    },
+    "application/vnd.veryant.thin": {
+        "extensions": [
+            "istc",
+            "isws"
+        ]
+    },
+    "application/vnd.ves.encrypted": {
+        "extensions": [
+            "VES"
+        ]
+    },
+    "application/vnd.vidsoft.vidconference": {
+        "extensions": [
+            "vsc"
+        ]
+    },
+    "application/vnd.visio2013": {
+        "extensions": [
+            "vsdx"
+        ]
+    },
+    "application/vnd.wap.sic": {
+        "extensions": [
+            "sic"
+        ]
+    },
+    "application/vnd.wap.slc": {
+        "extensions": [
+            "slc"
+        ]
+    },
+    "application/vnd.wap.wtls-ca-certificate": {
+        "extensions": [
+            "wtls-ca-certificate"
+        ]
+    },
+    "application/vnd.wasmflow.wafl": {
+        "extensions": [
+            "wafl"
+        ]
+    },
+    "application/vnd.wfa.p2p": {
+        "extensions": [
+            "p2p"
+        ]
+    },
+    "application/vnd.wfa.wsc": {
+        "extensions": [
+            "wsc"
+        ]
+    },
+    "application/vnd.wmc": {
+        "extensions": [
+            "wmc"
+        ]
+    },
+    "application/vnd.wolfram.mathematica": {
+        "extensions": [
+            "nb"
+        ]
+    },
+    "application/vnd.wolfram.mathematica.package": {
+        "extensions": [
+            "m"
+        ]
+    },
+    "application/vnd.wv.csp+wbxml": {
+        "extensions": [
+            "wv"
+        ]
+    },
+    "application/vnd.xfdl": {
+        "extensions": [
+            "xfd"
+        ]
+    },
+    "application/vnd.xmpie.cpkg": {
+        "extensions": [
+            "cpkg"
+        ]
+    },
+    "application/vnd.xmpie.dpkg": {
+        "extensions": [
+            "dpkg"
+        ]
+    },
+    "application/vnd.xmpie.ppkg": {
+        "extensions": [
+            "ppkg"
+        ]
+    },
+    "application/vnd.xmpie.xlim": {
+        "extensions": [
+            "xlim"
+        ]
+    },
+    "application/vnd.yaoweme": {
+        "extensions": [
+            "yme"
+        ]
+    },
+    "application/voucher-cms+json": {
+        "extensions": [
+            "vcj"
+        ]
+    },
+    "application/x-123": {
+        "extensions": [
+            "wk"
+        ]
+    },
+    "application/x-bb-appworld": {
+        "extensions": [
+            "bbaw"
+        ]
+    },
+    "application/x-cdf": {
+        "extensions": [
+            "cdf",
+            "cda"
+        ]
+    },
+    "application/x-comsol": {
+        "extensions": [
+            "mph"
+        ]
+    },
+    "application/x-dwf": {
+        "extensions": [
+            "dwf",
+            "dwfx"
+        ]
+    },
+    "application/x-font": {
+        "extensions": [
+            "pfa",
+            "pfb",
+            "gsf"
+        ]
+    },
+    "application/x-font-pcf": {
+        "extensions": [
+            "pcf.z"
+        ]
+    },
+    "application/x-font-woff": {
+        "extensions": [
+            "woff_o1"
+        ]
+    },
+    "application/x-freemind": {
+        "extensions": [
+            "mm"
+        ]
+    },
+    "application/x-ganttproject": {
+        "extensions": [
+            "gan"
+        ]
+    },
+    "application/x-go-sgf": {
+        "extensions": [
+            "sgf"
+        ]
+    },
+    "application/x-graphing-calculator": {
+        "extensions": [
+            "gcf"
+        ]
+    },
+    "application/x-gtar-compressed": {
+        "extensions": [
+            "tgz",
+            "taz"
+        ]
+    },
+    "application/x-hwp": {
+        "extensions": [
+            "hwp"
+        ]
+    },
+    "application/x-ica": {
+        "extensions": [
+            "ica"
+        ]
+    },
+    "application/x-info": {
+        "extensions": [
+            "info"
+        ]
+    },
+    "application/x-internet-signup": {
+        "extensions": [
+            "ins",
+            "isp"
+        ]
+    },
+    "application/x-iphone": {
+        "extensions": [
+            "iii"
+        ]
+    },
+    "application/x-jmol": {
+        "extensions": [
+            "jmz"
+        ]
+    },
+    "application/x-killustrator": {
+        "extensions": [
+            "kil"
+        ]
+    },
+    "application/x-lha": {
+        "extensions": [
+            "lha"
+        ]
+    },
+    "application/x-lyx": {
+        "extensions": [
+            "lyx"
+        ]
+    },
+    "application/x-lzh": {
+        "extensions": [
+            "lzh"
+        ]
+    },
+    "application/x-lzx": {
+        "extensions": [
+            "lzx"
+        ]
+    },
+    "application/x-maker": {
+        "extensions": [
+            "frm",
+            "maker",
+            "frame",
+            "fm",
+            "fb",
+            "book",
+            "fbdoc"
+        ]
+    },
+    "application/x-msdos-program": {
+        "extensions": [
+            "com",
+            "bat",
+            "dll"
+        ]
+    },
+    "application/x-msi": {
+        "extensions": [
+            "msi"
+        ]
+    },
+    "application/x-nwc": {
+        "extensions": [
+            "nwc"
+        ]
+    },
+    "application/x-object": {
+        "extensions": [
+            "o"
+        ]
+    },
+    "application/x-opera-extension": {
+        "extensions": [
+            "oex"
+        ]
+    },
+    "application/x-oz-application": {
+        "extensions": [
+            "oza"
+        ]
+    },
+    "application/x-python-code": {
+        "extensions": [
+            "pyc",
+            "pyo"
+        ]
+    },
+    "application/x-qgis": {
+        "extensions": [
+            "qgs",
+            "shp",
+            "shx"
+        ]
+    },
+    "application/x-quicktimeplayer": {
+        "extensions": [
+            "qtl"
+        ]
+    },
+    "application/x-rdp": {
+        "extensions": [
+            "rdp"
+        ]
+    },
+    "application/x-rss+xml": {
+        "extensions": [
+            "rss"
+        ]
+    },
+    "application/x-ruby": {
+        "extensions": [
+            "rb"
+        ]
+    },
+    "application/x-scilab": {
+        "extensions": [
+            "sci",
+            "sce"
+        ]
+    },
+    "application/x-scilab-xcos": {
+        "extensions": [
+            "xcos"
+        ]
+    },
+    "application/x-shockwave-flash2-preview": {
+        "extensions": [
+            "swf"
+        ]
+    },
+    "application/x-silverlight": {
+        "extensions": [
+            "scr"
+        ]
+    },
+    "application/x-stuffit": {
+        "extensions": [
+            "sitx"
+        ]
+    },
+    "application/x-tex-gf": {
+        "extensions": [
+            "gf"
+        ]
+    },
+    "application/x-tex-pk": {
+        "extensions": [
+            "pk"
+        ]
+    },
+    "application/x-trash": {
+        "extensions": [
+            "~",
+            "%",
+            "bak",
+            "old",
+            "sik"
+        ]
+    },
+    "application/x-troff-man": {
+        "extensions": [
+            "man"
+        ]
+    },
+    "application/x-troff-me": {
+        "extensions": [
+            "me"
+        ]
+    },
+    "application/x-troff-ms": {
+        "extensions": [
+            "ms"
+        ]
+    },
+    "application/x-wingz": {
+        "extensions": [
+            "wz"
+        ]
+    },
+    "application/xcap-error+xml": {
+        "extensions": [
+            "xer"
+        ]
+    },
+    "application/xhtml+xml": {
+        "extensions": [
+            "xhtm"
+        ]
+    },
+    "application/xml-dtd": {
+        "extensions": [
+            "mod"
+        ]
+    },
+    "application/xml-external-parsed-entity": {
+        "extensions": [
+            "ent"
+        ]
+    },
+    "application/zstd": {
+        "extensions": [
+            "zst"
+        ]
+    },
+    "audio/32kadpcm": {
+        "extensions": [
+            "726"
+        ]
+    },
+    "audio/aac": {
+        "extensions": [
+            "ass"
+        ]
+    },
+    "audio/ac3": {
+        "extensions": [
+            "ac3"
+        ]
+    },
+    "audio/amr-wb": {
+        "extensions": [
+            "awb"
+        ]
+    },
+    "audio/annodex": {
+        "extensions": [
+            "axa"
+        ]
+    },
+    "audio/asc": {
+        "extensions": [
+            "acn"
+        ]
+    },
+    "audio/atrac-advanced-lossless": {
+        "extensions": [
+            "aal"
+        ]
+    },
+    "audio/atrac-x": {
+        "extensions": [
+            "atx"
+        ]
+    },
+    "audio/atrac3": {
+        "extensions": [
+            "at3",
+            "aa3",
+            "omg"
+        ]
+    },
+    "audio/csound": {
+        "extensions": [
+            "csd",
+            "orc",
+            "sco"
+        ]
+    },
+    "audio/dls": {
+        "extensions": [
+            "dls"
+        ]
+    },
+    "audio/evrc": {
+        "extensions": [
+            "evc"
+        ]
+    },
+    "audio/evrc-qcp": {
+        "extensions": [
+            "qcp",
+            "QCP"
+        ]
+    },
+    "audio/evrcb": {
+        "extensions": [
+            "evb"
+        ]
+    },
+    "audio/evrcnw": {
+        "extensions": [
+            "enw"
+        ]
+    },
+    "audio/evrcwb": {
+        "extensions": [
+            "evw"
+        ]
+    },
+    "audio/flac": {
+        "extensions": [
+            "flac"
+        ]
+    },
+    "audio/ilbc": {
+        "extensions": [
+            "lbc"
+        ]
+    },
+    "audio/l16": {
+        "extensions": [
+            "l16"
+        ]
+    },
+    "audio/mhas": {
+        "extensions": [
+            "mhas"
+        ]
+    },
+    "audio/module-xm": {
+        "extensions": [
+            "mod",
+            "mtm",
+            "wow",
+            "amf",
+            "s3m",
+            "xm",
+            "med",
+            "stm",
+            "ult",
+            "far",
+            "it",
+            "okt",
+            "dmf",
+            "mt2",
+            "669"
+        ]
+    },
+    "audio/mp1": {
+        "extensions": [
+            "f4a"
+        ]
+    },
+    "audio/mp2": {
+        "extensions": [
+            "f4b"
+        ]
+    },
+    "audio/mpeg": {
+        "extensions": [
+            "mpega",
+            "mp1"
+        ]
+    },
+    "audio/mpegurl": {
+        "extensions": [
+            "m3u"
+        ]
+    },
+    "audio/prs.sid": {
+        "extensions": [
+            "sid",
+            "psid"
+        ]
+    },
+    "audio/rmf": {
+        "extensions": [
+            "aiff",
+            "aif",
+            "ief"
+        ]
+    },
+    "audio/smv": {
+        "extensions": [
+            "smv"
+        ]
+    },
+    "audio/sofa": {
+        "extensions": [
+            "sofa"
+        ]
+    },
+    "audio/sp-midi": {
+        "extensions": [
+            "mid"
+        ]
+    },
+    "audio/usac": {
+        "extensions": [
+            "loas",
+            "xhe"
+        ]
+    },
+    "audio/vnd.audiokoz": {
+        "extensions": [
+            "koz"
+        ]
+    },
+    "audio/vnd.dolby.mlp": {
+        "extensions": [
+            "mlp"
+        ]
+    },
+    "audio/vnd.everad.plj": {
+        "extensions": [
+            "plj"
+        ]
+    },
+    "audio/vnd.nortel.vbk": {
+        "extensions": [
+            "vbk"
+        ]
+    },
+    "audio/vnd.presonus.multitrack": {
+        "extensions": [
+            "multitrack"
+        ]
+    },
+    "audio/vnd.sealedmedia.softseal.mpeg": {
+        "extensions": [
+            "smp3",
+            "smp",
+            "s1m"
+        ]
+    },
+    "audio/x-gsm": {
+        "extensions": [
+            "gsm"
+        ]
+    },
+    "audio/x-midi": {
+        "extensions": [
+            "aiff",
+            "aif",
+            "ief"
+        ]
+    },
+    "audio/x-mod": {
+        "extensions": [
+            "mod",
+            "mtm",
+            "wow",
+            "amf",
+            "s3m",
+            "xm",
+            "med",
+            "stm",
+            "ult",
+            "far",
+            "it",
+            "okt",
+            "dmf",
+            "mt2",
+            "669"
+        ]
+    },
+    "audio/x-pn-aiff": {
+        "extensions": [
+            "aiff",
+            "aif",
+            "ief"
+        ]
+    },
+    "audio/x-pn-realaudio": {
+        "extensions": [
+            "rm"
+        ]
+    },
+    "audio/x-rmf": {
+        "extensions": [
+            "aiff",
+            "aif",
+            "ief"
+        ]
+    },
+    "audio/x-scpls": {
+        "extensions": [
+            "pls"
+        ]
+    },
+    "audio/x-sd2": {
+        "extensions": [
+            "sd2"
+        ]
+    },
+    "chemical/x-alchemy": {
+        "extensions": [
+            "alc"
+        ]
+    },
+    "chemical/x-cache": {
+        "extensions": [
+            "cac",
+            "cache"
+        ]
+    },
+    "chemical/x-cache-csf": {
+        "extensions": [
+            "csf"
+        ]
+    },
+    "chemical/x-cactvs-binary": {
+        "extensions": [
+            "cbin",
+            "cascii",
+            "ctab"
+        ]
+    },
+    "chemical/x-chem3d": {
+        "extensions": [
+            "c3d"
+        ]
+    },
+    "chemical/x-chemdraw": {
+        "extensions": [
+            "chm"
+        ]
+    },
+    "chemical/x-compass": {
+        "extensions": [
+            "cpa"
+        ]
+    },
+    "chemical/x-crossfire": {
+        "extensions": [
+            "bsd"
+        ]
+    },
+    "chemical/x-csml": {
+        "extensions": [
+            "csm"
+        ]
+    },
+    "chemical/x-ctx": {
+        "extensions": [
+            "ctx"
+        ]
+    },
+    "chemical/x-cxf": {
+        "extensions": [
+            "cxf",
+            "cef"
+        ]
+    },
+    "chemical/x-daylight-smiles": {
+        "extensions": [
+            "smi"
+        ]
+    },
+    "chemical/x-embl-dl-nucleotide": {
+        "extensions": [
+            "emb",
+            "embl"
+        ]
+    },
+    "chemical/x-galactic-spc": {
+        "extensions": [
+            "spc"
+        ]
+    },
+    "chemical/x-gamess-input": {
+        "extensions": [
+            "inp",
+            "gam",
+            "gamin"
+        ]
+    },
+    "chemical/x-gaussian-checkpoint": {
+        "extensions": [
+            "fch",
+            "fchk"
+        ]
+    },
+    "chemical/x-gaussian-cube": {
+        "extensions": [
+            "cub"
+        ]
+    },
+    "chemical/x-gaussian-input": {
+        "extensions": [
+            "gau",
+            "gjc",
+            "gjf"
+        ]
+    },
+    "chemical/x-gaussian-log": {
+        "extensions": [
+            "gal"
+        ]
+    },
+    "chemical/x-gcg8-sequence": {
+        "extensions": [
+            "gcg"
+        ]
+    },
+    "chemical/x-genbank": {
+        "extensions": [
+            "gen"
+        ]
+    },
+    "chemical/x-hin": {
+        "extensions": [
+            "hin"
+        ]
+    },
+    "chemical/x-isostar": {
+        "extensions": [
+            "istr",
+            "ist"
+        ]
+    },
+    "chemical/x-jcamp-dx": {
+        "extensions": [
+            "jdx",
+            "dx"
+        ]
+    },
+    "chemical/x-kinemage": {
+        "extensions": [
+            "kin"
+        ]
+    },
+    "chemical/x-macmolecule": {
+        "extensions": [
+            "mcm"
+        ]
+    },
+    "chemical/x-macromodel-input": {
+        "extensions": [
+            "mmod"
+        ]
+    },
+    "chemical/x-mdl-molfile": {
+        "extensions": [
+            "mol"
+        ]
+    },
+    "chemical/x-mdl-rdfile": {
+        "extensions": [
+            "rd"
+        ]
+    },
+    "chemical/x-mdl-rxnfile": {
+        "extensions": [
+            "rxn"
+        ]
+    },
+    "chemical/x-mdl-sdfile": {
+        "extensions": [
+            "sd",
+            "sdf"
+        ]
+    },
+    "chemical/x-mdl-tgf": {
+        "extensions": [
+            "tgf"
+        ]
+    },
+    "chemical/x-mif": {
+        "extensions": [
+            "mif"
+        ]
+    },
+    "chemical/x-mmcif": {
+        "extensions": [
+            "mcif"
+        ]
+    },
+    "chemical/x-molconn-Z": {
+        "extensions": [
+            "b"
+        ]
+    },
+    "chemical/x-mopac-graph": {
+        "extensions": [
+            "gpt"
+        ]
+    },
+    "chemical/x-mopac-input": {
+        "extensions": [
+            "mop",
+            "mopcrt",
+            "mpc",
+            "zmt"
+        ]
+    },
+    "chemical/x-mopac-out": {
+        "extensions": [
+            "moo"
+        ]
+    },
+    "chemical/x-mopac-vib": {
+        "extensions": [
+            "mvb"
+        ]
+    },
+    "chemical/x-ncbi-asn1": {
+        "extensions": [
+            "asn"
+        ]
+    },
+    "chemical/x-ncbi-asn1-ascii": {
+        "extensions": [
+            "prt"
+        ]
+    },
+    "chemical/x-ncbi-asn1-binary": {
+        "extensions": [
+            "val",
+            "aso"
+        ]
+    },
+    "chemical/x-ncbi-asn1-spec": {
+        "extensions": [
+            "asn"
+        ]
+    },
+    "chemical/x-pdb": {
+        "extensions": [
+            "pdb"
+        ]
+    },
+    "chemical/x-rosdal": {
+        "extensions": [
+            "ros"
+        ]
+    },
+    "chemical/x-swissprot": {
+        "extensions": [
+            "sw"
+        ]
+    },
+    "chemical/x-vamas-iso14976": {
+        "extensions": [
+            "vms"
+        ]
+    },
+    "chemical/x-vmd": {
+        "extensions": [
+            "vmd"
+        ]
+    },
+    "chemical/x-xtel": {
+        "extensions": [
+            "xtel"
+        ]
+    },
+    "drawing/x-dwf": {
+        "extensions": [
+            "dwf",
+            "dwfx"
+        ]
+    },
+    "image/avif": {
+        "extensions": [
+            "hif"
+        ]
+    },
+    "image/avif-sequence": {
+        "extensions": [
+            "avifs"
+        ]
+    },
+    "image/fits": {
+        "extensions": [
+            "fit",
+            "fts"
+        ]
+    },
+    "image/hsj2": {
+        "extensions": [
+            "hsj2"
+        ]
+    },
+    "image/jpeg": {
+        "extensions": [
+            "jfif"
+        ]
+    },
+    "image/jphc": {
+        "extensions": [
+            "jphc"
+        ]
+    },
+    "image/vnd.dwf": {
+        "extensions": [
+            "dwf",
+            "dwfx"
+        ]
+    },
+    "image/vnd.globalgraphics.pgb": {
+        "extensions": [
+            "PGB",
+            "pgb"
+        ]
+    },
+    "image/vnd.radiance": {
+        "extensions": [
+            "hdr",
+            "rgbe",
+            "xyze"
+        ]
+    },
+    "image/vnd.sealed.png": {
+        "extensions": [
+            "spng",
+            "spn",
+            "s1n"
+        ]
+    },
+    "image/vnd.sealedmedia.softseal.gif": {
+        "extensions": [
+            "sgif",
+            "sgi",
+            "s1g"
+        ]
+    },
+    "image/vnd.sealedmedia.softseal.jpg": {
+        "extensions": [
+            "sjpg",
+            "sjp",
+            "s1j"
+        ]
+    },
+    "image/x-canon-cr2": {
+        "extensions": [
+            "cr2"
+        ]
+    },
+    "image/x-canon-crw": {
+        "extensions": [
+            "crw"
+        ]
+    },
+    "image/x-coreldraw": {
+        "extensions": [
+            "cdr"
+        ]
+    },
+    "image/x-coreldrawpattern": {
+        "extensions": [
+            "pat"
+        ]
+    },
+    "image/x-coreldrawtemplate": {
+        "extensions": [
+            "cdt"
+        ]
+    },
+    "image/x-corelphotopaint": {
+        "extensions": [
+            "cpt"
+        ]
+    },
+    "image/x-dwf": {
+        "extensions": [
+            "dwf",
+            "dwfx"
+        ]
+    },
+    "image/x-epson-erf": {
+        "extensions": [
+            "erf"
+        ]
+    },
+    "image/x-jg": {
+        "extensions": [
+            "art"
+        ]
+    },
+    "image/x-nikon-nef": {
+        "extensions": [
+            "nef"
+        ]
+    },
+    "image/x-olympus-orf": {
+        "extensions": [
+            "orf"
+        ]
+    },
+    "image/x-xcf": {
+        "extensions": [
+            "xcf"
+        ]
+    },
+    "message/rfc822": {
+        "extensions": [
+            "mail",
+            "art"
+        ]
+    },
+    "model/vnd.gdl": {
+        "extensions": [
+            "gsm",
+            "win",
+            "dor",
+            "lmp",
+            "rsm",
+            "msm",
+            "ism"
+        ]
+    },
+    "model/vnd.moml+xml": {
+        "extensions": [
+            "moml"
+        ]
+    },
+    "model/vnd.parasolid.transmit.binary": {
+        "extensions": [
+            "xmt_bin"
+        ]
+    },
+    "model/vnd.parasolid.transmit.text": {
+        "extensions": [
+            "xmt_txt"
+        ]
+    },
+    "model/vrml": {
+        "extensions": [
+            "vrm"
+        ]
+    },
+    "model/x3d-vrml": {
+        "extensions": [
+            "x3dvz"
+        ]
+    },
+    "multipart/vnd.bint.med-plus": {
+        "extensions": [
+            "bmed"
+        ]
+    },
+    "multipart/voice-message": {
+        "extensions": [
+            "vpm"
+        ]
+    },
+    "sound/aiff": {
+        "extensions": [
+            "aiff",
+            "aif",
+            "ief"
+        ]
+    },
+    "text/cql": {
+        "extensions": [
+            "CQL"
+        ]
+    },
+    "text/csv-schema": {
+        "extensions": [
+            "csvs"
+        ]
+    },
+    "text/dns": {
+        "extensions": [
+            "soa",
+            "zone"
+        ]
+    },
+    "text/gff3": {
+        "extensions": [
+            "gff3"
+        ]
+    },
+    "text/javascript": {
+        "extensions": [
+            "es"
+        ]
+    },
+    "text/jcr-cnd": {
+        "extensions": [
+            "cnd"
+        ]
+    },
+    "text/mizar": {
+        "extensions": [
+            "miz"
+        ]
+    },
+    "text/plain": {
+        "extensions": [
+            "pot",
+            "brf",
+            "srt"
+        ]
+    },
+    "text/plain-bas": {
+        "extensions": [
+            "par"
+        ]
+    },
+    "text/provenance-notation": {
+        "extensions": [
+            "provn"
+        ]
+    },
+    "text/prs.fallenstein.rst": {
+        "extensions": [
+            "rst"
+        ]
+    },
+    "text/prs.lines.tag": {
+        "extensions": [
+            "tag"
+        ]
+    },
+    "text/shaclc": {
+        "extensions": [
+            "shaclc",
+            "shc"
+        ]
+    },
+    "text/texmacs": {
+        "extensions": [
+            "tm"
+        ]
+    },
+    "text/vcard": {
+        "extensions": [
+            "vcf"
+        ]
+    },
+    "text/vnd.a": {
+        "extensions": [
+            "a"
+        ]
+    },
+    "text/vnd.abc": {
+        "extensions": [
+            "abc"
+        ]
+    },
+    "text/vnd.ascii-art": {
+        "extensions": [
+            "ascii"
+        ]
+    },
+    "text/vnd.debian.copyright": {
+        "extensions": [
+            "copyright"
+        ]
+    },
+    "text/vnd.dmclientscript": {
+        "extensions": [
+            "dms"
+        ]
+    },
+    "text/vnd.esmertec.theme-descriptor": {
+        "extensions": [
+            "jtd"
+        ]
+    },
+    "text/vnd.exchangeable": {
+        "extensions": [
+            "VFK"
+        ]
+    },
+    "text/vnd.ficlab.flt": {
+        "extensions": [
+            "flt"
+        ]
+    },
+    "text/vnd.graphviz": {
+        "extensions": [
+            "dot"
+        ]
+    },
+    "text/vnd.hans": {
+        "extensions": [
+            "hans"
+        ]
+    },
+    "text/vnd.hgl": {
+        "extensions": [
+            "hgl"
+        ]
+    },
+    "text/vnd.in3d.3dml": {
+        "extensions": [
+            "3dm"
+        ]
+    },
+    "text/vnd.in3d.spot": {
+        "extensions": [
+            "spo"
+        ]
+    },
+    "text/vnd.ms-mediapackage": {
+        "extensions": [
+            "mpf"
+        ]
+    },
+    "text/vnd.net2phone.commcenter.command": {
+        "extensions": [
+            "ccc"
+        ]
+    },
+    "text/vnd.rim.location.xloc": {
+        "extensions": [
+            "xloc"
+        ]
+    },
+    "text/vnd.senx.warpscript": {
+        "extensions": [
+            "mc2"
+        ]
+    },
+    "text/vnd.sosi": {
+        "extensions": [
+            "sos"
+        ]
+    },
+    "text/vnd.trolltech.linguist": {
+        "extensions": [
+            "ts"
+        ]
+    },
+    "text/vnd.wap.si": {
+        "extensions": [
+            "si"
+        ]
+    },
+    "text/vnd.wap.sl": {
+        "extensions": [
+            "sl"
+        ]
+    },
+    "text/x-bibtex": {
+        "extensions": [
+            "bib"
+        ]
+    },
+    "text/x-boo": {
+        "extensions": [
+            "boo"
+        ]
+    },
+    "text/x-c++hdr": {
+        "extensions": [
+            "h++",
+            "hpp",
+            "hxx",
+            "hh"
+        ]
+    },
+    "text/x-c++src": {
+        "extensions": [
+            "c++",
+            "cpp",
+            "cxx",
+            "cc"
+        ]
+    },
+    "text/x-chdr": {
+        "extensions": [
+            "h"
+        ]
+    },
+    "text/x-csh": {
+        "extensions": [
+            "csh"
+        ]
+    },
+    "text/x-csrc": {
+        "extensions": [
+            "c"
+        ]
+    },
+    "text/x-diff": {
+        "extensions": [
+            "diff",
+            "patch"
+        ]
+    },
+    "text/x-dsrc": {
+        "extensions": [
+            "d"
+        ]
+    },
+    "text/x-haskell": {
+        "extensions": [
+            "hs"
+        ]
+    },
+    "text/x-java": {
+        "extensions": [
+            "java"
+        ]
+    },
+    "text/x-lilypond": {
+        "extensions": [
+            "ly"
+        ]
+    },
+    "text/x-literate-haskell": {
+        "extensions": [
+            "lhs"
+        ]
+    },
+    "text/x-moc": {
+        "extensions": [
+            "moc"
+        ]
+    },
+    "text/x-pcs-gcd": {
+        "extensions": [
+            "gcd"
+        ]
+    },
+    "text/x-perl": {
+        "extensions": [
+            "pl",
+            "pm"
+        ]
+    },
+    "text/x-python": {
+        "extensions": [
+            "py"
+        ]
+    },
+    "text/x-scala": {
+        "extensions": [
+            "scala"
+        ]
+    },
+    "text/x-sh": {
+        "extensions": [
+            "sh"
+        ]
+    },
+    "text/x-tcl": {
+        "extensions": [
+            "tcl",
+            "tk"
+        ]
+    },
+    "text/x-tex": {
+        "extensions": [
+            "tex",
+            "ltx",
+            "sty",
+            "cls"
+        ]
+    },
+    "video/annodex": {
+        "extensions": [
+            "axv"
+        ]
+    },
+    "video/asf": {
+        "extensions": [
+            "asx"
+        ]
+    },
+    "video/fli": {
+        "extensions": [
+            "fli"
+        ]
+    },
+    "video/gl": {
+        "extensions": [
+            "gl"
+        ]
+    },
+    "video/mp1": {
+        "extensions": [
+            "f4v"
+        ]
+    },
+    "video/mp2": {
+        "extensions": [
+            "f4p"
+        ]
+    },
+    "video/mp4": {
+        "extensions": [
+            "m4v"
+        ]
+    },
+    "video/vnd.dece.mp4": {
+        "extensions": [
+            "uvu",
+            "uvvu"
+        ]
+    },
+    "video/vnd.nokia.interleaved-multimedia": {
+        "extensions": [
+            "nim"
+        ]
+    },
+    "video/vnd.radgamettools.bink": {
+        "extensions": [
+            "bik",
+            "bk2"
+        ]
+    },
+    "video/vnd.radgamettools.smacker": {
+        "extensions": [
+            "smk"
+        ]
+    },
+    "video/vnd.sealed.mpeg1": {
+        "extensions": [
+            "smpg",
+            "s11"
+        ]
+    },
+    "video/vnd.sealed.mpeg4": {
+        "extensions": [
+            "s14"
+        ]
+    },
+    "video/vnd.sealed.swf": {
+        "extensions": [
+            "sswf",
+            "ssw"
+        ]
+    },
+    "video/vnd.sealedmedia.softseal.mov": {
+        "extensions": [
+            "smov",
+            "smo",
+            "s1q"
+        ]
+    },
+    "video/vnd.youtube.yt": {
+        "extensions": [
+            "yt"
+        ]
+    },
+    "video/x-la-asf": {
+        "extensions": [
+            "lsf",
+            "lsx"
+        ]
+    },
+    "video/x-matroska": {
+        "extensions": [
+            "mpv"
+        ]
+    }
+}

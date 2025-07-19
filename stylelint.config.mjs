@@ -10,7 +10,7 @@ export default {
     'stylelint-high-performance-animation',
     'stylelint-declaration-block-no-ignored-properties',
     'stylelint-no-browser-hacks',
-    './build/js/stylelint-plugin-attribute-case-i',
+    './build/js/dev/stylelint-plugin-attribute-case-i',
   ],
   rules: {
     'simbiat/require-attribute-i-flag': [true, { severity: 'warning' }],
