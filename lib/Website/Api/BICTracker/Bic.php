@@ -5,6 +5,7 @@ namespace Simbiat\Website\Api\BICTracker;
 
 use Simbiat\http20\Headers;
 use Simbiat\Website\Abstracts\Api;
+use Simbiat\Website\Errors;
 
 class Bic extends Api
 {
@@ -15,14 +16,15 @@ class Bic extends Api
         'description' => 'JSON representation of a Russian organization based on Bank Identification Code',
         'ID_regexp' => '/^\d+$/mi',
     ];
-
+    
     protected function genData(array $path): array
     {
         try {
-            $data = (new \Simbiat\BIC\BIC($path[0]))->getArray();
+            $data = new \Simbiat\BIC\BIC($path[0])->getArray();
         } catch (\UnexpectedValueException) {
             return ['http_error' => 400, 'reason' => 'ID `'.$path[0].'` has unsupported format'];
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Errors::error_log($exception);
             return ['http_error' => 500, 'reason' => 'Unknown error during request processing'];
         }
         #Check if 404
@@ -35,7 +37,7 @@ class Bic extends Api
         $result = ['response' => $data];
         #Link header/tag for API
         $result['alt_links'] = [
-            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/bics/' . $path[0]],
+            ['type' => 'text/html', 'title' => 'Main page on Tracker', 'href' => '/bictracker/bics/'.$path[0]],
         ];
         return $result;
     }

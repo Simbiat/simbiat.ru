@@ -69,14 +69,21 @@ class Tests
         exit(0);
     }
     
-    #A simple wrapper function for var_dump to apply <pre> tag and exit the script by default
+    /**
+     * A simple wrapper function for var_dump to apply <pre> tag and exit the script by default
+     * @param mixed $variable Variable to dump
+     * @param bool  $exit     Whether to stop execution right away
+     *
+     * @return void
+     */
     public static function testDump(mixed $variable, bool $exit = true): void
     {
         echo '<pre>';
-        var_dump($variable);
+        /** @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
+        \var_dump($variable);
         echo '</pre>';
-        @ob_flush();
-        @flush();
+        @\ob_flush();
+        @\flush();
         if ($exit) {
             exit(0);
         }

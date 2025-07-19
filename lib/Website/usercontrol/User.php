@@ -875,11 +875,20 @@ class User extends Entity
         }
         $threads = new Threads($bindings, $where, '`talks__threads`.`created` DESC')->listEntities();
         #Clean any threads with empty `first_post` (means the thread is either empty or is in progress of creation)
-        foreach ($threads['entities'] as $key => $thread) {
-            if (empty($thread['first_post'])) {
-                unset($threads['entities'][$key]);
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (is_array($threads) && is_array($threads['entities'])) {
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            foreach ($threads['entities'] as $key => $thread) {
+                if (empty($thread['first_post'])) {
+                    /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                    unset($threads['entities'][$key]);
+                }
             }
+        } else {
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            $threads['entities'] = [];
         }
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         return $threads['entities'];
     }
     
@@ -898,9 +907,11 @@ class User extends Entity
             $where .= ' AND `talks__threads`.`private`=0';
         }
         $posts = new Posts($bindings, $where, '`talks__posts`.`created` DESC')->listEntities();
-        if (!is_array($posts)) {
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (!is_array($posts) || !is_array($posts['entities'])) {
             return [];
         }
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         return $posts['entities'];
     }
     
@@ -954,13 +965,16 @@ class User extends Entity
         }
         $bindings[':postIDs'] = [$ids, 'in', 'int'];
         $posts = new Posts($bindings, '`talks__posts`.`post_id` IN (:postIDs)'.$where, '`talks__posts`.`created` DESC')->listEntities();
-        if (is_array($posts) && !empty($posts['entities'])) {
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (is_array($posts) && is_array($posts['entities'])) {
             #Get like value for each post if the current user has appropriate permission
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             foreach ($posts['entities'] as &$post) {
                 if (!empty($threads[$post['thread_id']]['og_image'])) {
                     $post['og_image'] = $threads[$post['thread_id']]['og_image'];
                 }
             }
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return $posts['entities'];
         }
         return [];

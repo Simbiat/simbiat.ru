@@ -335,8 +335,8 @@ class Curl
             $upload['extension'] = pathinfo($upload['server_path'].'/'.$upload['server_name'], PATHINFO_EXTENSION);
             #Get a path for hash-tree structure
             $upload['hash_tree'] = mb_substr($upload['hash'], 0, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 2, 2, 'UTF-8').'/'.mb_substr($upload['hash'], 4, 2, 'UTF-8').'/';
-            if (!is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
-                mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true);
+            if (!\is_dir($upload['new_path'].'/'.$upload['hash_tree']) && !\mkdir($upload['new_path'].'/'.$upload['hash_tree'], recursive: true) && !\is_dir($upload['new_path'].'/'.$upload['hash_tree'])) {
+                throw new \RuntimeException(\sprintf('Directory "%s" was not created', $upload['new_path'].'/'.$upload['hash_tree']));
             }
             #Set the file location to return in output
             $upload['location'] .= $upload['hash_tree'].$upload['new_name'];

@@ -60,9 +60,11 @@ class Post extends Entity
         #Get details of a post, to which this is a reply to
         if (!empty($data['reply_to'])) {
             $data['reply_to'] = new Posts([':post_id' => [$data['reply_to'], 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`post_id`=:post_id')->listEntities();
-            if (empty($data['reply_to']['entities'])) {
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            if (is_array($data['reply_to']) && empty($data['reply_to']['entities'])) {
                 $data['reply_to'] = [];
             } else {
+                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                 $data['reply_to'] = $data['reply_to']['entities'][0];
             }
         } else {

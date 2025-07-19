@@ -93,8 +93,13 @@ class Thread extends Entity
         } else {
             #Get posts
             $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC')->listEntities($page);
-            foreach ($data['posts']['entities'] as $post_key => $post) {
-                $data['posts']['entities'][$post_key]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $post['id']], return: 'all');
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            if (is_array($data['posts']) && is_array($data['posts']['entities'])) {
+                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                foreach ($data['posts']['entities'] as $post_key => $post) {
+                    /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+                    $data['posts']['entities'][$post_key]['attachments'] = Query::query('SELECT * FROM `talks__attachments` LEFT JOIN `sys__files` ON `talks__attachments`.`file_id` = `sys__files`.`file_id` WHERE `post_id`=:post_id;', [':post_id' => $post['id']], return: 'all');
+                }
             }
             #Get tags
             $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int'],], return: 'column');

@@ -13,13 +13,14 @@ class Caching
      */
     public function __construct(private string $cache_dir = '')
     {
-        if (empty($this->cache_dir)) {
+        if (\preg_match('/^\s*$/u', $this->cache_dir) === 1) {
             $this->cache_dir = Config::$html_cache;
-        } elseif (!is_dir($this->cache_dir)) {
-            @mkdir($this->cache_dir, recursive: true);
-            if (preg_match('/\/$/', $this->cache_dir) !== 1) {
-                $this->cache_dir .= '/';
-            }
+        }
+        if (!\is_dir($this->cache_dir) && !\mkdir($this->cache_dir, recursive: true) && !\is_dir($this->cache_dir)) {
+            throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir));
+        }
+        if (\preg_match('/\/$/', $this->cache_dir) !== 1) {
+            $this->cache_dir .= '/';
         }
     }
     
@@ -56,8 +57,8 @@ class Caching
             #Generate subdirectory name
             $sub_dir = mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/';
             #Create folder if missing
-            if (!is_dir($this->cache_dir.$sub_dir)) {
-                @mkdir($this->cache_dir.$sub_dir, recursive: true);
+            if (!\is_dir($this->cache_dir.$sub_dir) && !\mkdir($this->cache_dir.$sub_dir, recursive: true) && !\is_dir($this->cache_dir.$sub_dir)) {
+                throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
             }
             #Write the file. We do not care much if it fails
             if (@file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {

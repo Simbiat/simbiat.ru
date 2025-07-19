@@ -103,13 +103,14 @@ class Search extends Page
         #Prepare the array of dates
         $dates = [];
         foreach ($results as $type) {
-            $dates = array_merge($dates, array_column($type['results'], 'updated'));
+            $dates[] = \array_column($type['results'], 'updated');
         }
+        $dates = \array_merge(...$dates);
         #Return max value if the array is not empty or 0 otherwise
-        if (empty($dates)) {
+        if (\count($dates) === 0) {
             return 0;
         }
-        return max($dates);
+        return \max($dates);
     }
     
     /**
@@ -122,11 +123,11 @@ class Search extends Page
         if (empty($term)) {
             return true;
         }
-        $term = Sanitization::removeNonPrintable($term, true);
-        #Remove not allowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
-        $decoded_search = preg_replace([$this->regex_search, '/:/'], '', $term);
+        $sanitized = Sanitization::removeNonPrintable($term, true);
+        #Remove disallowed characters. Ensure colon is removed, since it breaks binding. Using regex, in case some other characters will be required forceful removal in the future
+        $decoded_search = \preg_replace([$this->regex_search, '/:/'], '', $sanitized);
         #Check if the new value is just the set of operators and if it is - consider a bad request
-        if (preg_match('/^[+\-<>~()"*]+$/', $decoded_search)) {
+        if (\preg_match('/^[+\-<>~()"*]+$/', $decoded_search)) {
             return false;
         }
         #If the value is empty, ensure it's an empty string

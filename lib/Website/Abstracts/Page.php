@@ -208,7 +208,8 @@ abstract class Page
         #Generate a link for cache reset if page uses cache
         if ($this->cache_age > 0 && !$this->static) {
             $query = IRI::parseUri(Config::$canonical);
-            if (is_array($query)) {
+            if (\is_array($query)) {
+                /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
                 $page['cache_reset'] = Config::$canonical.(empty($query['query']) ? '?cache_reset=true' : '&cache_reset=true');
             } else {
                 $page['cache_reset'] = '';

@@ -257,6 +257,7 @@ class Security
         $bot = $dd->getBot();
         if (is_array($bot)) {
             #Do not waste resources on bots
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false];
         }
         #Get OS
@@ -318,14 +319,16 @@ class Security
             return '';
         }
         #Parse the query string into an associative array
-        parse_str($parsed_url['query'] ?? '', $query_params);
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        \parse_str($parsed_url['query'] ?? '', $query_params);
         #Remove tracking parameters
         foreach ($query_params as $param => $value) {
-            if (in_array($param, Config::$shared_with_js['tracking_query_parameters'], true)) {
+            if (\in_array($param, Config::$shared_with_js['tracking_query_parameters'], true)) {
                 unset($query_params[$param]);
             }
         }
         #Rebuild the query string
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
         $parsed_url['query'] = IRI::rawBuildQuery($query_params);
         #Reconstruct the full URL
         return IRI::restoreUri($parsed_url);

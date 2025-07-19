@@ -42,7 +42,7 @@ class Search extends \Simbiat\Website\Abstracts\Pages\Search
     #Add any extra fields, if required by overriding this function
     protected function extras(): array
     {
-        $output_array['bic_date'] = new Library()->bicDate();
+        $output_array['bic_date'] = new Library()->bicDate()->format('d.m.Y');
         return $output_array;
     }
 }

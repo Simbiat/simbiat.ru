@@ -26,14 +26,16 @@ class Images
         if ($temp === false) {
             return false;
         }
-        if (is_file($temp['server_path'].'/'.$temp['server_name'])) {
+        /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+        if (\is_file($temp['server_path'].'/'.$temp['server_name'])) {
             #Create directory if missing and create it recursively
-            if (!is_dir(dirname($to)) && !mkdir(dirname($to), recursive: true) && !is_dir(dirname($to))) {
+            if (!\is_dir(dirname($to)) && !\mkdir(dirname($to), recursive: true) && !\is_dir(dirname($to))) {
                 return false;
             }
             #Move file
-            rename($temp['server_path'].'/'.$temp['server_name'], $to);
-            if (is_file($to)) {
+            /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
+            \rename($temp['server_path'].'/'.$temp['server_name'], $to);
+            if (\is_file($to)) {
                 if ($convert) {
                     #Convert to WebP
                     return self::toWebP($to);
