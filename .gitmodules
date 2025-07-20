@@ -79,3 +79,6 @@
 [submodule "lib/Database/Installer"]
 	path = lib/Database/Installer
 	url = https://github.com/Simbiat/db-installer
+[submodule "lib/HTTP/PrettyURL"]
+	path = lib/HTTP/PrettyURL
+	url = https://github.com/Simbiat/pretty-url

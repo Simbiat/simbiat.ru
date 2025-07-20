@@ -260,7 +260,8 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         ),
         'Simbiat\\HTTP\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/lib/HTTP/SSE/src',
+            0 => __DIR__ . '/../..' . '/lib/HTTP/PrettyURL/src',
+            1 => __DIR__ . '/../..' . '/lib/HTTP/SSE/src',
         ),
         'Simbiat\\HTML\\ArrayToTable\\' => 
         array (
@@ -844,6 +845,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\HTML\\ArrayToTable\\Types\\Url' => __DIR__ . '/../..' . '/lib/array2table/src/Types/Url.php',
         'Simbiat\\HTML\\Cut' => __DIR__ . '/../..' . '/lib/HTML/Cut/src/Cut.php',
         'Simbiat\\HTML\\NL2Tag' => __DIR__ . '/../..' . '/lib/HTML/nl2tag/src/NL2Tag.php',
+        'Simbiat\\HTTP\\PrettyURL' => __DIR__ . '/../..' . '/lib/HTTP/PrettyURL/src/PrettyURL.php',
         'Simbiat\\HTTP\\SSE' => __DIR__ . '/../..' . '/lib/HTTP/SSE/src/SSE.php',
         'Simbiat\\SafeFileName' => __DIR__ . '/../..' . '/lib/SafeFileName/src/SafeFileName.php',
         'Simbiat\\SandClock' => __DIR__ . '/../..' . '/lib/SandClock/src/SandClock.php',
@@ -1010,7 +1012,6 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\http20\\IRI' => __DIR__ . '/../..' . '/lib/http20/src/IRI.php',
         'Simbiat\\http20\\Links' => __DIR__ . '/../..' . '/lib/http20/src/Links.php',
         'Simbiat\\http20\\Meta' => __DIR__ . '/../..' . '/lib/http20/src/Meta.php',
-        'Simbiat\\http20\\PrettyURL' => __DIR__ . '/../..' . '/lib/http20/src/PrettyURL.php',
         'Simbiat\\http20\\RSS' => __DIR__ . '/../..' . '/lib/http20/src/RSS.php',
         'Simbiat\\http20\\Sharing' => __DIR__ . '/../..' . '/lib/http20/src/Sharing.php',
         'Simbiat\\http20\\Sitemap' => __DIR__ . '/../..' . '/lib/http20/src/Sitemap.php',

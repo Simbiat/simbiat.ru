@@ -72,6 +72,7 @@
                 "./lib/FFXIV/Tracker/src"
             ],
             "Simbiat\\HTTP\\": [
+                "./lib/HTTP/PrettyURL/src",
                 "./lib/HTTP/SSE/src"
             ],
             "Simbiat\\HTML\\": [
