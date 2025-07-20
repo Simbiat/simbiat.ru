@@ -8,7 +8,7 @@ use Simbiat\CuteBytes;
 use Simbiat\HTML\Cut;
 use Simbiat\http20\HTML;
 use Simbiat\http20\Links;
-use Simbiat\http20\PrettyURL;
+use Simbiat\HTTP\PrettyURL;
 use Simbiat\HTML\NL2Tag;
 use Simbiat\SandClock;
 use Simbiat\Website\Sanitization;
