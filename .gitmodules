@@ -1,9 +1,6 @@
 [submodule "lib/ArrayHelpers"]
 	path = lib/ArrayHelpers
 	url = https://github.com/Simbiat/ArrayHelpers
-[submodule "lib/SafeFileName"]
-	path = lib/SafeFileName
-	url = https://github.com/Simbiat/filename-sanitizer
 [submodule "lib/SandClock"]
 	path = lib/SandClock
 	url = https://github.com/Simbiat/sand-clock
@@ -79,6 +76,6 @@
 [submodule "lib/Database/Installer"]
 	path = lib/Database/Installer
 	url = https://github.com/Simbiat/db-installer
-[submodule "lib/HTTP/PrettyURL"]
-	path = lib/HTTP/PrettyURL
-	url = https://github.com/Simbiat/pretty-url
+[submodule "lib/Translit"]
+	path = lib/Translit
+	url = https://github.com/Simbiat/translit

@@ -3,9 +3,9 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts\Pages;
 
+use Simbiat\Translit\Convert;
 use Simbiat\Website\Config;
 use Simbiat\http20\Headers;
-use Simbiat\SafeFileName;
 
 use function array_slice, count, in_array;
 
@@ -42,7 +42,7 @@ class FileListing extends StaticPage
         $output_array = [];
         #Set the page number
         $this->page = (int)($_GET['page'] ?? 1);
-        $this->search_for = SafeFileName::sanitize($_GET['search'] ?? '', true, true);
+        $this->search_for = Convert::safeFileName($_GET['search'] ?? '', true, true);
         if (empty($this->dirs)) {
             return ['http_error' => 503, 'reason' => 'No directories are setup for this endpoint'];
         }

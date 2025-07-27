@@ -8,7 +8,7 @@ use Simbiat\CuteBytes;
 use Simbiat\HTML\Cut;
 use Simbiat\http20\HTML;
 use Simbiat\http20\Links;
-use Simbiat\HTTP\PrettyURL;
+use Simbiat\Translit\Convert;
 use Simbiat\HTML\NL2Tag;
 use Simbiat\SandClock;
 use Simbiat\Website\Sanitization;
@@ -212,6 +212,6 @@ class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function prettyURL(string $string): string
     {
-        return PrettyURL::pretty($string, '_');
+        return Convert::prettyURL($string, '_');
     }
 }

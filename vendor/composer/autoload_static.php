@@ -64,6 +64,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
             'Symfony\\Bridge\\Twig\\' => 20,
             'Simbiat\\http20\\' => 15,
             'Simbiat\\Website\\' => 16,
+            'Simbiat\\Translit\\' => 17,
             'Simbiat\\HTTP\\' => 13,
             'Simbiat\\HTML\\ArrayToTable\\' => 26,
             'Simbiat\\HTML\\' => 13,
@@ -258,10 +259,13 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         array (
             0 => __DIR__ . '/../..' . '/lib/Website',
         ),
+        'Simbiat\\Translit\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/lib/Translit/src',
+        ),
         'Simbiat\\HTTP\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/lib/HTTP/PrettyURL/src',
-            1 => __DIR__ . '/../..' . '/lib/HTTP/SSE/src',
+            0 => __DIR__ . '/../..' . '/lib/HTTP/SSE/src',
         ),
         'Simbiat\\HTML\\ArrayToTable\\' => 
         array (
@@ -845,10 +849,11 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\HTML\\ArrayToTable\\Types\\Url' => __DIR__ . '/../..' . '/lib/array2table/src/Types/Url.php',
         'Simbiat\\HTML\\Cut' => __DIR__ . '/../..' . '/lib/HTML/Cut/src/Cut.php',
         'Simbiat\\HTML\\NL2Tag' => __DIR__ . '/../..' . '/lib/HTML/nl2tag/src/NL2Tag.php',
-        'Simbiat\\HTTP\\PrettyURL' => __DIR__ . '/../..' . '/lib/HTTP/PrettyURL/src/PrettyURL.php',
         'Simbiat\\HTTP\\SSE' => __DIR__ . '/../..' . '/lib/HTTP/SSE/src/SSE.php',
         'Simbiat\\SafeFileName' => __DIR__ . '/../..' . '/lib/SafeFileName/src/SafeFileName.php',
         'Simbiat\\SandClock' => __DIR__ . '/../..' . '/lib/SandClock/src/SandClock.php',
+        'Simbiat\\Translit\\Convert' => __DIR__ . '/../..' . '/lib/Translit/src/Convert.php',
+        'Simbiat\\Translit\\Unicode' => __DIR__ . '/../..' . '/lib/Translit/src/Unicode.php',
         'Simbiat\\Website\\Abstracts\\Api' => __DIR__ . '/../..' . '/lib/Website/Abstracts/Api.php',
         'Simbiat\\Website\\Abstracts\\Entity' => __DIR__ . '/../..' . '/lib/Website/Abstracts/Entity.php',
         'Simbiat\\Website\\Abstracts\\Page' => __DIR__ . '/../..' . '/lib/Website/Abstracts/Page.php',
