@@ -25,13 +25,15 @@
                 {% if subject == 'Account Activation' %}
                     {{ include('mail/activation.twig') }}
                 {% elseif subject == 'Password Reset' %}
-                    {{ include('mail/pwreset.twig') }}
+                    {{ include('mail/password_reset.twig') }}
                 {% elseif subject == '[Alert]: Low space' or subject == '[Resolved]: Low space' %}
-                    {{ include('mail/nospace.twig') }}
+                    {{ include('mail/no_space.twig') }}
                 {% elseif subject == '[Alert]: Database is down' or subject == '[Resolved]: Database is down' %}
-                    {{ include('mail/dbdown.twig') }}
+                    {{ include('mail/db_down.twig') }}
                 {% elseif subject == '[Alert]: Cron task failed' %}
                     {{ include('mail/cron.twig') }}
+                {% elseif subject == '[Alert]: Error log found' %}
+                    {{ include('mail/error_log.twig') }}
                 {% endif %}
             </div>
         </div>

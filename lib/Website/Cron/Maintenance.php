@@ -239,29 +239,58 @@ class Maintenance
     {
         #Get directory
         $dir = \sys_get_temp_dir();
+        if (!\is_dir($dir) && !\mkdir($dir) && !\is_dir($dir)) {
+            throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
+        }
+        $no_db_flag = $dir.'/no_db.flag';
+        $crash_flag = Config::$work_dir.'/data/backups/crash.flag';
         if (Config::$prod && !Config::$dbup) {
             #Do not do anything if mail has already been sent
-            if (!\is_file($dir.'/noDB.flag')) {
+            if (!\is_file($no_db_flag)) {
                 #Send mail
                 new Email(Config::ADMIN_MAIL)->send('[Alert]: Database is down', ['errors' => \print_r(Pool::$errors, true)], 'Simbiat');
                 #Generate flag
-                \file_put_contents($dir.'/noDB.flag', 'Database is down');
+                \file_put_contents($no_db_flag, 'Database is down');
             }
-        } elseif (\is_file(Config::$work_dir.'/data/backups/crash.flag')) {
-            $error_text = \file_get_contents(Config::$work_dir.'/data/backups/crash.flag');
+        } elseif (\is_file($crash_flag)) {
+            $error_text = \file_get_contents($crash_flag);
             try {
                 $result = Query::query('UPDATE `sys__settings` SET `value` = 0 WHERE `setting` = \'maintenance\';');
             } catch (\Throwable) {
                 $result = false;
             }
-            @\unlink(Config::$work_dir.'/data/backups/crash.flag');
-            @\unlink($dir.'/noDB.flag');
+            @\unlink($crash_flag);
+            @\unlink($no_db_flag);
             #Send mail
             new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');
-        } elseif (\is_file($dir.'/noDB.flag')) {
-            @\unlink($dir.'/noDB.flag');
+        } elseif (\is_file($no_db_flag)) {
+            @\unlink($no_db_flag);
             #Send mail
             new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', username: 'Simbiat');
+        }
+    }
+    
+    /**
+     * Check if error log exists and notify about it
+     * @return void
+     */
+    public function errorLog(): void
+    {
+        $dir = \sys_get_temp_dir();
+        if (!\is_dir($dir) && !\mkdir($dir) && !\is_dir($dir)) {
+            throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
+        }
+        $error_log = Config::$work_dir.'/logs/php.log';
+        $error_flag = $dir.'/no_db.flag';
+        #Check if the error log exists and there is no flag yet (thus no notification has been sent)
+        if (\is_file($error_log) && !\is_file($error_flag)) {
+            #Send mail
+            new Email(Config::ADMIN_MAIL)->send('[Alert]: Error log found', ['errors' => \print_r(Pool::$errors, true)], 'Simbiat');
+            #Generate flag
+            \file_put_contents($error_flag, 'Error log found');
+        } elseif (\is_file($error_flag)) {
+            #If the error log does not exist - remove the flag if it exists
+            \unlink($error_flag);
         }
     }
     
