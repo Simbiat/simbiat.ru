@@ -120,6 +120,25 @@
                                 }
                             ]
                         },
+                        //Force HTTPS
+                        {
+                            "match": [
+                                {
+                                    "protocol": "http"
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "static_response",
+                                    "headers": {
+                                        "Location": [
+                                            "https://{http.request.host}{http.request.uri}"
+                                        ]
+                                    },
+                                    "status_code": 308
+                                }
+                            ]
+                        },
                         //Force WWW if missing
                         {
                             "match": [
