@@ -281,7 +281,7 @@ class Maintenance
             throw new \RuntimeException(\sprintf('Directory "%s" was not created', $dir));
         }
         $error_log = Config::$work_dir.'/logs/php.log';
-        $error_flag = $dir.'/no_db.flag';
+        $error_flag = $dir.'/error_log.flag';
         #Check if the error log exists and there is no flag yet (thus no notification has been sent)
         if (\is_file($error_log) && !\is_file($error_flag)) {
             #Send mail
