@@ -18,6 +18,8 @@ $maintenance = new Maintenance();
 $maintenance->dbDown();
 #Check space availability
 $maintenance->noSpace();
+#Check for error log
+$maintenance->errorLog();
 #Run cron
 try {
     if (Config::$dbup) {
