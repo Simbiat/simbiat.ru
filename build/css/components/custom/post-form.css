@@ -1,5 +1,6 @@
 post-form {
     display: block;
+    margin: 0.5rem;
     margin-block-start: 1rem;
 
     & #post_form_submit {

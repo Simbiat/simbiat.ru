@@ -171,7 +171,6 @@
 
 /* Label for textarea which are replaced by TinyMCE */
 .wrapper_for_tinymce {
-    inline-size: 98%;
     position: relative;
 
     & .label_for_tinymce {
