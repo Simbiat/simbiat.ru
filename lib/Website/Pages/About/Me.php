@@ -434,7 +434,7 @@ class Me extends StaticPage
                 ],
                 [
                     'start_time' => '2023-04-24',
-                    'end_time' => null,
+                    'end_time' => '2025-06-30',
                     'name' => 'Signant Health',
                     'icon' => '/assets/images/icons/SignantHealth.svg',
                     'href' => 'https://www.signanthealth.com/',
@@ -475,6 +475,19 @@ class Me extends StaticPage
                     'href' => 'https://play.google.com/store/apps/details?id=com.carillongames.blueberry',
                     'position' => 'Beta-tester',
                     'description' => 'Beta-testing new game "Blue Berry"',
+                ],
+                [
+                    'start_time' => '2025-07-01',
+                    'end_time' => null,
+                    'name' => 'Signant Health',
+                    'icon' => '/assets/images/icons/SignantHealth.svg',
+                    'href' => 'https://www.signanthealth.com/',
+                    'position' => 'Senior R&D Support Engineer',
+                    'responsibilities' => [
+                        'Investigate, manage, and triage application incidents and service requests.',
+                    ],
+                    'achievements' => [],
+                    'description' => null,
                 ],
             ];
         return $output_array;
