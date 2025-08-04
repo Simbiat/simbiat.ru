@@ -154,7 +154,11 @@ class Me extends StaticPage
                     'responsibilities' => null,
                     'achievements' => [
                         'Blood donor',
-                        'Patron for <a href="https://sos-dd.ru/" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="link_icon">SOS Children\'s Villages</a>'
+                        'Patron for <a href="https://sos-dd.ru" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="link_icon">SOS Children\'s Villages</a>',
+                        'Patron for <a href="https://www.punainenristi.fi" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/Red Cross.webp" alt="Suomen Punainen Risti" class="link_icon">Suomen Punainen Risti</a>',
+                        'Patron for <a href="https://www.vammr.org" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/VAMMR.webp" alt="Vancouver Aquarium Marine Mammal Rescue Society" class="link_icon">Vancouver Aquarium Marine Mammal Rescue Society</a>',
+                        'Patron for <a href="https://www.pelastakaalapset.fi" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/Pelastakaa Lapset.webp" alt="Pelastakaa Lapset" class="link_icon">Pelastakaa Lapset</a>',
+                        'Patron for <a href="https://mieli.fi" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/Mieli.svg" alt="Mieli" class="link_icon">Mieli</a>'
                     ],
                     'description' => null,
                 ],
