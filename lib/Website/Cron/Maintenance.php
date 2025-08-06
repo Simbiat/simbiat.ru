@@ -125,7 +125,7 @@ class Maintenance
      */
     public function argon(): bool
     {
-        return !empty(Security::argonCalc(true));
+        return \count(Security::argonCalc(true)) !== 0;
     }
     
     /**
@@ -252,7 +252,9 @@ class Maintenance
                 #Generate flag
                 \file_put_contents($no_db_flag, 'Database is down');
             }
-        } elseif (\is_file($crash_flag)) {
+            return;
+        }
+        if (\is_file($crash_flag)) {
             $error_text = \file_get_contents($crash_flag);
             try {
                 $result = Query::query('UPDATE `sys__settings` SET `value` = 0 WHERE `setting` = \'maintenance\';');
@@ -263,7 +265,9 @@ class Maintenance
             @\unlink($no_db_flag);
             #Send mail
             new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');
-        } elseif (\is_file($no_db_flag)) {
+            return;
+        }
+        if (\is_file($no_db_flag)) {
             @\unlink($no_db_flag);
             #Send mail
             new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', username: 'Simbiat');
@@ -283,12 +287,16 @@ class Maintenance
         $error_log = Config::$work_dir.'/logs/php.log';
         $error_flag = $dir.'/error_log.flag';
         #Check if the error log exists and there is no flag yet (thus no notification has been sent)
-        if (\is_file($error_log) && !\is_file($error_flag)) {
-            #Send mail
-            new Email(Config::ADMIN_MAIL)->send('[Alert]: Error log found', ['errors' => \print_r(Pool::$errors, true)], 'Simbiat');
-            #Generate flag
-            \file_put_contents($error_flag, 'Error log found');
-        } elseif (\is_file($error_flag)) {
+        if (\is_file($error_log)) {
+            if (!\is_file($error_flag)) {
+                #Send mail
+                new Email(Config::ADMIN_MAIL)->send('[Alert]: Error log found', ['errors' => \print_r(Pool::$errors, true)], 'Simbiat');
+                #Generate flag
+                \file_put_contents($error_flag, 'Error log found');
+            }
+            return;
+        }
+        if (\is_file($error_flag)) {
             #If the error log does not exist - remove the flag if it exists
             \unlink($error_flag);
         }
@@ -372,7 +380,7 @@ class Maintenance
                 #Do nothing
             }
             #If we have size limitation and a list of fresh items is not empty
-            if ($max_size > 0 && !empty($fresh)) {
+            if ($max_size > 0 && \count($fresh) !== 0) {
                 #Calclate total size
                 $total_size = \array_sum(\array_column($fresh, 'size')) + $size_to_remove;
                 #Check if we are already removing enough. If so - skip further checks
