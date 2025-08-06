@@ -17,6 +17,13 @@ function inputInit(input: HTMLInputElement): void {
       toggleDetailsButton(input);
     });
   }
+  if (input.getAttribute('type') === 'file') {
+    ['change', 'input',].forEach((eventType: string) => {
+      input.addEventListener(eventType, () => {
+        inputFileValidate(input);
+      });
+    });
+  }
 }
 
 function textareaInit(textarea: HTMLTextAreaElement): void {

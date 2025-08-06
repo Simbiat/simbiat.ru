@@ -273,6 +273,8 @@ export default defineConfig([
       // escompat is bundled with GitHub rules, and some rules do not recognize that options are supported by targeted browsers (a limitation of caniuse-lite)
       'escompat/no-optional-catch': 'off',
       'escompat/no-optional-chaining': 'off',
+      // This is also from GitHub rules
+      'i18n-text/no-en': 'off',
       // Not sure what installed this, but Stylistic duplicates all the rules, and they seem a bit more readable to me
       'prettier/prettier': 'off',
       // Also not sure where this came from

@@ -24,7 +24,7 @@
         "twig/cssinliner-extra": "^3",
         "league/html-to-markdown": "^5.1.1",
         "geoip2/geoip2": "^3",
-        "tinymce/tinymce": "^7",
+        "tinymce/tinymce": "^8",
         "vlucas/phpdotenv": "^5",
         "ext-intl": "*",
         "ext-mbstring": "*",

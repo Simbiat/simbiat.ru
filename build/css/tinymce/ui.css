@@ -251,3 +251,8 @@ body > div.tox.tox-silver-sink.tox-tinymce-aux {
     min-block-size: 100vb;
     padding-block-end: 0.1rem;
 }
+
+/* Hide the "source" field for image upload */
+.tox-form__group:has(input[type='url' i]) {
+    display: none;
+}

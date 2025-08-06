@@ -1,6 +1,3 @@
-declare module "../vendor/tinymce/tinymce/tinymce.min" {
-    export = e;
-}
 interface ajaxJSONResponse extends JSON {
     status: number;
     data: boolean | number | string;
@@ -52,6 +49,7 @@ declare function pasteAndMove(input: HTMLInputElement, text: string): void;
 declare function formEnter(event: KeyboardEvent): boolean;
 declare function inputBackSpace(event: Event): void;
 declare function autoNext(event: Event): void;
+declare function inputFileValidate(file_input: HTMLInputElement): void;
 declare const CUSTOM_COLOR_MAP: Record<string, string>;
 declare const TINY_SETTINGS: {
     automatic_uploads: boolean;
@@ -311,7 +309,7 @@ declare const TINY_SETTINGS: {
 };
 declare function tinyMCEtoTextarea(textarea: HTMLTextAreaElement, tinyInstance: any): void;
 declare function tinyMCEHideInputs(): void;
-declare function loadTinyMCE(id: string, noMedia?: boolean, noRestoreOnEmpty?: boolean): void;
+declare function loadTinyMCE(id: string, no_media?: boolean, no_restore_on_empty?: boolean): void;
 declare function saveTinyMCE(id: string, textareaOnly?: boolean): void;
 declare function cleanGET(): void;
 declare function urlClean(event: ClipboardEvent): Promise<void>;
@@ -498,4 +496,7 @@ declare class WebShare extends HTMLElement {
     constructor();
     private share;
     private toClipboard;
+}
+declare module "../vendor/tinymce/tinymce/tinymce.min" {
+    export = e;
 }
