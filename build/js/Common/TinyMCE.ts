@@ -406,10 +406,8 @@ function tinyMCEHideInputs(): void {
         .toLowerCase();
       if (titleText === 'insert/edit image') {
         // Input tags standardization
-        const inputs = document.querySelectorAll('input[type="file"]');
-        console.log('here');
+        const inputs = dialog.querySelectorAll('input[type="file"]');
         if (!empty(inputs)) {
-            console.log('here2');
           inputs.forEach((input) => {
               inputInit(input);
           });

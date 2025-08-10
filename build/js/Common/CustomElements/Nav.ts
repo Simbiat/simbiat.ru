@@ -34,7 +34,7 @@ class SideShow extends HTMLElement {
     if (this.id === 'prod_link') {
       if (this.button) {
         this.button.addEventListener('click', () => {
-          window.open(encodeURI(document.location.href.replace('local.simbiat.dev', 'www.simbiat.dev')), '_blank');
+          window.open(encodeURI(document.location.href.replace('localhost', 'www.simbiat.eu')), '_blank');
         });
       }
     } else if (this.button && this.sideHide && this.hasAttribute('data-sidebar')) {

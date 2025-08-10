@@ -18,13 +18,13 @@ final class Config
 {
     public static bool $prod = false;
     public static string $work_dir = '';
-    public const string ADMIN_MAIL = 'support@simbiat.dev';
+    public const string ADMIN_MAIL = 'support@simbiat.eu';
     public const string ADMIN_NAME = 'Dmitrii Kustov';
     public const string SITE_NAME = 'Simbiat Software';
     #Mail to use to send emails from
-    public const string FROM = 'noreply@simbiat.dev';
-    public static string $http_host = 'www.simbiat.dev';
-    public static string $base_url = 'https://www.simbiat.dev';
+    public const string FROM = 'noreply@simbiat.eu';
+    public static string $http_host = 'www.simbiat.eu';
+    public static string $base_url = 'https://www.simbiat.eu';
     public static string $html_cache = '';
     public static string $security_settings = '';
     public static string $sitemap = '';
@@ -97,7 +97,7 @@ final class Config
         #Other settings
         $dotenv->required(['WEB_SERVER_TEST', 'PROTON_DSN', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
         self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
-        self::$http_host = (self::$prod ? 'www.simbiat.dev' : 'localhost');
+        self::$http_host = (self::$prod ? 'www.simbiat.eu' : 'localhost');
         self::$base_url = 'https://'.self::$http_host;
         self::$html_cache = self::$work_dir.'/data/cache/html/';
         self::$security_settings = self::$work_dir.'/data/security.json';
@@ -121,7 +121,7 @@ final class Config
         self::$cookie_settings = [
             'expires' => \time() + 60,
             'path' => '/',
-            'domain' => (self::$prod ? 'simbiat.dev' : 'localhost'),
+            'domain' => (self::$prod ? 'simbiat.eu' : 'localhost'),
             'secure' => true,
             'httponly' => true,
             #Adding "Partitioned" to enable CHIPS. This is a "hack" until PHP supports the setting natively. https://github.com/php/php-src/issues/12646

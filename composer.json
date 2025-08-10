@@ -1,6 +1,6 @@
 {
     "name": "simbiat/simbiat.ru",
-    "description": "Package for simbiat.dev",
+    "description": "Package for simbiat.eu",
     "prefer-stable": true,
     "version": "1.0.0",
     "minimum-stability": "dev",
@@ -8,8 +8,8 @@
     "authors": [
         {
             "name": "Dmitrii Kustov",
-            "email": "support@simbiat.dev",
-            "homepage": "https://www.simbiat.dev",
+            "email": "support@simbiat.eu",
+            "homepage": "https://www.simbiat.eu",
             "role": "Developer"
         }
     ],

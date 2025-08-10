@@ -1,3 +1,6 @@
+declare module "../vendor/tinymce/tinymce/tinymce.min" {
+    export = e;
+}
 interface ajaxJSONResponse extends JSON {
     status: number;
     data: boolean | number | string;
@@ -496,7 +499,4 @@ declare class WebShare extends HTMLElement {
     constructor();
     private share;
     private toClipboard;
-}
-declare module "../vendor/tinymce/tinymce/tinymce.min" {
-    export = e;
 }

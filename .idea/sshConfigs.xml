@@ -2,7 +2,7 @@
 <project version="4">
   <component name="SshConfigs">
     <configs>
-      <sshConfig authType="PASSWORD" connectionConfig="{&quot;hostKeyVerifier&quot;:{&quot;hashKnownHosts&quot;:true,&quot;stringHostKeyChecking&quot;:&quot;ASK&quot;},&quot;serverAliveInterval&quot;:300}" host="simbiat.dev" id="0d17ec04-8b18-4d60-b8d8-fefecbd5678b" port="22" nameFormat="DESCRIPTIVE" username="administrator" useOpenSSHConfig="false" />
+      <sshConfig authType="PASSWORD" connectionConfig="{&quot;hostKeyVerifier&quot;:{&quot;hashKnownHosts&quot;:true,&quot;stringHostKeyChecking&quot;:&quot;ASK&quot;},&quot;serverAliveInterval&quot;:300}" host="152.53.182.176" id="0d17ec04-8b18-4d60-b8d8-fefecbd5678b" port="22" nameFormat="DESCRIPTIVE" username="administrator" useOpenSSHConfig="false" />
     </configs>
   </component>
 </project>

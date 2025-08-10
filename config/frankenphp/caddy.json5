@@ -46,7 +46,13 @@
             "certificates": {
                 "automate": [
                     "simbiat.dev",
+                    "simbiat.eu",
+                    "simbiat.net",
+                    "simbiat.org",
                     "www.simbiat.dev",
+                    "www.simbiat.eu",
+                    "www.simbiat.net",
+                    "www.simbiat.org",
                     "localhost"
                 ]
             },
@@ -55,7 +61,13 @@
                     {
                         "subjects": [
                             "simbiat.dev",
+                            "simbiat.eu",
+                            "simbiat.net",
+                            "simbiat.org",
                             "www.simbiat.dev",
+                            "www.simbiat.eu",
+                            "www.simbiat.net",
+                            "www.simbiat.org",
                             "localhost"
                         ],
                         "issuers": [
@@ -144,7 +156,13 @@
                             "match": [
                                 {
                                     "host": [
-                                        "simbiat.dev"
+                                        "simbiat.dev",
+                                        "simbiat.eu",
+                                        "simbiat.net",
+                                        "simbiat.org",
+                                        "www.simbiat.dev",
+                                        "www.simbiat.net",
+                                        "www.simbiat.org"
                                     ]
                                 }
                             ],
@@ -153,7 +171,7 @@
                                     "handler": "static_response",
                                     "headers": {
                                         "Location": [
-                                            "https://www.simbiat.dev{http.request.uri}"
+                                            "https://www.simbiat.eu{http.request.uri}"
                                         ]
                                     },
                                     "status_code": 308
@@ -164,7 +182,7 @@
                             "match": [
                                 {
                                     "host": [
-                                        "www.simbiat.dev",
+                                        "www.simbiat.eu",
                                         "localhost"
                                     ]
                                 }

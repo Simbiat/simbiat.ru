@@ -3,12 +3,12 @@
 
 # TEAM
     Developer: Dmitrii Kustov
-    Contact: support [at] simbiat.dev
+    Contact: support [at] simbiat.eu
     From: Moscow, Russia
 
 # THANKS
     Developer: Dmitrii Kustov
-    Contact: support [at] simbiat.dev
+    Contact: support [at] simbiat.eu
     From: Moscow, Russia
 
 # TECHNOLOGY COLOPHON

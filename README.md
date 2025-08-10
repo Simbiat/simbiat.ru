@@ -1,4 +1,4 @@
-Code of https://www.simbiat.dev website
+Code of https://www.simbiat.eu website
 
 Informational:
 

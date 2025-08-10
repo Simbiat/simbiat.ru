@@ -1,7 +1,7 @@
 {
-    "name": "simbiat.dev",
+    "name": "simbiat.eu",
     "version": "1.0.0",
-    "description": "simbiat.dev NPM packages used mainly in development",
+    "description": "simbiat.eu NPM packages used mainly in development",
     "devDependencies": {
         "npm": "*",
         "typescript": "*",
@@ -53,5 +53,5 @@
         "generate:mime": "node ./build/js/dev/generate-mime-files.js",
         "postinstall": "npm run generate:mime"
     },
-    "author": "Dmitrii Kustov <support@simbiat.dev>"
+    "author": "Dmitrii Kustov <support@simbiat.eu>"
 }
