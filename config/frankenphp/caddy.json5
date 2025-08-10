@@ -75,14 +75,14 @@
                             {
                                 "module": "acme",
                                 "ca": "https://api.buypass.com/acme/directory",
-                                "email": "support@simbiat.dev",
+                                "email": "support@simbiat.eu",
                                 "acme_timeout": "60s"
                             },
                             //Failback to Let's Encrypt if BuyPass fails for some reason
                             {
                                 "module": "acme",
                                 "ca": "https://acme-v02.api.letsencrypt.org/directory",
-                                "email": "support@simbiat.dev",
+                                "email": "support@simbiat.eu",
                                 "acme_timeout": "60s"
                             },
                             //Internal is supposed to be used only for localhost
@@ -151,7 +151,7 @@
                                 }
                             ]
                         },
-                        //Force WWW if missing
+                        //Force www.simbiat.eu
                         {
                             "match": [
                                 {
