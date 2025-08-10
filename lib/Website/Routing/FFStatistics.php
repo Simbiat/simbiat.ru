@@ -22,7 +22,7 @@ class FFStatistics extends Router
     ];
     protected string $title = 'Final Fantasy XIV Statistics';
     protected string $h1 = 'Final Fantasy XIV Statistics';
-    protected string $ogdesc = 'Final Fantasy XIV Statistics';
+    protected string $og_desc = 'Final Fantasy XIV Statistics';
     protected string $og_image = '/ogimages/fftracker.png';
     protected string $service_name = 'fftracker';
     protected string $redirect_main = '/fftracker/statistics/characters';

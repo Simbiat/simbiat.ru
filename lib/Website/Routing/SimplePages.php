@@ -16,7 +16,7 @@ class SimplePages extends Router
     ];
     protected string $title = 'Simple Pages';
     protected string $h1 = 'Simple Pages';
-    protected string $ogdesc = 'Various simple pages hosted by Simbiat Software';
+    protected string $og_desc = 'Various simple pages hosted by Simbiat Software';
     protected string $service_name = 'simplepages';
     
     #This is actual page generation based on further details of the $path

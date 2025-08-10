@@ -20,7 +20,7 @@ class Tests extends Router
     ];
     protected string $title = 'Tests';
     protected string $h1 = 'Tests';
-    protected string $ogdesc = 'Tests';
+    protected string $og_desc = 'Tests';
     
     #This is the actual page generation based on further details of the $path
     protected function pageGen(array $path): array

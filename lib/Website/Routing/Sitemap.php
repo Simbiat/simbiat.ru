@@ -22,7 +22,7 @@ class Sitemap extends Router
     ];
     protected string $title = 'Sitemap';
     protected string $h1 = 'Sitemap';
-    protected string $ogdesc = 'Sitemap';
+    protected string $og_desc = 'Sitemap';
     protected string $service_name = 'sitemap';
     #If no path[0] is provided, but we want to show specific page, instead of a stub - redirect to page with this address
     protected string $redirect_main = '/sitemap/index';

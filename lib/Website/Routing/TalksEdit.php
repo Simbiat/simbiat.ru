@@ -17,7 +17,7 @@ class TalksEdit extends \Simbiat\Website\Abstracts\Router
     ];
     protected string $title = 'Talks';
     protected string $h1 = 'Talks';
-    protected string $ogdesc = 'Talks';
+    protected string $og_desc = 'Talks';
     protected string $service_name = 'talks';
     protected string $redirect_main = '/talks/edit/sections/';
 

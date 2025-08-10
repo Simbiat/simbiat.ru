@@ -24,7 +24,7 @@ class About extends Router
     ];
     protected string $title = 'About Simbiat Software';
     protected string $h1 = 'About Simbiat Software';
-    protected string $ogdesc = 'About Simbiat Software';
+    protected string $og_desc = 'About Simbiat Software';
     protected string $service_name = 'about';
     
     /**

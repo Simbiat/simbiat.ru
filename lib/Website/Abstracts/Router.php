@@ -23,7 +23,7 @@ abstract class Router
     #Page's H1 tag. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $h1 = '';
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
-    protected string $ogdesc = '';
+    protected string $og_desc = '';
     #Banner for all pages under the router. Defaults to website's banner. Needs to be inside /assets/images directory and start with /
     protected string $og_image = '';
     #Service name

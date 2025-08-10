@@ -23,7 +23,7 @@ class UserControl extends \Simbiat\Website\Abstracts\Router
     ];
     protected string $title = 'User Cabinet';
     protected string $h1 = 'User Cabinet';
-    protected string $ogdesc = 'User Cabinet';
+    protected string $og_desc = 'User Cabinet';
     protected string $service_name = 'uc';
     protected string $redirect_main = '/uc/profile/';
 

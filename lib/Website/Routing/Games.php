@@ -20,7 +20,7 @@ class Games extends Router
     ];
     protected string $title = 'Games';
     protected string $h1 = 'Games';
-    protected string $ogdesc = 'Games';
+    protected string $og_desc = 'Games';
     protected string $service_name = 'games';
     
     #This is the actual page generation based on further details of the $path
