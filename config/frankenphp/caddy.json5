@@ -170,9 +170,6 @@
                                             "Timing-Allow-Origin": [
                                                 "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
                                             ],
-                                            "Strict-Transport-Security": [
-                                                "max-age=31536000; includeSubDomains; preload"
-                                            ],
                                             "Access-Control-Max-Age": [
                                                 "86400"
                                             ],
@@ -776,6 +773,26 @@
                                         ]
                                     },
                                     "status_code": 308
+                                }
+                            ]
+                        },
+                        //Set HSTS header
+                        {
+                            "match": [
+                                {
+                                    "protocol": "https"
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Strict-Transport-Security": [
+                                                "max-age=31536000; includeSubDomains; preload"
+                                            ]
+                                        }
+                                    }
                                 }
                             ]
                         },
