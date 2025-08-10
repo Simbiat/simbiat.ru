@@ -132,6 +132,634 @@
                                 }
                             ]
                         },
+                        //Common headers manipulation
+                        {
+                            "handle": [
+                                //Remove certain headers from responses if they are present
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "delete": [
+                                            "Expires",
+                                            "Host",
+                                            "P3P",
+                                            "Pragma",
+                                            "Public-Key-Pins",
+                                            "Public-Key-Pins-Report-Only",
+                                            "Server",
+                                            "Via",
+                                            "X-AspNet-Version",
+                                            "X-AspNetMvc-version",
+                                            "X-Powered-By",
+                                            "X-Runtime",
+                                            "X-Version",
+                                            "X-UA-Compatible",
+                                            "X-Robots-Tag",
+                                            "X-Frame-Options",
+                                            "X-Requested-With",
+                                            "X-Content-Duration",
+                                            "X-Pingback"
+                                        ]
+                                    }
+                                },
+                                //Force some standard headers
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Timing-Allow-Origin": [
+                                                "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+                                            ],
+                                            "Strict-Transport-Security": [
+                                                "max-age=31536000; includeSubDomains; preload"
+                                            ],
+                                            "Access-Control-Max-Age": [
+                                                "86400"
+                                            ],
+                                            "Access-Control-Allow-Credentials": [
+                                                "true"
+                                            ],
+                                            "X-Content-Type-Options": [
+                                                "nosniff"
+                                            ],
+                                            "Referrer-Policy": [
+                                                "no-referrer"
+                                            ],
+                                            "Cross-Origin-Opener-Policy": [
+                                                "same-origin"
+                                            ],
+                                            "Access-Control-Allow-Origin": [
+                                                "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+                                            ],
+                                            "Cross-Origin-Embedder-Policy": [
+                                                "require-corp"
+                                            ],
+                                            "Cross-Origin-Resource-Policy": [
+                                                "same-origin"
+                                            ]
+                                        }
+                                    }
+                                },
+                                //Deny access to some things
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        //Deny TRACE method for all requests and POST method for requests using HTTP below 1.1
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "error",
+                                                    "status_code": 405
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "protocol": "http/0.9",
+                                                    "method": [
+                                                        "POST"
+                                                    ]
+                                                },
+                                                {
+                                                    "protocol": "http/1.0",
+                                                    "method": [
+                                                        "POST"
+                                                    ]
+                                                },
+                                                {
+                                                    "method": [
+                                                        "TRACE"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        //Deny access to certain folders. They should not be in /public, but just as a precaution
+                                        //Some of these folders are legacy, but keeping them also as a precaution
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "error",
+                                                    "status_code": 403
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/bin*",
+                                                        "/build*",
+                                                        "/config*",
+                                                        "/lib*",
+                                                        "/logs*",
+                                                        "/node_modules*",
+                                                        "/templates*",
+                                                        "/twig*",
+                                                        "/vendor*",
+                                                        "/.*",
+                                                        "/data*"
+                                                    ],
+                                                    "not": [
+                                                        {
+                                                            "path": [
+                                                                //Access to the TinyMCE folder is required for loading of the editor components
+                                                                "/vendor/tinymce/*",
+                                                                //well-known folder is allowed to be accessed
+                                                                "/.well-known/*",
+                                                                //It is ok to access certain data folders
+                                                                "/data/sitemap*",
+                                                                "/data/mergedcrests*",
+                                                                "/data/ffstatistics*",
+                                                                "/data/uploaded*",
+                                                                "/data/uploadedimages*"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                //Set Access-Control-Expose-Headers, if empty
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Access-Control-Expose-Headers": [
+                                                "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link"
+                                            ]
+                                        },
+                                        "require": {
+                                            "headers": {
+                                                "Access-Control-Expose-Headers": null
+                                            }
+                                        }
+                                    }
+                                },
+                                //Set Access-Control-Allow-Methods, if empty
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Access-Control-Allow-Methods": [
+                                                "HEAD, OPTIONS, GET"
+                                            ]
+                                        },
+                                        "require": {
+                                            "headers": {
+                                                "Access-Control-Allow-Methods": null
+                                            }
+                                        }
+                                    }
+                                },
+                                //Set Cache-Control, if empty
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Cache-Control": [
+                                                "max-age=31536000,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                            ]
+                                        },
+                                        "require": {
+                                            "headers": {
+                                                "Cache-Control": null
+                                            }
+                                        }
+                                    }
+                                },
+                                //Set Cache-Control for HTML5 games
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "max-age=1800,public,stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/assets/html5games*",
+                                                        "/html5games*",
+                                                        "/games/html5games*"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                //Set Cache-Control based on MIME, if empty
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "max-age=31556952,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "header": {
+                                                        "Cache-Control": null,
+                                                        "Content-Type": [
+                                                            "text/css*",
+                                                            "application/javascript*",
+                                                            "application/x-javascript*",
+                                                            "text/javascript*"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "max-age=3600,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "header": {
+                                                        "Cache-Control": null,
+                                                        "Content-Type": [
+                                                            "application/atom+xml*",
+                                                            "application/rdf+xml*",
+                                                            "application/rss+xml*"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "public,no-cache, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "header": {
+                                                        "Cache-Control": null,
+                                                        "Content-Type": [
+                                                            "application/json*",
+                                                            "application/ld+json*",
+                                                            "application/schema+json*",
+                                                            "application/geo+json*",
+                                                            "application/xml*",
+                                                            "text/calendar*",
+                                                            "text/xml*",
+                                                            "application/x-web-app-manifest+json*",
+                                                            "text/cache-manifest*",
+                                                            "text/markdown*"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "max-age=60,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "header": {
+                                                        "Cache-Control": null,
+                                                        "Content-Type": [
+                                                            "text/html*"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "max-age=604800,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "header": {
+                                                        "Cache-Control": null,
+                                                        "Content-Type": [
+                                                            "application/manifest+json*",
+                                                            "text/x-cross-domain-policy*"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cache-Control": [
+                                                                "max-age=31556952,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "header": {
+                                                        "Cache-Control": null,
+                                                        "Content-Type": [
+                                                            "application/wasm*"
+                                                        ]
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                //Set Allow, if empty
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Allow": [
+                                                "HEAD, OPTIONS, GET"
+                                            ]
+                                        },
+                                        "require": {
+                                            "headers": {
+                                                "Allow": null
+                                            }
+                                        }
+                                    }
+                                },
+                                //Set some headers based on a path
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        //Allow access to images from outside (for example, just opening them in a separate tab)
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Access-Control-Allow-Origin": [
+                                                                "*"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/img*",
+                                                        "/data/uploadedimages*",
+                                                        "/data/mergedcrests*"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        //FFTracker loads some images directly from FFXIV Lodestone, and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
+                                        //Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them,
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "headers",
+                                                    "response": {
+                                                        "set": {
+                                                            "Cross-Origin-Embedder-Policy": [
+                                                                "unsafe-none"
+                                                            ]
+                                                        },
+                                                        "deferred": true
+                                                    }
+                                                }
+                                            ],
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/uc/fftracker*",
+                                                        "/fftracker*",
+                                                        "/talks/users*"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                //Allow cross-origin for certain MIME types
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Cross-Origin-Resource-Policy": [
+                                                "cross-origin"
+                                            ]
+                                        },
+                                        "require": {
+                                            "headers": {
+                                                "Content-Type": [
+                                                    "image/*",
+                                                    "audio/*",
+                                                    "video/*",
+                                                    "font/*",
+                                                    "application/json*",
+                                                    "application/xml*"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                },
+                                //Add Accept-Encoding to Vary if Content-Encoding is set
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "require": {
+                                            "headers": {
+                                                "Content-Encoding": []
+                                            }
+                                        },
+                                        "set": {
+                                            "Vary": [
+                                                "Origin, Save-Data, Accept-Encoding"
+                                            ]
+                                        }
+                                    }
+                                },
+                                //Add Vary to all responses
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "set": {
+                                            "Vary": [
+                                                "Origin, Save-Data"
+                                            ]
+                                        },
+                                        //Required to avoid duplicate headers
+                                        "deferred": true
+                                    }
+                                },
+                                //Force UTF-8 charset to certain MIME types
+                                {
+                                    "handler": "headers",
+                                    "response": {
+                                        "require": {
+                                            "headers": {
+                                                "Content-Type": [
+                                                    "text/*",
+                                                    "application/xml",
+                                                    "application/atom+xml",
+                                                    "application/x-bb-appworld",
+                                                    "application/xml-dtd",
+                                                    "application/json",
+                                                    "application/rdf+xml",
+                                                    "application/rss+xml",
+                                                    "image/svg+xml",
+                                                    "application/manifest+json"
+                                                ]
+                                            }
+                                        },
+                                        "replace": {
+                                            "Content-Type": [
+                                                {
+                                                    "search_regexp": "^([^;]+)(;?\\s*)$",
+                                                    "replace": "$1; charset=UTF-8"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                //Compression settings
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "vars",
+                                                    "root": "/app/public/"
+                                                },
+                                                {
+                                                    "handler": "encode",
+                                                    "encodings": {
+                                                        "br": {
+                                                            "quality": 6,
+                                                            "lgwin": 0
+                                                        },
+                                                        "gzip": {
+                                                            "level": 6
+                                                        },
+                                                        "zstd": {}
+                                                    },
+                                                    "prefer": [
+                                                        "zstd",
+                                                        "br",
+                                                        "gzip"
+                                                    ],
+                                                    "minimum_length": 256,
+                                                    "match": {
+                                                        "headers": {
+                                                            "Content-Type": [
+                                                                "application/atom+xml*",
+                                                                "application/eot*",
+                                                                "application/font*",
+                                                                "application/geo+json*",
+                                                                "application/graphql+json*",
+                                                                "application/javascript*",
+                                                                "application/json*",
+                                                                "application/ld+json*",
+                                                                "application/manifest+json*",
+                                                                "application/opentype*",
+                                                                "application/otf*",
+                                                                "application/rdf+xml",
+                                                                "application/rss+xml*",
+                                                                "application/schema+json",
+                                                                "application/sql",
+                                                                "application/truetype*",
+                                                                "application/ttf*",
+                                                                "application/vnd.api+json*",
+                                                                "application/vnd.ms-fontobject*",
+                                                                "application/wasm*",
+                                                                "application/x-font-ttf",
+                                                                "application/xhtml+xml*",
+                                                                "application/x-httpd-cgi*",
+                                                                "application/x-javascript*",
+                                                                "application/xml*",
+                                                                "application/x-opentype*",
+                                                                "application/x-otf*",
+                                                                "application/x-perl*",
+                                                                "application/x-protobuf*",
+                                                                "application/x-ttf*",
+                                                                "application/x-web-app-manifest+json",
+                                                                "font/*",
+                                                                "image/bmp",
+                                                                "image/svg+xml*",
+                                                                "image/vnd.microsoft.icon*",
+                                                                "image/x-icon*",
+                                                                "multipart/bag*",
+                                                                "multipart/mixed*",
+                                                                "text/*"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
                         //Force HTTPS
                         {
                             "match": [
@@ -188,33 +816,6 @@
                                 }
                             ],
                             "handle": [
-                                //Remove certain headers from responses if they are present
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "delete": [
-                                            "Expires",
-                                            "Host",
-                                            "P3P",
-                                            "Pragma",
-                                            "Public-Key-Pins",
-                                            "Public-Key-Pins-Report-Only",
-                                            "Server",
-                                            "Via",
-                                            "X-AspNet-Version",
-                                            "X-AspNetMvc-version",
-                                            "X-Powered-By",
-                                            "X-Runtime",
-                                            "X-Version",
-                                            "X-UA-Compatible",
-                                            "X-Robots-Tag",
-                                            "X-Frame-Options",
-                                            "X-Requested-With",
-                                            "X-Content-Duration",
-                                            "X-Pingback"
-                                        ]
-                                    }
-                                },
                                 //Some redirects
                                 {
                                     "handler": "subroute",
@@ -1011,602 +1612,6 @@
                                         }
                                     ]
                                 },
-                                //Set Cache-Control, if empty
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Cache-Control": [
-                                                "max-age=31536000,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                            ]
-                                        },
-                                        "require": {
-                                            "headers": {
-                                                "Cache-Control": null
-                                            }
-                                        }
-                                    }
-                                },
-                                //Set Cache-Control for HTML5 games
-                                {
-                                    "handler": "subroute",
-                                    "routes": [
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "max-age=1800,public,stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "path": [
-                                                        "/assets/html5games*",
-                                                        "/html5games*",
-                                                        "/games/html5games*"
-                                                    ]
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                //Set Cache-Control based on MIME, if empty
-                                {
-                                    "handler": "subroute",
-                                    "routes": [
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "max-age=31556952,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "header": {
-                                                        "Cache-Control": null,
-                                                        "Content-Type": [
-                                                            "text/css*",
-                                                            "application/javascript*",
-                                                            "application/x-javascript*",
-                                                            "text/javascript*"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "max-age=3600,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "header": {
-                                                        "Cache-Control": null,
-                                                        "Content-Type": [
-                                                            "application/atom+xml*",
-                                                            "application/rdf+xml*",
-                                                            "application/rss+xml*"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "public,no-cache, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "header": {
-                                                        "Cache-Control": null,
-                                                        "Content-Type": [
-                                                            "application/json*",
-                                                            "application/ld+json*",
-                                                            "application/schema+json*",
-                                                            "application/geo+json*",
-                                                            "application/xml*",
-                                                            "text/calendar*",
-                                                            "text/xml*",
-                                                            "application/x-web-app-manifest+json*",
-                                                            "text/cache-manifest*",
-                                                            "text/markdown*"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "max-age=60,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "header": {
-                                                        "Cache-Control": null,
-                                                        "Content-Type": [
-                                                            "text/html*"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "max-age=604800,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "header": {
-                                                        "Cache-Control": null,
-                                                        "Content-Type": [
-                                                            "application/manifest+json*",
-                                                            "text/x-cross-domain-policy*"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cache-Control": [
-                                                                "max-age=31556952,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "header": {
-                                                        "Cache-Control": null,
-                                                        "Content-Type": [
-                                                            "application/wasm*"
-                                                        ]
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                //Set Access-Control-Expose-Headers, if empty
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Access-Control-Expose-Headers": [
-                                                "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link"
-                                            ]
-                                        },
-                                        "require": {
-                                            "headers": {
-                                                "Access-Control-Expose-Headers": null
-                                            }
-                                        }
-                                    }
-                                },
-                                //Set Access-Control-Allow-Methods, if empty
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Access-Control-Allow-Methods": [
-                                                "HEAD, OPTIONS, GET"
-                                            ]
-                                        },
-                                        "require": {
-                                            "headers": {
-                                                "Access-Control-Allow-Methods": null
-                                            }
-                                        }
-                                    }
-                                },
-                                //Set Allow, if empty
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Allow": [
-                                                "HEAD, OPTIONS, GET"
-                                            ]
-                                        },
-                                        "require": {
-                                            "headers": {
-                                                "Allow": null
-                                            }
-                                        }
-                                    }
-                                },
-                                //Set some headers based on a path
-                                {
-                                    "handler": "subroute",
-                                    "routes": [
-                                        //Allow access to images from outside (for example, just opening them in a separate tab)
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Access-Control-Allow-Origin": [
-                                                                "*"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "path": [
-                                                        "/img*",
-                                                        "/data/uploadedimages*",
-                                                        "/data/mergedcrests*"
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        //FFTracker loads some images directly from FFXIV Lodestone, and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
-                                        //Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them,
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "headers",
-                                                    "response": {
-                                                        "set": {
-                                                            "Cross-Origin-Embedder-Policy": [
-                                                                "unsafe-none"
-                                                            ]
-                                                        },
-                                                        "deferred": true
-                                                    }
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "path": [
-                                                        "/uc/fftracker*",
-                                                        "/fftracker*",
-                                                        "/talks/users*"
-                                                    ]
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                //Allow cross-origin for certain MIME types
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Cross-Origin-Resource-Policy": [
-                                                "cross-origin"
-                                            ]
-                                        },
-                                        "require": {
-                                            "headers": {
-                                                "Content-Type": [
-                                                    "image/*",
-                                                    "audio/*",
-                                                    "video/*",
-                                                    "font/*",
-                                                    "application/json*",
-                                                    "application/xml*"
-                                                ]
-                                            }
-                                        }
-                                    }
-                                },
-                                //Force some standard headers
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Timing-Allow-Origin": [
-                                                "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
-                                            ],
-                                            "Strict-Transport-Security": [
-                                                "max-age=31536000; includeSubDomains; preload"
-                                            ],
-                                            "Access-Control-Max-Age": [
-                                                "86400"
-                                            ],
-                                            "Access-Control-Allow-Credentials": [
-                                                "true"
-                                            ],
-                                            "X-Content-Type-Options": [
-                                                "nosniff"
-                                            ],
-                                            "Referrer-Policy": [
-                                                "no-referrer"
-                                            ],
-                                            "Cross-Origin-Opener-Policy": [
-                                                "same-origin"
-                                            ],
-                                            "Access-Control-Allow-Origin": [
-                                                "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
-                                            ],
-                                            "Cross-Origin-Embedder-Policy": [
-                                                "require-corp"
-                                            ],
-                                            "Cross-Origin-Resource-Policy": [
-                                                "same-origin"
-                                            ]
-                                        }
-                                    }
-                                },
-                                //Add Accept-Encoding to Vary if Content-Encoding is set
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "require": {
-                                            "headers": {
-                                                "Content-Encoding": []
-                                            }
-                                        },
-                                        "set": {
-                                            "Vary": [
-                                                "Origin, Save-Data, Accept-Encoding"
-                                            ]
-                                        }
-                                    }
-                                },
-                                //Add Vary to all responses
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "set": {
-                                            "Vary": [
-                                                "Origin, Save-Data"
-                                            ]
-                                        },
-                                        //Required to avoid duplicate headers
-                                        "deferred": true
-                                    }
-                                },
-                                //Force UTF-8 charset to certain MIME types
-                                {
-                                    "handler": "headers",
-                                    "response": {
-                                        "require": {
-                                            "headers": {
-                                                "Content-Type": [
-                                                    "text/*",
-                                                    "application/xml",
-                                                    "application/atom+xml",
-                                                    "application/x-bb-appworld",
-                                                    "application/xml-dtd",
-                                                    "application/json",
-                                                    "application/rdf+xml",
-                                                    "application/rss+xml",
-                                                    "image/svg+xml",
-                                                    "application/manifest+json"
-                                                ]
-                                            }
-                                        },
-                                        "replace": {
-                                            "Content-Type": [
-                                                {
-                                                    "search_regexp": "^([^;]+)(;?\\s*)$",
-                                                    "replace": "$1; charset=UTF-8"
-                                                }
-                                            ]
-                                        }
-                                    }
-                                },
-                                //Deny access to some things
-                                {
-                                    "handler": "subroute",
-                                    "routes": [
-                                        //Deny TRACE method for all requests and POST method for requests using HTTP below 1.1
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "error",
-                                                    "status_code": 405
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "protocol": "http/0.9",
-                                                    "method": [
-                                                        "POST"
-                                                    ]
-                                                },
-                                                {
-                                                    "protocol": "http/1.0",
-                                                    "method": [
-                                                        "POST"
-                                                    ]
-                                                },
-                                                {
-                                                    "method": [
-                                                        "TRACE"
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        //Deny access to certain folders. They should not be in /public, but just as a precaution
-                                        //Some of these folders are legacy, but keeping them also as a precaution
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "error",
-                                                    "status_code": 403
-                                                }
-                                            ],
-                                            "match": [
-                                                {
-                                                    "path": [
-                                                        "/bin*",
-                                                        "/build*",
-                                                        "/config*",
-                                                        "/lib*",
-                                                        "/logs*",
-                                                        "/node_modules*",
-                                                        "/templates*",
-                                                        "/twig*",
-                                                        "/vendor*",
-                                                        "/.*",
-                                                        "/data*"
-                                                    ],
-                                                    "not": [
-                                                        {
-                                                            "path": [
-                                                                //Access to the TinyMCE folder is required for loading of the editor components
-                                                                "/vendor/tinymce/*",
-                                                                //well-known folder is allowed to be accessed
-                                                                "/.well-known/*",
-                                                                //It is ok to access certain data folders
-                                                                "/data/sitemap*",
-                                                                "/data/mergedcrests*",
-                                                                "/data/ffstatistics*",
-                                                                "/data/uploaded*",
-                                                                "/data/uploadedimages*"
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
-                                //Compression settings
-                                {
-                                    "handler": "subroute",
-                                    "routes": [
-                                        {
-                                            "handle": [
-                                                {
-                                                    "handler": "vars",
-                                                    "root": "/app/public/"
-                                                },
-                                                {
-                                                    "handler": "encode",
-                                                    "encodings": {
-                                                        "br": {
-                                                            "quality": 6,
-                                                            "lgwin": 0
-                                                        },
-                                                        "gzip": {
-                                                            "level": 6
-                                                        },
-                                                        "zstd": {}
-                                                    },
-                                                    "prefer": [
-                                                        "zstd",
-                                                        "br",
-                                                        "gzip"
-                                                    ],
-                                                    "minimum_length": 256,
-                                                    "match": {
-                                                        "headers": {
-                                                            "Content-Type": [
-                                                                "application/atom+xml*",
-                                                                "application/eot*",
-                                                                "application/font*",
-                                                                "application/geo+json*",
-                                                                "application/graphql+json*",
-                                                                "application/javascript*",
-                                                                "application/json*",
-                                                                "application/ld+json*",
-                                                                "application/manifest+json*",
-                                                                "application/opentype*",
-                                                                "application/otf*",
-                                                                "application/rdf+xml",
-                                                                "application/rss+xml*",
-                                                                "application/schema+json",
-                                                                "application/sql",
-                                                                "application/truetype*",
-                                                                "application/ttf*",
-                                                                "application/vnd.api+json*",
-                                                                "application/vnd.ms-fontobject*",
-                                                                "application/wasm*",
-                                                                "application/x-font-ttf",
-                                                                "application/xhtml+xml*",
-                                                                "application/x-httpd-cgi*",
-                                                                "application/x-javascript*",
-                                                                "application/xml*",
-                                                                "application/x-opentype*",
-                                                                "application/x-otf*",
-                                                                "application/x-perl*",
-                                                                "application/x-protobuf*",
-                                                                "application/x-ttf*",
-                                                                "application/x-web-app-manifest+json",
-                                                                "font/*",
-                                                                "image/bmp",
-                                                                "image/svg+xml*",
-                                                                "image/vnd.microsoft.icon*",
-                                                                "image/x-icon*",
-                                                                "multipart/bag*",
-                                                                "multipart/mixed*",
-                                                                "text/*"
-                                                            ]
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                },
                                 //Caddy's `php_server` directive)
                                 {
                                     "handler": "subroute",
@@ -1708,138 +1713,6 @@
                                     {
                                         "handler": "subroute",
                                         "routes": [
-                                            //This route replicates selected header processing from the main route,
-                                            //because otherwise, processing will not reach them (due to error)
-                                            {
-                                                "handle": [
-                                                    //Remove certain headers from responses if they are present
-                                                    {
-                                                        "handler": "headers",
-                                                        "response": {
-                                                            "delete": [
-                                                                "Expires",
-                                                                "Host",
-                                                                "P3P",
-                                                                "Pragma",
-                                                                "Public-Key-Pins",
-                                                                "Public-Key-Pins-Report-Only",
-                                                                "Server",
-                                                                "Via",
-                                                                "X-AspNet-Version",
-                                                                "X-AspNetMvc-version",
-                                                                "X-Powered-By",
-                                                                "X-Runtime",
-                                                                "X-Version",
-                                                                "X-UA-Compatible",
-                                                                "X-Robots-Tag",
-                                                                "X-Frame-Options",
-                                                                "X-Requested-With",
-                                                                "X-Content-Duration",
-                                                                "X-Pingback"
-                                                            ]
-                                                        }
-                                                    },
-                                                    //Set Access-Control-Expose-Headers, if empty
-                                                    {
-                                                        "handler": "headers",
-                                                        "response": {
-                                                            "set": {
-                                                                "Access-Control-Expose-Headers": [
-                                                                    "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link"
-                                                                ]
-                                                            },
-                                                            "require": {
-                                                                "headers": {
-                                                                    "Access-Control-Expose-Headers": null
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    //Set Access-Control-Allow-Methods, if empty
-                                                    {
-                                                        "handler": "headers",
-                                                        "response": {
-                                                            "set": {
-                                                                "Access-Control-Allow-Methods": [
-                                                                    "HEAD, OPTIONS, GET"
-                                                                ]
-                                                            },
-                                                            "require": {
-                                                                "headers": {
-                                                                    "Access-Control-Allow-Methods": null
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    //Force some standard headers
-                                                    {
-                                                        "handler": "headers",
-                                                        "response": {
-                                                            "set": {
-                                                                "Timing-Allow-Origin": [
-                                                                    "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
-                                                                ],
-                                                                "Strict-Transport-Security": [
-                                                                    "max-age=31536000; includeSubDomains; preload"
-                                                                ],
-                                                                "Access-Control-Max-Age": [
-                                                                    "86400"
-                                                                ],
-                                                                "Access-Control-Allow-Credentials": [
-                                                                    "true"
-                                                                ],
-                                                                "X-Content-Type-Options": [
-                                                                    "nosniff"
-                                                                ],
-                                                                "Referrer-Policy": [
-                                                                    "no-referrer"
-                                                                ],
-                                                                "Cross-Origin-Opener-Policy": [
-                                                                    "same-origin"
-                                                                ],
-                                                                "Access-Control-Allow-Origin": [
-                                                                    "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
-                                                                ],
-                                                                "Cross-Origin-Embedder-Policy": [
-                                                                    "require-corp"
-                                                                ],
-                                                                "Cross-Origin-Resource-Policy": [
-                                                                    "same-origin"
-                                                                ]
-                                                            }
-                                                        }
-                                                    },
-                                                    //Add Accept-Encoding to Vary if Content-Encoding is set
-                                                    {
-                                                        "handler": "headers",
-                                                        "response": {
-                                                            "require": {
-                                                                "headers": {
-                                                                    "Content-Encoding": []
-                                                                }
-                                                            },
-                                                            "set": {
-                                                                "Vary": [
-                                                                    "Origin, Save-Data, Accept-Encoding"
-                                                                ]
-                                                            }
-                                                        }
-                                                    },
-                                                    //Add Vary to all responses
-                                                    {
-                                                        "handler": "headers",
-                                                        "response": {
-                                                            "set": {
-                                                                "Vary": [
-                                                                    "Origin, Save-Data"
-                                                                ]
-                                                            },
-                                                            //Required to avoid duplicate headers
-                                                            "deferred": true
-                                                        }
-                                                    }
-                                                ]
-                                            },
                                             {
                                                 "handle": [
                                                     {
