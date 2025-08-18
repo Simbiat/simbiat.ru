@@ -71,14 +71,7 @@
                             "localhost"
                         ],
                         "issuers": [
-                            //Prioritize BuyPass, since EU based
-                            {
-                                "module": "acme",
-                                "ca": "https://api.buypass.com/acme/directory",
-                                "email": "support@simbiat.eu",
-                                "acme_timeout": "60s"
-                            },
-                            //Failback to Let's Encrypt if BuyPass fails for some reason
+                            //Let's Encrypt is default
                             {
                                 "module": "acme",
                                 "ca": "https://acme-v02.api.letsencrypt.org/directory",
