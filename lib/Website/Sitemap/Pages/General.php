@@ -40,7 +40,7 @@ class General extends StaticPage
                 ['loc' => 'fftracker/statistics/raw/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Raw Character Data'],
                 ['loc' => 'fftracker/statistics/characters/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Characters'],
                 ['loc' => 'fftracker/statistics/groups/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Groups'],
-                ['loc' => 'fftracker/statistics/servers/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Servers'],
+                ['loc' => 'fftracker/statistics/bugs/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Bugs'],
                 ['loc' => 'fftracker/statistics/achievements/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Achievements'],
                 ['loc' => 'fftracker/statistics/timelines/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Timelines'],
                 ['loc' => 'fftracker/statistics/other/', 'changefreq' => 'weekly', 'name' => 'FFXIV: Other'],
