@@ -4,7 +4,12 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Pages\BICTracker;
 
 use Simbiat\Website\Abstracts\Page;
+use Simbiat\Website\Errors;
+use Simbiat\Website\Twig\EnvironmentGenerator;
 
+/**
+ * Class to generate pages for individual BICs
+ */
 class Bic extends Page
 {
     #Current breadcrumb for navigation
@@ -24,7 +29,12 @@ class Bic extends Page
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = ['view_bic'];
     
-    #This is the actual page generation based on further details of the $path
+    /**
+     * Generation of the page data
+     * @param array $path
+     *
+     * @return array
+     */
     protected function generate(array $path): array
     {
         #Sanitize BIC
@@ -41,7 +51,7 @@ class Bic extends Page
         }
         #Continue breadcrumbs
         if (!empty($output_array['bicdetails']['PrntBIC'])) {
-            foreach(\array_reverse($output_array['bicdetails']['PrntBIC']) as $bank) {
+            foreach (\array_reverse($output_array['bicdetails']['PrntBIC']) as $bank) {
                 $this->breadcrumb = [['href' => '/bictracker/bics/'.$bank['id'], 'name' => $bank['name']]];
             }
             $this->breadcrumb[] = ['href' => '/bictracker/bics/'.$bic, 'name' => $output_array['bicdetails']['NameP']];
@@ -60,6 +70,20 @@ class Bic extends Page
             $this->h1 = 'Це Україна! Іди додому, окупанте!';
         } else {
             $output_array['bicdetails']['Ukraine'] = false;
+        }
+        #Update description for account restrictions if any
+        foreach ($output_array['bicdetails']['restrictions'] as $restriction => $details) {
+            if ($details['type'] === 'account') {
+                $output_array['bicdetails']['restrictions'][$restriction]['description'] .= ', счёт <var>'.$details['account'].'</var>.';
+                if (!empty($details['SuccessorBIC'])) {
+                    try {
+                        $output_array['bicdetails']['restrictions'][$restriction]['description'] .= ' Преемник: '.EnvironmentGenerator::getTwig()->render('common/elements/entitycard.twig' ?? 'index.twig', $details['SuccessorBIC']);
+                    } catch (\Throwable $exception) {
+                        #Not critical, but log this
+                        Errors::error_log($exception);
+                    }
+                }
+            }
         }
         return $output_array;
     }
