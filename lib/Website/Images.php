@@ -296,7 +296,7 @@ class Images
         #Using array_merge to suppress PHPStorm's complaints about array keys
         $info = \array_merge(\pathinfo($file));
         $info['mime'] = \mime_content_type($file);
-        if ($info['mime'] !== 'image/png') {
+        if (!in_array($info['mime'], ['image/png', 'image/jpeg', 'image/webp'])) {
             return ['og_image' => null, 'og_image_width' => null, 'og_image_height' => null];
         }
         [$info['width'], $info['height']] = \getimagesize($file);
