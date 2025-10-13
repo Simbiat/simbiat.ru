@@ -30,7 +30,7 @@ class Curl
         \CURLOPT_FOLLOWLOCATION => true,
         \CURLOPT_MAXREDIRS => 3,
         \CURLOPT_HTTPHEADER => [],
-        \CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.200',
+        \CURLOPT_USERAGENT => 'Simbiat Software',
         \CURLOPT_ENCODING => '',
         \CURLOPT_SSL_VERIFYPEER => true,
         \CURLOPT_SSLVERSION => \CURL_SSLVERSION_TLSv1_2 | \CURL_SSLVERSION_MAX_TLSv1_3,
@@ -56,13 +56,19 @@ class Curl
         'image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'
     ];
     
-    final public function __construct()
+    /**
+     * @param string $user_agent Optional user agent
+     */
+    final public function __construct(string $user_agent = 'Simbiat Software')
     {
         #Check if cURL handle already created and create it if not
-        if (!self::$curl_handle instanceof \CurlHandle) {
+        if (self::$curl_handle instanceof \CurlHandle) {
+            #Update user-agent
+            \curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent);
+        } else {
             self::$curl_handle = \curl_init();
-            if (self::$curl_handle !== false && !\curl_setopt_array(self::$curl_handle, $this->curl_options) && !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers)) {
-                #Set default headers
+            if (self::$curl_handle !== false && (!\curl_setopt_array(self::$curl_handle, $this->curl_options) || !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers) || !\curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent))) {
+                #Do not set curl handle, if setting up options failed
                 self::$curl_handle = false;
             }
         }
