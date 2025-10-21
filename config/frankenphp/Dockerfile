@@ -1,5 +1,5 @@
 # Based on https://frankenphp.dev/docs/docker/
-FROM dunglas/frankenphp:1.9.1-builder-php8.4.11-trixie AS builder
+FROM dunglas/frankenphp:1.9.1-builder-php8.4.13-trixie AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -14,11 +14,11 @@ RUN CGO_ENABLED=1 \
     --output /usr/local/bin/frankenphp \
     --with github.com/dunglas/frankenphp=./ \
     --with github.com/dunglas/frankenphp/caddy=./caddy/ \
-    # Mercure and Vulcain are included in the official build, but feel free to remove them
+    # Mercure and Vulcain are included in the official build, but feel free to remove them \
     --with github.com/dunglas/caddy-cbrotli \
     --with github.com/dunglas/mercure/caddy \
     --with github.com/dunglas/vulcain/caddy \
-    # Add extra Caddy modules here
+    # Add extra Caddy modules here \
     --with github.com/caddyserver/json5-adapter \
     # CrowdSec modules \
     --with github.com/hslatman/caddy-crowdsec-bouncer/crowdsec@main \
@@ -26,7 +26,7 @@ RUN CGO_ENABLED=1 \
     --with github.com/hslatman/caddy-crowdsec-bouncer/layer4@main \
     --with github.com/hslatman/caddy-crowdsec-bouncer/appsec@main
 
-FROM dunglas/frankenphp:1.9.1-php8.4.11-trixie AS runner
+FROM dunglas/frankenphp:1.9.1-php8.4.13-trixie AS runner
 
 # Replace the official binary by the one contained your custom modules
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp

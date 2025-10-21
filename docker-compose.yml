@@ -18,7 +18,7 @@ volumes:
 services:
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin:5.2.2-apache
+    image: phpmyadmin:5.2.3-apache
     profiles:
       - dev_only
     restart: unless-stopped

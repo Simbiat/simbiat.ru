@@ -1,6 +1,6 @@
 FROM crowdsecurity/crowdsec:v1.7.0-debian
 
-ARG CRS_RELEASE="4.18.0"
+ARG CRS_RELEASE="4.19.0"
 
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install curl gpg dirmngr gpg-agent&&apt-get -y autoremove&&apt-get clean && \
     curl -sSL https://github.com/coreruleset/coreruleset/releases/download/v${CRS_RELEASE}/coreruleset-${CRS_RELEASE}-minimal.tar.gz -o v${CRS_RELEASE}-minimal.tar.gz && \
