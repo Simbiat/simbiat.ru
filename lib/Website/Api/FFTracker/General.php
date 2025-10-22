@@ -29,6 +29,10 @@ abstract class General extends Api
             $path[1] = '';
         }
         try {
+            if (($_SESSION['user_id'] === 1 || empty($_SESSION['user_id'])) && ($path[1] === 'update' || $path[1] === 'lodestone')) {
+                #User is not authenticated. Abuse of Lodestone can slow down automated updates, and Update requires authentication either way
+                return ['http_error' => 403, 'reason' => 'Authentication required'];
+            }
             if ($this->name_for_links === 'achievement') {
                 $data = match ($path[1]) {
                     'update' => new \Simbiat\FFXIV\Achievement($path[0])->updateFromApi(),

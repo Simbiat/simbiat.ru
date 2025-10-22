@@ -71,16 +71,16 @@ abstract class Api
             self::headers();
         }
         #Check if proper endpoint
-        if (!empty($this->sub_routes) && (empty($path[0]) || (!$this->final_node && !in_array($path[0], $this->sub_routes, true)))) {
+        if (\count($this->sub_routes) !== 0 && (empty($path[0]) || (!$this->final_node && !in_array($path[0], $this->sub_routes, true)))) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => \array_combine($this->sub_routes, $this->routes_description)];
-        } elseif ($this->authentication_needed && $_SESSION['user_id'] === 1) {
+        } elseif ($this->authentication_needed && ($_SESSION['user_id'] === 1 || empty($_SESSION['user_id']))) {
             #User is not authenticated
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
         } elseif ($this->csrf && !$this->antiCSRF($this->allowed_origins)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
         } else {
             try {
-                if (!empty($this->required_permission) && empty(\array_intersect($this->required_permission, $_SESSION['permissions']))) {
+                if (\count($this->required_permission) !== 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'])) === 0) {
                     $data = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
                 } else {
                     $data = $this->getData($path);
@@ -177,7 +177,7 @@ abstract class Api
         $fields = $_GET['fields'] ?? $_POST['fields'] ?? null;
         if (!empty($fields)) {
             $filter = \explode(',', $fields);
-            if (!empty($filter)) {
+            if (\count($filter) !== 0) {
                 foreach ($array as $field => $value) {
                     if (!in_array($field, $filter, true)) {
                         unset($array[$field]);
@@ -215,7 +215,7 @@ abstract class Api
     final protected function antiCSRF(array $allow_origins = []): bool
     {
         #By default, allow only our own origin
-        if (empty($allow_origins)) {
+        if (\count($allow_origins) === 0) {
             $allow_origins = [Config::$base_url];
         }
         #Get CSRF token
@@ -231,7 +231,7 @@ abstract class Api
                 if (\hash_equals($_SESSION['csrf'], $token)) {
                     #Check if HTTP Origin is among allowed ones if we want to restrict them.
                     #Note that this will be applied to forms or APIs you want to restrict. For global restriction use \Simbiat\http20\headers->security()
-                    if (empty($allow_origins) ||
+                    if (\count($allow_origins) === 0 ||
                         #If origins are limited, check if origin is present
                         (!empty($origin) &&
                             #Check if it's a valid origin and is allowed
@@ -286,7 +286,7 @@ abstract class Api
                 \session_write_close();
             }
             #Add description
-            if (!empty($this->description)) {
+            if (\count($this->description) !== 0) {
                 $result['about'] = $this->description;
                 $result['about']['verbs'] = $this->verbs;
                 $result['about']['methods'] = $this->methods;
