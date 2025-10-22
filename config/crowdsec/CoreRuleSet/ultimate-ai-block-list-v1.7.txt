@@ -1,0 +1,360 @@
+.ai
+-ai
+_ai
+ai.
+ai-
+ai_
+ai=
+AddSearchBot
+Agentic
+AgentQL
+Agent 3
+Agent API
+AI Agent
+AI Article Writer
+AI Chat
+AI Content Detector
+AI Detection
+AI Dungeon
+AI Journalist
+AI Legion
+AI RAG
+AI Search
+AI SEO Crawler
+AI Training
+AI Web
+AI Writer
+AI2
+AIBot
+aiHitBot
+AIMatrix
+AISearch
+AITraining
+Alexa
+Alice Yandex
+AliGenie
+AliyunSec
+Alpha AI
+AlphaAI
+Amazon
+Amelia
+AndersPinkBot
+AndiBot
+Anonymous AI
+Anthropic
+AnyPicker
+Anyword
+Applebot
+Aria AI
+Aria Browse
+Articoolo
+Ask AI
+AutoGen
+AutoGLM
+Automated Writer
+AutoML
+Autonomous RAG
+AwarioRssBot
+AwarioSmartBot
+AWS Trainium
+Azure
+BabyAGI
+BabyCatAGI
+BardBot
+Basic RAG
+Bedrock
+Big Sur
+Bigsur
+Botsonic
+Brightbot
+Browser MCP Agent
+Browser Use
+Bytebot
+ByteDance
+Bytespider
+CarynAI
+CatBoost
+CC-Crawler
+CCBot
+Chai
+Character
+Charstar AI
+Chatbot
+ChatGLM
+Chatsonic
+ChatUser
+Chinchilla
+Claude
+ClearScope
+Clearview
+Cognitive AI
+Cohere
+Common Crawl
+CommonCrawl
+Content Harmony
+Content King
+Content Optimizer
+Content Samurai
+ContentAtScale
+ContentBot
+Contentedge
+ContentShake
+Conversion AI
+Copilot
+CopyAI
+Copymatic
+Copyscape
+CoreWeave
+Corrective RAG
+Cotoyogi
+CRAB
+Crawl4AI
+CrawlQ AI
+Crawlspace
+Crew AI
+CrewAI
+Crushon AI
+DALL-E
+DarkBard
+DataFor
+DataProvider
+Datenbank Crawler
+DeepAI
+Deep AI
+DeepL
+DeepMind
+Deep Research
+DeepResearch
+DeepSeek
+Devin
+Diffbot
+Doubao AI
+DuckAssistBot
+DuckDuckGo Chat
+DuckDuckGo-Enhanced
+Echobot
+Echobox
+Elixir
+FacebookBot
+FacebookExternalHit
+Factset
+Falcon
+FIRE-1
+Firebase
+Firecrawl
+Flux
+Flyriver
+Frase AI
+FriendlyCrawler
+Gato
+Gemini
+Gemma
+Gen AI
+GenAI
+Generative
+Genspark
+Gentoo-chat
+Ghostwriter
+GigaChat
+GLM
+GodMode
+Goose
+GPT
+Grammarly
+Grendizer
+Grok
+GT Bot
+GTBot
+GTP
+Hemingway Editor
+Hetzner
+Hugging
+Hunyuan
+Hybrid Search RAG
+Hypotenuse AI
+iAsk
+ICC-Crawler
+ImageGen
+ImagesiftBot
+img2dataset
+imgproxy
+INK Editor
+INKforall
+Instructor
+IntelliSeek
+Inferkit
+ISSCyberRiskCrawler
+Janitor AI
+Jasper
+Jenni AI
+Julius AI
+Kafkai
+Kaggle
+Kangaroo
+Keyword Density AI
+Kimi
+Knowledge
+KomoBot
+Kruti
+LangChain
+Le Chat
+Lensa
+Lightpanda
+LinerBot
+LLaMA
+LLM
+Local RAG Agent
+Lovable
+Magistral
+magpie-crawler
+Manus
+MarketMuse
+Meltwater
+Meta-AI
+Meta-External
+Meta-Webindexer
+Meta AI
+MetaAI
+MetaTagBot
+Middleware
+Midjourney
+Mini AGI
+MiniMax
+Mintlify
+Mistral
+Mixtral
+model-training
+Monica
+Narrative
+NeevaBot
+netEstate
+Neural Text
+NeuralSEO
+NinjaAI
+NodeZero
+Nova Act
+NovaAct
+OAI-SearchBot
+OAI SearchBot
+OASIS
+Olivia
+Omgili
+Open AI
+Open Interpreter
+OpenAGI
+OpenAI
+OpenBot
+OpenPi
+OpenRouter
+OpenText AI
+Operator
+Outwrite
+Page Analyzer AI
+PanguBot
+Panscient
+Paperlibot
+Paraphraser.io
+peer39_crawler
+Perflexity
+Perplexity
+Petal
+Phind
+PiplBot
+PoeBot
+PoeSearchBot
+ProWritingAid
+Proximic
+Puppeteer
+Python AI
+Qualified
+Quark
+QuillBot
+Qopywriter
+Qwen
+RAG Agent
+RAG Azure AI
+RAG Chatbot
+RAG Database
+RAG IS
+RAG Pipeline
+RAG Search
+RAG with
+RAG-
+RAG_
+Raptor
+React Agent
+Redis AI RAG
+RobotSpider
+Rytr
+SaplingAI
+SBIntuitionsBot
+Scala
+Scalenut
+Scrap
+ScriptBook
+Seekr
+SEObot
+SEO Content Machine
+SEO Robot
+SemrushBot
+Sentibot
+Serper
+ShapBot
+Sidetrade
+Simplified AI
+Sitefinity
+Skydancer
+SlickWrite
+SmartBot
+Sonic
+Sora
+Spider/2
+SpiderCreator
+Spin Rewrite
+Spinbot
+Stability
+StableDiffusionBot
+Sudowrite
+SummalyBot
+Super Agent
+Superagent
+SuperAGI
+Surfer AI
+TerraCotta
+Text Blaze
+TextCortex
+Thinkbot
+Thordata
+TikTokSpider
+Timpibot
+Tinybird
+Together AI
+Traefik
+TurnitinBot
+uAgents
+VelenPublicWebCrawler
+Venus Chub AI
+Vidnami AI
+Vision RAG
+WebSurfer
+WebText
+Webzio
+WeChat
+Whisper
+WordAI
+Wordtune
+WPBot
+Writecream
+WriterZen
+Writescope
+Writesonic
+xAI
+xBot
+YaML
+YandexAdditional
+YouBot
+Zendesk
+Zero
+Zhipu
+Zhuque AI
+Zimm

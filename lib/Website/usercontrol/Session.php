@@ -6,6 +6,7 @@ namespace Simbiat\Website\usercontrol;
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
+use Simbiat\Website\HomePage;
 use Simbiat\Website\Security;
 
 /**
@@ -249,7 +250,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     private function dataRefresh(array &$data): void
     {
         #Add UserAgent data
-        $data['useragent'] = Security::getUA();
+        $data['useragent'] = HomePage::$user_agent;
         #Add IP data
         $this->getIP($data);
         #Add previous and current pages to attempt to determine if this is a page refresh or a new visit

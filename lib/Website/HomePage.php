@@ -30,6 +30,8 @@ class HomePage
     public static ?string $method = null;
     #Array that can contain variables indicating common HTTP errors
     public static ?array $http_error = [];
+    #User agent details from
+    public static array $user_agent = [];
     
     public function __construct()
     {
@@ -94,30 +96,16 @@ class HomePage
                 } else {
                     Page::headers();
                 }
-                #Try to start a session if it's not started yet and DB is up
-                if (Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
-                    session_set_save_handler(new Session(), true);
-                    \session_start();
-                    #Show that the client is unsupported
-                    if (isset($_SESSION['useragent']['unsupported']) && $_SESSION['useragent']['unsupported'] === true) {
-                        self::$http_error = ['client' => $_SESSION['useragent']['client'] ?? 'unknown', 'http_error' => 418, 'reason' => 'Teapot'];
-                        #Check if banned IP
-                    } elseif (!empty($_SESSION['banned_ip'])) {
-                        self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
-                    }
-                    #Handle Sec-Fetch. Use strict mode if a request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
-                    Headers::secFetch(strict: (empty($_SESSION['useragent']['bot']) && $_SESSION['useragent']['browser']));
-                } else {
-                    $ua = Security::getUA();
-                    #Show that the client is unsupported
-                    if ($ua['unsupported'] === true) {
-                        self::$http_error = ['client' => $ua['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
-                    }
-                    #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
-                    Headers::secFetch(strict: (empty($ua['bot']) && $ua['browser']));
+                #Get user agent details
+                self::$user_agent = Security::getUA();#Show that the client is unsupported
+                if (self::$user_agent['unsupported'] === true) {
+                    self::$http_error = ['client' => self::$user_agent['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                 }
-                #Check if we have cached the results already
-                self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
+                #Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
+                if (!empty(self::$user_agent['bot']) && in_array(self::$user_agent['bot'], Config::BLCOKED_BOTS, true)
+                ) {
+                    self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
+                }
                 #Check if there was an internal redirect to a custom error page
                 if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
                     if (\preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
@@ -126,8 +114,21 @@ class HomePage
                         self::$http_error = ['http_error' => 500, 'reason' => 'Failed on Caddy level and could not retrieve the error message'];
                     }
                 }
+                #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
+                Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
+                #Try to start a session if it's not started yet and DB is up. Do not do it, if cache is being returned, and if an error has been detected already
+                if ((self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
+                    session_set_save_handler(new Session(), true);
+                    \session_start();
+                    #Check if banned IP
+                    if (!empty($_SESSION['banned_ip'])) {
+                        self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
+                    }
+                }
+                #Check if we have cached the results already
+                self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
                 #Do not do processing if we already encountered a problem
-                if (empty(self::$http_error)) {
+                if (self::$http_error === null || self::$http_error === []) {
                     $vars = new MainRouter()->route($uri);
                 } else {
                     $vars = self::$http_error;

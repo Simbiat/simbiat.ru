@@ -79,6 +79,52 @@ final class Config
     public static array $cookie_settings = [];
     #Settings shared by PHP and JS code
     public static array $shared_with_js = [];
+    #Blocked bots
+    public const array BLCOKED_BOTS = [
+        'aHrefs Bot',
+        'aiHitBot',
+        'Amazon Bot',
+        'Anthropic AI',
+        'Applebot',
+        'Awario',
+        'Barkrowler',
+        'BLEXBot Crawler',
+        'BuiltWith',
+        'Bytespider',
+        'ccBot crawler',
+        'CensysInspect',
+        'ChatGPT-User',
+        'ClaudeBot',
+        'Cohere AI',
+        'DataForSeoBot',
+        'Dataprovider',
+        'Diffbot',
+        'DotBot',
+        'Expanse',
+        'FacebookBot',
+        'Googlebot',
+        'GPTBot',
+        'ImageSift',
+        'InternetMeasurement',
+        'IONOS Crawler',
+        'Meta-ExternalAgent',
+        'MJ12 Bot',
+        'OAI-SearchBot',
+        'Omgili bot',
+        'Peer39',
+        'PerplexityBot',
+        'Perplexity-User',
+        'Petal Bot',
+        'Scrapy',
+        'Semrush Reputation Management',
+        'SemrushBot',
+        'Spawning AI',
+        'Thinkbot',
+        'Timpibot',
+        'Velen Public Web Crawler',
+        'YouBot',
+        'ZoominfoBot',
+    ];
     
     public function __construct()
     {

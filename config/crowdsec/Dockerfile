@@ -1,5 +1,6 @@
-FROM crowdsecurity/crowdsec:v1.7.0-debian
+FROM crowdsecurity/crowdsec:v1.7.2-debian
 
+#When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 ARG CRS_RELEASE="4.19.0"
 
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install curl gpg dirmngr gpg-agent&&apt-get -y autoremove&&apt-get clean && \
