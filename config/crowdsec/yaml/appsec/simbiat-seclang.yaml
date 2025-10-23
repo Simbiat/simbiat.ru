@@ -3,9 +3,9 @@ description: "Rules based on Coraza recommendations with some customizations"
 seclang_files_rules:
   - /CoreRuleSet/01-coraza-recommended.conf
   - /CoreRuleSet/02-crs-setup.conf
-  - /CoreRuleSet/03-custom-blocks.conf
-  - /CoreRuleSet/04-exclusions-before-crs.conf
+  - /CoreRuleSet/03-exclusions-before-crs.conf
   - REQUEST-901-INITIALIZATION.conf
+  - /CoreRuleSet/04-custom-blocks.conf
   - REQUEST-905-COMMON-EXCEPTIONS.conf
   - REQUEST-911-METHOD-ENFORCEMENT.conf
   - REQUEST-913-SCANNER-DETECTION.conf
