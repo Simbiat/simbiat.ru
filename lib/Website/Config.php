@@ -102,7 +102,6 @@ final class Config
         'DotBot',
         'Expanse',
         'FacebookBot',
-        'Googlebot',
         'GPTBot',
         'ImageSift',
         'InternetMeasurement',
