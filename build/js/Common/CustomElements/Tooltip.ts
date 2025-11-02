@@ -9,7 +9,7 @@ class Tooltip extends HTMLElement
     {
         super();
         //Add data-tooltip attribute for elements, that have title or alt and do not have tooltip either on them or their parent
-        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]), [title]:not([title=""]):not([data-tooltip]):not(link)').forEach((item) => {
+        document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]):not(.no_tooltip), [title]:not([title=""]):not([data-tooltip]):not(link):not(.no_tooltip)').forEach((item) => {
             //Add tooltip only if it's not set on parent element already
             if (item.parentElement?.hasAttribute('data-tooltip') === false) {
                 item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
@@ -30,7 +30,7 @@ class Tooltip extends HTMLElement
             item.addEventListener('focus', () => { this.removeAttribute('data-tooltip'); });
         });
     }
-    
+
     private onPointerMove(event: PointerEvent): void
     {
         this.update(event.target as HTMLElement);
@@ -41,7 +41,7 @@ class Tooltip extends HTMLElement
         //Get block dimensions
         this.tooltipCursor();
     }
-    
+
     private onFocus(event: Event): void
     {
         this.update(event.target as HTMLElement);
