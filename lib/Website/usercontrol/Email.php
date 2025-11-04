@@ -302,7 +302,7 @@ class Email extends Entity
                 $email->getHeaders()->addTextHeader('Priority', 'Urgent')->addTextHeader('Importance', 'High');
             }
             #Add content
-            $email->subject(Config::SITE_NAME.': '.$subject)
+            $email->subject(Config::SITE_NAME.(Config::$prod ? '' : ' (Test)').': '.$subject)
                 ->htmlTemplate('mail/index.twig')
                 ->context(\array_merge($body, ['subject' => $subject, 'username' => $username, 'unsubscribe' => Security::encrypt($this->id)]));
             $mailer->send($email);
