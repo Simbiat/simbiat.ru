@@ -1,7 +1,10 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0" is_locked="false">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="682abc00-c7c0-347c-85ea-fc382fbe77df" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="7387f796-c82a-3028-87f9-07527621e7c8" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
+    <inspection_tool class="7d78d672-300c-3398-b4a6-a376cf564ba3" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
+    <inspection_tool class="869a30f7-35aa-3f0c-b967-c25fee0428cc" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="8da76c0a-418d-319a-9904-af5dfebefb78" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="AngularIncorrectLetUsage" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="AngularUnresolvedPipe" enabled="false" level="ERROR" enabled_by_default="false" />
@@ -358,7 +361,22 @@
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignmentJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReuseOfLocalVariableJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" description="Recommend explicit encoding in multibyte functions" suppressId="NoMBExplicitEncoding" problemDescriptor="Multibyte function is used without explicit encoding and may lead to unexpected results" text="mb_check_encoding($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_check_encoding($p$, 'UTF-8')">
+      <replaceConfiguration name="[A] Missing noreferrer" description="Missing `noreferrer` and `noopener` in `rel` attribute" suppressId="NoANoreferrer" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;a $attributes$ rel=&quot;noopener noreferrer&quot;&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="tag" script="&quot;def href = tag.getAttribute(&quot;href&quot;)?.value&#10;if (href == null) return false&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def internal = href.startsWith(&quot;/&quot;) || href.startsWith(&quot;#&quot;) || href.startsWith(&quot;?&quot;)&#10;if (internal) return false&#10;&#10;def rel = tag.getAttribute(&quot;rel&quot;)?.value&#10;return rel == null || !rel.contains(&quot;noopener&quot;) || !rel.contains(&quot;noreferrer&quot;)&quot;" regexp="a" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[IMG] Missing decoding" description="Image is missing `decoding` attribute" suppressId="NoImgDecodingAttribute" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ decoding=&quot;async&quot;&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="tag" script="&quot;tag.getAttribute(&quot;decoding&quot;) == null&quot;" regexp="img" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[IMG] Missing loading" description="Image is missing `loading` attribute" suppressId="NoImgLoadingAttribute" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ loading=&quot;lazy&quot;&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="tag" script="&quot;tag.getAttribute(&quot;loading&quot;) == null&quot;" regexp="img" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" description="Recommend explicit encoding in multibyte functions" suppressId="NoMBExplicitEncoding" text="mb_check_encoding($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_check_encoding($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" within="" contains="" />
       </replaceConfiguration>
@@ -380,15 +398,15 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_convert_kana($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_convert_kana($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_decode_numericentity($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_decode_numericentity($p$, 'UTF-8')">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_encode_numericentity($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_decode_numericentity($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_decode_numericentity($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_decode_numericentity($p$, 'UTF-8')">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_http_output()" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_http_output('UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -407,11 +425,11 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_pad($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_pad($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="4" maxCount="4" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="4" maxCount="4" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_split($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_split($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -419,7 +437,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_str_split($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_str_split($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strcut($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strcut($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -427,7 +445,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strcut($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strcut($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strimwidth($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strimwidth($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -435,7 +453,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strimwidth($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strimwidth($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="4" maxCount="4" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="4" maxCount="4" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stripos($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -443,7 +461,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stripos($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stristr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -451,7 +469,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_stristr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strlen($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_stristr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -463,7 +481,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strpos($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrchr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrchr($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -471,7 +489,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrchr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrchr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrichr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrichr($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -479,7 +497,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrichr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrichr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strripos($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -487,7 +505,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strripos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strripos($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrpos($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -495,7 +513,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strrpos($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strrpos($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strstr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strstr($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -503,7 +521,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strstr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strstr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_strtolower($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_strtolower($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -527,7 +545,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_substr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_substr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="3" maxCount="3" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="3" maxCount="3" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_lcfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_lcfirst($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -543,7 +561,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_ltrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_ltrim($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -551,7 +569,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_rtrim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_rtrim($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, encoding: 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -559,9 +577,9 @@
       </replaceConfiguration>
       <replaceConfiguration name="[MB] Implicit encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" text="mb_trim($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_trim($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="p" minCount="2" maxCount="2" negateName="true" within="" contains="" />
+        <constraint name="p" script="&quot;if (p.getText().startsWith(&quot;encoding:&quot;)) return false&quot;" minCount="2" maxCount="2" negateName="true" within="" contains="" />
       </replaceConfiguration>
-      <replaceConfiguration name="[MB] Replace with multibyte alterantive" description="Suggest replacing certain string functions with multibyte alterantive" suppressId="NoMBMultibyteAlternative" problemDescriptor="When working with strings in modern world it is better to expect multibyte characters be present, so using multibyte function is recommend, when not dealing with binary data." text="chr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_chr($p$, 'UTF-8')">
+      <replaceConfiguration name="[MB] Replace with multibyte alterantive" description="Suggest replacing certain string functions with multibyte alterantive" suppressId="NoMBMultibyteAlternative" text="chr($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_chr($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" negateName="true" within="" contains="" />
       </replaceConfiguration>
