@@ -221,6 +221,12 @@ function imgInit(img: HTMLImageElement): void {
   if (empty(img.alt)) {
     img.alt = basename(String(img.src));
   }
+  if (empty(img.loading)) {
+    img.loading = 'lazy';
+  }
+  if (empty(img.decoding)) {
+    img.decoding = 'async';
+  }
   //Wrap gallery_zoom images in anchor
   if (img.classList.contains('gallery_zoom')) {
     //Check if parent is already a link
@@ -288,7 +294,7 @@ function anchorInit(anchor: HTMLAnchorElement): void {
   }
   // Add an icon indicating that link will open in new tab
   if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
-    anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
+    anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab" loading="lazy" decoding="async">';
     // I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
   } else if (!empty(anchor.href) && !empty(current_URL.hash) && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
     // Logic to update URL if this is a hash link for current page

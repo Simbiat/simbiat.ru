@@ -54,5 +54,5 @@
     {% endif %}
     {{ include('common/elements/postform.twig', {'verb': 'add', 'new_thread': true}, with_context = false) }}
     <input role="button" form="add_thread_form" type="submit" name="new_thread[submit]" id="add_thread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Post">
-    <img id="add_thread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
+    <img id="add_thread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}..." loading="lazy" decoding="async">
 </form>

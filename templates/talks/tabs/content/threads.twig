@@ -60,7 +60,7 @@
                 </details>
             {% endif %}
             <input role="button" form="edit_thread_form" type="submit" name="current_thread[submit]" id="edit_thread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Update">
-            <img id="edit_thread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}...">
+            <img id="edit_thread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}..." loading="lazy" decoding="async">
         </form>
     </tab-content>
 {% endif %}

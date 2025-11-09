@@ -4293,6 +4293,12 @@ function imgInit(img) {
     if (empty(img.alt)) {
         img.alt = basename(String(img.src));
     }
+    if (empty(img.loading)) {
+        img.loading = 'lazy';
+    }
+    if (empty(img.decoding)) {
+        img.decoding = 'async';
+    }
     if (img.classList.contains('gallery_zoom')) {
         const parent = img.parentElement;
         if (parent && parent.nodeName.toLowerCase() !== 'a') {
@@ -4347,7 +4353,7 @@ function anchorInit(anchor) {
         }
     }
     if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
-        anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
+        anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab" loading="lazy" decoding="async">';
     }
     else if (!empty(anchor.href) && !empty(current_URL.hash) && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
         anchor.addEventListener('click', () => {

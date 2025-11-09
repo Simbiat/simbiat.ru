@@ -47,5 +47,5 @@
         {% endif %}
     {% endif %}
     <input role="button" form="add_section_form" type="submit" name="new_section[submit]" id="add_section_submit" formaction="/api/talks/sections" formmethod="post" formtarget="_self" value="Add">
-    <img id="add_section_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating section...">
+    <img id="add_section_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating section..." loading="lazy" decoding="async">
 </form>

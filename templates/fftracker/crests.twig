@@ -23,9 +23,9 @@
                 <span class="float_label"><input id="crest_frame" name="crest_frame" type="text" inputmode="text" pattern="^F[a-fA-F0-9]{2}_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_frame">Frame</label></span>
                 <span class="float_label"><input id="crest_background" name="crest_background" type="text" inputmode="text" pattern="^(B[a-fA-F0-9]{2}|F00)_[a-fA-F0-9]{32}_[a-fA-F0-9]{2}_128x128\.png$"><label for="crest_background">Background</label></span>
                 <div id="crest_preview" data-tooltip="Crest preview">
-                    <img src="" alt="Background" id="preview_background">
-                    <img src="" alt="Frame" id="preview_frame">
-                    <img src="" alt="Emblem" id="preview_emblem">
+                    <img src="" alt="Background" id="preview_background" loading="lazy" decoding="async">
+                    <img src="" alt="Frame" id="preview_frame" loading="lazy" decoding="async">
+                    <img src="" alt="Emblem" id="preview_emblem" loading="lazy" decoding="async">
                 </div>
                 <input type="submit" value="Merge & Download" form="ff_merge_crest" id="ff_merge_crest_submit">
                 <img loading="lazy" decoding="async" id="fff_merge_crest_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Merging crest...">
