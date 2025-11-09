@@ -949,6 +949,21 @@
                                                 }
                                             ]
                                         },
+                                        {
+                                            "match": [
+                                                {
+                                                    "path": [
+                                                        "/favicon.svg"
+                                                    ]
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "rewrite",
+                                                    "uri": "/assets/images/favicons/favicon.svg"
+                                                }
+                                            ]
+                                        },
                                         //Main CSS file
                                         {
                                             "match": [
