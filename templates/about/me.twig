@@ -133,10 +133,327 @@
     <h2 id="experience" class="home_page block_title">Experience</h2>
 </div>
 <section>
-    <p>{{ years_of_experience }}+ years of work experience is nothing to sniff at, and potentially a lot to read about. I tried to compact it into a nice timeline, but am hiding it in case you are not ready to scroll a lot.</p>
+    <p>{{ (now|date('Y')) - 2009 }}+ years of work experience is nothing to sniff at, and potentially a lot to read about. I tried to compact it into a nice timeline, but am hiding it in case you are not ready to scroll a lot.</p>
     <details>
         <summary class="middle">I am ready, show it to me!</summary>
-        {{ timeline(timeline, br_limit=6) }}
+        {{ timeline({
+            0: {
+                'start_time': '1989-05-12 02:00:00',
+                'name': 'Human',
+                'icon': '/assets/images/icons/Earth.svg',
+                'achievements': {
+                    0: 'Blood donor',
+                    1: 'Patron for <a href="https://sos-dd.ru" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/SOSVillages.svg" alt="SOS Children\'s Villages" class="link_icon">SOS Children\'s Villages</a>',
+                    2: 'Patron for <a href="https://www.punainenristi.fi" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/Red Cross.webp" alt="Suomen Punainen Risti" class="link_icon">Suomen Punainen Risti</a>',
+                    3: 'Patron for <a href="https://www.vammr.org" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/VAMMR.webp" alt="Vancouver Aquarium Marine Mammal Rescue Society" class="link_icon">Vancouver Aquarium Marine Mammal Rescue Society</a>',
+                    4: 'Patron for <a href="https://www.pelastakaalapset.fi" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/Pelastakaa Lapset.webp" alt="Pelastakaa Lapset" class="link_icon">Pelastakaa Lapset</a>',
+                    5: 'Patron for <a href="https://mieli.fi" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/icons/Mieli.svg" alt="Mieli" class="link_icon">Mieli</a>'
+                },
+            },
+            1: {
+                'start_time': '1995-09-01',
+                'end_time': '2006-06-23',
+                'name': 'School №1208',
+                'icon': '/assets/images/icons/1208.webp',
+                'href': 'https://sch1208uv.mskobr.ru/',
+                'position': 'Pupil',
+                'achievements': {
+                    0: '10 years of general education',
+                    1: 'High level of English',
+                    2: 'Class president in grades 6 to 9',
+                    3: 'Participated in school theatre with noticeable roles of Famusov (<cite>Grief from the mind</cite>), Zvyagincev (<cite>They Were Fighting for Homeland</cite>), reindeer (<cite>Snow Queen</cite>), Carlo/Geppetto and Karabas-Barabas/Mangiafuoco/Stromboli (<cite>Buratino/Pinocchio</cite>)',
+                    4: '<a href="/resume/MiddleSchool.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
+                },
+            },
+            2: {
+                'start_time': '2002-01-07',
+                'icon': '/assets/images/logo.svg',
+                'position': 'Content Engineer',
+                'responsibilities': {
+                    0: 'Develop website on PHP with JavaScript',
+                    1: 'Design UI and UX of the website',
+                    2: 'Support website operations and users',
+                    3: 'Analyze all requirements and requests of users, maintaining close communications to understand needs and improve product accordingly',
+                    4: 'Write technical and client documentation',
+                    7: 'Write prose in English and Russian',
+                    8: 'Write poetry in English and Russian',
+                    9: 'Occasionally write reviews for games, anime, manga, movies and TV series',
+                    10: 'Learn narrative design through gaming experiences',
+                },
+                'achievements': {
+                    0: 'Rewrote code into libraries and published on <a href="https://github.com/Simbiat" target="_blank"><img decoding="async" loading="lazy" class="link_icon" src="/assets/images/social/github.svg" alt="GitHub">GitHub</a>. Current website project is also meant to remain open source for, unless it can affect security.',
+                    1: 'Controlled optimization processes and served as the main developer of the <a href="https://github.com/Simbiat/DarkSteam/" target="_blank"><img decoding="async" loading="lazy" class="link_icon" src="/assets/images/social/github.svg" alt="GitHub">DarkSteam</a> project until its closure, including releasing a revamped app version with migration to web platform to yield a 150x performance increase',
+                    2: 'Supported file storage of 8Tbs+',
+                    3: 'Administered and moderated a forum of 20,000+ users',
+                    4: 'Automated payments and donations via PayPal using vBulletin plugins',
+                    5: 'Posted most of the game reviews on <a href="https://steamcommunity.com/id/Simbiat19/recommended/" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/steam.svg" alt="Steam">Steam</a>',
+                    6: 'Experimented with narrative in video by creating <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/youtube.svg" alt="Youtube">Welcome To My Crib</a> and <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/social/youtube.svg" alt="Youtube">Aqua Chronica</a> series',
+                },
+            },
+            3: {
+                'start_time': '2006-09-01',
+                'end_time': '2011-06-16',
+                'name': 'Moscow Institute of Electronics and Mathematics',
+                'icon': '/assets/images/icons/MIEM.svg',
+                'href': 'https://miem.hse.ru/',
+                'position': 'Student (specialist)',
+                'achievements': {
+                    0: 'Class president since 2nd year',
+                    1: 'Graduate work: <cite>Testing of hardware and software solutions for 3-dimensional information representation in virtual reality system</cite>',
+                    2: '<a href="/resume/Specialist-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Diploma" class="link_icon">Diploma</a>',
+                    3: '<a href="/resume/Specialist-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="GPA" class="link_icon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.56',
+                },
+                'description': 'Specialization: management and informatics in technical systems',
+            },
+            4: {
+                'start_time': '2007-09-01',
+                'end_time': '2011-06-07',
+                'name': 'Moscow Institute of Electronics and Mathematics',
+                'icon': '/assets/images/icons/MIEM.svg',
+                'href': 'https://miem.hse.ru/',
+                'position': 'Student (bachelor)',
+                'achievements': {
+                    0: 'Class president',
+                    1: 'Graduate work: <cite>Hardware solutions for 3-dimensional information representation in virtual reality system</cite>',
+                    2: '<a href="/resume/Bachelor-Diploma.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Diploma" class="link_icon">Diploma</a>',
+                    3: '<a href="/resume/Bachelor-GPA.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="GPA" class="link_icon"><abbr data-tooltip="Grade Point Average">GPA</abbr></a> 3.52',
+                },
+                'description': 'Specialization: automation and management',
+            },
+            5: {
+                'start_time': '2009-02-02',
+                'end_time': '2009-03-27',
+                'name': 'Windsor',
+                'icon': '/assets/images/icons/Windsor.webp',
+                'href': 'https://www.windsor.ru/',
+                'position': 'Engineer',
+                'responsibilities': {
+                    0: 'Manage office hardware and software',
+                    1: 'Manage company\'s website',
+                    2: 'Create digital training courses',
+                },
+            },
+            6: {
+                'start_time': '2009-06-04',
+                'end_time': '2011-05-20',
+                'name': 'IBS Datafort',
+                'icon': '/assets/images/icons/IBS.svg',
+                'href': 'https://www.datafort.ru/',
+                'position': 'Engineer',
+                'responsibilities': {
+                    0: 'Initiate operations related to End of Day processing',
+                    1: 'Monitor continuous night processes',
+                    2: 'Level 1 support of subset of regional applications',
+                    3: 'Level 1 or level 2 support of local applications'
+                },
+                'achievements': {
+                    0: 'Promoted to day-time operator after approximately 1 year',
+                    1: 'Transferred a paper-based checklist used by operators to Excel featuring several automated functions to improve traceability of work',
+                },
+                'description': 'Outsourced job for Citi Russia as evening operator.',
+            },
+            7: {
+                'start_time': '2011-05-23',
+                'end_time': '2015-09-14',
+                'name': 'Citi',
+                'icon': '/assets/images/icons/Citi.svg',
+                'href': 'https://www.citibank.ru/',
+                'position': 'Technical Support Specialist',
+                'responsibilities': {
+                    0: 'Level 1 support of subset of regional applications',
+                    1: 'Level 1 to level 2 support of local applications',
+                    2: 'Subject matter expert for several local applications',
+                    3: 'Application management',
+                    4: 'Participation in projects',
+                    5: 'Testing of fixes and new features in supported applications',
+                    6: 'Assistance with integration of new applications or processes',
+                },
+                'achievements': {
+                    0: 'Migration of clearing processing from Windows XP to Windows 7 and automation of some of the steps',
+                    1: 'Expert assistance in refactoring of local application for stability and speed improvements',
+                    2: 'Coached several new evening and morning operators',
+                },
+            },
+            8: {
+                'start_time': '2015-09-15',
+                'end_time': '2018-05-15',
+                'name': 'Citi',
+                'icon': '/assets/images/icons/Citi.svg',
+                'href': 'https://www.citibank.ru/',
+                'position': 'Technical Support Analyst',
+                'responsibilities': {
+                    0: 'Level 1 support of subset of regional applications',
+                    1: 'Level 1 to level 3 support of local applications',
+                    2: 'Subject matter expert for several local applications',
+                    3: 'Application management (mix of product ownership, project management, business analysis, quality assurance, and some other roles)',
+                    4: 'Participate in projects',
+                    5: 'Testing of fixes and new features in supported applications',
+                    6: 'Assistance with integration of new applications or processes',
+                    7: 'Primary contact person for clearing operations\' technology, processes and applications including cryptography',
+                    8: 'Write technical and user documentation',
+                    9: 'Participate in audits both internal and external',
+                    10: 'Team leader for operators working in shifts',
+                },
+                'achievements': {
+                    0: 'Automated several manual processes used in the department',
+                    1: 'Standardized and optimized server-side scripts',
+                    2: 'Successfully managed 30 applications simultaneously, closing decade-long backlog for a handful of them',
+                    3: 'Participated in <cite>Ideation</cite> program as subject-matter expert for one of the winning ideas',
+                    4: 'Single-handedly supported the entire country of Kazakhstan for 2 years, fulfilling various roles including technical support, project manager, application manager, and business analyst',
+                },
+            },
+            9: {
+                'start_time': '2018-05-16',
+                'end_time': '2021-07-23',
+                'name': 'Citi',
+                'icon': '/assets/images/icons/Citi.svg',
+                'href': 'https://www.citibank.ru/',
+                'position': 'Senior Technical Support Analyst',
+                'responsibilities': {
+                    0: 'Level 1 to level 3 support of local applications',
+                    1: 'Subject matter expert for local applications',
+                    2: 'Participate in projects',
+                    3: 'Primary contact person for clearing operations\' technology, processes and applications including cryptography',
+                    4: 'Write technical and user documentation',
+                    5: 'Participate in audits both internal and external',
+                    6: 'Changes management',
+                    7: 'Team leader for operators working in shifts',
+                },
+                'achievements': {
+                    0: 'Closed several potential security issues in Kazakhstan processes',
+                    1: 'Negotiated vendor pricing for a project from $100k USD down to $55k USD and led the refactoring of the application',
+                    2: 'Participated in <cite>Want to be a leader</cite> program leading my team to 1st place as early as in the 2nd month of it',
+                    3: 'Registered all externally issued certificates in local tracking system',
+                },
+            },
+            10: {
+                'end_time': '2020-12-21',
+                'name': 'Luxoft Training',
+                'icon': '/assets/images/icons/Luxoft.svg',
+                'href': 'https://www.luxoft-training.ru/',
+                'position': 'Student',
+                'achievements': '<a href="/resume/Web-Service_Certificate.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
+                'description': 'Customized course <cite>Basics of web-services support</cite>, 6 hours',
+            },
+            11: {
+                'start_time': '2021-09-20',
+                'end_time': '2022-06-30',
+                'name': 'Smartly.io',
+                'icon': '/assets/images/icons/Smartly.svg',
+                'href': 'https://www.smartly.io/',
+                'position': 'Tier 3 Technical Support Engineer',
+                'responsibilities': {
+                    0: 'Ensured best-in-class technical support and distinguished customer service with lots of analysis and debugging.',
+                    1: 'Kept product documentation up to date.',
+                    2: 'Assisted and trained teammates.',
+                },
+                'achievements': {
+                    0: 'Drove implementation of Support Handbook, internal collection of manuals and guidelines for customer support.',
+                    1: 'Participated in leadership training',
+                    2: '<a href="/resume/Snapchat_Essentials.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Snapchat Essentials</a>'
+                },
+            },
+            12: {
+                'end_time': '2021-10-28',
+                'name': 'Snap Inc.',
+                'icon': '/assets/images/social/snapchat.svg',
+                'href': 'https://www.snapchat.com/',
+                'position': 'Student',
+                'achievements': '<a href="https://focus.snapchat.com/student/award/Mky9cibA5QqZFG6ESU3SQiEy" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
+                'description': 'Snapchat Essentials',
+            },
+            13: {
+                'end_time': '2022-01-18',
+                'name': 'Smartly.io',
+                'icon': '/assets/images/icons/Smartly.svg',
+                'href': 'https://www.smartly.io/',
+                'position': 'Student',
+                'achievements': '<a href="https://www.credly.com/badges/746c851c-6bb2-4fc1-b3f4-e5902e789654/public_url" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Certificate" class="link_icon">Certificate</a>',
+                'description': 'Creative Foundational certification',
+            },
+            14: {
+                'start_time': '2022-10-26',
+                'name': 'Support from Hel',
+                'icon': '/assets/images/icons/SupportFromHel.svg',
+                'href': 'https://supportfromhel.fi/',
+                'position': 'Founding Member',
+                'responsibilities': {
+                    0: 'Sharing tech support knowledge with fellow tech supporters and specialists from related fields or those inspiring to become ones.'
+                },
+                'description': 'Group for professionals working in customer support to meet, network & learn with industry peers.',
+            },
+            15: {
+                'start_time': '2023-01-24',
+                'end_time': '2023-05-11',
+                'name': 'Arcada',
+                'icon': '/assets/images/icons/Arcada.svg',
+                'href': 'https://www.arcada.fi/en/study-arcada/continuing-education/course-calendar/game-design-and-production',
+                'position': 'Student',
+                'achievements': '<a href="/resume/ArcadaGameDesignTranscript.jpg" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="Transcript of records" class="link_icon">Transcript of records</a>',
+                'description': 'Game Design and Production',
+            },
+            16: {
+                'start_time': '2023-10-09',
+                'end_time': '2024-01-26',
+                'name': 'Security Journey',
+                'icon': '/assets/images/icons/SecurityJourney.svg',
+                'href': 'https://www.securityjourney.com/',
+                'position': 'Student',
+                'achievements': '<a href="/resume/SecurityJourney.pdf" target="_blank"><img loading="lazy" decoding="async" src="/assets/images/certificate.svg" alt="20 certificates" class="link_icon">20 certificates</a>',
+                'description': '19 Green Belts and Threat Modeling',
+            },
+            17: {
+                'start_time': '2023-04-24',
+                'end_time': '2025-06-30',
+                'name': 'Signant Health',
+                'icon': '/assets/images/icons/SignantHealth.svg',
+                'href': 'https://www.signanthealth.com/',
+                'position': 'R&D Support Engineer',
+                'responsibilities': {
+                    0: 'Investigate, manage, and triage application incidents and service requests.',
+                },
+                'achievements': {
+                    0: 'Submitted almost a hundred suggestions for product improvement.',
+                    1: 'Helped with several de-escalations of issues with sponsors.',
+                    2: 'Wrote multiple knowledgebase articles.',
+                },
+            },
+            18: {
+                'start_time': '2024-09-12',
+                'end_time': '2024-12-28',
+                'name': 'Far Far Games',
+                'icon': '/assets/images/icons/Far Far Games.webp',
+                'href': 'https://farfargames.com/',
+                'position': 'Beta-tester',
+                'description': 'Beta-testing new game "Bylina" a.k.a "The Epic"',
+            },
+            19: {
+                'start_time': '2024-10-07',
+                'name': 'Green Sisu',
+                'icon': '/assets/images/social/vihreät.svg',
+                'href': 'https://www.greensisu.fi/',
+                'position': 'Member',
+            },
+            20: {
+                'start_time': '2024-11-06',
+                'end_time': '2024-11-27',
+                'name': 'Carillon Games',
+                'icon': '/assets/images/icons/Blue Berry.webp',
+                'href': 'https://play.google.com/store/apps/details?id=com.carillongames.blueberry',
+                'position': 'Beta-tester',
+                'description': 'Beta-testing new game "Blue Berry"',
+            },
+            21: {
+                'start_time': '2025-07-01',
+                'name': 'Signant Health',
+                'icon': '/assets/images/icons/SignantHealth.svg',
+                'href': 'https://www.signanthealth.com/',
+                'position': 'Senior R&D Support Engineer',
+                'responsibilities': {
+                    0: 'Investigate, manage, and triage application incidents and service requests.',
+                },
+            }
+        }, br_limit=6) }}
     </details>
 </section>
 
@@ -148,7 +465,7 @@
     <h3>Games</h3>
     <div class="about_showcase">
         <a href="/games/jiangshi" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Jiangshi" src="/assets/images/ogimages/jiangshi.png">
+            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Jiangshi" src="/assets/images/ogimages/jiangshi.webp">
             <div>Jiangshi</div>
         </a>
         <a href="/games/radicalresonance" class="about_banner no_new_tab_icon">
@@ -156,18 +473,18 @@
             <div>Radical Resonance</div>
         </a>
         <a href="/games/dden" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Dangerous Dave: Endless Nightmare" src="/assets/images/ogimages/dden.png">
+            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Dangerous Dave: Endless Nightmare" src="/assets/images/ogimages/dden.webp">
             <div>Dangerous Dave: Endless Nightmare</div>
         </a>
     </div>
     <h3>PHP</h3>
     <div class="about_showcase">
         <a href="/fftracker" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Final Fantasy XIV Tracker" src="/assets/images/ogimages/fftracker.png">
+            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Final Fantasy XIV Tracker" src="/assets/images/ogimages/fftracker.webp">
             <div>Final Fantasy XIV Tracker</div>
         </a>
         <a href="/bictracker" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="BIC Tracker" src="/assets/images/ogimages/bictracker.png">
+            <img loading="lazy" decoding="async" class="cursor_pointer" alt="BIC Tracker" src="/assets/images/ogimages/bictracker.webp">
             <div>BIC Tracker</div>
         </a>
     </div>
@@ -176,19 +493,19 @@
         <summary class="right_summary"><h3 class="home_page" id="about_me_other_projects">Others</h3></summary>
         <div class="about_showcase">
             <a href="https://www.youtube.com/watch?v=Q7fN-XDUMHA&list=PL0KIME6alndX8-8yEqF0c3IbajPJDAvJt" class="about_banner no_new_tab_icon">
-                <img loading="lazy" decoding="async" class="cursor_pointer" alt="Aqua Chronica" src="/assets/images/ogimages/aquachronica.png">
+                <img loading="lazy" decoding="async" class="cursor_pointer" alt="Aqua Chronica" src="/assets/images/ogimages/aquachronica.webp">
                 <div>Aqua Chronica</div>
             </a>
             <a href="https://www.youtube.com/watch?v=AsCOsuaB4IE" class="about_banner no_new_tab_icon">
-                <img loading="lazy" decoding="async" class="cursor_pointer" alt="Welcome to My Crib" src="/assets/images/ogimages/mycrib.png">
+                <img loading="lazy" decoding="async" class="cursor_pointer" alt="Welcome to My Crib" src="/assets/images/ogimages/mycrib.webp">
                 <div>Welcome to My Crib</div>
             </a>
             <a href="/simplepages/devicedetector" class="about_banner no_new_tab_icon">
-                <img loading="lazy" decoding="async" class="cursor_pointer" alt="Device Detector Icons" src="/assets/images/ogimages/devicedetector.png">
+                <img loading="lazy" decoding="async" class="cursor_pointer" alt="Device Detector Icons" src="/assets/images/ogimages/devicedetector.webp">
                 <div>Device Detector Icons</div>
             </a>
             <a href="https://github.com/Simbiat" class="about_banner no_new_tab_icon">
-                <img loading="lazy" decoding="async" class="cursor_pointer" alt="GitHub" src="/assets/images/ogimages/github.png">
+                <img loading="lazy" decoding="async" class="cursor_pointer" alt="GitHub" src="/assets/images/ogimages/github.webp">
                 <div>GitHub</div>
             </a>
             <a href="https://codepen.io/Simbiat" class="about_banner no_new_tab_icon">
@@ -205,7 +522,108 @@
 </div>
 <section>
     <div>
-        {{ include('common/elements/carousel.twig', {'images': feedbacks}, true) }}
+        {{ include('common/elements/carousel.twig', {'images': {
+            0: {
+                'href': '/resume/Signant/20250610_1.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            1: {
+                'href': '/resume/Signant/20250610_2.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            2: {
+                'href': '/resume/Signant/20241111.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            3: {
+                'href': '/resume/Signant/20240604_1.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            4: {
+                'href': '/resume/Signant/20240604_2.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            5: {
+                'href': '/resume/Signant/20240424.webp',
+                'alt': 'Feedback from Jaakko Anttonen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/jaakko/" target="_blank">Jaakko Anttonen</a>'
+            },
+            6: {
+                'href': '/resume/Signant/20240205.webp',
+                'alt': 'Feedback from Alexandru Vacaru',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/alexandru-vacaru-tech/" target="_blank">Alexandru Vacaru</a>'
+            },
+            7: {
+                'href': '/resume/Signant/20231117.webp',
+                'alt': 'Feedback from Jaakko Anttonen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/jaakko/" target="_blank">Jaakko Anttonen</a>'
+            },
+            8: {
+                'href': '/resume/Signant/20231103_1.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            9: {
+                'href': '/resume/Signant/20231103_2.webp',
+                'alt': 'Feedback from Mika Nuutilainen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/mikanuu/" target="_blank">Mika Nuutilainen</a>'
+            },
+            10: {
+                'href': '/resume/Smartly/20220513_1.webp',
+                'alt': 'Feedback from Marcella Armilla',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>'
+            },
+            11: {
+                'href': '/resume/Smartly/20220513_2.webp',
+                'alt': 'Feedback from Magalí Gomez',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/magali-gomez/" target="_blank">Magalí Gomez</a>'
+            },
+            12: {
+                'href': '/resume/Smartly/20220429.webp',
+                'alt': 'Feedback from Jana Christoviciute',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/jana-christoviciute-05ba268b/" target="_blank">Jana Christoviciute</a>'
+            },
+            13: {
+                'href': '/resume/Smartly/20220413.webp',
+                'alt': 'Feedback from Xavier Budan',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/xavierbudan/" target="_blank">Xavier Budan</a>'
+            },
+            14: {
+                'href': '/resume/Smartly/20220404.webp',
+                'alt': 'Feedback from Augustine Lee',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/augustinelee12/" target="_blank">Augustine Lee</a>'
+            },
+            15: {
+                'href': '/resume/Smartly/20220304.webp',
+                'alt': 'Feedback from Ayberk Yerlikaya',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/ayberkyrlky/" target="_blank">Ayberk Yerlikaya</a>'
+            },
+            16: {
+                'href': '/resume/Smartly/20220303.webp',
+                'alt': 'Feedback from Marcella Armilla',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/marcelladitaarmilla/" target="_blank">Marcella Armilla</a>'
+            },
+            17: {
+                'href': '/resume/Smartly/20220218.webp',
+                'alt': 'Feedback from Jarno Marin',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/jarnomarin/" target="_blank">Jarno Marin</a>'
+            },
+            18: {
+                'href': '/resume/Smartly/20220216.webp',
+                'alt': 'Feedback from Toivo Vaje',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/toivovaje/" target="_blank">Toivo Vaje</a>'
+            },
+            19: {
+                'href': '/resume/Smartly/20211126.webp',
+                'alt': 'Feedback from Tatu Virtanen',
+                'caption': 'Feedback from <a href="https://www.linkedin.com/in/tatuvirtanen/" target="_blank">Tatu Virtanen</a>'
+            }
+        }}, true) }}
     </div>
 </section>
 

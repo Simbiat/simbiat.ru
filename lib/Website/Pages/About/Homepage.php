@@ -24,11 +24,11 @@ class Homepage extends Page
     protected string $og_desc = 'Homepage of Simbiat Software';
     #List of images to H2 push
     protected array $h2_push_extra = [
-        '/assets/images/ogimages/jiangshi.png',
-        '/assets/images/ogimages/dden.png',
+        '/assets/images/ogimages/jiangshi.webp',
+        '/assets/images/ogimages/dden.webp',
         '/assets/images/ogimages/RadicalResonance.png',
-        '/assets/images/ogimages/bictracker.png',
-        '/assets/images/ogimages/fftracker.png',
+        '/assets/images/ogimages/bictracker.webp',
+        '/assets/images/ogimages/fftracker.webp',
     ];
     
     protected function generate(array $path): array

@@ -29,7 +29,7 @@ class FFTracker extends Router
     protected string $title = 'Final Fantasy XIV Tracker';
     protected string $h1 = 'Final Fantasy XIV Tracker';
     protected string $og_desc = 'Tracker for Final Fantasy XIV entities and respective statistics';
-    protected string $og_image = '/ogimages/fftracker.png';
+    protected string $og_image = '/ogimages/fftracker.webp';
     protected string $service_name = 'fftracker';
     
     #This is the actual page generation based on further details of the $path

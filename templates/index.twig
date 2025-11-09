@@ -2,15 +2,15 @@
 <html lang="en" prefix="og: https://ogp.me/ns# fb: https://ogp.me/ns/fb# profile: https://ogp.me/ns/profile# article: https://ogp.me/ns/article# book: https://ogp.me/ns/book# website: https://ogp.me/ns/website#" itemscope itemtype="https://schema.org/Article">
     <head>
         {{ include('common/layout/metatags.twig') }}
-
+        
         <!-- Generated links -->
         {{ linkTags(link_tags, 'head') }}
         {% if link_extra %}
             {{ linkTags(link_extra, 'head') }}
         {% endif %}
-
+        
         <title>{% if title %}{{ title }} on {{ site_name }}{% else %}{{ site_name }}{% endif %}</title>
-
+        
         {{ include('common/layout/scripts.twig') }}
         {% if http_error %}
             {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] and construction == false %}
@@ -60,12 +60,12 @@
                 </footer>
             </div>
             {{ include('common/layout/sidebar.twig') }}
-        <over-lays>
-            {{ include('common/layout/gallery.twig') }}
-            <tool-tip id="tooltip" role="tooltip" aria-label="Tooltip"></tool-tip>
-            <snack-bar role="dialog"></snack-bar>
-        </over-lays>
-        {{ include('common/layout/templates.twig') }}
+            <over-lays>
+                {{ include('common/layout/gallery.twig') }}
+                <tool-tip id="tooltip" role="tooltip" aria-label="Tooltip"></tool-tip>
+                <snack-bar role="dialog"></snack-bar>
+            </over-lays>
+            {{ include('common/layout/templates.twig') }}
         </body>
     {% endif %}
 </html>

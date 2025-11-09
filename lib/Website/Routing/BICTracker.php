@@ -22,7 +22,7 @@ class BICTracker extends Router
     protected string $title = 'БИК Трекер';
     protected string $h1 = 'БИК Трекер';
     protected string $og_desc = 'Трекер БИК предоставляемых Центральным Банком Российской Федерации';
-    protected string $og_image = '/ogimages/bictracker.png';
+    protected string $og_image = '/ogimages/bictracker.webp';
     protected string $service_name = 'bictracker';
     
     #This is the actual page generation based on further details of the $path

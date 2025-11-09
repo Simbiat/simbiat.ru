@@ -19,7 +19,7 @@ class DeviceDetector extends FileListing
     protected string $h1 = 'Device Detector Icons';
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Icons or logos of operating systems, browsers and other applications based on respective items detectable by matomo-org/device-detector library';
-    protected string $og_image = '/ogimages/devicedetector.png';
+    protected string $og_image = '/ogimages/devicedetector.webp';
     #Directories relative to working dir
     protected array $dirs = [
         'bottype' => ['path' => '/lib/DDCIcons/src/icons/bot/category', 'name' => 'Bot Types'],
