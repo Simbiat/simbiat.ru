@@ -361,10 +361,11 @@
     <inspection_tool class="ReplaceAssignmentWithOperatorAssignmentJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReuseOfLocalVariableJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <replaceConfiguration name="[A] Missing noreferrer" description="Missing `noreferrer` and `noopener` in `rel` attribute" suppressId="NoANoreferrer" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;a $attributes$ rel=&quot;noopener noreferrer&quot;&gt;">
+      <replaceConfiguration name="[A] Missing noreferrer" description="Missing `noreferrer` and `noopener` in `rel` attribute" suppressId="NoANoreferrer" text="&lt;$tag$ $attribute$&gt;$content$&lt;/$tag$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;a $attribute$ rel=&quot;noopener noreferrer&quot;&gt;$content$&lt;/a&gt;">
         <constraint name="__context__" within="" contains="" />
+        <constraint name="attribute" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="content" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="tag" script="&quot;def href = tag.getAttribute(&quot;href&quot;)?.value&#10;if (href == null) return false&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def internal = href.startsWith(&quot;/&quot;) || href.startsWith(&quot;#&quot;) || href.startsWith(&quot;?&quot;)&#10;if (internal) return false&#10;&#10;def rel = tag.getAttribute(&quot;rel&quot;)?.value&#10;return rel == null || !rel.contains(&quot;noopener&quot;) || !rel.contains(&quot;noreferrer&quot;)&quot;" regexp="a" within="" contains="" />
-        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[IMG] Missing decoding" description="Image is missing `decoding` attribute" suppressId="NoImgDecodingAttribute" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ decoding=&quot;async&quot;&gt;">
         <constraint name="__context__" within="" contains="" />
