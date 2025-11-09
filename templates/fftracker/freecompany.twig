@@ -63,7 +63,7 @@
         </ul>
     {% endif %}
     {% if not freecompany.dates.deleted %}
-        {% if freecompany.community %} Has an open <a href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ freecompany.community }}" target="_blank">community</a>.{% endif %}
+        {% if freecompany.community %} Has an open <a rel="noopener noreferrer" href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ freecompany.community }}" target="_blank">community</a>.{% endif %}
         {% if freecompany.recruiting == 1 %}
             <p>Is recruiting{% if freecompany.seeking.Tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}:{% else %}, but does not specify whom.{% endif %}</p>
             {% if freecompany.seeking.tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}

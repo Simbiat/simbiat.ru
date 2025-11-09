@@ -2,9 +2,9 @@
     <article class="margin_05rem">
         <details {% if not subservice_name %}class="persistent" open{% endif %}>
             <summary class="right_summary about_section">О сервисе</summary>
-            <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
+            <p>Это БИК Трекер, предназначенный для отслеживания изменений Банковских Идентификационных Кодов, предоставляемых <a href="https://cbr.ru/" target="_blank" rel="noopener noreferrer"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/tech/CBR.svg" alt="Центральный Банк Российской Федерации">Центральным Банком Российской Федерации</a>.</p>
             <p>Библиотека содержит различную информацию, использующейся в банковских расчётах. Трекер предназначен для визуального отображения этой информации, а также отслеживания некоторых изменений.</p>
-            <p>У сервиса есть "официальная" страница на форуме <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/icons/banki.ru.svg" alt="banki.ru">banki.ru</a></p>
+            <p>У сервиса есть "официальная" страница на форуме <a href="https://www.banki.ru/forum/?PAGE_NAME=read&FID=29&TID=324456" target="_blank" rel="noopener noreferrer"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/icons/banki.ru.svg" alt="banki.ru">banki.ru</a></p>
             {% if not subservice_name %}
                 <p>Вы находитесь на главной странице сервиса. Для поиска банков используйте <a href="/bictracker/search" target="_self" itemprop="url"><span itemprop="name">поиск</span></a>. Если вы хотите проверить ключевание счёта, то можете использовать эту <a href="/bictracker/keying" target="_self" itemprop="url"><span itemprop="name">страницу</span></a>.</p>
             {% endif %}

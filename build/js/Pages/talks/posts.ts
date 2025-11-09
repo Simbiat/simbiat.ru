@@ -43,7 +43,7 @@ export class Posts
                         window.location.assign(encodeURI(data.location));
                     } else {
                         if (data.location) {
-                            addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank">here</a>.`, 'failure', 0);
+                            addSnackbar(data.reason + ` View the post <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
                         } else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }

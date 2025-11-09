@@ -62,7 +62,7 @@
                     {% set list_url = '/fftracker/crossworld_linkshells/' %}
                 {% endif %}
                 {# Show link itself #}
-                <a href="{{ list_url }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ sub_result.count }}</a>
+                <a rel="noopener noreferrer" href="{{ list_url }}{% if search_value %}?search={{ search_value|url_encode }}{% endif %}">{{ sub_result.count }}</a>
             {% else %}
                 {{ sub_result.count }}
             {% endif %}

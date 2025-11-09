@@ -3,11 +3,11 @@
         <details class="persistent" open>
             <summary class="right_summary about_section">About crests' page</summary>
             <p>This page provides
-                <a href="https://github.com/Simbiat/FFXIV-Crests-Components" target="_blank">components</a> used by FFXIV for creating crests: backgrounds, frames, emblems, - as well as "merged" crests, where all 3 components were merged into 1 image (storage is temporary for these, acting as cache).
+                <a href="https://github.com/Simbiat/FFXIV-Crests-Components" target="_blank" rel="noopener noreferrer">components</a> used by FFXIV for creating crests: backgrounds, frames, emblems, - as well as "merged" crests, where all 3 components were merged into 1 image (storage is temporary for these, acting as cache).
             </p>
             <p>These are not necessarily
                 <b>all</b> components, let alone their combinations. Only those, identified by the tracker service during its normal work, are listed. Quite a few pre-merged crests can be downloaded
-                <a href="https://github.com/Simbiat/FFXIV-Crests" target="_blank">here</a>.
+                <a href="https://github.com/Simbiat/FFXIV-Crests" target="_blank" rel="noopener noreferrer">here</a>.
             </p>
             <ul>
                 <li><a href="/fftracker/crests/frame">{{ files.frame.name }}</a>: {{ files.frame.count }} icons</li>
@@ -36,7 +36,7 @@
 {% if path %}
     <section>
         {% if files[path].parent %}
-            <a class="middle block no_decor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
+            <a class="middle block no_decor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder" rel="noopener noreferrer"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
         {% endif %}
         {% if files[path].files %}
             {{ include('common/elements/iconlist.twig', {icons: files[path].files}, with_context = false) }}
@@ -55,7 +55,7 @@
             </ul>
         {% endif %}
         {% if files[path].parent %}
-            <a class="middle block no_decor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
+            <a class="middle block no_decor" href="{{ files[path].parent.href }}" data-tooltip="Parent folder" rel="noopener noreferrer"><img loading="lazy" decoding="async" alt="Parent folder" src="/assets/images/navigation/folder_up.svg" class="link_icon">{{ files[path].parent.name }}</a>
         {% endif %}
     </section>
 {% endif %}

@@ -85,7 +85,7 @@
                     </tr>
                     {% for attachment in post.attachments %}
                         <tr>
-                            <td><a href="{{ uploadedLink(attachment.file_id ~ '.' ~ attachment.extension) }}" target="_blank">{{ attachment.name }}</a></td>
+                            <td><a href="{{ uploadedLink(attachment.file_id ~ '.' ~ attachment.extension) }}" target="_blank" rel="noopener noreferrer">{{ attachment.name }}</a></td>
                             <td>{{ attachment.mime }}</td>
                             <td>{{ cuteBytes(attachment.size) }}</td>
                         </tr>

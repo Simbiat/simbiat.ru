@@ -5,7 +5,7 @@
             {% if image.href %}
                 <li>
                     <figure>
-                        <a class="gallery_zoom no_new_tab_icon" href="{{ image.href }}" target="_blank">
+                        <a class="gallery_zoom no_new_tab_icon" href="{{ image.href }}" target="_blank" rel="noopener noreferrer">
                             <img loading="lazy" decoding="async" src="{% if image.thumb %}{{ image.thumb }}{% else %}{{ image.href }}{% endif %}" alt="{% if image.alt %}{{ image.alt }}{% else %}{{ basename(image.href) }}{% endif %}">
                             <div>{{ loop.index }}/{{ images|length }}</div>
                         </a>

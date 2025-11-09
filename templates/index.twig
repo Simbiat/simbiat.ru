@@ -36,7 +36,7 @@
                                 {% endif %}
                                 {{ include('errors/'~http_error~'.twig') }}
                                 {% if http_error not in [503, 418] and session_data.prev_page %}
-                                    <p>You can try going back to previous <a href="{{ session_data.prev_page }}">page</a>.</p>
+                                    <p>You can try going back to previous <a href="{{ session_data.prev_page }}" rel="noopener noreferrer">page</a>.</p>
                                 {% endif %}
                             {% else %}
                                 {{ include('errors/construction.twig') }}

@@ -8,7 +8,7 @@ export class ffCrests
     private readonly backgroundImage: HTMLImageElement | null = null;
     private readonly frameImage: HTMLImageElement | null = null;
     private readonly emblemImage: HTMLImageElement | null = null;
-    
+
     public constructor()
     {
         //Get form
@@ -37,7 +37,7 @@ export class ffCrests
             }
         }
     }
-    
+
     private updatePreview(): void
     {
         if (this.background && this.frame && this.emblem && this.backgroundImage && this.frameImage && this.emblemImage) {
@@ -69,7 +69,7 @@ export class ffCrests
             }
         }
     }
-    
+
     private merge(): void
     {
         if (this.form) {
@@ -79,7 +79,7 @@ export class ffCrests
             void ajax(`${location.protocol}//${location.host}/api/fftracker/merge_crest`, formData, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
                     const data = response as ajaxJSONResponse;
                     if (data.data === true) {
-                        addSnackbar(`Crest merged successfully. Click <a href="${data.location}" download>here</a> to download.`, 'success', 0);
+                        addSnackbar(`Crest merged successfully. Click <a href="${data.location}" rel="noopener noreferrer" download>here</a> to download.`, 'success', 0);
                     } else {
                         addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }

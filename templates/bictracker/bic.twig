@@ -96,7 +96,7 @@
             <td>Административный центр:</td><td>{{ bicdetails.CENTER|default('-') }}</td>
         </tr>
         <tr>
-            <td>Адрес:</td><td>{% if bicdetails.Adr %}{% if bicdetails.Ind %}{{ bicdetails.Ind }}, {% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp }} {% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp }}, {% endif %}{{ bicdetails.Adr }} <a target="_blank" href="https://yandex.ru/maps/?mode=search&amp;text={% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}"><img loading="lazy" decoding="async" src="/assets/images/icons/YandexMaps.svg" class="link_icon" alt="Яндекс Карты"></a><a target="_blank" href="https://www.google.com/maps/search/{% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}"><img src="/assets/images/icons/GoogleMaps.svg" class="link_icon" alt="Google Maps"></a>{% else %}-{% endif %}</td>
+            <td>Адрес:</td><td>{% if bicdetails.Adr %}{% if bicdetails.Ind %}{{ bicdetails.Ind }}, {% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp }} {% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp }}, {% endif %}{{ bicdetails.Adr }} <a target="_blank" rel="noopener noreferrer" href="https://yandex.ru/maps/?mode=search&amp;text={% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}"><img loading="lazy" decoding="async" src="/assets/images/icons/YandexMaps.svg" class="link_icon" alt="Яндекс Карты"></a><a target="_blank" rel="noopener noreferrer" href="https://www.google.com/maps/search/{% if bicdetails.Ind %}{{ bicdetails.Ind|url_encode }}%2C%20{% endif %}{% if bicdetails.Tnp %}{{ bicdetails.Tnp|url_encode }}%20{% endif %}{% if bicdetails.Nnp %}{{ bicdetails.Nnp|url_encode }}%2C%20{% endif %}{{ bicdetails.Adr|url_encode }}"><img src="/assets/images/icons/GoogleMaps.svg" class="link_icon" alt="Google Maps"></a>{% else %}-{% endif %}</td>
         </tr>
         </tbody>
     </table>
@@ -202,7 +202,7 @@
                 <td>Телефон{% if bicdetails.DBF.contacts.TELEF.phones|length > 1 %}ы{% endif %}:</td>
                 <td>{% if bicdetails.DBF.contacts.TELEF %}
                         {% for tel in bicdetails.DBF.contacts.TELEF.phones %}
-                            📞<a target="_blank" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}
+                            📞<a target="_blank" rel="noopener noreferrer" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}
                         {% endfor %}
                         {% if bicdetails.DBF.contacts.TELEF.dob %}
                             (доб. {{ bicdetails.DBF.contacts.TELEF.dob }})

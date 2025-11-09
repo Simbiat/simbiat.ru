@@ -39,9 +39,9 @@
         </div>
         <div id="footer">
             <div>
-                <a href="{{ domain }}/about/contacts">Contact us</a>
+                <a href="{{ domain }}/about/contacts" rel="noopener noreferrer">Contact us</a>
                 {% if unsubscribe %} or
-                    <a href="{{ domain }}/uc/unsubscribe/?token={{ unsubscribe|url_encode }}">unsubscribe</a>
+                    <a href="{{ domain }}/uc/unsubscribe/?token={{ unsubscribe|url_encode }}" rel="noopener noreferrer">unsubscribe</a>
                 {% endif %}
             </div>
             <div>

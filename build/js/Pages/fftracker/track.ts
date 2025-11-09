@@ -40,11 +40,11 @@ export class ffTrack
                     then((response) => {
                         const data = response as ajaxJSONResponse;
                         if (data.data === true) {
-                            addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was registered. Check <a href="${data.location}" target="_blank">here</a>.`, 'success', 0);
+                            addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was registered. Check <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'success', 0);
                         } else if (data.status === 404) {
                             addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was not found on Lodestone.`, 'failure', SNACKBAR_FAIL_LIFE);
                         } else if ((/^ID `.*` is already registered$/ui).exec(data.reason)) {
-                            addSnackbar(`${data.reason}. Check <a href="${data.location}" target="_blank">here</a>.`, 'warning', 0);
+                            addSnackbar(`${data.reason}. Check <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'warning', 0);
                         } else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
