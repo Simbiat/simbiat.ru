@@ -75,7 +75,7 @@ function headingInit(heading: HTMLHeadingElement): void {
     //Get the element under the mouse pointer
     const elementUnderMouse = document.elementFromPoint(event.clientX, event.clientY);
     //Check if it's an <a> element
-    if (elementUnderMouse && elementUnderMouse.tagName === "A") {
+    if (elementUnderMouse && elementUnderMouse.tagName === 'A') {
       //Cancel this event if we clicked on an anchor, because it can confuse if we get notification about copy, and follow the link right away
       return;
     }
@@ -96,12 +96,12 @@ function headingInit(heading: HTMLHeadingElement): void {
   });
 }
 
-//Below is a list of input types, that do not make much sense to be tracked through keypress or paste events, in case it will be required at some time
-//Including date/time types, even though some of them may fall back to textual fields. Doing this, since you can't predict this by checking browser version.
-//Not including hidden (since it's hidden), image (since its purpose is unclear by default),
-//range (unclear how to track to actually determine, that user stopped interaction),
-//reset and submit (due to their purpose)
-//const nonTextInputTypes = ['checkbox', 'color', 'date', 'datetime-local', 'file', 'month', 'number', 'radio', 'time', 'week',];
+// Below is a list of input types, that do not make much sense to be tracked through keypress or paste events, in case it will be required at some time
+// Including date/time types, even though some of them may fall back to textual fields. Doing this, since you can't predict this by checking browser version.
+// Not including hidden (since it's hidden), image (since its purpose is unclear by default),
+// range (unclear how to track to actually determine, that user stopped interaction),
+// reset and submit (due to their purpose)
+// const nonTextInputTypes = ['checkbox', 'color', 'date', 'datetime-local', 'file', 'month', 'number', 'radio', 'time', 'week',];
 function formInit(form: HTMLFormElement): void {
   //Prevent form submit on Enter, if action is empty (otherwise this causes page reload with additional question mark in address
   form.addEventListener('keypress', (event: KeyboardEvent) => {
@@ -131,11 +131,11 @@ function formInit(form: HTMLFormElement): void {
 }
 
 function sampInit(samp: HTMLElement): void {
-  //Add a visual button
-  //Modifying innerHTML instead of insertBefore, since block may not have any actual children in the first place, and as per https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
-  //"When the element does not have a first child, then firstChild is null. The element is still appended to the parent, after the last child."
-  //This results in same effect as with appendChild, that the image is inserted at the end, which is not what we want
-  //Same is true for codeInit and blockquoteInit
+  // Add a visual button
+  // Modifying innerHTML instead of insertBefore, since block may not have any actual children in the first place, and as per https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
+  // "When the element does not have a first child, then firstChild is null. The element is still appended to the parent, after the last child."
+  // This results in same effect as with appendChild, that the image is inserted at the end, which is not what we want
+  // Same is true for codeInit and blockquoteInit
   samp.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${samp.innerHTML}`;
   //Add description
   const description = samp.getAttribute('data-description') ?? '';
@@ -195,9 +195,9 @@ function blockquoteInit(quote: HTMLElement): void {
 }
 
 function qInit(quote: HTMLQuoteElement): void {
-  //q tag is inline and a visual button does not suit it, so we add tooltip to it
+  // q tag is inline and a visual button does not suit it, so we add tooltip to it
   quote.setAttribute('data-tooltip', 'Click to copy quote');
-  //Add listener
+  // Add listener
   quote.addEventListener('click', (event: MouseEvent) => {
     copyQuote(event.target as HTMLElement);
   });
@@ -205,11 +205,7 @@ function qInit(quote: HTMLQuoteElement): void {
 
 function detailsInit(details: HTMLDetailsElement): void {
   if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
-    //Close all details except currently selected one
-    //details.addEventListener('click', (event) => {
-    //    closeAllDetailsTags(event.target as HTMLDetailsElement);
-    //});
-    //Attach listener for clicks. Technically we can (and probably should) use 'toggle', but I was not able to achieve consistent behavior with it.
+    // Attach listener for clicks. Technically we can (and probably should) use 'toggle', but I was not able to achieve consistent behavior with it.
     const summary = details.querySelector('summary');
     if (summary) {
       summary.addEventListener('click', (event) => {
@@ -272,45 +268,58 @@ function anchorInit(anchor: HTMLAnchorElement): void {
   if (empty(anchor.href)) {
     return;
   }
-  const currentURL = new URL(anchor.href);
+  const current_URL = new URL(anchor.href);
   // Add `target="_blank"` if link is not from the current domain
-  if (currentURL.host !== window.location.host) {
+  if (current_URL.host !== window.location.host) {
     anchor.target = '_blank';
+    // Add noopener and noreferrer for some level of security/privacy.
+    // Technically all modern browsers are supposed to add them during onclick, but can't trust that.
+    // Also, noreferrer already implies noopener, but allegedly some browsers at least used to require both, not following the spec.
+    if (empty(anchor.rel)) {
+      anchor.rel = 'noopener noreferrer';
+    } else {
+      if (!anchor.rel.includes('noopener')) {
+        anchor.rel += ' noopener';
+      }
+      if (!anchor.rel.includes('noreferrer')) {
+        anchor.rel += ' noreferrer';
+      }
+    }
   }
   // Add an icon indicating that link will open in new tab
   if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
     anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
-    //I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
-  } else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
-    //Logic to update URL if this is a hash link for current page
+    // I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
+  } else if (!empty(anchor.href) && !empty(current_URL.hash) && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
+    // Logic to update URL if this is a hash link for current page
     anchor.addEventListener('click', () => {
       if (!window.location.hash.toLowerCase()
                  .startsWith('#gallery=')) {
-        history.replaceState(document.title, document.title, `${currentURL.hash}`);
+        history.replaceState(document.title, document.title, `${current_URL.hash}`);
       }
     });
   }
 }
 
-//Function to apply custom initializers from observer
-function customizeNewElements(newNode: Node): void {
-  if (newNode.nodeType === 1) {
-    const nodeName = newNode.nodeName.toLowerCase();
-    switch (nodeName) {
+// Function to apply custom initializers from observer
+function customizeNewElements(new_node: Node): void {
+  if (new_node.nodeType === 1) {
+    const node_name = new_node.nodeName.toLowerCase();
+    switch (node_name) {
       case 'a':
-        anchorInit(newNode as HTMLAnchorElement);
+        anchorInit(new_node as HTMLAnchorElement);
         break;
       case 'blockquote':
-        blockquoteInit(newNode as HTMLElement);
+        blockquoteInit(new_node as HTMLElement);
         break;
       case 'code':
-        codeInit(newNode as HTMLElement);
+        codeInit(new_node as HTMLElement);
         break;
       case 'details':
-        detailsInit(newNode as HTMLDetailsElement);
+        detailsInit(new_node as HTMLDetailsElement);
         break;
       case 'form':
-        formInit(newNode as HTMLFormElement);
+        formInit(new_node as HTMLFormElement);
         break;
       case 'h1':
       case 'h2':
@@ -318,25 +327,25 @@ function customizeNewElements(newNode: Node): void {
       case 'h4':
       case 'h5':
       case 'h6':
-        headingInit(newNode as HTMLHeadingElement);
+        headingInit(new_node as HTMLHeadingElement);
         break;
       case 'img':
-        imgInit(newNode as HTMLImageElement);
+        imgInit(new_node as HTMLImageElement);
         break;
       case 'input':
-        inputInit(newNode as HTMLInputElement);
+        inputInit(new_node as HTMLInputElement);
         break;
       case 'q':
-        qInit(newNode as HTMLQuoteElement);
+        qInit(new_node as HTMLQuoteElement);
         break;
       case 'samp':
-        sampInit(newNode as HTMLElement);
+        sampInit(new_node as HTMLElement);
         break;
       case 'textarea':
-        textareaInit(newNode as HTMLTextAreaElement);
+        textareaInit(new_node as HTMLTextAreaElement);
         break;
       default:
-        //Do nothing
+        // Do nothing
         break;
     }
   }

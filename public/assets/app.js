@@ -4189,7 +4189,7 @@ function headingInit(heading) {
     }
     heading.addEventListener('click', (event) => {
         const elementUnderMouse = document.elementFromPoint(event.clientX, event.clientY);
-        if (elementUnderMouse && elementUnderMouse.tagName === "A") {
+        if (elementUnderMouse && elementUnderMouse.tagName === 'A') {
             return;
         }
         const selection = window.getSelection();
@@ -4331,40 +4331,51 @@ function anchorInit(anchor) {
     if (empty(anchor.href)) {
         return;
     }
-    const currentURL = new URL(anchor.href);
-    if (currentURL.host !== window.location.host) {
+    const current_URL = new URL(anchor.href);
+    if (current_URL.host !== window.location.host) {
         anchor.target = '_blank';
+        if (empty(anchor.rel)) {
+            anchor.rel = 'noopener noreferrer';
+        }
+        else {
+            if (!anchor.rel.includes('noopener')) {
+                anchor.rel += ' noopener';
+            }
+            if (!anchor.rel.includes('noreferrer')) {
+                anchor.rel += ' noreferrer';
+            }
+        }
     }
     if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
         anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab">';
     }
-    else if (!empty(anchor.href) && !empty(currentURL.hash) && currentURL.origin + currentURL.host + currentURL.pathname === window.location.origin + window.location.host + window.location.pathname) {
+    else if (!empty(anchor.href) && !empty(current_URL.hash) && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
         anchor.addEventListener('click', () => {
             if (!window.location.hash.toLowerCase()
                 .startsWith('#gallery=')) {
-                history.replaceState(document.title, document.title, `${currentURL.hash}`);
+                history.replaceState(document.title, document.title, `${current_URL.hash}`);
             }
         });
     }
 }
-function customizeNewElements(newNode) {
-    if (newNode.nodeType === 1) {
-        const nodeName = newNode.nodeName.toLowerCase();
-        switch (nodeName) {
+function customizeNewElements(new_node) {
+    if (new_node.nodeType === 1) {
+        const node_name = new_node.nodeName.toLowerCase();
+        switch (node_name) {
             case 'a':
-                anchorInit(newNode);
+                anchorInit(new_node);
                 break;
             case 'blockquote':
-                blockquoteInit(newNode);
+                blockquoteInit(new_node);
                 break;
             case 'code':
-                codeInit(newNode);
+                codeInit(new_node);
                 break;
             case 'details':
-                detailsInit(newNode);
+                detailsInit(new_node);
                 break;
             case 'form':
-                formInit(newNode);
+                formInit(new_node);
                 break;
             case 'h1':
             case 'h2':
@@ -4372,22 +4383,22 @@ function customizeNewElements(newNode) {
             case 'h4':
             case 'h5':
             case 'h6':
-                headingInit(newNode);
+                headingInit(new_node);
                 break;
             case 'img':
-                imgInit(newNode);
+                imgInit(new_node);
                 break;
             case 'input':
-                inputInit(newNode);
+                inputInit(new_node);
                 break;
             case 'q':
-                qInit(newNode);
+                qInit(new_node);
                 break;
             case 'samp':
-                sampInit(newNode);
+                sampInit(new_node);
                 break;
             case 'textarea':
-                textareaInit(newNode);
+                textareaInit(new_node);
                 break;
             default:
                 break;

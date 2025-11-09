@@ -20,7 +20,7 @@ declare function detailsInit(details: HTMLDetailsElement): void;
 declare function imgInit(img: HTMLImageElement): void;
 declare function dialogInit(dialog: HTMLDialogElement): void;
 declare function anchorInit(anchor: HTMLAnchorElement): void;
-declare function customizeNewElements(newNode: Node): void;
+declare function customizeNewElements(new_node: Node): void;
 declare function getAllDetailsTags(): NodeListOf<HTMLDetailsElement>;
 declare function closeAllDetailsTags(target: HTMLDetailsElement): void;
 declare function clickOutsideDetailsTags(initialEvent: MouseEvent, details: HTMLDetailsElement): void;
