@@ -12,7 +12,10 @@ kbd {
     font-weight: 700;
     letter-spacing: 0.1rem;
     margin: 0.1rem;
+    min-inline-size: 1.5rem;
     padding: 0 0.25rem;
+    text-align: center;
+    text-indent: 0;
     user-select: none;
     vertical-align: text-bottom;
 

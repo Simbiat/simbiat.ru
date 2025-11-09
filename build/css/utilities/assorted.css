@@ -107,7 +107,8 @@
     cursor: zoom-in;
 
     & img {
-        cursor: zoom-in;
+        /* noinspection Stylelint */
+        cursor: zoom-in !important;
     }
 
     &:not(img, a:has(img)) {

@@ -19,6 +19,7 @@ gallery-image {
             cursor: zoom-out;
             max-block-size: unset;
             max-inline-size: unset;
+            position: relative;
         }
 
         &.no_zoom {

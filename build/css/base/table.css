@@ -58,4 +58,53 @@ table {
         font-style: italic;
         font-weight: 700;
     }
+
+    /* Make table scrollable horizontally with setting appropriate column widths */
+
+    &[class^='table_horizontal_scroll_' i],
+    &[class*=' table_horizontal_scroll_' i] {
+        display: block;
+        overflow-inline: auto;
+
+        &.table_horizontal_scroll_5 {
+            & td,
+            & th {
+                min-inline-size: 5rem;
+            }
+        }
+
+        &.table_horizontal_scroll_10 {
+            & td,
+            & th {
+                min-inline-size: 10rem;
+            }
+        }
+    }
+
+    /* Sticky 1st column */
+
+    &.sticky_column {
+        & tr td:first-child,
+        & tr th:first-child {
+            inset-inline-start: 0;
+            position: sticky;
+        }
+    }
+
+    /* Sticky 1st row (implies existence of thead) */
+
+    &.sticky_row {
+        & thead:first-child {
+            inset-block-start: 0;
+            position: sticky;
+        }
+    }
+
+    /* If table has both sticky column and row, need to prioritize the header */
+
+    &.sticky_column.sticky_row {
+        & thead:first-child {
+            z-index: 2;
+        }
+    }
 }
