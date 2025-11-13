@@ -51,7 +51,7 @@ return array(
     'Simbiat\\Cron\\' => array($baseDir . '/lib/Cron/src'),
     'Simbiat\\BIC\\' => array($baseDir . '/lib/BIC/AccountKeying/src', $baseDir . '/lib/BIC/Tracker/src'),
     'Simbiat\\Arrays\\' => array($baseDir . '/lib/ArrayHelpers/src'),
-    'Simbiat\\' => array($baseDir . '/lib/CuteBytes/src', $baseDir . '/lib/DDCIcons/src', $baseDir . '/lib/HTMLCache/src', $baseDir . '/lib/SafeFileName/src', $baseDir . '/lib/SandClock/src'),
+    'Simbiat\\' => array($baseDir . '/lib/CuteBytes/src', $baseDir . '/lib/DDCIcons/src', $baseDir . '/lib/HTMLCache/src', $baseDir . '/lib/SandClock/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
     'Psr\\EventDispatcher\\' => array($vendorDir . '/psr/event-dispatcher/src'),

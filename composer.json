@@ -50,7 +50,6 @@
                 "./lib/CuteBytes/src",
                 "./lib/DDCIcons/src",
                 "./lib/HTMLCache/src",
-                "./lib/SafeFileName/src",
                 "./lib/SandClock/src"
             ],
             "Simbiat\\Arrays\\": [
