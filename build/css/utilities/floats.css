@@ -8,8 +8,5 @@
 }
 
 .float_clear {
-    block-size: 0;
     clear: both;
-    content: ' ';
-    display: block;
 }
