@@ -1,0 +1,19 @@
+/* Styling related to SupOps pages */
+a.button.supops_next_slide {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    inline-size: 98%;
+    justify-content: space-around;
+    text-align: center;
+
+    & img {
+        block-size: 1rem;
+    }
+}
+
+img.supops_fact {
+    block-size: 8rem;
+    inline-size: 8rem;
+    margin: 1rem;
+}
