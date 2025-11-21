@@ -43,8 +43,7 @@ RUN install-php-extensions \
     brotli \
     zstd \
     apcu \
-    intl \
-    opcache
+    intl
 
 # Completely custom
 # Add composer
