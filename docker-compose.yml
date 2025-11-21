@@ -224,7 +224,8 @@ services:
     volumes:
       - mariadb_socket:/run/mysqld/:rw
       - ${MARIADB_DATA_DIR}:/var/lib/mysql:rw
-      - ./config/mysql:/etc/mysql/conf.d:ro
+      #For some reason since 12.1.2 RW permission is required to this directory
+      - ./config/mysql:/etc/mysql/conf.d:rw
       - ./logs:/usr/local/logs:rw
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
       - ./build/DDL:/usr/local/DDL:ro
