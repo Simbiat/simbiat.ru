@@ -102,6 +102,7 @@ final class Config
         'DotBot',
         'Expanse',
         'FacebookBot',
+        'FirecrawlAgent',
         'GPTBot',
         'ImageSift',
         'InternetMeasurement',
@@ -122,6 +123,7 @@ final class Config
         'Timpibot',
         'Velen Public Web Crawler',
         'YouBot',
+        'xAI-Bot',
         'ZoominfoBot',
     ];
     
