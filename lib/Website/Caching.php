@@ -36,7 +36,7 @@ class Caching
     {
         #JSON encode the value
         try {
-            if (!empty($data)) {
+            if ($data !== '' && $data !== []) {
                 #Ensure we do not save CSRF
                 unset($data['X-CSRF-Token']);
                 #Add headers data
@@ -51,24 +51,30 @@ class Caching
         } catch (\Throwable) {
             $data = '';
         }
-        if (!empty($data)) {
+        if ($data !== '' && $data !== []) {
             #Generate key
             $key = $this->key($key);
             #Generate subdirectory name
             $sub_dir = mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/';
-            #Create folder if missing
-            if (!\is_dir($this->cache_dir.$sub_dir) && !\mkdir($this->cache_dir.$sub_dir, recursive: true) && !\is_dir($this->cache_dir.$sub_dir)) {
+            #Create folder if missing. Silencing operator because of potential concurrency
+            /** @noinspection PhpUsageOfSilenceOperatorInspection */
+            if (!\is_dir($this->cache_dir.$sub_dir) && !@\mkdir($this->cache_dir.$sub_dir, recursive: true) && !\is_dir($this->cache_dir.$sub_dir)) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
             }
-            #Write the file. We do not care much if it fails
+            #Write the file. We do not care much if it fails, so silencing
+            /** @noinspection PhpUsageOfSilenceOperatorInspection */
             if (@\file_put_contents($this->cache_dir.$sub_dir.$key.'.json', $data)) {
-                @\header('X-Server-Cached: true');
-                @\header('X-Server-Cache-Hit: false');
+                if (!\headers_sent()) {
+                    \header('X-Server-Cached: true');
+                    \header('X-Server-Cache-Hit: false');
+                }
                 return true;
             }
         }
-        @\header('X-Server-Cached: false');
-        @\header('X-Server-Cache-Hit: false');
+        if (!\headers_sent()) {
+            \header('X-Server-Cached: false');
+            \header('X-Server-Cache-Hit: false');
+        }
         return true;
     }
     
@@ -85,9 +91,11 @@ class Caching
         #Generate file name
         $file = $this->cache_dir.mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/'.$key.'.json';
         $data = $this->getArrayFromFile($file);
-        if (empty($data)) {
-            @\header('X-Server-Cached: false');
-            @\header('X-Server-Cache-Hit: false');
+        if (\count($data) === 0) {
+            if (\headers_sent()) {
+                \header('X-Server-Cached: false');
+                \header('X-Server-Cache-Hit: false');
+            }
         } else {
             #Enforce cached page flag
             $data['cached_page'] = true;
@@ -96,8 +104,10 @@ class Caching
                 \array_map('\header', $data['http_headers']);
             }
             #Send header indicating that cached response was sent
-            @\header('X-Server-Cached: true');
-            @\header('X-Server-Cache-Hit: true');
+            if (\headers_sent()) {
+                \header('X-Server-Cached: true');
+                \header('X-Server-Cache-Hit: true');
+            }
         }
         #Ensure we use fresh CSRF
         unset($data['X-CSRF-Token']);
@@ -112,7 +122,7 @@ class Caching
      */
     public function key(string $key): string
     {
-        if (empty($key)) {
+        if ($key === '') {
             $key = \hash('sha3-512', Config::$canonical);
         } else {
             $key = \hash('sha3-512', $key);
