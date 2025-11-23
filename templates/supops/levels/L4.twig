@@ -1,0 +1,24 @@
+<section>
+    <figure>
+        <a class="gallery_zoom no_new_tab_icon" href="/assets/images/supops/charts/l4.png" target="_blank">
+            <img loading="lazy" decoding="async" src="/assets/images/supops/charts/l4.png" alt="Level 4" tabindex="0">
+        </a>
+    </figure>
+    <details>
+        <summary>Mermaid code</summary>
+        <code>
+{{ include('supops/charts/l4.mermaid') }}
+        </code>
+    </details>
+    <br>
+    <p><b>Level 4</b> is much more complex than previous levels. This is because it is the last line where you <em>have</em> to come up with a solution for a problem, and as such it also covers development flow. The chart provided on this page shows a potentially simplified development flow, though, since it is not the focus of SupOps, and there are other concepts and methodologies, that define different ideals, including DevOps.</p>
+    <p>Similar to L2 there are likely multiple teams here, so the ticket can bounce between them for some time, but once all information is gathered, there is a set of questions that <em>needs</em> to be answered. You need to determine if the ticket is being closed without a resolution for some <em>valid</em> reason (more on that later) or if it is resolved through development. Note, that not only bugs should be able to reach this level, but also features. Whether lack of them is already causing issues (overly complex user flow), make investigations more difficult (lack of logs) or they are just nice-to-haves does not matter: ideas that come to people while solving issues are a <em>valuable</em> resource, and need to be written down in some way. That does not necessarily mean, that you act on them right away - prioritization is still required based on company's goals, existing backlog and available resources. Regardless, L4 is where the issue needs to be resolved or if it's not, resolved, there needs to be a clear explanation of why.</p>
+    <img loading="lazy" decoding="async" class="w50pc middle block gallery_zoom" src="/assets/images/supops/memes/priorities.gif" alt="Priorities">
+    <p>Keep in mind, that even if we are talking about a bug fix, change management processes should be followed. You can have some sort of shortcut for time-sensitive fixes, but everything still needs to be documented, tested, reviewed and approved. Ensure that business side of affected product/process is at least aware of the changes, better yet - let them test and confirm the fix, too. Include people from support teams as well: they may know the product even better than developers in some cases, and can predict side-effects from suggested solutions. They also should be aware of steps, that may be required in case something goes wrong with the change, because they may need to take a hit from angry users.</p>
+    <p>This also deserves a separate mention: <em>do</em> invest into testing flow, where end-users (whether internal or external) validate the change. It may seem too expensive in terms of people's time at first, but it does reduce chances issues caused by users using the software incorrectly in some way, and help test for potential edge-cases. Having some sort of beta-test program for end users also helps to build trust, if you actively engage with and listen to participants.</p>
+    <a class="button supops_next_slide" href="/supops/interoperability">
+        <img loading="lazy" decoding="async" src="/assets/images/supops/navigation/map.svg" alt="Next slide icon" class="no_tooltip">
+        <span>Track the flow</span>
+        <img loading="lazy" decoding="async" src="/assets/images/supops/navigation/map.svg" alt="Next slide icon" class="no_tooltip">
+    </a>
+</section>

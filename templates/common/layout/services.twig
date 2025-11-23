@@ -12,6 +12,8 @@
     {{ include('usercontrol/usercontrol.twig') }}
 {% elseif service_name == 'talks' %}
     {{ include('talks/talks.twig') }}
+{% elseif service_name == 'supops' %}
+    {{ include('supops/supops.twig') }}
 {% elseif service_name == 'games' %}
     {{ include('games/games.twig') }}
 {% elseif service_name == 'styling_test' %}

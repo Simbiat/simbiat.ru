@@ -1,0 +1,38 @@
+<section>
+    <figure>
+        <a class="gallery_zoom no_new_tab_icon" href="/assets/images/supops/charts/resolution.png" target="_blank">
+            <img loading="lazy" decoding="async" src="/assets/images/supops/charts/resolution.png" alt="Overall flow" tabindex="0">
+        </a>
+    </figure>
+    <details>
+        <summary>Mermaid code</summary>
+        <code>
+{{ include('supops/charts/resolution.mermaid') }}
+        </code>
+    </details>
+    <p>Ticket can be closed on any of the levels, but will require several steps.</p>
+    <p>First one is root cause analysis. If you have a specific process or framework for that - that's amazing. The important thing is to identify the root cause(s) and any contributing factors and document them in the ticket. Remember, that even if an issue was caused by action of an internal user - they are not to blame, they exposed a potential flaw in the product/process, that now can be fixed for the sake of improvement. It is recommended to read up on articles about blameless RCA to avoid finger-pointing and to devise your own process.</p>
+    <p>Second step is determining whether documentation (or more broadly L0 support) update is required as result of that analysis and chosen resolution. If there is anything that can improve L0 - share it. Remember, that whatever resources you have in L0 are accessible to lower levels of support, and thus can benefit them, too.</p>
+    <img loading="lazy" decoding="async" class="w50pc middle block gallery_zoom" src="/assets/images/supops/memes/sharing.gif" alt="Sharing">
+    <p>Updating L0 can be a resolution by itself, and then marking a ticket as resolved will mean applying respective sub-status or tag, as well. But it's not the only possible resolution. Here is the minimal set:</p>
+    <ul class="suppos_list_resolutions">
+        <li><strong>Configuration</strong>: resolved by updating configuration (whether user-side or product-side).</li>
+        <li><strong>Duplicate</strong>: the ticket is duplicate of an existing one. Original one should be linked, and reporter should be added as watcher to it, if the issue is still ongoing.</li>
+        <li><strong>Bug</strong>: bug was fixed. Reserved for L4 by default, but depending on internal processes some minor bugs <em>may</em> be fixed by L3, if same change control procedures are followed.</li>
+        <li><strong>Feature</strong>: new feature was implemented or existing one was enhanced (reserved for L4 only).</li>
+        <li><strong>Documentation</strong>: issue resolved by updating L0 resources. Should be possible to do by any support level, but with appropriate change control processes in place.</li>
+        <li><strong>Design</strong>: working as designed/known limitation, no plan or possibility to address. Should mostly be used by L4, but depends on original issue raised.</li>
+        <li><strong>3rd party</strong>: caused and resolved by external partner(s).</li>
+        <li><strong>Specialist</strong>: resolved by last assignee, without a need to escalate to next level or update documentation (reserved for L1, L2 and L3).</li>
+        <li><strong>Timeout</strong>: additional information to clarify the issue was requested from the user, but none was provided in timely manner. Reserved for L1, L2 and L3, and implies, that the issue is not reproducible. If it is - the status should not be marked as resolved even if unable to get information from the user.</li>
+        <li><strong>Cancelled</strong>: ticket was cancelled. There may be various valid reasons for cancellation. For example, user requested to cancel it (issue self-resolved), or ticket was raised for something, that is not handled through tickets (like granting access to internal system), or as result of clean-up of the backlog (issue was considered a low-priority bug or feature, but something in the product changed, that made it no longer reproducible and no longer applicable). Clear justification of cancellation should exist in the ticket's history.</li>
+    </ul>
+    <img loading="lazy" decoding="async" class="w50pc middle block gallery_zoom" src="/assets/images/supops/memes/flex_seal.gif" alt="Flex Seal">
+    <p>Regardless of sub-status for resolution, that you select, the ticket should not be closed right away. It should be possible to <em>"contest"</em> the resolution by the user. Not necessarily because they did not like it (we would prefer to avoid such resolutions), but because the issue was not really fixed for them, or the ticket timed out, but user wants to resume conversation. There should be a clear grace period (for example 14 days, but may be configurable per product or per service level), when ticket can be re-opened (with <em>>Reopened</em> status), but once it expires, it should not be possible to reopen the ticket, and potentially modify some of the fields in it. At the same time, if user tries to update it after closure, it would be best to automatically create a <em>>new</em> ticket with reference to the old one.</p>
+    <p>Speaking of automation: use it for notifying the user about progress. You do not have to notify about everything, of course, but changes in status (aside from development specific ones) and your questions to the user should be sent out via user selected method(s). They also should be able to view all of their current and past tickets regardless of the status, and be able to update the open ones, if required.</p>
+    <a class="button supops_next_slide" href="/supops/scale">
+        <img loading="lazy" decoding="async" src="/assets/images/supops/navigation/expand.svg" alt="Next slide icon" class="no_tooltip">
+        <span>Scale the process</span>
+        <img loading="lazy" decoding="async" src="/assets/images/supops/navigation/expand.svg" alt="Next slide icon" class="no_tooltip">
+    </a>
+</section>

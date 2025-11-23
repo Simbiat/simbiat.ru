@@ -1,0 +1,36 @@
+flowchart LR
+    Overall[["From overall flow"]]
+    L2New["L2 New"]
+    L2Reopen[["Resolution"]]
+    L2Ass["L2 Assigned"]
+    L2Prog["L2 In Progress"]
+    L2MoreInfo{"Is more<br>information<br>required?"}
+    L2FromWhom{"From whom?"}
+    L2WFC@{ shape: delay, label: "L2 Waiting for User"}
+    L2WFO@{ shape: delay, label: "L2 Waiting for Other Group"}
+    L2ToOtherTeam{"Is<br>reassignment<br>to another team<br>required?"}
+    L2Timeout{"Was the<br>information<br>provided in a<br>timely manner?"}
+    L2Reassign["Reassign to different team"]
+    L2Escalate{"Is<br>level<br>change<br>required?"}
+    L2ToResolve[["Resolution"]]
+    L2ToL3[["Escalate to L3"]]
+    L2Reopen --> L2Ass
+    Overall --> L2New --> L2Ass --> L2Prog
+    L2Prog --> L2MoreInfo
+    L2MoreInfo -->|Yes| L2FromWhom
+    L2FromWhom -->|Other group| L2WFO --> L2Prog
+    L2FromWhom -->|User| L2WFC --> L2Timeout
+    L2Timeout -->|Yes| L2Prog
+    L2MoreInfo -->|No| L2ToOtherTeam
+    L2ToOtherTeam -->|Yes| L2Escalate
+    L2Escalate -->|No| L2Reassign -->|Update team, unassign specialist| L2New
+    L2Escalate -->|Yes| L2ToL3
+    L2Timeout -->|No| L2ToResolve
+    L2ToOtherTeam -->|No| L2ToResolve
+
+    classDef L2Style fill:#00B8A9,color:#FFFFFF
+    classDef L3Style fill:#00857A,color:#FFFFFF
+    classDef ResolutionStyle fill:#54157B,color:#FFFFFF
+    class Overall L2Style
+    class L2ToL3 L3Style
+    class L2Reopen,L2ToResolve ResolutionStyle

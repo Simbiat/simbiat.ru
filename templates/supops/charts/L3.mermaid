@@ -1,0 +1,32 @@
+flowchart LR
+    Overall[["From overall flow"]]
+    L3New["L3 New"]
+    L3Reopen[["Resolution"]]
+    L3Ass["L3 Assigned"]
+    L3Prog["L3 In Progress"]
+    L3MoreInfo{"Is more<br>information<br>required?"}
+    L3FromWhom{"From whom?"}
+    L3WFC@{ shape: delay, label: "L3 Waiting for User"}
+    L3WFO@{ shape: delay, label: "L3 Waiting for Other Group"}
+    L3Timeout{"Was the<br>information<br>provided in a<br>timely manner?"}
+    L3Escalate{"Is<br>level<br>change<br>required?"}
+    L3ToResolve[["Resolution"]]
+    L3ToL4[["Escalate to L4"]]
+    Overall --> L3New --> L3Ass --> L3Prog
+    L3Reopen --> L3Ass
+    L3Prog --> L3MoreInfo
+    L3MoreInfo -->|Yes| L3FromWhom
+    L3FromWhom -->|Other group| L3WFO --> L3Prog
+    L3FromWhom -->|User| L3WFC --> L3Timeout
+    L3Timeout -->|Yes| L3Prog
+    L3MoreInfo -->|No| L3Escalate
+    L3Escalate -->|Yes| L3ToL4
+    L3Timeout -->|No| L3ToResolve
+    L3Escalate -->|No| L3ToResolve
+
+    classDef L3Style fill:#00857A,color:#FFFFFF
+    classDef L4Style fill:#003F5C,color:#FFFFFF
+    classDef ResolutionStyle fill:#54157B,color:#FFFFFF
+    class Overall L3Style
+    class L3ToL4 L4Style
+    class L3Reopen,L3ToResolve ResolutionStyle

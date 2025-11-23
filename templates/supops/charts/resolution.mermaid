@@ -1,0 +1,36 @@
+flowchart TB
+    Overall[["From overall flow"]]
+    %% Resolution
+    subgraph Resolution["Resolution substatuses"]
+        direction LR
+        ResConf["Configuration"]
+        ResDuplicate["Duplicate"]
+        ResBug["Bug<br>(only for L4)"]
+        ResFeat["Feature<br>(only for L4)"]
+        ResDoc["Documentation"]
+        ResDes["Design<br>(mainly for L4)"]
+        Res3rd["3rd party"]
+        ResCancel["Cancelled"]
+        ResSpecialist["Specialist<br>(only for L1-L3)"]
+        ResTime["Timeout<br>(only for L1-L3)"]
+        %% This is to render items as a horizontal list
+        ResConf ~~~ ResDuplicate ~~~ ResBug ~~~ ResFeat ~~~ ResDoc ~~~ ResDes ~~~ Res3rd ~~~ ResCancel ~~~ ResSpecialist ~~~ ResTime
+    end
+
+    L4IfDoc{"Is L0 update required?"}
+    L4ActDoc@{ shape: trap-t, label: "Update L0"}
+    Overall --> RCAc@{ shape: trap-t, label: "Root cause analysis"} --> L4IfDoc
+    L4IfDoc -->|Yes| L4ActDoc --> Resolution
+    L4IfDoc -->|No| Resolution
+    IfReopen{"Is reopening required?"}
+    Resolution -->|Wait| Wait@{ shape: delay, label: "Grace period"} --> IfReopen
+    IfReopen -->|No| End(["Closed"])
+    IfReopen -->|Yes| ReopenStatus@{ shape: trap-t, label: "Change status<br>to Reopened"} --> PointerToReopen[["To overall flow"]]
+
+    %% classes for styling
+    classDef L0Style fill:#A7DFF9,color:#212121
+    classDef DevStyle fill:#54157B,color:#FFFFFF
+
+    %% Assigning classes
+    class L4ActDoc L0Style
+    class Overall,PointerToReopen DevStyle

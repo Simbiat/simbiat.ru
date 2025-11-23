@@ -1,0 +1,67 @@
+flowchart LR
+    Overall[["From overall flow"]]
+    L4New["L4 New"]
+    L4Reopen[["Resolution"]]
+    L4Ass["L4 Assigned"]
+    L4Prog["L4 In Progress"]
+    L4MoreInfo{"Is more<br>information<br>required?"}
+    L4FromWhom{"From whom?"}
+    L4WFC@{ shape: delay, label: "L4 Waiting for User"}
+    L4WFO@{ shape: delay, label: "L4 Waiting for Other Group"}
+    L4Timeout{"Was the<br>information<br>provided in a<br>timely manner?"}
+    L4ToOtherTeam{"Is<br>reassignment<br>to another team<br>required?"}
+    L4ToResolve[["Resolution"]]
+    L4IfConf{"Is it a<br>misconfiguration?"}
+    L4IfDuplicate{"Is this a<br>duplicate?"}
+    L4IfBug{"Is this<br>a bug?"}
+    L4IfBug2{"Is this<br>a high<br>priority?"}
+    L4IfFeat{"Is this a<br>missing<br>feature?"}
+    L4IfFeat2{"Is<br>implementation<br>feasible and<br>justified?"}
+    L4IfDes{"Is this<br>by design?"}
+    L4If3rd{"Is this<br>caused by<br>3rd party?"}
+    L4If3rd2{"Can we<br>handle such<br>situations<br>gracefully?"}
+    L4ActConf@{ shape: trap-t, label: "Update configuration"}
+    L4Backlog@{ shape: delay, label: "L4 Backlog"}
+    L4LinkDuplicate@{ shape: trap-t, label: "Link to original ticket"}
+    L4WatchDuplicate@{ shape: trap-t, label: "Add reporter as watcher in original ticket"}
+
+    subgraph Development
+        direction TB
+        L4Dev["L4 In Development"] --> L4CR["L4 Code Review"] --> L4Testing["L4 Testing"] --> L4InApp["L4 Pending Approval"] --> L4InImp["L4 Pending Implementation"]
+    end
+
+    Overall --> L4New --> L4Ass --> L4Prog
+    L4Reopen --> L4Ass
+    L4Prog --> L4MoreInfo
+    L4MoreInfo -->|Yes| L4FromWhom
+    L4FromWhom -->|Other group| L4WFO --> L4Prog
+    L4FromWhom -->|User| L4WFC --> L4Timeout
+    L4Timeout -->|Yes| L4Prog
+    L4MoreInfo -->|No| L4ToOtherTeam
+    L4ToOtherTeam -->|Yes| L4New
+    L4Timeout -->|No| L4ToResolve
+    L4ToOtherTeam -->|No| L4IfDuplicate
+    L4IfDuplicate -->|Yes| L4LinkDuplicate --> L4WatchDuplicate --> L4ToResolve
+    L4IfDuplicate -->|No| L4IfConf
+    L4IfConf -->|Yes| L4ActConf --> L4ToResolve
+    L4IfConf -->|No| L4If3rd
+    L4If3rd -->|Yes| L4If3rd2
+    L4If3rd2 -->|No| L4ToResolve
+    L4If3rd2 -->|Yes| L4IfBug
+    L4If3rd -->|No| L4IfDes
+    L4IfDes -->|Yes| L4IfFeat
+    L4IfDes -->|No| L4IfBug
+    L4IfBug -->|Yes| L4IfBug2
+    L4IfBug2 -->|No| L4Backlog
+    L4IfBug2 -->|Yes| Development
+    L4IfBug -->|No| L4IfFeat
+    L4IfFeat -->|Yes| L4IfFeat2
+    L4IfFeat -->|No| L4ToResolve
+    L4IfFeat2 -->|Yes| L4Backlog
+    L4IfFeat2 -->|No| L4ToResolve
+    L4Backlog --> Development --> L4ToResolve
+
+    classDef L4Style fill:#003F5C,color:#FFFFFF
+    classDef ResolutionStyle fill:#54157B,color:#FFFFFF
+    class Overall L4Style
+    class L4Reopen,L4ToResolve ResolutionStyle

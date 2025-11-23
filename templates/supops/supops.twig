@@ -1,0 +1,68 @@
+<section>
+    {% if not subservice_name or subservice_name == 'pitch' %}
+        <article class="margin_05rem">
+            <p>We all heard this, right?</p>
+            <blockquote>Have you tried turning it off and back on?</blockquote>
+            <p>Or something like:</p>
+            <blockquote>Working fine for me, closing the ticket.</blockquote>
+            <p>Or something even worse:</p>
+            <blockquote>Try reinstalling Windows.</blockquote>
+            <p>No matter how much we pay for some service or product, when something does not work well, we tend to get template, almost bot-like, answers. We are bombarded with unreasonable and outright irrelevant questions or those already answered in previous messages. Surely, dear reader, you know the frustration that this can cause. So much frustration, that you are ready to abandon the product because of this kind of <a href=/talks/sections/23/" target="_blank">bad support</a>.</p>
+            <p>But have you ever considered that <em>your own company</em> may be providing the same levels of frustration and, as result, costing you more money than what you would have spent on a good team?</p>
+            <p>That's exactly the problem SupOps strives to solve!</p>
+            <img loading="lazy" decoding="async" class="cursor_pointer" alt="SupOps logo" src="/assets/images/supops/logo/rectangle_color.svg">
+            <p>But first, let's formulate what actually <em>is</em> the problem, so we can turn frustration into a competitive advantage. Click the button below or use the left-side menu (it may be hidden in hamburger 🍔 menu on smaller screens) to go to next page.</p>
+            <a class="button supops_next_slide" href="/supops/problem">
+                <img loading="lazy" decoding="async" src="/assets/images/supops/navigation/problem.svg" alt="Next slide icon" class="no_tooltip">
+                <span>Investigate the problem in detail</span>
+                <img loading="lazy" decoding="async" src="/assets/images/supops/navigation/problem.svg" alt="Next slide icon" class="no_tooltip">
+            </a>
+        </article>
+    {% else %}
+        <article class="margin_05rem">
+            {% if subservice_name == 'problem' %}
+                {{ include('supops/problem.twig') }}
+            {% elseif subservice_name == 'solution' %}
+                {{ include('supops/solution.twig') }}
+            {% elseif subservice_name == 'glossary' %}
+                {{ include('supops/glossary.twig') }}
+            {% elseif subservice_name == 'facts' %}
+                {{ include('supops/facts/facts.twig') }}
+            {% elseif subservice_name == 'feedback' %}
+                {{ include('supops/facts/feedback.twig') }}
+            {% elseif subservice_name == 'automation' %}
+                {{ include('supops/facts/automation.twig') }}
+            {% elseif subservice_name == 'collaboration' %}
+                {{ include('supops/facts/collaboration.twig') }}
+            {% elseif subservice_name == 'transparency' %}
+                {{ include('supops/facts/transparency.twig') }}
+            {% elseif subservice_name == 'sustainability' %}
+                {{ include('supops/facts/sustainability.twig') }}
+            {% elseif subservice_name == 'flow' %}
+                {{ include('supops/flow.twig') }}
+            {% elseif subservice_name == 'l0' %}
+                {{ include('supops/levels/L0.twig') }}
+            {% elseif subservice_name == 'l1' %}
+                {{ include('supops/levels/L1.twig') }}
+            {% elseif subservice_name == 'l2' %}
+                {{ include('supops/levels/L2.twig') }}
+            {% elseif subservice_name == 'l3' %}
+                {{ include('supops/levels/L3.twig') }}
+            {% elseif subservice_name == 'l4' %}
+                {{ include('supops/levels/L4.twig') }}
+            {% elseif subservice_name == 'interoperability' %}
+                {{ include('supops/interoperability.twig') }}
+            {% elseif subservice_name == 'resolution' %}
+                {{ include('supops/resolution.twig') }}
+            {% elseif subservice_name == 'scale' %}
+                {{ include('supops/scale.twig') }}
+            {% elseif subservice_name == 'metrics' %}
+                {{ include('supops/metrics/metrics.twig') }}
+            {% elseif subservice_name == 'comparison' %}
+                {{ include('supops/comparison.twig') }}
+            {% elseif subservice_name == 'needs' %}
+                {{ include('supops/needs.twig') }}
+            {% endif %}
+        </article>
+    {% endif %}
+</section>

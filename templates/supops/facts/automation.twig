@@ -1,0 +1,57 @@
+<section>
+    <h2>📌 Principle</h2>
+    <p>Automation</p>
+    <h2>❓ What</h2>
+    <p>When you know an issue can happen - act proactively: monitor for signs, block certain actions, and if all fails - notify immediately about the issue occurring after all. For frequent issues, find ways to minimize number of manual actions done by support agents, without compromising security. If you use multiple different system, find ways to teach them "to talk" with each other without involving agents unnecessarily.</p>
+    <h2>🪙 Business impact</h2>
+    <ul>
+        <li>Delayed reaction to issues</li>
+        <li>Repetitive time-consuming tasks</li>
+        <li>Manual information exchange</li>
+    </ul>
+    <h2>❌ Poor implementation</h2>
+    <ul>
+        <li>Promotes reactive resolutions, often after a business escalation</li>
+        <li>Zombifies agents by demanding constant repetitive manual tasks.</li>
+        <li>Necessitates access to multiple tools at the same time to get the whole picture.</li>
+    </ul>
+    <h2>✅ Good implementation</h2>
+    <ul>
+        <li>Promotes proactive resolutions, often before there is user impact.</li>
+        <li>Frees agents' time to spend on deeper and more complex investigations.</li>
+        <li>Allows tools to communicate with each other giving agents a wider view of the product state.</li>
+    </ul>
+    <h2>🪢 Alignment</h2>
+    <p>SRE Error-budget-driven automation and RPA</p>
+    <h2>🖼️ Logo</h2>
+    <img loading="lazy" decoding="async" class="float_left gallery_zoom supops_fact" src="/assets/images/supops/facts/automation.svg" alt="Automation icon">
+    <p>Represented by a gear, since even a small element can drive a much bigger machine. And because it can look like a head when set inside the Feedback's headset.</p>
+    <h2 class="float_clear">🛠️ Common tools</h2>
+    <ul>
+        <li>Notification systems</li>
+        <li>System integrations</li>
+        <li>Monitoring tools</li>
+        <li>Chatbots</li>
+        <li>User input validation</li>
+        <li>User input sanitization</li>
+        <li>Stored procedures</li>
+    </ul>
+    <h2>📊 Metrics</h2>
+    {{ include('supops/metrics/automation.twig') }}
+    <h2>💡 Tips</h2>
+    <ul>
+        <li>Monitor logs for potential errors and automatically notify or raise a ticket in case of their occurrence (at least for critical ones).</li>
+        <li>Validate and sanitize user input blocking it before it reaches your database, but also clearly explain to user what went wrong.</li>
+        <li>Use chatbots, if possible, but use them to guide users to already existing articles, rather than hallucinate solutions themselves.</li>
+        <li>If using chatbots allow direct contact with a human right away, when the chat starts.</li>
+        <li>Setup automatic notifications for ticket status changes and other events, while allowing users (including external ones) to adjust settings for those notifications.</li>
+        <li>Where possible consider automatic ticket assignment, for example, based on keywords, as well automatic status changes based on certain events.</li>
+        <li>Leverage system integrations, ideally allowing to get all information stored in non-ticketing systems through the ticketing system (without compromising security or privacy).</li>
+        <li>Leverage template responses, but use them smartly and customize them depending on situation (that is previous messages from the user).</li>
+    </ul>
+    <a class="button supops_next_slide" href="/supops/collaboration">
+        <img loading="lazy" decoding="async" src="/assets/images/supops/facts/collaboration.svg" alt="Next slide icon" class="no_tooltip">
+        <span>Collaborate now</span>
+        <img loading="lazy" decoding="async" src="/assets/images/supops/facts/collaboration.svg" alt="Next slide icon" class="no_tooltip">
+    </a>
+</section>

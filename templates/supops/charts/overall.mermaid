@@ -1,0 +1,81 @@
+flowchart TB
+    %% Start of the flow
+        Start(["Start"])
+        Satisfied(["Satisfied user"])
+        User@{ shape: bow-rect, label: "User" }
+    Issue{"Has an issue<br>occurred?"}
+    L0Result{"Was the issue<br>resolved?"}
+    Start --> User
+    User --> Issue
+    Issue -->|No| Satisfied
+    Issue --->|Yes| L0
+
+    %% L0
+    subgraph L0["Self‑service (L0)"]
+        direction LR
+        L0Tooltip@{ shape: docs, label: "Tooltips"}
+        L0Docs@{ shape: docs, label: "Documentation"}
+        L0Known@{ shape: docs, label: "Known issues list"}
+        L0KnownL@{ shape: docs, label: "Known limitations list"}
+        L0Changelog@{ shape: docs, label: "Changelogs"}
+        L0Tickets@{ shape: docs, label: "Existing tickets"}
+        L0Forum@{ shape: docs, label: "Forum"}
+        L0Blog@{ shape: docs, label: "Blog"}
+        L0Bot@{ shape: docs, label: "Chatbots"}
+        L0Etc@{ shape: docs, label: "etc."}
+        %% This is to render items as a horizontal list
+        L0Tooltip ~~~ L0Docs ~~~ L0Known ~~~ L0KnownL ~~~ L0Changelog ~~~ L0Tickets ~~~ L0Forum ~~~ L0Blog ~~~ L0Bot ~~~ L0Etc
+    end
+    L0 --> L0Result
+    L0Result -->|No| Ticket@{ shape: manual-input, label: "Ticket creation<br>manual or automated"} --> TicketLife
+    L0Result -->|Yes| L0Success@{ shape: trap-t, label: "Record<br>self‑service<br>outcome"} --> Satisfied
+    TicketLife --> Satisfied
+
+    subgraph TicketLife["Ticket life"]
+        direction TB
+        subgraph Investigation
+            direction TB
+            %% L1
+            L1[["L1 – First‑line: Help Desk, Service Desk, etc."]]
+
+            subgraph IncMan["Incident management"]
+                %% L2
+                L2[["L2: Tech Support, Customer Success, etc."]]
+
+                subgraph ProbMan["Problem management"]
+                    %% L3
+                    L3[["L3"]]
+
+                    %% L4
+                    L4[["L4 – Development, Product or 3rd party"]]
+                end
+            end
+
+            %% Normal escalation paths
+            L1 -->|Escalate| L2
+            L2 -->|Escalate| L3
+            L3 -->|Escalate| L4
+            %% Potential shortcuts
+            L1 -.->|"Problem<br>or potential<br>bug with<br>strong evidence"| L3
+            L1 -.->|"Obvious<br> new bug with<br>strong evidence<br> or post-release<br>hyper-care"| L4
+            L2 -.->|"Obvious<br>bug with<br>strong evidence"| L4
+        end
+        %% This is just to force resolution to be below L4
+        Investigation --> Resolution[["Resolution"]]
+    end
+
+    %% classes for styling
+    classDef L0Style fill:#A7DFF9,color:#212121
+    classDef L1Style fill:#5AB8F5,color:#212121
+    classDef L2Style fill:#00B8A9,color:#FFFFFF
+    classDef L3Style fill:#00857A,color:#FFFFFF
+    classDef L4Style fill:#003F5C,color:#FFFFFF
+    classDef ResolutionStyle fill:#54157B,color:#FFFFFF
+
+    %% Assigning classes
+    class L0 L0Style
+    class L1 L1Style
+    class L2 L2Style
+    class L3 L3Style
+    class L4 L4Style
+    class Resolution ResolutionStyle

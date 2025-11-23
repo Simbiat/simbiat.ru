@@ -110,6 +110,83 @@
         </li>
         <li class="nav_element">
             <div class="nav_line">
+                <details class="nav_cat{% if service_name == 'supops' %} persistent{% endif %}" {% if service_name == 'supops' %}open{% endif %}>
+                    <summary class="right_summary">
+                        <img loading="lazy" decoding="async" class="nav_icon" alt="Talks" src="/assets/images/supops/logo/square_navigation.svg"><span itemprop="name">SupOps</span>
+                    </summary>
+                    <ul>
+                        <li{% if service_name == 'supops' and (not subservice_name or subservice_name == 'pitch') %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops" target="_self" itemprop="url"><span itemprop="name">The Pitch</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'problem' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/problem" target="_self" itemprop="url"><span itemprop="name">The Problem</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'solution' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/solution" target="_self" itemprop="url"><span itemprop="name">The Solution</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'glossary' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/glossary" target="_self" itemprop="url"><span itemprop="name">The Glossary</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'facts' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/facts" target="_self" itemprop="url"><span itemprop="name">The FACTS</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'feedback' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/feedback" target="_self" itemprop="url"><span itemprop="name">Feedback</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'automation' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/automation" target="_self" itemprop="url"><span itemprop="name">Automation</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'collaboration' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/collaboration" target="_self" itemprop="url"><span itemprop="name">Collaboration</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'transparency' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/transparency" target="_self" itemprop="url"><span itemprop="name">Transparency</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'sustainability' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/sustainability" target="_self" itemprop="url"><span itemprop="name">Sustainability</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'flow' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/flow" target="_self" itemprop="url"><span itemprop="name">The Flow</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'l0' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/l0" target="_self" itemprop="url"><span itemprop="name">Level 0</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'l1' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/l1" target="_self" itemprop="url"><span itemprop="name">Level 1</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'l2' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/l2" target="_self" itemprop="url"><span itemprop="name">Level 2</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'l3' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/l3" target="_self" itemprop="url"><span itemprop="name">Level 3</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'l4' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/l4" target="_self" itemprop="url"><span itemprop="name">Level 4</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'interoperability' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/interoperability" target="_self" itemprop="url"><span itemprop="name">The Interoperability</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'resolution' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/resolution" target="_self" itemprop="url"><span itemprop="name">The Resolution</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'scale' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/scale" target="_self" itemprop="url"><span itemprop="name">The Scale</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'metrics' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/metrics" target="_self" itemprop="url"><span itemprop="name">The Metrics</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'comparison' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/comparison" target="_self" itemprop="url"><span itemprop="name">The Comparison</span></a>
+                        </li>
+                        <li{% if service_name == 'supops' and subservice_name == 'needs' %} class="current"{% endif %}>
+                            <a class="nav_item" href="/supops/needs" target="_self" itemprop="url"><span itemprop="name">The Needs</span></a>
+                        </li>
+                    </ul>
+                </details>
+            </div>
+        </li>
+        <li class="nav_element">
+            <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'games' %} persistent{% endif %}" {% if service_name == 'games' %}open{% endif %}>
                     <summary class="right_summary">
                         <img loading="lazy" decoding="async" class="nav_icon" alt="Games" data-tooltip="Games" src="/assets/images/navigation/gamepad.svg"><span itemprop="name">Games</span>
@@ -173,13 +250,13 @@
         </li>
     </ul>
     <address id="footer_contacts">
-        <a href="mailto:support@simbiat.eu" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/email.svg" alt="Email"></a>
-        <a href="https://facebook.com/SimbiatSoftware/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/facebook.svg" alt="Facebook"></a>
-        <a href="https://vk.com/simbiat19" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/VK.svg" alt="VK"></a>
-        <a href="https://kitsu.io/users/Simbiat" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/kitsu.svg" alt="Kitsu"></a>
-        <a href="https://www.linkedin.com/in/simbiat19/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/linkedin.svg" alt="LinkedIn"></a>
-        <a href="https://www.instagram.com/simbiat19/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/instagram.svg" alt="Instagram"></a>
-        <a href="https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/youtube.svg" alt="Youtube"></a>
-        <a href="https://github.com/Simbiat" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 inverted_30 cursor_pointer" src="/assets/images/social/github.svg" alt="GitHub"></a>
+        <a rel="noopener noreferrer" href="mailto:support@simbiat.eu" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/email.svg" alt="Email"></a>
+        <a rel="noopener noreferrer" href="https://facebook.com/SimbiatSoftware/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/facebook.svg" alt="Facebook"></a>
+        <a rel="noopener noreferrer" href="https://vk.com/simbiat19" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/VK.svg" alt="VK"></a>
+        <a rel="noopener noreferrer" href="https://kitsu.io/users/Simbiat" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/kitsu.svg" alt="Kitsu"></a>
+        <a rel="noopener noreferrer" href="https://www.linkedin.com/in/simbiat19/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/linkedin.svg" alt="LinkedIn"></a>
+        <a rel="noopener noreferrer" href="https://www.instagram.com/simbiat19/" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/instagram.svg" alt="Instagram"></a>
+        <a rel="noopener noreferrer" href="https://www.youtube.com/channel/UCyzixPty8XEiUWC4c1jns_Q" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 cursor_pointer" src="/assets/images/social/youtube.svg" alt="Youtube"></a>
+        <a rel="noopener noreferrer" href="https://github.com/Simbiat" target="_blank" class="no_new_tab_icon no_outline"><img loading="lazy" decoding="async" class="link_icon dimmed_70 inverted_30 cursor_pointer" src="/assets/images/social/github.svg" alt="GitHub"></a>
     </address>
 </nav>
