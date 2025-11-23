@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.5",
         "matomo/device-detector": "^6",
         "symfony/html-sanitizer": "^7.3",
         "symfony/mailer": "^7.3",
