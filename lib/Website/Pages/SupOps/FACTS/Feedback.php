@@ -19,4 +19,9 @@ class Feedback extends StaticPage
     protected string $h1 = 'SupOps: Feedback';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Every user voice is a data point; listen, inform, improve';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/facts/feedback.svg',
+        '/assets/images/supops/navigation/automation.svg',
+    ];
 }

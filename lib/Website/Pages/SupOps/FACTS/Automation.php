@@ -19,4 +19,9 @@ class Automation extends StaticPage
     protected string $h1 = 'SupOps: Automation';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Automate the routine, amplify the human';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/facts/automation.svg',
+        '/assets/images/supops/navigation/collaboration.svg',
+    ];
 }

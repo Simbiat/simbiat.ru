@@ -19,4 +19,10 @@ class FACTS extends StaticPage
     protected string $h1 = 'SupOps: The FACTS';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps is built on FACTS';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/memes/everybody_lies.avif',
+        '/assets/images/supops/memes/megazord.avif',
+        '/assets/images/supops/navigation/feedback.svg',
+    ];
 }

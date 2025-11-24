@@ -19,4 +19,9 @@ class Scale extends StaticPage
     protected string $h1 = 'SupOps: The Scale';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Both big and small scale';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/memes/shortcut.webp',
+        '/assets/images/supops/navigation/performance.svg',
+    ];
 }

@@ -19,4 +19,9 @@ class Sustainability extends StaticPage
     protected string $h1 = 'SupOps: Sustainability';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Keep on keeping on';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/facts/sustainability.svg',
+        '/assets/images/supops/navigation/flowchart.svg',
+    ];
 }

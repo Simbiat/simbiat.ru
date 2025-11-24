@@ -19,4 +19,9 @@ class Flow extends StaticPage
     protected string $h1 = 'SupOps: The Flow';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: High-level process flow';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/charts/overall.png',
+        '/assets/images/supops/navigation/journey.svg',
+    ];
 }

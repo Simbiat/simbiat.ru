@@ -19,4 +19,11 @@ class L1 extends StaticPage
     protected string $h1 = 'SupOps: Level 1';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Level 1 specifics of The Flow';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/charts/l1.png',
+        '/assets/images/supops/memes/detective_mode.avif',
+        '/assets/images/supops/memes/bean_waiting.avif',
+        '/assets/images/supops/navigation/escalator.svg',
+    ];
 }

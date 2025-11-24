@@ -19,4 +19,10 @@ class Problem extends StaticPage
     protected string $h1 = 'SupOps: The Problem';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Why does tech support fail?';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/memes/overworked.avif',
+        '/assets/images/supops/memes/trust_me.avif',
+        '/assets/images/supops/navigation/idea.svg',
+    ];
 }

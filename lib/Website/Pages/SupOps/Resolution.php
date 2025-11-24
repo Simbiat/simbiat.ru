@@ -19,4 +19,10 @@ class Resolution extends StaticPage
     protected string $h1 = 'SupOps: The Resolution';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: How to resolve tickets';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/memes/sharing.avif',
+        '/assets/images/supops/memes/flex_seal.avif',
+        '/assets/images/supops/navigation/expand.svg',
+    ];
 }

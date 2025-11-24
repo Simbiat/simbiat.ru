@@ -19,4 +19,9 @@ class Metrics extends StaticPage
     protected string $h1 = 'SupOps: The Metrics';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: Measuring success';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/tech/lumo.svg',
+        '/assets/images/supops/navigation/scales.svg',
+    ];
 }

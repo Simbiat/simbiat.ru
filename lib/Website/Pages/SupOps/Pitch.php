@@ -19,4 +19,9 @@ class Pitch extends StaticPage
     protected string $h1 = 'SupOps: The Pitch';
     #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
     protected string $og_desc = 'SupOps: The Pitch';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/logo/rectangle_color.svg',
+        '/assets/images/supops/navigation/problem.svg',
+    ];
 }
