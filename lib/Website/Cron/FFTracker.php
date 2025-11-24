@@ -205,7 +205,15 @@ class FFTracker
                             ) {
                                 $pages_parsed++;
                                 #Get linkshells
-                                $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
+                                try {
+                                    $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
+                                } catch (\Throwable $exception) {
+                                    if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
+                                        #Take a pause if we were throttled, and pause is allowed
+                                        \sleep(60);
+                                        continue;
+                                    }
+                                }
                                 #Get data
                                 $data = $lodestone->getResult();
                                 $page_total = (int)($data['linkshells']['page_total'] ?? 0);
