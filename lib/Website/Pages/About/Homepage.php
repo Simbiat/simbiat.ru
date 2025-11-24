@@ -29,6 +29,7 @@ class Homepage extends Page
         '/assets/images/ogimages/RadicalResonance.png',
         '/assets/images/ogimages/bictracker.webp',
         '/assets/images/ogimages/fftracker.webp',
+        '/assets/images/supops/logo/ogimage.webp',
     ];
     
     protected function generate(array $path): array
