@@ -444,3 +444,17 @@ UPDATE `talks__alt_links` SET `url`=REPLACE(`url`, 'kitsu.io', 'kitsu.app');
 UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.(app|io)' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
 SET FOREIGN_KEY_CHECKS = 1;
 UPDATE `talks__sections` SET `author` = '4', `editor` = '4' WHERE `talks__sections`.`section_id` IN (6, 7, 8);
+
+UPDATE `cron__schedule` SET `next_run` = '2025-07-30 04:00:00.000000' WHERE `cron__schedule`.`task` = 'ff_update_statistics' AND `cron__schedule`.`arguments` = '' AND `cron__schedule`.`instance` = 1;
+UPDATE `cron__schedule` SET `next_run` = '2025-07-30 05:00:00.000000' WHERE `cron__schedule`.`task` = 'ff_new_linkshells' AND `cron__schedule`.`arguments` = '' AND `cron__schedule`.`instance` = 1;
+
+INSERT INTO `talks__alt_link_types` (`type`, `icon`, `regex`) VALUES ('Reddit', '/assets/images/social/reddit.svg', '(reddit\\.com\\/r\\/[a-zA-Z0-9_]+\\/comments\\/)');
+UPDATE `talks__alt_link_types` SET `regex` = 'proza\\.ru\\/\\d{4}\\/' WHERE `talks__alt_link_types`.`type` = 'Proza.ru';
+UPDATE `talks__alt_link_types` SET `regex` = 'imdb\\.com(\\/title\\/tt\\d+)?\\/review\\/rw\\d+' WHERE `talks__alt_link_types`.`type` = 'IMDB';
+UPDATE `talks__alt_link_types` SET `regex` = '(instagram\\.com|ig\\.me)\\/p\\/' WHERE `talks__alt_link_types`.`type` = 'Instagram';
+UPDATE `talks__alt_link_types` SET `regex` = 'kitsu\\.(app|io)\\/posts\\/\\d+' WHERE `talks__alt_link_types`.`type` = 'Kitsu';
+UPDATE `talks__alt_link_types` SET `regex` = '(linkedin\\.(com|at|cn)|lnkd\\.in)\\/posts\\/' WHERE `talks__alt_link_types`.`type` = 'LinkedIn';
+UPDATE `talks__alt_link_types` SET `regex` = 'stihi\\.ru\\/\\d{4}\\/' WHERE `talks__alt_link_types`.`type` = 'Stihi.ru';
+UPDATE `talks__alt_link_types` SET `regex` = 'vk\\.(com|ru)\\/(feed\\?w=)?wall\\d+_\\d+' WHERE `talks__alt_link_types`.`type` = 'VK';
+UPDATE `talks__alt_link_types` SET `regex` = '((yt|youtu)\\.be|youtube\\.com)\\/watch\\?v=' WHERE `talks__alt_link_types`.`type` = 'YouTube';
+UPDATE `talks__alt_link_types` SET `regex` = '(store\\.steampowered\\.com|steamchina\\.com|steamcommunity\\.com)\\/((id\\/[^\\/]+)\\/recommended\\/\\d+|(app\\/\\d+\\/discussions\\/[A-Za-z0-9]+\\/\\d+))' WHERE `talks__alt_link_types`.`type` = 'Steam';

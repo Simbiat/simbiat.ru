@@ -48,16 +48,7 @@
                     <input form="edit_thread_form" id="cur_thread_clear_icon" name="current_thread[clear_og_image]" type="checkbox">
                     <label for="cur_thread_clear_icon" data-tooltip="If checked will remove custom banner for the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}, replacing it with the default one.<br>Physical file will not be removed on update, it will only be unlinked from the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove banner</label>
                 </div>
-                <details>
-                    <summary>Alternative links</summary>
-                    <p>If the content being posted is available on any of the supported websites, you can add links to them below. Links will be shown below the first post in the thread.</p>
-                    {% for altlink in thread_link_types %}
-                        <span class="float_label">
-                            <input form="edit_thread_form" type="url" aria-required="false" name="current_thread[alt_links][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" value="{{ external_links[altlink.type].url }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
-                            <label for="new_thread_{{ altlink.type }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
-                        </span>
-                    {% endfor %}
-                </details>
+                {{ include('talks/forms/alt_links.twig', {'alt_links_edit': true}) }}
             {% endif %}
             <input role="button" form="edit_thread_form" type="submit" name="current_thread[submit]" id="edit_thread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Update">
             <img id="edit_thread_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Creating {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}..." loading="lazy" decoding="async">

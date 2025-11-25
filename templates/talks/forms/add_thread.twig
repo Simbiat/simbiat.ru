@@ -41,16 +41,7 @@
             </div>
             <br>
         {% endif %}
-        <details>
-            <summary>Alternative links</summary>
-            <p>If the content being posted is available on any of the supported websites, you can add links to them below. Links will be shown below the first post in the thread.</p>
-            {% for altlink in thread_link_types %}
-                <span class="float_label">
-                    <input form="add_thread_form" type="url" aria-required="false" name="new_thread[alt_links][{{ altlink.type }}]" id="new_thread_{{ altlink.type }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255">
-                    <label for="new_thread_{{ altlink.type }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
-                </span>
-            {% endfor %}
-        </details>
+        {{ include('talks/forms/alt_links.twig', {'alt_links_edit': false}) }}
     {% endif %}
     {{ include('common/elements/postform.twig', {'verb': 'add', 'new_thread': true}, with_context = false) }}
     <input role="button" form="add_thread_form" type="submit" name="new_thread[submit]" id="add_thread_submit" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="Post">

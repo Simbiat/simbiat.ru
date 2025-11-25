@@ -46,7 +46,7 @@ input {
         content: '*';
     }
 
-    &:user-invalid {
+    &:invalid {
         border-color: var(--color_failure);
         box-shadow: 0.1rem 0.1rem 0.75rem var(--color_failure), -0.1rem -0.1rem 0.75rem var(--color_failure);
     }
