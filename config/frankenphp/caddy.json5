@@ -49,10 +49,22 @@
                     "simbiat.eu",
                     "simbiat.net",
                     "simbiat.org",
+                    "facts.support",
+                    "supops.support",
+                    "supops.tech",
+                    "supops.eu",
+                    "supops.net",
+                    "supops.org",
                     "www.simbiat.dev",
                     "www.simbiat.eu",
                     "www.simbiat.net",
                     "www.simbiat.org",
+                    "www.facts.support",
+                    "www.supops.support",
+                    "www.supops.tech",
+                    "www.supops.eu",
+                    "www.supops.net",
+                    "www.supops.org",
                     "localhost"
                 ]
             },
@@ -64,10 +76,22 @@
                             "simbiat.eu",
                             "simbiat.net",
                             "simbiat.org",
+                            "facts.support",
+                            "supops.support",
+                            "supops.tech",
+                            "supops.eu",
+                            "supops.net",
+                            "supops.org",
                             "www.simbiat.dev",
                             "www.simbiat.eu",
                             "www.simbiat.net",
                             "www.simbiat.org",
+                            "www.facts.support",
+                            "www.supops.support",
+                            "www.supops.tech",
+                            "www.supops.eu",
+                            "www.supops.net",
+                            "www.supops.org",
                             "localhost"
                         ],
                         "issuers": [
@@ -75,7 +99,7 @@
                             {
                                 "module": "acme",
                                 "ca": "https://acme-v02.api.letsencrypt.org/directory",
-                                "email": "support@simbiat.eu",
+                                "email": "letsencrypt@simbiat.eu",
                                 "acme_timeout": "60s"
                             },
                             //Internal is supposed to be used only for localhost
@@ -810,6 +834,38 @@
                                     "headers": {
                                         "Location": [
                                             "https://www.simbiat.eu{http.request.uri}"
+                                        ]
+                                    },
+                                    "status_code": 308
+                                }
+                            ]
+                        },
+                        //Force SupOps page
+                        {
+                            "match": [
+                                {
+                                    "host": [
+                                        "facts.support",
+                                        "supops.support",
+                                        "supops.tech",
+                                        "supops.eu",
+                                        "supops.net",
+                                        "supops.org",
+                                        "www.facts.support",
+                                        "www.supops.support",
+                                        "www.supops.tech",
+                                        "www.supops.eu",
+                                        "www.supops.net",
+                                        "www.supops.org"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "static_response",
+                                    "headers": {
+                                        "Location": [
+                                            "https://www.simbiat.eu/supops"
                                         ]
                                     },
                                     "status_code": 308
