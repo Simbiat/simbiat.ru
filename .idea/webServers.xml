@@ -2,11 +2,11 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="a1b89345-f17e-493b-ade1-dcef9695e549" name="local.simbiat.ru" url="https://local.simbiat.ru">
+      <webServer id="a1b89345-f17e-493b-ade1-dcef9695e549" name="local.simbiat.ru" url="https://localhost">
         <fileTransfer accessType="LOCAL" port="0" />
       </webServer>
-      <webServer id="2f49962b-eba5-4df8-958e-bb6f81f23f56" name="www.simbiat.dev" url="https://www.simbiat.dev">
-        <fileTransfer rootFolder="/usr/local/webserver/" accessType="SFTP" host="152.53.182.176" port="22" sshConfigId="0d17ec04-8b18-4d60-b8d8-fefecbd5678b" sshConfig="administrator@152.53.182.176:22 password">
+      <webServer id="2f49962b-eba5-4df8-958e-bb6f81f23f56" name="www.simbiat.dev" url="https://www.simbiat.eu">
+        <fileTransfer rootFolder="/usr/local/webserver/" accessType="SFTP" host="simbiat.eu" port="22" sshConfigId="0d17ec04-8b18-4d60-b8d8-fefecbd5678b" sshConfig="administrator@simbiat.eu:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" enabledFtpsProtocols="TLSv1,TLSv1.1,TLSv1.2" keepAliveCommand="LIST" connections="2" passiveMode="true" shareSSLContext="true" isUseRsync="true">
               <option name="ftpsDisabledTls13" value="true" />
