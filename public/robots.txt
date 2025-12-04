@@ -12,3 +12,6 @@ Disallow: /lib/
 Disallow: /twig/
 Disallow: /api/
 Disallow: /uc/
+
+user-agent: Google-Extended
+disallow: *
