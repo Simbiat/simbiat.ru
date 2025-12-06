@@ -44,6 +44,7 @@ Poggio-Citations
 QualifiedBot
 Replicate-Bot
 RunPod-Bot
+SBIntuitionsBot
 StatusNestBacklinkSpider
 The Knowledge AI
 Together-Bot
