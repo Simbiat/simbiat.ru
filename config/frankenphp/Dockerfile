@@ -43,7 +43,12 @@ RUN install-php-extensions \
     brotli \
     zstd \
     apcu \
-    intl
+    intl \
+    bcmath \
+    gmp \
+    maxminddb \
+    yaml \
+    uuid
 
 # Completely custom
 # Add composer
