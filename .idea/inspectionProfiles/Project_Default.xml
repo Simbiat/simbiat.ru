@@ -6,10 +6,6 @@
     <inspection_tool class="7d78d672-300c-3398-b4a6-a376cf564ba3" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="869a30f7-35aa-3f0c-b967-c25fee0428cc" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="8da76c0a-418d-319a-9904-af5dfebefb78" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
-    <inspection_tool class="AngularIncorrectLetUsage" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="AngularUnresolvedPipe" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="AngularUnsupportedSyntax" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="AngularUnusedComponentImport" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="AssignmentResultUsedJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToForLoopParameterJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AssignmentToFunctionParameterJS" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -41,15 +37,76 @@
     <inspection_tool class="CssMissingSemicolon" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CssNoGenericFontName" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CssRedundantUnit" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="CustomRegExpInspection" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="CyclicJobDependency" enabled="false" level="ERROR" enabled_by_default="false" />
+    <inspection_tool class="CustomRegExpInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myConfigurations">
+        <list>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Use exit function with exit code" />
+            <option name="name" value="[PHP] Use exit function with exit code" />
+            <option name="suppressId" value="use_exit_function" />
+            <option name="uuid" value="facc88b0-ed5d-3573-a29b-da5c43a297cd" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="exit;" />
+                  <option name="_fileType" value="PHP" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="exit(0);" />
+                  <option name="flags" value="66" />
+                </InspectionPattern>
+                <InspectionPattern>
+                  <option name="regExp" value="exit();" />
+                  <option name="_fileType" value="PHP" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="exit(0);" />
+                  <option name="flags" value="66" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Use CURRENT date/time functions instead of UTC" />
+            <option name="name" value="[SQL_TIME] UTC to CURRENT" />
+            <option name="suppressId" value="utc_to_current" />
+            <option name="uuid" value="d3158831-6ab0-3377-a3b9-167c1a996028" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="(UTC_)(TIMESTAMP|TIME|DATE)(\(\d*\))?" />
+                  <option name="_fileType" value="UNKNOWN" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="CURRENT_\U$2$3\E" />
+                  <option name="flags" value="66" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Force maxmium precision of 6" />
+            <option name="name" value="[SQL_TIME] Force maximum precision" />
+            <option name="suppressId" value="force_maximum_precision" />
+            <option name="uuid" value="9f576d4d-a29e-3bd3-ad99-ac9f3a9e430d" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="\b(CURRENT_TIMESTAMP|CURRENT_TIME|SYSDATE|NOW|CURTIME|TIMESTAMP|DATETIME)\b(?!\(6\))(?:\((?:[0-5])?\))?(?=(?:[^'&quot;]))" />
+                  <option name="_fileType" value="UNKNOWN" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="\U$1\E(6)" />
+                  <option name="flags" value="66" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+        </list>
+      </option>
+    </inspection_tool>
     <inspection_tool class="CyclomaticComplexityInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CyclomaticComplexityJS" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="10" />
     </inspection_tool>
     <inspection_tool class="DebuggerStatementJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DefaultNotLastCaseInSwitchJS" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="DevContainerIdeSettings" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="DisallowWritingIntoStaticPropertiesInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="DisconnectedForeachInstructionInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="SUGGEST_USING_CLONE" value="true" />
@@ -228,6 +285,7 @@
     </inspection_tool>
     <inspection_tool class="JSDeclarationsAtScopeStart" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="JSEqualityComparisonWithCoercion.TS" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="JSHint" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="JSNonASCIINames" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myAllowOnlyAscii" value="true" />
     </inspection_tool>
@@ -295,7 +353,11 @@
     <inspection_tool class="PhpConstantNamingConventionInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="m_minLength" value="3" />
     </inspection_tool>
-    <inspection_tool class="PhpEnforceDocCommentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PhpEnforceDocCommentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="CHECK_CONSTANT" value="true" />
+      <option name="CHECK_FIELD" value="true" />
+      <option name="CHECK_CLASS_CONSTANT" value="true" />
+    </inspection_tool>
     <inspection_tool class="PhpFeatureEnvyLocalInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpFullyQualifiedNameUsageInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="IGNORE_GLOBAL_NAMESPACE" value="true" />
@@ -318,7 +380,11 @@
       <option name="m_maxLength" value="32" />
     </inspection_tool>
     <inspection_tool class="PhpMethodOrClassCallIsNotCaseSensitiveInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
-    <inspection_tool class="PhpMissingDocCommentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PhpMissingDocCommentInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false">
+      <option name="CHECK_CONSTANT" value="true" />
+      <option name="CHECK_FIELD" value="true" />
+      <option name="CHECK_CLASS_CONSTANT" value="true" />
+    </inspection_tool>
     <inspection_tool class="PhpMissingParentCallCommonInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpMissingParentCallMagicInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpMissingStrictTypesDeclarationInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
@@ -791,6 +857,7 @@
     <inspection_tool class="SqlMissingColumnAliasesInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SqlNamedArgumentsInspection" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="SqlNullComparisonInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StandardJS" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="StatementsPerFunctionJS" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="30" />
     </inspection_tool>
@@ -801,6 +868,7 @@
     <inspection_tool class="ThreeNegationsPerFunctionJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TodoComment" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TransitiveDependenciesUsageInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="TsLint" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TypesCastingCanBeUsedInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="REPORT_TO_STRING_METHOD_CALLS" value="true" />
     </inspection_tool>

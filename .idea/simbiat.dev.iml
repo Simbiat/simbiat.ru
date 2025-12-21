@@ -35,7 +35,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri-interfaces" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/masterminds/html5" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/matomo/device-detector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mustangostang/spyc" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpoption/phpoption" />
@@ -77,6 +76,9 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/controllers" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/html5games" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/styles" />
+      <excludeFolder url="file://$MODULE_DIR$/build/DDL" />
+      <excludeFolder url="file://$MODULE_DIR$/build/PSDs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/phpmyadmin" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />

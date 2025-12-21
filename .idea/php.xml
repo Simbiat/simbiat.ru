@@ -270,15 +270,14 @@
       <path value="$PROJECT_DIR$/symfony/webapp/vendor/twig/extra-bundle" />
       <path value="$PROJECT_DIR$/symfony/webapp/vendor/twig/twig" />
       <path value="$PROJECT_DIR$/symfony/webapp/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/brick/math" />
       <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
       <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
       <path value="$PROJECT_DIR$/vendor/geoip2/geoip2" />
       <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
-      <path value="$PROJECT_DIR$/vendor/league/html-to-markdown" />
       <path value="$PROJECT_DIR$/vendor/league/uri" />
       <path value="$PROJECT_DIR$/vendor/league/uri-interfaces" />
-      <path value="$PROJECT_DIR$/vendor/masterminds/html5" />
       <path value="$PROJECT_DIR$/vendor/matomo/device-detector" />
       <path value="$PROJECT_DIR$/vendor/maxmind-db/reader" />
       <path value="$PROJECT_DIR$/vendor/maxmind/web-service-common" />
@@ -290,6 +289,8 @@
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
       <path value="$PROJECT_DIR$/vendor/psr/http-message" />
       <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
       <path value="$PROJECT_DIR$/vendor/symfony/cache" />
       <path value="$PROJECT_DIR$/vendor/symfony/cache-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/config" />
@@ -312,7 +313,7 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php83" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php85" />
       <path value="$PROJECT_DIR$/vendor/symfony/routing" />
       <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
       <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
@@ -321,6 +322,7 @@
       <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/vendor/symfony/var-exporter" />
       <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/tinify/tinify" />
       <path value="$PROJECT_DIR$/vendor/tinymce/tinymce" />
       <path value="$PROJECT_DIR$/vendor/twig/cssinliner-extra" />
       <path value="$PROJECT_DIR$/vendor/twig/extra-bundle" />
@@ -362,6 +364,7 @@
             <extension name="SimpleXML" />
             <extension name="Zend OPcache" />
             <extension name="apcu" />
+            <extension name="bcmath" />
             <extension name="brotli" />
             <extension name="ctype" />
             <extension name="curl" />
@@ -370,12 +373,14 @@
             <extension name="fileinfo" />
             <extension name="filter" />
             <extension name="gd" />
+            <extension name="gmp" />
             <extension name="hash" />
             <extension name="iconv" />
             <extension name="intl" />
             <extension name="json" />
             <extension name="lexbor" />
             <extension name="libxml" />
+            <extension name="maxminddb" />
             <extension name="mbstring" />
             <extension name="mysqli" />
             <extension name="mysqlnd" />
@@ -391,9 +396,11 @@
             <extension name="standard" />
             <extension name="tokenizer" />
             <extension name="uri" />
+            <extension name="uuid" />
             <extension name="xml" />
             <extension name="xmlreader" />
             <extension name="xmlwriter" />
+            <extension name="yaml" />
             <extension name="zip" />
             <extension name="zlib" />
             <extension name="zstd" />
@@ -413,32 +420,35 @@
       <extension name="amqp" enabled="false" />
       <extension name="apache" enabled="false" />
       <extension name="bz2" enabled="false" />
+      <extension name="calendar" enabled="false" />
       <extension name="cassandra" enabled="false" />
       <extension name="couchbase" enabled="false" />
       <extension name="cubrid" enabled="false" />
       <extension name="dba" enabled="false" />
       <extension name="decimal" enabled="false" />
       <extension name="dio" enabled="false" />
+      <extension name="elastic_apm" enabled="false" />
       <extension name="enchant" enabled="false" />
       <extension name="exif" enabled="false" />
       <extension name="fann" enabled="false" />
       <extension name="ffmpeg" enabled="false" />
+      <extension name="frankenphp" enabled="false" />
       <extension name="ftp" enabled="false" />
       <extension name="gearman" enabled="false" />
       <extension name="geoip" enabled="false" />
       <extension name="geos" enabled="false" />
       <extension name="gettext" enabled="false" />
       <extension name="gmagick" enabled="false" />
-      <extension name="gmp" enabled="false" />
       <extension name="gnupg" enabled="false" />
       <extension name="grpc" enabled="false" />
       <extension name="http" enabled="false" />
       <extension name="ibm_db2" enabled="false" />
-      <extension name="iconv" enabled="false" />
       <extension name="igbinary" enabled="false" />
       <extension name="imagick" enabled="false" />
+      <extension name="imap" enabled="false" />
       <extension name="inotify" enabled="false" />
       <extension name="interbase" enabled="false" />
+      <extension name="jsonpath" enabled="false" />
       <extension name="judy" enabled="false" />
       <extension name="ldap" enabled="false" />
       <extension name="libevent" enabled="false" />
@@ -460,22 +470,23 @@
       <extension name="oauth" enabled="false" />
       <extension name="oci8" enabled="false" />
       <extension name="odbc" enabled="false" />
+      <extension name="opentelemetry" enabled="false" />
       <extension name="pcntl" enabled="false" />
       <extension name="pdflib" enabled="false" />
       <extension name="pgsql" enabled="false" />
-      <extension name="posix" enabled="false" />
       <extension name="pspell" enabled="false" />
       <extension name="pthreads" enabled="false" />
       <extension name="rar" enabled="false" />
       <extension name="recode" enabled="false" />
       <extension name="redis" enabled="false" />
+      <extension name="relay" enabled="false" />
       <extension name="rrd" enabled="false" />
       <extension name="shmop" enabled="false" />
+      <extension name="snappy" enabled="false" />
       <extension name="snmp" enabled="false" />
       <extension name="soap" enabled="false" />
       <extension name="sockets" enabled="false" />
       <extension name="sodium" enabled="false" />
-      <extension name="sqlite3" enabled="false" />
       <extension name="sqlsrv" enabled="false" />
       <extension name="ssh2" enabled="false" />
       <extension name="suhosin" enabled="false" />
@@ -485,7 +496,9 @@
       <extension name="sysvsem" enabled="false" />
       <extension name="sysvshm" enabled="false" />
       <extension name="tidy" enabled="false" />
+      <extension name="uuid" enabled="true" />
       <extension name="v8js" enabled="false" />
+      <extension name="wddx" enabled="false" />
       <extension name="win32service" enabled="false" />
       <extension name="wincache" enabled="false" />
       <extension name="xdebug" enabled="false" />
@@ -493,7 +506,6 @@
       <extension name="xlswriter" enabled="false" />
       <extension name="xmlrpc" enabled="false" />
       <extension name="xsl" enabled="false" />
-      <extension name="yaml" enabled="false" />
       <extension name="zend" enabled="false" />
       <extension name="zmq" enabled="false" />
       <extension name="zstd" enabled="true" />
