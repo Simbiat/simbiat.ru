@@ -249,7 +249,7 @@ class Post extends Entity
                 ], return: 'increment'
             );
             #Update last post for thread
-            Query::query('UPDATE `talks__threads` SET `updated`=`updated`, `last_post`=:time, `last_poster`=:user_id WHERE `thread_id`=:thread_id;',
+            Query::query('UPDATE `talks__threads` SET `updated`=`updated`, `last_post`=:time, `posts`=`posts`+1, `last_poster`=:user_id WHERE `thread_id`=:thread_id;',
                 [
                     ':time' => [
                         (empty($data['time']) ? 'now' : $data['time']),
@@ -601,9 +601,19 @@ class Post extends Entity
         } else {
             $location = '/talks/sections/';
         }
-        #Attempt removal
+        #Attempt removal. We also need to update thread details
         try {
-            Query::query('DELETE FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$this->id, 'int']]);
+            $queries = [
+                [
+                    'DELETE FROM `talks__posts` WHERE `post_id`=:post_id;',
+                    [':post_id' => [$this->id, 'int']]
+                ],
+                [
+                    'UPDATE `talks__threads` SET `updated`=`updated`, `last_post`=(SELECT `created` FROM `talks__posts` WHERE `thread_id`=:thread_id ORDER BY `created` DESC LIMIT 1), `posts`=`posts`-1, `last_poster`=(SELECT `author` FROM `talks__posts` WHERE `thread_id`=:thread_id ORDER BY `created` DESC LIMIT 1) WHERE `thread_id`=:thread_id;',
+                    ':thread_id' => [$this->thread_id, 'int']
+                ],
+            ];
+            Query::query($queries);
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

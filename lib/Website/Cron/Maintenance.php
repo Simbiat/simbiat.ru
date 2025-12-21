@@ -462,8 +462,7 @@ class Maintenance
      */
     public function removeEmptyThreads(): bool
     {
-        #TODO https://github.com/Simbiat/simbiat.ru/issues/94
-        return true;
+        return Query::query('DELETE FROM `talks__threads` WHERE `created`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `posts`=0;');
     }
     
     /**

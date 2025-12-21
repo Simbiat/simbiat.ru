@@ -207,9 +207,7 @@ class Section extends Entity
                                     FROM `talks__sections` `s`
                                     INNER JOIN `SectionHierarchy` `sh` ON `s`.`parent_id` = `sh`.`section_id`
                                 )
-                                SELECT
-                                    (SELECT COUNT(`thread_id`) FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).') AS `thread_count`,
-                                    (SELECT COUNT(`post_id`) FROM `talks__posts` `p` WHERE `p`.`thread_id` IN (SELECT `thread_id` FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).')) AS `post_count`;',
+                                SELECT COUNT(`thread_id`) AS `thread_count`, SUM(`posts`) AS `post_count` FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).';',
                         $bindings, return: 'row');
                     if (!is_array($result)) {
                         $result = [];
