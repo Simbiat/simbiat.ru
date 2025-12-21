@@ -610,7 +610,7 @@ class Post extends Entity
                 ],
                 [
                     'UPDATE `talks__threads` SET `updated`=`updated`, `last_post`=(SELECT `created` FROM `talks__posts` WHERE `thread_id`=:thread_id ORDER BY `created` DESC LIMIT 1), `posts`=`posts`-1, `last_poster`=(SELECT `author` FROM `talks__posts` WHERE `thread_id`=:thread_id ORDER BY `created` DESC LIMIT 1) WHERE `thread_id`=:thread_id;',
-                    ':thread_id' => [$this->thread_id, 'int']
+                    [':thread_id' => [$this->thread_id, 'int']]
                 ],
             ];
             Query::query($queries);
