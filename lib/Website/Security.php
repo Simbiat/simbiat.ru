@@ -244,7 +244,7 @@ class Security
         #Check if User Agent is present
         if (empty($_SERVER['HTTP_USER_AGENT'])) {
             #Something is fishy, so let's 418 this
-            return ['unsupported' => true, 'browser' => false];
+            return ['unsupported' => true, 'browser' => false, 'bot' => NULL];
         }
         #Parse user agent
         Config::$device_detector->setUserAgent($_SERVER['HTTP_USER_AGENT']);
@@ -255,7 +255,7 @@ class Security
         if (is_array($bot)) {
             #Do not waste resources on bots
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'], 'ai', 2) === 0];
+            return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'] ?? '', 'ai', 2) === 0];
         }
         #Get OS
         $os = Config::$device_detector->getOs();

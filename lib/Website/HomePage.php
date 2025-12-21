@@ -148,7 +148,7 @@ class HomePage
                 $vars['template_override'] = 'common/pages/api.twig';
             }
             #Generate page
-            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot']]));
+            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot'] ?? null]));
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
         }
