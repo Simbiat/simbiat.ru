@@ -13,19 +13,35 @@
             "role": "Developer"
         }
     ],
+    "_comment": [
+        "ext-bcmath and ext-gmp are used as suggestions from a bunch of dependencies for faster/better processing (at least ramsey/uuid, geoip2/geoip2)",
+        "ext-yaml is used as suggestion for matomo/device-detector",
+        "ext-maxminddb is used to speed-up geoip2/geoip2",
+        "ext-uuid is used as suggestion from ramsey/uuid",
+        "below suggestions should be ignored:",
+        "paragonie/random-lib - since ext-uuid is being used",
+        "ramsey/uuid-doctrine - since not using doctrine",
+        "maxmind-db/reader-ext - since ext-maxminddb is being used",
+        "jeremykendall/php-domain-parser - since does not seem to be used by the library",
+        "league/uri-polyfill - since using modern PHP",
+        "league/uri-components - since used only for tests",
+        "rowbot/url - not used by the library"
+    ],
     "require": {
         "php": "^8.5",
         "matomo/device-detector": "^6",
-        "symfony/html-sanitizer": "^7.3",
-        "symfony/mailer": "^7.3",
-        "symfony/twig-bundle": "^7.3",
+        "symfony/html-sanitizer": "^8",
+        "symfony/mailer": "^8",
+        "symfony/twig-bundle": "^8",
+        "symfony/cache": "^8",
         "twig/twig": "^3",
         "twig/extra-bundle": "^3",
         "twig/cssinliner-extra": "^3",
-        "league/html-to-markdown": "^5.1.1",
         "geoip2/geoip2": "^3",
         "tinymce/tinymce": "^8",
         "vlucas/phpdotenv": "^5",
+        "ramsey/uuid": "^4",
+        "tinify/tinify": "^1",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-zip": "*",
@@ -39,7 +55,12 @@
         "ext-openssl": "*",
         "ext-gd": "*",
         "ext-brotli": "*",
-        "ext-zstd": "*"
+        "ext-zstd": "*",
+        "ext-bcmath": "*",
+        "ext-gmp": "*",
+        "ext-maxminddb": "*",
+        "ext-yaml": "*",
+        "ext-uuid": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
