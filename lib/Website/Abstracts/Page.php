@@ -120,7 +120,7 @@ abstract class Page
             \header('Content-Language: '.$this->language);
         }
         #Check if user has required permission
-        if (\count($this->required_permission) !== 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'] ?? [])) > 0) {
+        if (\count($this->required_permission) > 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'] ?? [])) === 0) {
             $page = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
         } elseif (HomePage::$http_error === [] || HomePage::$http_error === null || $this->static) {
             #Generate the page only if no prior errors detected
