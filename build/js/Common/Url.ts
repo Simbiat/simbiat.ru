@@ -45,6 +45,7 @@ function hashCheck(): void {
   const hash = url.hash;
   const gallery = document.querySelector('gallery-overlay');
   const gallery_link = /#gallery=\d+/ui;
+  const tab_name = /#tab_name_.+/ui;
   if (gallery) {
     if (gallery_link.test(hash)) {
       const image_id = Number(hash.replace(/(?<hash>#gallery=)(?<number>\d+)/ui, '$<number>'));
@@ -58,6 +59,17 @@ function hashCheck(): void {
       }
     } else {
       (gallery as Gallery).close();
+    }
+  }
+  if (tab_name.test(hash)) {
+    const tab_name_id = hash.replace(/(?<hash>#)(?<id>tab_name_.+)/ui, '$<id>');
+    const tab_element = document.getElementById(tab_name_id);
+    if (tab_element && tab_element.tagName.toLowerCase() === 'a') {
+      //Open respective tab
+      const tab_menu = tab_element.parentElement?.parentElement;
+      if (tab_menu && tab_menu.tagName.toLowerCase() === 'tab-menu') {
+        (tab_menu as TabMenu).tabSwitch(tab_element as HTMLAnchorElement);
+      }
     }
   }
 }

@@ -1,28 +1,28 @@
 {# Check if user does not have a blog created and we are in a blog root section #}
 {% if id == 1 and not session_data.sections.blog %}
-    <a class="tab_name">Start blog</a>
+    <a class="tab_name" id="tab_name_start_blog" href="#tab_name_start_blog">Start blog</a>
 {% endif %}
 {# Check if user does not have a changelog created and we are in a changelog root section #}
 {% if id == 3 and not session_data.sections.changelog %}
-    <a class="tab_name">Start changelog</a>
+    <a class="tab_name" id="tab_name_start_changelog" href="#tab_name_start_changelog">Start changelog</a>
 {% endif %}
 {# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
 {% if id == 4 and not session_data.sections.knowledgebase %}
-    <a class="tab_name">Start knowledgebase</a>
+    <a class="tab_name" id="tab_name_start_knowledgebase" href="#tab_name_start_knowledgebase">Start knowledgebase</a>
 {% endif %}
 {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
-        <a class="tab_name">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</a>
+        <a class="tab_name" id="tab_name_new_thread" href="#tab_name_new_thread">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</a>
     {% endif %}
 {% endif %}
 {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
     {% if inherited_type != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
-        <a class="tab_name">Add subsection</a>
+        <a class="tab_name" id="tab_name_new_section" href="#tab_name_new_section">Add subsection</a>
     {% endif %}
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
-    <a class="tab_name">Edit</a>
+    <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
 {% endif %}
 {% if (owned or 'remove_sections' in session_data.permissions) and not system %}
-    <a class="tab_name danger">Delete</a>
+    <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
 {% endif %}

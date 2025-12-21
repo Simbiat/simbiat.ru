@@ -12,7 +12,10 @@ class TabMenu extends HTMLElement {
     // Attach listener to tabs
     for (const tab of this.tabs) {
       tab.addEventListener('click', (event: MouseEvent) => {
-        this.tabSwitch(event);
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const target = event.target as HTMLAnchorElement;
+        this.tabSwitch(target);
       });
     }
     this.updateCurrentTab();
@@ -22,11 +25,7 @@ class TabMenu extends HTMLElement {
     }
   }
 
-  // Function to switch tabs
-  private tabSwitch(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const target = event.target as HTMLAnchorElement;
+  public tabSwitch(target: HTMLAnchorElement) {
     let tab_index = 0;
     // Hide all the content first, so that there would not be a case, when we have 2 content divs shown at once
     for (const [index, tab] of this.tabs.entries()) {
@@ -51,6 +50,9 @@ class TabMenu extends HTMLElement {
       // Otherwise, try to switch tab contents
       if (this.contents[tab_index]) {
         (this.contents[tab_index] as HTMLSpanElement).classList.add('active');
+        const url = new URL(document.location.href);
+        window.history.replaceState(document.title, document.title, url.toString()
+                                                                       .replace('#' + target.id, ''));
       }
     }
     if (this.wrapper) {
