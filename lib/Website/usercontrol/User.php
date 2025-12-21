@@ -785,6 +785,7 @@ class User extends Entity
                     );
                     #Another attempt to prevent race conditions
                     if ($current_pass === $hashed_pass) {
+                        /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
                         setcookie('rememberme_'.Config::$http_host,
                             \json_encode(['cookie_id' => Security::encrypt($cookie_id), 'pass' => Security::encrypt($pass)], \JSON_THROW_ON_ERROR | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION),
                             \array_merge(Config::$cookie_settings, ['expires' => \time() + 2592000]),
@@ -1081,6 +1082,7 @@ class User extends Entity
         Security::log('Logout', 'Logout');
         #Remove rememberme cookie
         #From browser
+        /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
         setcookie('rememberme_'.Config::$http_host, '',
             \array_merge(Config::$cookie_settings, ['expires' => \time() - 3600])
         );

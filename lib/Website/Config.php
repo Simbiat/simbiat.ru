@@ -134,8 +134,8 @@ final class Config
             'domain' => (self::$prod ? 'simbiat.eu' : 'localhost'),
             'secure' => true,
             'httponly' => true,
-            #Adding "Partitioned" to enable CHIPS. This is a "hack" until PHP supports the setting natively. https://github.com/php/php-src/issues/12646
-            'samesite' => 'Strict; Partitioned',
+            'samesite' => 'Strict',
+            'partitioned' => true,
         ];
         #These are required only if we are outside CLI mode
         if (!self::$cli) {

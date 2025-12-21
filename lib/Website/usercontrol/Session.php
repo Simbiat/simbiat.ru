@@ -30,6 +30,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Set session cookie parameters
             \ini_set('session.cookie_lifetime', $this->session_life);
             \ini_set('session.cookie_secure', Config::$cookie_settings['secure']);
+            \ini_set('session.cookie_partitioned', Config::$cookie_settings['partitioned']);
             \ini_set('session.cookie_httponly', Config::$cookie_settings['httponly']);
             \ini_set('session.cookie_path', Config::$cookie_settings['path']);
             \ini_set('session.cookie_samesite', Config::$cookie_settings['samesite']);
