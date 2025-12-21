@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Pages\UserControl\Activation;
 use Simbiat\Website\Pages\UserControl\Avatars;
 use Simbiat\Website\Pages\UserControl\Emails;
@@ -13,7 +14,7 @@ use Simbiat\Website\Pages\UserControl\Removal;
 use Simbiat\Website\Pages\UserControl\Sessions;
 use Simbiat\Website\Pages\UserControl\Unsubscribe;
 
-class UserControl extends \Simbiat\Website\Abstracts\Router
+class UserControl extends Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['activate', 'register', 'emails', 'unsubscribe', 'profile', 'password', 'removal', 'sessions', 'fftracker', 'avatars'];

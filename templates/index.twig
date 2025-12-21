@@ -13,7 +13,7 @@
         
         {{ include('common/layout/scripts.twig') }}
         {% if http_error %}
-            {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] and construction == false %}
+            {% if not(error_page) and http_error in [305, 408, 409, 500, 501, 502, 503] and construction == false and static_page == false %}
                 <meta http-equiv="refresh" content="60"/>
             {% endif %}
         {% endif %}

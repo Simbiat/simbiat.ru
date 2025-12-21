@@ -1,8 +1,15 @@
 <table id="emails_list">
-    <thead><tr><th>Email</th><th>Confirmed</th><th>Notifications</th><th>Delete</th></tr></thead>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Confirmed</th>
+            <th>Notifications</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
     <tbody>
         {% for number, email in emails %}
-            {{ include('usercontrol/emailrow.twig', {'email': email, 'number': number}, with_context = false) }}
+            {{ include('usercontrol/emailrow.twig', {'email': email, 'number': number, 'count_activated': count_activated, 'count_subscribed': count_subscribed}, with_context = false) }}
         {% endfor %}
     </tbody>
 </table>

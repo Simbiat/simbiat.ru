@@ -1,0 +1,79 @@
+<form role="form" id="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" name="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" autocomplete="off" class="middle">
+    <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="hidden" name="verb" value="{% if thread_edit %}edit{% else %}add{% endif %}" required>
+    <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="hidden" name="{% if thread_edit %}current_thread[thread_id]{% else %}new_thread[parent_id]{% endif %}" value="{% if thread_edit %}{{ id }}{% else %}{{ section_id }}{% endif %}" required>
+    {% if contact_form %}
+        {% if session_data.user_id == 1 %}
+            <p class="warning">If form submission without email succeeds, be sure to save provided URL to be able to view and update the ticket in future!</p>
+            <div class="float_label">
+                <input form="add_thread_form" type="email" spellcheck="false" aria-required="false" name="new_thread[contact_form_email]" id="contact_form_email" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="320" pattern="^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
+                <label for="contact_form_email" data-tooltip="Provide email in this field if you want to be notified about updates to it.">Email</label>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="float_label">
+            <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="text" {% if thread_edit %}value="{{ name }}" {% endif %}aria-required="true" required name="{% if thread_edit %}current_thread[name]{% else %}new_thread[name]{% endif %}" id="{% if thread_edit %}current_thread_name{% else %}new_thread_name{% endif %}" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+            <label for="{% if thread_edit %}current_thread_name{% else %}new_thread_name{% endif %}">Name</label>
+        </div>
+    {% endif %}
+    {% if thread_edit %}
+        {% if 'move_threads' in session_data.permissions %}
+            <div class="float_label">
+                <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="current_thread[parent_id]" id="cur_thread_parent" placeholder="Parent ID">
+                <label for="cur_thread_parent" data-tooltip="ID of parent section.<br>Change it to move the thread.">Parent ID</label>
+            </div>
+        {% else %}
+            <input type="hidden" name="current_thread[parent_id]" value="{{ parent_id }}" required>
+        {% endif %}
+    {% endif %}
+    {% if type == 'Support' or (thread_edit and 'mark_private' in session_data.permissions) or (not thread_edit and 'post_private' in session_data.permissions) %}
+        <span class="float_label">
+            <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" id="{% if thread_edit %}current_thread_private{% else %}new_thread_private{% endif %}" class="thread_private" name="{% if thread_edit %}current_thread[private]{% else %}new_thread[private]{% endif %}" type="checkbox"{% if type == 'Support' or (thread_edit and private) %} checked{% endif %}{% if type == 'Support' %} disabled{% endif %}>
+            <label for="{% if thread_edit %}current_thread_private{% else %}new_thread_private{% endif %}" data-tooltip="{% if type == 'Support' %}Threads created by this form can only be viewed by people with special permission or using appropriate URL.{% else %}Public threads can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change.{% endif %}"></label>
+        </span>
+    {% endif %}
+    {% if not contact_form %}
+        {% if not thread_edit and 'close_own_threads' in session_data.permissions %}
+            <span class="float_label">
+                <input form="add_thread_form" id="new_thread_closed" class="thread_closed" name="new_thread[closed]" type="checkbox">
+                <label for="new_thread_closed" data-tooltip="Open threads allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+            </span>
+        {% endif %}
+        {% if 'can_pin' in session_data.permissions %}
+            <span class="float_label">
+                <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" id="{% if thread_edit %}current_thread_pin{% else %}new_thread_pin{% endif %}" class="thread_pin" name="{% if thread_edit %}current_thread[pinned]{% else %}new_thread[pinned]{% endif %}" type="checkbox"{% if thread_edit and pinned %} checked{% endif %}>
+                <label for="{% if thread_edit %}current_thread_pin{% else %}new_thread_pin{% endif %}" data-tooltip="Pinned threads will appear at the top of the threads' list in respective section.<br>Click to change."></label>
+            </span>
+        {% endif %}
+    {% endif %}
+    {% if type != 'Support' %}
+        <br>
+        <div class="float_label">
+            <select form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" id="{% if thread_edit %}current_thread_language{% else %}new_thread_language{% endif %}" name="{% if thread_edit %}current_thread[language]{% else %}new_thread[language]{% endif %}">
+                {% for thread_language in thread_languages %}
+                    <option value="{{ thread_language.value }}"{% if (thread_edit and thread_language.value == language) or (not thread_edit and thread_language.value == 'en') %} selected{% endif %}>{{ thread_language.name }}{% if thread_language.value == 'en' %} (Default){% endif %}</option>
+                {% endfor %}
+            </select>
+            <label for="{% if thread_edit %}current_thread_language{% else %}new_thread_language{% endif %}" data-tooltip="Select a language indicating the language of intended audience.<br>This does not need to be the same as language the {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %} is written in.<br>This will only affect the value of Content-Language HTTP header, which may discoverability.<br>If uncertain, leave it as `English (Default)`.">Language</label>
+        </div>
+        {{ include('common/elements/imageupload.twig', {'form_name': thread_edit ? 'edit_thread_form' : 'add_thread_form', 'placeholder': 'Custom banner', 'input_name': thread_edit ? 'current_thread[og_image]' : 'new_thread[og_image]', 'preview_classes': 'middle', 'mime': 'image/jpeg, image/png, image/webp', 'required': false, 'image_url': thread_edit ? og_image : null, 'tooltip': 'Optional image to be shown as a banner and on social media, when you share the link.<br>If not set no banner will be shown on page, and social media will show a general one.<br>JPEG, PNG and WEBP files are accepted. Resolution ratio needs to be 1.9:1 with minimum being 1200x630 pixels.'}, with_context = false) }}
+        {% if thread_edit %}
+            <div class="float_label">
+                <input form="edit_thread_form" id="cur_thread_clear_icon" name="current_thread[clear_og_image]" type="checkbox">
+                <label for="cur_thread_clear_icon" data-tooltip="If checked will remove custom banner for the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}, replacing it with the default one.<br>Physical file will not be removed on update, it will only be unlinked from the {% if type == 'Knowledgebase' %}article{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove banner</label>
+            </div>
+        {% endif %}
+        {% if not thread_edit and 'post_scheduled' in session_data.permissions %}
+            <div class="float_label">
+                <input form="add_thread_form" id="new_thread_time" name="new_thread[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
+                <label for="new_thread_time" data-tooltip="You can select a future time at which, the thread and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
+            </div>
+            <br>
+        {% endif %}
+        {{ include('talks/forms/alt_links.twig', {'alt_links_edit': thread_edit}) }}
+    {% endif %}
+    {% if not thread_edit %}
+        {{ include('talks/forms/post.twig', {'verb': 'add', 'new_thread': true}, with_context = false) }}
+    {% endif %}
+    <input role="button" form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="submit" name="{% if thread_edit %}current_thread[submit]{% else %}new_thread[submit]{% endif %}" id="{% if thread_edit %}edit_thread_submit{% else %}add_thread_submit{% endif %}" formaction="/api/talks/threads" formmethod="post" formtarget="_self" value="{% if thread_edit %}Update{% else %}{% if contact_form %}Contact{% else %}Post{% endif %}{% endif %}">
+    <img id="{% if thread_edit %}edit_thread_spinner{% else %}add_thread_spinner{% endif %}" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if thread_edit %}Updating{% else %}Creating{% endif %} {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}..." loading="lazy" decoding="async">
+</form>

@@ -63,7 +63,7 @@ class Images
             $layers[$key] = self::open($image);
             if ($layers[$key] === false) {
                 if ($output) {
-                    self::errorImage();
+                    self::noImage();
                 }
                 #This means that we failed to get the image thus a final object will either fail or be corrupt, thus exiting early
                 throw new \RuntimeException('Failed to open `'.$image.'`');
@@ -85,7 +85,7 @@ class Images
             }
         } catch (\Throwable) {
             if ($output) {
-                self::errorImage();
+                self::noImage();
             }
             return null;
         }
@@ -238,7 +238,7 @@ class Images
         #Get MIME type
         $mime = \mime_content_type($image);
         if (!in_array($mime, ['image/avif', 'image/bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'])) {
-            #Unsuported format provided
+            #Unsupported format provided
             return false;
         }
         #Create a GD object from a file
@@ -257,12 +257,41 @@ class Images
     }
     
     /**
-     * Display an error image
+     * Display an image for "no image" scenario
      * @return void
      */
-    #[NoReturn] private static function errorImage(): void
+    #[NoReturn]
+    public static function noImage(): void
     {
         $file = Config::$img_dir.'/noimage.svg';
+        \header('Content-Type: image/svg+xml');
+        \header('Content-Length: '.\filesize($file));
+        \readfile($file);
+        exit(0);
+    }
+    
+    /**
+     * Display a red cross indicating an error
+     * @return void
+     */
+    #[NoReturn]
+    public static function errorImage(): void
+    {
+        $file = Config::$img_dir.'/close.svg';
+        \header('Content-Type: image/svg+xml');
+        \header('Content-Length: '.\filesize($file));
+        \readfile($file);
+        exit(0);
+    }
+    
+    /**
+     * Display a green check mark indicating success
+     * @return void
+     */
+    #[NoReturn]
+    public static function successImage(): void
+    {
+        $file = Config::$img_dir.'/check.svg';
         \header('Content-Type: image/svg+xml');
         \header('Content-Length: '.\filesize($file));
         \readfile($file);

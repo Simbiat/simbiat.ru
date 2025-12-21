@@ -13,6 +13,12 @@ use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
+use Simbiat\Website\Notifications\CronFailure;
+use Simbiat\Website\Notifications\DatabaseDown;
+use Simbiat\Website\Notifications\DatabaseUp;
+use Simbiat\Website\Notifications\EnoughSpace;
+use Simbiat\Website\Notifications\ErrorLog;
+use Simbiat\Website\Notifications\NoSpace;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\Email;
 use Simbiat\Website\usercontrol\Session;
@@ -61,7 +67,7 @@ class Maintenance
         #Get existing cookies that need to be cleaned
         try {
             $items = Query::query(
-                'SELECT `cookie_id`, `user_id`, `ip`, `user_agent`, `time` FROM `uc__cookies` WHERE `user_id` IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 MONTH);', return: 'all'
+                'SELECT `cookie_id`, `user_id`, `ip`, `user_agent`, `time` FROM `uc__cookies` WHERE `user_id` IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) OR `time`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', return: 'all'
             );
         } catch (\Throwable) {
             $items = [];
@@ -89,7 +95,7 @@ class Maintenance
     {
         $queries = [];
         #Clean audit logs
-        $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 YEAR)';
+        $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR)';
         try {
             $result = Query::query($queries);
         } catch (\Throwable $e) {
@@ -107,9 +113,9 @@ class Maintenance
     {
         $queries = [];
         #Remove pages that have not been viewed in 2 years
-        $queries[] = 'DELETE FROM `seo__pageviews` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
+        $queries[] = 'DELETE FROM `seo__pageviews` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 2 YEAR)';
         #Remove visitors who have not come in 2 years
-        $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 YEAR)';
+        $queries[] = 'DELETE FROM `seo__visitors` WHERE `last`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 2 YEAR)';
         try {
             $result = Query::query($queries);
         } catch (\Throwable $exception) {
@@ -219,7 +225,7 @@ class Maintenance
                 $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
-                    new Email(Config::ADMIN_MAIL)->send('[Alert]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
+                    new NoSpace()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
                     #Generate flag
                     \file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
@@ -227,7 +233,7 @@ class Maintenance
         } elseif (\is_file($dir.'/noSpace.flag')) {
             @\unlink($dir.'/noSpace.flag');
             #Send mail
-            new Email(Config::ADMIN_MAIL)->send('[Resolved]: Low space', ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], 'Simbiat');
+            new EnoughSpace()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
         }
     }
     
@@ -248,7 +254,7 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!\is_file($no_db_flag)) {
                 #Send mail
-                new Email(Config::ADMIN_MAIL)->send('[Alert]: Database is down', ['errors' => \print_r(Pool::$errors, true)], 'Simbiat');
+                new DatabaseDown()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['errors' => \print_r(Pool::$errors, true)])->save()->send(Config::ADMIN_MAIL, true);
                 #Generate flag
                 \file_put_contents($no_db_flag, 'Database is down');
             }
@@ -264,13 +270,13 @@ class Maintenance
             @\unlink($crash_flag);
             @\unlink($no_db_flag);
             #Send mail
-            new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', ['maintenance' => true, 'restored' => $result, 'error' => $error_text], 'Simbiat');
+            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['maintenance' => true, 'restored' => $result, 'error_text' => $error_text])->save()->send(Config::ADMIN_MAIL, true);
             return;
         }
         if (\is_file($no_db_flag)) {
             @\unlink($no_db_flag);
             #Send mail
-            new Email(Config::ADMIN_MAIL)->send('[Resolved]: Database is down', username: 'Simbiat');
+            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['maintenance' => false])->save()->send(Config::ADMIN_MAIL, true);
         }
     }
     
@@ -290,7 +296,7 @@ class Maintenance
         if (\is_file($error_log)) {
             if (!\is_file($error_flag)) {
                 #Send mail
-                new Email(Config::ADMIN_MAIL)->send('[Alert]: Error log found', ['errors' => \print_r(Pool::$errors, true)], 'Simbiat');
+                new ErrorLog()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate()->save()->send(Config::ADMIN_MAIL, true);
                 #Generate flag
                 \file_put_contents($error_flag, 'Error log found');
             }
@@ -436,5 +442,57 @@ class Maintenance
         }
         #Restore execution time
         \set_time_limit($cur_max_time);
+    }
+    
+    /**
+     * Remove entries that would violate foreign key restrictions, if they were used.
+     * Service does not use them normally due to performance hit, and to have potentially more flexibility in business logic.
+     * While logic should be written in a way to prevent such "violations", having a job to forcefully remove them is useful.
+     * @return bool
+     */
+    public function cleanForeignKeys(): bool
+    {
+        #TODO Actually write queries for this. Should also cover Website's ENUMs
+        return true;
+    }
+    
+    /**
+     * Remove empty threads older than 1 day
+     * @return bool
+     */
+    public function removeEmptyThreads(): bool
+    {
+        #TODO https://github.com/Simbiat/simbiat.ru/issues/94
+        return true;
+    }
+    
+    /**
+     * Remove alt links that no longer exist
+     * @return bool
+     */
+    public function removeDeadLinks(): bool
+    {
+        #TODO https://github.com/Simbiat/simbiat.ru/issues/96
+        return true;
+    }
+    
+    /**
+     * Remove old notifications
+     * @return bool
+     */
+    public function cleanNotifications(): bool
+    {
+        #TODO Actually implement the logic
+        return true;
+    }
+    
+    /**
+     * Try to resend unsent email notification
+     * @return bool
+     */
+    public function sendNotifications(): bool
+    {
+        #TODO Actually implement the logic
+        return true;
     }
 }

@@ -6,10 +6,16 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 #Database settings
+use DeviceDetector\Cache\PSR6Bridge;
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\AbstractParser;
+use DeviceDetector\Parser\Device\AbstractDeviceParser;
+use DeviceDetector\Yaml\Pecl;
 use Dotenv\Dotenv;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Query;
 use Simbiat\Database\Pool;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
 
 /**
  * Class that holds the main settings for the website. Needs to be instantiated early as part of bootstrapping.
@@ -49,6 +55,8 @@ final class Config
     public static string $merged_crests_cache = '';
     public static string $icons = '';
     public static string $statistics = '';
+    #Device detector object
+    public static ?DeviceDetector $device_detector = null;
     #List of system user IDs
     public const array USER_IDS = [
         'Unknown user' => 1,
@@ -66,6 +74,8 @@ final class Config
         'Linked to FF' => 6,
         'Bots' => 7,
     ];
+    #Section ID to be used for contact form
+    public static int $support_section = 26;
     public static array $argon_settings = [];
     #Flag indicating whether we are in CLI
     public static bool $cli = false;
@@ -79,53 +89,6 @@ final class Config
     public static array $cookie_settings = [];
     #Settings shared by PHP and JS code
     public static array $shared_with_js = [];
-    #Blocked bots
-    public const array BLCOKED_BOTS = [
-        'aHrefs Bot',
-        'aiHitBot',
-        'Amazon Bot',
-        'Anthropic AI',
-        'Applebot',
-        'Awario',
-        'Barkrowler',
-        'BLEXBot Crawler',
-        'BuiltWith',
-        'Bytespider',
-        'ccBot crawler',
-        'CensysInspect',
-        'ChatGPT-User',
-        'ClaudeBot',
-        'Cohere AI',
-        'DataForSeoBot',
-        'Dataprovider',
-        'Diffbot',
-        'DotBot',
-        'Expanse',
-        'FacebookBot',
-        'FirecrawlAgent',
-        'GPTBot',
-        'ImageSift',
-        'InternetMeasurement',
-        'IONOS Crawler',
-        'Meta-ExternalAgent',
-        'MJ12 Bot',
-        'OAI-SearchBot',
-        'Omgili bot',
-        'Peer39',
-        'PerplexityBot',
-        'Perplexity-User',
-        'Petal Bot',
-        'Scrapy',
-        'Semrush Reputation Management',
-        'SemrushBot',
-        'Spawning AI',
-        'Thinkbot',
-        'Timpibot',
-        'Velen Public Web Crawler',
-        'YouBot',
-        'xAI-Bot',
-        'ZoominfoBot',
-    ];
     
     public function __construct()
     {
@@ -161,7 +124,7 @@ final class Config
         self::$statistics = self::$work_dir.'/data/ffstatistics/';
         self::$geoip = self::$work_dir.'/data/geoip/';
         #Generate Argon settings
-        if (empty(self::$argon_settings)) {
+        if (\count(self::$argon_settings) === 0) {
             self::$argon_settings = Security::argonCalc();
         }
         #Set default cookie settings
@@ -186,6 +149,12 @@ final class Config
             #For now just logging, at the moment of writing there should not be anything critical here
             Errors::error_log($exception);
         }
+        #Initiate device detector
+        #Force full string versions
+        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
+        self::$device_detector = new DeviceDetector();
+        self::$device_detector->setYamlParser(new Pecl());
+        self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('matomo')));
     }
     
     /**
@@ -206,11 +175,11 @@ final class Config
         if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
         }
-        #And also return a page or search query, if present
+        #Also return some of the GET parameters, that we do support
         self::$canonical .= '?'.\http_build_query([
                 #Do not add the 1st page as a query (since it is excessive)
                 'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
-                'search' => $_GET['search'] ?? null,
+                'search' => $_GET['search'] ?? null
             ], encoding_type: \PHP_QUERY_RFC3986);
         #Trim the excessive question mark, in case no query was attached
         self::$canonical = mb_rtrim(self::$canonical, '?', 'UTF-8');

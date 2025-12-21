@@ -178,8 +178,8 @@ abstract class Search
                 return Query::query($exactly_like.$this->like().')'.(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by), \array_merge($this->bindings, [':what' => [$what, 'string'], ':like' => [$what, 'like']]), return: 'count');
             }
             return Query::query('SELECT COUNT('.$this->count_argument.') FROM `'.$this->table.'`'.(empty($this->join) ? '' : ' '.$this->join).(empty($this->where) ? '' : ' WHERE '.$this->where).(empty($this->group_by) ? '' : ' GROUP BY '.$this->group_by).';', $this->bindings, return: 'count');
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
             return 0;
         }
     }

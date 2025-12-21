@@ -3,9 +3,11 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing\Api;
 
+use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Api\UserControl\Avatars;
 use Simbiat\Website\Api\UserControl\Cookies;
 use Simbiat\Website\Api\UserControl\Emails;
+use Simbiat\Website\Api\UserControl\Notifications;
 use Simbiat\Website\Api\UserControl\FFLink;
 use Simbiat\Website\Api\UserControl\Login;
 use Simbiat\Website\Api\UserControl\Logout;
@@ -17,11 +19,11 @@ use Simbiat\Website\Api\UserControl\Remove;
 use Simbiat\Website\Api\UserControl\Sessions;
 use Simbiat\Website\Api\UserControl\Username;
 
-class UserControl extends \Simbiat\Website\Abstracts\Api
+class UserControl extends Api
 {
     #Supported edges
     protected array $sub_routes = [
-        'register', 'login', 'remind', 'logout', 'emails', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove'
+        'register', 'login', 'remind', 'logout', 'emails', 'notifications', 'password', 'username', 'profile', 'fflink', 'avatars', 'cookies', 'sessions', 'remove'
     ];
     #Description of the nodes (need to be in same order)
     protected array $routes_description = [
@@ -30,6 +32,7 @@ class UserControl extends \Simbiat\Website\Abstracts\Api
         'Password reset',
         'Logout the current session',
         'Emails management',
+        'Marking notifications as read',
         'Password change',
         'Username change',
         'Update profile details',
@@ -41,7 +44,7 @@ class UserControl extends \Simbiat\Website\Abstracts\Api
     ];
     #Flag to indicate, that this is a top level node (false by default)
     protected bool $top_level = false;
-
+    
     protected function genData(array $path): array
     {
         return match($path[0]) {
@@ -50,6 +53,7 @@ class UserControl extends \Simbiat\Website\Abstracts\Api
             'logout' => (new Logout)->route(\array_slice($path, 1)),
             'register' => (new Register)->route(\array_slice($path, 1)),
             'emails' => (new Emails)->route(\array_slice($path, 1)),
+            'notifications' => (new Notifications)->route(\array_slice($path, 1)),
             'password' => (new Password)->route(\array_slice($path, 1)),
             'username' => (new Username)->route(\array_slice($path, 1)),
             'profile' => (new Profile)->route(\array_slice($path, 1)),

@@ -81,6 +81,7 @@
 @import url('./utilities/emojis.css');
 @import url('./utilities/filters.css');
 @import url('./utilities/floats.css');
+@import url('./utilities/fonts.css');
 @import url('./utilities/lists.css');
 @import url('./utilities/margins.css');
 @import url('./utilities/source.css');
@@ -104,6 +105,7 @@
 @import url('./pages/usercontrol/avatars.css');
 @import url('./pages/usercontrol/emails.css');
 @import url('./pages/usercontrol/fftracker.css');
+@import url('./pages/usercontrol/notifications.css');
 @import url('./pages/usercontrol/password.css');
 @import url('./pages/usercontrol/profile.css');
 @import url('./pages/usercontrol/removal.css');

@@ -149,7 +149,7 @@ class Sanitization
                 $datetime = SandClock::convertTimezone($time, $_SESSION['timezone'] ?? $timezone);
                 $time = $datetime->getTimestamp();
                 $cur_time = \time();
-                #Sections should not be created in the past, so if time is less than the current one - correct it
+                #Do not allow past, unless respective permission is present
                 if ($time < $cur_time && !in_array('post_backlog', $_SESSION['permissions'], true)) {
                     $time = $cur_time;
                 }

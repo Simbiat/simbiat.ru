@@ -4,12 +4,12 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Routing;
 
 use Simbiat\Website\Abstracts\Router;
+use Simbiat\Website\Pages\About\Contacts;
 use Simbiat\Website\Pages\About\Me;
 use Simbiat\Website\Pages\About\Privacy;
 use Simbiat\Website\Pages\About\Security;
 use Simbiat\Website\Pages\About\Tech;
 use Simbiat\Website\Pages\About\ToS;
-use Simbiat\Website\Redirects\About\Contacts;
 use Simbiat\Website\Redirects\About\Resume;
 use Simbiat\Website\Redirects\About\Website;
 use function array_slice;

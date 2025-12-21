@@ -15,11 +15,22 @@ async function ajax(
   timeout = AJAX_TIMEOUT,
   skipError = false
 ): Promise<ajaxJSONResponse | ArrayBuffer | Blob | FormData | boolean | string> {
+  const is_bot = !empty(getMeta('is_bot'));
+  if (is_bot) {
+    addSnackbar('No Ajax calls are allowed for bots', 'error');
+    return false;
+  }
   let result;
   const controller = new AbortController();
   window.setTimeout(() => {
     controller.abort();
   }, timeout);
+  // Add access token to the URL, if present
+  if (!empty(ACCESS_TOKEN) && url.startsWith(`${location.protocol}//${location.host}`)) {
+    const url_obj = new URL(url);
+    url_obj.searchParams.set('access_token', ACCESS_TOKEN);
+    url = url_obj.toString();
+  }
   try {
     const response = await fetch(url, {
       'body': ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method) ? formData : null,

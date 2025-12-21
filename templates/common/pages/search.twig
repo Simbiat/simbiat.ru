@@ -13,10 +13,14 @@
     {% elseif service_name == 'fftracker' %}
         <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
-    <form role="search" class="search_form" action="{{ action_url }}" method="get">
-        <span class="float_label" id="search_label"><input id="search_field" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
-        <input role="button" type="submit" id="search_button" data-noname value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
-    </form>
+    {% if request_from_bot %}
+        <p class="error">You were identified as a bot, search form hidden.</p>
+    {% else %}
+        <form role="search" class="search_form" action="{{ action_url }}" method="get">
+            <span class="float_label" id="search_label"><input id="search_field" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+            <input role="button" type="submit" id="search_button" data-noname value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
+        </form>
+    {% endif %}
 </search>
 <section>
     {% if service_name == 'bictracker' %}

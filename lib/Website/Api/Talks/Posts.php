@@ -17,6 +17,8 @@ class Posts extends Api
     protected array $verbs = ['add' => 'Add post', 'delete' => 'Delete post', 'edit' => 'Edit post', 'like' => 'Like a post', 'dislike' => 'Dislike a post'];
     #Flag indicating that authentication is required
     protected bool $authentication_needed = true;
+    #Flag indicating, that lack of authentication can be bypassed by an access_token
+    protected bool $access_token_possible = true;
     #Flag to indicate need to validate CSRF
     protected bool $csrf = false;
     #Flag to indicate that session data change is possible on this page

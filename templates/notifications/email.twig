@@ -1,0 +1,43 @@
+{% apply inline_css(source('@styles/email.css')) %}
+    <html lang="en" style="height: 100% !important;">
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{{ subject }}</title>
+        </head>
+        <body style="height: 100% !important;">
+            <div id="content" style="height: 100% !important;">
+                <div id="header">
+                    <div id="header_mail">
+                        <div class="header_text">Simbiat</div>
+                        <div id="logo_nav">
+                            <img loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="{{ email.image('@images/favicons/favicon-32x32.png') }}">
+                        </div>
+                        <div class="header_text">Software</div>
+                    </div>
+                    <div id="h1_div_mail">
+                        <h1 id="h1_title">{{ subject }}</h1>
+                    </div>
+                </div>
+                <div id="main" style="height: 100% !important; width: 100% !important;">
+                    <div class="article margin_05rem">
+                        <p>Hi, {{ username|default('dear user') }}!</p>
+                        {{ text|raw }}
+                    </div>
+                </div>
+                <div id="footer">
+                    <div>
+                        <a href="{{ domain }}/about/contacts" rel="noopener noreferrer">Contact us</a>
+                        {% if unsubscribe_all %} or
+                            <a href="{{ domain }}/uc/unsubscribe?unsubscribe_all={{ unsubscribe_all|url_encode }}" rel="noopener noreferrer">unsubscribe from all emails</a>
+                        {% endif %}
+                    </div>
+                    <div class="xx_small">
+                        Email generated at {{ timeTag(created, 'Y-m-d H:i:s') }} UTC and sent at {{ timeTag(sent, 'Y-m-d H:i:s') }} UTC{% if tracker %}
+                        <img class="read_status" src="{{ domain }}/api/uc/notifications?uuid={{ tracker }}" loading="lazy" decoding="async" alt="Read status" title="Read status">{% endif %}
+                    </div>
+                </div>
+            </div>
+        </body>
+    </html>
+{% endapply %}

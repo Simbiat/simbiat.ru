@@ -34,8 +34,10 @@ abstract class Api
     protected int $cache_age = 0;
     #Description of the node
     protected array $description = [];
-    #Flag indicating that authentication is required
+    #Flag indicating, that authentication is required
     protected bool $authentication_needed = false;
+    #Flag indicating, that lack of authentication can be bypassed by an access_token
+    protected bool $access_token_possible = false;
     #List of permissions, from which at least 1 is required to have access the node
     protected array $required_permission = [];
     #Flag to indicate need to validate CSRF
@@ -73,8 +75,20 @@ abstract class Api
         #Check if proper endpoint
         if (\count($this->sub_routes) !== 0 && (empty($path[0]) || (!$this->final_node && !in_array($path[0], $this->sub_routes, true)))) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => \array_combine($this->sub_routes, $this->routes_description)];
-        } elseif ($this->authentication_needed && (empty($_SESSION['user_id']) || $_SESSION['user_id'] < 4)) {
-            #User is not authenticated
+        } elseif (
+            (
+                $this->authentication_needed &&
+                (
+                    empty($_SESSION['user_id']) ||
+                    $_SESSION['user_id'] < Config::USER_IDS['Owner']
+                )
+            ) &&
+            (
+                !$this->access_token_possible ||
+                empty($_GET['access_token'])
+            )
+        ) {
+            #User is not authenticated or there is no access_token provided
             $data = ['http_error' => 403, 'reason' => 'Authentication required'];
         } elseif ($this->csrf && !$this->antiCSRF($this->allowed_origins)) {
             $data = ['http_error' => 403, 'reason' => 'CSRF validation failed, possibly due to expired session. Please, try to reload the page.'];
@@ -240,6 +254,9 @@ abstract class Api
                     ) {
                         #All checks passed
                         $_SESSION['csrf'] = Security::genToken();
+                        if (!\headers_sent()) {
+                            \header('X-CSRF-Token: '.$_SESSION['csrf']);
+                        }
                         return true;
                     }
                     $reason = 'Bad origin';
@@ -264,6 +281,9 @@ abstract class Api
             Headers::clientReturn(403, false);
         }
         $_SESSION['csrf'] = Security::genToken();
+        if (!\headers_sent()) {
+            \header('X-CSRF-Token: '.$_SESSION['csrf']);
+        }
         return false;
     }
     

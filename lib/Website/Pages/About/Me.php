@@ -12,7 +12,7 @@ class Me extends StaticPage
 {
     #Current breadcrumb for navigation
     protected array $breadcrumb = [
-        ['href' => '/', 'name' => 'me']
+        ['href' => '/about/me', 'name' => 'me']
     ];
     #Sub service name
     protected string $subservice_name = 'me';

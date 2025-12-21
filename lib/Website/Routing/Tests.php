@@ -3,12 +3,10 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
-use Simbiat\http20\Common;
 use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
-use Simbiat\Website\Twig\EnvironmentGenerator;
-use Simbiat\Website\usercontrol\Email;
+use Simbiat\Website\Notifications\Test;
 
 class Tests extends Router
 {
@@ -22,7 +20,12 @@ class Tests extends Router
     protected string $h1 = 'Tests';
     protected string $og_desc = 'Tests';
     
-    #This is the actual page generation based on further details of the $path
+    /**
+     * This is the actual page generation based on further details of the $path
+     * @param array $path
+     *
+     * @return array
+     */
     protected function pageGen(array $path): array
     {
         $output_array = [];
@@ -35,16 +38,10 @@ class Tests extends Router
         }
         switch ($path[0]) {
             case 'mail':
-                if (!empty($path[1]) && $path[1] === 'send') {
-                    echo new Email(Config::ADMIN_MAIL)->send('Test Mail', ['username' => 'Simbiat'], 'Simbiat', true);
-                } else {
-                    try {
-                        $output = EnvironmentGenerator::getTwig()->render('mail/index.twig', ['subject' => 'Test Mail', 'username' => 'Simbiat']);
-                    } catch (\Throwable $exception) {
-                        Errors::error_log($exception);
-                        $output = 'Twig failure';
-                    }
-                    Common::zEcho($output, 'live');
+                try {
+                    new Test()->setEmail(true)->setPush(true)->setUser(Config::USER_IDS['Owner'])->generate()->save()->send(Config::ADMIN_MAIL, true, true);
+                } catch (\Throwable $throwable) {
+                    Errors::error_log($throwable, debug: true);
                 }
                 exit(0);
             case 'styling':

@@ -1,0 +1,24 @@
+/* Classes controlling font parameters */
+.small {
+    font-size: small;
+}
+
+.x_small {
+    font-size: x-small;
+}
+
+.xx_small {
+    font-size: xx-small;
+}
+
+.large {
+    font-size: large;
+}
+
+.x_large {
+    font-size: x-large;
+}
+
+.xx_large {
+    font-size: xx-large;
+}

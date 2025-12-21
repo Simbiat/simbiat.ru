@@ -91,7 +91,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     {
         #Get session data
         try {
-            $data = Query::query('SELECT `data` FROM `uc__sessions` WHERE `session_id` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->session_life, 'int']], return: 'value');
+            $data = Query::query('SELECT `data` FROM `uc__sessions` WHERE `session_id` = :id AND `time` >= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND)', [':id' => $id, ':life' => [$this->session_life, 'int']], return: 'value');
         } catch (\Throwable) {
             $data = '';
         }
@@ -185,7 +185,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             }
             #Write session data
             $queries[] = [
-                'INSERT INTO `uc__sessions` SET `session_id`=:id, `cookie_id`=:cookie_id, `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(), `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data;',
+                'INSERT INTO `uc__sessions` SET `session_id`=:id, `cookie_id`=:cookie_id, `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(6), `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data;',
                 [
                     ':id' => $id,
                     #Whether a cookie is associated with this session
@@ -276,6 +276,9 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
             #Add CSRF token, if missing
             if (empty($data['csrf'])) {
                 $data['csrf'] = Security::genToken();
+                if (!\headers_sent()) {
+                    \header('X-CSRF-Token: '.$data['csrf']);
+                }
             } elseif (!\headers_sent()) {
                 \header('X-CSRF-Token: '.$data['csrf']);
             }
@@ -296,6 +299,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['groups'] = $user->groups;
                     $data['permissions'] = $user->permissions;
                     $data['activated'] = $user->activated;
+                    $data['banned'] = $user->banned;
                     $data['avatar'] = $user->current_avatar;
                     $data['sections'] = $user->sections;
                 } else {
@@ -431,7 +435,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL :life SECOND) OR `user_id` IN ('.Config::USER_IDS['System user'].', '.Config::USER_IDS['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
+            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN ('.Config::USER_IDS['System user'].', '.Config::USER_IDS['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;
@@ -498,7 +502,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function updateTimestamp(string $id, string $data): bool
     {
         try {
-            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP() WHERE `session_id` = :id;', [':id' => $id]);
+            return Query::query('UPDATE `uc__sessions` SET `time`= CURRENT_TIMESTAMP(6) WHERE `session_id` = :id;', [':id' => $id]);
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

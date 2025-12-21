@@ -3,12 +3,19 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Talks;
 
+use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
+use Simbiat\Website\Notifications\NewPost;
+use Simbiat\Website\Notifications\PasswordReset;
+use Simbiat\Website\Notifications\TicketCreation;
+use Simbiat\Website\Notifications\TicketUpdate;
 use Simbiat\Website\Sanitization;
 use Simbiat\Website\Search\Posts;
+use Simbiat\Website\Security;
+use Simbiat\Website\usercontrol\Email;
 use function in_array;
 use function is_array;
 
@@ -17,7 +24,6 @@ use function is_array;
  */
 class Post extends Entity
 {
-    protected const string ENTITY_TYPE = 'post';
     public string $name = '';
     public string $type = 'Blog';
     public bool $system = true;
@@ -32,6 +38,7 @@ class Post extends Entity
     public int $editor = 1;
     public string $editor_name = 'Deleted user';
     public ?int $thread_id = null;
+    public int $thread_author = 1;
     public array $reply_to = [];
     public string $text = '';
     public string $avatar = '/assets/images/avatar.svg';
@@ -44,6 +51,8 @@ class Post extends Entity
     #Number of the page to which the post belongs (at the time of access)
     public int $page = 1;
     public array $attachments = [];
+    #Access token for support tickets from contact form
+    public ?string $access_token = null;
     
     /**
      * Get data from DB
@@ -86,7 +95,9 @@ class Post extends Entity
     {
         $this->name = $from_db['name'];
         $this->type = $from_db['thread']['type'];
+        $this->access_token = $from_db['thread']['access_token'];
         $this->thread_id = $from_db['thread_id'];
+        $this->thread_author = $from_db['thread']['author'];
         $this->system = (bool)$from_db['system'];
         $this->private = (bool)$from_db['thread']['private'];
         $this->locked = (bool)$from_db['locked'];
@@ -119,7 +130,7 @@ class Post extends Entity
         $posts = [];
         try {
             #Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').' ORDER BY `created`;', [':thread_id' => [$thread, 'int']], return: 'column');
+            $posts = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP(6)').' ORDER BY `created`;', [':thread_id' => [$thread, 'int']], return: 'column');
         } catch (\Throwable) {
             #Do nothing
         }
@@ -202,12 +213,15 @@ class Post extends Entity
     
     /**
      * Add post
+     *
+     * @param bool $first_post Whether this is first post in thread
+     *
      * @return array
      */
-    public function add(): array
+    public function add(bool $first_post = false): array
     {
         #Check permission
-        if (!in_array('can_post', $_SESSION['permissions'], true)) {
+        if (empty($_GET['access_token']) && !in_array('can_post', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
         }
         #Sanitize data
@@ -253,10 +267,70 @@ class Post extends Entity
             $this->attach([], $data['inline_files']);
             #Get the up-to-date data for the thread to get the last page for location
             $thread = new Thread($data['thread_id'])->get();
-            return ['response' => true, 'location' => '/talks/threads/'.$this->thread_id.'/'.($thread->last_page === 1 ? '' : '?page='.$thread->last_page).'#post_'.$new_id];
+            $new_location = '/talks/threads/'.$this->thread_id.($thread->last_page === 1 ? '' : '?page='.$thread->last_page);
+            if (
+                $thread->type === 'Support' &&
+                $thread->author === Config::USER_IDS['Unknown user']
+            ) {
+                #If we are here, it means that we need to update ticket's token
+                $this->tokenUpdate($thread->email ?? $_POST['new_thread']['contact_form_email'] ?? null, $first_post);
+                if ($thread->author === $_SESSION['user_id'] && $this->access_token !== '' && $this->access_token !== null) {
+                    #Post is added by author, so provide new location with new access token
+                    $new_location .= ($thread->last_page === 1 ? '?' : '&').'access_token='.$this->access_token;
+                }
+            }
+            #Add anchor to the post, if there is more than 1
+            if (\count($thread->posts['entities']) > 1) {
+                $new_location .= '#post_'.$new_id;
+            }
+            foreach ($thread->subscribers as $subscriber) {
+                new NewPost()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => $thread->name, 'location' => $new_location])->save()->send();
+            }
+            return ['response' => true, 'location' => $new_location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to create new post'];
+        }
+    }
+    
+    /**
+     * Update token linked to a ticket, where post is made
+     *
+     * @param string|null $email      Email to send notification to
+     * @param bool        $first_post Whether this is first post
+     *
+     * @return void
+     */
+    private function tokenUpdate(#[\SensitiveParameter] ?string $email = null, bool $first_post = false): void
+    {
+        $new_token = Uuid::uuid7()->toString();
+        try {
+            if ($this->access_token === null) {
+                $affected = Query::query('INSERT INTO `talks__contact_form` (`thread_id`, `email`, `access_token`) VALUES (:thread_id, :email, :token);', [':token' => $new_token, ':email' => [$email, (($email === null || $email === '') ? 'null' : 'string')], ':thread_id' => $this->thread_id], return: 'affected');
+            } else {
+                $affected = Query::query('UPDATE `talks__contact_form` SET `access_token`=:token WHERE `thread_id`=:thread_id;', [':token' => $new_token, ':thread_id' => $this->thread_id], return: 'affected');
+            }
+            #Should be just 1
+            if ($affected === 1) {
+                $this->access_token = $new_token;
+                #Get email linked to the thread, if any, if it was not provided
+                if ($email === null || $email === '') {
+                    $email = Query::query('SELECT `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => $this->thread_id], return: 'value');
+                }
+                #Send notification
+                if ($email !== null && $email !== '') {
+                    $ticket = \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name);
+                    $twig_vars = ['ticket' => $ticket, 'token' => $new_token, 'thread_id' => $this->thread_id];
+                    if ($first_post) {
+                        new TicketCreation()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Unknown user'])->generate($twig_vars)->save()->send($email, true);
+                    } else {
+                        new TicketUpdate()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Unknown user'])->generate($twig_vars)->save()->send($email);
+                    }
+                }
+            }
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+            #Do nothing. While it's ideal to change the token, if it fails - it's not that big of a deal
         }
     }
     
@@ -378,7 +452,7 @@ class Post extends Entity
             #Update time
             if (!$data['hide_update']) {
                 $queries[] = [
-                    'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP() WHERE `post_id`=:post_id;',
+                    'UPDATE `talks__posts` SET `updated`=CURRENT_TIMESTAMP(6) WHERE `post_id`=:post_id;',
                     [
                         ':post_id' => [$this->id, 'int'],
                     ]
@@ -441,6 +515,25 @@ class Post extends Entity
         }
         #Attempt to get the thread
         $parent = new Thread($data['thread_id'])->setForPost(true)->get();
+        $this->type = $parent->type;
+        $this->access_token = $parent->access_token;
+        $this->private = $parent->private;
+        $this->thread_author = $parent->author;
+        if (
+            #If we are in Support section
+            $this->type === 'Support' &&
+            #Posting in a thread created by unknown user (through Contact Form)
+            $this->thread_author === Config::USER_IDS['Unknown user'] &&
+            #And we are an unknown user ourselves
+            $this->thread_author === $_SESSION['user_id'] &&
+            #And thread has an empty access token or our access token does not equal the thread's token
+            ($this->access_token === null || $this->access_token === '' || $this->access_token !== ($_GET['access_token'] ?? '')) &&
+            #And we are also lacking `can_post` permission (so most likely posting in the thread directly)
+            !in_array('can_post', $_SESSION['permissions'], true)
+        ) {
+            #Return same error as when no permission to minimize chances of brute-forcing the token
+            return ['http_error' => 403, 'reason' => 'No `can_post` permission'];
+        }
         if ($parent->id === null) {
             return ['http_error' => 400, 'reason' => 'Parent thread with ID `'.$data['parent_id'].'` does not exist'];
         }
@@ -449,15 +542,15 @@ class Post extends Entity
             return ['http_error' => 403, 'reason' => 'No `post_in_closed` permission to post in closed thread.'];
         }
         #Check if the thread is private, and we can post in it
-        if ($parent->private && !$parent->owned && !in_array('view_private', $_SESSION['permissions'], true)) {
+        if ($this->private && !$parent->owned && !in_array('view_private', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'Cannot post in private and not owned thread'];
         }
         #Check if duplicate post
-        $post_exists = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id AND `text`=:text;', [':text' => $data['text'], ':thread_id' => [$data['thread_id'], 'int']], return: 'value');
+        $post_exists = Query::query('SELECT `post_id` FROM `talks__posts` WHERE `thread_id`=:thread_id AND `author`=:author AND `text`=:text;', [':text' => $data['text'], ':thread_id' => [$data['thread_id'], 'int'], ':author' => [$_SESSION['user_id'], 'int']], return: 'value');
         if (
             (
-                #If the name is empty (a new section is being created)
-                empty($this->text) ||
+                #If the current text is empty (a new post is being created)
+                $this->text === '' ||
                 #Or it's not empty and is different from the one we are trying to set
                 $this->text !== $data['text']
             ) &&

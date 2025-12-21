@@ -33,12 +33,15 @@
 @import url('./components/native/button.css');
 @import url('./components/native/details.css');
 @import url('./components/native/text.css');
+/* Styling of notifications' elements */
+@import url('./pages/usercontrol/notifications.css');
 /* Utility classes and shared styling */
 @import url('./utilities/assorted.css');
 @import url('./utilities/colors.css');
 @import url('./utilities/displays.css');
 @import url('./utilities/emojis.css');
 @import url('./utilities/filters.css');
+@import url('./utilities/fonts.css');
 @import url('./utilities/margins.css');
 @import url('./utilities/widths.css');
 /* Styling of TinyMCE elements */

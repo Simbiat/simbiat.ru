@@ -24,7 +24,7 @@ class Talks
     public function lockPosts(): bool
     {
         try {
-            return Query::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND `locked`=0;');
+            return Query::query('UPDATE `talks__posts` SET `updated`=`updated`, `locked`=1 WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `locked`=0;');
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
             return false;
@@ -81,7 +81,7 @@ class Talks
         try {
             #PHPStorm does not like HAVING in the query, even though it is completely normal, so suppressing inspection for it
             /** @noinspection SqlAggregates */
-            $db_files = Query::query('SELECT `file_id`, `extension`, `mime`, `sys__files`.`user_id`, IF(`file_id` IN (SELECT `file_id` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`file_id` IN (SELECT `og_image` FROM `talks__threads`), 1, 0) as `og_image`, IF(`file_id` IN (SELECT `file_id` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`file_id` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`file_id` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` WHERE `added` <= DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) HAVING `attachment`+`og_image`+`avatar`+`section`+`section_defaults`=0;', return: 'all');
+            $db_files = Query::query('SELECT `file_id`, `extension`, `mime`, `sys__files`.`user_id`, IF(`file_id` IN (SELECT `file_id` FROM `talks__attachments`), 1, 0) as `attachment`, IF(`file_id` IN (SELECT `og_image` FROM `talks__threads`), 1, 0) as `og_image`, IF(`file_id` IN (SELECT `file_id` FROM `uc__avatars`), 1, 0) as `avatar`, IF(`file_id` IN (SELECT `icon` FROM `talks__sections`), 1, 0) as `section`, IF(`file_id` IN (SELECT `icon` FROM `talks__types`), 1, 0) as `section_defaults` FROM `sys__files` WHERE `added` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) HAVING `attachment`+`og_image`+`avatar`+`section`+`section_defaults`=0;', return: 'all');
             #Iterrate through the list
             foreach ($db_files as $file) {
                 #Get the expected full path of the file

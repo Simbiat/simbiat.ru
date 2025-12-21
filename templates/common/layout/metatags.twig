@@ -20,6 +20,7 @@
 <meta itemprop="image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
 
 <meta name="X-CSRF-Token" content="{{ session_data.csrf }}" />
+<meta name="is_bot" content="{{ request_from_bot }}">
 <!-- Custom meta tag to indicate whether Save-Data header was received -->
 <meta name="save_data" content="{{ save_data }}" />
 
@@ -31,7 +32,7 @@
 <meta property="og:site_name" content="{{ site_name }}" />
 <meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
 <meta property="og:description" content="{{ og_desc|default('Official Simbiat Software website') }}" />
-<meta property="og:url" content="{{ url }}" />
+<meta property="og:url" content="{{ canonical }}" />
 <meta property="og:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
 <meta property="og:image:secure_url" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
 <meta property="og:image:width" content="{{ og_image_width|default('1200') }}" />

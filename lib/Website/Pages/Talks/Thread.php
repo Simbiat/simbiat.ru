@@ -44,8 +44,19 @@ class Thread extends Page
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($output_array['private'] && $output_array['author'] !== $_SESSION['user_id'] && !in_array('view_private', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
+        if ($output_array['private']) {
+            if ($output_array['author'] === Config::USER_IDS['Unknown user'] && $output_array['author'] === $_SESSION['user_id']) {
+                if ($output_array['type'] === 'Support') {
+                    if (($output_array['access_token'] === null || $output_array['access_token'] === '' || $output_array['access_token'] !== ($_GET['access_token'] ?? ''))) {
+                        #Return same error to limit potential of brute-forcing a token
+                        return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
+                    }
+                    #If token is valid - temporary give permission to allow posting
+                    $_SESSION['permissions'][] = 'can_post';
+                }
+            } elseif ($output_array['author'] !== $_SESSION['user_id'] && !in_array('view_private', $_SESSION['permissions'], true)) {
+                return ['http_error' => 403, 'reason' => 'This thread is private and you lack `view_private` permission'];
+            }
         }
         #Check if scheduled
         if ($output_array['created'] >= \time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {
@@ -131,6 +142,10 @@ class Thread extends Page
         ) {
             $output_array['thread_languages'] = \Simbiat\Website\Talks\Thread::getLanguages();
             $output_array['thread_link_types'] = \Simbiat\Website\Talks\Thread::getAltLinkTypes();
+        }
+        #Add access token
+        if ($output_array['author'] === Config::USER_IDS['Unknown user'] && $_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
+            $output_array['get_access_token'] = $_GET['access_token'] ?? null;
         }
         return $output_array;
     }

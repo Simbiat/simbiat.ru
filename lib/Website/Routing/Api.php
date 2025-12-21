@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Routing;
 
 use Simbiat\Website\Api\Upload;
+use Simbiat\Website\Api\Contact;
 
 use function array_slice;
 
@@ -11,7 +12,7 @@ class Api extends \Simbiat\Website\Abstracts\Api
 {
     #Supported edges
     protected array $sub_routes = [
-        'fftracker', 'bictracker', 'uc', 'upload', 'talks',
+        'fftracker', 'bictracker', 'uc', 'upload', 'talks', 'contact',
     ];
     #Description of the nodes (need to be in the same order)
     protected array $routes_description = [
@@ -20,6 +21,7 @@ class Api extends \Simbiat\Website\Abstracts\Api
         'Endpoints for user registration, login, password reset and other actions for user editing',
         'Endpoint for file upload',
         'Endpoint for managing forums',
+        'Endpoint to submit support requests'
     ];
     #Flag to indicate that this is a top level node (false by default)
     protected bool $top_level = true;
@@ -32,13 +34,15 @@ class Api extends \Simbiat\Website\Abstracts\Api
      */
     protected function genData(array $path): array
     {
-        return match($path[0]) {
+        return match ($path[0]) {
             'fftracker' => new Api\FFTracker()->route(array_slice($path, 1)),
             'bictracker' => new Api\BICTracker()->route(array_slice($path, 1)),
             'uc' => new Api\UserControl()->route(array_slice($path, 1)),
             'talks' => new Api\Talks()->route(array_slice($path, 1)),
             #Upload does not require any further paths
             'upload' => new Upload()->route([]),
+            #Contact does not require any further paths
+            'contact' => new Contact()->route([]),
         };
     }
 }

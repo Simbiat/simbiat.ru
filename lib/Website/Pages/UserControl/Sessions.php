@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Pages\UserControl;
 
-use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use GeoIp2\Database\Reader;
@@ -54,8 +53,6 @@ class Sessions extends Page
         #Create user_agent object
         #Force full string versions
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
-        #Initialize device detector
-        $dd = (new DeviceDetector());
         #Prevent unnecessary trips to a DB file by "caching" found IPs, since it's unlikely to have too many different ones
         $ips = [];
         #Expand user_agent
@@ -73,12 +70,13 @@ class Sessions extends Page
                 }
                 $output_array[$type][$key]['country'] = $ips[$item['ip']]['country'];
                 $output_array[$type][$key]['city'] = $ips[$item['ip']]['city'];
-                $dd->setUserAgent((string)$item['user_agent']);
-                $dd->parse();
+                Config::$device_detector->setUserAgent((string)$item['user_agent']);
+                Config::$device_detector->setClientHints();
+                Config::$device_detector->parse();
                 #Get OS
-                $output_array[$type][$key]['os'] = $dd->getOs();
+                $output_array[$type][$key]['os'] = Config::$device_detector->getOs();
                 #Get client
-                $output_array[$type][$key]['client'] = $dd->getClient();
+                $output_array[$type][$key]['client'] = Config::$device_detector->getClient();
                 #Set OS and client icon if they exist
                 if (!empty($output_array[$type][$key]['os'])) {
                     $output_array[$type][$key]['os']['icon'] = DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']);

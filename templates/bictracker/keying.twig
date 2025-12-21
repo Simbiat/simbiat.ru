@@ -6,11 +6,15 @@
 </section>
 <section>
     <p>Используйте форму ниже для проверки контрольного символа номера счёта или проверки <em>возможной</em> принадлежности счёта указанному БИК согласно алгоритму 1997ого года (до постановления <cite>№732-П</cite>):</p>
-    <form role="form" action="" id="bic_keying" name="bic_keying">
-        <span class="float_label"><input id="bic_key" name="bic_key" form="bic_keying" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^\d{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}><label for="bic_key">БИК</label></span>
-        <span class="float_label"><input id="account_key" name="account_key" form="bic_keying" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^\d{5}[\dАВСЕНКМРТХавсенкмртх]{1}\d{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}><label for="account_key">Номер счёта</label></span>
-        <img loading="lazy" decoding="async" id="bic_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Проверяем ключевание...">
-    </form>
+    {% if request_from_bot %}
+        <p class="error">Вы были идентифицированы как бот, форма проверки скрыта.</p>
+    {% else %}
+        <form role="form" action="" id="bic_keying" name="bic_keying">
+            <span class="float_label"><input id="bic_key" name="bic_key" form="bic_keying" type="text" inputmode="decimal" autocomplete="on" required maxlength="9" size="9" pattern="^\d{9}$"{% if bic_value %} value="{{ bic_value }}"{% endif %}><label for="bic_key">БИК</label></span>
+            <span class="float_label"><input id="account_key" name="account_key" form="bic_keying" type="text" inputmode="text" autocomplete="on" required maxlength="20" size="20" pattern="^\d{5}[\dАВСЕНКМРТХавсенкмртх]{1}\d{14}$"{% if acc_value %} value="{{ acc_value }}"{% endif %}><label for="account_key">Номер счёта</label></span>
+            <img loading="lazy" decoding="async" id="bic_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Проверяем ключевание...">
+        </form>
+    {% endif %}
     <p>
         {% if check_result is same as(null) %}
             <span id="acc_check_result"></span>

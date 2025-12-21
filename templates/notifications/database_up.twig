@@ -1,0 +1,12 @@
+<p>The database appears to have started up again.</p>
+{% if maintenance %}
+    <p>It looks like something went wrong during maintenance.</p>
+    {% if error_text %}
+        <p>{{ error_text }}</p>
+    {% endif %}
+    {% if restored %}
+        <p>Maintenance mode was successfully canceled.</p>
+    {% else %}
+        <p>Maintenance mode failed to be canceled.</p>
+    {% endif %}
+{% endif %}

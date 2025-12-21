@@ -13,7 +13,7 @@ use Twig\TwigFunction;
 /**
  * Class to implement some extension stuff for Twig
  */
-class Extension extends AbstractExtension implements GlobalsInterface
+final class Extension extends AbstractExtension implements GlobalsInterface
 {
     /**
      * Returns a list of functions to add to the existing list.
@@ -52,7 +52,8 @@ class Extension extends AbstractExtension implements GlobalsInterface
         $defaults = [
             'site_name' => Config::SITE_NAME,
             'domain' => Config::$base_url,
-            'url' => Config::$base_url.'/'.($_SERVER['REQUEST_URI'] ?? ''),
+            'canonical' => Config::$canonical,
+            'url' => mb_rtrim(Config::$base_url.'/'.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
             'maintenance' => 1,
             'registration' => 0,
         ];

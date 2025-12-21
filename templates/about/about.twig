@@ -12,6 +12,7 @@
                     <li><a href="/about/privacy" target="_self" itemprop="url"><span itemprop="name">Privacy Policy</span></a></li>
                     <li><a href="/about/security" target="_self" itemprop="url"><span itemprop="name">Security Policy</span></a></li>
                     <li><a href="/talks/sections/7" target="_self" itemprop="url"><span itemprop="name">Changelog</span></a></li>
+                    <li><a href="/about/contacts" target="_self" itemprop="url"><span itemprop="name">Contacts</span></a></li>
                 </ul>
             {% endif %}
         </details>
@@ -28,6 +29,8 @@
                 {{ include('about/privacy.twig') }}
             {% elseif subservice_name == 'security' %}
                 {{ include('about/security.twig') }}
+            {% elseif subservice_name == 'contacts' %}
+                {{ include('about/contacts.twig') }}
             {% endif %}
         </article>
     {% endif %}

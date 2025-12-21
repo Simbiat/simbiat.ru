@@ -2,6 +2,7 @@ const TIMEZONE = Intl.DateTimeFormat()
                      .resolvedOptions().timeZone;
 const AJAX_TIMEOUT = 60000;
 const SNACKBAR_FAIL_LIFE = 10000;
+const ACCESS_TOKEN = getSearchParam('access_token');
 
 //Runs initialization routines
 function init(): void {
@@ -70,6 +71,13 @@ function init(): void {
   if (!empty(quotes)) {
     quotes.forEach((quote) => {
       qInit(quote);
+    });
+  }
+  //Handle var tags
+  const variables = document.querySelectorAll('var');
+  if (!empty(variables)) {
+    variables.forEach((variable) => {
+      varInit(variable);
     });
   }
   //Handle dialog closure when clicking outside dialog content

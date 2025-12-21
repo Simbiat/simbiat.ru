@@ -41,8 +41,15 @@ class Post extends Page
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];
         }
         #Check if private
-        if ($output_array['private'] && $output_array['owned'] !== true && !in_array('view_private', $_SESSION['permissions'], true)) {
-            return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
+        if ($output_array['private']) {
+            if ($output_array['author'] === Config::USER_IDS['Unknown user'] && $output_array['owned'] === true) {
+                if ($output_array['type'] === 'Support' && ($output_array['access_token'] === null || $output_array['access_token'] === '' || $output_array['access_token'] !== ($_GET['access_token'] ?? ''))) {
+                    #Return same error to limit potential of brute-forcing a token
+                    return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
+                }
+            } elseif ($output_array['owned'] !== true && !in_array('view_private', $_SESSION['permissions'], true)) {
+                return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];
+            }
         }
         #Check if scheduled
         if ($output_array['created'] >= \time() && !in_array('view_scheduled', $_SESSION['permissions'], true)) {

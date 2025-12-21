@@ -1,0 +1,8 @@
+<div class="tiny_align_center">You can contact administration using social media listed below. If you want to report a bug, <a href="https://github.com/Simbiat/simbiat.ru/issues" target="_blank" rel="noopener noreferrer">GitHub</a> is recommended.</div>
+{{ include('common/layout/contacts.twig') }}
+<div class="tiny_align_center">Alternatively you can use the contact form. You also <strong>need</strong> to use the form, if you want to appeal a ban.</div>
+{% if reason == 'Failed to connect to database' %}
+    <div class="tiny_align_center error">The contact form relies on database, which is currently unavailable, so the form is not available. Please, try again later.</div>
+{% else %}
+    {{ include('talks/forms/thread.twig', {'thread_edit': false, 'contact_form': true, 'type': 'Support'}) }}
+{% endif %}

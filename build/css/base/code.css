@@ -22,10 +22,10 @@ samp {
     margin: 0.5rem;
     max-inline-size: calc(100% - 1rem);
     min-block-size: 2.5rem;
+    overflow-wrap: break-word;
     padding: 0.2rem;
     position: relative;
     white-space: pre-wrap;
-    word-wrap: break-word;
 
     &[data-description] {
         padding-block-start: 1rem;
@@ -72,11 +72,12 @@ var {
     border-width: var(--border_width);
     box-sizing: border-box;
     color: var(--color_disabled);
+    cursor: pointer;
     display: inline;
     font-family: var(--font_mono);
     font-style: normal;
+    overflow-wrap: break-word;
     padding: .2rem;
     position: relative;
     white-space: pre-wrap;
-    word-wrap: break-word;
 }

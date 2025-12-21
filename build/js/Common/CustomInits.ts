@@ -196,9 +196,22 @@ function blockquoteInit(quote: HTMLElement): void {
 
 function qInit(quote: HTMLQuoteElement): void {
   // q tag is inline and a visual button does not suit it, so we add tooltip to it
-  quote.setAttribute('data-tooltip', 'Click to copy quote');
+  if (!quote.hasAttribute('data-tooltip')) {
+    quote.setAttribute('data-tooltip', 'Click to copy quote');
+  }
   // Add listener
   quote.addEventListener('click', (event: MouseEvent) => {
+    copyQuote(event.target as HTMLElement);
+  });
+}
+
+function varInit(variable: HTMLElement): void {
+  // var tag is inline and a visual button does not suit it, so we add tooltip to it
+  if (!variable.hasAttribute('data-tooltip')) {
+    variable.setAttribute('data-tooltip', 'Click to copy variable');
+  }
+  // Add listener
+  variable.addEventListener('click', (event: MouseEvent) => {
     copyQuote(event.target as HTMLElement);
   });
 }
@@ -236,7 +249,9 @@ function imgInit(img: HTMLImageElement): void {
       const link = document.createElement('a');
       link.href = img.src;
       link.target = '_blank';
-      link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+      if (!link.hasAttribute('data-tooltip')) {
+        link.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+      }
       link.classList.add('gallery_zoom');
       //Create a clone of the image, and remove gallery_zoom class for cleanliness
       const clone = img.cloneNode(true) as HTMLImageElement;
@@ -249,7 +264,9 @@ function imgInit(img: HTMLImageElement): void {
       //Handle existing anchor
       (parent as HTMLAnchorElement).href = img.src;
       (parent as HTMLAnchorElement).target = '_blank';
-      parent.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+      if (!parent.hasAttribute('data-tooltip')) {
+        parent.setAttribute('data-tooltip', (img.hasAttribute('data-tooltip') ? String(img.getAttribute('data-tooltip')) : String(img.alt)));
+      }
       parent.classList.add('gallery_zoom');
       img.classList.contains('gallery_zoom');
     }
@@ -343,6 +360,9 @@ function customizeNewElements(new_node: Node): void {
         break;
       case 'q':
         qInit(new_node as HTMLQuoteElement);
+        break;
+      case 'var':
+        varInit(new_node as HTMLElement);
         break;
       case 'samp':
         sampInit(new_node as HTMLElement);

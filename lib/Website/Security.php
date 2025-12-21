@@ -4,10 +4,6 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 use DeviceDetector\ClientHints;
-use DeviceDetector\DeviceDetector;
-use DeviceDetector\Parser\AbstractParser;
-use DeviceDetector\Parser\Device\AbstractDeviceParser;
-
 use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
 use function is_array, function_exists;
@@ -81,17 +77,17 @@ class Security
     
     /**
      * Function to generate tokens (for example, CSRF)
+     *
+     * @param int $length
+     *
      * @return string
      */
-    public static function genToken(): string
+    public static function genToken(int $length = 32): string
     {
         try {
-            $token = \bin2hex(\random_bytes(32));
+            $token = \bin2hex(\random_bytes($length));
         } catch (\Throwable) {
             $token = '';
-        }
-        if (!\headers_sent()) {
-            \header('X-CSRF-Token: '.$token);
         }
         return $token;
     }
@@ -205,12 +201,14 @@ class Security
         #Get IP
         $ip = $_SESSION['ip'] ?? null;
         #Get username
-        $user_id = (int)($_SESSION['user_id'] ?? $user_id ?? Config::USER_IDS['Unknown user']);
+        if ($user_id === null) {
+            $user_id = (int)($_SESSION['user_id'] ?? Config::USER_IDS['Unknown user']);
+        }
         #Get User Agent
         $ua = $_SESSION['useragent']['full'] ?? null;
         try {
             Query::query(
-                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(), (SELECT `type_id` FROM `sys__log_types` WHERE `name`=:type), :action, :user_id, :ip, :ua, :extras);',
+                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(6), (SELECT `type_id` FROM `sys__log_types` WHERE `name`=:type), :action, :user_id, :ip, :ua, :extras);',
                 [
                     ':type' => $type,
                     ':action' => $action,
@@ -248,20 +246,19 @@ class Security
             #Something is fishy, so let's 418 this
             return ['unsupported' => true, 'browser' => false];
         }
-        #Force full string versions
-        AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
-        #Initialize device detector
-        $dd = (new DeviceDetector($_SERVER['HTTP_USER_AGENT'], ClientHints::factory($_SERVER)));
-        $dd->parse();
+        #Parse user agent
+        Config::$device_detector->setUserAgent($_SERVER['HTTP_USER_AGENT']);
+        Config::$device_detector->setClientHints(ClientHints::factory($_SERVER));
+        Config::$device_detector->parse();
         #Get bot name
-        $bot = $dd->getBot();
+        $bot = Config::$device_detector->getBot();
         if (is_array($bot)) {
             #Do not waste resources on bots
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
-            return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false];
+            return ['bot' => mb_substr($bot['name'], 0, 64, 'UTF-8'), 'os' => NULL, 'client' => NULL, 'unsupported' => false, 'browser' => false, 'ai' => \strncasecmp($bot['category'], 'ai', 2) === 0];
         }
         #Get OS
-        $os = $dd->getOs();
+        $os = Config::$device_detector->getOs();
         #Concat OS and version
         $os = mb_trim(($os['name'] ?? '').' '.($os['version'] ?? ''), null, 'UTF-8');
         #Force OS to be NULL if it's empty
@@ -269,8 +266,8 @@ class Security
             $os = NULL;
         }
         #Get client
-        $browser = $dd->isBrowser();
-        $client = $dd->getClient();
+        $browser = Config::$device_detector->isBrowser();
+        $client = Config::$device_detector->getClient();
         #Check if a client is supported
         if (\preg_match('/^(Internet Explorer|Opera Mini|Opera Mobile|Baidu|UC Browser|QQ Browser|KaiOS Browser)/ui', $client['name'] ?? '') === 1 ||
             (!empty($client['version']) && (
@@ -343,8 +340,13 @@ class Security
     public static function session_regenerate_id(bool $delete_old_session = false): bool
     {
         try {
-            \session_regenerate_id($delete_old_session);
+            if (\session_status() === \PHP_SESSION_ACTIVE) {
+                \session_regenerate_id($delete_old_session);
+            }
             $_SESSION['csrf'] = self::genToken();
+            if (!\headers_sent()) {
+                \header('X-CSRF-Token: '.$_SESSION['csrf']);
+            }
             return true;
         } catch (\Throwable) {
             return false;

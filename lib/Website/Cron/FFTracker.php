@@ -19,6 +19,7 @@ use Simbiat\FFXIV\Statistics;
 use Simbiat\Website\Caching;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
+use Simbiat\Website\Notifications\CronFailure;
 use Simbiat\Website\usercontrol\Email;
 
 /**
@@ -37,9 +38,9 @@ class FFTracker
                 new Statistics()->update($type);
             }
             return true;
-        } catch (\Throwable $e) {
-            $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            new Email(Config::ADMIN_MAIL)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+        } catch (\Throwable $throwable) {
+            $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
+            new CronFailure()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
             return $error;
         }
     }
@@ -81,13 +82,13 @@ class FFTracker
         try {
             $entities = Query::query('
                     SELECT `type`, `id`, `priority`, `updated` FROM (
-                        (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`user_id` IS NOT NULL AND `deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`user_id` IS NOT NULL AND `deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT \'freecompany\' AS `type`, `fc_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__freecompany_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__freecompany_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__freecompany` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'freecompany\' AS `type`, `fc_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__freecompany_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__freecompany_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__freecompany` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT \'pvpteam\' AS `type`, `pvp_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__pvpteam_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` AND `ffxiv__pvpteam_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__pvpteam` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'pvpteam\' AS `type`, `pvp_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__pvpteam_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` AND `ffxiv__pvpteam_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__pvpteam` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__linkshell_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__linkshell_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` AND `ffxiv__linkshell_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__linkshell_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__linkshell_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` AND `ffxiv__linkshell_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
                         (SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `updated`, 0 AS `priority` FROM `ffxiv__achievement` as `ach_main` WHERE `achievement_id` = (SELECT `achievement_id` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__character_achievement`.`achievement_id` = `ach_main`.`achievement_id` AND `ffxiv__character`.`deleted` IS NULL AND `hidden` IS NULL LIMIT 1) ORDER BY `updated` LIMIT :max_lines OFFSET :offset)
                     ) `all_entities`
@@ -138,9 +139,9 @@ class FFTracker
                 }
             }
             return Query::query($queries);
-        } catch (\Throwable $e) {
-            $error = $e->getMessage()."\r\n".$e->getTraceAsString();
-            new Email(Config::ADMIN_MAIL)->send('[Alert]: Cron task failed', ['errors' => $error], 'Simbiat');
+        } catch (\Throwable $throwable) {
+            $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
+            new CronFailure()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
             return $error;
         }
     }

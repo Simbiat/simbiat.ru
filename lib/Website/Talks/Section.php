@@ -19,7 +19,6 @@ use function is_array;
  */
 class Section extends Entity
 {
-    protected const string ENTITY_TYPE = 'section';
     protected string $id_format = '/^top|\d+$/mi';
     public string $name = '';
     public string $type = 'Category';
@@ -45,6 +44,8 @@ class Section extends Entity
     public array $threads = [];
     #Flag indicating if we are getting data for a thread and can skip some details
     private bool $for_thread = false;
+    #List of subscribers
+    public array $subscribers = [];
     
     /**
      * Function to set a flag to return only the data required for a thread (for the sake of optimization)
@@ -86,7 +87,7 @@ class Section extends Entity
             ];
             #Get children
             if (!$this->for_thread) {
-                $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()'))->listEntities($page);
+                $data['children'] = new Sections(where: '`talks__sections`.`parent_id` IS NULL'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP(6)'))->listEntities($page);
             }
         } else {
             $data = new Sections([':section_id' => [$this->id, 'int']], '`talks__sections`.`section_id`=:section_id')->listEntities();
@@ -133,7 +134,7 @@ class Section extends Entity
             $where = '';
             $bindings = [':section_id' => [$this->id, 'int']];
             if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
-                $where .= ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP()';
+                $where .= ' AND `talks__sections`.`created`<=CURRENT_TIMESTAMP(6)';
             }
             if (!in_array('view_private', $_SESSION['permissions'], true)) {
                 $where .= ' AND (`talks__sections`.`private`=0 OR `talks__sections`.`author`=:user_id)';
@@ -143,7 +144,7 @@ class Section extends Entity
                 $data['children'] = new Sections($bindings, '`talks__sections`.`parent_id`=:section_id'.$where)->listEntities($page);
             }
             #Get threads
-            if ($data['detailed_type'] === 'Category') {
+            if ($data['detailed_type'] === 'Category' || $this->for_thread) {
                 #Categories are not meant to have threads in them
                 $data['threads'] = [];
             } else {
@@ -151,42 +152,52 @@ class Section extends Entity
                 $order_by = match ($data['detailed_type']) {
                     'Blog', 'Changelog' => '`created` DESC, `last_post` DESC, `name` ASC',
                     'Forum' => '`last_post` DESC, `name` ASC',
-                    'Support' => '`closed` IS NOT NULL, `closed` DESC, `last_post` DESC, `name` ASC',
+                    'Support' => '`talks__threads`.`closed` IS NOT NULL, `talks__threads`.`closed` DESC, `last_post` DESC, `name` ASC',
                     'Knowledgebase' => '`name` ASC',
                 };
                 #If the user is not an admin, also limit the selection to non-private threads or those created by the user
                 $where = '`talks__threads`.`section_id`=:section_id';
                 $bindings = [':section_id' => [$this->id, 'int']];
+                #Do not show threads created by "Unknown user"
+                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
+                    $where .= ' AND `talks__threads`.`author`!=:anonymous';
+                    $bindings[':anonymous'] = [Config::USER_IDS['Unknown user'], 'int'];
+                }
                 if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
-                    $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP()';
+                    $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP(6)';
                 }
                 if (!in_array('view_private', $_SESSION['permissions'], true)) {
                     $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:user_id)';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
-                if (!$this->for_thread) {
-                    $data['threads'] = new Threads($bindings, $where, $order_by)->listEntities($page);
-                }
+                $data['threads'] = new Threads($bindings, $where, $order_by)->listEntities($page);
             }
         }
         if (!$this->for_thread) {
+            #Get subscribers
+            $data['subscribers'] = Query::query('SELECT `user_id` FROM `subs__sections` WHERE `section_id`=:section_id AND `user_id`<>:user_id;', [':section_id' => [$this->id, 'int'], 'user_id' => [$data['author'], 'int']], return: 'column');
             #Count grandchildren
             if (!empty($data['children']['entities'])) {
                 $where = '';
                 $bindings = [];
                 if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
-                    $where .= '`t`.`created`<=CURRENT_TIMESTAMP() AND ';
+                    $where .= '`t`.`created`<=CURRENT_TIMESTAMP(6) AND ';
                 }
                 if (!in_array('view_private', $_SESSION['permissions'], true)) {
                     $where .= '(`t`.`private`=0 OR `t`.`author`=:user_id) AND ';
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
-                if (!empty($where)) {
+                #Do not show threads created by "Unknown user"
+                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
+                    $where .= '`t`.`author`!=:anonymous AND ';
+                    $bindings[':anonymous'] = [Config::USER_IDS['Unknown user'], 'int'];
+                }
+                if ($where !== '') {
                     $where = \preg_replace('/( AND $)/ui', '', $where);
                 }
                 foreach ($data['children']['entities'] as &$category) {
                     $bindings[':section_id'] = [$category['section_id'], 'int'];
-                    ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = Query::query(
+                    $result = Query::query(
                         'WITH RECURSIVE `SectionHierarchy` AS (
                                     SELECT `section_id`, `parent_id`
                                     FROM `talks__sections`
@@ -197,16 +208,20 @@ class Section extends Entity
                                     INNER JOIN `SectionHierarchy` `sh` ON `s`.`parent_id` = `sh`.`section_id`
                                 )
                                 SELECT
-                                    (SELECT COUNT(`thread_id`) FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' AND '.$where).') AS `thread_count`,
-                                    (SELECT COUNT(`post_id`) FROM `talks__posts` `p` WHERE `p`.`thread_id` IN (SELECT `thread_id` FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.(empty($where) ? '' : ' AND '.$where).')) AS `post_count`;',
+                                    (SELECT COUNT(`thread_id`) FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).') AS `thread_count`,
+                                    (SELECT COUNT(`post_id`) FROM `talks__posts` `p` WHERE `p`.`thread_id` IN (SELECT `thread_id` FROM `talks__threads` `t` WHERE `t`.`section_id` IN (SELECT `section_id` FROM `SectionHierarchy`)'.($where === '' ? '' : ' AND '.$where).')) AS `post_count`;',
                         $bindings, return: 'row');
+                    if (!is_array($result)) {
+                        $result = [];
+                    }
+                    ['thread_count' => $category['threads'], 'post_count' => $category['posts']] = $result;
                 }
                 unset($category);
             }
             #Count posts
             if (!empty($data['threads']['entities'])) {
                 foreach ($data['threads']['entities'] as &$thread) {
-                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
+                    $thread['posts'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$thread['id'], 'int']], return: 'count');
                 }
             }
         }
@@ -238,6 +253,7 @@ class Section extends Entity
         $this->parent_id = (int)($from_db['parent_id'] ?? 0);
         $this->description = $from_db['description'] ?? '';
         if (!$this->for_thread) {
+            $this->subscribers = $from_db['subscribers'];
             $this->children = (is_array($from_db['children']) ? $from_db['children'] : ['pages' => $from_db['children'], 'entities' => []]);
             $this->threads = (is_array($from_db['threads']) ? $from_db['threads'] : ['pages' => $from_db['threads'], 'entities' => []]);
         }

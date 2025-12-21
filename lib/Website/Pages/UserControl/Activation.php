@@ -60,13 +60,16 @@ class Activation extends Page
         #Check if the user requires activation
         $output_array['activation'] = Query::query('SELECT `user_id` FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Unverified'], 'int']], return: 'check');
         #Get a list of mails for the user with activation codes
-        $emails = Query::query('SELECT `email`, `activation` FROM `uc__emails` WHERE `user_id`=:user_id AND `activation` IS NOT NULL;', [':user_id' => [$user_id, 'int']], return: 'pair');
+        $emails = Query::query('SELECT `email` FROM `uc__emails` WHERE `user_id`=:user_id AND `activation` IS NOT NULL;', [':user_id' => [$user_id, 'int']], return: 'column');
         #Check if the provided activation code fits any of those mails
-        foreach ($emails as $email => $code) {
-            if (\password_verify($activation, $code) && new Email($email)->activate($user_id)) {
+        foreach ($emails as $email) {
+            if (new Email($email)->activate($user_id, $activation)) {
                 $output_array = ['activated' => true, 'email' => $email];
                 break;
             }
+        }
+        if (!\array_key_exists('activated', $output_array)) {
+            $output_array = ['activated' => false];
         }
         return $output_array;
     }

@@ -10,11 +10,14 @@ use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
+use Simbiat\Website\Notifications\NewPost;
+use Simbiat\Website\Notifications\NewThread;
 use Simbiat\Website\Sanitization;
 use Simbiat\Website\Search\Posts;
 use Simbiat\Website\Search\Threads;
 use Simbiat\Website\Security;
 
+use Simbiat\Website\usercontrol\Email;
 use function in_array, is_array, count;
 
 /**
@@ -22,7 +25,6 @@ use function in_array, is_array, count;
  */
 class Thread extends Entity
 {
-    protected const string ENTITY_TYPE = 'thread';
     public string $name = '';
     public string $type = 'Blog';
     public bool $system = false;
@@ -53,6 +55,12 @@ class Thread extends Entity
     public array $external_links = [];
     #Flag indicating if we are getting data for a post and can skip some details
     private bool $for_post = false;
+    #Access token for support tickets from contact form
+    public ?string $access_token = null;
+    #Access token for support tickets from contact form
+    public ?string $email = null;
+    #List of subscribers
+    public array $subscribers = [];
     
     /**
      * Function to set a flag, indicating that data is needed for a post (for optimization)
@@ -81,18 +89,23 @@ class Thread extends Entity
         }
         $data = $data['entities'][0];
         #Get section details
-        $data['section'] = new Section($data['section_id'])->setForThread(true)->getArray();#Get posts
+        $data['section'] = new Section($data['section_id'])->setForThread(true)->getArray();
+        if ($data['detailed_type'] === 'Support') {
+            $data['access_token'] = Query::query('SELECT `access_token`, `email` FROM `talks__contact_form` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int']], return: 'row');
+        }
         if ($this->for_post) {
             #Get pagination data
             try {
                 #Regular list does not fit due to pagination and due to excessive data, so using a custom query to get all posts
-                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP()').';', [':thread_id' => [$this->id, 'int']], return: 'count');
+                $data['posts']['pages'] = Query::query('SELECT COUNT(*) AS `count` FROM `talks__posts` WHERE `thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `created`<=CURRENT_TIMESTAMP(6)').';', [':thread_id' => [$this->id, 'int']], return: 'count');
             } catch (\Throwable) {
                 $data['posts']['pages'] = 1;
             }
         } else {
+            #Get subscribers
+            $data['subscribers'] = Query::query('SELECT `user_id` FROM `subs__threads` WHERE `thread_id`=:thread_id AND `user_id`<>:user_id;', [':thread_id' => [$this->id, 'int'], 'user_id' => [$data['author'], 'int']], return: 'column');
             #Get posts
-            $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP()'), '`talks__posts`.`created` ASC')->listEntities($page);
+            $data['posts'] = new Posts([':thread_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], '`talks__posts`.`thread_id`=:thread_id'.(in_array('view_scheduled', $_SESSION['permissions'], true) ? '' : ' AND `talks__posts`.`created`<=CURRENT_TIMESTAMP(6)'), '`talks__posts`.`created` ASC')->listEntities($page);
             /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
             if (is_array($data['posts']) && is_array($data['posts']['entities'])) {
                 /** @noinspection OffsetOperationsInspection https://github.com/kalessil/phpinspectionsea/issues/1941 */
@@ -104,7 +117,7 @@ class Thread extends Entity
             #Get tags
             $data['tags'] = Query::query('SELECT `tag` FROM `talks__thread_to_tags` INNER JOIN `talks__tags` ON `talks__thread_to_tags`.`tag_id`=`talks__tags`.`tag_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int'],], return: 'column');
             #Get external links
-            $data['links'] = Query::query('SELECT `url`, `talks__alt_links`.`type`, `icon` FROM `talks__alt_links` INNER JOIN `talks__alt_link_types` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int'],], return: 'all');
+            $data['links'] = Query::query('SELECT `url`, `talks__alt_link_types`.`type`, `icon` FROM `talks__alt_links` INNER JOIN `talks__alt_link_types` ON `talks__alt_links`.`type`=`talks__alt_link_types`.`type_id` WHERE `thread_id`=:thread_id;', [':thread_id' => [$this->id, 'int'],], return: 'all');
         }
         return $data;
     }
@@ -136,7 +149,13 @@ class Thread extends Entity
         $this->parent_id = (int)$from_db['section']['id'];
         $this->language = $from_db['language'];
         $this->last_page = $from_db['posts']['pages'];
+        if ($this->last_page < 1) {
+            $this->last_page = 1;
+        }
+        $this->access_token = $from_db['access_token']['access_token'] ?? null;
+        $this->email = $from_db['access_token']['email'] ?? null;
         if (!$this->for_post) {
+            $this->subscribers = $from_db['subscribers'];
             $this->posts = $from_db['posts'];
             $this->tags = $from_db['tags'];
             $this->external_links = Editors::digitToKey($from_db['links'], 'type');
@@ -247,6 +266,27 @@ class Thread extends Entity
         if ($with_post && (empty($_POST['post_form']) || empty($_POST['post_form']['text']) || \preg_match('/^(<p?)\s*(<\/p>)?$/ui', $_POST['post_form']['text']) === 1)) {
             return ['http_error' => 400, 'reason' => 'No post text provided'];
         }
+        #Check email, if it was provided with contact form
+        if (!empty($_POST['new_thread']['contact_form_email'])) {
+            try {
+                $email = (new Email($_POST['new_thread']['contact_form_email']));
+            } catch (\Throwable) {
+                #Email validation failed
+                return ['http_error' => 403, 'reason' => 'Bad email provided'];
+            }
+            #Check if banned
+            if ($email->banned) {
+                return ['http_error' => 403, 'reason' => 'Bad email provided'];
+            }
+            #Attempt to register email
+            if (!$email->registered) {
+                $email_status = $email->add();
+                if (!\array_key_exists('status', $email_status) || $email_status['status'] !== 201) {
+                    return $email_status;
+                }
+                $email->subscribe();
+            }
+        }
         #Sanitize data
         $data = $_POST['new_thread'] ?? [];
         $sanitize = $this->sanitizeInput($data);
@@ -286,14 +326,17 @@ class Thread extends Entity
             #Add alt links
             $queries = [];
             foreach ($data['alt_links'] as $key => $link) {
-                $queries[] = [
-                    'INSERT INTO `talks__alt_links` (`thread_id`, `type`, `url`) VALUES (:thread_id, :type, :url);',
-                    [
-                        ':thread_id' => [$new_id, 'int'],
-                        ':type' => $key,
-                        ':url' => $link,
-                    ]
-                ];
+                if ($link !== null) {
+                    $queries[] = [
+                        'INSERT INTO `talks__alt_links` (`thread_id`, `type`, `url`, `added_by`, `edited_by`) VALUES (:thread_id, (SELECT `type_id` FROM `talks__alt_link_types` WHERE `type`=:type), :url, :user_id, :user_id) ON DUPLICATE KEY UPDATE `url`=:url, `edited_by`=:user_id, `edited`=CURRENT_TIMESTAMP(6), `checked`=null;',
+                        [
+                            ':thread_id' => [$new_id, 'int'],
+                            ':type' => $key,
+                            ':url' => $link,
+                            ':user_id' => [$_SESSION['user_id'], 'int'],
+                        ]
+                    ];
+                }
             }
             if (count($queries) !== 0) {
                 try {
@@ -307,13 +350,20 @@ class Thread extends Entity
             if ($with_post) {
                 $_POST['post_form']['thread_id'] = $new_id;
                 $_POST['post_form']['time'] = $data['time'];
-                $result = new Post()->add();
+                $result = new Post()->add(true);
                 if (empty($result['location'])) {
                     #An error occurred, return it
                     return $result;
                 }
+                $location = $result['location'];
+            } else {
+                $location = '/talks/threads/'.$new_id;
             }
-            return ['response' => true, 'location' => '/talks/threads/'.$new_id];
+            $section = new Section($data['parent_id'])->get();
+            foreach ($section->subscribers as $subscriber) {
+                new NewThread()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => mb_trim($data['name'], null, 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)])->save()->send();
+            }
+            return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             return ['http_error' => 500, 'reason' => 'Failed to create new thread'];
@@ -385,23 +435,41 @@ class Thread extends Entity
                     ]
                 );
             }
-            #Remove all previous alt links
-            $queries[] = [
-                'DELETE FROM `talks__alt_links` WHERE `thread_id`=:thread;',
-                [
-                    ':thread' => [$this->id, 'int']
-                ]
-            ];
+            $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
             #Add alt links as per the edited form
             foreach ($data['alt_links'] as $key => $link) {
-                $queries[] = [
-                    'INSERT INTO `talks__alt_links` (`thread_id`, `type`, `url`) VALUES (:thread, :type, :url);',
-                    [
-                        ':thread' => [$this->id, 'int'],
-                        ':type' => $key,
-                        ':url' => $link,
-                    ]
-                ];
+                if ($link === null) {
+                    #Remove previous alt link
+                    $queries[] = [
+                        'DELETE FROM `talks__alt_links` WHERE `thread_id`=:thread AND `type`=(SELECT `type_id` FROM `talks__alt_link_types` WHERE `type`=:type);',
+                        [
+                            ':thread' => [$this->id, 'int'],
+                            ':type' => $key,
+                        ]
+                    ];
+                } elseif (\array_key_exists($key, $this->external_links)) {
+                    if ($this->external_links[$key]['url'] !== $link) {
+                        $queries[] = [
+                            'UPDATE `talks__alt_links` SET `url`=:url, `edited_by`=:user_id, `edited`=CURRENT_TIMESTAMP(6), `checked`=NULL WHERE `thread_id`=:thread AND `type`=(SELECT `type_id` FROM `talks__alt_link_types` WHERE `type`=:type);',
+                            [
+                                ':thread' => [$this->id, 'int'],
+                                ':type' => $key,
+                                ':url' => $link,
+                                ':user_id' => [$_SESSION['user_id'], 'int'],
+                            ]
+                        ];
+                    }
+                } else {
+                    $queries[] = [
+                        'INSERT INTO `talks__alt_links` (`thread_id`, `type`, `url`, `added_by`, `edited_by`) VALUES (:thread, (SELECT `type_id` FROM `talks__alt_link_types` WHERE `type`=:type), :url, :user_id, :user_id) ON DUPLICATE KEY UPDATE `url`=:url, `edited_by`=:user_id, `edited`=CURRENT_TIMESTAMP(6), `checked`=NULL;',
+                        [
+                            ':thread' => [$this->id, 'int'],
+                            ':type' => $key,
+                            ':url' => $link,
+                            ':user_id' => [$_SESSION['user_id'], 'int'],
+                        ]
+                    ];
+                }
             }
             #Run the queries
             Query::query($queries);
@@ -438,7 +506,7 @@ class Thread extends Entity
             $data['pinned'] = null;
         }
         $data['clear_og_image'] = Sanitization::checkboxToBoolean($data['clear_og_image']);
-        $data['og_image'] = !(mb_strtolower($data['og_image'], 'UTF-8') === 'false');
+        $data['og_image'] = !(mb_strtolower($data['og_image'] ?? '', 'UTF-8') === 'false');
         if (empty($data['parent_id'])) {
             return ['http_error' => 400, 'reason' => 'No section ID provided'];
         }
@@ -480,11 +548,11 @@ class Thread extends Entity
             return ['http_error' => 400, 'reason' => 'Can\' post in categories'];
         }
         #Check if the name is duplicated
-        $thread_exists = Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int']], return: 'value');
+        $thread_exists = Query::query('SELECT `thread_id` FROM `talks__threads` WHERE `section_id`=:section_id AND `author`=:author AND `name`=:name;', [':name' => $data['name'], ':section_id' => [$data['parent_id'], 'int'], ':author' => [$_SESSION['user_id'], 'int']], return: 'value');
         if (
             (
                 #If the name is empty (a new thread is being created)
-                empty($this->name) ||
+                $this->name === '' ||
                 #Or it's not empty and is different from the one we are trying to set
                 $this->name !== $data['name']
             ) &&
@@ -521,25 +589,8 @@ class Thread extends Entity
         if (empty($data['alt_links']) || $parent->type === 'Support') {
             #Ensure it's an array
             $data['alt_links'] = [];
-        } else {
-            #Get supported links and set keys to the respective values of the `type` field
-            $alt_links = Editors::digitToKey(self::getAltLinkTypes(), 'type');
-            foreach ($data['alt_links'] as $key => $link) {
-                if (!empty($link)) {
-                    $link = Security::sanitizeURL($link);
-                } else {
-                    unset($data['alt_links'][$key]);
-                    continue;
-                }
-                #Check if a website (sent as a key) is supported and check the value against regex (to avoid using field for YouTube (as an example) for some random website that is not YouTube)
-                if (empty($link) || !\array_key_exists($key, $alt_links) || \preg_match('/^https:\/\/(www\.)?'.$alt_links[$key]['regex'].'.*$/ui', $link) !== 1) {
-                    #Remove unsupported or possibly malicious website
-                    unset($data['alt_links'][$key]);
-                } else {
-                    $data['alt_links'][$key] = $link;
-                }
-            }
         }
+        $data['alt_links'] = $this->altLinksSanitize($data['alt_links']);
         #Check if og_image was sent and try to process it, unless `clear_og_image` is set, or the section type is Support
         if ($data['og_image'] && !$data['clear_og_image'] && $parent->type !== 'Support') {
             #Attempt to upload the image
@@ -556,6 +607,39 @@ class Thread extends Entity
             $data['og_image'] = null;
         }
         return true;
+    }
+    
+    /**
+     * Sanitize list of alternative links
+     * @param array $alt_links
+     *
+     * @return array
+     */
+    private function altLinksSanitize(array $alt_links): array
+    {
+        #Get supported links and set keys to the respective values of the `type` field
+        $supported = Editors::digitToKey(self::getAltLinkTypes(), 'type');
+        foreach ($alt_links as $key => $link) {
+            /** @noinspection IsEmptyFunctionUsageInspection We have less control on what values come here, so treat all possible empty values as bad one */
+            if (empty($link)) {
+                $alt_links[$key] = null;
+                continue;
+            }
+            $link = Security::sanitizeURL($link);
+            #Check if a website (sent as a key) is supported and check the value against regex (to avoid using field for YouTube (as an example) for some random website that is not YouTube)
+            if ($link === '' || !\array_key_exists($key, $supported) || \preg_match('/^https:\/\/(www\.)?'.$supported[$key]['regex'].'.*$/ui', $link) !== 1) {
+                #Remove unsupported or possibly malicious website
+                $alt_links[$key] = null;
+            } else {
+                $alt_links[$key] = $link;
+            }
+        }
+        foreach ($supported as $key => $link) {
+            if (!\array_key_exists($key, $alt_links)) {
+                $alt_links[$key] = null;
+            }
+        }
+        return $alt_links;
     }
     
     /**

@@ -35,19 +35,6 @@ class Unsubscribe extends Page
      */
     protected function generate(array $path): array
     {
-        if (empty($_GET['token'])) {
-            return ['http_error' => 400, 'reason' => 'No email token provided'];
-        }
-        $email = Security::decrypt($_GET['token']);
-        if (\preg_match(Security::EMAIL_REGEX, $email) !== 1) {
-            return ['http_error' => 400, 'reason' => 'Token provided does not represent a valid email'];
-        }
-        $output_array = [];
-        $output_array['email'] = $email;
-        if (!new Email($email)->unsubscribe()) {
-            $output_array['http_error'] = 500;
-            $output_array['reason'] = 'Failed to unsubscribe '.$email.'. You can try again, but if issue persists, contact us for assistance.';
-        }
-        return $output_array;
+        return new Email()->unsubscribe($_GET['unsubscribe_all'] ?? '');
     }
 }

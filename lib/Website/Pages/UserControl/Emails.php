@@ -30,13 +30,6 @@ class Emails extends Page
     #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $output_array = [];
-        #Get the email list
-        $output_array['emails'] = new User($_SESSION['user_id'])->getEmails();
-        #Count how many emails are activated (to restrict removal of emails)
-        $output_array['count_activated'] = \count(\array_filter(\array_column($output_array['emails'], 'activation'), static function ($x) {
-            return empty($x);
-        }));
-        return $output_array;
+        return new User($_SESSION['user_id'])->getEmails();
     }
 }

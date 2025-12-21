@@ -66,7 +66,7 @@ class HomePage
                 Headers::clientReturn(403);
             }
             #Redirect if the page number is set and is less than 1
-            if (isset($_GET['page']) && (int)$_GET['page'] < 1) {
+            if (\array_key_exists('page', $_GET) && (int)$_GET['page'] < 1) {
                 #Remove page (since we ignore page=1 in canonical)
                 Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', Config::$canonical));
             }
@@ -97,12 +97,20 @@ class HomePage
                     Page::headers();
                 }
                 #Get user agent details
-                self::$user_agent = Security::getUA();#Show that the client is unsupported
+                self::$user_agent = Security::getUA();
+                #Show that the client is unsupported
                 if (self::$user_agent['unsupported'] === true) {
                     self::$http_error = ['client' => self::$user_agent['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                 }
+                #Clear POST data if bot was detected to prevent potential abuse
+                if (!empty(self::$user_agent['bot'])) {
+                    echo 'here';exit;
+                }
                 #Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
-                if (!empty(self::$user_agent['bot']) && in_array(self::$user_agent['bot'], Config::BLCOKED_BOTS, true)
+                #Also block any bot that's known as AI one
+                if (
+                    !empty(self::$user_agent['bot']) &&
+                    (\array_key_exists('ai', self::$user_agent) && self::$user_agent['ai'] === true)
                 ) {
                     self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
                 }
@@ -116,23 +124,22 @@ class HomePage
                 }
                 #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
                 Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
-                #Try to start a session if it's not started yet and DB is up. Do not do it, if cache is being returned, and if an error has been detected already
-                if ((self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
+                #Try to start a session if it's not started yet and DB is up. Do not do it, if cache is being returned, if an error has been detected already or if a bot was detected
+                if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
                     \session_start();
                     #Check if banned IP
                     if (!empty($_SESSION['banned_ip'])) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                     }
+                    if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
+                        self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
+                    }
                 }
                 #Check if we have cached the results already
                 self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
-                #Do not do processing if we already encountered a problem
-                if (self::$http_error === null || self::$http_error === []) {
-                    $vars = new MainRouter()->route($uri);
-                } else {
-                    $vars = self::$http_error;
-                }
+                #We go to router in any case, since error checks will happen in Page class
+                $vars = new MainRouter()->route($uri);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);
                 $vars = ['http_error' => 500];
@@ -141,7 +148,7 @@ class HomePage
                 $vars['template_override'] = 'common/pages/api.twig';
             }
             #Generate page
-            $this->twigProc($vars);
+            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot']]));
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
         }
@@ -180,16 +187,19 @@ class HomePage
     final public function twigProc(array $twig_vars = [], bool $cache = false): bool
     {
         if ($cache) {
-            if (empty($twig_vars) || self::$method !== 'GET' || isset($_GET['cachereset']) || isset($_POST['cachereset'])) {
+            if ($twig_vars === [] || self::$method !== 'GET' || \array_key_exists('cachereset', $_GET) || \array_key_exists('cachereset', $_POST)) {
                 return false;
             }
             try {
                 #Update CSRF token
                 if (\session_status() === \PHP_SESSION_ACTIVE) {
                     $_SESSION['csrf'] = Security::genToken();
+                    if (!\headers_sent()) {
+                        \header('X-CSRF-Token: '.$_SESSION['csrf']);
+                    }
                 }
                 $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-                if (isset($twig_vars['http_error'])) {
+                if (\array_key_exists('http_error', $twig_vars)) {
                     Headers::clientReturn($twig_vars['http_error'], false);
                 }
                 \ob_end_clean();
@@ -216,9 +226,12 @@ class HomePage
                 #Update CSRF token
                 if (\session_status() === \PHP_SESSION_ACTIVE) {
                     $_SESSION['csrf'] = Security::genToken();
+                    if (!\headers_sent()) {
+                        \header('X-CSRF-Token: '.$_SESSION['csrf']);
+                    }
                 }
                 $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-                if (isset($twig_vars['http_error'])) {
+                if (\array_key_exists('http_error', $twig_vars)) {
                     Headers::clientReturn($twig_vars['http_error'], false);
                 }
                 $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
