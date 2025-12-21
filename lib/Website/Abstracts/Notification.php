@@ -378,7 +378,7 @@ abstract class Notification extends Entity
         }
         try {
             #Add content
-            $email->subject($this::SUBJECT)
+            $email->subject((Config::$prod ? '' : '[Test] ').$this::SUBJECT)
                 ->htmlTemplate('notifications/email.twig')
                 ->context(['subject' => (Config::$prod ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
             if ($debug) {
