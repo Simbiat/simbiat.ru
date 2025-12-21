@@ -11,7 +11,7 @@
         {% endif %}
     {% else %}
         <div class="float_label">
-            <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="text" {% if thread_edit %}value="{{ name }}" {% endif %}aria-required="true" required name="{% if thread_edit %}current_thread[name]{% else %}new_thread[name]{% endif %}" id="{% if thread_edit %}current_thread_name{% else %}new_thread_name{% endif %}" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64">
+            <input form="{% if thread_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="text" {% if thread_edit %}value="{{ name }}" {% endif %}aria-required="true" required name="{% if thread_edit %}current_thread[name]{% else %}new_thread[name]{% endif %}" id="{% if thread_edit %}current_thread_name{% else %}new_thread_name{% endif %}" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="100">
             <label for="{% if thread_edit %}current_thread_name{% else %}new_thread_name{% endif %}">Name</label>
         </div>
     {% endif %}
