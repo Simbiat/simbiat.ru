@@ -104,9 +104,15 @@ function headingInit(heading: HTMLHeadingElement): void {
 // const nonTextInputTypes = ['checkbox', 'color', 'date', 'datetime-local', 'file', 'month', 'number', 'radio', 'time', 'week',];
 function formInit(form: HTMLFormElement): void {
   //Prevent form submit on Enter, if action is empty (otherwise this causes page reload with additional question mark in address
-  form.addEventListener('keypress', (event: KeyboardEvent) => {
-    formEnter(event);
-  });
+  if (empty(form.action)) {
+    form.addEventListener('keypress', (event: KeyboardEvent) => {
+      formEnter(event);
+    });
+    if (!form.hasAttribute('data-intercepted') || form.getAttribute('data-intercepted') !== 'true') {
+      form.addEventListener('submit', submitDefaultIntercept);
+      form.addEventListener('keypress', submitDefaultIntercept);
+    }
+  }
   //For all elements that can be used inside a form add name, if it's missing. Make it equal to ID.
   form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea')
       .forEach((item) => {

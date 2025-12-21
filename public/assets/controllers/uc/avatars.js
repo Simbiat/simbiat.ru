@@ -42,8 +42,7 @@ export class EditAvatars {
             const formData = new FormData(this.form);
             const button = this.form.querySelector('#avatar_submit');
             buttonToggle(button);
-            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', AJAX_TIMEOUT, true).
-                then((response) => {
+            void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, formData, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
                 const data = response;
                 if (data.data === true) {
                     this.addToList(data.location);
@@ -79,8 +78,7 @@ export class EditAvatars {
     refresh(avatar) {
         const hash = basename(avatar);
         if (this.avatarsList) {
-            this.avatarsList.querySelectorAll('li').
-                forEach((item) => {
+            this.avatarsList.querySelectorAll('li').forEach((item) => {
                 const radio = item.querySelector('input[id^=avatar_]');
                 const close = item.querySelector('input[id^=del_]');
                 if (item.id === hash) {

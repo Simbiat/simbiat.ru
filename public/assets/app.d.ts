@@ -31,6 +31,7 @@ declare function addSnackbar(text: string, color?: string, milliseconds?: number
 declare function getMeta(meta_name: string): string | null;
 declare function updateHistory(new_url: string, title: string): void;
 declare function submitIntercept(form: HTMLFormElement, callable: () => void): void;
+declare function submitDefaultIntercept(event: SubmitEvent | KeyboardEvent): boolean;
 declare function deleteRow(element: HTMLElement): boolean;
 declare function basename(text: string): string;
 declare function rawurlencode(str: string): string;

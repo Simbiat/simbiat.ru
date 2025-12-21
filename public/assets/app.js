@@ -4189,9 +4189,15 @@ function headingInit(heading) {
     });
 }
 function formInit(form) {
-    form.addEventListener('keypress', (event) => {
-        formEnter(event);
-    });
+    if (empty(form.action)) {
+        form.addEventListener('keypress', (event) => {
+            formEnter(event);
+        });
+        if (!form.hasAttribute('data-intercepted') || form.getAttribute('data-intercepted') !== 'true') {
+            form.addEventListener('submit', submitDefaultIntercept);
+            form.addEventListener('keypress', submitDefaultIntercept);
+        }
+    }
     form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea')
         .forEach((item) => {
         if (!item.hasAttribute('data-noname') && (!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
@@ -4503,6 +4509,9 @@ function updateHistory(new_url, title) {
 }
 function submitIntercept(form, callable) {
     const is_bot = !empty(getMeta('is_bot'));
+    form.removeEventListener('submit', submitDefaultIntercept);
+    form.removeEventListener('keypress', submitDefaultIntercept);
+    form.setAttribute('data-intercepted', 'true');
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -4528,6 +4537,15 @@ function submitIntercept(form, callable) {
         }
         return true;
     });
+}
+function submitDefaultIntercept(event) {
+    if (event.type === 'submit' || (event.type === 'keydown' && event.code === 'Enter')) {
+        event.preventDefault();
+        event.stopPropagation();
+        addSnackbar('Default form events blocked', 'warning');
+        return false;
+    }
+    return true;
 }
 function deleteRow(element) {
     const table = element.closest('table');

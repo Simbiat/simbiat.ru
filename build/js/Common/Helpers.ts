@@ -51,6 +51,9 @@ function updateHistory(new_url: string, title: string): void {
 //Function to intercept both form submission and Enter key pressed in the form (which normally also submits it)
 function submitIntercept(form: HTMLFormElement, callable: () => void): void {
   const is_bot = !empty(getMeta('is_bot'));
+  form.removeEventListener('submit', submitDefaultIntercept);
+  form.removeEventListener('keypress', submitDefaultIntercept);
+  form.setAttribute('data-intercepted', 'true');
   form.addEventListener('submit', (event: SubmitEvent) => {
     event.preventDefault();
     event.stopPropagation();
@@ -74,6 +77,16 @@ function submitIntercept(form: HTMLFormElement, callable: () => void): void {
     }
     return true;
   });
+}
+
+function submitDefaultIntercept(event: SubmitEvent | KeyboardEvent): boolean {
+  if (event.type === 'submit' || (event.type === 'keydown' && (event as KeyboardEvent).code === 'Enter')) {
+    event.preventDefault();
+    event.stopPropagation();
+    addSnackbar('Default form events blocked', 'warning');
+    return false;
+  }
+  return true;
 }
 
 //Remove table row based containing element
