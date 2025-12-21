@@ -116,13 +116,13 @@ abstract class Page
             \session_write_close();
         }
         #Send page language
-        if (!empty($this->language) && !\headers_sent()) {
+        if ($this->language !== '' && !\headers_sent()) {
             \header('Content-Language: '.$this->language);
         }
         #Check if user has required permission
-        if (!empty($this->required_permission) && empty(\array_intersect($this->required_permission, $_SESSION['permissions']))) {
+        if (\count($this->required_permission) !== 0 && \count(\array_intersect($this->required_permission, $_SESSION['permissions'] ?? [])) > 0) {
             $page = ['http_error' => 403, 'reason' => 'No `'.\implode('` or `', $this->required_permission).'` permission'];
-        } elseif (empty(HomePage::$http_error) || $this->static) {
+        } elseif (HomePage::$http_error === [] || HomePage::$http_error === null || $this->static) {
             #Generate the page only if no prior errors detected
             #Generate a list of allowed methods
             $allowed_methods = \array_unique(\array_merge(['HEAD', 'OPTIONS', 'GET'], $this->methods));
