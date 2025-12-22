@@ -286,6 +286,15 @@ class Post extends Entity
             foreach ($thread->subscribers as $subscriber) {
                 new NewPost()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => $thread->name, 'location' => $new_location])->save()->send();
             }
+            if ($thread->author !== (int)$_SESSION['user_id'] && !in_array((int)$_SESSION['user_id'], $thread->subscribers, true)) {
+                Query::query(
+                    'INSERT INTO `subs__threads` (`thread_id`, `user_id`) VALUES (:thread_id,:user_id);',
+                    [
+                        ':thread_id' => [$data['thread_id'], 'int'],
+                        ':user_id' => [$_SESSION['user_id'], 'int'],
+                    ]
+                );
+            }
             return ['response' => true, 'location' => $new_location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);

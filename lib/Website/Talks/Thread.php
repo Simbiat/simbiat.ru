@@ -363,6 +363,15 @@ class Thread extends Entity
             foreach ($section->subscribers as $subscriber) {
                 new NewThread()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => mb_trim($data['name'], null, 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)])->save()->send();
             }
+            if ((int)$_SESSION['user_id'] !== Config::USER_IDS['Unknown user']) {
+                Query::query(
+                    'INSERT INTO `subs__threads` (`thread_id`, `user_id`) VALUES (:thread_id,:user_id);',
+                    [
+                        ':thread_id' => [$new_id, 'int'],
+                        ':user_id' => [$_SESSION['user_id'], 'int'],
+                    ]
+                );
+            }
             return ['response' => true, 'location' => $location];
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
