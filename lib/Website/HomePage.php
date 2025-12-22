@@ -104,7 +104,7 @@ class HomePage
                 }
                 #Clear POST data if bot was detected to prevent potential abuse
                 if (!empty(self::$user_agent['bot'])) {
-                    echo 'here';exit;
+                    $_POST = [];
                 }
                 #Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
                 #Also block any bot that's known as AI one
