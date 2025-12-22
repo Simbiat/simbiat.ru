@@ -89,6 +89,14 @@ final class Config
     public static array $cookie_settings = [];
     #Settings shared by PHP and JS code
     public static array $shared_with_js = [];
+    /**
+     * Default permissions list in case $_SESSION fails to start
+     */
+    public const array DEFAULT_PERMISSIONS = [
+        'view_bic',
+        'view_ff',
+        'view_posts',
+    ];
     
     public function __construct()
     {

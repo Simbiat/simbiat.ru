@@ -135,6 +135,9 @@ class HomePage
                     if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
                     }
+                } else {
+                    $_SESSION = [];
+                    $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
                 }
                 #Check if we have cached the results already
                 self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
