@@ -1036,6 +1036,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Simbiat\\Website\\Cron\\Talks' => __DIR__ . '/../..' . '/lib/Website/Cron/Talks.php',
         'Simbiat\\Website\\Curl' => __DIR__ . '/../..' . '/lib/Website/Curl.php',
         'Simbiat\\Website\\Enums\\NotificationTypes' => __DIR__ . '/../..' . '/lib/Website/Enums/NotificationTypes.php',
+        'Simbiat\\Website\\Enums\\TalkTypes' => __DIR__ . '/../..' . '/lib/Website/Enums/TalkTypes.php',
         'Simbiat\\Website\\Errors' => __DIR__ . '/../..' . '/lib/Website/Errors.php',
         'Simbiat\\Website\\Feeds' => __DIR__ . '/../..' . '/lib/Website/Feeds.php',
         'Simbiat\\Website\\HomePage' => __DIR__ . '/../..' . '/lib/Website/HomePage.php',

@@ -629,6 +629,7 @@ return array(
     'Simbiat\\Website\\Cron\\Talks' => $baseDir . '/lib/Website/Cron/Talks.php',
     'Simbiat\\Website\\Curl' => $baseDir . '/lib/Website/Curl.php',
     'Simbiat\\Website\\Enums\\NotificationTypes' => $baseDir . '/lib/Website/Enums/NotificationTypes.php',
+    'Simbiat\\Website\\Enums\\TalkTypes' => $baseDir . '/lib/Website/Enums/TalkTypes.php',
     'Simbiat\\Website\\Errors' => $baseDir . '/lib/Website/Errors.php',
     'Simbiat\\Website\\Feeds' => $baseDir . '/lib/Website/Feeds.php',
     'Simbiat\\Website\\HomePage' => $baseDir . '/lib/Website/HomePage.php',

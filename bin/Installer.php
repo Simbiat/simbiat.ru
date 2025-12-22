@@ -47,6 +47,7 @@ if (new Installer()->install()) {
     new Task()->settingsFromArray(['task' => 'empty_threads', 'function' => 'removeEmptyThreads', 'object' => '\\'.Maintenance::class, 'max_time' => 3600, 'min_frequency' => 60, 'retry' => 0, 'enabled' => 1, 'system' => 1, 'description' => 'Remove empty threads older than 1 day'])->add();
     new Task()->settingsFromArray(['task' => 'dead_links', 'function' => 'removeDeadLinks', 'object' => '\\'.Maintenance::class, 'max_time' => 3600, 'min_frequency' => 60, 'retry' => 0, 'enabled' => 1, 'system' => 1, 'description' => 'Remove alt links that no longer exist'])->add();
     new Task()->settingsFromArray(['task' => 'clean_notifications', 'function' => 'cleanNotifications', 'object' => '\\'.Maintenance::class, 'max_time' => 3600, 'min_frequency' => 60, 'retry' => 0, 'enabled' => 1, 'system' => 1, 'description' => 'Remove old notifications'])->add();
+    new Task()->settingsFromArray(['task' => 'close_tickets', 'function' => 'closeInactiveTickets', 'object' => '\\'.Maintenance::class, 'max_time' => 3600, 'min_frequency' => 60, 'retry' => 0, 'enabled' => 1, 'system' => 1, 'description' => 'Close inactive tickets'])->add();
     #Adding task instances
     new TaskInstance()->settingsFromArray(['task' => 'argon', 'instance' => 1, 'enabled' => 1, 'system' => 1, 'frequency' => 2592000, 'priority' => 0, 'message' => 'Recalculating Argon settings', 'next_run' => strtotime('today 2:00')])->add();
     new TaskInstance()->settingsFromArray(['task' => 'bic_update', 'instance' => 1, 'enabled' => 1, 'system' => 1, 'frequency' => 86400, 'priority' => 5, 'message' => 'Updating BIC library', 'next_run' => strtotime('today 23:00')])->add();
@@ -72,6 +73,7 @@ if (new Installer()->install()) {
     new TaskInstance()->settingsFromArray(['task' => 'empty_threads', 'instance' => 1, 'enabled' => 1, 'system' => 1, 'frequency' => 86400, 'priority' => 0, 'message' => 'Cleaning empty threads', 'next_run' => strtotime('today 20:00')])->add();
     new TaskInstance()->settingsFromArray(['task' => 'dead_links', 'instance' => 1, 'enabled' => 1, 'system' => 1, 'frequency' => 86400, 'priority' => 0, 'message' => 'Checking for dead links', 'next_run' => strtotime('today 20:00')])->add();
     new TaskInstance()->settingsFromArray(['task' => 'clean_notifications', 'instance' => 1, 'enabled' => 1, 'system' => 1, 'frequency' => 86400, 'priority' => 0, 'message' => 'Removing old notifications', 'next_run' => strtotime('today 14:00')])->add();
+    new TaskInstance()->settingsFromArray(['task' => 'close_tickets', 'instance' => 1, 'enabled' => 1, 'system' => 1, 'frequency' => 86400, 'priority' => 0, 'message' => 'Closing inactive tickets', 'next_run' => strtotime('today 15:00')])->add();
 }
 #Install the Maintainer library. This *SHOULD* be the last operation, so that all tables are added in the initial update.
 if (new \Simbiat\Database\Maintainer\Installer()->install()) {

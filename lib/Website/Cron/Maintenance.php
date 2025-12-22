@@ -5,6 +5,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
+use Simbiat\Arrays\Converters;
 use Simbiat\CuteBytes;
 use Simbiat\Database\Maintainer\Analyzer;
 use Simbiat\Database\Maintainer\Settings;
@@ -12,15 +13,16 @@ use Simbiat\Database\Manage;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\NotificationTypes;
+use Simbiat\Website\Enums\TalkTypes;
 use Simbiat\Website\Errors;
-use Simbiat\Website\Notifications\CronFailure;
 use Simbiat\Website\Notifications\DatabaseDown;
 use Simbiat\Website\Notifications\DatabaseUp;
 use Simbiat\Website\Notifications\EnoughSpace;
 use Simbiat\Website\Notifications\ErrorLog;
 use Simbiat\Website\Notifications\NoSpace;
 use Simbiat\Website\Security;
-use Simbiat\Website\usercontrol\Email;
+use Simbiat\Website\Talks\Thread;
 use Simbiat\Website\usercontrol\Session;
 use function dirname;
 
@@ -52,8 +54,8 @@ class Maintenance
     {
         try {
             return (bool)new Session()->gc();
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
             return false;
         }
     }
@@ -98,8 +100,8 @@ class Maintenance
         $queries[] = 'DELETE FROM `sys__logs` WHERE `time`<= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR)';
         try {
             $result = Query::query($queries);
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
             $result = false;
         }
         return $result;
@@ -163,9 +165,9 @@ class Maintenance
             }
             \file_put_contents(Config::$ddl_dir.'/000-recommended_table_order.txt', $dump_order);
             $this->dbOptimize();
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
-            return $e->getMessage();
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
+            return $throwable->getMessage();
         }
         return true;
     }
@@ -453,6 +455,8 @@ class Maintenance
     public function cleanForeignKeys(): bool
     {
         #TODO Actually write queries for this. Should also cover Website's ENUMs
+        #Remove unsupported notifications
+        Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:type);', ['type' => [Converters::enumValues(NotificationTypes::class), 'in', 'int']]);
         return true;
     }
     
@@ -462,7 +466,7 @@ class Maintenance
      */
     public function removeEmptyThreads(): bool
     {
-        return Query::query('DELETE FROM `talks__threads` WHERE `created`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `posts`=0;');
+        return Query::query('DELETE FROM `talks__threads` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `posts`=0;');
     }
     
     /**
@@ -481,8 +485,7 @@ class Maintenance
      */
     public function cleanNotifications(): bool
     {
-        #TODO Actually implement the logic
-        return true;
+        return Query::query('DELETE FROM `sys__notifications` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 YEAR);');
     }
     
     /**
@@ -492,6 +495,24 @@ class Maintenance
     public function sendNotifications(): bool
     {
         #TODO Actually implement the logic
+        return true;
+    }
+    
+    /**
+     * Close tickets that have been inactive for some time
+     * @return bool
+     */
+    public function closeInactiveTickets(): bool
+    {
+        $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkTypes::Support->value]);
+        foreach ($tickets as $ticket) {
+            try {
+                /** @noinspection UnusedFunctionResultInspection We do not care if this succeeds or not, really */
+                new Thread($ticket['thread_id'])->setClosed(true);
+            } catch (\Throwable $throwable) {
+                Errors::error_log($throwable);
+            }
+        }
         return true;
     }
 }
