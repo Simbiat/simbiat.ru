@@ -11,12 +11,14 @@ class TabMenu extends HTMLElement {
     this.contents = Array.from(this.querySelectorAll('tab-content'));
     // Attach listener to tabs
     for (const tab of this.tabs) {
-      tab.addEventListener('click', (event: MouseEvent) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        const target = event.target as HTMLAnchorElement;
-        this.tabSwitch(target);
-      });
+      if (!tab.hasAttribute('href') || /^#tab_name_.+$/.test(tab.getAttribute('href') ?? '')) {
+        tab.addEventListener('click', (event: MouseEvent) => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          const target = event.target as HTMLAnchorElement;
+          this.tabSwitch(target);
+        });
+      }
     }
     this.updateCurrentTab();
     // Hide tab-contents block if there is no active tab at the initial load
@@ -44,15 +46,17 @@ class TabMenu extends HTMLElement {
       target.classList.add('active');
       // Follow the link if we have one
       if (target.href !== '' && target.href !== window.location.href) {
-        window.location.assign(encodeURI(target.href));
+        pageRefresh(target.href);
         return;
       }
       // Otherwise, try to switch tab contents
       if (this.contents[tab_index]) {
         (this.contents[tab_index] as HTMLSpanElement).classList.add('active');
         const url = new URL(document.location.href);
-        window.history.replaceState(document.title, document.title, url.toString()
-                                                                       .replace('#' + target.id, ''));
+        if (/^#tab_name_.+$/.test(url.hash)) {
+          url.hash = '';
+        }
+        window.history.replaceState(document.title, document.title, url.toString());
       }
     }
     if (this.wrapper) {

@@ -36,7 +36,7 @@ declare function deleteRow(element: HTMLElement): boolean;
 declare function basename(text: string): string;
 declare function rawurlencode(str: string): string;
 declare function empty(variable: unknown): boolean;
-declare function pageRefresh(): void;
+declare function pageRefresh(new_url?: string): void;
 declare function copyQuote(target: HTMLElement): string;
 declare function is_file(url: string): Promise<boolean>;
 declare const TIMEZONE: string;

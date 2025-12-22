@@ -59,7 +59,7 @@ export class Threads {
                         }
                     }
                     addSnackbar('Post created. Reloading...', 'success');
-                    window.location.assign(encodeURI(data.location));
+                    pageRefresh(data.location);
                 }
                 else {
                     if (data.location) {
@@ -84,7 +84,7 @@ export class Threads {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Thread removed. Redirecting to parent...', 'success');
-                            window.location.assign(encodeURI(data.location));
+                            pageRefresh(data.location);
                         }
                         else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);

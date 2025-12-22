@@ -4584,7 +4584,10 @@ function empty(variable) {
     }
     return false;
 }
-function pageRefresh() {
+function pageRefresh(new_url) {
+    if (!empty(new_url)) {
+        window.location.assign(encodeURI(new_url));
+    }
     const url = new URL(document.location.href);
     url.searchParams.set('force_reload', String(Date.now()));
     window.location.replace(url.toString());
@@ -6499,7 +6502,7 @@ class PostForm extends HTMLElement {
                 this.label.innerHTML = `Replying to post #${post_id}`;
             }
         }
-        window.location.assign(encodeURI('#post_form'));
+        pageRefresh('#post_form');
     }
 }
 class SelectCustom extends HTMLElement {
@@ -6590,12 +6593,14 @@ class TabMenu extends HTMLElement {
         this.tabs = Array.from(this.querySelectorAll('a.tab_name'));
         this.contents = Array.from(this.querySelectorAll('tab-content'));
         for (const tab of this.tabs) {
-            tab.addEventListener('click', (event) => {
-                event.preventDefault();
-                event.stopImmediatePropagation();
-                const target = event.target;
-                this.tabSwitch(target);
-            });
+            if (!tab.hasAttribute('href') || /^#tab_name_.+$/.test(tab.getAttribute('href') ?? '')) {
+                tab.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    const target = event.target;
+                    this.tabSwitch(target);
+                });
+            }
         }
         this.updateCurrentTab();
         if (this.wrapper?.querySelector('.active')) {
@@ -6617,14 +6622,16 @@ class TabMenu extends HTMLElement {
         if (this.current_tab !== tab_index) {
             target.classList.add('active');
             if (target.href !== '' && target.href !== window.location.href) {
-                window.location.assign(encodeURI(target.href));
+                pageRefresh(target.href);
                 return;
             }
             if (this.contents[tab_index]) {
                 this.contents[tab_index].classList.add('active');
                 const url = new URL(document.location.href);
-                window.history.replaceState(document.title, document.title, url.toString()
-                    .replace('#' + target.id, ''));
+                if (/^#tab_name_.+$/.test(url.hash)) {
+                    url.hash = '';
+                }
+                window.history.replaceState(document.title, document.title, url.toString());
             }
         }
         if (this.wrapper) {

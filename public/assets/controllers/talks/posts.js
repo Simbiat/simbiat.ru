@@ -1,14 +1,14 @@
 export class Posts {
     post_form = null;
-    deletePostButton = null;
+    delete_post_button = null;
     constructor() {
         this.post_form = document.querySelector('post-form form');
-        this.deletePostButton = document.querySelector('#delete_post');
+        this.delete_post_button = document.querySelector('#delete_post');
         if (this.post_form) {
             submitIntercept(this.post_form, this.editPost.bind(this));
         }
-        if (this.deletePostButton) {
-            this.deletePostButton.addEventListener('click', () => {
+        if (this.delete_post_button) {
+            this.delete_post_button.addEventListener('click', () => {
                 this.deletePost();
             });
         }
@@ -16,9 +16,9 @@ export class Posts {
     editPost() {
         if (this.post_form) {
             const button = this.post_form.querySelector('input[type=submit]');
-            const formData = new FormData(this.post_form);
+            const form_data = new FormData(this.post_form);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(formData.get('post_form[post_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(form_data.get('post_form[post_id]') ?? '0')}/edit`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -29,7 +29,7 @@ export class Posts {
                         }
                     }
                     addSnackbar('Post updated. Reloading...', 'success');
-                    window.location.assign(encodeURI(data.location));
+                    pageRefresh(data.location);
                 }
                 else {
                     if (data.location) {
@@ -44,23 +44,23 @@ export class Posts {
         }
     }
     deletePost() {
-        if (this.deletePostButton) {
+        if (this.delete_post_button) {
             if (confirm('This is the last chance to back out.\nIf you press \'OK\' this post will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-                const id = this.deletePostButton.getAttribute('data-post') ?? '';
+                const id = this.delete_post_button.getAttribute('data-post') ?? '';
                 if (!empty(id)) {
-                    buttonToggle(this.deletePostButton);
+                    buttonToggle(this.delete_post_button);
                     ajax(`${location.protocol}//${location.host}/api/talks/posts/${id}/delete`, null, 'json', 'DELETE', AJAX_TIMEOUT, true)
                         .then((response) => {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Post removed. Redirecting to thread...', 'success');
-                            window.location.assign(encodeURI(data.location));
+                            pageRefresh(data.location);
                         }
                         else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                         }
-                        if (this.deletePostButton) {
-                            buttonToggle(this.deletePostButton);
+                        if (this.delete_post_button) {
+                            buttonToggle(this.delete_post_button);
                         }
                     });
                 }

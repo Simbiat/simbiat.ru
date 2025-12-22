@@ -254,7 +254,7 @@ export class Sections {
                         const data = response;
                         if (data.data === true) {
                             addSnackbar('Section removed. Redirecting to parent...', 'success');
-                            window.location.assign(encodeURI(data.location));
+                            pageRefresh(data.location);
                         }
                         else {
                             addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
@@ -291,7 +291,7 @@ export class Sections {
                         }
                     }
                     addSnackbar('Thread created. Reloading...', 'success');
-                    window.location.assign(encodeURI(data.location));
+                    pageRefresh(data.location);
                 }
                 else {
                     if (data.location) {

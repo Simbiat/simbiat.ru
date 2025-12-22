@@ -23,7 +23,7 @@ export class Contacts {
                         }
                     }
                     addSnackbar('Thread created. Reloading...', 'success');
-                    window.location.assign(encodeURI(data.location));
+                    pageRefresh(data.location);
                 }
                 else {
                     if (data.location) {

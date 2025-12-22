@@ -1,4 +1,5 @@
 {% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
+    <!--suppress HtmlUnknownAnchorTarget -->
     <a class="tab_name" href="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</a>
 {% endif %}
 {% if (owned and 'edit_own_threads' in session_data.permissions) or (not owned and 'edit_others_threads' in session_data.permissions) %}

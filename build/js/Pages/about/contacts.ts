@@ -31,7 +31,7 @@ export class Contacts {
               }
             }
             addSnackbar('Thread created. Reloading...', 'success');
-            window.location.assign(encodeURI(data.location));
+            pageRefresh(data.location);
           } else {
             if (data.location) {
               addSnackbar(data.reason + ` View the thread <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);

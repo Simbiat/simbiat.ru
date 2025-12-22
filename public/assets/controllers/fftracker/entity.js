@@ -18,8 +18,7 @@ export class ffEntity {
                     if (!this.forceRefresh) {
                         return;
                     }
-                    void ajax(`${location.protocol}//${location.host}${this.forceRefresh.getAttribute('data-link') ?? ''}`, null, 'json', 'PUT', 300000).
-                        then((response) => {
+                    void ajax(`${location.protocol}//${location.host}${this.forceRefresh.getAttribute('data-link') ?? ''}`, null, 'json', 'PUT', 300000).then((response) => {
                         const data = response;
                         if (this.forceRefresh) {
                             this.forceRefresh.classList.remove('spin');
