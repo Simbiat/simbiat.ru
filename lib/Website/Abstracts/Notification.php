@@ -369,12 +369,16 @@ abstract class Notification extends Entity
             $email = $email->addTo(Config::ADMIN_MAIL);
         }
         #Set priority
-        if ($this::PRIORITY > 1) {
-            $email->getHeaders()->addTextHeader('Priority', 'Urgent')->addTextHeader('Importance', 'High');
-        } elseif ($this::PRIORITY < 1) {
-            $email->getHeaders()->addTextHeader('Priority', 'Non-Urgent')->addTextHeader('Importance', 'Low');
+        if (Config::$prod) {
+            if ($this::PRIORITY > 1) {
+                $email->getHeaders()->addTextHeader('Priority', 'Urgent')->addTextHeader('Importance', 'High');
+            } elseif ($this::PRIORITY < 1) {
+                $email->getHeaders()->addTextHeader('Priority', 'Non-Urgent')->addTextHeader('Importance', 'Low');
+            } else {
+                $email->getHeaders()->addTextHeader('Priority', 'Normal')->addTextHeader('Importance', 'Normal');
+            }
         } else {
-            $email->getHeaders()->addTextHeader('Priority', 'Normal')->addTextHeader('Importance', 'Normal');
+            $email->getHeaders()->addTextHeader('Priority', 'Non-Urgent')->addTextHeader('Importance', 'Low');
         }
         try {
             #Add content
