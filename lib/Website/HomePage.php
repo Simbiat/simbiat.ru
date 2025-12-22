@@ -137,6 +137,7 @@ class HomePage
                     }
                 } else {
                     $_SESSION = [];
+                    $_SESSION['user_id'] = Config::USER_IDS['Unknown user'];
                     $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
                 }
                 #Check if we have cached the results already
