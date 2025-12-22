@@ -9,6 +9,7 @@ use Simbiat\Website\Abstracts\Page;
 use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Routing\MainRouter;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 use Simbiat\Website\usercontrol\Session;
@@ -137,7 +138,7 @@ class HomePage
                     }
                 } else {
                     $_SESSION = [];
-                    $_SESSION['user_id'] = Config::USER_IDS['Unknown user'];
+                    $_SESSION['user_id'] = SystemUsers::Unknown->value;
                     $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
                 }
                 #Check if we have cached the results already

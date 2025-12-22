@@ -5,6 +5,7 @@ namespace Simbiat\Website\Routing;
 
 use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Notifications\Test;
 
@@ -39,7 +40,7 @@ class Tests extends Router
         switch ($path[0]) {
             case 'mail':
                 try {
-                    new Test()->setEmail(true)->setPush(true)->setUser(Config::USER_IDS['Owner'])->generate()->save()->send(Config::ADMIN_MAIL, true, true);
+                    new Test()->setEmail(true)->setPush(true)->setUser(SystemUsers::Owner->value)->generate()->save()->send(Config::ADMIN_MAIL, true, true);
                 } catch (\Throwable $throwable) {
                     Errors::error_log($throwable, debug: true);
                 }

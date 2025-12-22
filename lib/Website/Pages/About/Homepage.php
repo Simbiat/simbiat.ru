@@ -5,6 +5,7 @@ namespace Simbiat\Website\Pages\About;
 
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\usercontrol\User;
 
 /**
@@ -35,7 +36,7 @@ class Homepage extends Page
     protected function generate(array $path): array
     {
         $output_array = ['h1' => 'Home', 'service_name' => 'homepage'];
-        $output_array['posts'] = new User(Config::USER_IDS['Owner'])->getTalksStarters(true);
+        $output_array['posts'] = new User(SystemUsers::Owner->value)->getTalksStarters(true);
         #Add ogimages to H2 push
         foreach ($output_array['posts'] as $post) {
             $this->h2_push_extra[] = $post['og_image']['og_image'];

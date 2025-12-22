@@ -6,6 +6,7 @@ namespace Simbiat\Website\Pages\Talks;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
 
+use Simbiat\Website\Enums\SystemUsers;
 use function in_array;
 
 class Post extends Page
@@ -42,7 +43,7 @@ class Post extends Page
         }
         #Check if private
         if ($output_array['private']) {
-            if ($output_array['author'] === Config::USER_IDS['Unknown user'] && $output_array['owned'] === true) {
+            if ($output_array['author'] === SystemUsers::Unknown->value && $output_array['owned'] === true) {
                 if ($output_array['type'] === 'Support' && ($output_array['access_token'] === null || $output_array['access_token'] === '' || $output_array['access_token'] !== ($_GET['access_token'] ?? ''))) {
                     #Return same error to limit potential of brute-forcing a token
                     return ['http_error' => 403, 'reason' => 'This post is private and you lack `view_private` permission'];

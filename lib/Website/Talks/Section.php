@@ -7,6 +7,7 @@ use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Sanitization;
 use Simbiat\Website\Search\Sections;
@@ -77,9 +78,9 @@ class Section extends Entity
                 'private' => false,
                 'closed' => 'now',
                 'created' => null,
-                'author' => Config::USER_IDS['System user'],
+                'author' => SystemUsers::System->value,
                 'updated' => null,
-                'editor' => Config::USER_IDS['System user'],
+                'editor' => SystemUsers::System->value,
                 'icon' => '/assets/images/talks/category.svg',
                 'parents' => [],
                 'threads' => [],
@@ -159,9 +160,9 @@ class Section extends Entity
                 $where = '`talks__threads`.`section_id`=:section_id';
                 $bindings = [':section_id' => [$this->id, 'int']];
                 #Do not show threads created by "Unknown user"
-                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
+                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === SystemUsers::Unknown->value) {
                     $where .= ' AND `talks__threads`.`author`!=:anonymous';
-                    $bindings[':anonymous'] = [Config::USER_IDS['Unknown user'], 'int'];
+                    $bindings[':anonymous'] = [SystemUsers::Unknown->value, 'int'];
                 }
                 if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
                     $where .= ' AND `talks__threads`.`created`<=CURRENT_TIMESTAMP(6)';
@@ -188,9 +189,9 @@ class Section extends Entity
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
                 #Do not show threads created by "Unknown user"
-                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
+                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === SystemUsers::Unknown->value) {
                     $where .= '`t`.`author`!=:anonymous AND ';
-                    $bindings[':anonymous'] = [Config::USER_IDS['Unknown user'], 'int'];
+                    $bindings[':anonymous'] = [SystemUsers::Unknown->value, 'int'];
                 }
                 if ($where !== '') {
                     $where = \preg_replace('/( AND $)/ui', '', $where);
@@ -243,9 +244,9 @@ class Section extends Entity
         $this->owned = $from_db['owned'];
         $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
         $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
-        $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
+        $this->author = $from_db['author'] ?? SystemUsers::Deleted->value;
         $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
-        $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
+        $this->editor = $from_db['editor'] ?? SystemUsers::Deleted->value;
         $this->icon = $from_db['icon'] ?? '/assets/images/talks/category.svg';
         $this->parents = $from_db['parents'];
         $this->parent_id = (int)($from_db['parent_id'] ?? 0);

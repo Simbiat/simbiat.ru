@@ -6,6 +6,7 @@ namespace Simbiat\Website\Pages\Talks;
 use Simbiat\http20\Headers;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Images;
 
 use function in_array;
@@ -45,7 +46,7 @@ class Thread extends Page
         }
         #Check if private
         if ($output_array['private']) {
-            if ($output_array['author'] === Config::USER_IDS['Unknown user'] && $output_array['author'] === $_SESSION['user_id']) {
+            if ($output_array['author'] === SystemUsers::Unknown->value && $output_array['author'] === $_SESSION['user_id']) {
                 if ($output_array['type'] === 'Support') {
                     if (($output_array['access_token'] === null || $output_array['access_token'] === '' || $output_array['access_token'] !== ($_GET['access_token'] ?? ''))) {
                         #Return same error to limit potential of brute-forcing a token
@@ -144,7 +145,7 @@ class Thread extends Page
             $output_array['thread_link_types'] = \Simbiat\Website\Talks\Thread::getAltLinkTypes();
         }
         #Add access token
-        if ($output_array['author'] === Config::USER_IDS['Unknown user'] && $_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
+        if ($output_array['author'] === SystemUsers::Unknown->value && $_SESSION['user_id'] === SystemUsers::Unknown->value) {
             $output_array['get_access_token'] = $_GET['access_token'] ?? null;
         }
         return $output_array;

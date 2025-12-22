@@ -8,6 +8,7 @@ use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
 use Simbiat\Website\Notifications\NewPost;
@@ -137,13 +138,13 @@ class Thread extends Entity
         $this->pinned = (bool)$from_db['pinned'];
         $this->og_image = $from_db['og_image'] ?? null;
         $this->last_post = $from_db['last_post'] !== null ? \strtotime($from_db['last_post']) : null;
-        $this->last_poster = $from_db['last_poster'] ?? Config::USER_IDS['Deleted user'];
+        $this->last_poster = $from_db['last_poster'] ?? SystemUsers::Deleted->value;
         $this->closed = $from_db['closed'] !== null ? \strtotime($from_db['closed']) : null;
         $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
-        $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
+        $this->author = $from_db['author'] ?? SystemUsers::Deleted->value;
         $this->owned = ($this->author === $_SESSION['user_id']);
         $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
-        $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
+        $this->editor = $from_db['editor'] ?? SystemUsers::Deleted->value;
         $this->parents = \array_merge($from_db['section']['parents'], [['section_id' => $from_db['section']['id'], 'name' => $from_db['section']['name'], 'type' => $from_db['section']['type'], 'parent_id' => $from_db['section']['parents'][0]['section_id']]]);
         $this->parent = $from_db['section'];
         $this->parent_id = (int)$from_db['section']['id'];
@@ -363,7 +364,7 @@ class Thread extends Entity
             foreach ($section->subscribers as $subscriber) {
                 new NewThread()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => mb_trim($data['name'], null, 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)])->save()->send();
             }
-            if ((int)$_SESSION['user_id'] !== Config::USER_IDS['Unknown user']) {
+            if ((int)$_SESSION['user_id'] !== SystemUsers::Unknown->value) {
                 Query::query(
                     'INSERT INTO `subs__threads` (`thread_id`, `user_id`) VALUES (:thread_id,:user_id);',
                     [

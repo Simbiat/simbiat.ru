@@ -7,6 +7,7 @@ use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Notifications\NewPost;
 use Simbiat\Website\Notifications\PasswordReset;
@@ -103,11 +104,11 @@ class Post extends Entity
         $this->locked = (bool)$from_db['locked'];
         $this->closed = $from_db['thread']['closed'] ?? null;
         $this->created = $from_db['created'] !== null ? \strtotime($from_db['created']) : null;
-        $this->author = $from_db['author'] ?? Config::USER_IDS['Deleted user'];
+        $this->author = $from_db['author'] ?? SystemUsers::Deleted->value;
         $this->owned = ($this->author === $_SESSION['user_id']);
         $this->author_name = $from_db['author_name'] ?? 'Deleted user';
         $this->updated = $from_db['updated'] !== null ? \strtotime($from_db['updated']) : null;
-        $this->editor = $from_db['editor'] ?? Config::USER_IDS['Deleted user'];
+        $this->editor = $from_db['editor'] ?? SystemUsers::Deleted->value;
         $this->editor_name = $from_db['editor_name'] ?? 'Deleted user';
         $this->parents = $from_db['thread']['parents'];
         $this->reply_to = $from_db['reply_to'];
@@ -270,7 +271,7 @@ class Post extends Entity
             $new_location = '/talks/threads/'.$this->thread_id.($thread->last_page === 1 ? '' : '?page='.$thread->last_page);
             if (
                 $thread->type === 'Support' &&
-                $thread->author === Config::USER_IDS['Unknown user']
+                $thread->author === SystemUsers::Unknown->value
             ) {
                 #If we are here, it means that we need to update ticket's token
                 $this->tokenUpdate($thread->email ?? $_POST['new_thread']['contact_form_email'] ?? null, $first_post);
@@ -331,9 +332,9 @@ class Post extends Entity
                     $ticket = \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name);
                     $twig_vars = ['ticket' => $ticket, 'token' => $new_token, 'thread_id' => $this->thread_id];
                     if ($first_post) {
-                        new TicketCreation()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Unknown user'])->generate($twig_vars)->save()->send($email, true);
+                        new TicketCreation()->setEmail(true)->setPush(false)->setUser(SystemUsers::Unknown->value)->generate($twig_vars)->save()->send($email, true);
                     } else {
-                        new TicketUpdate()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Unknown user'])->generate($twig_vars)->save()->send($email);
+                        new TicketUpdate()->setEmail(true)->setPush(false)->setUser(SystemUsers::Unknown->value)->generate($twig_vars)->save()->send($email);
                     }
                 }
             }
@@ -532,7 +533,7 @@ class Post extends Entity
             #If we are in Support section
             $this->type === 'Support' &&
             #Posting in a thread created by unknown user (through Contact Form)
-            $this->thread_author === Config::USER_IDS['Unknown user'] &&
+            $this->thread_author === SystemUsers::Unknown->value &&
             #And we are an unknown user ourselves
             $this->thread_author === $_SESSION['user_id'] &&
             #And thread has an empty access token or our access token does not equal the thread's token

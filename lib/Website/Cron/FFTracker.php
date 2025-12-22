@@ -18,6 +18,7 @@ use Simbiat\FFXIV\PvPTeam;
 use Simbiat\FFXIV\Statistics;
 use Simbiat\Website\Caching;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Notifications\CronFailure;
 use Simbiat\Website\usercontrol\Email;
@@ -40,7 +41,7 @@ class FFTracker
             return true;
         } catch (\Throwable $throwable) {
             $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-            new CronFailure()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
+            new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
             return $error;
         }
     }
@@ -141,7 +142,7 @@ class FFTracker
             return Query::query($queries);
         } catch (\Throwable $throwable) {
             $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-            new CronFailure()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
+            new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
             return $error;
         }
     }

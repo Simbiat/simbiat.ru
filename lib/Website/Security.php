@@ -6,6 +6,7 @@ namespace Simbiat\Website;
 use DeviceDetector\ClientHints;
 use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
+use Simbiat\Website\Enums\SystemUsers;
 use function is_array, function_exists;
 
 /**
@@ -186,44 +187,53 @@ class Security
     
     /**
      * Function to log actions
-     * @param string     $type    Action type
+     *
+     * @param int        $type    Action type
      * @param string     $action  Message of the action
      * @param mixed|null $extras  Extra data related to the action
      * @param int|null   $user_id User ID of the user that triggered the action
      *
      * @return bool
      */
-    public static function log(string $type, string $action, mixed $extras = NULL, ?int $user_id = null): bool
+    public static function log(int $type, string $action, mixed $extras = NULL, ?int $user_id = null): bool
     {
+        /** @noinspection IsEmptyFunctionUsageInspection Valid case, since mixed type */
         if (!empty($extras) && !\is_scalar($extras)) {
-            $extras = \json_encode($extras, \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
+            try {
+                $extras = \json_encode($extras, \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION | \JSON_THROW_ON_ERROR);
+            } catch (\Throwable $throwable) {
+                Errors::error_log($throwable);
+                $extras = null;
+            }
+        } else {
+            $extras = null;
         }
         #Get IP
         $ip = $_SESSION['ip'] ?? null;
         #Get username
         if ($user_id === null) {
-            $user_id = (int)($_SESSION['user_id'] ?? Config::USER_IDS['Unknown user']);
+            $user_id = (int)($_SESSION['user_id'] ?? SystemUsers::Unknown->value);
         }
         #Get User Agent
         $ua = $_SESSION['useragent']['full'] ?? null;
         try {
             Query::query(
-                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(6), (SELECT `type_id` FROM `sys__log_types` WHERE `name`=:type), :action, :user_id, :ip, :ua, :extras);',
+                'INSERT INTO `sys__logs` (`time`, `type`, `action`, `user_id`, `ip`, `user_agent`, `extra`) VALUES (CURRENT_TIMESTAMP(6), :type, :action, :user_id, :ip, :ua, :extras);',
                 [
-                    ':type' => $type,
+                    ':type' => [$type, 'int'],
                     ':action' => $action,
                     ':user_id' => [$user_id, 'int'],
                     ':ip' => [
-                        (empty($ip) ? NULL : $ip),
-                        (empty($ip) ? 'null' : 'string'),
+                        ($ip ?? null),
+                        ($ip === null ? 'null' : 'string'),
                     ],
                     ':ua' => [
-                        (empty($ua) ? NULL : $ua),
-                        (empty($ua) ? 'null' : 'string'),
+                        ($ua ?? NULL),
+                        ($ua === null ? 'null' : 'string'),
                     ],
                     ':extras' => [
-                        (empty($extras) ? NULL : $extras),
-                        (empty($extras) ? 'null' : 'string'),
+                        ($extras ?? NULL),
+                        ($extras === null ? 'null' : 'string'),
                     ],
                 ]
             );

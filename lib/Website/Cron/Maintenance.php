@@ -13,7 +13,9 @@ use Simbiat\Database\Manage;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\LogTypes;
 use Simbiat\Website\Enums\NotificationTypes;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Enums\TalkTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Notifications\DatabaseDown;
@@ -83,7 +85,7 @@ class Maintenance
             );
             #If it was deleted - log it
             if ($affected > 0) {
-                Security::log('Logout', 'Logged out due to cookie timeout', $item, $item['user_id']);
+                Security::log(LogTypes::Logout->value, 'Logged out due to cookie timeout', $item, $item['user_id']);
             }
         }
         return true;
@@ -227,7 +229,7 @@ class Maintenance
                 $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
-                    new NoSpace()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
+                    new NoSpace()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
                     #Generate flag
                     \file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
@@ -235,7 +237,7 @@ class Maintenance
         } elseif (\is_file($dir.'/noSpace.flag')) {
             @\unlink($dir.'/noSpace.flag');
             #Send mail
-            new EnoughSpace()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
+            new EnoughSpace()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
         }
     }
     
@@ -256,7 +258,7 @@ class Maintenance
             #Do not do anything if mail has already been sent
             if (!\is_file($no_db_flag)) {
                 #Send mail
-                new DatabaseDown()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['errors' => \print_r(Pool::$errors, true)])->save()->send(Config::ADMIN_MAIL, true);
+                new DatabaseDown()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['errors' => \print_r(Pool::$errors, true)])->save()->send(Config::ADMIN_MAIL, true);
                 #Generate flag
                 \file_put_contents($no_db_flag, 'Database is down');
             }
@@ -272,13 +274,13 @@ class Maintenance
             @\unlink($crash_flag);
             @\unlink($no_db_flag);
             #Send mail
-            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['maintenance' => true, 'restored' => $result, 'error_text' => $error_text])->save()->send(Config::ADMIN_MAIL, true);
+            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['maintenance' => true, 'restored' => $result, 'error_text' => $error_text])->save()->send(Config::ADMIN_MAIL, true);
             return;
         }
         if (\is_file($no_db_flag)) {
             @\unlink($no_db_flag);
             #Send mail
-            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate(['maintenance' => false])->save()->send(Config::ADMIN_MAIL, true);
+            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['maintenance' => false])->save()->send(Config::ADMIN_MAIL, true);
         }
     }
     
@@ -298,7 +300,7 @@ class Maintenance
         if (\is_file($error_log)) {
             if (!\is_file($error_flag)) {
                 #Send mail
-                new ErrorLog()->setEmail(true)->setPush(false)->setUser(Config::USER_IDS['Owner'])->generate()->save()->send(Config::ADMIN_MAIL, true);
+                new ErrorLog()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate()->save()->send(Config::ADMIN_MAIL, true);
                 #Generate flag
                 \file_put_contents($error_flag, 'Error log found');
             }
@@ -450,13 +452,19 @@ class Maintenance
      * Remove entries that would violate foreign key restrictions, if they were used.
      * Service does not use them normally due to performance hit, and to have potentially more flexibility in business logic.
      * While logic should be written in a way to prevent such "violations", having a job to forcefully remove them is useful.
+     * Nullable values will be set to NULL.
      * @return bool
      */
     public function cleanForeignKeys(): bool
     {
-        #TODO Actually write queries for this. Should also cover Website's ENUMs
-        #Remove unsupported notifications
-        Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:type);', ['type' => [Converters::enumValues(NotificationTypes::class), 'in', 'int']]);
+        #TODO Actually write queries for this
+        #Logs
+        Query::query('DELETE FROM `sys__logs` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(LogTypes::class), 'in', 'int']]);
+        Query::query('UPDATE `sys__logs` SET `user_id`=:user_id WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users`);', [':user_id' => SystemUsers::Unknown->value]);
+        #Notification types
+        Query::query('DELETE FROM `sys__notifications` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(NotificationTypes::class), 'in', 'int']]);
+        #Unsupported section types
+        Query::query('DELETE FROM `talks__sections` WHERE `type` NOT IN (:types);', [':types' => [Converters::enumValues(TalkTypes::class), 'in', 'int']]);
         return true;
     }
     

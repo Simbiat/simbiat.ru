@@ -7,6 +7,8 @@ namespace Simbiat\Website\Cron;
 
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\LogTypes;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
 use Simbiat\Website\usercontrol\User;
@@ -54,7 +56,7 @@ class Talks
                     ], return: 'column'
                 );
                 #Log the change
-                Security::log('Avatar', 'Automatically deleted avatars', $to_delete, user_id: $user);
+                Security::log(LogTypes::Avatar->value, 'Automatically deleted avatars', $to_delete, user_id: $user);
                 #Delete from DB
                 Query::query(
                     'DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `current`=0 AND `file_id` IN (:toDelete);',
@@ -92,7 +94,7 @@ class Talks
                 }
                 $full_path .= '/'.mb_substr($file['file_id'], 0, 2, 'UTF-8').'/'.mb_substr($file['file_id'], 2, 2, 'UTF-8').'/'.mb_substr($file['file_id'], 4, 2, 'UTF-8').'/'.$file['file_id'].'.'.$file['extension'];
                 #Log the removal
-                Security::log('File upload', 'Automatically deleted file', $file['file_id'].'.'.$file['extension'], user_id: $file['user_id']);
+                Security::log(LogTypes::FileUpload->value, 'Automatically deleted file', $file['file_id'].'.'.$file['extension'], user_id: $file['user_id']);
                 #Remove from DB
                 Query::query('DELETE FROM `sys__files` WHERE `file_id`=:file_id;', [':file_id' => $file['file_id']]);
                 #Remove from drive
@@ -111,7 +113,7 @@ class Talks
                     #Get a directory tree for the file
                     $dirs = [dirname($file), dirname($file, 2), dirname($file, 3)];
                     #Log the removal
-                    Security::log('File upload', 'Automatically deleted file', \basename($file), user_id: Config::USER_IDS['System user']);
+                    Security::log(LogTypes::FileUpload->value, 'Automatically deleted file', \basename($file), user_id: SystemUsers::System->value);
                     #Remove the file
                     /** @noinspection PhpUsageOfSilenceOperatorInspection */
                     @\unlink($file);

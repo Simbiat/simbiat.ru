@@ -8,6 +8,8 @@ use Simbiat\Database\Query;
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
 
+use Simbiat\Website\Enums\LogTypes;
+use Simbiat\Website\Enums\SystemUsers;
 use function in_array;
 
 /**
@@ -272,7 +274,7 @@ class Curl
             if (Query::$dbh === null) {
                 return ['http_error' => 503, 'reason' => 'Database unavailable'];
             }
-            Security::log('File upload', 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], $_SESSION['user_id'] ?? Config::USER_IDS['System user']);
+            Security::log(LogTypes::FileUpload->value, 'Attempted to upload file', ['$_FILES' => $_FILES, 'link' => $link], (int)($_SESSION['user_id'] ?? SystemUsers::System->value));
             if (!empty($link)) {
                 $upload = $this->getFile($link);
                 if ($upload === false) {
@@ -359,7 +361,7 @@ class Curl
                 'INSERT IGNORE INTO `sys__files`(`file_id`, `user_id`, `name`, `extension`, `mime`, `size`) VALUES (:hash, :user_id, :filename, :extension, :mime, :size);',
                 [
                     ':hash' => $upload['hash'],
-                    ':user_id' => $_SESSION['user_id'] ?? Config::USER_IDS['System user'],
+                    ':user_id' => [(int)($_SESSION['user_id'] ?? SystemUsers::System->value), 'int'],
                     ':filename' => $upload['user_name'],
                     ':extension' => $upload['extension'],
                     ':mime' => $upload['type'],

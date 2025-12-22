@@ -57,13 +57,6 @@ final class Config
     public static string $statistics = '';
     #Device detector object
     public static ?DeviceDetector $device_detector = null;
-    #List of system user IDs
-    public const array USER_IDS = [
-        'Unknown user' => 1,
-        'System user' => 2,
-        'Deleted user' => 3,
-        'Owner' => 4,
-    ];
     #List of system group IDs
     public const array GROUP_IDS = [
         'Administrators' => 1,

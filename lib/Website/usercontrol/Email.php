@@ -8,6 +8,8 @@ use Simbiat\Arrays\Converters;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\LogTypes;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
 use Simbiat\Website\Notifications\PasswordReset;
@@ -76,7 +78,7 @@ class Email extends Entity
             $this->subscribed = $details['subscribed'];
             $this->activation = $details['activation'];
             $this->user_id = $details['user_id'];
-            if ($this->user_id === Config::USER_IDS['Unknown user']) {
+            if ($this->user_id === SystemUsers::Unknown->value) {
                 $this->anonymous = true;
             } else {
                 $this->anonymous = false;
@@ -143,7 +145,7 @@ class Email extends Entity
         ];
         $result = Query::query($queries);
         Security::session_regenerate_id(true);
-        Security::log('User details change', 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
+        Security::log(LogTypes::UserDetailsChanged->value, 'Attempted to subscribe email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
     
@@ -187,8 +189,8 @@ class Email extends Entity
         if ($this->subscribed !== $token) {
             return ['http_error' => 400, 'reason' => 'Token provided looks malformed'];
         }
-        if ($_SESSION['user_id'] === Config::USER_IDS['Unknown user']) {
-            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email AND `subscribed`=:token', [':user_id' => Config::USER_IDS['Unknown user'], ':email' => $this->id, ':token' => $token]);
+        if ($_SESSION['user_id'] === SystemUsers::Unknown->value) {
+            $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email AND `subscribed`=:token', [':user_id' => SystemUsers::Unknown->value, ':email' => $this->id, ':token' => $token]);
         } else {
             if (!$this->safeToUnsubscribe()) {
                 return ['http_error' => 409, 'reason' => 'Can\'t unsubscribe this email at the moment at its current state'];
@@ -196,7 +198,7 @@ class Email extends Entity
             $result = Query::query('UPDATE `uc__emails` SET `subscribed`=NULL WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
             Security::session_regenerate_id(true);
         }
-        Security::log('User details change', 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
+        Security::log(LogTypes::UserDetailsChanged->value, 'Attempted to unsubscribe email', ['email' => $this->id, 'result' => $result]);
         return ['response' => $result, 'email' => $this->id];
     }
     
@@ -231,7 +233,7 @@ class Email extends Entity
         }
         $result = Query::query('DELETE FROM `uc__emails` WHERE `user_id`=:user_id AND `email`=:email', [':user_id' => [$_SESSION['user_id'], 'int'], ':email' => $this->id]);
         Security::session_regenerate_id(true);
-        Security::log('User details change', 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
+        Security::log(LogTypes::UserDetailsChanged->value, 'Attempted to delete email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
     
@@ -294,7 +296,7 @@ class Email extends Entity
                 $result = false;
             }
         }
-        Security::log('User details change', 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
+        Security::log(LogTypes::UserDetailsChanged->value, 'Attempted to add email', ['email' => $this->id, 'result' => $result]);
         if ($result) {
             $this->setId($this->id);
             Security::session_regenerate_id(true);
@@ -339,7 +341,7 @@ class Email extends Entity
         } catch (\Throwable) {
             return false;
         }
-        Security::log('User details change', 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);
+        Security::log(LogTypes::UserDetailsChanged->value, 'Attempted to activate email', ['email' => $this->id, 'result' => $result]);
         return $result;
     }
     

@@ -5,6 +5,7 @@ namespace Simbiat\Website\usercontrol;
 
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
 use Simbiat\Website\Security;
@@ -284,7 +285,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                 \header('X-CSRF-Token: '.$data['csrf']);
             }
             if (empty($data['user_id'])) {
-                $data['user_id'] = Config::USER_IDS['Unknown user'];
+                $data['user_id'] = SystemUsers::Unknown->value;
                 $data['username'] = $data['useragent']['bot'] ?? null;
                 $data['timezone'] = null;
                 $data['groups'] = [];
@@ -304,12 +305,12 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
                     $data['avatar'] = $user->current_avatar;
                     $data['sections'] = $user->sections;
                 } else {
-                    $data['user_id'] = Config::USER_IDS['Unknown user'];
+                    $data['user_id'] = SystemUsers::Unknown->value;
                     $data['username'] = (!empty($data['useragent']['bot']) ? $data['useragent']['bot'] : null);
                 }
             }
         } catch (\Throwable) {
-            $data['user_id'] = Config::USER_IDS['Unknown user'];
+            $data['user_id'] = SystemUsers::Unknown->value;
             $data['username'] = (!empty($data['useragent']['bot']) ? $data['useragent']['bot'] : null);
         }
     }
@@ -436,7 +437,7 @@ class Session implements \SessionHandlerInterface, \SessionIdInterface, \Session
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN ('.Config::USER_IDS['System user'].', '.Config::USER_IDS['Deleted user'].');', [':life' => [$max_lifetime, 'int']], return: 'affected');
+            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN ('.SystemUsers::System->value.', '.SystemUsers::Deleted->value.');', [':life' => [$max_lifetime, 'int']], return: 'affected');
         } catch (\Throwable $e) {
             Errors::error_log($e);
             return false;

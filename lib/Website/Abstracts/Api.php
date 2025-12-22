@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Abstracts;
 
 use Simbiat\Website\Config;
+use Simbiat\Website\Enums\LogTypes;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
 use Simbiat\http20\Headers;
@@ -80,7 +82,7 @@ abstract class Api
                 $this->authentication_needed &&
                 (
                     empty($_SESSION['user_id']) ||
-                    $_SESSION['user_id'] < Config::USER_IDS['Owner']
+                    $_SESSION['user_id'] < SystemUsers::Owner->value
                 )
             ) &&
             (
@@ -270,7 +272,7 @@ abstract class Api
             $reason = 'No token from client';
         }
         #Log attack details. Suppressing errors, so that values will be turned into NULLs if they are not set
-        Security::log('CSRF', 'CSRF attack detected', [
+        Security::log(LogTypes::CSRF->value, 'CSRF attack detected', [
             'reason' => $reason,
             'page' => $_SERVER['REQUEST_URI'] ?? null,
             'origin' => $_SERVER['HTTP_ORIGIN'] ?? null,

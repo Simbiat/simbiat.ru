@@ -11,6 +11,8 @@ use Simbiat\FFXIV\AbstractTrackerEntity;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
+use Simbiat\Website\Enums\LogTypes;
+use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
 use Simbiat\Website\Notifications\LoginFailed;
@@ -270,7 +272,7 @@ class User extends Entity
                 return $upload;
             }
             #Log the change
-            Security::log('Avatar', 'Added avatar', $upload['hash']);
+            Security::log(LogTypes::Avatar->value, 'Added avatar', $upload['hash']);
             #Add to DB
             Query::query(
                 'INSERT IGNORE INTO `uc__avatars` (`user_id`, `file_id`, `character_id`, `current`) VALUES (:user_id, :file_id, :character, 0);',
@@ -311,7 +313,7 @@ class User extends Entity
         }
         $file_id = $_POST['avatar'] ?? '';
         #Log the change
-        Security::log('Avatar', 'Deleted avatar', $file_id);
+        Security::log(LogTypes::Avatar->value, 'Deleted avatar', $file_id);
         #Delete the avatar (only allow deletion of those that are not current)
         Query::query('DELETE FROM `uc__avatars` WHERE `user_id`=:user_id AND `file_id`=:file_id AND `current`=0;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]);
         return ['location' => $this->getAvatar(), 'response' => true];
@@ -333,7 +335,7 @@ class User extends Entity
             $file_id = $_POST['avatar'];
         }
         #Log the change
-        Security::log('Avatar', 'Changed active avatar', $file_id);
+        Security::log(LogTypes::Avatar->value, 'Changed active avatar', $file_id);
         Query::query([
             #Set the chosen avatar as current
             ['UPDATE `uc__avatars` SET `current`=1 WHERE `user_id`=:user_id AND `file_id`=:file_id;', [':user_id' => [$this->id, 'int'], ':file_id' => $file_id]],
@@ -412,7 +414,7 @@ class User extends Entity
                 Security::session_regenerate_id(true);
             }
             #Log the change
-            Security::log('User details change', 'Changed name', ['name' => ['old' => $this->username, 'new' => $new_name]]);
+            Security::log(LogTypes::UserDetailsChanged->value, 'Changed name', ['name' => ['old' => $this->username, 'new' => $new_name]]);
             return ['response' => $result];
         } catch (\Throwable) {
             return ['http_error' => 500, 'reason' => 'Failed to change the username'];
@@ -548,7 +550,7 @@ class User extends Entity
         }
         $result = Query::query($queries);
         #Log the change
-        Security::log('User details change', 'Changed details', $log);
+        Security::log(LogTypes::UserDetailsChanged->value, 'Changed details', $log);
         return ['response' => $result];
     }
     
@@ -608,17 +610,17 @@ class User extends Entity
         }
         #Validating data
         if (empty($_POST['signinup']['email'])) {
-            Security::log('Failed login', 'No email provided');
+            Security::log(LogTypes::FailedLogin->value, 'No email provided');
             return ['http_error' => 400, 'reason' => 'No email provided'];
         }
         if (empty($_POST['signinup']['password'])) {
-            Security::log('Failed login', 'No password provided');
+            Security::log(LogTypes::FailedLogin->value, 'No password provided');
             return ['http_error' => 400, 'reason' => 'No password provided'];
         }
         #Check if banned
         $is_email = \filter_var($_POST['signinup']['email'], \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE);
         if (!$is_email && $this->bannedName($_POST['signinup']['email'])) {
-            Security::log('Failed login', 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
+            Security::log(LogTypes::FailedLogin->value, 'Prohibited credentials provided: `'.$_POST['signinup']['email'].'`');
             return ['http_error' => 403, 'reason' => 'Prohibited credentials provided'];
         }
         #Check DB
@@ -635,7 +637,7 @@ class User extends Entity
         }
         #Check if a password is set (means that a user does exist)
         if (empty($credentials['password'])) {
-            Security::log('Failed login', 'No user found');
+            Security::log(LogTypes::FailedLogin->value, 'No user found');
             return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
         /** @noinspection UnusedFunctionResultInspection Needed to just update current ID */
@@ -643,17 +645,17 @@ class User extends Entity
         #Get permissions
         $_SESSION['permissions'] = $this->getPermissions();
         if (!in_array('can_login', $_SESSION['permissions'], true)) {
-            Security::log('Failed login', 'Attempt to login with account that can\'t login', user_id: (int)$this->id);
+            Security::log(LogTypes::FailedLogin->value, 'Attempt to login with account that can\'t login', user_id: (int)$this->id);
             return ['http_error' => 403, 'reason' => 'No `can_login` permission'];
         }
         #Check for strikes
         if ($credentials['strikes'] >= 5) {
-            Security::log('Failed login', 'Too many failed login attempts', user_id: (int)$this->id);
+            Security::log(LogTypes::FailedLogin->value, 'Too many failed login attempts', user_id: (int)$this->id);
             return ['http_error' => 403, 'reason' => 'Too many failed login attempts. Try password reset.'];
         }
         #Check the password
         if (!$this->passValid($_POST['signinup']['password'], $credentials['password'])) {
-            Security::log('Failed login', 'Bad password', user_id: (int)$this->id);
+            Security::log(LogTypes::FailedLogin->value, 'Bad password', user_id: (int)$this->id);
             return ['http_error' => 403, 'reason' => 'Wrong login or password'];
         }
         #Add username and user_id to the session
@@ -662,9 +664,9 @@ class User extends Entity
         #Set cookie if we have "rememberme" checked
         if (!empty($_POST['signinup']['rememberme'])) {
             $this->rememberMe();
-            Security::log('Login', 'Successful login with cookie setup', 'Cookie ID is '.($_SESSION['cookie_id'] ?? 'NULL'), (int)$this->id);
+            Security::log(LogTypes::Login->value, 'Successful login with cookie setup', 'Cookie ID is '.($_SESSION['cookie_id'] ?? 'NULL'), (int)$this->id);
         } else {
-            Security::log('Login', 'Successful login', user_id: (int)$this->id);
+            Security::log(LogTypes::Login->value, 'Successful login', user_id: (int)$this->id);
         }
         if (\session_status() === \PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
@@ -684,7 +686,7 @@ class User extends Entity
     public function remind(): array
     {
         if (empty($_POST['signinup']['email'])) {
-            Security::log('Password reset', 'No email/name provided');
+            Security::log(LogTypes::PasswordReset->value, 'No email/name provided');
             return ['http_error' => 400, 'reason' => 'No email/name provided'];
         }
         #Check DB
@@ -706,7 +708,7 @@ class User extends Entity
             #Get permissions
             $_SESSION['permissions'] = $this->getPermissions();
             if (!in_array('can_login', $_SESSION['permissions'], true)) {
-                Security::log('Password reset', 'Attempt to reset password for account that can\'t login', user_id: (int)$this->id);
+                Security::log(LogTypes::PasswordReset->value, 'Attempt to reset password for account that can\'t login', user_id: (int)$this->id);
                 #Return "true" to prevent spoofing registered emails
                 return ['response' => true];
             }
@@ -714,7 +716,7 @@ class User extends Entity
             try {
                 #Write the reset token to DB
                 Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
-                Security::log('Password reset', 'Attempt to reset password for account', user_id: (int)$this->id);
+                Security::log(LogTypes::PasswordReset->value, 'Attempt to reset password for account', user_id: (int)$this->id);
                 new PasswordReset()->setEmail(true)->setPush(false)->setUser($this->id)->generate(['token' => $token, 'user_id' => $credentials['user_id']])->save()->send($credentials['email'], true);
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Password reset failed'];
@@ -744,7 +746,7 @@ class User extends Entity
             $pass = \bin2hex(\random_bytes(128));
             $hashed_pass = Security::passHash($pass);
             #Write cookie data to DB
-            if (!($this->id === null || $this->id === '') || (!empty($_SESSION['user_id']) && !in_array($_SESSION['user_id'], [Config::USER_IDS['Unknown user'], Config::USER_IDS['System user'], Config::USER_IDS['Deleted user']], true))) {
+            if (!($this->id === null || $this->id === '') || (!empty($_SESSION['user_id']) && !in_array($_SESSION['user_id'], [SystemUsers::Unknown->value, SystemUsers::System->value, SystemUsers::Deleted->value], true))) {
                 #Check if a cookie exists and get its `validator`. This also helps with race conditions a bit
                 $current_pass = Query::query('SELECT `validator` FROM `uc__cookies` WHERE `user_id`=:id AND `cookie_id`=:cookie',
                     [
@@ -831,7 +833,7 @@ class User extends Entity
             Query::query(
                 'UPDATE `uc__users` SET `strikes`=`strikes`+1 WHERE `user_id`=:user_id',
                 [':user_id' => [$this->id, 'string']]);
-            Security::log('Failed login', 'Strike added');
+            Security::log(LogTypes::FailedLogin->value, 'Strike added');
             if ($this->strikes === 5) {
                 new UserLock()->setEmail(true)->setPush(true)->setUser($this->id)->generate()->save()->send(force: true);
             } elseif ($this->strikes < 5) {
@@ -868,7 +870,7 @@ class User extends Entity
         if (\session_status() === \PHP_SESSION_ACTIVE) {
             Security::session_regenerate_id(true);
         }
-        Security::log('Password change', 'Attempted to change password', $result);
+        Security::log(LogTypes::PasswordChange->value, 'Attempted to change password', $result);
         new PasswordChange()->setEmail(true)->setPush(true)->setUser($this->id)->generate()->save()->send(force: true);
         return $result;
     }
@@ -917,7 +919,7 @@ class User extends Entity
             ], return: 'affected'
         );
         if ($result > 0) {
-            Security::log('Logout', $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
+            Security::log(LogTypes::Logout->value, $logout ? 'Cookie deleted during logout' : 'Manually deleted a cookie', 'Cookie ID deleted is '.$_POST['cookie']);
         }
         return true;
     }
@@ -943,7 +945,7 @@ class User extends Entity
             ], return: 'affected'
         );
         if ($result > 0) {
-            Security::log('Logout', 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
+            Security::log(LogTypes::Logout->value, 'Manually deleted a session', 'Session ID deleted is '.$_POST['session']);
         }
         return true;
     }
@@ -1079,7 +1081,7 @@ class User extends Entity
      */
     public function logout(): bool
     {
-        Security::log('Logout', 'Logout');
+        Security::log(LogTypes::Logout->value, 'Logout');
         #Remove rememberme cookie
         #From browser
         /** @noinspection SecureCookiesTransferInspection Necessary parameters are provided through the array */
@@ -1220,39 +1222,39 @@ class User extends Entity
                 $queries = [
                     [
                         'UPDATE `talks__sections` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__sections` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__threads` SET `last_poster`=:deleted WHERE `last_poster`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__posts` SET `author`=:deleted WHERE `author`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__posts` SET `editor`=:deleted WHERE `editor`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `talks__posts_history` SET `user_id`=:deleted WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'UPDATE `sys__files` SET `user_id`=:deleted WHERE `user_id`=:user_id;',
-                        [':user_id' => [$this->id, 'int'], ':deleted' => [Config::USER_IDS['Deleted user'], 'int']]
+                        [':user_id' => [$this->id, 'int'], ':deleted' => [SystemUsers::Deleted->value, 'int']]
                     ],
                     [
                         'DELETE FROM `talks__likes` WHERE `user_id`=:user_id;',
@@ -1308,7 +1310,7 @@ class User extends Entity
             $result = false;
         }
         #Log
-        Security::log('User removal', 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? Config::USER_IDS['Deleted user'] : $this->id));
+        Security::log(LogTypes::UserRemoval->value, 'Removal', ['user_id' => $this->id, 'hard' => $hard, 'result' => $result], ($hard ? SystemUsers::Deleted->value : $this->id));
         return $result;
     }
 }
