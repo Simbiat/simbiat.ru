@@ -1,7 +1,7 @@
 USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `talks__threads` (
   `thread_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Thread ID',
-  `name` varchar(70) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'Thread name',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'Thread name',
   `section_id` int(10) unsigned NOT NULL COMMENT 'Forum ID where the thread is located',
   `language` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL DEFAULT 'en' COMMENT 'Main language of the thread',
   `system` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Flag indicating that thread is system one, thus should not be deleted.',
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS `talks__threads` (
   `author` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the creator',
   `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When thread was updated',
   `editor` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'User ID of the updater',
+  `posts` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Number of posts in the thread',
   `last_post` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'Time of the last post',
   `last_poster` int(10) unsigned NOT NULL DEFAULT 1 COMMENT 'ID of the last poster',
   `og_image` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci DEFAULT NULL COMMENT 'Optional file ID to be used as og:image',
