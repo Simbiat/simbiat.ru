@@ -120,6 +120,7 @@
     border-block-end: var(--border_light) var(--border_width) dotted;
     border-inline-end: var(--border_light) var(--border_width) dotted;
     float: inline-start;
+    inline-size: 8rem;
     margin-block-start: -1rem;
     margin-inline-end: 1rem;
     padding: 1rem;
