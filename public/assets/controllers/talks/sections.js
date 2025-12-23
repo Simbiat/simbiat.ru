@@ -290,7 +290,6 @@ export class Sections {
                             saveTinyMCE(textarea.id);
                         }
                     }
-                    addSnackbar('Thread created. Reloading...', 'success');
                     pageRefresh(data.location);
                 }
                 else {

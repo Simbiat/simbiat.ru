@@ -4585,10 +4585,14 @@ function empty(variable) {
     return false;
 }
 function pageRefresh(new_url) {
-    if (!empty(new_url)) {
-        window.location.assign(encodeURI(new_url));
+    let url;
+    if (empty(new_url)) {
+        url = new URL(document.location.href);
     }
-    const url = new URL(document.location.href);
+    else {
+        window.location.assign(encodeURI(new_url));
+        url = new URL(new_url, document.location.href);
+    }
     url.searchParams.set('force_reload', String(Date.now()));
     window.location.replace(url.toString());
 }

@@ -137,10 +137,13 @@ function empty(variable: unknown): boolean {
 
 //Function to force page refresh. Regular reload() often hits cache, thus not properly updating
 function pageRefresh(new_url?: string): void {
-  if (!empty(new_url)) {
+  let url;
+  if (empty(new_url)) {
+    url = new URL(document.location.href);
+  } else {
     window.location.assign(encodeURI(new_url as string));
+    url = new URL(new_url as string, document.location.href);
   }
-  const url = new URL(document.location.href);
   url.searchParams.set('force_reload', String(Date.now()));
   window.location.replace(url.toString());
 }
