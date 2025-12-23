@@ -30,19 +30,17 @@ class FFTracker
 {
     /**
      * Update statistics
-     * @return bool|string
+     * @return void
      */
-    public function updateStatistics(): bool|string
+    public function updateStatistics(): void
     {
         try {
             foreach (['raw', 'characters', 'groups', 'achievements', 'timelines', 'other', 'bugs'] as $type) {
                 new Statistics()->update($type);
             }
-            return true;
         } catch (\Throwable $throwable) {
             $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
             new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
-            return $error;
         }
     }
     
@@ -121,9 +119,9 @@ class FFTracker
     
     /**
      * Update the list of servers
-     * @return bool|string
+     * @return void
      */
-    public function updateServers(): bool|string
+    public function updateServers(): void
     {
         try {
             $lodestone = (new Lodestone());
@@ -139,26 +137,25 @@ class FFTracker
                     ];
                 }
             }
-            return Query::query($queries);
+            Query::query($queries);
         } catch (\Throwable $throwable) {
             $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
             new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
-            return $error;
         }
     }
     
     /**
-     * Register new characters (if found)
-     * @return bool|string
+     * Generate tasks to attempt to register new characters
+     * @return void
      */
-    public function registerNewCharacters(): bool|string
+    public function registerNewCharacters(): void
     {
         try {
             $cron = new TaskInstance();
             #Try to register new characters
             $max_id = Query::query('SELECT MAX(`character_id`) as `character_id` FROM `ffxiv__character`;', return: 'value');
             #We can't go higher than MySQL max unsigned integer. Unlikely we will ever get to it, but who knows?
-            $new_max_id = \min($max_id + 100, 4294967295);
+            $new_max_id = \min($max_id + 500, 4294967295);
             if ((int)$max_id < (int)$new_max_id) {
                 for ($character = $max_id + 1; (int)$character <= (int)$new_max_id; $character++) {
                     $extra_for_error = 'character ID '.$character;
@@ -167,9 +164,7 @@ class FFTracker
             }
         } catch (\Throwable $exception) {
             Errors::error_log($exception, $extra_for_error ?? '');
-            return $exception->getMessage()."\r\n".$exception->getTraceAsString();
         }
-        return true;
     }
     
     /**

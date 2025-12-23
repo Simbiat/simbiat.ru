@@ -16,10 +16,8 @@ $maintenance = new Minute();
 #Run cron
 try {
     if (Config::$dbup) {
-        #Clean sessions
-        $maintenance->sessionClean();
-        #Clean cookies
-        $maintenance->cookiesClean();
+        #Send messages
+        (void)$maintenance->sendNotifications();
     }
 } catch (Throwable $throwable) {
     Errors::error_log($throwable);

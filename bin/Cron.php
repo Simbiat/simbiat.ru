@@ -18,7 +18,7 @@ try {
     if (Config::$dbup && !Config::$db_update) {
         new Agent()->process(50);
     }
-} catch (Throwable $e) {
-    Errors::error_log($e);
+} catch (Throwable $throwable) {
+    Errors::error_log($throwable);
 }
 exit(0);

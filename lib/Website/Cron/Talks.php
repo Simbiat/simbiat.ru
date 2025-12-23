@@ -9,8 +9,10 @@ use Simbiat\Database\Query;
 use Simbiat\Website\Config;
 use Simbiat\Website\Enums\LogTypes;
 use Simbiat\Website\Enums\SystemUsers;
+use Simbiat\Website\Enums\TalkTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
+use Simbiat\Website\Talks\Thread;
 use Simbiat\Website\usercontrol\User;
 use function dirname;
 
@@ -131,5 +133,40 @@ class Talks
             Errors::error_log($exception);
             return false;
         }
+    }
+    
+    /**
+     * Close tickets that have been inactive for some time
+     * @return bool
+     */
+    public function closeInactiveTickets(): bool
+    {
+        $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkTypes::Support->value]);
+        foreach ($tickets as $ticket) {
+            try {
+                /** @noinspection UnusedFunctionResultInspection We do not care if this succeeds or not, really */
+                new Thread($ticket['thread_id'])->setClosed(true);
+            } catch (\Throwable $throwable) {
+                Errors::error_log($throwable);
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Remove empty threads older than 1 day
+     * @return bool
+     */
+    public function removeEmptyThreads(): bool
+    {
+        return Query::query('DELETE FROM `talks__threads` WHERE `created` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND `posts`=0;');
+    }
+    
+    /**
+     * Remove alt links that no longer exist
+     */
+    public function removeDeadLinks(): void
+    {
+        #TODO https://github.com/Simbiat/simbiat.ru/issues/96
     }
 }
