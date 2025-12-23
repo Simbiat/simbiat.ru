@@ -6,8 +6,8 @@ namespace Simbiat\Website\Api\UserControl;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\User;
 use Simbiat\Website\Security;
-use Simbiat\Website\usercontrol\User;
 
 /**
  * Function to change password through API

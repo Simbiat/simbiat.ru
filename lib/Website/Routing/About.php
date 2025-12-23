@@ -10,8 +10,8 @@ use Simbiat\Website\Pages\About\Privacy;
 use Simbiat\Website\Pages\About\Security;
 use Simbiat\Website\Pages\About\Tech;
 use Simbiat\Website\Pages\About\ToS;
-use Simbiat\Website\Redirects\About\Resume;
-use Simbiat\Website\Redirects\About\Website;
+use Simbiat\Website\Pages\Redirects\About\Resume;
+use Simbiat\Website\Pages\Redirects\About\Website;
 use function array_slice;
 
 class About extends Router

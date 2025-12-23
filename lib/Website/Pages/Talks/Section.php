@@ -6,7 +6,6 @@ namespace Simbiat\Website\Pages\Talks;
 use Simbiat\http20\Headers;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
-
 use function in_array;
 
 class Section extends Page
@@ -41,7 +40,7 @@ class Section extends Page
             #Redirect to top page
             Headers::redirect(Config::$base_url.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/talks/sections/', false);
         }
-        $output_array = new \Simbiat\Website\Talks\Section($id)->getArray();
+        $output_array = new \Simbiat\Website\Entities\Section($id)->getArray();
         if (empty($output_array['id'])) {
             return ['http_error' => 404, 'reason' => 'Section does not exist', 'suggested_link' => '/talks/sections/'];
         }
@@ -102,12 +101,12 @@ class Section extends Page
         $output_array['edit_mode'] = $this->edit_mode;
         #Get section types
         if ($output_array['owned'] || in_array('add_sections', $_SESSION['permissions'], true)) {
-            $output_array['section_types'] = \Simbiat\Website\Talks\Section::getSectionTypes($output_array['inherited_type']);
+            $output_array['section_types'] = \Simbiat\Website\Entities\Section::getSectionTypes($output_array['inherited_type']);
         }
         #Get stuff for threads
         if ($output_array['owned'] || in_array('can_post', $_SESSION['permissions'], true)) {
-            $output_array['thread_languages'] = \Simbiat\Website\Talks\Thread::getLanguages();
-            $output_array['thread_link_types'] = \Simbiat\Website\Talks\Thread::getAltLinkTypes();
+            $output_array['thread_languages'] = \Simbiat\Website\Entities\Thread::getLanguages();
+            $output_array['thread_link_types'] = \Simbiat\Website\Entities\Thread::getAltLinkTypes();
         }
         if ($this->edit_mode) {
             #Add edit mode to breadcrumb

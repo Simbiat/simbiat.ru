@@ -7,13 +7,13 @@ namespace Simbiat\Website\Cron;
 
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\Thread;
+use Simbiat\Website\Entities\User;
 use Simbiat\Website\Enums\LogTypes;
 use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Enums\TalkTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
-use Simbiat\Website\Talks\Thread;
-use Simbiat\Website\usercontrol\User;
 use function dirname;
 
 /**

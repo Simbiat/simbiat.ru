@@ -4,8 +4,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use Simbiat\Website\Abstracts\Api;
+use Simbiat\Website\Entities\User;
 use Simbiat\Website\HomePage;
-use Simbiat\Website\usercontrol\User;
 
 class Remove extends Api
 {

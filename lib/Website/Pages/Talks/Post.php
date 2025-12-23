@@ -5,7 +5,6 @@ namespace Simbiat\Website\Pages\Talks;
 
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
-
 use Simbiat\Website\Enums\SystemUsers;
 use function in_array;
 
@@ -36,7 +35,7 @@ class Post extends Page
         if (empty($id) || (int)$id < 1) {
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
-        $post = new \Simbiat\Website\Talks\Post($id);
+        $post = new \Simbiat\Website\Entities\Post($id);
         $output_array = $post->getArray();
         if (empty($output_array['id']) || empty($output_array['text'])) {
             return ['http_error' => 404, 'reason' => 'Post does not exist', 'suggested_link' => '/talks/sections/'];

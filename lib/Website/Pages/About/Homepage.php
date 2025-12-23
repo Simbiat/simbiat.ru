@@ -4,9 +4,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Pages\About;
 
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\Config;
+use Simbiat\Website\Entities\User;
 use Simbiat\Website\Enums\SystemUsers;
-use Simbiat\Website\usercontrol\User;
 
 /**
  * Class for page which is currently used as home page

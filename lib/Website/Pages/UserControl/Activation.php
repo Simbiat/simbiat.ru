@@ -6,7 +6,7 @@ namespace Simbiat\Website\Pages\UserControl;
 use Simbiat\Database\Query;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
-use Simbiat\Website\usercontrol\Email;
+use Simbiat\Website\Entities\Email;
 
 /**
  * User activation

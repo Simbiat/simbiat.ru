@@ -7,12 +7,12 @@ use Simbiat\CuteBytes;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\Notifications\DatabaseDown;
+use Simbiat\Website\Entities\Notifications\DatabaseUp;
+use Simbiat\Website\Entities\Notifications\EnoughSpace;
+use Simbiat\Website\Entities\Notifications\ErrorLog;
+use Simbiat\Website\Entities\Notifications\NoSpace;
 use Simbiat\Website\Enums\SystemUsers;
-use Simbiat\Website\Notifications\DatabaseDown;
-use Simbiat\Website\Notifications\DatabaseUp;
-use Simbiat\Website\Notifications\EnoughSpace;
-use Simbiat\Website\Notifications\ErrorLog;
-use Simbiat\Website\Notifications\NoSpace;
 
 /**
  * Various health check tasks menat to be run every minute

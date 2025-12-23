@@ -30,7 +30,7 @@ class User extends Page
         if (empty($path[0])) {
             Headers::redirect('https://'.(\preg_match('/^[a-z\d\-_~]+\.[a-z\d\-_~]+$/iu', Config::$http_host) === 1 ? 'www.' : '').Config::$http_host.($_SERVER['SERVER_PORT'] !== 443 ? ':'.$_SERVER['SERVER_PORT'] : '').'/uc/profile/');
         }
-        $user = new \Simbiat\Website\usercontrol\User($path[0]);
+        $user = new \Simbiat\Website\Entities\User($path[0]);
         $output_array = [];
         $output_array['user_data'] = $user->getArray();
         if (empty($output_array['user_data']['id'])) {

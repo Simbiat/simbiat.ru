@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\Notifications\Test;
+use Simbiat\Website\Entities\Notifications\Test;
 
 /**
  * API endpoint to control notifications

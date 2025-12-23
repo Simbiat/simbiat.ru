@@ -7,11 +7,11 @@ use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\User;
 use Simbiat\Website\Enums\NotificationTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
 use Simbiat\Website\Twig\EnvironmentGenerator;
-use Simbiat\Website\usercontrol\User;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -107,7 +107,7 @@ abstract class Notification extends Entity
     /**
      * Set user
      *
-     * @param string|int|\Simbiat\Website\usercontrol\User $user_id
+     * @param string|int|\Simbiat\Website\Entities\User $user_id
      *
      * @return $this
      */

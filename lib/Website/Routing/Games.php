@@ -7,7 +7,7 @@ use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Pages\Games\DDEN;
 use Simbiat\Website\Pages\Games\Jiangshi;
 use Simbiat\Website\Pages\Games\RadicalResonance;
-use Simbiat\Website\Redirects\Games\Anti;
+use Simbiat\Website\Pages\Redirects\Games\Anti;
 use function array_slice;
 
 class Games extends Router

@@ -8,7 +8,6 @@ use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Config;
 use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Images;
-
 use function in_array;
 
 class Thread extends Page
@@ -40,7 +39,7 @@ class Thread extends Page
         if (empty($id) || (int)$id < 1) {
             return ['http_error' => 400, 'reason' => 'Wrong ID'];
         }
-        $output_array = new \Simbiat\Website\Talks\Thread($id)->getArray();
+        $output_array = new \Simbiat\Website\Entities\Thread($id)->getArray();
         if (empty($output_array['id'])) {
             return ['http_error' => 404, 'reason' => 'Thread does not exist', 'suggested_link' => '/talks/sections/'];
         }
@@ -141,8 +140,8 @@ class Thread extends Page
             ($output_array['owned'] && in_array('edit_own_threads', $_SESSION['permissions'], true)) ||
             (!$output_array['owned'] && in_array('edit_others_threads', $_SESSION['permissions'], true))
         ) {
-            $output_array['thread_languages'] = \Simbiat\Website\Talks\Thread::getLanguages();
-            $output_array['thread_link_types'] = \Simbiat\Website\Talks\Thread::getAltLinkTypes();
+            $output_array['thread_languages'] = \Simbiat\Website\Entities\Thread::getLanguages();
+            $output_array['thread_link_types'] = \Simbiat\Website\Entities\Thread::getAltLinkTypes();
         }
         #Add access token
         if ($output_array['author'] === SystemUsers::Unknown->value && $_SESSION['user_id'] === SystemUsers::Unknown->value) {

@@ -8,7 +8,7 @@ use Simbiat\Website\Pages\BICTracker\Bic;
 use Simbiat\Website\Pages\BICTracker\Keying;
 use Simbiat\Website\Pages\BICTracker\Listing;
 use Simbiat\Website\Pages\BICTracker\Search;
-use Simbiat\Website\Redirects\BICTracker\ToBics;
+use Simbiat\Website\Pages\Redirects\BICTracker\ToBics;
 use function array_slice;
 
 class BICTracker extends Router

@@ -17,7 +17,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 /**
  * Collection of methods to pass to expose to Twig
  */
-class RuntimeExtension implements RuntimeExtensionInterface
+final class RuntimeExtension implements RuntimeExtensionInterface
 {
     /**
      * Generate a link for the file

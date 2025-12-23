@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Pages\UserControl;
 
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\usercontrol\User;
+use Simbiat\Website\Entities\User;
 
 class FFTracker extends Page
 {

@@ -5,8 +5,8 @@ namespace Simbiat\Website\Api;
 
 use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\Thread;
 use Simbiat\Website\Security;
-use Simbiat\Website\Talks\Thread;
 
 class Contact extends Api
 {

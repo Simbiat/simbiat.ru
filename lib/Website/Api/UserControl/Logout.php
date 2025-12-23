@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\usercontrol\User;
+use Simbiat\Website\Entities\User;
 
 class Logout extends Api
 {

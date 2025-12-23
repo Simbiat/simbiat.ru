@@ -7,9 +7,8 @@ namespace Simbiat\Website\Cron;
 
 use Simbiat\BIC\Library;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\Notifications\CronFailure;
 use Simbiat\Website\Enums\SystemUsers;
-use Simbiat\Website\Notifications\CronFailure;
-use Simbiat\Website\usercontrol\Email;
 
 /**
  * Cron task(s) for BIC Tracker

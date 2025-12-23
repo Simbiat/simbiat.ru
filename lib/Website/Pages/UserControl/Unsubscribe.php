@@ -4,8 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Pages\UserControl;
 
 use Simbiat\Website\Abstracts\Page;
-use Simbiat\Website\Security;
-use Simbiat\Website\usercontrol\Email;
+use Simbiat\Website\Entities\Email;
 
 /**
  * Page to unsubscribe email addresses from messages

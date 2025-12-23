@@ -4,11 +4,10 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Cron\Maintenance;
 
 use Simbiat\Database\Query;
-
 use Simbiat\Website\Enums\LogTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
-use Simbiat\Website\usercontrol\Session;
+use Simbiat\Website\Session;
 
 /**
  * Various maintenance tasks menat to be run every minute

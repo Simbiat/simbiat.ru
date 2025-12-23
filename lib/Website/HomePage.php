@@ -4,16 +4,14 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 use DateTimeInterface;
-use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\Abstracts\Page;
 use Simbiat\http20\Common;
 use Simbiat\http20\Headers;
 use Simbiat\http20\Links;
+use Simbiat\Website\Abstracts\Api;
+use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Routing\MainRouter;
 use Simbiat\Website\Twig\EnvironmentGenerator;
-use Simbiat\Website\usercontrol\Session;
-
 use function in_array;
 
 /**

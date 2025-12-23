@@ -4,8 +4,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\Talks;
 
 use Simbiat\Website\Abstracts\Api;
+use Simbiat\Website\Entities\Section;
 use Simbiat\Website\HomePage;
-use Simbiat\Website\Talks\Section;
 
 class Sections extends Api
 {

@@ -6,9 +6,7 @@ namespace Simbiat\Website\Routing;
 use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Feeds;
 use Simbiat\Website\Pages\About\Homepage;
-
-use Simbiat\Website\Redirects\BICTracker\Legacy;
-
+use Simbiat\Website\Pages\Redirects\BICTracker\Legacy;
 use function array_slice;
 
 /**

@@ -18,10 +18,9 @@ use Simbiat\FFXIV\PvPTeam;
 use Simbiat\FFXIV\Statistics;
 use Simbiat\Website\Caching;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\Notifications\CronFailure;
 use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
-use Simbiat\Website\Notifications\CronFailure;
-use Simbiat\Website\usercontrol\Email;
 
 /**
  * Class handling regular tasks for FFXIV tracker

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Api\UserControl;
 
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\usercontrol\Email;
+use Simbiat\Website\Entities\Email;
 
 class Emails extends Api
 {

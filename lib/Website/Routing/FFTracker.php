@@ -48,12 +48,12 @@ class FFTracker extends Router
             'achievements' => (!empty($path[1]) ? new Achievement()->get(array_slice($path, 1)) : new Listing()->get($path)),
             'points' => new Listing()->get($path),
             #Redirects
-            'character' => new \Simbiat\Website\Redirects\FFTracker\Character()->get(array_slice($path, 1)),
-            'freecompany' => new \Simbiat\Website\Redirects\FFTracker\FreeCompany()->get(array_slice($path, 1)),
-            'pvpteam' => new \Simbiat\Website\Redirects\FFTracker\PvPTeam()->get(array_slice($path, 1)),
-            'linkshell' => new \Simbiat\Website\Redirects\FFTracker\Linkshell()->get(array_slice($path, 1)),
-            'crossworld_linkshell', 'crossworldlinkshell', 'crossworldlinkshells' => new \Simbiat\Website\Redirects\FFTracker\CrossworldLinkshell()->get(array_slice($path, 1)),
-            'achievement' => new \Simbiat\Website\Redirects\FFTracker\Achievement()->get(array_slice($path, 1)),
+            'character' => new \Simbiat\Website\Pages\Redirects\FFTracker\Character()->get(array_slice($path, 1)),
+            'freecompany' => new \Simbiat\Website\Pages\Redirects\FFTracker\FreeCompany()->get(array_slice($path, 1)),
+            'pvpteam' => new \Simbiat\Website\Pages\Redirects\FFTracker\PvPTeam()->get(array_slice($path, 1)),
+            'linkshell' => new \Simbiat\Website\Pages\Redirects\FFTracker\Linkshell()->get(array_slice($path, 1)),
+            'crossworld_linkshell', 'crossworldlinkshell', 'crossworldlinkshells' => new \Simbiat\Website\Pages\Redirects\FFTracker\CrossworldLinkshell()->get(array_slice($path, 1)),
+            'achievement' => new \Simbiat\Website\Pages\Redirects\FFTracker\Achievement()->get(array_slice($path, 1)),
             default => ['http_error' => 400, 'reason' => 'Unsupported endpoint `'.$path[0].'`. Supported endpoints: `'.\implode('`, `', $this->sub_routes).'`.'],
         };
     }
