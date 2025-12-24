@@ -141,11 +141,10 @@ class Talks
      */
     public function closeInactiveTickets(): bool
     {
-        $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkTypes::Support->value]);
+        $tickets = Query::query('SELECT `thread_id` FROM `talks__threads` LEFT JOIN `talks__sections` ON `talks__threads`.`section_id`=`talks__sections`.`section_id` WHERE `type`=:type AND `last_post` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 MONTH);', [':type' => TalkTypes::Support->value], return: 'column');
         foreach ($tickets as $ticket) {
             try {
-                /** @noinspection UnusedFunctionResultInspection We do not care if this succeeds or not, really */
-                new Thread($ticket['thread_id'])->setClosed(true);
+                (void)new Thread($ticket['thread_id'])->setClosed(true);
             } catch (\Throwable $throwable) {
                 Errors::error_log($throwable);
             }
