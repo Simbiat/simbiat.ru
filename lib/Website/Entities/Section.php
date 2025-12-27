@@ -188,7 +188,7 @@ final class Section extends Entity
                     $bindings[':user_id'] = [$_SESSION['user_id'], 'int'];
                 }
                 #Do not show threads created by "Unknown user"
-                if (($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === SystemUsers::Unknown->value) {
+                if ($this->id !== 'top' && ($data['detailed_type'] === 'Support' || $data['inherited_type'] === 'Support') && $_SESSION['user_id'] === SystemUsers::Unknown->value) {
                     $where .= '`t`.`author`!=:anonymous AND ';
                     $bindings[':anonymous'] = [SystemUsers::Unknown->value, 'int'];
                 }
