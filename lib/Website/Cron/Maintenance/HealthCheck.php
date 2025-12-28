@@ -249,7 +249,7 @@ class HealthCheck
                     #Check if the file is old enough
                     if (\is_file($file)) {
                         #Remove the file
-                        /** @noinspection PhpUsageOfSilenceOperatorInspection */
+                        /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
                         @\unlink($file);
                         #Remove the parent directory if empty
                         if (!new \RecursiveDirectoryIterator(\dirname($file), \FilesystemIterator::SKIP_DOTS)->valid()) {
@@ -267,7 +267,8 @@ class HealthCheck
             if ($dir !== $path) {
                 #Using catch to handle potential race condition, when a directory gets removed by a different process before the check gets called
                 try {
-                    \rmdir($dir);
+                    /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
+                    @\rmdir($dir);
                     #Remove the parent directory if empty
                     if (\dirname($dir) !== $path && !new \RecursiveDirectoryIterator(\dirname($dir), \FilesystemIterator::SKIP_DOTS)->valid()) {
                         \rmdir(\dirname($dir));
