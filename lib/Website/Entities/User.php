@@ -50,8 +50,6 @@ final class User extends Entity
         'prefix' => null,
         'suffix' => null,
     ];
-    #Phone
-    public ?string $phone = null;
     #Dates
     public array $dates = [
         'registered' => null,
@@ -108,7 +106,7 @@ final class User extends Entity
     protected function getFromDB(): array
     {
         
-        $db_data = Query::query('SELECT `username`, `system`, `strikes`, `phone`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) AS `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
+        $db_data = Query::query('SELECT `username`, `system`, `strikes`, `ff_token`, `registered`, `updated`, `parent_id`, (IF(`parent_id` IS NULL, NULL, (SELECT `username` FROM `uc__users` WHERE `user_id`=:user_id))) AS `parentname`, `birthday`, `first_name`, `last_name`, `middle_name`, `father_name`, `prefix`, `suffix`, `sex`, `about`, `timezone`, `country`, `city`, `website`, `blog`, `changelog`, `knowledgebase` FROM `uc__users` LEFT JOIN `uc__user_to_section` ON `uc__users`.`user_id`=`uc__user_to_section`.`user_id` WHERE `uc__users`.`user_id`=:user_id', ['user_id' => [$this->id, 'int']], return: 'row');
         if (empty($db_data)) {
             return [];
         }
@@ -676,7 +674,7 @@ final class User extends Entity
         if ($after_registration) {
             return ['status' => 201, 'response' => true];
         }
-        new LoginSuccess()->setEmail(true)->setPush(true)->setUser($this->id)->generate()->save()->send();
+        new LoginSuccess()->save($this->id)->send();
         return ['response' => true];
     }
     
@@ -719,7 +717,7 @@ final class User extends Entity
                 #Write the reset token to DB
                 Query::query('UPDATE `uc__users` SET `password_reset`=:token WHERE `user_id`=:user_id', [':user_id' => $credentials['user_id'], ':token' => Security::passHash($token)]);
                 Security::log(LogTypes::PasswordReset->value, 'Attempt to reset password for account', user_id: (int)$this->id);
-                new PasswordReset()->setEmail(true)->setPush(false)->setUser($this->id)->generate(['token' => $token, 'user_id' => $credentials['user_id']])->save()->send($credentials['email'], true);
+                new PasswordReset()->save($this->id, ['token' => $token, 'user_id' => $credentials['user_id']], true, false, $credentials['email'])->send();
             } catch (\Throwable) {
                 return ['http_error' => 500, 'reason' => 'Password reset failed'];
             }
@@ -837,9 +835,9 @@ final class User extends Entity
                 [':user_id' => [$this->id, 'string']]);
             Security::log(LogTypes::FailedLogin->value, 'Strike added');
             if ($this->strikes === 5) {
-                new UserLock()->setEmail(true)->setPush(true)->setUser($this->id)->generate()->save()->send(force: true);
+                new UserLock()->save($this->id)->send();
             } elseif ($this->strikes < 5) {
-                new LoginFailed()->setEmail(true)->setPush(true)->setUser($this->id)->generate()->save()->send(force: true);
+                new LoginFailed()->save($this->id)->send();
             }
             return false;
         } catch (\Throwable) {
@@ -873,7 +871,7 @@ final class User extends Entity
             Security::session_regenerate_id(true);
         }
         Security::log(LogTypes::PasswordChange->value, 'Attempted to change password', $result);
-        new PasswordChange()->setEmail(true)->setPush(true)->setUser($this->id)->generate()->save()->send(force: true);
+        new PasswordChange()->save($this->id)->send();
         return $result;
     }
     

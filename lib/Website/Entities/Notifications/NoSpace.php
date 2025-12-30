@@ -17,10 +17,6 @@ final class NoSpace extends Notification
      */
     protected const string SUBJECT = '[Alert]: Low space';
     /**
-     * Whether database is required to generate the notification
-     */
-    protected const bool DB_REQUIRED = false;
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 2;
@@ -28,6 +24,14 @@ final class NoSpace extends Notification
      * Whether a non-empty array of Twig variables is required
      */
     protected const bool TWIG_REQUIRED = true;
+    /**
+     * Whether to send to all emails registered for the user
+     */
+    protected const bool ALL_EMAILS = true;
+    /**
+     * Whether to send to email even if some details fail to be retrieved
+     */
+    protected const bool ALWAYS_SEND = true;
     
     /**
      * Generate text for message
@@ -36,7 +40,7 @@ final class NoSpace extends Notification
      *
      * @return self
      */
-    public function generate(array $twig_vars = []): self
+    protected function setText(array $twig_vars = []): self
     {
         #If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.
         if (self::TWIG_REQUIRED && \count($twig_vars) === 0) {

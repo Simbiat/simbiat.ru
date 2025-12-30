@@ -17,10 +17,6 @@ final class UserLock extends Notification
      */
     protected const string SUBJECT = 'Account locked';
     /**
-     * Whether database is required to generate the notification
-     */
-    protected const bool DB_REQUIRED = true;
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 2;
@@ -36,7 +32,7 @@ final class UserLock extends Notification
      *
      * @return self
      */
-    public function generate(array $twig_vars = []): self
+    protected function setText(array $twig_vars = []): self
     {
         try {
             $this->text = EnvironmentGenerator::getTwig()->render('notifications/user_lock.twig', $twig_vars);

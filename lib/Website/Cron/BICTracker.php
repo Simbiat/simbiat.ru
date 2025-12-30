@@ -25,7 +25,7 @@ class BICTracker
         #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
         if (\is_string($result) && !\is_numeric($result) && !str_contains($result, 'Не удалось скачать файл')) {
             #Send email notification, this most likely means some change in UFEBS form
-            new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $result])->save()->send(Config::ADMIN_MAIL);
+            new CronFailure()->save(SystemUsers::Owner->value, ['method' => __METHOD__, 'errors' => $result], true, false, Config::ADMIN_MAIL)->send();
         }
         return $result;
     }

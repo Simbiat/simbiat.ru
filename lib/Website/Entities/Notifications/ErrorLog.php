@@ -15,13 +15,17 @@ final class ErrorLog extends Notification
      */
     protected const string SUBJECT = '[Alert]: Error log found';
     /**
-     * Whether database is required to generate the notification
-     */
-    protected const bool DB_REQUIRED = false;
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 2;
+    /**
+     * Whether to send to all emails registered for the user
+     */
+    protected const bool ALL_EMAILS = true;
+    /**
+     * Whether to send to email even if some details fail to be retrieved
+     */
+    protected const bool ALWAYS_SEND = true;
     
     /**
      * Generate text for message
@@ -30,7 +34,7 @@ final class ErrorLog extends Notification
      *
      * @return self
      */
-    public function generate(array $twig_vars = []): self
+    protected function setText(array $twig_vars = []): self
     {
         
         $this->text = '<p>A PHP error log was found. It is recommended to check what failed and fix the errors.</p>';

@@ -17,10 +17,6 @@ final class LoginSuccess extends Notification
      */
     protected const string SUBJECT = 'Successful login';
     /**
-     * Whether database is required to generate the notification
-     */
-    protected const bool DB_REQUIRED = true;
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 0;
@@ -32,7 +28,7 @@ final class LoginSuccess extends Notification
      *
      * @return self
      */
-    public function generate(array $twig_vars = []): self
+    protected function setText(array $twig_vars = []): self
     {
         try {
             $this->text = EnvironmentGenerator::getTwig()->render('notifications/login_success.twig', $twig_vars);

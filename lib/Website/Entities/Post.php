@@ -281,7 +281,7 @@ final class Post extends Entity
                 $new_location .= '#post_'.$new_id;
             }
             foreach ($thread->subscribers as $subscriber) {
-                new NewPost()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => $thread->name, 'location' => $new_location])->save()->send();
+                new NewPost()->save($subscriber, ['thread_name' => $thread->name, 'location' => $new_location])->send();
             }
             if ($thread->author !== (int)$_SESSION['user_id'] && !in_array((int)$_SESSION['user_id'], $thread->subscribers, true)) {
                 Query::query(
@@ -328,9 +328,9 @@ final class Post extends Entity
                     $ticket = \preg_replace('/^\[Contact Form]\s*/ui', '', $this->name);
                     $twig_vars = ['ticket' => $ticket, 'token' => $new_token, 'thread_id' => $this->thread_id];
                     if ($first_post) {
-                        new TicketCreation()->setEmail(true)->setPush(false)->setUser(SystemUsers::Unknown->value)->generate($twig_vars)->save()->send($email, true);
+                        new TicketCreation()->save(SystemUsers::Unknown->value, $twig_vars, true, false, $email)->send(true);
                     } else {
-                        new TicketUpdate()->setEmail(true)->setPush(false)->setUser(SystemUsers::Unknown->value)->generate($twig_vars)->save()->send($email);
+                        new TicketUpdate()->save(SystemUsers::Unknown->value, $twig_vars, true, false, $email)->send();
                     }
                 }
             }

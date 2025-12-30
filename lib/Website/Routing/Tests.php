@@ -40,7 +40,7 @@ class Tests extends Router
         switch ($path[0]) {
             case 'mail':
                 try {
-                    new Test()->setEmail(true)->setPush(true)->setUser(SystemUsers::Owner->value)->generate()->save()->send(Config::ADMIN_MAIL, true, true);
+                    new Test()->save(SystemUsers::Owner->value, email_override: Config::ADMIN_MAIL)->send(true);
                 } catch (\Throwable $throwable) {
                     Errors::error_log($throwable, debug: true);
                 }

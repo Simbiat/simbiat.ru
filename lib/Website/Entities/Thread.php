@@ -360,7 +360,7 @@ final class Thread extends Entity
             }
             $section = new Section($data['parent_id'])->get();
             foreach ($section->subscribers as $subscriber) {
-                new NewThread()->setEmail(true)->setPush(true)->setUser($subscriber)->generate(['thread_name' => mb_trim($data['name'], null, 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)])->save()->send();
+                new NewThread()->save($subscriber, ['thread_name' => mb_trim($data['name'], null, 'UTF-8'), 'section_name' => $section->name, 'location' => \preg_replace('/[?&]access_token=.*/ui', '', $location)])->send();
             }
             if ((int)$_SESSION['user_id'] !== SystemUsers::Unknown->value) {
                 Query::query(

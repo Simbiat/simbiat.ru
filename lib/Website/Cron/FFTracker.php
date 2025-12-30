@@ -39,7 +39,7 @@ class FFTracker
             }
         } catch (\Throwable $throwable) {
             $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-            new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
+            new CronFailure()->save(SystemUsers::Owner->value, ['method' => __METHOD__, 'errors' => $error], true, false, Config::ADMIN_MAIL)->send();
         }
     }
     
@@ -139,7 +139,7 @@ class FFTracker
             Query::query($queries);
         } catch (\Throwable $throwable) {
             $error = $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
-            new CronFailure()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['method' => __METHOD__, 'errors' => $error])->save()->send(Config::ADMIN_MAIL);
+            new CronFailure()->save(SystemUsers::Owner->value, ['method' => __METHOD__, 'errors' => $error], true, false, Config::ADMIN_MAIL)->send();
         }
     }
     

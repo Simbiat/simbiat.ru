@@ -359,7 +359,7 @@ final class Email extends Entity
         } catch (\Throwable) {
             return false;
         }
-        new UserActivation()->setEmail(true)->setPush(false)->setUser($this->id)->generate(['activation' => $activation, 'user_id' => $this->user_id])->save()->send($this->id, true);
+        new UserActivation()->save($this->id, ['activation' => $activation, 'user_id' => $this->user_id], true, false, $this->id)->send();
         return true;
     }
 }

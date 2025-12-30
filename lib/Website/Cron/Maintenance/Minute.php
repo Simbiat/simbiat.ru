@@ -4,7 +4,10 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Cron\Maintenance;
 
 use Simbiat\Database\Query;
+use Simbiat\Website\Abstracts\Notification;
+use Simbiat\Website\Entities\Notifications\Test;
 use Simbiat\Website\Enums\LogTypes;
+use Simbiat\Website\Enums\NotificationTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Security;
 use Simbiat\Website\Session;
@@ -63,7 +66,25 @@ class Minute
      */
     public function sendNotifications(): bool
     {
-        #TODO Actually implement the logic
+        $notifications = Query::query('SELECT `uuid`, `type` FROM `sys__notifications` WHERE `email` IS NOT NULL AND `sent` IS NULL AND `attempts` < :max_attempts AND (`last_attempt` IS NULL OR `last_attempt`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 5 MINUTE)) ORDER BY `last_attempt` LIMIT 50;', [':max_attempts' => Notification::MAX_ATTEMPTS], return: 'pair');
+        if (\count($notifications) > 0) {
+            Query::query('UPDATE `sys__notifications` SET `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` IN (:uuid)', [':uuid' => [\array_keys($notifications), 'in', 'string']]);
+        }
+        foreach ($notifications as $uuid => $type) {
+            $class_name = NotificationTypes::tryFrom($type);
+            if ($class_name === null) {
+                #Bad type, remove the notification
+                new Test($uuid)->delete();
+            } else {
+                $class_name = "\Simbiat\Website\Entities\Notifications\\$class_name->name";
+                try {
+                    new $class_name($uuid)->get()->send();
+                } catch (\Throwable $throwable) {
+                    Errors::error_log($throwable);
+                }
+                echo 'here';
+            }
+        }
         return true;
     }
 }

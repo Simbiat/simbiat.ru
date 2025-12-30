@@ -17,10 +17,6 @@ final class NewThread extends Notification
      */
     protected const string SUBJECT = 'New thread in watched section';
     /**
-     * Whether database is required to generate the notification
-     */
-    protected const bool DB_REQUIRED = true;
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 1;
@@ -36,7 +32,7 @@ final class NewThread extends Notification
      *
      * @return self
      */
-    public function generate(array $twig_vars = []): self
+    protected function setText(array $twig_vars = []): self
     {
         #If Twig variables are required, but not provided - do not do anything. This will result in failure on save and send.
         if (self::TWIG_REQUIRED && \count($twig_vars) === 0) {

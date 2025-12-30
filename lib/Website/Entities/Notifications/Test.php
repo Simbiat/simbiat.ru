@@ -15,13 +15,13 @@ final class Test extends Notification
      */
     protected const string SUBJECT = 'Test email';
     /**
-     * Whether database is required to generate the notification
-     */
-    protected const bool DB_REQUIRED = false;
-    /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 0;
+    /**
+     * Whether to send to all emails registered for the user
+     */
+    protected const bool ALL_EMAILS = true;
     
     /**
      * Generate text for message
@@ -30,7 +30,7 @@ final class Test extends Notification
      *
      * @return self
      */
-    public function generate(array $twig_vars = []): self
+    protected function setText(array $twig_vars = []): self
     {
         $this->text = '<p>Test message</p>';
         return $this;

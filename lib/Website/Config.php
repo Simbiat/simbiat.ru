@@ -24,10 +24,21 @@ final class Config
 {
     public static bool $prod = false;
     public static string $work_dir = '';
-    public const string ADMIN_MAIL = 'support@simbiat.eu';
+    /**
+     * Mail for admin of the service
+     */
+    public const string ADMIN_MAIL = 'admin@simbiat.eu';
+    /**
+     * Name of the admin
+     */
     public const string ADMIN_NAME = 'Dmitrii Kustov';
+    /**
+     * Name of the website
+     */
     public const string SITE_NAME = 'Simbiat Software';
-    #Mail to use to send emails from
+    /**
+     * Mail to use to send emails from
+     */
     public const string FROM = 'noreply@simbiat.eu';
     public static string $http_host = 'www.simbiat.eu';
     public static string $base_url = 'https://www.simbiat.eu';
@@ -57,7 +68,9 @@ final class Config
     public static string $statistics = '';
     #Device detector object
     public static ?DeviceDetector $device_detector = null;
-    #List of system group IDs
+    /**
+     * List of system group IDs
+     */
     public const array GROUP_IDS = [
         'Administrators' => 1,
         'Unverified' => 2,

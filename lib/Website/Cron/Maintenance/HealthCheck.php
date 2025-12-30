@@ -58,7 +58,7 @@ class HealthCheck
                 $percentage = $free * 100 / $total;
                 if ($percentage < 5) {
                     #Send mail
-                    new NoSpace()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
+                    new NoSpace()->save(SystemUsers::Owner->value, ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], true, false, Config::ADMIN_MAIL)->send();
                     #Generate flag
                     \file_put_contents($dir.'/noSpace.flag', $percentage.'% of space left');
                 }
@@ -67,7 +67,7 @@ class HealthCheck
             /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($dir.'/noSpace.flag');
             #Send mail
-            new EnoughSpace()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)])->save()->send(Config::ADMIN_MAIL, true);
+            new EnoughSpace()->save(SystemUsers::Owner->value, ['percentage' => $percentage, 'free' => CuteBytes::bytes($free, 1024), 'total' => CuteBytes::bytes($total, 1024)], true, false, Config::ADMIN_MAIL)->send();
         }
     }
     
@@ -88,7 +88,7 @@ class HealthCheck
             #Do not do anything if mail has already been sent
             if (!\is_file($no_db_flag)) {
                 #Send mail
-                new DatabaseDown()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['errors' => \print_r(Pool::$errors, true)])->save()->send(Config::ADMIN_MAIL, true);
+                new DatabaseDown()->save(SystemUsers::Owner->value, ['errors' => \print_r(Pool::$errors, true)], true, false, Config::ADMIN_MAIL)->send();
                 #Generate flag
                 \file_put_contents($no_db_flag, 'Database is down');
             }
@@ -106,14 +106,14 @@ class HealthCheck
             /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
             #Send mail
-            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['maintenance' => true, 'restored' => $result, 'error_text' => $error_text])->save()->send(Config::ADMIN_MAIL, true);
+            new DatabaseUp()->save(SystemUsers::Owner->value, ['maintenance' => true, 'restored' => $result, 'error_text' => $error_text], true, false, Config::ADMIN_MAIL)->send();
             return;
         }
         if (\is_file($no_db_flag)) {
             /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
             #Send mail
-            new DatabaseUp()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate(['maintenance' => false])->save()->send(Config::ADMIN_MAIL, true);
+            new DatabaseUp()->save(SystemUsers::Owner->value, ['maintenance' => false], true, false, Config::ADMIN_MAIL)->send();
         }
     }
     
@@ -133,7 +133,7 @@ class HealthCheck
         if (\is_file($error_log)) {
             if (!\is_file($error_flag)) {
                 #Send mail
-                new ErrorLog()->setEmail(true)->setPush(false)->setUser(SystemUsers::Owner->value)->generate()->save()->send(Config::ADMIN_MAIL, true);
+                new ErrorLog()->save(SystemUsers::Owner->value, [], true, false, Config::ADMIN_MAIL)->send();
                 #Generate flag
                 \file_put_contents($error_flag, 'Error log found');
             }
