@@ -1,6 +1,7 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0" is_locked="false">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="4e1209f3-613d-3ab3-981e-ef2bb07b5abf" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="682abc00-c7c0-347c-85ea-fc382fbe77df" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="7387f796-c82a-3028-87f9-07527621e7c8" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="7d78d672-300c-3398-b4a6-a376cf564ba3" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
@@ -40,30 +41,6 @@
     <inspection_tool class="CustomRegExpInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myConfigurations">
         <list>
-          <RegExpInspectionConfiguration>
-            <option name="description" value="Use exit function with exit code" />
-            <option name="name" value="[PHP] Use exit function with exit code" />
-            <option name="suppressId" value="use_exit_function" />
-            <option name="uuid" value="facc88b0-ed5d-3573-a29b-da5c43a297cd" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="exit;" />
-                  <option name="_fileType" value="PHP" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="exit(0);" />
-                  <option name="flags" value="66" />
-                </InspectionPattern>
-                <InspectionPattern>
-                  <option name="regExp" value="exit();" />
-                  <option name="_fileType" value="PHP" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="replacement" value="exit(0);" />
-                  <option name="flags" value="66" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
           <RegExpInspectionConfiguration>
             <option name="description" value="Use CURRENT date/time functions instead of UTC" />
             <option name="name" value="[SQL_TIME] UTC to CURRENT" />
@@ -116,7 +93,6 @@
     <inspection_tool class="DuplicateConditionJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="DynamicallyGeneratedCodeJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ES6TopLevelAwaitExpression" enabled="true" level="ERROR" enabled_by_default="true" />
-    <inspection_tool class="EfferentObjectCouplingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="EmptyCatchBlockJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="EmptyClassInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="EmptyFinallyBlockJS" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -793,6 +769,10 @@
       <replaceConfiguration name="[MB] Replace with multibyte alterantive" text="lcfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_lcfirst($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" negateName="true" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[PHP] Use exit function with exit code" uuid="4e1209f3-613d-3ab3-981e-ef2bb07b5abf" description="Use exit function with exit code" suppressId="use_exit_function" text="exit($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="exit(0)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="p" regexp="^\s*$" minCount="0" maxCount="0" within="" contains="" />
       </replaceConfiguration>
     </inspection_tool>
     <inspection_tool class="SecurityAdvisoriesInspection" enabled="true" level="WARNING" enabled_by_default="true">
