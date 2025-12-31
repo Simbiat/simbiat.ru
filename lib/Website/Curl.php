@@ -252,9 +252,8 @@ class Curl
         #Initialize cUrl
         \curl_setopt(self::$curl_handle, \CURLOPT_NOBODY, true);
         \curl_setopt(self::$curl_handle, \CURLOPT_URL, $remote_file);
-        \curl_exec(self::$curl_handle);
+        (void)\curl_exec(self::$curl_handle);
         $http_code = \curl_getinfo(self::$curl_handle, \CURLINFO_HTTP_CODE);
-        \curl_close(self::$curl_handle);
         #Check code
         return $http_code === 200;
     }
