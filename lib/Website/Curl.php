@@ -68,6 +68,9 @@ class Curl
             #Update user-agent
             \curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent);
         } else {
+            #Create or retrieve a persistent cURL share handle to share data to help speed up connections
+            $share = \curl_share_init_persistent([\CURL_LOCK_DATA_DNS, \CURL_LOCK_DATA_SSL_SESSION, \CURL_LOCK_DATA_CONNECT, \CURL_LOCK_DATA_PSL]);
+            $this->curl_options[\CURLOPT_SHARE] = $share;
             self::$curl_handle = \curl_init();
             if (self::$curl_handle !== false && (!\curl_setopt_array(self::$curl_handle, $this->curl_options) || !\curl_setopt(self::$curl_handle, \CURLOPT_HTTPHEADER, self::$headers) || !\curl_setopt(self::$curl_handle, \CURLOPT_USERAGENT, $user_agent))) {
                 #Do not set curl handle, if setting up options failed
