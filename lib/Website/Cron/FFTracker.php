@@ -80,13 +80,13 @@ class FFTracker
         try {
             $entities = Query::query('
                     SELECT `type`, `id`, `priority`, `updated` FROM (
-                        (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`user_id` IS NOT NULL AND `deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY), 1, 0) as `priority` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `hidden` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND EXISTS(SELECT `user_id` FROM `uc__user_to_ff_character` WHERE `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id`), 1, 0) as `priority` FROM `ffxiv__character` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT \'freecompany\' AS `type`, `fc_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__freecompany_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__freecompany_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__freecompany` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'freecompany\' AS `type`, `fc_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__freecompany` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT \'pvpteam\' AS `type`, `pvp_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__pvpteam_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__pvpteam_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__pvpteam_character`.`pvp_id`=`ffxiv__pvpteam`.`pvp_id` AND `ffxiv__pvpteam_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__pvpteam` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'pvpteam\' AS `type`, `pvp_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__pvpteam` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, IF(`deleted` IS NULL AND `updated`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 1 DAY) AND (SELECT `user_id` FROM `ffxiv__linkshell_character` LEFT JOIN `uc__user_to_ff_character` ON `ffxiv__linkshell_character`.`character_id`=`uc__user_to_ff_character`.`character_id` WHERE `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` AND `ffxiv__linkshell_character`.`current` = 1 AND `uc__user_to_ff_character`.`user_id` IS NOT NULL AND `deleted` IS NULL LIMIT 1) IS NOT NULL, 1, 0) as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
                         (SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `updated`, 0 AS `priority` FROM `ffxiv__achievement` as `ach_main` WHERE `achievement_id` = (SELECT `achievement_id` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__character_achievement`.`achievement_id` = `ach_main`.`achievement_id` AND `ffxiv__character`.`deleted` IS NULL AND `hidden` IS NULL LIMIT 1) ORDER BY `updated` LIMIT :max_lines OFFSET :offset)
                     ) `all_entities`
@@ -100,9 +100,10 @@ class FFTracker
                 $extra_for_error = $entity['type'].' ID '.$entity['id'];
                 $result = $this->updateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
-                    #If we were throttled, means we already slept and can continue, instead of breaking the whole instance
+                    #If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                     if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
-                        continue;
+                        \sleep(60);
+                        return true;
                     }
                     return $result;
                 }
@@ -110,9 +111,9 @@ class FFTracker
                 new TaskInstance('ff_update_entity', [(string)$entity['id'], $entity['type']])->delete();
             }
             return true;
-        } catch (\Throwable $e) {
-            Errors::error_log($e, $extra_for_error ?? '');
-            return $e->getMessage()."\r\n".$e->getTraceAsString();
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable, $extra_for_error ?? '');
+            return $throwable->getMessage()."\r\n".$throwable->getTraceAsString();
         }
     }
     
@@ -204,10 +205,10 @@ class FFTracker
                                 try {
                                     $lodestone->searchLinkshell('', $world['world'], $count, $order, $page, $world['entity'] === 'crossworldlinkshell');
                                 } catch (\Throwable $exception) {
+                                    #If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                                     if (\preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1) {
-                                        #Take a pause if we were throttled, and pause is allowed
                                         \sleep(60);
-                                        continue;
+                                        return true;
                                     }
                                 }
                                 #Get data
@@ -236,7 +237,7 @@ class FFTracker
                                     \file_put_contents($cache_path, \json_encode($json, \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR | \JSON_PRESERVE_ZERO_FRACTION | \JSON_PRETTY_PRINT));
                                 }
                                 if ($pages_parsed === 500) {
-                                    #Do not parse more than 200 pages at a time
+                                    #Do not parse more than 500 pages at a time
                                     return true;
                                 }
                                 if ($page === $page_total) {

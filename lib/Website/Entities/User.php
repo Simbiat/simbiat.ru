@@ -356,7 +356,7 @@ final class User extends Entity
         #Get token
         $output_array['token'] = Query::query('SELECT `ff_token` FROM `uc__users` WHERE `user_id`=:user_id;', [':user_id' => [$this->id, 'int']], return: 'value');
         #Get linked characters
-        $output_array['characters'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `name`, `avatar` AS `icon` FROM `ffxiv__character` LEFT JOIN `uc__user_to_ff_character` ON `uc__user_to_ff_character`.`character_id`=`ffxiv__character`.`character_id` WHERE `user_id`=:user_id ORDER BY `name`;', [':user_id' => [$this->id, 'int']], return: 'all');
+        $output_array['characters'] = Query::query('SELECT \'character\' AS `type`, `ffxiv__character`.`character_id` AS `id`, `name`, `avatar` AS `icon` FROM `ffxiv__character` WHERE `character_id` IN (SELECT `character_id` FROM `uc__user_to_ff_character` WHERE `user_id`=:user_id) ORDER BY `name`;', [':user_id' => [$this->id, 'int']], return: 'all');
         #Get linked groups
         if (!empty($output_array['characters'])) {
             foreach ($output_array['characters'] as $character) {
