@@ -52,7 +52,7 @@ class Generate
                     $path[\array_key_last($path)] = \str_replace('.xml', '', $path[\array_key_last($path)]);
                     #Get filepath and filename
                     $file_path = mb_rtrim(Config::$sitemap.\implode('/', \array_slice($path, 0, -1)), '/', 'UTF-8');
-                    $file_name = \implode('/', \array_last($path));
+                    $file_name = \implode('/', \array_slice($path, -1));
                     #Create folder if it does not exist
                     if (!@\mkdir($file_path) && !\is_dir($file_path)) {
                         throw new \RuntimeException(\sprintf('Directory `%s` was not created', $file_path));
