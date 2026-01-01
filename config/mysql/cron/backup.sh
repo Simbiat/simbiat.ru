@@ -29,7 +29,7 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
   touch /usr/local/backups/maintenance.flag
   {
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Cleaning files...";
-    rm -rf $logical_backup/*.sql;
+    find "$logical_backup" -maxdepth 1 -type f -name '*.sql' ! -name 'optimization_commands.sql' -exec rm -f {} +;
     rm -rf $logical_backup/*.7z;
     rm -rf $physical_backup;
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Enabling maintenance mode...";
