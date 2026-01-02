@@ -66,7 +66,12 @@ class Minute
      */
     public function sendNotifications(): bool
     {
-        $notifications = Query::query('SELECT `uuid`, `type` FROM `sys__notifications` WHERE `email` IS NOT NULL AND `sent` IS NULL AND `attempts` < :max_attempts AND (`last_attempt` IS NULL OR `last_attempt`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 5 MINUTE)) ORDER BY `last_attempt` LIMIT 50;', [':max_attempts' => Notification::MAX_ATTEMPTS], return: 'pair');
+        #According to Proton support:
+        #Here are approximate limits for your reference:
+        #400 emails per hour
+        #9,600 emails per day
+        #Thus limiting to 10 emails per minute, which is still over their limit, but it's not soon that I will reach it
+        $notifications = Query::query('SELECT `uuid`, `type` FROM `sys__notifications` WHERE `email` IS NOT NULL AND `sent` IS NULL AND `attempts` < :max_attempts AND (`last_attempt` IS NULL OR `last_attempt`<=DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL 5 MINUTE)) ORDER BY `last_attempt` LIMIT 10;', [':max_attempts' => Notification::MAX_ATTEMPTS], return: 'pair');
         if (\count($notifications) > 0) {
             Query::query('UPDATE `sys__notifications` SET `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` IN (:uuid)', [':uuid' => [\array_keys($notifications), 'in', 'string']]);
         }
