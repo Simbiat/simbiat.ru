@@ -4,11 +4,14 @@ declare(strict_types = 1);
 use Simbiat\Website\Config;
 use Simbiat\Website\Cron\FFTracker;
 use Simbiat\Website\Cron\Maintenance\HealthCheck;
+use Simbiat\Website\Cron\Maintenance\Minute;
 use Simbiat\Website\Cron\Maintenance\Month;
 use Simbiat\Website\Errors;
 
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
+#Enable implicit flush for CLI mode
+ini_set('implicit_flush', 1);
 
 #The below script is meant to run some monthly tasks
 
@@ -18,17 +21,17 @@ $maintenance = new Month();
 #Run cron
 try {
     if (Config::$dbup) {
-        #Update argon settings
+        Minute::cliOutput('Updating argon settings...', true);
         $maintenance->argon();
-        #Clean some files
+        Minute::cliOutput('Cleaning files...', true);
         new HealthCheck()->filesClean();
-        #Clean logs
+        Minute::cliOutput('Cleaning logs...', true);
         $maintenance->logsClean();
-        #Clean statistics
+        Minute::cliOutput('Cleaning statistics...', true);
         $maintenance->statisticsClean();
-        #Add FF servers, if any
+        Minute::cliOutput('Updating FF servers...', true);
         new FFTracker()->updateServers();
-        #Clean foreign keys
+        Minute::cliOutput('Cleaning foreign keys...', true);
         $maintenance->cleanForeignKeys();
     }
 } catch (Throwable $throwable) {

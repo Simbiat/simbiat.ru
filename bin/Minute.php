@@ -7,6 +7,8 @@ use Simbiat\Website\Errors;
 
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
+#Enable implicit flush for CLI mode
+ini_set('implicit_flush', 1);
 
 #The below script is meant to run some every-minute tasks
 
@@ -16,9 +18,9 @@ $maintenance = new Minute();
 #Run cron
 try {
     if (Config::$dbup) {
-        #Clean sessions
+        Minute::cliOutput('Cleaning sessions...');
         $maintenance->sessionClean();
-        #Clean cookies
+        Minute::cliOutput('Cleaning cookies...');
         $maintenance->cookiesClean();
     }
 } catch (Throwable $throwable) {

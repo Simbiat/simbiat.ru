@@ -1,6 +1,4 @@
 <?php
-#Functions meant to be called from Cron, so they are not used "directly"
-/** @noinspection PhpUnused */
 declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;

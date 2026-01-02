@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
+#Enable implicit flush for CLI mode
+ini_set('implicit_flush', 1);
 
 #Below is meant to be run only once, as part of some upgrade to the system.
 #It is encouraged to code stuff in a way to avoid potential impact in case of running it twice.

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 use Simbiat\Website\Config;
 use Simbiat\Website\Cron\BICTracker;
 use Simbiat\Website\Cron\Maintenance\Day;
+use Simbiat\Website\Cron\Maintenance\Minute;
 use Simbiat\Website\Cron\Talks;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Cron\FFTracker;
@@ -11,6 +12,8 @@ use Simbiat\Website\Sitemap\Generate;
 
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
+#Enable implicit flush for CLI mode
+ini_set('implicit_flush', 1);
 
 #The below script is meant to run daily maintenance tasks
 
@@ -22,31 +25,31 @@ $ff = new FFTracker();
 #Run cron
 try {
     if (Config::$dbup) {
-        #Clean avatars
+        Minute::cliOutput('Cleaning avatars...', true);
         $talks->cleanAvatars();
-        #Clean files uploaded through Talks
+        Minute::cliOutput('Cleaning unused uploaded files...', true);
         $talks->cleanFiles();
-        #Clean notifications
+        Minute::cliOutput('Cleaning notifications...', true);
         $maintenance->cleanNotifications();
-        #Lock posts
+        Minute::cliOutput('Locking posts...', true);
         $talks->lockPosts();
-        #Close tickets
+        Minute::cliOutput('Closing tickets...', true);
         $talks->closeInactiveTickets();
-        #Remove empty threads
+        Minute::cliOutput('Removing empty threads...', true);
         $talks->removeEmptyThreads();
-        #Generate tasks for registering new FF characters
+        Minute::cliOutput('Registering new FF characters...', true);
         $ff->registerNewCharacters();
-        #Update FF statistics
+        Minute::cliOutput('Updating FF statistics...', true);
         $ff->updateStatistics();
-        #Generate ordered list of tables for backup
+        Minute::cliOutput('Generating ordered tables list...', true);
         $maintenance->forBackup();
-        #Generate script for DB optimization
+        Minute::cliOutput('Generating script for DB optimization...', true);
         $maintenance->dbOptimize();
-        #Generate sitemap
+        Minute::cliOutput('Generating sitemap...', true);
         new Generate()->generate();
-        #Update BIC
+        Minute::cliOutput('Updating BIC...', true);
         (void)new BICTracker()->libraryUpdate();
-        #Remove dead links
+        Minute::cliOutput('Removing dead links...', true);
         $talks->removeDeadLinks();
     }
 } catch (Throwable $throwable) {

@@ -7,7 +7,8 @@ use Simbiat\Website\Errors;
 
 #Bootstrap things
 require_once dirname(__DIR__).'/bin/Bootstrap.php';
-
+#Enable implicit flush for CLI mode
+ini_set('implicit_flush', 1);
 
 #Below is a script meant to run CRON tasks from the database (using CRON library)
 

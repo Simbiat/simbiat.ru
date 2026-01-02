@@ -1,11 +1,11 @@
 <?php
-#Functions meant to be called from Cron
-/** @noinspection PhpUnused */
 declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
 use JetBrains\PhpStorm\ExpectedValues;
+use Simbiat\Cron\Agent;
+use Simbiat\Cron\EventTypes;
 use Simbiat\Cron\TaskInstance;
 use Simbiat\Database\Query;
 use Simbiat\FFXIV\Achievement;
@@ -70,6 +70,7 @@ class FFTracker
      * @param int $instance Instance number that called the function
      *
      * @return bool|string
+     * @noinspection PhpUnused Used from Cron Agent
      */
     public function updateOld(int $limit = 1, int $instance = 1): bool|string
     {
@@ -96,12 +97,15 @@ class FFTracker
                     ':offset' => [($instance - 1) * $limit, 'int'],
                 ], return: 'all'
             );
+            $cron_agent = new Agent();
             foreach ($entities as $entity) {
                 $extra_for_error = $entity['type'].' ID '.$entity['id'];
+                $cron_agent->log('Updating '.$extra_for_error.'...', EventTypes::CustomInformation);
                 $result = $this->updateEntity($entity['id'], $entity['type']);
                 if (!\in_array($result, ['character', 'freecompany', 'linkshell', 'crossworldlinkshell', 'pvpteam', 'achievement', false, true], true)) {
                     #If we were throttled, sleep an extra minute, and then do an early return to reduce throttling chance on other jobs. Do not treat this as failure, though
                     if (\preg_match('/Request throttled by Lodestone/', $result) === 1) {
+                        $cron_agent->log('Throttled on '.$extra_for_error.'. Sleeping...', EventTypes::CustomNotice);
                         \sleep(60);
                         return true;
                     }
@@ -170,6 +174,7 @@ class FFTracker
     /**
      * Register any new linkshells found
      * @return bool|string
+     * @noinspection PhpUnused Used from Cron Agent
      */
     public function registerNewLinkshells(): bool|string
     {
@@ -185,6 +190,7 @@ class FFTracker
             #Get cache
             $cache_path = Config::$statistics.'linkshellPages.json';
             $json = new Caching()->getArrayFromFile($cache_path);
+            $cron_agent = new Agent();
             #Loop through the servers
             $pages_parsed = 0;
             foreach ($worlds as $world) {
@@ -193,8 +199,9 @@ class FFTracker
                     #Loop through the number of member's filter
                     foreach ([10, 30, 50, 51] as $count) {
                         #Loop through pages
+                        $cron_agent->log('Parsing '.$world.' linkshells (pages for count '.$count.', order '.$order.')...', EventTypes::CustomInformation);
                         for ($page = 1; $page <= 20; $page++) {
-                            if (!isset($json[$world['entity']][$world['world']][$order][$count][$page]) ||
+                            if (!\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count]) ||
                                 #Count of 0 may mean that the last attempt failed (rate limit or maintenance)
                                 $json[$world['entity']][$world['world']][$order][$count][$page]['count'] === 0 ||
                                 #Cycle through everything every 5 days. At the time of writing, there should be less than 30000 pages, with 500 pages per hourly scan; the full cycle finishes in less than 3 days
