@@ -199,7 +199,7 @@ class FFTracker
                     #Loop through the number of member's filter
                     foreach ([10, 30, 50, 51] as $count) {
                         #Loop through pages
-                        $cron_agent->log('Parsing '.$world.' linkshells (pages for count '.$count.', order '.$order.')...', EventTypes::CustomInformation);
+                        $cron_agent->log('Parsing '.$world['entity'].'s on '.$world['world'].' (pages for count '.$count.', order '.$order.')...', EventTypes::CustomInformation);
                         for ($page = 1; $page <= 20; $page++) {
                             if (!\array_key_exists($page, $json[$world['entity']][$world['world']][$order][$count]) ||
                                 #Count of 0 may mean that the last attempt failed (rate limit or maintenance)
