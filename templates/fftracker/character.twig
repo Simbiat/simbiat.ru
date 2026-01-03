@@ -65,7 +65,7 @@
         {% endif %}
     </section>
     {% if not character.dates.hidden %}
-        {% if character.groups %}
+        {% if character.groups|length > 0 %}
             <section class="ff_char_block">
                 <h2>Affiliations</h2>
                 {% if character.groups %}
@@ -80,7 +80,7 @@
                 {% endif %}
             </section>
         {% endif %}
-        {% if character.friends %}
+        {% if character.friends|length > 0 %}
             <section class="ff_char_block">
                 <h2>Friends</h2>
                 {% if character.friends %}
@@ -95,7 +95,7 @@
                 {% endif %}
             </section>
         {% endif %}
-        {% if character.following %}
+        {% if character.following|length > 0 %}
             <section class="ff_char_block">
                 <h2>Following</h2>
                 {% if character.following %}
@@ -121,18 +121,38 @@
                 <div>Total points: {{ character.achievement_points }}</div>
             </section>
         {% endif %}
-        <section class="ff_char_block">
-            <h2>Job affinities</h2>
-            <table>
-                <thead><tr><th>Job</th><th>Level</th><th>Last change</th></tr></thead>
-                {% for job in character.jobs %}
-                    {% set sum = job.level + sum ?? 0 %}
-                    <tr><td><img loading="lazy" decoding="async" class="link_icon" alt="{{ job.name }}" src="/assets/images/fftracker/jobs/{{ job.name }}.webp">{{ job.name }}</td><td>{{ job.level }}</td><td>{{ timeTag(job.last_change, "d/m/Y") }}</td></tr>
-                    {% if loop.last %}
-                        <tfoot><tr><td>Total:</td><td>{{ sum }}</td><td></td></tr></tfoot>
-                    {% endif %}
-                {% endfor %}
-            </table>
-        </section>
+        {% if character.jobs|length > 0 %}
+            <section class="ff_char_block">
+                <h2>Job affinities</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th>Level</th>
+                            <th>Last change</th>
+                        </tr>
+                    </thead>
+                    {% for job in character.jobs %}
+                        {% set sum = job.level + sum ?? 0 %}
+                        <tr>
+                            <td>
+                                <img loading="lazy" decoding="async" class="link_icon" alt="{{ job.name }}" src="/assets/images/fftracker/jobs/{{ job.name }}.webp">{{ job.name }}
+                            </td>
+                            <td>{{ job.level }}</td>
+                            <td>{{ timeTag(job.last_change, "d/m/Y") }}</td>
+                        </tr>
+                        {% if loop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td>Total:</td>
+                                    <td>{{ sum }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </section>
+        {% endif %}
     {% endif %}
 </section>
