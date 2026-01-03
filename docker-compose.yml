@@ -248,4 +248,4 @@ services:
                   cron &&
                   #If maintenance flag is found, it implies crash during maintenance: rename it to indicate this
                   mv /usr/local/backups/maintenance.flag /usr/local/backups/crash.flag
-                  docker-entrypoint.sh mariadbd"
+                  docker-entrypoint.sh mariadbd-safe"
