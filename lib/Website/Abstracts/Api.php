@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts;
 
+use Simbiat\Arrays\Sorters;
 use Simbiat\Website\Config;
 use Simbiat\Website\Enums\LogTypes;
 use Simbiat\Website\Enums\SystemUsers;
@@ -177,8 +178,10 @@ abstract class Api
     "reason": "Failed to generate JSON output"
 }';
             }
+            Sorters::recursiveSort($result, true, false, \SORT_NATURAL);
             return $result;
         }
+        Sorters::recursiveSort($data, true, false, \SORT_NATURAL);
         return $data;
     }
     
