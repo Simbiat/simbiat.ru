@@ -80,6 +80,36 @@
                 {% endif %}
             </section>
         {% endif %}
+        {% if character.friends %}
+            <section class="ff_char_block">
+                <h2>Friends</h2>
+                {% if character.friends %}
+                    <div class="ff_groups">
+                        {% for entity in character.friends %}
+                            <div>
+                                {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                {{ include('common/elements/entitycard.twig', entity) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+        {% if character.following %}
+            <section class="ff_char_block">
+                <h2>Following</h2>
+                {% if character.following %}
+                    <div class="ff_groups">
+                        {% for entity in character.following %}
+                            <div>
+                                {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                {{ include('common/elements/entitycard.twig', entity) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
         {% if character.achievements|length > 0 %}
             <section class="ff_char_block">
                 <h2>Last achievements</h2>

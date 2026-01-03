@@ -89,7 +89,7 @@ class FFTracker
                         UNION ALL
                         (SELECT IF(`crossworld` = 0, \'linkshell\', \'crossworldlinkshell\') AS `type`, `ls_id` AS `id`, `updated`, 0 as `priority` FROM `ffxiv__linkshell` ORDER BY `priority` DESC, `updated` LIMIT :max_lines OFFSET :offset)
                         UNION ALL
-                        (SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `updated`, 0 AS `priority` FROM `ffxiv__achievement` as `ach_main` WHERE `achievement_id` = (SELECT `achievement_id` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__character_achievement`.`achievement_id` = `ach_main`.`achievement_id` AND `ffxiv__character`.`deleted` IS NULL AND `hidden` IS NULL LIMIT 1) ORDER BY `updated` LIMIT :max_lines OFFSET :offset)
+                        (SELECT \'achievement\' AS `type`, `achievement_id` AS `id`, `updated`, 0 AS `priority` FROM `ffxiv__achievement` as `ach_main` WHERE `achievement_id` = (SELECT `achievement_id` FROM `ffxiv__character_achievement` LEFT JOIN `ffxiv__character` ON `ffxiv__character_achievement`.`character_id`=`ffxiv__character`.`character_id` WHERE `ffxiv__character_achievement`.`achievement_id` = `ach_main`.`achievement_id` AND `ffxiv__character`.`deleted` IS NULL AND `hidden_achievements` IS NULL LIMIT 1) ORDER BY `updated` LIMIT :max_lines OFFSET :offset)
                     ) `all_entities`
                     ORDER BY `priority` DESC, `updated` LIMIT :max_lines',
                 [
