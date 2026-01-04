@@ -7,7 +7,7 @@ use GeoIp2\Database\Reader;
 use Simbiat\Arrays\Converters;
 use Simbiat\Arrays\Editors;
 use Simbiat\Database\Query;
-use Simbiat\FFXIV\AbstractTrackerEntity;
+use Simbiat\FFXIV\Entities\AbstractEntity;
 use Simbiat\Website\Abstracts\Entity;
 use Simbiat\Website\Config;
 use Simbiat\Website\Curl;
@@ -360,7 +360,7 @@ final class User extends Entity
         #Get linked groups
         if (!empty($output_array['characters'])) {
             foreach ($output_array['characters'] as $character) {
-                $output_array['groups'][$character['id']] = AbstractTrackerEntity::cleanCrestResults(Query::query(
+                $output_array['groups'][$character['id']] = AbstractEntity::cleanCrestResults(Query::query(
                 /** @lang SQL */ '(SELECT \'freecompany\' AS `type`, 0 AS `crossworld`, `ffxiv__freecompany_character`.`fc_id` AS `id`, `ffxiv__freecompany`.`name` AS `name`, `crest_part_1`, `crest_part_2`, `crest_part_3`, `gc_id` FROM `ffxiv__freecompany_character` LEFT JOIN `ffxiv__freecompany` ON `ffxiv__freecompany_character`.`fc_id`=`ffxiv__freecompany`.`fc_id` LEFT JOIN `ffxiv__freecompany_rank` ON `ffxiv__freecompany_rank`.`fc_id`=`ffxiv__freecompany`.`fc_id` AND `ffxiv__freecompany_character`.`rank_id`=`ffxiv__freecompany_rank`.`rank_id` WHERE `character_id`=:id AND `ffxiv__freecompany_character`.`current`=1 AND `ffxiv__freecompany_character`.`rank_id`=0)
                 UNION ALL
                 (SELECT \'linkshell\' AS `type`, `crossworld`, `ffxiv__linkshell_character`.`ls_id` AS `id`, `ffxiv__linkshell`.`name` AS `name`, NULL AS `crest_part_1`, NULL AS `crest_part_2`, NULL AS `crest_part_3`, NULL AS `gc_id` FROM `ffxiv__linkshell_character` LEFT JOIN `ffxiv__linkshell` ON `ffxiv__linkshell_character`.`ls_id`=`ffxiv__linkshell`.`ls_id` LEFT JOIN `ffxiv__linkshell_rank` ON `ffxiv__linkshell_character`.`rank_id`=`ffxiv__linkshell_rank`.`ls_rank_id` WHERE `character_id`=:id AND `ffxiv__linkshell_character`.`current`=1 AND `ffxiv__linkshell_character`.`rank_id`=1)

@@ -3,11 +3,11 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\BIC\Pages\Bic;
+use Simbiat\BIC\Pages\Keying;
+use Simbiat\BIC\Pages\Listing;
+use Simbiat\BIC\Pages\Search;
 use Simbiat\Website\Abstracts\Router;
-use Simbiat\Website\Pages\BICTracker\Bic;
-use Simbiat\Website\Pages\BICTracker\Keying;
-use Simbiat\Website\Pages\BICTracker\Listing;
-use Simbiat\Website\Pages\BICTracker\Search;
 use Simbiat\Website\Pages\Redirects\BICTracker\ToBics;
 use function array_slice;
 

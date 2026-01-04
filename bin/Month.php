@@ -1,8 +1,8 @@
 <?php
 declare(strict_types = 1);
 
+use Simbiat\FFXIV\Cron;
 use Simbiat\Website\Config;
-use Simbiat\Website\Cron\FFTracker;
 use Simbiat\Website\Cron\Maintenance\HealthCheck;
 use Simbiat\Website\Cron\Maintenance\Minute;
 use Simbiat\Website\Cron\Maintenance\Month;
@@ -30,7 +30,7 @@ try {
         Minute::cliOutput('Cleaning statistics...', true);
         $maintenance->statisticsClean();
         Minute::cliOutput('Updating FF servers...', true);
-        new FFTracker()->updateServers();
+        new Cron()->updateServers();
         Minute::cliOutput('Cleaning foreign keys...', true);
         $maintenance->cleanForeignKeys();
     }

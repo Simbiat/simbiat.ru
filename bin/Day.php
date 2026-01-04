@@ -1,13 +1,13 @@
 <?php
 declare(strict_types = 1);
 
+use Simbiat\FFXIV\Cron;
 use Simbiat\Website\Config;
 use Simbiat\Website\Cron\BICTracker;
 use Simbiat\Website\Cron\Maintenance\Day;
 use Simbiat\Website\Cron\Maintenance\Minute;
 use Simbiat\Website\Cron\Talks;
 use Simbiat\Website\Errors;
-use Simbiat\Website\Cron\FFTracker;
 use Simbiat\Website\Sitemap\Generate;
 
 #Bootstrap things
@@ -21,7 +21,7 @@ ini_set('implicit_flush', 1);
 Config::dbConnect();
 $maintenance = new Day();
 $talks = new Talks();
-$ff = new FFTracker();
+$ff = new Cron();
 #Run cron
 try {
     if (Config::$dbup) {

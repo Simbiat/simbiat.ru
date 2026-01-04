@@ -3,13 +3,13 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing\Api;
 
-use Simbiat\Website\Api\FFTracker\Achievement;
-use Simbiat\Website\Api\FFTracker\Character;
-use Simbiat\Website\Api\FFTracker\CrossworldLinkshell;
-use Simbiat\Website\Api\FFTracker\FreeCompany;
-use Simbiat\Website\Api\FFTracker\Linkshell;
-use Simbiat\Website\Api\FFTracker\MergeCrest;
-use Simbiat\Website\Api\FFTracker\PvPTeam;
+use Simbiat\FFXIV\Api\Achievement;
+use Simbiat\FFXIV\Api\Character;
+use Simbiat\FFXIV\Api\CrossworldLinkshell;
+use Simbiat\FFXIV\Api\FreeCompany;
+use Simbiat\FFXIV\Api\Linkshell;
+use Simbiat\FFXIV\Api\MergeCrest;
+use Simbiat\FFXIV\Api\PvPTeam;
 use function array_slice;
 
 class FFTracker extends \Simbiat\Website\Abstracts\Api

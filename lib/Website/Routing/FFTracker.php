@@ -3,17 +3,17 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\FFXIV\Pages\Achievement;
+use Simbiat\FFXIV\Pages\Character;
+use Simbiat\FFXIV\Pages\Crests;
+use Simbiat\FFXIV\Pages\CrossworldLinkshell;
+use Simbiat\FFXIV\Pages\FreeCompany;
+use Simbiat\FFXIV\Pages\Linkshell;
+use Simbiat\FFXIV\Pages\Listing;
+use Simbiat\FFXIV\Pages\PvPTeam;
+use Simbiat\FFXIV\Pages\Search;
+use Simbiat\FFXIV\Pages\Track;
 use Simbiat\Website\Abstracts\Router;
-use Simbiat\Website\Pages\FFTracker\Achievement;
-use Simbiat\Website\Pages\FFTracker\Character;
-use Simbiat\Website\Pages\FFTracker\Crests;
-use Simbiat\Website\Pages\FFTracker\CrossworldLinkshell;
-use Simbiat\Website\Pages\FFTracker\FreeCompany;
-use Simbiat\Website\Pages\FFTracker\Linkshell;
-use Simbiat\Website\Pages\FFTracker\Listing;
-use Simbiat\Website\Pages\FFTracker\PvPTeam;
-use Simbiat\Website\Pages\FFTracker\Search;
-use Simbiat\Website\Pages\FFTracker\Track;
 use function array_slice;
 
 class FFTracker extends Router

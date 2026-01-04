@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 
 namespace Simbiat\Website\Search;
-use Simbiat\FFXIV\AbstractTrackerEntity;
+use Simbiat\FFXIV\Entities\AbstractEntity;
 use Simbiat\Website\Abstracts\Search;
 
 class Companies extends Search
@@ -45,6 +45,6 @@ class Companies extends Search
     
     protected function postProcess(array $results): array
     {
-        return AbstractTrackerEntity::cleanCrestResults($results);
+        return AbstractEntity::cleanCrestResults($results);
     }
 }

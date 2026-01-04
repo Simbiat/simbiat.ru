@@ -3,14 +3,14 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\FFXIV\Pages\Statistics\Achievements;
+use Simbiat\FFXIV\Pages\Statistics\Bugs;
+use Simbiat\FFXIV\Pages\Statistics\Characters;
+use Simbiat\FFXIV\Pages\Statistics\Groups;
+use Simbiat\FFXIV\Pages\Statistics\Other;
+use Simbiat\FFXIV\Pages\Statistics\Raw;
+use Simbiat\FFXIV\Pages\Statistics\Timelines;
 use Simbiat\Website\Abstracts\Router;
-use Simbiat\Website\Pages\FFTracker\Statistics\Achievements;
-use Simbiat\Website\Pages\FFTracker\Statistics\Bugs;
-use Simbiat\Website\Pages\FFTracker\Statistics\Characters;
-use Simbiat\Website\Pages\FFTracker\Statistics\Groups;
-use Simbiat\Website\Pages\FFTracker\Statistics\Other;
-use Simbiat\Website\Pages\FFTracker\Statistics\Raw;
-use Simbiat\Website\Pages\FFTracker\Statistics\Timelines;
 
 class FFStatistics extends Router
 {

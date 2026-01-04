@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Api\UserControl;
 
-use Simbiat\FFXIV\Character;
+use Simbiat\FFXIV\Entities\Character;
 use Simbiat\Website\Abstracts\Api;
 
 class FFLink extends Api

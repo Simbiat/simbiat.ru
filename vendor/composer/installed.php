@@ -244,7 +244,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '412d91dc6342787fd733523797d9c9faf2ad3ea5',
+            'reference' => '5ba14c800ff89c74333c22d56ca1c1f35c424805',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
