@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `sys__notifications` (
   `user_id` int(10) unsigned NOT NULL COMMENT 'ID of the user notification is meant for',
   `type` tinyint(3) unsigned NOT NULL COMMENT 'Type of notification',
   `text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Text of notification',
-  `email` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Whether notification is supposed to be sent by email',
+  `email` varchar(254) DEFAULT NULL COMMENT 'If not null and valid email, means the notification is meant to be sent to this email',
   `push` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Whether notification is supposed to be shown in UI',
   `attempts` tinyint(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Number of attempts for sending an email',
   `last_attempt` timestamp(6) NULL DEFAULT NULL COMMENT 'Time of last attempt to send the email',

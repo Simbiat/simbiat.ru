@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS `uc__users` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'User ID',
   `username` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci NOT NULL COMMENT 'User''s username/login',
   `system` tinyint(1) unsigned DEFAULT 0 COMMENT 'Flag indicating that user is a system one (required for normal functionality)',
-  `phone` bigint(15) unsigned DEFAULT NULL COMMENT 'User''s phone number in international format',
   `password` text NOT NULL COMMENT 'Hashed password',
   `strikes` tinyint(2) unsigned NOT NULL DEFAULT 0 COMMENT 'Number of unsuccessful logins',
   `password_reset` text DEFAULT NULL COMMENT 'Password reset code',

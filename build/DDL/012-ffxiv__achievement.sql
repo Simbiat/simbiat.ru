@@ -2,7 +2,7 @@ USE `simbiatr_simbiat`;
 CREATE TABLE IF NOT EXISTS `ffxiv__achievement` (
   `achievement_id` smallint(5) unsigned NOT NULL COMMENT 'Achievement ID taken from Lodestone (https://eu.finalfantasyxiv.com/lodestone/character/characterid/achievement/detail/achievementid/)',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Name of achievement',
-  `registered` date NOT NULL DEFAULT current_timestamp() COMMENT 'When achievement was initially added to tracker',
+  `registered` datetime(6) NOT NULL DEFAULT current_timestamp(6) COMMENT 'When achievement was initially added to tracker',
   `updated` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6) COMMENT 'When achievement was last updated on the tracker',
   `category` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci DEFAULT NULL COMMENT 'Category of the achievement',
   `subcategory` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_ci DEFAULT NULL COMMENT 'Subcategory of the achievement',
