@@ -23,6 +23,7 @@ services:
       - dev_only
     restart: unless-stopped
     environment:
+      APACHE_PORT: ${PHPMYADMIN_PORT}
       PMA_ARBITRARY: 0
       PMA_SOCKET: ${DATABASE_SOCKET}
       PMA_USER: ${DATABASE_USER}
@@ -35,7 +36,8 @@ services:
     networks:
       - webserver
     ports:
-      - ${PHPMYADMIN_PORT}:80
+      - "127.0.0.1:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
+      - "[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
     volumes:
       - mariadb_socket:/run/mysqld/:ro
       - ./config/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
@@ -109,7 +111,7 @@ services:
       - webserver
     ports:
       - "80:80" # HTTP
-      - "443:443" # HTTPS
+      - "443:443/tcp" # HTTPS
       - "443:443/udp" # HTTP/3
     volumes:
       - mariadb_socket:/run/mysqld/:ro
@@ -158,9 +160,12 @@ services:
     networks:
       - webserver
     ports:
-      - "8080:8080"
-      - "6060:6060"
-      - "7422:7422"
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:6060:6060"
+      - "127.0.0.1:7422:7422"
+      - "[::1]:8080:8080"
+      - "[::1]:6060:6060"
+      - "[::1]:7422:7422"
     volumes:
       - mariadb_socket:/run/mysqld/:ro
       - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
@@ -220,7 +225,7 @@ services:
     networks:
       - webserver
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mariadb_socket:/run/mysqld/:rw
       - ${MARIADB_DATA_DIR}:/var/lib/mysql:rw
