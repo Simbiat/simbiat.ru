@@ -1,13 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\Cron\Maintenance;
+namespace Simbiat\Website\Cron;
 
+use Simbiat\BIC\Library;
 use Simbiat\Database\Maintainer\Analyzer;
 use Simbiat\Database\Maintainer\Settings;
 use Simbiat\Database\Manage;
 use Simbiat\Database\Query;
+use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Config;
+use Simbiat\Website\Entities\Notifications\CronFailure;
 use Simbiat\Website\Errors;
 
 /**
@@ -87,5 +90,20 @@ class Day
         }
         #Dump commands to file
         \file_put_contents(Config::$work_dir.'/data/backups/optimization_commands.sql', \implode(\PHP_EOL, $commands));
+    }
+    
+    /**
+     * Update the BIC library
+     * @return bool|string
+     */
+    public function libraryUpdate(): bool|string
+    {
+        $result = new Library()->update(true);
+        #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
+        if (\is_string($result) && !\is_numeric($result) && !str_contains($result, 'Не удалось скачать файл')) {
+            #Send email notification, this most likely means some change in UFEBS form
+            new CronFailure()->save(SystemUsers::Owner->value, ['method' => __METHOD__, 'errors' => $result], true, false, Config::ADMIN_MAIL)->send();
+        }
+        return $result;
     }
 }

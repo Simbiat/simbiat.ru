@@ -3,16 +3,16 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\Talks\Pages\UserControl\Activation;
+use Simbiat\Talks\Pages\UserControl\Avatars;
+use Simbiat\Talks\Pages\UserControl\Emails;
+use Simbiat\Talks\Pages\UserControl\FFTracker;
+use Simbiat\Talks\Pages\UserControl\Password;
+use Simbiat\Talks\Pages\UserControl\Profile;
+use Simbiat\Talks\Pages\UserControl\Removal;
+use Simbiat\Talks\Pages\UserControl\Sessions;
+use Simbiat\Talks\Pages\UserControl\Unsubscribe;
 use Simbiat\Website\Abstracts\Router;
-use Simbiat\Website\Pages\UserControl\Activation;
-use Simbiat\Website\Pages\UserControl\Avatars;
-use Simbiat\Website\Pages\UserControl\Emails;
-use Simbiat\Website\Pages\UserControl\FFTracker;
-use Simbiat\Website\Pages\UserControl\Password;
-use Simbiat\Website\Pages\UserControl\Profile;
-use Simbiat\Website\Pages\UserControl\Removal;
-use Simbiat\Website\Pages\UserControl\Sessions;
-use Simbiat\Website\Pages\UserControl\Unsubscribe;
 
 class UserControl extends Router
 {

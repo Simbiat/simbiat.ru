@@ -3,9 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
-use Simbiat\Website\Api\Upload;
-use Simbiat\Website\Api\Contact;
-
+use Simbiat\Talks\Api\Contact;
+use Simbiat\Website\Upload;
 use function array_slice;
 
 class Api extends \Simbiat\Website\Abstracts\Api

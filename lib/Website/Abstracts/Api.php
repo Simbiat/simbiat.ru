@@ -4,15 +4,15 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Abstracts;
 
 use Simbiat\Arrays\Sorters;
+use Simbiat\http20\Headers;
+use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Config;
 use Simbiat\Website\Enums\LogTypes;
-use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
-use Simbiat\http20\Headers;
 use Simbiat\Website\Security;
-
-use function in_array, is_array;
+use function in_array;
+use function is_array;
 
 /**
  * Abstract class to handle API stuff

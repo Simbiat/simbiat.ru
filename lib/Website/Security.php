@@ -6,8 +6,9 @@ namespace Simbiat\Website;
 use DeviceDetector\ClientHints;
 use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
-use Simbiat\Website\Enums\SystemUsers;
-use function is_array, function_exists;
+use Simbiat\Talks\Enums\SystemUsers;
+use function function_exists;
+use function is_array;
 
 /**
  * Various security stuff

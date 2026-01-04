@@ -4,9 +4,8 @@ declare(strict_types = 1);
 use Simbiat\FFXIV\Cron;
 use Simbiat\Website\Config;
 use Simbiat\Website\Cron\BICTracker;
-use Simbiat\Website\Cron\Maintenance\Day;
-use Simbiat\Website\Cron\Maintenance\Minute;
-use Simbiat\Website\Cron\Talks;
+use Simbiat\Website\Cron\Day;
+use Simbiat\Website\Cron\Minute;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Sitemap\Generate;
 
@@ -20,7 +19,7 @@ ini_set('implicit_flush', 1);
 #Connect to DB
 Config::dbConnect();
 $maintenance = new Day();
-$talks = new Talks();
+$talks = new \Simbiat\Talks\Cron();
 $ff = new Cron();
 #Run cron
 try {
@@ -48,7 +47,7 @@ try {
         Minute::cliOutput('Generating sitemap...', true);
         new Generate()->generate();
         Minute::cliOutput('Updating BIC...', true);
-        (void)new BICTracker()->libraryUpdate();
+        (void)$maintenance->libraryUpdate();
         Minute::cliOutput('Removing dead links...', true);
         $talks->removeDeadLinks();
     }

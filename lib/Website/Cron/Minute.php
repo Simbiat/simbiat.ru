@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\Cron\Maintenance;
+namespace Simbiat\Website\Cron;
 
 use Simbiat\Cron\Agent;
 use Simbiat\Cron\EventTypes;

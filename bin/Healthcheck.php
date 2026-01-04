@@ -2,8 +2,8 @@
 declare(strict_types = 1);
 
 use Simbiat\Website\Config;
-use Simbiat\Website\Cron\Maintenance\HealthCheck;
-use Simbiat\Website\Cron\Maintenance\Minute;
+use Simbiat\Website\Cron\HealthCheck;
+use Simbiat\Website\Cron\Minute;
 use Simbiat\Website\Errors;
 
 #Bootstrap things

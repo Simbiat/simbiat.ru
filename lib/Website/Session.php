@@ -4,8 +4,8 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 use Simbiat\Database\Query;
-use Simbiat\Website\Entities\User;
-use Simbiat\Website\Enums\SystemUsers;
+use Simbiat\Talks\Entities\User;
+use Simbiat\Talks\Enums\SystemUsers;
 
 /**
  * Implement session handling using database

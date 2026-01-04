@@ -1,18 +1,18 @@
 <?php
 declare(strict_types = 1);
 
-namespace Simbiat\Website\Cron\Maintenance;
+namespace Simbiat\Website\Cron;
 
 use Simbiat\CuteBytes;
 use Simbiat\Database\Pool;
 use Simbiat\Database\Query;
+use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Config;
 use Simbiat\Website\Entities\Notifications\DatabaseDown;
 use Simbiat\Website\Entities\Notifications\DatabaseUp;
 use Simbiat\Website\Entities\Notifications\EnoughSpace;
 use Simbiat\Website\Entities\Notifications\ErrorLog;
 use Simbiat\Website\Entities\Notifications\NoSpace;
-use Simbiat\Website\Enums\SystemUsers;
 
 /**
  * Various health check tasks menat to be run every minute

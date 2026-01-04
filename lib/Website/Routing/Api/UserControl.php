@@ -3,21 +3,21 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing\Api;
 
+use Simbiat\Talks\Api\UserControl\Avatars;
+use Simbiat\Talks\Api\UserControl\Cookies;
+use Simbiat\Talks\Api\UserControl\Emails;
+use Simbiat\Talks\Api\UserControl\FFLink;
+use Simbiat\Talks\Api\UserControl\Login;
+use Simbiat\Talks\Api\UserControl\Logout;
+use Simbiat\Talks\Api\UserControl\Notifications;
+use Simbiat\Talks\Api\UserControl\Password;
+use Simbiat\Talks\Api\UserControl\Profile;
+use Simbiat\Talks\Api\UserControl\Register;
+use Simbiat\Talks\Api\UserControl\Remind;
+use Simbiat\Talks\Api\UserControl\Remove;
+use Simbiat\Talks\Api\UserControl\Sessions;
+use Simbiat\Talks\Api\UserControl\Username;
 use Simbiat\Website\Abstracts\Api;
-use Simbiat\Website\Api\UserControl\Avatars;
-use Simbiat\Website\Api\UserControl\Cookies;
-use Simbiat\Website\Api\UserControl\Emails;
-use Simbiat\Website\Api\UserControl\Notifications;
-use Simbiat\Website\Api\UserControl\FFLink;
-use Simbiat\Website\Api\UserControl\Login;
-use Simbiat\Website\Api\UserControl\Logout;
-use Simbiat\Website\Api\UserControl\Password;
-use Simbiat\Website\Api\UserControl\Profile;
-use Simbiat\Website\Api\UserControl\Register;
-use Simbiat\Website\Api\UserControl\Remind;
-use Simbiat\Website\Api\UserControl\Remove;
-use Simbiat\Website\Api\UserControl\Sessions;
-use Simbiat\Website\Api\UserControl\Username;
 
 class UserControl extends Api
 {

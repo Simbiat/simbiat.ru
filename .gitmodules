@@ -79,3 +79,6 @@
 [submodule "lib/Translit"]
 	path = lib/Translit
 	url = https://github.com/Simbiat/translit
+[submodule "lib/Talks"]
+	path = lib/Talks
+	url = https://github.com/Simbiat/talks

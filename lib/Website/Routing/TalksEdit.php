@@ -3,9 +3,9 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
-use Simbiat\Website\Pages\Talks\Edit\Post;
-use Simbiat\Website\Pages\Talks\Edit\Section;
-use Simbiat\Website\Pages\Talks\Edit\User;
+use Simbiat\Talks\Pages\Edit\Post;
+use Simbiat\Talks\Pages\Edit\Section;
+use Simbiat\Talks\Pages\Edit\User;
 
 class TalksEdit extends \Simbiat\Website\Abstracts\Router
 {

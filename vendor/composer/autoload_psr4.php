@@ -43,6 +43,7 @@ return array(
     'Simbiat\\http20\\' => array($baseDir . '/lib/http20/src'),
     'Simbiat\\Website\\' => array($baseDir . '/lib/Website'),
     'Simbiat\\Translit\\' => array($baseDir . '/lib/Translit/src'),
+    'Simbiat\\Talks\\' => array($baseDir . '/lib/Talks/src'),
     'Simbiat\\HTTP\\' => array($baseDir . '/lib/HTTP/SSE/src'),
     'Simbiat\\HTML\\ArrayToTable\\' => array($baseDir . '/lib/array2table/src'),
     'Simbiat\\HTML\\' => array($baseDir . '/lib/HTML/Cut/src', $baseDir . '/lib/HTML/nl2tag/src'),

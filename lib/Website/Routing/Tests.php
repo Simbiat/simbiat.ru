@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Abstracts\Router;
 use Simbiat\Website\Config;
 use Simbiat\Website\Entities\Notifications\Test;
-use Simbiat\Website\Enums\SystemUsers;
 use Simbiat\Website\Errors;
 
 class Tests extends Router

@@ -3,9 +3,9 @@ declare(strict_types = 1);
 
 use Simbiat\FFXIV\Cron;
 use Simbiat\Website\Config;
-use Simbiat\Website\Cron\Maintenance\HealthCheck;
-use Simbiat\Website\Cron\Maintenance\Minute;
-use Simbiat\Website\Cron\Maintenance\Month;
+use Simbiat\Website\Cron\HealthCheck;
+use Simbiat\Website\Cron\Minute;
+use Simbiat\Website\Cron\Month;
 use Simbiat\Website\Errors;
 
 #Bootstrap things

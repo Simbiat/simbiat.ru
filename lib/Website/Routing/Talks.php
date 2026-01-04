@@ -3,12 +3,11 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing;
 
+use Simbiat\Talks\Pages\Post;
+use Simbiat\Talks\Pages\Section;
+use Simbiat\Talks\Pages\Thread;
+use Simbiat\Talks\Pages\User;
 use Simbiat\Website\Abstracts\Router;
-use Simbiat\Website\Pages\Talks\Post;
-use Simbiat\Website\Pages\Talks\Section;
-use Simbiat\Website\Pages\Talks\Thread;
-use Simbiat\Website\Pages\Talks\User;
-
 use function array_slice;
 
 class Talks extends Router

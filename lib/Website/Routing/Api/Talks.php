@@ -3,9 +3,9 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Routing\Api;
 
-use Simbiat\Website\Api\Talks\Posts;
-use Simbiat\Website\Api\Talks\Sections;
-use Simbiat\Website\Api\Talks\Threads;
+use Simbiat\Talks\Api\Posts;
+use Simbiat\Talks\Api\Sections;
+use Simbiat\Talks\Api\Threads;
 
 class Talks extends \Simbiat\Website\Abstracts\Api
 {

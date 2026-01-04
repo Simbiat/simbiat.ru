@@ -30,6 +30,7 @@
     <mapping directory="$PROJECT_DIR$/lib/HTMLCache" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/HTTP/SSE" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/SandClock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/lib/Talks" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/Translit" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/array2table" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/lib/http20" vcs="Git" />

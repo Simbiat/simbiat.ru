@@ -98,6 +98,7 @@
                 "./lib/HTML/Cut/src",
                 "./lib/HTML/nl2tag/src"
             ],
+            "Simbiat\\Talks\\": "./lib/Talks/src",
             "Simbiat\\Translit\\": "./lib/Translit/src",
             "Simbiat\\Database\\Maintainer\\": "./lib/Database/Maintainer/src",
             "Simbiat\\HTML\\ArrayToTable\\": "./lib/array2table/src",

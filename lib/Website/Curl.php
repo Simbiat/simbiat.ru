@@ -7,9 +7,8 @@ namespace Simbiat\Website;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
 use Simbiat\http20\Sharing;
-
+use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Enums\LogTypes;
-use Simbiat\Website\Enums\SystemUsers;
 use function in_array;
 
 /**
