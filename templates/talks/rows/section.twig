@@ -11,7 +11,7 @@
                     {% if section.private %}<span data-tooltip="Private section">🚷</span>{% endif %}
                 {% endif %}
             </div>
-            <a href="/talks/{% if edit_mode %}edit/{% endif %}sections/{{ section.section_id|default('section_id') }}/{{ prettyURL(section.name|default('')) }}">{{ section.name }}</a>
+            <a href="/talks/{% if edit_mode %}edit/{% endif %}sections/{{ section.section_id|default('section_id') }}">{{ section.name }}</a>
         </div>
         <div class="section_description">{{ section.description }}</div>
     </td>

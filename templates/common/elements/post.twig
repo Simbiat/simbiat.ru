@@ -4,7 +4,7 @@
             {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
                 <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></div>
             {% else %}
-                <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></div>
+                <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></div>
             {% endif %}
         {% endif %}
         <div class="post_time_id">

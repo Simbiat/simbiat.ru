@@ -27,7 +27,7 @@
         <p>Linked characters:</p>
         {% for character in characters %}
             <article class="ff_owned_block">
-                <div class="ff_owned_char"><img loading="lazy" decoding="async" class="avatar ff_owned" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.icon }}c0.jpg"><a href="/fftracker/characters/{{ character.id }}/{{ prettyURL(character.name) }}">{{ character.name }}</a></div>
+                <div class="ff_owned_char"><img loading="lazy" decoding="async" class="avatar ff_owned" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.icon }}c0.jpg"><a href="/fftracker/characters/{{ character.id }}">{{ character.name }}</a></div>
                 <div class="ff_owned_groups">
                     {% if groups[character.id] %}
                         <p>Owned groups:</p>

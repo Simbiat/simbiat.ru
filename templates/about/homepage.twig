@@ -42,7 +42,7 @@
                 {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
                     <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
                 {% else %}
-                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}/{{ prettyURL(post.name) }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
+                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
                 {% endif %}
             </section>
             {% if post.og_image %}
