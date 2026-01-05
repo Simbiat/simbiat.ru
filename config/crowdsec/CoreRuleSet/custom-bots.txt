@@ -5,6 +5,8 @@ Ai2Bot-Dolma
 AliyunSecBot
 Amazonbot
 Amazonbot-Video
+AmazonBuyForMe
+Amzn-SearchBot
 Amzn-User
 Andibot
 Anthropic AI
@@ -47,12 +49,15 @@ ImageSift
 InternetMeasurement
 IonCrawl
 LinkBloom
+Manus-User
 MJ12bot
 Meta-ExternalAds
 Meta-ExternalAgent
 MistralAI-User
+PanguBot
 PerplexityBot
 Poggio-Citations
+ProRata
 QualifiedBot
 Replicate-Bot
 RunPod-Bot
@@ -68,6 +73,7 @@ Together-Bot
 VertexWP
 WARDBot
 YaDirectFetcher
+YandexAdditionalBot
 YandexCalendar
 YandexDirect
 YandexDirectDyn
@@ -79,11 +85,14 @@ YandexTracker
 YandexVerticals
 ZanistaBot
 ZoominfoBot
+amazon-kendra
+blackboardally
 cohere-ai
 cohere-training
 deepcrawl
 gochitchat
 iAskBot
 peer39_crawler
+semantic-visions
 webzio-extended
 xAI-Bot
