@@ -123,7 +123,7 @@ class Caching
     public function key(string $key): string
     {
         if ($key === '') {
-            $key = \hash('sha3-512', Config::$canonical);
+            $key = \hash('sha3-512', (empty(HomePage::$user_agent['bot']) ? '' : 'bot_').Config::$canonical);
         } else {
             $key = \hash('sha3-512', $key);
         }
