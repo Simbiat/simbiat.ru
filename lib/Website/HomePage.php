@@ -55,6 +55,7 @@ class HomePage
     
     /**
      * Initial routing logic
+     *
      * @return void
      */
     private function init(): void
@@ -72,7 +73,8 @@ class HomePage
             #Process requests to file or cache
             $this->filesRequests();
             #Exploding further processing
-            $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.($_SERVER['QUERY_STRING'] ?? '').')?/ui', '$2', $_SERVER['REQUEST_URI']));
+            /* @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
+            $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.(\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/')).')?/ui', '$2', $_SERVER['REQUEST_URI']));
             try {
                 #Connect to DB
                 Config::dbConnect();
