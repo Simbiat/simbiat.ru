@@ -13,25 +13,4 @@
     <td>{{ timeTag(thread.created, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.author }}">{{ thread.author_name }}</a></td>
     <td>{{ timeTag(thread.last_post, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.last_poster }}">{{ thread.last_poster_name }}</a></td>
     <td>{{ thread.posts }}</td>
-    {% if edit_mode %}
-        <td>{{ thread.id }}</td>
-        {% if 'can_pin' in permissions %}
-            <td>
-                <span class="float_label">
-                    <input id="thread_pin_checkbox_{{ thread.id }}" class="thread_pin" data-thread="{{ thread.id }}" type="checkbox"{% if thread.pinned %} checked{% endif %}>
-                    <label for="thread_pin_checkbox_{{ thread.id }}"></label>
-                <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Pinning...">
-                </span>
-            </td>
-        {% endif %}
-        {% if type != 'Support' and 'mark_private' in permissions %}
-            <td>
-                <span class="float_label">
-                    <input id="thread_private_checkbox_{{ thread.id }}" class="thread_private" data-thread="{{ thread.id }}" type="checkbox"{% if thread.private %} checked{% endif %}>
-                    <label for="thread_private_checkbox_{{ thread.id }}"></label>
-                <img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Changing privacy...">
-                </span>
-            </td>
-        {% endif %}
-    {% endif %}
 </tr>

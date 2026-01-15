@@ -37,24 +37,79 @@
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <tab-content>
-        {% if edit_mode %}
-            {{ include('talks/forms/section.twig', {'section_edit': true}) }}
-        {% else %}
-            <p>For editing this section, please, use the edit mode using the button below.</p>
-            <a class="button" href="/talks/edit/sections/{{ section_id }}">Edit mode</a>
-        {% endif %}
+        {{ include('talks/forms/section.twig', {'section_edit': true}) }}
+    </tab-content>
+{% endif %}
+{% if owned or 'edit_sections' in session_data.permissions %}
+    <tab-content>
+        <form role="form" id="section_private_form" name="section_private_form" autocomplete="off" class="middle">
+            {% if private %}
+                <p>Marking the section public will make all content inside this section available for public view.</p>
+            {% else %}
+                <p>Marking the section private will hide all the content from almost everyone. Only the owner and users with <var>view_private</var> will be able to see it. Note, that while the content will be removed from sitemaps and thus no longer advertised to search engines, this action has no control on <i>when</i> it will be removed from those engines.</p>
+            {% endif %}
+            {% if author != session_data.user_id and author not in system_users %}
+                {{ include('common/elements/change_reason.twig', {'form_name': 'section_private_form', 'array_name': 'section_data'}, with_context = false) }}
+            {% endif %}
+            <input type="hidden" name="verb" value="mark_{% if private %}public{% else %}private{% endif %}" required>
+            <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
+            <input role="button" type="submit" id="section_private_submit" value="Mark {% if private %}public{% else %}private{% endif %}">
+            <img loading="lazy" decoding="async" id="section_private_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Marking section {% if private %}public{% else %}private{% endif %}...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if 'move_sections' in session_data.permissions and parent_id %}
+    <tab-content>
+        <form role="form" id="section_move_form" name="section_move_form" autocomplete="off" class="middle">
+            <p>Input ID of parent section to which you want to move this section.</p>
+            <p class="warning">Note, that moving this section <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
+            <div class="float_label">
+                <input type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="section_data[parent_id]" id="cur_section_parent" placeholder="Parent ID">
+                <label for="cur_section_parent">Parent ID</label>
+            </div>
+            <br>
+            <input type="hidden" name="verb" value="move" required>
+            <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
+            <input role="button" type="submit" id="section_move_submit" value="Move">
+            <img loading="lazy" decoding="async" id="section_move_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Moving section...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if owned or 'edit_sections' in session_data.permissions %}
+    <tab-content>
+        <form role="form" id="section_closed_form" name="section_closed_form" autocomplete="off" class="middle">
+            {% if closed %}
+                <p>Opening this section will allow others to create threads and posts in it, if they have appropriate permissions.</p>
+            {% else %}
+                <p>Closing this section will prevent others from creating threads and posts in it, unless they have <var>post_in_closed</var> permission.</p>
+            {% endif %}
+            {% if author != session_data.user_id and author not in system_users %}
+                {{ include('common/elements/change_reason.twig', {'form_name': 'section_closed_form', 'array_name': 'section_data'}, with_context = false) }}
+            {% endif %}
+            <input type="hidden" name="verb" value="{% if closed %}open{% else %}close{% endif %}" required>
+            <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
+            <input role="button" type="submit" id="section_closed_submit" value="{% if closed %}Open{% else %}Close{% endif %}">
+            <img loading="lazy" decoding="async" id="section_closed_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if closed %}Opening{% else %}Closing{% endif %} section...">
+        </form>
     </tab-content>
 {% endif %}
 {% if (owned or 'remove_sections' in session_data.permissions) and not system %}
     <tab-content>
-        {% if children.entities or threads.entities %}
+        {% if children.entities|length > 0 or threads.entities|length > 0 %}
             <p>This section has subsections or/and threads. Removal is not possible.</p>
         {% else %}
-            <p>Pressing below button will delete the current section completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
-            <p>If section has a custom icon it will not be removed along with the section. Instead, it will be removed during routine check for orphaned files, if the icon file is not linked to anything else.</p>
-            <p>If deletion is successful you will be redirected to respective parent section.</p>
-            <input role="button" type="button" id="delete_section" value="Delete" data-section="{{ section_id }}">
-            <img loading="lazy" decoding="async" id="section_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting section...">
+            <form role="form" id="section_delete_form" name="section_delete_form" autocomplete="off" class="middle">
+                <p>Pressing below button will delete the current section completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+                <p>If section has a custom icon it will not be removed along with the section. Instead, it will be removed during routine check for orphaned files, if the icon file is not linked to anything else.</p>
+                <p>If deletion is successful you will be redirected to respective parent section.</p>
+                {% if author != session_data.user_id and author not in system_users %}
+                    {{ include('common/elements/change_reason.twig', {'form_name': 'section_delete_form', 'array_name': 'section_data'}, with_context = false) }}
+                {% endif %}
+                <input type="hidden" name="verb" value="delete" required>
+                <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
+                <input role="button" type="submit" class="danger" id="section_delete_submit" value="Delete">
+                <img loading="lazy" decoding="async" id="section_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting section...">
+            </form>
         {% endif %}
     </tab-content>
 {% endif %}

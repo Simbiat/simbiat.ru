@@ -1,0 +1,23 @@
+/* Styling of special images */
+
+/* Styling of new tab icon, which is added to some links through JS */
+.new_tab_icon {
+    block-size: 0.75rem;
+    inline-size: 0.75rem;
+    margin: 0;
+    user-select: none;
+    vertical-align: super;
+}
+
+/* Styling of icons added to some links in HTML */
+.link_icon {
+    block-size: 1.25rem;
+    inline-size: 1.25rem;
+    /* Negative margin to align with text */
+    margin: 0 0.25rem 0.25rem 0.25rem;
+}
+
+/* New banner preview in emails */
+.banner_preview {
+    inline-size: 10rem;
+}

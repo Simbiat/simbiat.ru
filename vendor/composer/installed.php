@@ -101,9 +101,9 @@
             'dev_requirement' => false,
         ),
         'maxmind/web-service-common' => array(
-            'pretty_version' => 'v0.11.0',
-            'version' => '0.11.0.0',
-            'reference' => '5b9e3d3472213361eebdb3ab8879e91b8952091b',
+            'pretty_version' => 'v0.11.1',
+            'version' => '0.11.1.0',
+            'reference' => 'c309236b5a5555b96cf560089ec3cead12d845d2',
             'type' => 'library',
             'install_path' => __DIR__ . '/../maxmind/web-service-common',
             'aliases' => array(),
@@ -244,7 +244,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '5ba14c800ff89c74333c22d56ca1c1f35c424805',
+            'reference' => '8db0a0103c58e46c235523631e155680d7e0a7c1',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
@@ -568,9 +568,9 @@
             'dev_requirement' => false,
         ),
         'tinymce/tinymce' => array(
-            'pretty_version' => '8.3.1',
-            'version' => '8.3.1.0',
-            'reference' => 'd611e7b064eab7808a0d8d581776c5884a5b687a',
+            'pretty_version' => '8.3.2',
+            'version' => '8.3.2.0',
+            'reference' => '4b043a865f1978056f6649638b2e983c0624ff66',
             'type' => 'component',
             'install_path' => __DIR__ . '/../tinymce/tinymce',
             'aliases' => array(),

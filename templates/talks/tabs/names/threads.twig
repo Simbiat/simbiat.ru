@@ -5,8 +5,20 @@
 {% if (owned and 'edit_own_threads' in session_data.permissions) or (not owned and 'edit_others_threads' in session_data.permissions) %}
     <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
 {% endif %}
-{% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions) or (not owned and 'close_others_threads' in session_data.permissions))) %}
-    <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Reopen{% else %}Close{% endif %}</a>
+{% if 'edit_others_threads' in session_data.permissions and 'mark_private' in session_data.permissions %}
+    <a class="tab_name warning" id="tab_name_private" href="#tab_name_private">Mark {% if private %}public{% else %}private{% endif %}</a>
+{% endif %}
+{% if 'edit_others_threads' in session_data.permissions and 'can_pin' in session_data.permissions %}
+    <a class="tab_name warning" id="tab_name_pin" href="#tab_name_pin">{% if pinned %}Unpin{% else %}Pin{% endif %}</a>
+{% endif %}
+{% if 'edit_others_threads' in session_data.permissions and 'move_threads' in session_data.permissions %}
+    <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
+{% endif %}
+{% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or
+    (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions)
+    or (not owned and 'close_others_threads' in session_data.permissions)))
+%}
+    <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Open{% else %}Close{% endif %}</a>
 {% endif %}
 {% if 'remove_threads' in session_data.permissions %}
     <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>

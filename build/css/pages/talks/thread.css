@@ -153,7 +153,6 @@ input[type='checkbox' i].thread_closed:checked + label::before {
     content: '🔒';
 }
 
-form#edit_thread_form .link_icon,
-form#add_thread_form .link_icon {
+form#thread_form .link_icon {
     margin-block-end: 0.1rem;
 }

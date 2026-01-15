@@ -163,6 +163,7 @@ services:
       - "127.0.0.1:8080:8080"
       - "127.0.0.1:6060:6060"
       - "127.0.0.1:7422:7422"
+      #These are valid despite IDE highlighting them. https://youtrack.jetbrains.com/issue/IJPL-228615
       - "[::1]:8080:8080"
       - "[::1]:6060:6060"
       - "[::1]:7422:7422"

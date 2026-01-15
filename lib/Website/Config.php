@@ -184,7 +184,6 @@ final class Config
         #Remove the "friendly" portion of the links but exclude API
         self::$canonical = \preg_replace('/(^(?!api).*)(\/(bic|characters|freecompanies|pvpteams|linkshells|crossworldlinkshells|crossworld_linkshells|achievements|sections|threads|users)\/)([a-zA-Z\d]+)(\/?.*)/iu', '$1$2$4/', self::$canonical);
         #Update REQUEST_URI to ensure the data returned will be consistent
-        $_SERVER['REQUEST_URI'] = self::$canonical;
         #For canonical, though, we need to ensure that it does have a trailing slash
         if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
@@ -211,8 +210,7 @@ final class Config
      */
     private function nonApiLinks(): void
     {
-        $uri = \explode('/', $_SERVER['REQUEST_URI'], 100);
-        if ($uri[0] !== 'api') {
+        if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
             \array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.\filemtime(self::$js_dir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
         }
     }

@@ -3,8 +3,8 @@
     <p>If the content being posted is available on any of the supported websites, you can add links to them below. Links will be shown below the first post in the thread.</p>
     {% for altlink in thread_link_types %}
         <span class="float_label">
-            <input form="{% if alt_links_edit %}edit_thread_form{% else %}add_thread_form{% endif %}" type="url" aria-required="false" name="{% if alt_links_edit %}current_thread{% else %}new_thread{% endif %}[alt_links][{{ altlink.type }}]" id="{% if alt_links_edit %}current_thread{% else %}new_thread{% endif %}_{{ altlink.type }}" value="{{ external_links[altlink.type].url }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255" pattern="^https:\/\/(www\.)?{{ altlink.regex }}.*$">
-            <label for="{% if alt_links_edit %}current_thread{% else %}new_thread{% endif %}_{{ altlink.type }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
+            <input type="url" aria-required="false" name="thread_data[alt_links][{{ altlink.type }}]" id="thread_data_{{ altlink.type }}" value="{{ external_links[altlink.type].url }}" placeholder="{{ altlink.type }}" inputmode="url" minlength="0" maxlength="255" pattern="^https:\/\/(www\.)?{{ altlink.regex }}.*$">
+            <label for="thread_data_{{ altlink.type }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ altlink.type }}" src="{{ altlink.icon }}">{{ altlink.type }}</label>
         </span>
     {% endfor %}
 </details>

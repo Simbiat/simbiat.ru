@@ -1,30 +1,41 @@
 export class Threads {
     add_post_form = null;
     edit_thread_form = null;
-    closeThreadButton = null;
-    deleteThreadButton = null;
+    private_thread_form = null;
+    pin_thread_form = null;
+    closed_thread_form = null;
+    move_thread_form = null;
+    delete_thread_form = null;
     post_form = null;
     constructor() {
         this.add_post_form = document.querySelector('#post_form');
-        this.edit_thread_form = document.querySelector('#edit_thread_form');
-        this.closeThreadButton = document.querySelector('#close_thread');
-        this.deleteThreadButton = document.querySelector('#delete_thread');
+        this.edit_thread_form = document.querySelector('#thread_form');
+        this.private_thread_form = document.querySelector('#thread_private_form');
+        this.pin_thread_form = document.querySelector('#thread_pin_form');
+        this.closed_thread_form = document.querySelector('#thread_closed_form');
+        this.move_thread_form = document.querySelector('#thread_move_form');
+        this.delete_thread_form = document.querySelector('#thread_delete_form');
         this.post_form = document.querySelector('post-form');
         if (this.add_post_form) {
             submitIntercept(this.add_post_form, this.addPost.bind(this));
         }
         if (this.edit_thread_form) {
-            submitIntercept(this.edit_thread_form, this.editThread.bind(this));
+            submitIntercept(this.edit_thread_form, this.edit.bind(this));
         }
-        if (this.closeThreadButton) {
-            this.closeThreadButton.addEventListener('click', () => {
-                this.closeThread();
-            });
+        if (this.private_thread_form) {
+            submitIntercept(this.private_thread_form, this.makePrivate.bind(this));
         }
-        if (this.deleteThreadButton) {
-            this.deleteThreadButton.addEventListener('click', () => {
-                this.deleteThread();
-            });
+        if (this.pin_thread_form) {
+            submitIntercept(this.pin_thread_form, this.pin.bind(this));
+        }
+        if (this.closed_thread_form) {
+            submitIntercept(this.closed_thread_form, this.close.bind(this));
+        }
+        if (this.move_thread_form) {
+            submitIntercept(this.move_thread_form, this.move.bind(this));
+        }
+        if (this.delete_thread_form) {
+            submitIntercept(this.delete_thread_form, this.delete.bind(this));
         }
         document.querySelectorAll('.reply_to_button')
             .forEach((item) => {
@@ -46,10 +57,10 @@ export class Threads {
                 saveTinyMCE(textarea.id, true);
             }
             const button = this.add_post_form.querySelector('input[type=submit]');
-            const formData = new FormData(this.add_post_form);
-            formData.append('post_form[timezone]', TIMEZONE);
+            const form_data = new FormData(this.add_post_form);
+            form_data.append('post_data[timezone]', TIMEZONE);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -73,71 +84,84 @@ export class Threads {
             });
         }
     }
-    deleteThread() {
-        if (this.deleteThreadButton) {
-            if (confirm('This is the last chance to back out.\nIf you press \'OK\' this thread will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-                const id = this.deleteThreadButton.getAttribute('data-thread') ?? '';
-                if (!empty(id)) {
-                    buttonToggle(this.deleteThreadButton);
-                    ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/delete`, null, 'json', 'DELETE', AJAX_TIMEOUT, true)
-                        .then((response) => {
-                        const data = response;
-                        if (data.data === true) {
-                            addSnackbar('Thread removed. Redirecting to parent...', 'success');
-                            pageRefresh(data.location);
-                        }
-                        else {
-                            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
-                        }
-                        if (this.deleteThreadButton) {
-                            buttonToggle(this.deleteThreadButton);
-                        }
-                    });
+    move() {
+        if (this.move_thread_form) {
+            const button = this.move_thread_form.querySelector('input[type=submit]');
+            const form_data = new FormData(this.move_thread_form);
+            buttonToggle(button);
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+                .then((response) => {
+                const data = response;
+                if (data.data === true) {
+                    addSnackbar('Thread moved', 'success');
+                    pageRefresh();
                 }
-            }
+                else {
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                }
+                buttonToggle(button);
+            });
         }
     }
-    closeThread() {
-        if (this.closeThreadButton) {
-            const id = this.closeThreadButton.getAttribute('data-thread') ?? '';
-            const verb = this.closeThreadButton.value.toLowerCase();
-            if (!empty(id)) {
-                buttonToggle(this.closeThreadButton);
-                ajax(`${location.protocol}//${location.host}/api/talks/threads/${id}/${verb}`, null, 'json', 'PATCH', AJAX_TIMEOUT, true)
+    delete() {
+        if (this.delete_thread_form) {
+            if (confirm('This is the last chance to back out.\nIf you press \'OK\' this thread will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
+                const button = this.delete_thread_form.querySelector('input[type=submit]');
+                const form_data = new FormData(this.delete_thread_form);
+                buttonToggle(button);
+                ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'DELETE', AJAX_TIMEOUT, true)
                     .then((response) => {
                     const data = response;
                     if (data.data === true) {
-                        if (verb === 'close') {
-                            addSnackbar('Thread closed. Refreshing...', 'success');
-                        }
-                        else {
-                            addSnackbar('Thread reopened. Refreshing...', 'success');
-                        }
-                        pageRefresh();
+                        addSnackbar('Thread removed. Redirecting to parent...', 'success');
+                        pageRefresh(data.location);
                     }
                     else {
                         addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
-                    if (this.closeThreadButton) {
-                        buttonToggle(this.closeThreadButton);
-                    }
+                    buttonToggle(button);
                 });
             }
         }
     }
-    editThread() {
+    close() {
+        if (this.closed_thread_form) {
+            const button = this.closed_thread_form.querySelector('input[type=submit]');
+            const form_data = new FormData(this.closed_thread_form);
+            let verb = form_data.get('verb') ?? 'close';
+            buttonToggle(button);
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+                .then((response) => {
+                const data = response;
+                if (data.data === true) {
+                    if (verb === 'open') {
+                        addSnackbar('Thread marked as open', 'success');
+                    }
+                    else {
+                        addSnackbar('Thread marked as closed', 'success');
+                    }
+                    pageRefresh();
+                }
+                else {
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                }
+                buttonToggle(button);
+            });
+        }
+    }
+    edit() {
         if (this.edit_thread_form) {
             const button = this.edit_thread_form.querySelector('input[type=submit]');
-            const formData = new FormData(this.edit_thread_form);
+            const form_data = new FormData(this.edit_thread_form);
             const og_image = this.edit_thread_form.querySelector('input[type=file]');
             if (og_image?.files?.[0]) {
-                formData.append('current_thread[og_image]', 'true');
+                form_data.append('thread_data[og_image]', 'true');
             }
             else {
-                formData.append('current_thread[og_image]', 'false');
+                form_data.append('thread_data[og_image]', 'false');
             }
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(formData.get('current_thread[thread_id]') ?? '0')}/edit`, formData, 'json', 'POST', AJAX_TIMEOUT, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {
@@ -146,13 +170,63 @@ export class Threads {
                 }
                 else {
                     if (data.location) {
-                        addSnackbar(data.reason + ` View the section <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
+                        addSnackbar(data.reason + ` View the thread <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
                     }
                     else {
                         addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
                     }
                     buttonToggle(button);
                 }
+            });
+        }
+    }
+    makePrivate() {
+        if (this.private_thread_form) {
+            const button = this.private_thread_form.querySelector('input[type=submit]');
+            const form_data = new FormData(this.private_thread_form);
+            let verb = form_data.get('verb') ?? 'mark_private';
+            buttonToggle(button);
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+                .then((response) => {
+                const data = response;
+                if (data.data === true) {
+                    if (verb === 'mark_public') {
+                        addSnackbar('Thread marked as public', 'success');
+                    }
+                    else {
+                        addSnackbar('Thread marked as private', 'success');
+                    }
+                    pageRefresh();
+                }
+                else {
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                }
+                buttonToggle(button);
+            });
+        }
+    }
+    pin() {
+        if (this.pin_thread_form) {
+            const button = this.pin_thread_form.querySelector('input[type=submit]');
+            const form_data = new FormData(this.pin_thread_form);
+            let verb = form_data.get('verb') ?? 'unpin';
+            buttonToggle(button);
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+                .then((response) => {
+                const data = response;
+                if (data.data === true) {
+                    if (verb === 'pin') {
+                        addSnackbar('Thread pinned', 'success');
+                    }
+                    else {
+                        addSnackbar('Thread unpinned', 'success');
+                    }
+                    pageRefresh();
+                }
+                else {
+                    addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
+                }
+                buttonToggle(button);
             });
         }
     }

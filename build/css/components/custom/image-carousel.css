@@ -28,6 +28,7 @@ image-carousel {
                 inline-size: 10rem;
                 inset-block-start: 0.75rem;
                 inset-inline-start: 0;
+                object-fit: contain;
                 position: absolute;
             }
 

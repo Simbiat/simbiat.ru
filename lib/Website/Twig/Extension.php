@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Twig;
 
 use Simbiat\Database\Query;
+use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Config;
 use Simbiat\Website\HomePage;
 use Twig\Extension\AbstractExtension;
@@ -53,7 +54,7 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             'site_name' => Config::SITE_NAME,
             'domain' => Config::$base_url,
             'canonical' => Config::$canonical,
-            'url' => mb_rtrim(Config::$base_url.'/'.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
+            'url' => mb_rtrim(Config::$base_url.($_SERVER['REQUEST_URI'] ?? ''), '/', 'UTF-8'),
             'maintenance' => 1,
             'registration' => 0,
         ];
@@ -82,8 +83,10 @@ final class Extension extends AbstractExtension implements GlobalsInterface
             'save_data' => $save_data,
             'unsupported' => false,
             #Flag whether GET is present
-            'has_get' => !empty($_GET),
+            'has_get' => \count($_GET) !== 0,
             'http_method' => HomePage::$method,
+            #System users' IDs
+            'system_users' => SystemUsers::getSystemUsers(),
         ]);
     }
 }

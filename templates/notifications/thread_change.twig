@@ -1,0 +1,53 @@
+{% if change_type == 'private' %}
+    {% set action = 'marked private' %}
+{% elseif change_type == 'public' %}
+    {% set action = 'marked public' %}
+{% elseif change_type == 'close' %}
+    {% set action = 'closed' %}
+{% elseif change_type == 'open' %}
+    {% set action = 're-opened' %}
+{% elseif change_type == 'change' %}
+    {% set action = 'modified' %}
+{% elseif change_type == 'delete' %}
+    {% set action = 'deleted' %}
+{% elseif change_type == 'move' %}
+    {% set action = 'moved' %}
+{% elseif change_type == 'pin' %}
+    {% set action = 'pinned' %}
+{% elseif change_type == 'unpin' %}
+    {% set action = 'unpinned' %}
+{% endif %}
+<p>Your section <a href="{{ domain }}/talks/threads/{{ thread_id }}" rel="noopener noreferrer">{{ name }}</a> was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}" rel="noopener noreferrer">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}" rel="noopener noreferrer">{{ editor_name }}</a>.</p>
+{% if changes|length > 0 %}
+    <br>
+    <p>These are the changes:</p>
+    <ul>
+        {% for key, change in changes %}
+            {% if key == 'og_image' %}
+                {% if change.to %}
+                    <li>Banner: to <img loading="lazy" decoding="async" alt="New banner" src="{{ domain }}{{ change.to }}" class="banner_preview">
+                {% else %}
+                    <li>Banner: removed</li>
+                {% endif %}
+            {% elseif key == 'name' %}
+                <li>Name: from <var>{{ change.from }}</var> to <var>{{ change.to }}</var></li>
+            {% else %}
+                {% if change.to %}
+                    {% if change.from %}
+                        <li><img loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: changed to <var>{{ change.to.url }}</var></li>
+                    {% else %}
+                        <li><img loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: linked to <var>{{ change.to.url }}</var></li>
+                    {% endif %}
+                {% else %}
+                    <li><img loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.from.icon }}" class="link_icon">: removed</li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <br>
+{% endif %}
+{% if reason %}
+    <p><q>{{ reason }}</q> was provided as the reason.</p>
+{% else %}
+    <p>No reason was provided.</p>
+{% endif %}

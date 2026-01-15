@@ -89,7 +89,7 @@ class MainRouter extends Router
         } else {
             $output_array['http_error'] = (int)$uri[0];
         }
-        $output_array['suggested_link'] = '/'.\dirname($_SERVER['REQUEST_URI'] ?? '');
+        $output_array['suggested_link'] = \dirname($_SERVER['REQUEST_URI'] ?? '');
         $output_array['error_page'] = true;
         return $output_array;
     }

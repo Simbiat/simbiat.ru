@@ -1,7 +1,7 @@
 export class Contacts {
     add_thread_form = null;
     constructor() {
-        this.add_thread_form = document.querySelector('#add_thread_form');
+        this.add_thread_form = document.querySelector('#thread_form');
         if (this.add_thread_form) {
             submitIntercept(this.add_thread_form, this.addThread.bind(this));
         }
@@ -10,7 +10,7 @@ export class Contacts {
         if (this.add_thread_form) {
             const button = this.add_thread_form.querySelector('input[type=submit]');
             const form_data = new FormData(this.add_thread_form);
-            form_data.append('new_thread[timezone]', TIMEZONE);
+            form_data.append('thread_data[timezone]', TIMEZONE);
             buttonToggle(button);
             ajax(`${location.protocol}//${location.host}/api/contact`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {

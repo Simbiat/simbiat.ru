@@ -28,7 +28,7 @@ post-form {
         }
     }
 
-    & textarea {
+    & textarea:not([id$="change_reason" i]) {
         display: none;
     }
 }

@@ -18,7 +18,7 @@ export class Posts {
             const button = this.post_form.querySelector('input[type=submit]');
             const form_data = new FormData(this.post_form);
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(form_data.get('post_form[post_id]') ?? '0')}/edit`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/posts/${String(form_data.get('post_data[post_id]') ?? '0')}/edit`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {

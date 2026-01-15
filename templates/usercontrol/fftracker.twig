@@ -15,10 +15,10 @@
     </details>
     <form id="ff_link_user">
         <div class="float_label" data-tooltip="Character ID as seen on Lodestone (in URL)">
-            <input autofocus form="ff_link_user" type="text" required aria-required="true" name="character_id" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
+            <input autofocus type="text" required aria-required="true" name="character_id" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
             <label for="ff_link_id">Character ID</label>
         </div>
-        <input type="submit" value="Link" form="ff_link_user" id="ff_link_submit">
+        <input type="submit" value="Link" id="ff_link_submit">
         <img loading="lazy" decoding="async" id="ff_link_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Linking character...">
     </form>
 </section>

@@ -23,6 +23,15 @@
 {% if owned or 'edit_sections' in session_data.permissions %}
     <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
 {% endif %}
+{% if owned or 'edit_sections' in session_data.permissions %}
+    <a class="tab_name warning" id="tab_name_private" href="#tab_name_private">Mark {% if private %}public{% else %}private{% endif %}</a>
+{% endif %}
+{% if 'move_sections' in session_data.permissions and parent_id %}
+    <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
+{% endif %}
+{% if owned or 'edit_sections' in session_data.permissions %}
+    <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Open{% else %}Close{% endif %}</a>
+{% endif %}
 {% if (owned or 'remove_sections' in session_data.permissions) and not system %}
     <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
 {% endif %}

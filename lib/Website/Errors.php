@@ -6,8 +6,11 @@ namespace Simbiat\Website;
 /**
  * Custom PHP error handler
  */
-class Errors
+final class Errors
 {
+    /**
+     * Human-readable description of PHP error types
+     */
     public const array PHP_ERROR_TYPES = [
         \E_ERROR => 'PHP Error',
         \E_WARNING => 'PHP Warning',
@@ -27,31 +30,31 @@ class Errors
     
     /**
      * Helper function to log errors with identifying the page
-     * @param \Throwable $error Error object
-     * @param mixed      $extra Extra data to store in the log
-     * @param bool       $debug If set to `true` will output the error instead of writing to file
+     * @param \Throwable $error   Error object
+     * @param mixed      $context Context (extra data) to store in the log
+     * @param bool       $debug   If set to `true` will output the error instead of writing to file
      *
      * @return false
      */
-    final public static function error_log(\Throwable $error, mixed $extra = '', bool $debug = false): false
+    public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false): false
     {
         #Determine page link
-        $page = self::getPage();
-        if (!\is_string($extra)) {
+        $page = self::getRequest();
+        if (!\is_string($context)) {
             try {
-                $extra = \json_encode($extra, \JSON_THROW_ON_ERROR);
+                $context = \json_encode($context, \JSON_THROW_ON_ERROR);
             } catch (\Throwable) {
-                $extra = '';
+                $context = '';
             }
         }
         #Generate message
         $message = '['.\date('c').'] '.\get_class($error).' Exception:'."\r\n\t".
-            'Page: '.$page."\r\n\t".
+            'Request: '.$page."\r\n\t".
             'File: '.$error->getFile()."\r\n\t".
             'Line: '.$error->getLine()."\r\n\t".
-            $error->getMessage()."\r\n\t".
-            $error->getTraceAsString()."\r\n".
-            (empty($extra) ? '' : "\r\n\t".'Extra: '.$extra."\r\n");
+            'Message: '.$error->getMessage()."\r\n\t".
+            'Trace: '.$error->getTraceAsString()."\r\n".
+            ($context === '' ? '' : "\r\n\t".'Context: '.$context."\r\n");
         #Write to log
         if ($debug) {
             echo '<pre>'.$message.'</pre>';
@@ -70,7 +73,7 @@ class Errors
      *
      * @return bool
      */
-    final public static function error_handler(int $level, string $message, string $file, int $line): bool
+    public static function error_handler(int $level, string $message, string $file, int $line): bool
     {
         #Checking if @ was used to suppress error reporting
         if (!(\error_reporting() & $level)) {
@@ -93,12 +96,12 @@ class Errors
      * Custom shutdown function
      * @return void
      */
-    final public static function shutdown(): void
+    public static function shutdown(): void
     {
         #Get error
         $error = \error_get_last();
         #Log only time and memory exhaustion to avoid duplicates
-        if (!empty($error) && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
+        if ($error !== null && $error !== [] && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
             #Determine page link
             self::write(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
         }
@@ -118,7 +121,7 @@ class Errors
         \file_put_contents(
             Config::$work_dir.'/logs/php.log',
             '['.\date('c').'] '.$type.':'."\r\n\t".
-            'Page: '.self::getPage()."\r\n\t".
+            'Request: '.self::getRequest()."\r\n\t".
             'File: '.$file."\r\n\t".
             'Line: '.$line."\r\n\t".
             $message."\r\n",
@@ -129,15 +132,33 @@ class Errors
      * Helper to attempt to get URL, which was used when the error occurred
      * @return string
      */
-    private static function getPage(): string
+    private static function getRequest(): string
     {
-        if (Config::$cli) {
-            $page = 'CLI';
-        } elseif (empty(Config::$canonical)) {
-            $page = 'index.php';
+        if (\preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1) {
+            $request = 'CLI';
         } else {
-            $page = Config::$canonical;
+            $request = $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' '.$_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];;
         }
-        return $page;
+        return $request;
+    }
+    
+    /**
+     * A simple wrapper function for var_dump to apply <pre> tag and exit the script (by default)
+     * @param mixed $variable Variable to dump
+     * @param bool  $exit     Whether to stop execution right away
+     *
+     * @return void
+     */
+    public static function dump(mixed $variable, bool $exit = true): void
+    {
+        echo '<pre>';
+        /** @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
+        \var_dump($variable);
+        echo '</pre>';
+        @\ob_flush();
+        @\flush();
+        if ($exit) {
+            exit(0);
+        }
     }
 }

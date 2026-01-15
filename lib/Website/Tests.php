@@ -30,7 +30,7 @@ class Tests
         \curl_setopt($curl, \CURLOPT_HTTPHEADER, ['Content-type: '.\mime_content_type($filepath), 'Content-Disposition: attachment; filename="'.\basename($filepath).'"']);
         \curl_setopt($curl, \CURLOPT_INFILE, \fopen($filepath, 'rb'));
         \curl_setopt($curl, \CURLOPT_INFILESIZE, \filesize($filepath));
-        Tests::testDump(\curl_exec($curl));
+        Errors::dump(\curl_exec($curl));
         exit(0);
     }
     
@@ -51,7 +51,7 @@ class Tests
             Common::zEcho($output);
         } else {
             try {
-                Tests::testDump(Sharing::upload($upload_path, false, false, [], false));
+                Errors::dump(Sharing::upload($upload_path, false, false, [], false));
             } catch (\Throwable $exception) {
                 echo $exception->getMessage().'<br><br>'.$exception->getTraceAsString();
             }
@@ -67,25 +67,5 @@ class Tests
         }
         Sharing::download($filepath, '', '', true);
         exit(0);
-    }
-    
-    /**
-     * A simple wrapper function for var_dump to apply <pre> tag and exit the script by default
-     * @param mixed $variable Variable to dump
-     * @param bool  $exit     Whether to stop execution right away
-     *
-     * @return void
-     */
-    public static function testDump(mixed $variable, bool $exit = true): void
-    {
-        echo '<pre>';
-        /** @noinspection ForgottenDebugOutputInspection This is intentional, since this function is meant for debugging */
-        \var_dump($variable);
-        echo '</pre>';
-        @\ob_flush();
-        @\flush();
-        if ($exit) {
-            exit(0);
-        }
     }
 }

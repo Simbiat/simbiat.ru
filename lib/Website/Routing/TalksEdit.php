@@ -6,8 +6,9 @@ namespace Simbiat\Website\Routing;
 use Simbiat\Talks\Pages\Edit\Post;
 use Simbiat\Talks\Pages\Edit\Section;
 use Simbiat\Talks\Pages\Edit\User;
+use Simbiat\Website\Abstracts\Router;
 
-class TalksEdit extends \Simbiat\Website\Abstracts\Router
+class TalksEdit extends Router
 {
     #List supported "paths". Basic ones only, some extra validation may be required further
     protected array $sub_routes = ['sections', 'posts', 'users'];
@@ -25,9 +26,7 @@ class TalksEdit extends \Simbiat\Website\Abstracts\Router
     protected function pageGen(array $path): array
     {
         return match($path[0]) {
-            'sections' => (new Section)->get(\array_slice($path, 1)),
             'posts' => (new Post)->get(\array_slice($path, 1)),
-            'users' => (new User)->get(\array_slice($path, 1)),
         };
     }
 }

@@ -70,12 +70,9 @@ class HomePage
                 Headers::redirect(\preg_replace('/\\?page=-?\d+/ui', '', Config::$canonical));
             }
             #Process requests to file or cache
-            $file_result = $this->filesRequests($_SERVER['REQUEST_URI']);
-            if ($file_result === 200) {
-                exit(0);
-            }
+            $this->filesRequests();
             #Exploding further processing
-            $uri = \explode('/', $_SERVER['REQUEST_URI']);
+            $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.($_SERVER['QUERY_STRING'] ?? '').')?/ui', '$2', $_SERVER['REQUEST_URI']));
             try {
                 #Connect to DB
                 Config::dbConnect();
@@ -131,7 +128,7 @@ class HomePage
                     if (!empty($_SESSION['banned_ip'])) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                     }
-                    if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
+                    if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^about\/contacts$/ui', Config::$canonical) !== 1) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
                     }
                 } else {
@@ -159,25 +156,23 @@ class HomePage
     
     /**
      * Function to process some special files
-     * @param string $request
      *
-     * @return int
+     * @return void
      */
-    public function filesRequests(string $request): int
+    public function filesRequests(): void
     {
         #Remove query string, if present (that is everything after ?)
-        $request = \preg_replace('/^(.*)(\?.*)?$/', '$1', $request);
-        if (\preg_match('/^\.well-known\/security\.txt$/i', $request) === 1) {
+        $request = \preg_replace('/^(.*)(\?.*)?$/', '$1', $_SERVER['REQUEST_URI']);
+        if (\preg_match('/^\/\.well-known\/security\.txt$/i', $request) === 1) {
             #Send headers that will identify this as an actual file
             if (!\headers_sent()) {
                 \header('Content-Type: text/plain; charset=utf-8');
                 \header('Content-Disposition: inline; filename="security.txt"');
             }
             $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last monday of next month midnight'))]);
-            return 200;
+            exit(0);
         }
-        #Return 0, since we did not hit anything
-        return 0;
+        return;
     }
     
     /**
@@ -189,22 +184,22 @@ class HomePage
      */
     final public function twigProc(array $twig_vars = [], bool $cache = false): bool
     {
-        if ($cache) {
-            if ($twig_vars === [] || self::$method !== 'GET' || \array_key_exists('cachereset', $_GET) || \array_key_exists('cachereset', $_POST)) {
-                return false;
+        if ($cache && ($twig_vars === [] || self::$method !== 'GET' || \array_key_exists('cachereset', $_GET) || \array_key_exists('cachereset', $_POST))) {
+            return false;
+        }
+        #Update CSRF token
+        if (\session_status() === \PHP_SESSION_ACTIVE) {
+            $_SESSION['csrf'] = Security::genToken();
+            if (!\headers_sent()) {
+                \header('X-CSRF-Token: '.$_SESSION['csrf']);
             }
+        }
+        $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
+        if (\array_key_exists('http_error', $twig_vars)) {
+            Headers::clientReturn($twig_vars['http_error'], false);
+        }
+        if ($cache) {
             try {
-                #Update CSRF token
-                if (\session_status() === \PHP_SESSION_ACTIVE) {
-                    $_SESSION['csrf'] = Security::genToken();
-                    if (!\headers_sent()) {
-                        \header('X-CSRF-Token: '.$_SESSION['csrf']);
-                    }
-                }
-                $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-                if (\array_key_exists('http_error', $twig_vars)) {
-                    Headers::clientReturn($twig_vars['http_error'], false);
-                }
                 \ob_end_clean();
                 \ignore_user_abort(true);
                 \ob_start();
@@ -226,17 +221,6 @@ class HomePage
         } else {
             \ob_start();
             try {
-                #Update CSRF token
-                if (\session_status() === \PHP_SESSION_ACTIVE) {
-                    $_SESSION['csrf'] = Security::genToken();
-                    if (!\headers_sent()) {
-                        \header('X-CSRF-Token: '.$_SESSION['csrf']);
-                    }
-                }
-                $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-                if (\array_key_exists('http_error', $twig_vars)) {
-                    Headers::clientReturn($twig_vars['http_error'], false);
-                }
                 $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
             } catch (\Throwable $exception) {
                 Errors::error_log($exception);

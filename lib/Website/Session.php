@@ -203,7 +203,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                     ],
                     ':user_id' => [$data['user_id'], 'int'],
                     #What page is being viewed
-                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr($_SERVER['REQUEST_URI'], 0, 256, 'UTF-8')),
+                    ':page' => (empty($_SERVER['REQUEST_URI']) ? 'index.php' : mb_substr(\mb_ltrim($_SERVER['REQUEST_URI'], '/', 'UTF-8'), 0, 256, 'UTF-8')),
                     #Actual session data
                     ':data' => [
                         (empty($data) ? '' : Security::encrypt(\serialize($data))),

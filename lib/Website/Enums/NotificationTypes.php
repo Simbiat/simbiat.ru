@@ -27,5 +27,8 @@ enum NotificationTypes: int
     case NewThread = 13;
     case NewPost = 14;
     case TicketCreation = 15;
-    case TicketUpdate = 16;
+    case TicketChange = 16;
+    case SectionChange = 17;
+    case ThreadChange = 18;
+    case PostChange = 19;
 }

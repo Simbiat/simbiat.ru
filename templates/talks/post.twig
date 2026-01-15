@@ -1,5 +1,5 @@
 {% if edit_mode %}
-    {{ include('talks/forms/post.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions}, with_context = false) }}
+    {{ include('talks/forms/post.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions, 'author': author, 'current_user': session_data.user_id}, with_context = false) }}
 {% else %}
     {{ include('common/elements/post.twig', post) }}
 {% endif %}
@@ -27,6 +27,9 @@
             <p>Pressing below button will delete the current post completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
             <p>If post has attachments they will not be removed along with the thread. Instead, they will be removed during routine check for orphaned files, if they are not linked to anything else.</p>
             <p>If deletion is successful you will be redirected to respective parent thread.</p>
+            {% if author != session_data.user_id and author not in system_users %}
+                {{ include('common/elements/change_reason.twig', {'form_name': 'delete_post_form', 'array_name': 'post_data', 'placeholder': 'Deletion reason'}, with_context = false) }}
+            {% endif %}
             <input role="button" type="button" id="delete_post" value="Delete" data-post="{{ id }}">
             <img loading="lazy" decoding="async" id="post_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting post...">
         </form>

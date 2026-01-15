@@ -37,7 +37,7 @@ textarea {
     }
 
     &:placeholder-shown + label {
-        transform: translate(0.5rem, -2.25rem) scale(1.25);
+        transform: translate(0.5rem, -2.4rem) scale(1.25);
         transform-origin: left bottom;
     }
 }
@@ -47,7 +47,7 @@ textarea:not(:placeholder-shown) + label,
 textarea:focus + label {
     cursor: default;
     filter: var(--border_shadow);
-    transform: translate(0.5rem, -3.9rem) scale(1);
+    transform: translate(0.5rem, -4.1rem) scale(1);
 }
 
 textarea:hover {

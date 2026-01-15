@@ -27,6 +27,11 @@ a.button {
     text-decoration: none;
     text-transform: none;
 
+    > * {
+        /* noinspection Stylelint */
+        cursor: pointer !important; /* Valid case, need to ensure the cursor is pointer regardless of the content inside */
+    }
+
     &::-moz-focus-inner {
         border-style: none;
         padding: 0;

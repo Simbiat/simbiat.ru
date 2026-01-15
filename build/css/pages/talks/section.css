@@ -136,7 +136,8 @@ input[type='checkbox' i].section_closed:checked + label::before {
 
 /* Style textarea tags for section description */
 #new_section_description,
-#cur_section_description {
+#cur_section_description,
+[id$="change_reason" i] {
     inline-size: calc(100% - .375em - .375em - .375em);
     max-inline-size: 100ch;
 }

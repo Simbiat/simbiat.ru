@@ -1,72 +1,84 @@
-<form role="form" id="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" name="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" autocomplete="off" class="middle">
-    <input form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" type="hidden" name="verb" value="{% if section_edit %}edit{% else %}add{% endif %}" required>
-    <input form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" type="hidden" name="{% if section_edit %}cur_section[section_id]{% else %}new_section[parent_id]{% endif %}" {% if section_edit %}id="cur_section_id" {% endif %}value="{{ section_id }}" required>
+{% if section_edit %}
+    {% set section_form_name = 'edit_section_form' %}
+{% else %}
+    {% set section_form_name = 'add_section_form' %}
+{% endif %}
+<form role="form" id="{{ section_form_name }}" name="{{ section_form_name }}" autocomplete="off" class="middle">
+    <input type="hidden" name="verb" value="{% if section_edit %}edit{% else %}add{% endif %}" required>
+    {% if section_edit %}
+        <input type="hidden" name="section_data[parent_id]" value="{{ parent_id }}" required>
+        <input type="hidden" name="section_data[section_id]" id="cur_section_id" value="{{ section_id }}" required>
+    {% else %}
+        <input type="hidden" name="section_data[parent_id]" value="{{ section_id }}" required>
+    {% endif %}
     <div class="float_label">
-        <input form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" type="text" aria-required="true" required name="{% if section_edit %}cur_section[name]{% else %}new_section[name]{% endif %}" id="{% if section_edit %}cur_section_name{% else %}new_section_name{% endif %}" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64"{% if starting_new_blog or starting_new_changelog or starting_new_kb %} value="{{ session_data.username }}"{% else %}{% if section_edit %} value="{{ name }}"{% endif %}{% endif %}>
+        <input type="text" aria-required="true" required name="section_data[name]" id="{% if section_edit %}cur_section_name{% else %}new_section_name{% endif %}" placeholder="Name" spellcheck="true" inputmode="text" minlength="1" maxlength="64"{% if starting_new_blog or starting_new_changelog or starting_new_kb %} value="{{ session_data.username }}"{% else %}{% if section_edit %} value="{{ name }}"{% endif %}{% endif %}>
         <label for="{% if section_edit %}cur_section_name{% else %}new_section_name{% endif %}">Name</label>
     </div>
     {% if section_edit %}
-        {% if 'move_sections' in session_data.permissions and parent_id %}
+        {% if 'section_order' in session_data.permissions %}
             <div class="float_label">
-                <input form="edit_section_form" type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="cur_section[parent_id]" id="cur_section_parent" placeholder="Parent ID">
-                <label for="cur_section_parent" data-tooltip="ID of parent section.<br>Change it to move the section.">Parent ID</label>
-            </div>
-            <div class="float_label">
-                <input form="edit_section_form" type="number" inputmode="decimal" min="0" max="99" value="{{ sequence|default('0') }}" step="1" class="number_spinner" aria-required="false" name="cur_section[order]" id="cur_section_sequence" placeholder="Order">
+                <input type="number" inputmode="decimal" min="0" max="99" value="{{ sequence|default('0') }}" step="1" class="number_spinner" aria-required="false" name="section_data[order]" id="cur_section_sequence" placeholder="Order">
                 <label for="cur_section_sequence">Order</label>
             </div>
         {% endif %}
     {% else %}
         {% if starting_new_blog or starting_new_kb or starting_new_changelog %}
-            <input form="add_section_form" type="hidden" name="new_section[order]" value="0" id="new_section_sequence">
+            <input type="hidden" name="section_data[order]" value="0" id="new_section_sequence">
         {% else %}
             <div class="float_label">
-                <input form="add_section_form" type="number" inputmode="decimal" min="0" max="99" value="0" step="1" class="number_spinner" aria-required="false" name="new_section[order]" id="new_section_sequence" placeholder="Order">
+                <input type="number" inputmode="decimal" min="0" max="99" value="0" step="1" class="number_spinner" aria-required="false" name="section_data[order]" id="new_section_sequence" placeholder="Order">
                 <label for="new_section_sequence">Order</label>
             </div>
         {% endif %}
     {% endif %}
-    <span class="float_label">
-        <input form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" id="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" class="section_private" name="{% if section_edit %}cur_section[private]{% else %}new_section[private]{% endif %}" type="checkbox"{% if section_edit and private %} checked{% endif %}>
-        <label for="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
-    </span>
-    <span class="float_label">
-        <input form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" id="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" class="section_closed" name="{% if section_edit %}cur_section[closed]{% else %}new_section[closed]{% endif %}" type="checkbox"{% if section_edit and closed %} checked{% endif %}>
-        <label for="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
-    </span>
+    {% if not section_edit %}
+        <span class="float_label">
+            <input id="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" class="section_private" name="section_data[private]" type="checkbox"{% if section_edit and private %} checked{% endif %}>
+            <label for="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+        </span>
+        <span class="float_label">
+            <input id="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" class="section_closed" name="section_data[closed]" type="checkbox"{% if section_edit and closed %} checked{% endif %}>
+            <label for="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+        </span>
+    {% endif %}
     <br>
     <div class="float_label w100pc">
-        <textarea id="{% if section_edit %}cur_section_description{% else %}new_section_description{% endif %}" form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" name="{% if section_edit %}curr_section[description]{% else %}new_section[description]{% endif %}" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">{% if section_edit %}{{ description }}{% endif %}</textarea>
+        <textarea id="{% if section_edit %}cur_section_description{% else %}new_section_description{% endif %}" name="section_data[description]" aria-required="false" placeholder="Description" spellcheck="true" inputmode="text" minlength="0" maxlength="100">{% if section_edit %}{{ description }}{% endif %}</textarea>
         <label for="{% if section_edit %}cur_section_description{% else %}new_section_description{% endif %}">Description</label>
     </div>
     <br>
     {% if starting_new_blog %}
-        <input form="add_section_form" type="hidden" name="new_section[type]" value="2">
+        <input type="hidden" name="section_data[type]" value="2">
     {% elseif starting_new_changelog %}
-        <input form="add_section_form" type="hidden" name="new_section[type]" value="4">
+        <input type="hidden" name="section_data[type]" value="4">
     {% elseif starting_new_kb %}
-        <input form="add_section_form" type="hidden" name="new_section[type]" value="6">
+        <input type="hidden" name="section_data[type]" value="6">
     {% else %}
-        {{ include('common/elements/selectcustom.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': section_edit ? 'cur_section[type]' : 'new_section[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+        {{ include('common/elements/selectcustom.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': 'section_data[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
     {% endif %}
-    {{ include('common/elements/imageupload.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': section_edit ? 'cur_section[icon]' : 'new_section[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null}, with_context = false) }}
+    {{ include('common/elements/imageupload.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': 'section_data[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null}, with_context = false) }}
     {% if section_edit %}
         <div class="float_label">
-            <input form="edit_section_form" id="cur_section_clear_icon" name="cur_section[clear_icon]" type="checkbox">
-            <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section, replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
+            <input id="cur_section_clear_icon" name="section_data[clear_icon]" type="checkbox">
+            <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section (if used), replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
         </div>
         <br>
     {% else %}
         {% if not starting_new_blog and not starting_new_changelog and not starting_new_kb %}
             {% if 'post_scheduled' in session_data.permissions %}
                 <div class="float_label">
-                    <input form="add_section_form" id="new_section_time" name="new_section[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
+                    <input id="new_section_time" name="section_data[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
                     <label for="new_section_time" data-tooltip="You can select a future time at which, the section and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
                 </div>
                 <br>
             {% endif %}
         {% endif %}
     {% endif %}
-    <input role="button" form="{% if section_edit %}edit_section_form{% else %}add_section_form{% endif %}" type="submit" name="{% if section_edit %}cur_section[submit]{% else %}new_section[submit]{% endif %}" id="{% if section_edit %}edit_section_submit{% else %}add_section_submit{% endif %}" formaction="/api/talks/sections" formmethod="post" formtarget="_self" value="{% if section_edit %}Update{% else %}Add{% endif %}">
+    {% if section_edit and section.author != session_data.user_id and author not in system_users %}
+        {{ include('common/elements/change_reason.twig', {'form_name': 'edit_section_form', 'array_name': 'section_data'}, with_context = false) }}
+        <br>
+    {% endif %}
+    <input role="button" type="submit" name="section_data[submit]" id="{% if section_edit %}edit_section_submit{% else %}add_section_submit{% endif %}" formaction="/api/talks/sections" formmethod="post" formtarget="_self" value="{% if section_edit %}Update{% else %}Add{% endif %}">
     <img id="{% if section_edit %}edit_section_spinner{% else %}add_section_spinner{% endif %}" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if section_edit %}Adding{% else %}Creating{% endif %} section..." loading="lazy" decoding="async">
 </form>

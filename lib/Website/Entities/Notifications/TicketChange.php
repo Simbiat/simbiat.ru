@@ -10,7 +10,7 @@ use Simbiat\Website\Twig\EnvironmentGenerator;
 /**
  * Test notification
  */
-final class TicketUpdate extends Notification
+final class TicketChange extends Notification
 {
     /**
      * Subject for email
@@ -40,7 +40,7 @@ final class TicketUpdate extends Notification
             return $this;
         }
         try {
-            $this->text = EnvironmentGenerator::getTwig()->render('notifications/ticket_update.twig', $twig_vars);
+            $this->text = EnvironmentGenerator::getTwig()->render('notifications/ticket_change.twig', $twig_vars);
         } catch (\Throwable $throwable) {
             Errors::error_log($throwable);
             $this->text = null;

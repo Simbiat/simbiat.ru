@@ -1,0 +1,35 @@
+{% if change_type == 'private' %}
+    {% set action = 'marked private' %}
+{% elseif change_type == 'public' %}
+    {% set action = 'marked public' %}
+{% elseif change_type == 'close' %}
+    {% set action = 'closed' %}
+{% elseif change_type == 'open' %}
+    {% set action = 're-opened' %}
+{% elseif change_type == 'change' %}
+    {% set action = 'modified' %}
+{% elseif change_type == 'delete' %}
+    {% set action = 'deleted' %}
+{% elseif change_type == 'move' %}
+    {% set action = 'moved' %}
+{% endif %}
+<p>Your section <a href="{{ domain }}/talks/sections/{{ section_id }}" rel="noopener noreferrer">{{ name }}</a> was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ parent_id }}" rel="noopener noreferrer">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}" rel="noopener noreferrer">{{ editor_name }}</a>.</p>
+{% if changes|length > 0 %}
+    <br>
+    <p>These are the changes:</p>
+    <ul>
+        {% for key, change in changes %}
+            {% if key == 'icon' %}
+                <li>{{ key|capitalize }}: to <img loading="lazy" decoding="async" alt="New icon" src="{{ domain }}{{ change.to }}" class="link_icon">
+            {% else %}
+                <li>{{ key|capitalize }}: from <var>{{ change.from }}</var> to <var>{{ change.to }}</var></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <br>
+{% endif %}
+{% if reason %}
+    <p><q>{{ reason }}</q> was provided as the reason.</p>
+{% else %}
+    <p>No reason was provided.</p>
+{% endif %}

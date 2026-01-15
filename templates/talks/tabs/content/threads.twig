@@ -9,23 +9,94 @@
         {{ include('talks/forms/thread.twig', {'thread_edit': true}) }}
     </tab-content>
 {% endif %}
+{% if 'edit_others_threads' in session_data.permissions and 'mark_private' in session_data.permissions %}
+    <tab-content>
+        <form role="form" id="thread_private_form" name="thread_private_form" autocomplete="off" class="middle">
+            {% if private %}
+                <p>Marking the thread public will make all posts inside it available for public view.</p>
+            {% else %}
+                <p>Marking the thread private will hide it from almost everyone. Only the owner and users with <var>view_private</var> will be able to see it. Note, that while the thread will be removed from sitemaps and thus no longer advertised to search engines, this action has no control on <i>when</i> it will be removed from those engines.</p>
+            {% endif %}
+            {% if author != session_data.user_id and author not in system_users %}
+                {{ include('common/elements/change_reason.twig', {'form_name': 'thread_private_form', 'array_name': 'thread_data'}, with_context = false) }}
+            {% endif %}
+            <input type="hidden" name="verb" value="mark_{% if private %}public{% else %}private{% endif %}" required>
+            <input type="hidden" name="thread_data[thread_id]" value="{{ id }}" required>
+            <input role="button" type="submit" id="thread_private_submit" value="Mark {% if private %}public{% else %}private{% endif %}">
+            <img loading="lazy" decoding="async" id="thread_private_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Marking thread {% if private %}public{% else %}private{% endif %}...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if 'edit_others_threads' in session_data.permissions and 'can_pin' in session_data.permissions %}
+    <tab-content>
+        <form role="form" id="thread_pin_form" name="thread_pin_form" autocomplete="off" class="middle">
+            {% if pinned %}
+                <p>Unpinning this thread will result in it being sorted normally, and potentially reducing its visibility.</p>
+            {% else %}
+                <p>Pinning this thread will result in it being listed as one of the first ones, thus increasing its visibility.</p>
+            {% endif %}
+            {% if author != session_data.user_id and author not in system_users %}
+                {{ include('common/elements/change_reason.twig', {'form_name': 'thread_pin_form', 'array_name': 'thread_data'}, with_context = false) }}
+            {% endif %}
+            <input type="hidden" name="verb" value="{% if pinned %}unpin{% else %}pin{% endif %}" required>
+            <input type="hidden" name="thread_data[thread_id]" value="{{ id }}" required>
+            <input role="button" type="submit" id="thread_pin_submit" value=" {% if pinned %}Unpin{% else %}Pin{% endif %}">
+            <img loading="lazy" decoding="async" id="thread_pin_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if pinned %}Unpinning{% else %}Pinning{% endif %}...">
+        </form>
+    </tab-content>
+{% endif %}
+{% if 'edit_others_threads' in session_data.permissions and 'move_threads' in session_data.permissions %}
+    <tab-content>
+        <form role="form" id="thread_move_form" name="thread_move_form" autocomplete="off" class="middle">
+            <p>Input ID of parent section to which you want to move this thread.</p>
+            <p class="warning">Note, that moving this thread <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
+            <div class="float_label">
+                <input type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="thread_data[parent_id]" id="cur_thread_parent" placeholder="Parent ID">
+                <label for="cur_thread_parent">Parent ID</label>
+            </div>
+            <br>
+            <input type="hidden" name="verb" value="move" required>
+            <input type="hidden" name="thread_data[thread_id]" value="{{ id }}" required>
+            <input role="button" type="submit" id="thread_move_submit" value="Move">
+            <img loading="lazy" decoding="async" id="thread_move_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Moving thread...">
+        </form>
+    </tab-content>
+{% endif %}
 {% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions) or (not owned and 'close_others_threads' in session_data.permissions))) %}
     <tab-content>
-        <p>Pressing below button will {% if closed %}reopen{% else %}close{% endif %} the current thread <b class="warning">{% if closed %}allowing{% else %}preventing{% endif %}</b> users to post in it.</p>
-        <input role="button" type="button" id="close_thread" value="{% if closed %}Open{% else %}Close{% endif %}" data-thread="{{ id }}">
-        <img loading="lazy" decoding="async" id="thread_close_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if closed %}Reopening{% else %}Closing{% endif %} thread...">
+        <form role="form" id="thread_closed_form" name="thread_closed_form" autocomplete="off" class="middle">
+            {% if closed %}
+                <p>Opening this thread will allow others to post in it, if they have appropriate permission.</p>
+            {% else %}
+                <p>Closing this thread will prevent others from posting in it, unless they have <var>post_in_closed</var> permission.</p>
+            {% endif %}
+            {% if author != session_data.user_id and author not in system_users %}
+                {{ include('common/elements/change_reason.twig', {'form_name': 'thread_closed_form', 'array_name': 'thread_data'}, with_context = false) }}
+            {% endif %}
+            <input type="hidden" name="verb" value="{% if closed %}open{% else %}close{% endif %}" required>
+            <input type="hidden" name="thread_data[thread_id]" value="{{ id }}" required>
+            <input role="button" type="submit" id="thread_closed_submit" value="{% if closed %}Open{% else %}Close{% endif %}">
+            <img loading="lazy" decoding="async" id="thread_closed_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if closed %}Opening{% else %}Closing{% endif %} thread...">
+        </form>
     </tab-content>
 {% endif %}
 {% if 'remove_threads' in session_data.permissions %}
     <tab-content>
-        {% if posts.entities %}
+        {% if posts.entities|length > 0 %}
             <p>This thread has posts in it. Removal is not possible.</p>
         {% else %}
-            <p>Pressing below button will delete the current thread completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
-            <p>If thread has a custom banner it will not be removed along with the thread. Instead, it will be removed during routine check for orphaned files, if the banner file is not linked to anything else.</p>
-            <p>If deletion is successful you will be redirected to respective parent section.</p>
-            <input role="button" type="button" id="delete_thread" value="Delete" data-thread="{{ id }}">
-            <img loading="lazy" decoding="async" id="thread_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting thread...">
+            <form role="form" id="thread_delete_form" name="thread_delete_form" autocomplete="off" class="middle">
+                <p>Pressing below button will delete the current thread completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+                <p>If thread has a custom banner it will not be removed along with the thread. Instead, it will be removed during routine check for orphaned files, if the banner file is not linked to anything else.</p>
+                <p>If deletion is successful you will be redirected to respective parent section.</p>
+                {% if author != session_data.user_id and author not in system_users %}
+                    {{ include('common/elements/change_reason.twig', {'form_name': 'thread_delete_form', 'array_name': 'thread_data'}, with_context = false) }}
+                {% endif %}
+                <input type="hidden" name="verb" value="delete" required>
+                <input type="hidden" name="thread_data[thread_id]" value="{{ id }}" required>
+                <input role="button" type="submit" id="delete_thread_submit" value="Delete">
+                <img loading="lazy" decoding="async" id="thread_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting thread...">
+            </form>
         {% endif %}
     </tab-content>
 {% endif %}

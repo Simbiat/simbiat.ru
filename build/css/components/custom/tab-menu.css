@@ -41,6 +41,14 @@ a.tab_name {
 
     &.danger {
         color: var(--color_failure);
+    }
+
+    &.warning {
+        color: var(--color_warning);
+    }
+
+    &.danger,
+    &.warning {
         filter: brightness(0.7);
         font-weight: 100;
 

@@ -102,7 +102,7 @@ class Day
         #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
         if (\is_string($result) && !\is_numeric($result) && !str_contains($result, 'Не удалось скачать файл')) {
             #Send email notification, this most likely means some change in UFEBS form
-            new CronFailure()->save(SystemUsers::Owner->value, ['method' => __METHOD__, 'errors' => $result], true, false, Config::ADMIN_MAIL)->send();
+            (void)new CronFailure()->save(SystemUsers::Owner->value, ['method' => __METHOD__, 'errors' => $result], true, false, Config::ADMIN_MAIL);
         }
         return $result;
     }
