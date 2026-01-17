@@ -1,6 +1,6 @@
 {% if http_error != 'database' and http_error != 'maintenance' %}
     <side-show data-sidebar="login_form">
-        <input class="nav_icon" alt="{% if session_data.user_id != 1 %}User profile{% else %}Login{% endif %}" data-tooltip="{% if session_data.user_id != 1 %}User profile{% else %}Login{% endif %}" type="image" src="{% if session_data.user_id != 1 %}{{ session_data.avatar|default('/assets/images/avatar.svg') }}{% else %}/assets/images/navigation/login.svg{% endif %}">
+        <input class="nav_icon" alt="{% if session_data.user_id != 1 and session_data.username %}User profile{% else %}Login{% endif %}" data-tooltip="{% if session_data.user_id != 1 and session_data.username %}User profile{% else %}Login{% endif %}" type="image" src="{% if session_data.user_id != 1 %}{{ session_data.avatar|default('/assets/images/avatar.svg') }}{% else %}/assets/images/navigation/login.svg{% endif %}">
     </side-show>
 {% else %}
     <side-show data-sidebar="sidebar_no_db">
