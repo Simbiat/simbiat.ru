@@ -1,32 +1,42 @@
-{% if og_image %}
-    {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
-{% endif %}
 {% if not posts.entities %}
     <article class="margin_05rem">
         <p class="middle">Looks like we've got nothing in here</p>
         <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
     </article>
 {% else %}
-    <div class="thread_icons">
-        {% if created > 'now'|date('U') %}
-            <span data-tooltip="Scheduled thread">⏲</span>
-        {% endif %}
-        {% if pinned %}
-            <span data-tooltip="Pinned thread">📌</span>
-        {% endif %}
-        {% if closed %}
-            <span data-tooltip="Closed thread">🔒</span>
-        {% endif %}
-        {% if private %}
-            <span data-tooltip="Private thread">🚷</span>
-        {% endif %}
-        {% if system %}
-            <span data-tooltip="System thread">⚠</span>
-        {% endif %}
-        {% if access_token and get_access_token and access_token == get_access_token %}
-            <p class="warning margin_bottom_2rem">You have accessed this page using an access token. To be able to access the page in the future use this link: <var data-tooltip="Click to copy link">{{ canonical }}?access_token={{ access_token }}</var></p>
-        {% endif %}
-    </div>
+    {% if created > 'now'|date('U') or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
+        <div class="thread_icons margin_bottom_05rem">
+            {% if created > 'now'|date('U') %}
+                <span data-tooltip="Scheduled thread">⏲</span>
+            {% endif %}
+            {% if pinned %}
+                <span data-tooltip="Pinned thread">📌</span>
+            {% endif %}
+            {% if closed %}
+                <span data-tooltip="Closed thread">🔒</span>
+            {% endif %}
+            {% if private %}
+                <span data-tooltip="Private thread">🚷</span>
+            {% endif %}
+            {% if system %}
+                <span data-tooltip="System thread">⚠</span>
+            {% endif %}
+            {% if access_token and get_access_token and access_token == get_access_token %}
+                <p class="warning margin_bottom_2rem">You have accessed this page using an access token. To be able to access the page in the future use this link: <var data-tooltip="Click to copy link">{{ canonical }}?access_token={{ access_token }}</var></p>
+            {% endif %}
+        </div>
+    {% endif %}
+    <tab-menu>
+        <tab-names>
+            {{ include('talks/tabs/names/threads.twig') }}
+        </tab-names>
+        <tab-contents class="hidden">
+            {{ include('talks/tabs/content/threads.twig') }}
+        </tab-contents>
+    </tab-menu>
+    {% if og_image %}
+        {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
+    {% endif %}
     {% for post in posts.entities %}
         {% set post = post|merge({'noname': true, 'allow_reply_to': true}) %}
         {{ include('common/elements/post.twig', post) }}

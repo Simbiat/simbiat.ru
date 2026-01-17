@@ -5,32 +5,14 @@
             <p>Here you can find all forums, blogs and similar sections, that are meant for different types of communication.</p>
         </details>
     </article>
-    <tab-menu>
-        <tab-names>
-            {% if subservice_name == 'section' %}
-                {{ include('talks/tabs/names/sections.twig') }}
-            {% elseif subservice_name == 'thread' %}
-                {{ include('talks/tabs/names/threads.twig') }}
-            {% endif %}
-        </tab-names>
-        <tab-contents class="hidden">
-            {% if subservice_name == 'section' %}
-                {{ include('talks/tabs/content/sections.twig') }}
-            {% elseif subservice_name == 'thread' %}
-                {{ include('talks/tabs/content/threads.twig') }}
-            {% endif %}
-        </tab-contents>
-    </tab-menu>
     {% if subservice_name == 'search' %}
         {{ include('common/elements/search.twig') }}
     {% endif %}
     {% if subservice_name %}
-        {% if subservice_name != 'thread' and subservice_name != 'post' %}
+        {% if subservice_name == 'user' and subservice_name == 'search' %}
             <article class="margin_05rem">
                 {% if subservice_name == 'search' %}
                     {{ include('common/pages/search.twig') }}
-                {% elseif subservice_name == 'section' %}
-                    {{ include('talks/section.twig') }}
                 {% elseif subservice_name == 'user' %}
                     {{ include('talks/user.twig') }}
                 {% endif %}
@@ -38,6 +20,8 @@
         {% else %}
             {% if subservice_name == 'thread' %}
                 {{ include('talks/thread.twig') }}
+            {% elseif subservice_name == 'section' %}
+                {{ include('talks/section.twig') }}
             {% elseif subservice_name == 'post' %}
                 {{ include('talks/post.twig') }}
             {% endif %}

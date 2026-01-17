@@ -1,46 +1,58 @@
-{% if not children.entities and not threads.entities %}
-    <article class="margin_05rem">
-        <p class="middle">Looks like we've got nothing in here</p>
-        <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
-    </article>
-{% else %}
-    <div class="section_icons">
+{% if created > 'now'|date('U') or closed or private %}
+    <div class="section_icons margin_bottom_05rem">
         {% if created > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
         {% if closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
         {% if private %}<span data-tooltip="Private section">🚷</span>{% endif %}
     </div>
 {% endif %}
-{% if children.entities %}
-    <table id="sections_list">
-        <thead>
-            <tr>
-                <td></td>
-                <td>Section name</td>
-                <td>Threads</td>
-                <td>Posts</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for section in children.entities %}
-                {{ include('talks/rows/section.twig', {'section': section, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
-{% if threads.entities %}
-    <table id="threads_list">
-        <thead>
-            <tr>
-                <td>Thread name</td>
-                <td>Created</td>
-                <td>Last post</td>
-                <td>Posts</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for thread in threads.entities %}
-                {{ include('talks/rows/thread.twig', {'thread': thread, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
+<tab-menu>
+    <tab-names>
+        {{ include('talks/tabs/names/sections.twig') }}
+    </tab-names>
+    <tab-contents class="hidden">
+        {{ include('talks/tabs/content/sections.twig') }}
+    </tab-contents>
+</tab-menu>
+<article class="margin_05rem">
+    {% if not children.entities and not threads.entities %}
+        <article class="margin_05rem">
+            <p class="middle">Looks like we've got nothing in here</p>
+            <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
+        </article>
+    {% else %}
+    {% endif %}
+    {% if children.entities %}
+        <table id="sections_list">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td>Section name</td>
+                    <td>Threads</td>
+                    <td>Posts</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for section in children.entities %}
+                    {{ include('talks/rows/section.twig', {'section': section, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if threads.entities %}
+        <table id="threads_list">
+            <thead>
+                <tr>
+                    <td>Thread name</td>
+                    <td>Created</td>
+                    <td>Last post</td>
+                    <td>Posts</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for thread in threads.entities %}
+                    {{ include('talks/rows/thread.twig', {'thread': thread, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</article>
