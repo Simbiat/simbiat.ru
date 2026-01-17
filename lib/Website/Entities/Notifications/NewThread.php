@@ -8,7 +8,7 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 
 /**
- * Test notification
+ * Notification about new thread in a watched section
  */
 final class NewThread extends Notification
 {

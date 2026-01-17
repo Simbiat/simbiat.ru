@@ -8,7 +8,7 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 
 /**
- * Test notification
+ * Notification about database going down
  */
 final class DatabaseDown extends Notification
 {

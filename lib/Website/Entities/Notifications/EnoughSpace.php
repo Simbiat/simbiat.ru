@@ -8,7 +8,7 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 
 /**
- * Test notification
+ * Confirmation, that enough space is now available
  */
 final class EnoughSpace extends Notification
 {

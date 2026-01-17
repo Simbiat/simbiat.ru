@@ -8,7 +8,7 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 
 /**
- * Test notification
+ * Notification about user being locked due to wrong password
  */
 final class UserLock extends Notification
 {

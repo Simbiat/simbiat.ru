@@ -6,7 +6,7 @@ namespace Simbiat\Website\Entities\Notifications;
 use Simbiat\Website\Abstracts\Notification;
 
 /**
- * Test notification
+ * Notification about error.log being found
  */
 final class ErrorLog extends Notification
 {

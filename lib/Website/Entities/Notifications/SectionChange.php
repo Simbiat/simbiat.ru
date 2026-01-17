@@ -8,7 +8,7 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 
 /**
- * Test notification
+ * Notifications about changes to sections for section author
  */
 final class SectionChange extends Notification
 {

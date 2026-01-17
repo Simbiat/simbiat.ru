@@ -8,7 +8,7 @@ use Simbiat\Website\Errors;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 
 /**
- * Test notification
+ * Notification about new reply in a ticket for anonymous users
  */
 final class TicketChange extends Notification
 {
