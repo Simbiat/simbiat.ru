@@ -787,6 +787,9 @@
                                     "headers": {
                                         "Location": [
                                             "https://{http.request.host}{http.request.uri}"
+                                        ],
+                                        "X-Redirect-Source": [
+                                            "Caddy"
                                         ]
                                     },
                                     "status_code": 308
@@ -834,6 +837,9 @@
                                     "headers": {
                                         "Location": [
                                             "https://www.simbiat.eu{http.request.uri}"
+                                        ],
+                                        "X-Redirect-Source": [
+                                            "Caddy"
                                         ]
                                     },
                                     "status_code": 308
@@ -866,6 +872,9 @@
                                     "headers": {
                                         "Location": [
                                             "https://www.simbiat.eu/supops"
+                                        ],
+                                        "X-Redirect-Source": [
+                                            "Caddy"
                                         ]
                                     },
                                     "status_code": 308
@@ -886,14 +895,15 @@
                                 {
                                     "handler": "subroute",
                                     "routes": [
-                                        //No trailing slash
+                                        //No trailing slash with no query
                                         {
                                             "match": [
                                                 {
                                                     "path_regexp": {
                                                         "pattern": "^(.+?)/$",
                                                         "name": "noTrailSlash"
-                                                    }
+                                                    },
+                                                    "query": {}
                                                 }
                                             ],
                                             "handle": [
@@ -902,6 +912,39 @@
                                                     "headers": {
                                                         "Location": [
                                                             "{http.regexp.noTrailSlash.1}"
+                                                        ],
+                                                        "X-Redirect-Source": [
+                                                            "Caddy"
+                                                        ]
+                                                    },
+                                                    "status_code": 308
+                                                }
+                                            ]
+                                        },
+                                        //No trailing slash with a query
+                                        {
+                                            "match": [
+                                                {
+                                                    "path_regexp": {
+                                                        "pattern": "^(.+?)/$",
+                                                        "name": "noTrailSlashQuery"
+                                                    },
+                                                    "not": [
+                                                        {
+                                                            "query": {}
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "handle": [
+                                                {
+                                                    "handler": "static_response",
+                                                    "headers": {
+                                                        "Location": [
+                                                            "{http.regexp.noTrailSlashQuery.1}?{http.request.uri.query}"
+                                                        ],
+                                                        "X-Redirect-Source": [
+                                                            "Caddy"
                                                         ]
                                                     },
                                                     "status_code": 308
@@ -924,6 +967,9 @@
                                                     "headers": {
                                                         "Location": [
                                                             "/sitemap{http.regexp.sitemapFormat.2}"
+                                                        ],
+                                                        "X-Redirect-Source": [
+                                                            "Caddy"
                                                         ]
                                                     },
                                                     "status_code": 308
@@ -946,6 +992,9 @@
                                                     "headers": {
                                                         "Location": [
                                                             "/sitemap/index.xml"
+                                                        ],
+                                                        "X-Redirect-Source": [
+                                                            "Caddy"
                                                         ]
                                                     },
                                                     "status_code": 308
@@ -977,6 +1026,9 @@
                                                     "headers": {
                                                         "Location": [
                                                             "/sitemap/{http.regexp.sitemapNoExtension.1}.xml"
+                                                        ],
+                                                        "X-Redirect-Source": [
+                                                            "Caddy"
                                                         ]
                                                     },
                                                     "status_code": 308
@@ -1704,6 +1756,9 @@
                                                     "headers": {
                                                         "Location": [
                                                             "{http.request.orig_uri.path}/"
+                                                        ],
+                                                        "X-Redirect-Source": [
+                                                            "Caddy"
                                                         ]
                                                     },
                                                     "status_code": 308
@@ -1817,6 +1872,9 @@
                                                         "headers": {
                                                             "Location": [
                                                                 "{http.request.orig_uri.path}/"
+                                                            ],
+                                                            "X-Redirect-Source": [
+                                                                "Caddy"
                                                             ]
                                                         },
                                                         "status_code": 308
