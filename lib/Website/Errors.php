@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use Simbiat\Database\Query;
+
 /**
  * Custom PHP error handler
  */
@@ -104,6 +106,10 @@ final class Errors
         if ($error !== null && $error !== [] && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
             #Determine page link
             self::write(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
+        }
+        #Rollback if there was an open transaction
+        if (Query::$dbh !== null && Query::$dbh->inTransaction()) {
+            Query::$dbh->rollBack();
         }
     }
     
