@@ -5,14 +5,16 @@
         {% if private %}<span data-tooltip="Private section">🚷</span>{% endif %}
     </div>
 {% endif %}
-<tab-menu>
-    <tab-names>
-        {{ include('talks/tabs/names/sections.twig') }}
-    </tab-names>
-    <tab-contents class="hidden">
-        {{ include('talks/tabs/content/sections.twig') }}
-    </tab-contents>
-</tab-menu>
+{% if session_data.user_id != 1 and session_data.username %}
+    <tab-menu>
+        <tab-names>
+            {{ include('talks/tabs/names/sections.twig') }}
+        </tab-names>
+        <tab-contents class="hidden">
+            {{ include('talks/tabs/content/sections.twig') }}
+        </tab-contents>
+    </tab-menu>
+{% endif %}
 <article class="margin_05rem">
     {% if not children.entities and not threads.entities %}
         <article class="margin_05rem">

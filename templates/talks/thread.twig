@@ -26,14 +26,16 @@
             {% endif %}
         </div>
     {% endif %}
-    <tab-menu>
-        <tab-names>
-            {{ include('talks/tabs/names/threads.twig') }}
-        </tab-names>
-        <tab-contents class="hidden">
-            {{ include('talks/tabs/content/threads.twig') }}
-        </tab-contents>
-    </tab-menu>
+    {% if session_data.user_id != 1 and session_data.username %}
+        <tab-menu>
+            <tab-names>
+                {{ include('talks/tabs/names/threads.twig') }}
+            </tab-names>
+            <tab-contents class="hidden">
+                {{ include('talks/tabs/content/threads.twig') }}
+            </tab-contents>
+        </tab-menu>
+    {% endif %}
     {% if og_image %}
         {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
     {% endif %}
