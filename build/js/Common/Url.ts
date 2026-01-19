@@ -151,23 +151,17 @@ function router(): void {
         }
       }
     } else if (path[0] === 'talks') {
-      if (path[1] === 'edit') {
-        if (path[2] === 'sections') {
-          void import('/assets/controllers/talks/sections.js').then((module) => {
-            void new module.Sections();
-          });
-        } else if (path[2] === 'posts') {
-          void import('/assets/controllers/talks/posts.js').then((module) => {
-            void new module.Posts();
-          });
-        }
-      } else if (path[1] === 'sections') {
+      if (path[1] === 'sections') {
         void import('/assets/controllers/talks/sections.js').then((module) => {
           void new module.Sections();
         });
       } else if (path[1] === 'threads') {
         void import('/assets/controllers/talks/threads.js').then((module) => {
           void new module.Threads();
+        });
+      } else if (path[1] === 'posts') {
+        void import('/assets/controllers/talks/posts.js').then((module) => {
+          void new module.Posts();
         });
       }
     } else if (path[0] === 'games') {

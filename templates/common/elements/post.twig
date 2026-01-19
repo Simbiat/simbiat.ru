@@ -59,13 +59,13 @@
             {% endif %}
             {% if post.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled post">⏲</span>{% endif %}
             {% if post.locked %}
-                {% if 'edit_locked' in session_data.permissions and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
-                    <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
+                {% if not history_version and 'edit_locked' in session_data.permissions and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
+                    <a class="button" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>
                 {% endif %}
                 <span class="no_decor" data-tooltip="Locked post">🔒</span>
             {% else %}
-                {% if (owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions) %}
-                    <a class="button" href="/talks/edit/posts/{{ post.id }}" data-tooltip="Edit">✏</a>
+                {% if not history_version and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
+                    <a class="button" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>
                 {% endif %}
             {% endif %}
             {% if post.attachments|length > 0 %}
@@ -94,7 +94,7 @@
             </details>
         {% endif %}
         {% if post.noeditedtime != true %}
-            <div class="post_edited">{% if post.updated > post.created %}{% if 'view_posts_history' in session_data.permissions %}<a href="/talks/edit/posts/{{ post.id }}/#Version_History">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
+            <div class="post_edited">{% if post.updated > post.created %}{% if 'view_posts_history' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}#tab_name_history">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
         {% endif %}
     </section>
 </article>

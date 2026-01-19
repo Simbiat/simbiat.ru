@@ -319,7 +319,12 @@ function anchorInit(anchor: HTMLAnchorElement): void {
   if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
     anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab" loading="lazy" decoding="async">';
     // I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
-  } else if (!empty(anchor.href) && !empty(current_URL.hash) && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
+  } else if (
+    !empty(anchor.href) &&
+    !anchor.getAttribute('href')?.startsWith('#tab_name_') &&
+    !empty(current_URL.hash)
+    && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname
+  ) {
     // Logic to update URL if this is a hash link for current page
     anchor.addEventListener('click', () => {
       if (!window.location.hash.toLowerCase()

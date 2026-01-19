@@ -2341,7 +2341,7 @@
             if (m % 2 == 0 && -g <= p && p <= g && r[h] <= o[h + m])
                 return a(r[h], p + n - i, s, l);
         }
-    } return null; }, l = []; return s(0, e.length, 0, t.length, l), l; })(V(de(t.childNodes), jE), e), t), t), VE = it((() => document.implementation.createHTMLDocument("undo"))), qE = e => { const t = e.serializer.getTempAttrs(), n = Ch(e.getBody(), t); return (e => null !== e.querySelector("iframe"))(n) ? { type: "fragmented", fragments: Y(V(de(n.childNodes), _(qi, jE)), (e => e.length > 0)), content: "", bookmark: null, beforeBookmark: null } : { type: "complete", fragments: null, content: qi(n.innerHTML), bookmark: null, beforeBookmark: null }; }, WE = (e, t, n) => { const o = n ? t.beforeBookmark : t.bookmark; "fragmented" === t.type ? HE(t.fragments, e.getBody()) : e.setContent(t.content, { format: "raw", no_selection: !C(o) || !Rf(o) || !o.isFakeCaret }), o && (e.selection.moveToBookmark(o), e.selection.scrollIntoView()); }, KE = e => "fragmented" === e.type ? e.fragments.join("") : e.content, YE = (e, t) => { const n = mn.fromTag("body", VE()); return Lo(n, KE(t)), q(_r(n, "*[data-mce-bogus]"), Ro), e && q(_r(n, "details[open]"), (e => xo(e, "open"))), Po(n); }, GE = (e, t, n) => !(!t || !n) && (!!((e, t) => KE(e) === KE(t))(t, n) || ((e, t, n) => YE(e, t) === YE(e, n))(e, t, n)), XE = e => 0 === e.get(), QE = (e, t, n) => { XE(n) && (e.typing = t); }, ZE = (e, t) => { e.typing && (QE(e, !1, t), e.add()); }, JE = e => ({ init: { bindEvents: S }, undoManager: { beforeChange: (t, n) => ((e, t, n) => { XE(t) && n.set(dc(e.selection)); })(e, t, n), add: (t, n, o, r, s, a) => ((e, t, n, o, r, s, a) => { const i = qE(e), l = cn.extend(s || {}, i); if (!XE(o) || e.removed)
+    } return null; }, l = []; return s(0, e.length, 0, t.length, l), l; })(V(de(t.childNodes), jE), e), t), t), VE = it((() => document.implementation.createHTMLDocument("undo"))), qE = e => { const t = e.serializer.getTempAttrs(), n = Ch(e.getBody(), t); return (e => null !== e.querySelector(`iframe, ${ks}`))(n) ? { type: "fragmented", fragments: Y(V(de(n.childNodes), _(qi, jE)), (e => e.length > 0)), content: "", bookmark: null, beforeBookmark: null } : { type: "complete", fragments: null, content: qi(n.innerHTML), bookmark: null, beforeBookmark: null }; }, WE = (e, t, n) => { const o = n ? t.beforeBookmark : t.bookmark; "fragmented" === t.type ? HE(t.fragments, e.getBody()) : e.setContent(t.content, { format: "raw", no_selection: !C(o) || !Rf(o) || !o.isFakeCaret }), o && (e.selection.moveToBookmark(o), e.selection.scrollIntoView()); }, KE = e => "fragmented" === e.type ? e.fragments.join("") : e.content, YE = (e, t) => { const n = mn.fromTag("body", VE()); return Lo(n, KE(t)), q(_r(n, "*[data-mce-bogus]"), Ro), e && q(_r(n, "details[open]"), (e => xo(e, "open"))), Po(n); }, GE = (e, t, n) => !(!t || !n) && (!!((e, t) => KE(e) === KE(t))(t, n) || ((e, t, n) => YE(e, t) === YE(e, n))(e, t, n)), XE = e => 0 === e.get(), QE = (e, t, n) => { XE(n) && (e.typing = t); }, ZE = (e, t) => { e.typing && (QE(e, !1, t), e.add()); }, JE = e => ({ init: { bindEvents: S }, undoManager: { beforeChange: (t, n) => ((e, t, n) => { XE(t) && n.set(dc(e.selection)); })(e, t, n), add: (t, n, o, r, s, a) => ((e, t, n, o, r, s, a) => { const i = qE(e), l = cn.extend(s || {}, i); if (!XE(o) || e.removed)
                 return null; const c = t.data[n.get()]; if (e.dispatch("BeforeAddUndo", { level: l, lastLevel: c, originalEvent: a }).isDefaultPrevented())
                 return null; if (c && GE(e.readonly, c, l))
                 return null; t.data[n.get()] && r.get().each((e => { t.data[n.get()].beforeBookmark = e; })); const d = fm(e); if (d && t.data.length > d) {
@@ -3978,7 +3978,7 @@
     } })); }, pL = e => { if (e !== uL) {
         const t = ui.DOM;
         e ? (t.bind(window, "resize", gL), t.bind(window, "scroll", gL)) : (t.unbind(window, "resize", gL), t.unbind(window, "scroll", gL)), uL = e;
-    } }, hL = e => { const t = fL; return fL = Y(fL, (t => e !== t)), yL.activeEditor === e && (yL.activeEditor = fL.length > 0 ? fL[0] : null), yL.focusedEditor === e && (yL.focusedEditor = null), t.length !== fL.length; }, bL = "CSS1Compat" !== document.compatMode, yL = { ...IP, baseURI: null, baseURL: null, defaultOptions: {}, documentBaseURL: null, suffix: null, pageUid: Le(), majorVersion: "8", minorVersion: "3.1", releaseDate: "2025-12-17", i18n: yi, activeEditor: null, focusedEditor: null, setup() { const e = this; let t = "", n = "", o = vw.getDocumentBaseUrl(document.location); /^[^:]+:\/\/\/?[^\/]+\//.test(o) && (o = o.replace(/[\?#].*$/, "").replace(/[\/\\][^\/]+$/, ""), /[\/\\]$/.test(o) || (o += "/")); const r = window.tinymce || window.tinyMCEPreInit; if (r)
+    } }, hL = e => { const t = fL; return fL = Y(fL, (t => e !== t)), yL.activeEditor === e && (yL.activeEditor = fL.length > 0 ? fL[0] : null), yL.focusedEditor === e && (yL.focusedEditor = null), t.length !== fL.length; }, bL = "CSS1Compat" !== document.compatMode, yL = { ...IP, baseURI: null, baseURL: null, defaultOptions: {}, documentBaseURL: null, suffix: null, pageUid: Le(), majorVersion: "8", minorVersion: "3.2", releaseDate: "2026-01-14", i18n: yi, activeEditor: null, focusedEditor: null, setup() { const e = this; let t = "", n = "", o = vw.getDocumentBaseUrl(document.location); /^[^:]+:\/\/\/?[^\/]+\//.test(o) && (o = o.replace(/[\?#].*$/, "").replace(/[\/\\][^\/]+$/, ""), /[\/\\]$/.test(o) || (o += "/")); const r = window.tinymce || window.tinyMCEPreInit; if (r)
             t = r.base || r.baseURL, n = r.suffix;
         else {
             const e = document.getElementsByTagName("script");
@@ -4359,7 +4359,10 @@ function anchorInit(anchor) {
     if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
         anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab" loading="lazy" decoding="async">';
     }
-    else if (!empty(anchor.href) && !empty(current_URL.hash) && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
+    else if (!empty(anchor.href) &&
+        !anchor.getAttribute('href')?.startsWith('#tab_name_') &&
+        !empty(current_URL.hash)
+        && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname) {
         anchor.addEventListener('click', () => {
             if (!window.location.hash.toLowerCase()
                 .startsWith('#gallery=')) {
@@ -5642,19 +5645,7 @@ function router() {
             }
         }
         else if (path[0] === 'talks') {
-            if (path[1] === 'edit') {
-                if (path[2] === 'sections') {
-                    void import('/assets/controllers/talks/sections.js').then((module) => {
-                        void new module.Sections();
-                    });
-                }
-                else if (path[2] === 'posts') {
-                    void import('/assets/controllers/talks/posts.js').then((module) => {
-                        void new module.Posts();
-                    });
-                }
-            }
-            else if (path[1] === 'sections') {
+            if (path[1] === 'sections') {
                 void import('/assets/controllers/talks/sections.js').then((module) => {
                     void new module.Sections();
                 });
@@ -5662,6 +5653,11 @@ function router() {
             else if (path[1] === 'threads') {
                 void import('/assets/controllers/talks/threads.js').then((module) => {
                     void new module.Threads();
+                });
+            }
+            else if (path[1] === 'posts') {
+                void import('/assets/controllers/talks/posts.js').then((module) => {
+                    void new module.Posts();
                 });
             }
         }
@@ -6590,23 +6586,33 @@ class TabMenu extends HTMLElement {
     tabs;
     contents;
     wrapper = null;
-    current_tab = null;
     constructor() {
         super();
         this.wrapper = this.querySelector('tab-contents');
         this.tabs = Array.from(this.querySelectorAll('a.tab_name'));
         this.contents = Array.from(this.querySelectorAll('tab-content'));
-        for (const tab of this.tabs) {
-            if (!tab.hasAttribute('href') || /^#tab_name_.+$/.test(tab.getAttribute('href') ?? '')) {
-                tab.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                    const target = event.target;
-                    this.tabSwitch(target);
-                });
+        if (this.tabs.length > 1) {
+            for (const tab of this.tabs) {
+                if (!tab.hasAttribute('href') || /^#tab_name_.+$/.test(tab.getAttribute('href') ?? '')) {
+                    tab.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        const target = event.target;
+                        this.tabSwitch(target);
+                    });
+                }
             }
         }
-        this.updateCurrentTab();
+        else {
+            this.querySelector('tab-names')
+                ?.classList
+                .add('hidden');
+            if (this.tabs.length === 1) {
+                this.querySelector('tab-names a.tab_name')
+                    ?.classList
+                    .add('active');
+            }
+        }
         if (this.wrapper?.querySelector('.active')) {
             this.wrapper.classList.remove('hidden');
         }
@@ -6623,33 +6629,23 @@ class TabMenu extends HTMLElement {
             }
         }
         this.wrapper?.classList.add('hidden');
-        if (this.current_tab !== tab_index) {
-            target.classList.add('active');
-            if (target.href !== '' && target.href !== window.location.href) {
-                pageRefresh(target.href);
-                return;
+        target.classList.add('active');
+        if (target.href !== '' && target.href !== window.location.href && !target.getAttribute('href')
+            ?.startsWith('#tab_name_')) {
+            pageRefresh(target.href);
+            return;
+        }
+        if (this.contents[tab_index]) {
+            this.contents[tab_index].classList.add('active');
+            const url = new URL(document.location.href);
+            if (/^#tab_name_.+$/.test(url.hash)) {
+                url.hash = '';
             }
-            if (this.contents[tab_index]) {
-                this.contents[tab_index].classList.add('active');
-                const url = new URL(document.location.href);
-                if (/^#tab_name_.+$/.test(url.hash)) {
-                    url.hash = '';
-                }
-                window.history.replaceState(document.title, document.title, url.toString());
-            }
+            window.history.replaceState(document.title, document.title, url.toString());
         }
         if (this.wrapper) {
-            this.updateCurrentTab();
             if (this.wrapper.querySelector('.active')) {
                 this.wrapper.classList.remove('hidden');
-            }
-        }
-    }
-    updateCurrentTab() {
-        this.current_tab = null;
-        for (const [index, tab] of this.tabs.entries()) {
-            if (tab.classList.contains('active')) {
-                this.current_tab = index;
             }
         }
     }

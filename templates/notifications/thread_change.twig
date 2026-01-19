@@ -17,7 +17,7 @@
 {% elseif change_type == 'unpin' %}
     {% set action = 'unpinned' %}
 {% endif %}
-<p>Your section <a href="{{ domain }}/talks/threads/{{ thread_id }}" rel="noopener noreferrer">{{ name }}</a> was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}" rel="noopener noreferrer">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}" rel="noopener noreferrer">{{ editor_name }}</a>.</p>
+<p>Your thread {% if change_type != 'delete' %}<a href="{{ domain }}/talks/threads/{{ thread_id }}" rel="noopener noreferrer">{{ name }}</a>{% else %}<var>{{ name }}</var>{% endif %} was {{ action }} {% if change_type == 'move' %} to <a href="{{ domain }}/talks/sections/{{ section_id }}" rel="noopener noreferrer">{{ parent_name }}</a> {% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}" rel="noopener noreferrer">{{ editor_name }}</a>.</p>
 {% if changes|length > 0 %}
     <br>
     <p>These are the changes:</p>

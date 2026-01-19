@@ -32,7 +32,6 @@ class Talks extends Router
             'threads' => new Thread()->get(array_slice($path, 1)),
             'posts' => new Post()->get(array_slice($path, 1)),
             'users' => new User()->get(array_slice($path, 1)),
-            'edit' => new TalksEdit()->route(array_slice($path, 1)),
         };
     }
 }

@@ -478,10 +478,8 @@ declare class TabMenu extends HTMLElement {
     private readonly tabs;
     private readonly contents;
     private readonly wrapper;
-    private current_tab;
     constructor();
     tabSwitch(target: HTMLAnchorElement): void;
-    private updateCurrentTab;
 }
 declare class Timer extends HTMLElement {
     private readonly interval;

@@ -1,3 +1,13 @@
-<p>Your ticket <var>{{ ticket }}</var> has a new post.</p>
-<p>To view the ticket and update it, if required, just click 👉 <a href="{{ domain }}/talks/threads/{{ thread_id }}?access_token={{ token }}" rel="noopener noreferrer">here</a> 👈</p>
-<p class="warning">Note, that the link above is the only link you can use to access the ticket, unless you register, and it gets updated with every post. We recommend keeping this email for future tracking of progress.</p>
+{% if change_type == 'change' %}
+    {% set action = 'edited' %}
+{% elseif change_type == 'delete' %}
+    {% set action = 'deleted' %}
+{% elseif change_type == 'move' %}
+    {% set action = 'moved' %}
+{% endif %}
+<p>Your post {% if change_type != 'delete' %}<a href="{{ domain }}/talks/posts/{{ post_id }}" rel="noopener noreferrer">{{ post_id }}</a>{% else %}<var>{{ post_id }}</var>{% endif %} was {{ action }} {% if change_type == 'move' or change_type == 'delete' %} {% if change_type == 'move' %}to{% else %}from{% endif %} <a href="{{ domain }}/talks/threads/{{ thread_id }}" rel="noopener noreferrer">{{ parent_name }}</a> {% else %}{% endif %}by <a href="{{ domain }}/talks/users/{{ editor_id }}" rel="noopener noreferrer">{{ editor_name }}</a>.</p>
+{% if reason %}
+    <p><q>{{ reason }}</q> was provided as the reason.</p>
+{% else %}
+    <p>No reason was provided.</p>
+{% endif %}

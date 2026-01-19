@@ -1,0 +1,12 @@
+<a class="tab_name active" id="tab_name_view" href="#tab_name_view">View</a>
+{% if not history_version %}
+    {% if can_edit_post %}
+        <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
+    {% endif %}
+    {% if history and 'view_posts_history' in session_data.permissions %}
+        <a class="tab_name" id="tab_name_history" href="#tab_name_history">History</a>
+    {% endif %}
+    {% if 'remove_posts' in session_data.permissions %}
+        <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
+    {% endif %}
+{% endif %}

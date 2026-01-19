@@ -162,14 +162,6 @@
     margin-inline-start: 0.25rem;
 }
 
-#delete_post_form {
-    border-color: var(--color_failure);
-    border-radius: var(--border_radius);
-    border-style: solid;
-    border-width: var(--border_width);
-    inline-size: 98%;
-}
-
 /* Label for textarea which are replaced by TinyMCE */
 .wrapper_for_tinymce {
     position: relative;
