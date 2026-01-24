@@ -15,6 +15,7 @@ use Dotenv\Dotenv;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Query;
 use Simbiat\Database\Pool;
+use Simbiat\Talks\Enums\SystemUsers;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
 
 /**
@@ -151,8 +152,13 @@ final class Config
             'samesite' => 'Strict',
             'partitioned' => true,
         ];
-        #These are required only if we are outside CLI mode
-        if (!self::$cli) {
+        if (self::$cli) {
+            #Impersonate system user
+            $_SESSION['user_id'] = SystemUsers::System->value;
+            $_SESSION['username'] = 'System user';
+            $_SESSION['permissions'] = ['close_own_threads', 'close_others_threads'];
+        } else {
+            #These are required only if we are outside CLI mode
             $this->canonical();
             $this->nonApiLinks();
         }
