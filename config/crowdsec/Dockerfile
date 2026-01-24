@@ -1,4 +1,4 @@
-FROM crowdsecurity/crowdsec:v1.7.4-debian
+FROM crowdsecurity/crowdsec:v1.7.6-debian
 
 #When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 ARG CRS_RELEASE="4.22.0"
