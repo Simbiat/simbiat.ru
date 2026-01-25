@@ -23,8 +23,8 @@ use Symfony\Component\Cache\Adapter\ApcuAdapter;
  */
 final class Config
 {
-    public static bool $prod = false;
-    public static string $work_dir = '';
+    private(set) static bool $prod = false;
+    private(set) static string $work_dir = '';
     /**
      * Mail for admin of the service
      */
@@ -41,34 +41,34 @@ final class Config
      * Mail to use to send emails from
      */
     public const string FROM = 'noreply@simbiat.eu';
-    public static string $http_host = 'www.simbiat.eu';
-    public static string $base_url = 'https://www.simbiat.eu';
-    public static string $html_cache = '';
-    public static string $security_settings = '';
-    public static string $sitemap = '';
+    private(set) static string $http_host = 'www.simbiat.eu';
+    private(set) static string $base_url = 'https://www.simbiat.eu';
+    private(set) static string $html_cache = '';
+    private(set) static string $security_settings = '';
+    private(set) static string $sitemap = '';
     #Path where JS files are stored
-    public static string $js_dir = '';
+    private(set) static string $js_dir = '';
     #Path where CSS files are stored
-    public static string $css_dir = '';
+    private(set) static string $css_dir = '';
     #Path where images stored
-    public static string $img_dir = '';
+    private(set) static string $img_dir = '';
     #Path to uploaded files
-    public static string $uploaded = '';
+    private(set) static string $uploaded = '';
     #Path to uploaded images
-    public static string $uploaded_img = '';
+    private(set) static string $uploaded_img = '';
     #Folder to dump DDLs to
-    public static string $ddl_dir = '';
+    private(set) static string $ddl_dir = '';
     #GeoIP folder
-    public static string $geoip = '';
+    private(set) static string $geoip = '';
     #Set of general LINKs to be sent both in HTML and in HEADER
-    public static array $links = [];
+    private(set) static array $links = [];
     #FFTracker directories
-    public static string $crests_components = '';
-    public static string $merged_crests_cache = '';
-    public static string $icons = '';
-    public static string $statistics = '';
+    private(set) static string $crests_components = '';
+    private(set) static string $merged_crests_cache = '';
+    private(set) static string $icons = '';
+    private(set) static string $statistics = '';
     #Device detector object
-    public static ?DeviceDetector $device_detector = null;
+    private(set) static ?DeviceDetector $device_detector = null;
     /**
      * List of system group IDs
      */
@@ -81,21 +81,23 @@ final class Config
         'Linked to FF' => 6,
         'Bots' => 7,
     ];
-    #Section ID to be used for contact form
-    public static int $support_section = 26;
-    public static array $argon_settings = [];
+    /**
+     * Section ID to be used for contact form
+     */
+    public const int SUPPORT_SECTION = 26;
+    private(set) static array $argon_settings = [];
     #Flag indicating whether we are in CLI
-    public static bool $cli = false;
+    private(set) static bool $cli = false;
     #Allow access to canonical value of the host
-    public static string $canonical = '';
+    private(set) static string $canonical = '';
     #Track if the DB connection is up
-    public static bool $dbup = false;
+    private(set) static bool $dbup = false;
     #Maintenance flag
-    public static bool $db_update = false;
+    private(set) static bool $db_update = false;
     #Default cookie settings
-    public static array $cookie_settings = [];
+    private(set) static array $cookie_settings = [];
     #Settings shared by PHP and JS code
-    public static array $shared_with_js = [];
+    private(set) static array $shared_with_js = [];
     /**
      * Default permissions list in case $_SESSION fails to start
      */

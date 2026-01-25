@@ -20,17 +20,17 @@ use function in_array;
 class HomePage
 {
     #Cache object
-    public static ?Caching $data_cache = null;
+    private(set) static ?Caching $data_cache = null;
     #HTTP headers object
-    public static ?Headers $headers = NULL;
+    private(set) static ?Headers $headers = NULL;
     #Flag indicating that cached view has been served already
-    public static bool $stale_return = false;
+    private(set) static bool $stale_return = false;
     #HTTP method being used
     public static ?string $method = null;
     #Array that can contain variables indicating common HTTP errors
-    public static ?array $http_error = [];
+    private(set) static ?array $http_error = [];
     #User agent details from
-    public static array $user_agent = [];
+    private(set) static array $user_agent = [];
     
     public function __construct()
     {
@@ -60,6 +60,10 @@ class HomePage
      */
     private function init(): void
     {
+        #\Simbiat\Translit\Unicode::whatIsTransliterated();
+        #\Simbiat\Website\Errors::dump(\Simbiat\Translit\Convert::caseVariations('OSDATA'));
+        #echo 'here';
+        #exit(0);
         try {
             #Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
             if (empty($_SERVER['HTTP_HOST'])) {

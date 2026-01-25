@@ -17,7 +17,7 @@ class Sanitization
 {
     
     #Static sanitizer config for a little bit of performance
-    public static ?HtmlSanitizerConfig $sanitizer_config = null;
+    private(set) static ?HtmlSanitizerConfig $sanitizer_config = null;
     
     /**
      * Sanitize HTML string

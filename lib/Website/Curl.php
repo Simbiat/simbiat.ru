@@ -50,7 +50,7 @@ class Curl
         'Sec-Fetch-Mode: cors',
     ];
     #cURL Handle is static to allow reuse of a single instance, if possible and needed
-    public static \CurlHandle|null|false $curl_handle = null;
+    private(set) static \CurlHandle|null|false $curl_handle = null;
     #Allowed MIME types
     public const array ALLOWED_MIME = [
         #For now only images
