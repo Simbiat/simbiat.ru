@@ -291,8 +291,7 @@ export default defineConfig([
     languageOptions: {
       parser: ts_parser,
       parserOptions: {
-        tsconfigRootDir: '.',
-        project: ['./build/js/Common/tsconfig.json', './build/js/Pages/tsconfig.json'],
+        projectService: true
       },
     },
     rules: {
