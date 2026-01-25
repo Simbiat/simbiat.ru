@@ -173,7 +173,7 @@ export default defineConfig([
       'vars-on-top': 'error',
       '@stylistic/function-paren-newline': ['warn', 'multiline'],
       '@stylistic/newline-per-chained-call': 'warn',
-      '@stylistic/spaced-comment': 'warn',
+      '@stylistic/spaced-comment': 'off',
       'no-void': 'error',
       'default-param-last': 'error',
       'no-invalid-this': 'error',
@@ -225,7 +225,8 @@ export default defineConfig([
       'regexp/unicode-property': 'warn',
       'regexp/grapheme-string-literal': 'warn',
       'sonarjs/arguments-usage': 'error',
-      'sonarjs/arrow-function-convention': 'error',
+      // conflicts with Stylelint rule
+      'sonarjs/arrow-function-convention': 'off',
       'sonarjs/aws-iam-all-resources-accessible': 'error',
       'sonarjs/bool-param-default': 'error',
       'sonarjs/class-prototype': 'error',
@@ -234,10 +235,12 @@ export default defineConfig([
       'sonarjs/elseif-without-else': 'error',
       'sonarjs/file-name-differ-from-class': 'error',
       'sonarjs/max-union-size': 'error',
-      'sonarjs/nested-control-flow': 'error',
+      // not sure if this helps that much, probably would end up excluding cases
+      'sonarjs/nested-control-flow': 'off',
       'sonarjs/no-built-in-override': 'error',
       'sonarjs/no-collapsible-if': 'error',
-      'sonarjs/no-duplicate-string': 'error',
+      // gets triggered by CSS queries, which probably should not be put into a variable
+      'sonarjs/no-duplicate-string': 'off',
       'sonarjs/no-for-in-iterable': 'error',
       'sonarjs/no-function-declaration-in-block': 'error',
       'sonarjs/no-implicit-dependencies': 'error',
@@ -245,7 +248,8 @@ export default defineConfig([
       'sonarjs/no-incorrect-string-concat': 'error',
       'sonarjs/no-nested-incdec': 'error',
       'sonarjs/no-nested-switch': 'error',
-      'sonarjs/no-reference-error': 'error',
+      // no-reference-error returns too many false positives for some reason
+      'sonarjs/no-reference-error': 'off',
       'sonarjs/no-require-or-define': 'error',
       'sonarjs/no-return-type-any': 'error',
       'sonarjs/no-undefined-assignment': 'error',

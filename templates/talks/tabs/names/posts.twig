@@ -6,6 +6,9 @@
     {% if history and 'view_posts_history' in session_data.permissions %}
         <a class="tab_name" id="tab_name_history" href="#tab_name_history">History</a>
     {% endif %}
+    {% if 'move_posts' in session_data.permissions %}
+        <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
+    {% endif %}
     {% if 'remove_posts' in session_data.permissions %}
         <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
     {% endif %}
