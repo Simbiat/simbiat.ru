@@ -134,7 +134,7 @@ class HomePage
                     if (!empty($_SESSION['banned_ip'])) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
                     }
-                    if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^about\/contacts$/ui', Config::$canonical) !== 1) {
+                    if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
                         self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
                     }
                 } else {
