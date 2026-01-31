@@ -1,6 +1,9 @@
-<div class="tiny_align_center">You can contact administration using social media listed below. If you want to report a bug, <a href="https://github.com/Simbiat/simbiat.ru/issues" target="_blank" rel="noopener noreferrer">GitHub</a> is recommended.</div>
+<p>You can contact administration using social media listed below. If you want to report a bug, <a href="https://github.com/Simbiat/simbiat.ru/issues" target="_blank" rel="noopener noreferrer">GitHub</a> is recommended. It is also advised to check our <a href="/talks/sections/8" target="_blank">knowledgebabse</a> or if there are any open tickets with the same problem <a href="/talks/sections/26" target="_blank">here</a> in case there is an answer to your question already.</p>
 {{ include('common/layout/contacts.twig') }}
-<div class="tiny_align_center">Alternatively you can use the contact form. You also <strong>need</strong> to use the form, if you want to appeal a ban.</div>
+{% if session_data.user_id != 1 and not session_data.banned %}
+    <p>Since you are logged in, you can just create a thread <a href="/talks/sections/26">here</a>.</p>
+{% endif %}
+<p>Alternatively you can use the contact form. You also <strong>need</strong> to use the form, if you want to appeal a ban.</p>
 {% if reason == 'Failed to connect to database' %}
     <div class="tiny_align_center error">The contact form relies on database, which is currently unavailable, so the form is not available. Please, try again later.</div>
 {% else %}
