@@ -16,7 +16,6 @@ import no_constructor from 'eslint-plugin-no-constructor-bind'
 import redos from 'eslint-plugin-redos'
 import pii from 'eslint-plugin-pii'
 import xss from 'eslint-plugin-xss'
-import const_case from 'eslint-plugin-const-case'
 import github from 'eslint-plugin-github'
 import plugin_promise from 'eslint-plugin-promise'
 import regexp_plugin from 'eslint-plugin-regexp'
@@ -48,7 +47,6 @@ export default defineConfig([
       'redos': redos,
       'pii': pii,
       'xss': xss,
-      'const-case': const_case,
       'promise': plugin_promise,
     },
     languageOptions: {
@@ -202,7 +200,6 @@ export default defineConfig([
       'pii/no-ip': 'error',
       'pii/no-phone-number': 'error',
       'xss/no-location-href-assign': 'error',
-      'const-case/uppercase': 'error',
       'promise/no-multiple-resolved': 'error',
       'promise/prefer-await-to-callbacks': 'warn',
       'promise/prefer-await-to-then': 'warn',

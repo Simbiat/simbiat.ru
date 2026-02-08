@@ -15,7 +15,6 @@
         "cssnano": "*",
         "eslint": "*",
         "eslint-plugin-compat": "*",
-        "eslint-plugin-const-case": "*",
         "eslint-plugin-de-morgan": "*",
         "eslint-plugin-exception-handling": "*",
         "eslint-plugin-github": "*",
