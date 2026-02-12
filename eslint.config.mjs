@@ -148,7 +148,8 @@ export default defineConfig([
       '@stylistic/no-multi-spaces': 'warn',
       '@stylistic/object-property-newline': 'warn',
       '@stylistic/semi-style': ['warn', 'last'],
-      '@stylistic/indent': 'warn',
+      // Conflicts with PHPStorm settings
+      '@stylistic/indent': 'off',
       '@stylistic/quote-props': 'warn',
       '@stylistic/switch-colon-spacing': ['warn', {
         after: true,

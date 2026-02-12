@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'brick/math' => array(
-            'pretty_version' => '0.14.6',
-            'version' => '0.14.6.0',
-            'reference' => '32498d5e1897e7642c0b961ace2df6d7dc9a3bc3',
+            'pretty_version' => '0.14.8',
+            'version' => '0.14.8.0',
+            'reference' => '63422359a44b7f06cae63c3b429b59e8efcc0629',
             'type' => 'library',
             'install_path' => __DIR__ . '/../brick/math',
             'aliases' => array(),
@@ -244,7 +244,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '7ea2d110787f6807213e27a1255c6b858ad99d89',
+            'reference' => '0827484199a3d7d67a4f0f72637f235ca29b48d6',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(
