@@ -74,7 +74,6 @@ export default defineConfig([
         getWithoutSet: true,
       }],
       'arrow-body-style': ['error', 'always'],
-      'class-methods-use-this': 'error',
       'max-depth': ['error', 4],
       'max-params': ['error', 5],
       'consistent-return': 'error',
@@ -108,9 +107,6 @@ export default defineConfig([
       'no-object-constructor': 'error',
       'no-new-wrappers': 'error',
       'no-octal-escape': 'error',
-      'no-plusplus': ['error', {
-        allowForLoopAfterthoughts: true,
-      }],
       'no-proto': 'error',
       'no-return-assign': 'error',
       'no-script-url': 'error',

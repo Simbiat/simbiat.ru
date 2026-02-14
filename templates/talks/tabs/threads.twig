@@ -1,16 +1,16 @@
 {% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
-    <tab-content>
-        <!--suppress HtmlUnknownAnchorTarget -->
-        <a class="button" href="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</a>
-    </tab-content>
+    <!--suppress HtmlUnknownAnchorTarget -->
+    <a class="tab_name" href="#post_form">New {% if type == 'Forum' %}post{% else %}comment{% endif %}</a>
 {% endif %}
 {% if (owned and 'edit_own_threads' in session_data.permissions) or (not owned and 'edit_others_threads' in session_data.permissions) %}
-    <tab-content>
+    <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
+    <tab-content id="tab_content_edit">
         {{ include('talks/forms/thread.twig', {'thread_edit': true}) }}
     </tab-content>
 {% endif %}
 {% if 'edit_others_threads' in session_data.permissions and 'mark_private' in session_data.permissions %}
-    <tab-content>
+    <a class="tab_name warning" id="tab_name_private" href="#tab_name_private">Mark {% if private %}public{% else %}private{% endif %}</a>
+    <tab-content id="tab_content_private">
         <form role="form" id="thread_private_form" name="thread_private_form" autocomplete="off" class="middle">
             {% if private %}
                 <p>Marking the thread public will make all posts inside it available for public view.</p>
@@ -28,7 +28,8 @@
     </tab-content>
 {% endif %}
 {% if 'edit_others_threads' in session_data.permissions and 'can_pin' in session_data.permissions %}
-    <tab-content>
+    <a class="tab_name warning" id="tab_name_pin" href="#tab_name_pin">{% if pinned %}Unpin{% else %}Pin{% endif %}</a>
+    <tab-content id="tab_content_pin">
         <form role="form" id="thread_pin_form" name="thread_pin_form" autocomplete="off" class="middle">
             {% if pinned %}
                 <p>Unpinning this thread will result in it being sorted normally, and potentially reducing its visibility.</p>
@@ -46,7 +47,8 @@
     </tab-content>
 {% endif %}
 {% if 'edit_others_threads' in session_data.permissions and 'move_threads' in session_data.permissions %}
-    <tab-content>
+    <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
+    <tab-content id="tab_content_move">
         <form role="form" id="thread_move_form" name="thread_move_form" autocomplete="off" class="middle">
             <p>Input ID of parent section to which you want to move this thread.</p>
             <p class="warning">Note, that moving this thread <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
@@ -62,8 +64,11 @@
         </form>
     </tab-content>
 {% endif %}
-{% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions) or (not owned and 'close_others_threads' in session_data.permissions))) %}
-    <tab-content>
+{% if (type == 'Support' and (owned or (not owned and 'close_others_threads' in session_data.permissions))) or
+    (type != 'Support' and ((owned and 'close_own_threads' in session_data.permissions)
+    or (not owned and 'close_others_threads' in session_data.permissions))) %}
+    <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Open{% else %}Close{% endif %}</a>
+    <tab-content id="tab_content_close">
         <form role="form" id="thread_closed_form" name="thread_closed_form" autocomplete="off" class="middle">
             {% if closed %}
                 <p>Opening this thread will allow others to post in it, if they have appropriate permission.</p>
@@ -81,7 +86,8 @@
     </tab-content>
 {% endif %}
 {% if 'remove_threads' in session_data.permissions %}
-    <tab-content>
+    <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
+    <tab-content id="tab_content_delete">
         {% if posts.entities|length > 0 %}
             <p>This thread has posts in it. Removal is not possible.</p>
         {% else %}

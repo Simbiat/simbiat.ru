@@ -1,13 +1,11 @@
 <tab-menu>
-    <tab-names>
-        <a class="tab_name{% if subservice_name == 'profile' %} active{% endif %}" href="/uc/profile">Profile</a>
-        <a class="tab_name{% if subservice_name == 'avatars' %} active{% endif %}" href="/uc/avatars">Avatars</a>
-        <a class="tab_name{% if subservice_name == 'fftracker' %} active{% endif %}" href="/uc/fftracker">FFXIV</a>
-        <a class="tab_name{% if subservice_name == 'emails' %} active{% endif %}" href="/uc/emails">Emails</a>
-        <a class="tab_name{% if subservice_name == 'password' %} active{% endif %}" href="/uc/password">Password</a>
-        <a class="tab_name{% if subservice_name == 'sessions' %} active{% endif %}" href="/uc/sessions">Sessions</a>
-        <a class="tab_name danger{% if subservice_name == 'removal' %} active{% endif %}" href="/uc/removal">Removal</a>
-    </tab-names>
+    <a class="tab_name{% if subservice_name == 'profile' %} active{% endif %}" href="/uc/profile">Profile</a>
+    <a class="tab_name{% if subservice_name == 'avatars' %} active{% endif %}" href="/uc/avatars">Avatars</a>
+    <a class="tab_name{% if subservice_name == 'fftracker' %} active{% endif %}" href="/uc/fftracker">FFXIV</a>
+    <a class="tab_name{% if subservice_name == 'emails' %} active{% endif %}" href="/uc/emails">Emails</a>
+    <a class="tab_name{% if subservice_name == 'password' %} active{% endif %}" href="/uc/password">Password</a>
+    <a class="tab_name{% if subservice_name == 'sessions' %} active{% endif %}" href="/uc/sessions">Sessions</a>
+    <a class="tab_name danger{% if subservice_name == 'removal' %} active{% endif %}" href="/uc/removal">Removal</a>
 </tab-menu>
 <section>
     {% if subservice_name %}

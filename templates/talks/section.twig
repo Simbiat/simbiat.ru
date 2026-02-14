@@ -7,12 +7,7 @@
 {% endif %}
 {% if session_data.user_id != 1 and session_data.username %}
     <tab-menu>
-        <tab-names>
-            {{ include('talks/tabs/names/sections.twig') }}
-        </tab-names>
-        <tab-contents class="hidden">
-            {{ include('talks/tabs/content/sections.twig') }}
-        </tab-contents>
+        {{ include('talks/tabs/sections.twig') }}
     </tab-menu>
 {% endif %}
 <article class="margin_05rem">

@@ -1,8 +1,66 @@
 <tab-menu>
-    <tab-names>
-        {{ include('talks/tabs/names/posts.twig') }}
-    </tab-names>
-    <tab-contents class="hidden">
-        {{ include('talks/tabs/content/posts.twig') }}
-    </tab-contents>
+    <a class="tab_name active" id="tab_name_view" href="#tab_name_view">View</a>
+    <tab-content class="active" id="tab_content_view">
+        {{ include('common/elements/post.twig', post) }}
+    </tab-content>
+    {% if not history_version %}
+        {% if can_edit_post %}
+            <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
+            <tab-content id="tab_content_edit">
+                {{ include('talks/forms/post.twig', {'verb': 'edit', 'new_thread': false, 'thread_id': thread_id, 'post_id': id, 'text': text, 'permissions': session_data.permissions, 'author': author, 'current_user': session_data.user_id}, with_context = false) }}
+            </tab-content>
+        {% endif %}
+        {% if history and 'view_posts_history' in session_data.permissions %}
+            <a class="tab_name" id="tab_name_history" href="#tab_name_history">History</a>
+            <tab-content id="tab_content_history">
+                {% if history|length > 0 %}
+                    <p>List of versions below does not include any versions with the same text as current one.</p>
+                    <ol class="post_history" reversed>
+                        {% for version, selected in history %}
+                            <li>
+                                <a href="/talks/posts/{{ post.id }}/{{ version }}" target="_blank">{{ timeTag(version, "d/m/Y H:i") }}</a>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p>There have been no edits to the text of this post.</p>
+                {% endif %}
+            </tab-content>
+        {% endif %}
+        {% if 'move_posts' in session_data.permissions %}
+            <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
+            <tab-content id="tab_content_move">
+                <form role="form" id="post_move_form" name="post_move_form" autocomplete="off" class="middle">
+                    <p>Input ID of parent thread to which you want to move this post.</p>
+                    <p class="warning">Note, that moving this post <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
+                    <div class="float_label">
+                        <input type="number" inputmode="decimal" min="1" value="{{ thread_id }}" step="1" aria-required="true" required name="post_data[thread_id]" id="cur_post_parent" placeholder="Parent ID">
+                        <label for="cur_post_parent">Parent ID</label>
+                    </div>
+                    <br>
+                    <input type="hidden" name="verb" value="move" required>
+                    <input type="hidden" name="post_data[post_id]" value="{{ id }}" required>
+                    <input role="button" type="submit" id="post_move_submit" value="Move">
+                    <img loading="lazy" decoding="async" id="post_move_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Moving post...">
+                </form>
+            </tab-content>
+        {% endif %}
+        {% if 'remove_posts' in session_data.permissions %}
+            <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
+            <tab-content id="tab_content_delete">
+                <form role="form" id="delete_post_form" name="delete_post_form" autocomplete="off">
+                    <p>Pressing below button will delete the current post completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+                    <p>If post has attachments they will not be removed along with the post. Instead, they will be removed during routine check for orphaned files, if they are not linked to anything else.</p>
+                    <p>If deletion is successful you will be redirected to respective parent thread.</p>
+                    {% if author != session_data.user_id and author not in system_users %}
+                        {{ include('common/elements/change_reason.twig', {'form_name': 'delete_post_form', 'array_name': 'post_data', 'placeholder': 'Deletion reason'}, with_context = false) }}
+                    {% endif %}
+                    <input type="hidden" name="verb" value="delete" required>
+                    <input type="hidden" name="post_data[post_id]" value="{{ post.id }}" required>
+                    <input role="button" type="submit" id="delete_post" value="Delete">
+                    <img loading="lazy" decoding="async" id="post_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting post...">
+                </form>
+            </tab-content>
+        {% endif %}
+    {% endif %}
 </tab-menu>

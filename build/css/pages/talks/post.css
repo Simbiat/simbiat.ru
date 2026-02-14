@@ -176,3 +176,15 @@
         z-index: 2;
     }
 }
+
+/* Remove standard background for tab content and match the width */
+#tab_content_view {
+    background-color: inherit;
+    border: none;
+    margin-block-start: -.5rem;
+    margin-inline: 0;
+
+    & > .post {
+        margin-inline: calc(var(--border_radius) * 2.25 * -.75);
+    }
+}

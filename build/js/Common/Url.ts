@@ -1,6 +1,6 @@
 //Remove certain GET parameters, to avoid them being saved to favourites or shared
 function cleanGET(): void {
-  const url = new URL(document.location.href);
+  const url = new URL(document.location.href, window.location.origin);
   //Flag for resetting cache on server side
   url.searchParams.delete('cache_reset');
   //Flag used to attempt to force proper reload (with cache clear) of a page.
@@ -32,7 +32,7 @@ async function urlClean(event: ClipboardEvent): Promise<void> {
 
 function urlCleanString(url: string): string {
   const params_to_delete = sharedWithPHP?.tracking_query_parameters || [];
-  const url_new = new URL(url);
+  const url_new = new URL(url, window.location.origin);
   for (const param of params_to_delete) {
     url_new.searchParams.delete(param);
   }
@@ -41,14 +41,14 @@ function urlCleanString(url: string): string {
 
 //Special processing for special hash links
 function hashCheck(): void {
-  const url = new URL(document.location.href);
+  const url = new URL(document.location.href, window.location.origin);
   const hash = url.hash;
   const gallery = document.querySelector('gallery-overlay');
-  const gallery_link = /#gallery=\d+/ui;
-  const tab_name = /#tab_name_.+/ui;
+  const gallery_link = /#gallery=\d+/iv;
+  const tab_name = /#tab_name_.+/iv;
   if (gallery) {
     if (gallery_link.test(hash)) {
-      const image_id = Number(hash.replace(/(?<hash>#gallery=)(?<number>\d+)/ui, '$<number>'));
+      const image_id = Number(hash.replace(/#gallery=(?<number>\d+)/iv, '$<number>'));
       if (image_id) {
         if ((gallery as Gallery).images[image_id - 1]) {
           (gallery as Gallery).current = image_id - 1;
@@ -62,14 +62,18 @@ function hashCheck(): void {
     }
   }
   if (tab_name.test(hash)) {
-    const tab_name_id = hash.replace(/(?<hash>#)(?<id>tab_name_.+)/ui, '$<id>');
+    const tab_name_id = hash.replace(/#(?<id>tab_name_.+)/iv, '$<id>');
     const tab_element = document.getElementById(tab_name_id);
     if (tab_element && tab_element.tagName.toLowerCase() === 'a') {
       //Open respective tab
-      const tab_menu = tab_element.parentElement?.parentElement;
+      const tab_menu = tab_element.parentElement;
       if (tab_menu && tab_menu.tagName.toLowerCase() === 'tab-menu') {
         (tab_menu as TabMenu).tabSwitch(tab_element as HTMLAnchorElement);
       }
+    } else {
+      url.hash = '';
+      window.history.replaceState(document.title, document.title, url.toString());
+      // pageRefresh(url.toString());
     }
   }
 }

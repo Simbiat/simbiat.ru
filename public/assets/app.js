@@ -5499,7 +5499,7 @@ function saveTinyMCE(id, textareaOnly = false) {
     }
 }
 function cleanGET() {
-    const url = new URL(document.location.href);
+    const url = new URL(document.location.href, window.location.origin);
     url.searchParams.delete('cache_reset');
     url.searchParams.delete('force_reload');
     url.searchParams.delete('access_token');
@@ -5521,21 +5521,21 @@ async function urlClean(event) {
 }
 function urlCleanString(url) {
     const params_to_delete = sharedWithPHP?.tracking_query_parameters || [];
-    const url_new = new URL(url);
+    const url_new = new URL(url, window.location.origin);
     for (const param of params_to_delete) {
         url_new.searchParams.delete(param);
     }
     return decodeURI(url_new.toString());
 }
 function hashCheck() {
-    const url = new URL(document.location.href);
+    const url = new URL(document.location.href, window.location.origin);
     const hash = url.hash;
     const gallery = document.querySelector('gallery-overlay');
-    const gallery_link = /#gallery=\d+/ui;
-    const tab_name = /#tab_name_.+/ui;
+    const gallery_link = /#gallery=\d+/iv;
+    const tab_name = /#tab_name_.+/iv;
     if (gallery) {
         if (gallery_link.test(hash)) {
-            const image_id = Number(hash.replace(/(?<hash>#gallery=)(?<number>\d+)/ui, '$<number>'));
+            const image_id = Number(hash.replace(/#gallery=(?<number>\d+)/iv, '$<number>'));
             if (image_id) {
                 if (gallery.images[image_id - 1]) {
                     gallery.current = image_id - 1;
@@ -5551,13 +5551,17 @@ function hashCheck() {
         }
     }
     if (tab_name.test(hash)) {
-        const tab_name_id = hash.replace(/(?<hash>#)(?<id>tab_name_.+)/ui, '$<id>');
+        const tab_name_id = hash.replace(/#(?<id>tab_name_.+)/iv, '$<id>');
         const tab_element = document.getElementById(tab_name_id);
         if (tab_element && tab_element.tagName.toLowerCase() === 'a') {
-            const tab_menu = tab_element.parentElement?.parentElement;
+            const tab_menu = tab_element.parentElement;
             if (tab_menu && tab_menu.tagName.toLowerCase() === 'tab-menu') {
                 tab_menu.tabSwitch(tab_element);
             }
+        }
+        else {
+            url.hash = '';
+            window.history.replaceState(document.title, document.title, url.toString());
         }
     }
 }
@@ -6585,36 +6589,48 @@ class SnackbarClose extends HTMLElement {
 class TabMenu extends HTMLElement {
     tabs;
     contents;
-    wrapper = null;
+    current_tab = 0;
     constructor() {
         super();
-        this.wrapper = this.querySelector('tab-contents');
-        this.tabs = Array.from(this.querySelectorAll('a.tab_name'));
-        this.contents = Array.from(this.querySelectorAll('tab-content'));
-        if (this.tabs.length > 1) {
-            for (const tab of this.tabs) {
-                if (!tab.hasAttribute('href') || /^#tab_name_.+$/.test(tab.getAttribute('href') ?? '')) {
-                    tab.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        event.stopImmediatePropagation();
-                        const target = event.target;
-                        this.tabSwitch(target);
-                    });
-                }
+        this.setAttribute('role', 'tablist');
+        this.tabs = Array.from(this.querySelectorAll('a.tab_name[id^=tab_name_][href^=\\#tab_name_]'));
+        this.contents = Array.from(this.querySelectorAll('tab-content[id^=tab_content_]'));
+        let current_tab = 0;
+        for (const tab of this.tabs) {
+            tab.setAttribute('role', 'tab');
+            tab.setAttribute('aria-controls', tab.id.replace('tab_name_', 'tab_content_'));
+            if (tab.classList.contains('active')) {
+                this.current_tab = current_tab;
+                this.showTab(tab);
+            }
+            else {
+                this.hideTab(tab);
+            }
+            current_tab++;
+        }
+        for (const content of this.contents) {
+            content.setAttribute('role', 'tabpanel');
+            content.setAttribute('aria-labelledby', content.id.replace('tab_content_', 'tab_name_'));
+            if (content.classList.contains('active')) {
+                this.showContent(content);
+            }
+            else {
+                this.hideContent(content);
             }
         }
-        else {
-            this.querySelector('tab-names')
-                ?.classList
-                .add('hidden');
-            if (this.tabs.length === 1) {
-                this.querySelector('tab-names a.tab_name')
-                    ?.classList
-                    .add('active');
-            }
-        }
-        if (this.wrapper?.querySelector('.active')) {
-            this.wrapper.classList.remove('hidden');
+        this.addEventListener('keydown', (event) => {
+            this.keyboardNavigation(event);
+        });
+        for (const tab of this.tabs) {
+            tab.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const target = event.target;
+                this.tabSwitch(target);
+            });
+            tab.addEventListener('keydown', (event) => {
+                this.keyboardNavigation(event);
+            });
         }
     }
     tabSwitch(target) {
@@ -6623,30 +6639,84 @@ class TabMenu extends HTMLElement {
             if (tab === target) {
                 tab_index = index;
             }
-            tab.classList.remove('active');
+            this.hideTab(tab);
             if (this.contents[index]) {
-                this.contents[index].classList.remove('active');
+                this.hideContent(this.contents[index]);
             }
         }
-        this.wrapper?.classList.add('hidden');
-        target.classList.add('active');
-        if (target.href !== '' && target.href !== window.location.href && !target.getAttribute('href')
-            ?.startsWith('#tab_name_')) {
+        this.showTab(target);
+        target.focus();
+        if (target.href !== '' && target.href !== window.location.href && ((target.getAttribute('href')
+            ?.startsWith('#tab_name_')) === false)) {
             pageRefresh(target.href);
             return;
         }
-        if (this.contents[tab_index]) {
-            this.contents[tab_index].classList.add('active');
-            const url = new URL(document.location.href);
-            if (/^#tab_name_.+$/.test(url.hash)) {
-                url.hash = '';
+        const tab_content = this.contents[tab_index];
+        if (tab_content) {
+            this.showContent(tab_content);
+            const url = new URL(document.location.href, window.location.origin);
+            if (((target.getAttribute('href')
+                ?.startsWith('#tab_name_')) === true)) {
+                url.hash = target.getAttribute('href');
             }
             window.history.replaceState(document.title, document.title, url.toString());
+            this.current_tab = tab_index;
         }
-        if (this.wrapper) {
-            if (this.wrapper.querySelector('.active')) {
-                this.wrapper.classList.remove('hidden');
-            }
+    }
+    showTab(target) {
+        target.classList.add('active');
+        target.setAttribute('aria-selected', 'true');
+        target.setAttribute('tab-index', '-1');
+    }
+    hideTab(target) {
+        target.classList.remove('active');
+        target.setAttribute('aria-selected', 'false');
+        target.setAttribute('tab-index', '0');
+    }
+    showContent(target) {
+        target.classList.add('active');
+        target.setAttribute('aria-hidden', 'false');
+        target.setAttribute('tab-index', '0');
+    }
+    hideContent(target) {
+        target.classList.remove('active');
+        target.setAttribute('aria-hidden', 'true');
+        target.setAttribute('tab-index', '-1');
+    }
+    keyboardNavigation(event) {
+        let flag = false;
+        let new_tab = 0;
+        switch (event.key) {
+            case 'ArrowLeft':
+                if (this.current_tab === 0) {
+                    new_tab = -1;
+                }
+                else {
+                    new_tab = this.current_tab - 1;
+                }
+                flag = true;
+                break;
+            case 'ArrowRight':
+                if (this.current_tab !== this.tabs.length - 1) {
+                    new_tab = this.current_tab + 1;
+                }
+                flag = true;
+                break;
+            case 'Home':
+                flag = true;
+                break;
+            case 'End':
+                new_tab = -1;
+                flag = true;
+                break;
+            default:
+                break;
+        }
+        const tab = this.tabs.at(new_tab);
+        if (flag && tab) {
+            event.stopPropagation();
+            event.preventDefault();
+            this.tabSwitch(tab);
         }
     }
 }
