@@ -23,7 +23,7 @@ samp {
     max-inline-size: calc(100% - 1rem);
     min-block-size: 2.5rem;
     overflow-wrap: break-word;
-    padding: 0.2rem;
+    padding: 0.5rem;
     position: relative;
     white-space: pre-wrap;
 
