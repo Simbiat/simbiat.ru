@@ -47,11 +47,11 @@
                         </article>
                     {% else %}
                         {% if pagination %}
-                            {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
+                            {{ pagination(pagination.current, pagination.total, pagination.prefix) }}
                         {% endif %}
                         {{ include('common/layout/services.twig') }}
                         {% if pagination %}
-                            {{ pagination(pagination.current, pagination.total, prefix=pagination.prefix) }}
+                            {{ pagination(pagination.current, pagination.total, pagination.prefix) }}
                         {% endif %}
                     {% endif %}
                 </main>

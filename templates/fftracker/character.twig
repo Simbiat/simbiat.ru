@@ -1,129 +1,136 @@
-<section class="ff_char_page">
-    <section class="ff_char_block">
-        {% if not character.avatar_id or character.avatar_id == 'defaultf' %}
-            <img loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="/assets/images/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
-        {% else %}
-            <img loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatar_id }}l0.jpg">
-        {% endif %}
-    </section>
-    <section class="ff_char_block">
-        {% if not character.dates.hidden %}
-            <samp class="warning regular_text">If you own this character account, and do not want to share the data, read <a href="/talks/threads/1657" target="_blank">this article</a> to learn how to hide it.</samp>
-        {% endif %}
-        <h2>General</h2>
-        {% if character.owned.id and session_data.user_id == character.owned.id %}
-            <p>
-                You own this character. Press this button to force update the data.
-            </p>
-            <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update" src="/assets/images/refresh.svg">
-        {% endif %}
-        {% if character.dates.hidden %}
-            <p class="warning">
-                Requested <a href="/talks/threads/1657" target="_blank">anonymity</a> on {{ timeTag(character.dates.hidden, "d/m/Y") }}
-            </p>
-        {% else %}
-            <p>
-                <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.{% if character.biology.old_names|length > 0 %} Had also been known under <i>{{ character.biology.old_names|length }}</i> other name{% if character.biology.old_names|length > 1 %}s{% endif %}: {% for old_name in character.biology.old_names %}{{ old_name }}{% if loop.last %}.{% else %}, {% endif %}{% endfor %}{% endif %}
-            </p>
-            <p>
-                Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="link_icon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} <span class="failure">🪦 Died on {{ timeTag(character.dates.deleted, "d/m/Y") }}.</span>{% endif %}
-            </p>
-            <p>
-                {% if character.biology.incarnations %}
-                    Other known incarnations:
-                    {% for incarnation in character.biology.incarnations %}
-                        {% if loop.last and character.biology.incarnations|length > 1 %}and {% endif %}{% if character.biology.gender == 1 %}male{% else %}female{% endif %} {{ incarnation.race }} of {{ incarnation.clan }}{% if not loop.last %}, {% else %}.{% endif %}
-                    {% endfor %}
-                {% endif %}
-            </p>
-            <p>
-                {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="link_icon" src="/assets/images/fftracker/cities/{{ character.location.city_id }}.webp"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.data_center }}{% endif %}.
-                {% if character.location.previous_servers %}
-                    Has also been seen on
-                    {% for server in character.location.previous_servers %}
-                        {% if loop.last and character.location.previous_servers|length > 1 %}and {% endif %}{{ server.server }} of {{ server.data_center }}{% if not loop.last %}, {% else %}.{% endif %}
-                    {% endfor %}
-                {% endif %}
-            </p>
-            {% if character.pvp %}
-                <p>Participated in <i class="failure">{{ character.pvp }}</i> ⚔ battles.</p>
-            {% endif %}
-            {% if character.grand_company.name %}
-                <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grand_company.rank }}" class="link_icon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp"><i>{{ character.grand_company.rank }}</i> in <i>{{ character.grand_company.name }}</i> Grand company.</p>
-            {% endif %}
-            {% if not character.dates.deleted %}
-                <p>
-                    Last interview was conducted on {{ timeTag(character.dates.updated, "d/m/Y H:i") }}.
-                    {% if character.biography %}
-                        This is what adventurer had to say during it:
-                    {% endif %}
-                </p>
-            {% endif %}
-            {% if character.biography %}
-                <blockquote class="w100pc">{{ sanitize(character.biography) }}</blockquote>
-            {% endif %}
-        {% endif %}
-    </section>
-    {% if not character.dates.hidden %}
-        {% if character.groups|length > 0 %}
+<tab-menu>
+    <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
+    <tab-content id="tab_content_general" class="active">
+        <section class="ff_char_page">
             <section class="ff_char_block">
-                <h2>Affiliations</h2>
+                {% if not character.avatar_id or character.avatar_id == 'defaultf' %}
+                    <img loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="/assets/images/fftracker/silhouettes/{% if character.biology.gender == 1 %}male{% else %}female{% endif %}{{ character.biology.race }}.webp">
+                {% else %}
+                    <img loading="lazy" decoding="async" class="gallery_zoom{% if character.owned.id and session_data.user_id == character.owned.id %} ff_owned{% endif %}" id="ff_portrait_img" alt="{{ character.name }}" src="https://img2.finalfantasyxiv.com/f/{{ character.avatar_id }}l0.jpg">
+                {% endif %}
+            </section>
+            <section class="ff_char_block">
+                {% if not character.dates.hidden %}
+                    <samp class="warning regular_text">If you own this character account, and do not want to share the data, read <a href="/talks/threads/1657" target="_blank">this article</a> to learn how to hide it.</samp>
+                {% endif %}
+                <h2>General</h2>
+                {% if character.owned.id and session_data.user_id == character.owned.id %}
+                    <p>
+                        You own this character. Press this button to force update the data.
+                    </p>
+                    <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update" src="/assets/images/refresh.svg">
+                {% endif %}
+                {% if character.dates.hidden %}
+                    <p class="warning">
+                        Requested <a href="/talks/threads/1657" target="_blank">anonymity</a> on {{ timeTag(character.dates.hidden, "d/m/Y") }}
+                    </p>
+                {% else %}
+                    <p>
+                        <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.
+                    </p>
+                    <p>
+                        Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="link_icon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} <span class="failure">🪦 Died on {{ timeTag(character.dates.deleted, "d/m/Y") }}.</span>{% endif %}
+                    </p>
+                    <p>
+                        {% if character.dates.deleted %}Was{% else %}Currently is{% endif %} resident of <img loading="lazy" decoding="async" alt="{{ character.location.city }}" class="link_icon" src="/assets/images/fftracker/cities/{{ character.location.city_id }}.webp"><i>{{ character.location.city }}</i>, <i>{{ character.location.region }}</i>{% if character.location.server %} on {{ character.location.server }} of {{ character.location.data_center }}{% endif %}.
+                    </p>
+                    {% if character.pvp %}
+                        <p>Participated in <i class="failure">{{ character.pvp }}</i> ⚔ battles.</p>
+                    {% endif %}
+                    {% if character.grand_company.name %}
+                        <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grand_company.rank }}" class="link_icon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp"><i>{{ character.grand_company.rank }}</i> in <i>{{ character.grand_company.name }}</i> Grand company.</p>
+                    {% endif %}
+                    {% if not character.dates.deleted %}
+                        <p>
+                            Last interview was conducted on {{ timeTag(character.dates.updated, "d/m/Y H:i") }}.
+                            {% if character.biography %}
+                                This is what adventurer had to say during it:
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                    {% if character.biography %}
+                        <blockquote class="w100pc">{{ sanitize(character.biography) }}</blockquote>
+                    {% endif %}
+                {% endif %}
+            </section>
+        </section>
+    </tab-content>
+    {% if not character.dates.hidden %}
+        {% if character.location.previous_servers or character.biology.incarnations or character.biology.old_names|length > 0 %}
+            <a class="tab_name" id="tab_name_history" href="#tab_name_history">History</a>
+            <tab-content id="tab_content_history">
+                {% if character.location.previous_servers %}
+                    <p>Has also been seen on:
+                        {% for server in character.location.previous_servers %}
+                            {% if loop.last and character.location.previous_servers|length > 1 %}and {% endif %}{{ server.server }} of {{ server.data_center }}{% if not loop.last %}, {% else %}.{% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                {% if character.biology.incarnations %}
+                    <p>Other known incarnations:
+                        {% for incarnation in character.biology.incarnations %}
+                            {% if loop.last and character.biology.incarnations|length > 1 %}and {% endif %}{% if character.biology.gender == 1 %}male{% else %}female{% endif %} {{ incarnation.race }} of {{ incarnation.clan }}{% if not loop.last %}, {% else %}.{% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                {% if character.biology.old_names|length > 0 %}
+                    <p>Had also been known under <i>{{ character.biology.old_names|length }}</i> other name{% if character.biology.old_names|length > 1 %}s{% endif %}:
+                        {% for old_name in character.biology.old_names %}
+                            {{ old_name }}{% if loop.last %}.{% else %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            </tab-content>
+        {% endif %}
+        {% if character.groups|length > 0 %}
+            <a class="tab_name" id="tab_name_groups" href="#tab_name_groups">Groups</a>
+            <tab-content id="tab_content_groups">
                 {% if character.groups %}
-                    <div class="ff_groups">
+                    <ul class="search_results">
                         {% for entity in character.groups %}
                             <div>
                                 {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
                                 {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
                             </div>
                         {% endfor %}
-                    </div>
+                    </ul>
                 {% endif %}
-            </section>
+            </tab-content>
         {% endif %}
-        {% if character.friends|length > 0 %}
-            <section class="ff_char_block">
-                <h2>Friends</h2>
-                {% if character.friends %}
-                    <div class="ff_groups">
-                        {% for entity in character.friends %}
-                            <div>
-                                {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
-                                {{ include('common/elements/entitycard.twig', entity) }}
-                            </div>
-                        {% endfor %}
-                    </div>
+        {% if character.friends|length > 0 or character.following|length > 0 %}
+            <a class="tab_name" id="tab_name_connections" href="#tab_name_connections">Connections</a>
+            <tab-content id="tab_content_connections">
+                {% if character.friends|length > 0 %}
+                    <h2>Friends</h2>
+                    {% if character.friends %}
+                        <ul class="search_results">
+                            {% for entity in character.friends %}
+                                <div>
+                                    {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                    {{ include('common/elements/entitycard.twig', entity) }}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 {% endif %}
-            </section>
-        {% endif %}
-        {% if character.following|length > 0 %}
-            <section class="ff_char_block">
-                <h2>Following</h2>
-                {% if character.following %}
-                    <div class="ff_groups">
-                        {% for entity in character.following %}
-                            <div>
-                                {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
-                                {{ include('common/elements/entitycard.twig', entity) }}
-                            </div>
-                        {% endfor %}
-                    </div>
+                {% if character.following|length > 0 %}
+                    <h2>Following</h2>
+                    {% if character.following %}
+                        <ul class="search_results">
+                            {% for entity in character.following %}
+                                <div>
+                                    {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                    {{ include('common/elements/entitycard.twig', entity) }}
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 {% endif %}
-            </section>
-        {% endif %}
-        {% if character.achievements|length > 0 %}
-            <section class="ff_char_block">
-                <h2>Last achievements</h2>
-                <ul class="search_results">
-                    {% for entity in character.achievements|slice(0,10) %}
-                        <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
-                    {% endfor %}
-                </ul>
-                <div>Total points: {{ character.achievement_points }}</div>
-            </section>
+            </tab-content>
         {% endif %}
         {% if character.jobs|length > 0 %}
-            <section class="ff_char_block">
-                <h2>Job affinities</h2>
+            <a class="tab_name" id="tab_name_jobs" href="#tab_name_jobs">Jobs</a>
+            <tab-content id="tab_content_jobs">
                 <table>
                     <thead>
                         <tr>
@@ -152,7 +159,18 @@
                         {% endif %}
                     {% endfor %}
                 </table>
-            </section>
+            </tab-content>
+        {% endif %}
+        {% if character.achievements|length > 0 %}
+            <a class="tab_name" id="tab_name_achievements" href="#tab_name_achievements">Achievements</a>
+            <tab-content id="tab_content_achievements">
+                <p>Total achievement points: {{ character.achievement_points }}</p>
+                <ul class="search_results">
+                    {% for entity in character.achievements %}
+                        <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                    {% endfor %}
+                </ul>
+            </tab-content>
         {% endif %}
     {% endif %}
-</section>
+</tab-menu>

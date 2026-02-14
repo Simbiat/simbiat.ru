@@ -28,41 +28,43 @@
         {% if subservice_name == 'statistics' %}
             {{ include('fftracker/statistics.twig') }}
         {% else %}
-            <article class="margin_05rem">
-                {% if subservice_name == 'search' %}
-                    {{ include('common/pages/search.twig') }}
-                {% elseif subservice_name == 'characters' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'freecompanies' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'pvpteams' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'linkshells' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'crossworld_linkshells' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'achievements' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'points' %}
-                    {{ include('common/pages/list.twig') }}
-                {% elseif subservice_name == 'character' %}
-                    {{ include('fftracker/character.twig') }}
-                {% elseif subservice_name == 'linkshell' %}
-                    {{ include('fftracker/linkshell.twig') }}
-                {% elseif subservice_name == 'crossworld_linkshell' %}
-                    {{ include('fftracker/linkshell.twig') }}
-                {% elseif subservice_name == 'pvpteam' %}
-                    {{ include('fftracker/pvpteam.twig') }}
-                {% elseif subservice_name == 'achievement' %}
-                    {{ include('fftracker/achievement.twig') }}
-                {% elseif subservice_name == 'freecompany' %}
-                    {{ include('fftracker/freecompany.twig') }}
-                {% elseif subservice_name == 'track' %}
-                    {{ include('fftracker/track.twig') }}
-                {% elseif subservice_name == 'crests' %}
-                    {{ include('fftracker/crests.twig') }}
-                {% endif %}
-            </article>
+            {% if subservice_name == 'character' %}
+                {{ include('fftracker/character.twig') }}
+            {% else %}
+                <article class="margin_05rem">
+                    {% if subservice_name == 'search' %}
+                        {{ include('common/pages/search.twig') }}
+                    {% elseif subservice_name == 'characters' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'freecompanies' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'pvpteams' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'linkshells' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'crossworld_linkshells' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'achievements' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'points' %}
+                        {{ include('common/pages/list.twig') }}
+                    {% elseif subservice_name == 'linkshell' %}
+                        {{ include('fftracker/linkshell.twig') }}
+                    {% elseif subservice_name == 'crossworld_linkshell' %}
+                        {{ include('fftracker/linkshell.twig') }}
+                    {% elseif subservice_name == 'pvpteam' %}
+                        {{ include('fftracker/pvpteam.twig') }}
+                    {% elseif subservice_name == 'achievement' %}
+                        {{ include('fftracker/achievement.twig') }}
+                    {% elseif subservice_name == 'freecompany' %}
+                        {{ include('fftracker/freecompany.twig') }}
+                    {% elseif subservice_name == 'track' %}
+                        {{ include('fftracker/track.twig') }}
+                    {% elseif subservice_name == 'crests' %}
+                        {{ include('fftracker/crests.twig') }}
+                    {% endif %}
+                </article>
+            {% endif %}
         {% endif %}
     {% endif %}
 </section>

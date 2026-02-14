@@ -6593,12 +6593,13 @@ class TabMenu extends HTMLElement {
     constructor() {
         super();
         this.setAttribute('role', 'tablist');
-        this.tabs = Array.from(this.querySelectorAll('a.tab_name[id^=tab_name_][href^=\\#tab_name_]'));
+        this.tabs = Array.from(this.querySelectorAll('a.tab_name[id^=tab_name_]'));
         this.contents = Array.from(this.querySelectorAll('tab-content[id^=tab_content_]'));
         let current_tab = 0;
         for (const tab of this.tabs) {
             tab.setAttribute('role', 'tab');
             tab.setAttribute('aria-controls', tab.id.replace('tab_name_', 'tab_content_'));
+            tab.setAttribute('href', `#${tab.id}`);
             if (tab.classList.contains('active')) {
                 this.current_tab = current_tab;
                 this.showTab(tab);
