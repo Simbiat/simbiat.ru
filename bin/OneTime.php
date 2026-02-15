@@ -30,6 +30,7 @@ try {
                 sleep(60);
                 continue;
             }
+            throw $exception;
         }
         if (is_array($fc_data['freecompanies']) && is_array($fc_data['freecompanies'][$fc_id]) && is_array($fc_data['freecompanies'][$fc_id]['members'])) {
             $member = array_last($fc_data['freecompanies'][$fc_id]['members']);
