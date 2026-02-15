@@ -6633,6 +6633,15 @@ class TabMenu extends HTMLElement {
                 this.keyboardNavigation(event);
             });
         }
+        const all_tabs = Array.from(this.querySelectorAll('a.tab_name'));
+        if (all_tabs.length < 2) {
+            for (const tab of all_tabs) {
+                tab.classList.add('hidden', 'active');
+                if (this.contents[0]) {
+                    this.contents[0].classList.add('active');
+                }
+            }
+        }
     }
     tabSwitch(target) {
         let tab_index = 0;

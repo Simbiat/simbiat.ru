@@ -1,27 +1,40 @@
-<section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
-    {% if freecompany.linked %}
-        <p>
-            You are a linked member of this PvP team. Press this button to force update the data.
-        </p>
-        <input class="refresh" id="ff_refresh" alt="Update PvP team" data-tooltip="Update PvP team" type="image" data-link="/api/fftracker/pvpteams/{{ pvpteam.id }}/update" src="/assets/images/refresh.svg">
+<tab-menu>
+    <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
+    <tab-content id="tab_content_general" class="active">
+        <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
+        {% if freecompany.linked %}
+            <p>
+                You are a linked member of this PvP team. Press this button to force update the data.
+            </p>
+            <input class="refresh" id="ff_refresh" alt="Update PvP team" data-tooltip="Update PvP team" type="image" data-link="/api/fftracker/pvpteams/{{ pvpteam.id }}/update" src="/assets/images/refresh.svg">
+        {% endif %}
+        <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, "d/m/Y") }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {{ timeTag(pvpteam.dates.updated, "d/m/Y H:i") }}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
+        <p>Operate{% if pvpteam.dates.deleted %}d{% else %}s{% endif %} on <i>{{ pvpteam.data_center }}</i>.{% if not pvpteam.dates.deleted %}{% if pvpteam.community %} Has an open <a rel="noopener noreferrer" href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ pvpteam.community }}" target="_blank">community</a>.{% endif %}{% endif %}</p>
+        {% if pvpteam.old_names|length > 0 %}
+            <p>Had also been known under <i>{{ pvpteam.old_names|length }}</i> other name{% if pvpteam.old_names|length > 1 %}s{% endif %}:</p>
+            <ul>
+                {% for name in pvpteam.old_names %}
+                    <li>{{ name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if pvpteam.members|length > 0 %}
+            <p>Current members:</p>
+            <ul class="search_results">
+                {% for entity in pvpteam.members %}
+                    <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </tab-content>
+    {% if pvpteam.past_members|length > 0 %}
+        <a class="tab_name" id="tab_name_past_members" href="#tab_name_past_members">Past members</a>
+        <tab-content id="tab_content_past_members">
+            <ul class="search_results">
+                {% for entity in pvpteam.past_members %}
+                    <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                {% endfor %}
+            </ul>
+        </tab-content>
     {% endif %}
-    <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, "d/m/Y") }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {{ timeTag(pvpteam.dates.updated, "d/m/Y H:i") }}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
-    <p>Operate{% if pvpteam.dates.deleted %}d{% else %}s{% endif %} on <i>{{ pvpteam.data_center }}</i>.{% if not pvpteam.dates.deleted %}{% if pvpteam.community %} Has an open <a rel="noopener noreferrer" href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ pvpteam.community }}" target="_blank">community</a>.{% endif %}{% endif %}</p>
-    {% if pvpteam.old_names|length > 0 %}
-        <p>Had also been known under <i>{{ pvpteam.old_names|length }}</i> other name{% if pvpteam.old_names|length > 1 %}s{% endif %}:</p>
-        <ul>
-            {% for name in pvpteam.old_names %}
-                <li>{{ name }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% if pvpteam.members|length > 0 %}
-        <p>Current members:</p>
-        <ul class="search_results">
-            {% for entity in pvpteam.members %}
-                <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-</section>
+</tab-menu>

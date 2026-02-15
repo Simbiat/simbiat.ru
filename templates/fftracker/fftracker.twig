@@ -30,6 +30,14 @@
         {% else %}
             {% if subservice_name == 'character' %}
                 {{ include('fftracker/character.twig') }}
+            {% elseif subservice_name == 'freecompany' %}
+                {{ include('fftracker/freecompany.twig') }}
+            {% elseif subservice_name == 'linkshell' %}
+                {{ include('fftracker/linkshell.twig') }}
+            {% elseif subservice_name == 'crossworld_linkshell' %}
+                {{ include('fftracker/linkshell.twig') }}
+            {% elseif subservice_name == 'pvpteam' %}
+                {{ include('fftracker/pvpteam.twig') }}
             {% else %}
                 <article class="margin_05rem">
                     {% if subservice_name == 'search' %}
@@ -48,16 +56,8 @@
                         {{ include('common/pages/list.twig') }}
                     {% elseif subservice_name == 'points' %}
                         {{ include('common/pages/list.twig') }}
-                    {% elseif subservice_name == 'linkshell' %}
-                        {{ include('fftracker/linkshell.twig') }}
-                    {% elseif subservice_name == 'crossworld_linkshell' %}
-                        {{ include('fftracker/linkshell.twig') }}
-                    {% elseif subservice_name == 'pvpteam' %}
-                        {{ include('fftracker/pvpteam.twig') }}
                     {% elseif subservice_name == 'achievement' %}
                         {{ include('fftracker/achievement.twig') }}
-                    {% elseif subservice_name == 'freecompany' %}
-                        {{ include('fftracker/freecompany.twig') }}
                     {% elseif subservice_name == 'track' %}
                         {{ include('fftracker/track.twig') }}
                     {% elseif subservice_name == 'crests' %}
