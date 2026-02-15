@@ -32,7 +32,7 @@ try {
             }
             throw $exception;
         }
-        if (is_array($fc_data['freecompanies']) && is_array($fc_data['freecompanies'][$fc_id]) && is_array($fc_data['freecompanies'][$fc_id]['members'])) {
+        if (is_array($fc_data['freecompanies']) && is_array($fc_data['freecompanies'][$fc_id]) && array_key_exists('members', $fc_data['freecompanies'][$fc_id]) && is_array($fc_data['freecompanies'][$fc_id]['members'])) {
             $member = array_last($fc_data['freecompanies'][$fc_id]['members']);
             if ($member['rank_id'] > 0) {
                 Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`='.$member['rank_id'].' WHERE `fc_id`=\''.$fc_id.'\' AND `rank_id` IS NULL;');
