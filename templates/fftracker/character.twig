@@ -98,15 +98,22 @@
             </tab-content>
         {% endif %}
         {% if character.friends|length > 0 or character.following|length > 0 %}
-            <a class="tab_name" id="tab_name_connections" href="#tab_name_connections">Connections</a>
-            <tab-content id="tab_content_connections">
+            <a class="tab_name" id="tab_name_relationships" href="#tab_name_relationships">Relationships</a>
+            <tab-content id="tab_content_relationships">
                 {% if character.friends|length > 0 %}
                     <h2>Friends</h2>
                     {% if character.friends %}
                         <ul class="search_results">
                             {% for entity in character.friends %}
                                 <div>
-                                    {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                    {% if entity.current %}
+                                        <span class="emoji_green" data-tooltip="Current relationship">✔</span>
+                                    {% else %}
+                                        <span class="emoji_red" data-tooltip="Past relationship">❌</span>
+                                    {% endif %}
+                                    {% if entity.mutual %}
+                                        <span data-tooltip="Mutual relationship">🤝</span>
+                                    {% endif %}
                                     {{ include('common/elements/entitycard.twig', entity) }}
                                 </div>
                             {% endfor %}
@@ -119,7 +126,14 @@
                         <ul class="search_results">
                             {% for entity in character.following %}
                                 <div>
-                                    {% if entity.current %}<span class="emoji_green" data-tooltip="Current affiliation">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past affiliation">❌</span>{% endif %}
+                                    {% if entity.current %}
+                                        <span class="emoji_green" data-tooltip="Current relationship">✔</span>
+                                    {% else %}
+                                        <span class="emoji_red" data-tooltip="Past relationship">❌</span>
+                                    {% endif %}
+                                    {% if entity.mutual %}
+                                        <span data-tooltip="Mutual relationship">🤝</span>
+                                    {% endif %}
                                     {{ include('common/elements/entitycard.twig', entity) }}
                                 </div>
                             {% endfor %}
@@ -164,12 +178,38 @@
         {% if character.achievements|length > 0 %}
             <a class="tab_name" id="tab_name_achievements" href="#tab_name_achievements">Achievements</a>
             <tab-content id="tab_content_achievements">
-                <p>Total achievement points: {{ character.achievement_points }}</p>
-                <ul class="search_results">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Achievement</th>
+                            <th>Points</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
                     {% for entity in character.achievements %}
-                        <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
+                        <tr>
+                            <td>
+                                <img loading="lazy" decoding="async" alt="{{ entity.name }}" src="/assets/images/fftracker/icons/{{ entity.icon }}" class="center_image">
+                            </td>
+                            <td>
+                                <a href="/fftracker/achievements/{{ entity.id }}">{{ entity.name }}</a>
+                            </td>
+                            <td>{{ entity.points }}</td>
+                            <td>{{ timeTag(entity.time, "d/m/Y") }}</td>
+                        </tr>
+                        {% if loop.last %}
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td>Total:</td>
+                                    <td>{{ character.achievement_points }}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        {% endif %}
                     {% endfor %}
-                </ul>
+                </table>
             </tab-content>
         {% endif %}
     {% endif %}

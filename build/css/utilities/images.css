@@ -21,3 +21,8 @@
 .banner_preview {
     inline-size: 10rem;
 }
+
+.center_image {
+    display: block;
+    margin: auto;
+}

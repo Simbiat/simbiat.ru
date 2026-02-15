@@ -5,7 +5,6 @@ table {
     border-spacing: 0;
     inline-size: 100%;
     overflow-wrap: anywhere;
-    table-layout: fixed;
     text-indent: 0; /* Remove text indentation from table contents in Chrome, Edge, and Safari. */
     word-break: normal;
 

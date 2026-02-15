@@ -12,7 +12,6 @@ table {
     border-width: var(--border_width) !important;
     inline-size: 100% !important;
     overflow-wrap: anywhere !important;
-    table-layout: fixed !important;
     word-break: normal !important;
 
     & tr td,
