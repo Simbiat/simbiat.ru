@@ -23,7 +23,14 @@ try {
     $count = count($fc_ids);
     foreach ($fc_ids as $key => $fc_id) {
         echo '['.date('c').'] Processing '.$fc_id.' ('.($key + 1).'/'.$count.')'.PHP_EOL;
-        $fc_data = new Lodestone()->getFreeCompanyMembers($fc_id, 0)->getResult();
+        try {
+            $fc_data = new Lodestone()->getFreeCompanyMembers($fc_id, 0)->getResult();
+        } catch (Throwable $exception) {
+            if (preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1 || preg_match('/Lodestone not available/ui', $exception->getMessage()) === 1) {
+                sleep(60);
+                continue;
+            }
+        }
         if (is_array($fc_data['freecompanies']) && is_array($fc_data['freecompanies'][$fc_id]) && is_array($fc_data['freecompanies'][$fc_id]['members'])) {
             $member = array_last($fc_data['freecompanies'][$fc_id]['members']);
             if ($member['rank_id'] > 0) {
