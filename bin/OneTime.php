@@ -48,7 +48,7 @@ try {
                 } elseif ($fc_data['freecompanies'][$data['fc_id']]['members'] === 404) {
                     Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`=(SELECT MAX(`rank_id`) AS `rank_id` FROM `ffxiv__freecompany_rank` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) WHERE `fc_id`=\''.$data['fc_id'].'\' AND `rank_id` IS NULL;');
                 }
-            } elseif (array_key_exists('members_count', $fc_data['freecompanies'][$data['fc_id']]) && $fc_data['freecompanies'][$data['fc_id']]['members_count'] === 0) {
+            } elseif (array_key_exists('members_count', $fc_data['freecompanies'][$data['fc_id']]) && (int)$fc_data['freecompanies'][$data['fc_id']]['members_count'] === 0) {
                 Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`=(SELECT MAX(`rank_id`) AS `rank_id` FROM `ffxiv__freecompany_rank` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) WHERE `fc_id`=\''.$data['fc_id'].'\' AND `rank_id` IS NULL;');
             }
         }
