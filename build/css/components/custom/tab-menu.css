@@ -6,6 +6,24 @@ tab-menu {
     margin-block-end: -0.65rem;
     margin-inline: calc(var(--border_radius) * 2.25);
 
+    & > tab-content {
+        &.active {
+            display: block;
+        }
+
+        background-color: var(--color_article);
+        border-color: var(--border_color_inset);
+        border-radius: var(--border_radius);
+        border-style: solid;
+        border-width: var(--border_width);
+        display: none;
+        flex: 1 0 100%;
+        margin-block-end: 0.5rem;
+        margin-inline: calc(var(--border_radius) * 2.25 * -0.75);
+        order: 2;
+        padding: .5rem;
+    }
+
     & > a.tab_name {
         background-color: var(--color_body);
         block-size: 1.8rem;
@@ -60,63 +78,24 @@ tab-menu {
                 filter: none;
             }
         }
-    }
 
-    & > tab-content {
-        &.active {
-            display: block;
+        &:link {
+            text-decoration-line: underline;
         }
 
-        background-color: var(--color_article);
-        border-color: var(--border_color_inset);
-        border-radius: var(--border_radius);
-        border-style: solid;
-        border-width: var(--border_width);
-        display: none;
-        flex: 1 0 100%;
-        margin-block-end: 0.5rem;
-        margin-inline: calc(var(--border_radius) * 2.25 * -0.75);
-        order: 2;
+        &:visited {
+            border-style: solid;
+            text-decoration: none;
+        }
+
+        &:focus,
+        &:active {
+            border-color: var(--color_interactive);
+            text-decoration: none;
+        }
+
+        &:active {
+            filter: brightness(0.7);
+        }
     }
-}
-
-tab-names {
-    display: flex;
-    flex-flow: row wrap-reverse;
-    inline-size: fit-content;
-    justify-content: flex-end;
-    margin-block-end: -.65rem;
-    margin-inline: calc(var(--border_radius) * 2.25) calc(var(--border_radius) * 2.25);
-    min-block-size: 2rem;
-}
-
-/* Styling of tab-menu content */
-tab-contents {
-    background-color: var(--color_article);
-    border-color: var(--border_color_inset);
-    border-radius: var(--border_radius);
-    border-style: solid;
-    border-width: var(--border_width);
-    display: block;
-    margin: .5rem;
-    padding: .5rem;
-}
-
-a.tab_name:link {
-    text-decoration-line: underline;
-}
-
-a.tab_name:visited {
-    border-style: solid;
-    text-decoration: none;
-}
-
-a.tab_name:focus,
-a.tab_name:active {
-    border-color: var(--color_interactive);
-    text-decoration: none;
-}
-
-a.tab_name:active {
-    filter: brightness(0.7);
 }
