@@ -19,12 +19,16 @@ use Simbiat\Website\Errors;
 Config::dbConnect();
 try {
     echo '['.date('c').'] Getting companies...'.PHP_EOL;
-    $fc_ids = Query::query('SELECT DISTINCT(`fc_id`) as `fc_id` FROM `ffxiv__freecompany_character` WHERE `rank_id` IS NULL;', return: 'column');
+    $fc_ids = Query::query('SELECT DISTINCT(`fc_id`) as `fc_id`, (SELECT `deleted` FROM `ffxiv__freecompany` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) as `deleted` FROM `ffxiv__freecompany_character` WHERE `rank_id` IS NULL;', return: 'all');
     $count = count($fc_ids);
-    foreach ($fc_ids as $key => $fc_id) {
-        echo '['.date('c').'] Processing '.$fc_id.' ('.($key + 1).'/'.$count.')'.PHP_EOL;
+    foreach ($fc_ids as $key => $data) {
+        echo '['.date('c').'] Processing '.$data['fc_id'].' ('.($key + 1).'/'.$count.')'.PHP_EOL;
+        if (!empty($data['deleted'])) {
+            Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`=(SELECT MAX(`rank_id`) AS `rank_id` FROM `ffxiv__freecompany_rank` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) WHERE `fc_id`=\''.$data['fc_id'].'\' AND `rank_id` IS NULL;');
+            continue;
+        }
         try {
-            $fc_data = new Lodestone()->getFreeCompanyMembers($fc_id, 0)->getResult();
+            $fc_data = new Lodestone()->getFreeCompanyMembers($data['fc_id'], 0)->getResult();
         } catch (Throwable $exception) {
             if (preg_match('/Lodestone has throttled the request/ui', $exception->getMessage()) === 1 || preg_match('/Lodestone not available/ui', $exception->getMessage()) === 1) {
                 sleep(60);
@@ -32,12 +36,16 @@ try {
             }
             throw $exception;
         }
-        if (is_array($fc_data['freecompanies']) && is_array($fc_data['freecompanies'][$fc_id]) && array_key_exists('members', $fc_data['freecompanies'][$fc_id]) && is_array($fc_data['freecompanies'][$fc_id]['members'])) {
-            $member = array_last($fc_data['freecompanies'][$fc_id]['members']);
-            if ($member['rank_id'] > 0) {
-                Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`='.$member['rank_id'].' WHERE `fc_id`=\''.$fc_id.'\' AND `rank_id` IS NULL;');
-            } else {
-                Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`=(SELECT MAX(`rank_id`) AS `rank_id` FROM `ffxiv__freecompany_rank` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) WHERE `fc_id`=\''.$fc_id.'\' AND `rank_id` IS NULL;');
+        if (is_array($fc_data['freecompanies']) && is_array($fc_data['freecompanies'][$data['fc_id']]) && array_key_exists('members', $fc_data['freecompanies'][$data['fc_id']])) {
+            if (is_array($fc_data['freecompanies'][$data['fc_id']]['members'])) {
+                $member = array_last($fc_data['freecompanies'][$data['fc_id']]['members']);
+                if ($member['rank_id'] > 0) {
+                    Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`='.$member['rank_id'].' WHERE `fc_id`=\''.$data['fc_id'].'\' AND `rank_id` IS NULL;');
+                } else {
+                    Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`=(SELECT MAX(`rank_id`) AS `rank_id` FROM `ffxiv__freecompany_rank` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) WHERE `fc_id`=\''.$data['fc_id'].'\' AND `rank_id` IS NULL;');
+                }
+            } elseif ($fc_data['freecompanies'][$data['fc_id']]['members'] === 404) {
+                Query::query('UPDATE `ffxiv__freecompany_character` SET `rank_id`=(SELECT MAX(`rank_id`) AS `rank_id` FROM `ffxiv__freecompany_rank` WHERE `fc_id`=`ffxiv__freecompany_character`.`fc_id`) WHERE `fc_id`=\''.$data['fc_id'].'\' AND `rank_id` IS NULL;');
             }
         }
     }
