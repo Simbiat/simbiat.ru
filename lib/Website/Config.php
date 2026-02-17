@@ -257,7 +257,6 @@ final class Config
                     self::$db_update = true;
                     Errors::error_log($exception);
                 }
-                Query::query('SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;');
             } catch (\Throwable $exception) {
                 #2002 error code means server is not listening on port
                 #2006 error code means server has gone away
