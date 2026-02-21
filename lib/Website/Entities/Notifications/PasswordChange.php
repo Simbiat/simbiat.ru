@@ -15,7 +15,7 @@ final class PasswordChange extends Notification
     /**
      * Subject for email
      */
-    protected const string SUBJECT = '[Alert]: Cron task failed';
+    protected const string SUBJECT = '[Alert]: Password change';
     /**
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
