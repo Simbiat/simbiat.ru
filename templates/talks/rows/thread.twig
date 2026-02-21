@@ -2,7 +2,12 @@
     <td>
         <div class="thread_name">
             <div class="thread_icons">
-                {% if thread.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled thread">⏲</span>{% endif %}
+                {% if thread.created > thread.published %}
+                    <span data-tooltip="Backlog thread created on {{ thread.created|date('d/m/Y H:i') }}">🕰️</span>
+                {% endif %}
+                {% if thread.created < thread.published %}
+                    <span data-tooltip="Scheduled thread created on {{ thread.created|date('d/m/Y H:i') }}">⏲️</span>
+                {% endif %}
                 {% if thread.pinned %}<span data-tooltip="Pinned thread">📌</span>{% endif %}
                 {% if thread.closed %}<span data-tooltip="Closed thread">🔒</span>{% endif %}
                 {% if thread.private %}<span data-tooltip="Private thread">🚷</span>{% endif %}
@@ -10,7 +15,7 @@
             <a href="/talks/threads/{{ thread.id }}"{% if thread.detailed_type != 'Changelog' or is_numeric(thread.name) == false %}"{% endif %}>{% if thread.detailed_type == 'Changelog' and is_numeric(thread.name) %}{{ timeTag(thread.name, "Y.m.d") }}{% else %}{{ thread.name }}{% endif %}</a>
         </div>
     </td>
-    <td>{{ timeTag(thread.created, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.author }}">{{ thread.author_name }}</a></td>
+    <td>{{ timeTag(thread.published, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.author }}">{{ thread.author_name }}</a></td>
     <td>{{ timeTag(thread.last_post, "d/m/Y H:i") }} by <a href="/talks/users/{{ thread.last_poster }}">{{ thread.last_poster_name }}</a></td>
     <td>{{ thread.posts }}</td>
 </tr>

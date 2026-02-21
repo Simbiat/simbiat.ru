@@ -5,7 +5,12 @@
     <td>
         <div class="section_name">
             <div class="section_icons">
-                {% if section.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
+                {% if section.created > section.published %}
+                    <span data-tooltip="Backlog section created on {{ section.created|date('d/m/Y H:i') }}">🕰️</span>
+                {% endif %}
+                {% if section.created < section.published %}
+                    <span data-tooltip="Scheduled section created on {{ section.created|date('d/m/Y H:i') }}">⏲️</span>
+                {% endif %}
                 {% if 'edit_sections' not in permissions %}
                     {% if section.closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
                     {% if section.private %}<span data-tooltip="Private section">🚷</span>{% endif %}

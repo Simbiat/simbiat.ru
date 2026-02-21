@@ -8,7 +8,7 @@
             {% endif %}
         {% endif %}
         <div class="post_time_id">
-            {{ timeTag(post.created, "d/m/Y H:i", "post_time") }}
+            {{ timeTag(post.published, "d/m/Y H:i", "post_time") }}
             {% if post.no_post_id != true %}
                 <div class="post_id_wrapper">
                     <h2 class="post_id" id="post_{{ post.id }}">#{{ post.id }}</h2>
@@ -57,7 +57,12 @@
             {% if allow_reply_to and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
                 <input type="button" class="reply_to_button" data-post_id="{{ post.id }}" data-tooltip="Reply to this post" value="📩">
             {% endif %}
-            {% if post.created|date('U') > 'now'|date('U') %}<span data-tooltip="Scheduled post">⏲</span>{% endif %}
+            {% if post.created > post.published %}
+                <span data-tooltip="Backlog post created on {{ post.created|date('d/m/Y H:i') }}">🕰️</span>
+            {% endif %}
+            {% if post.created < post.published %}
+                <span data-tooltip="Scheduled post created on {{ post.created|date('d/m/Y H:i') }}">⏲️</span>
+            {% endif %}
             {% if post.locked %}
                 {% if not history_version and 'edit_locked' in session_data.permissions and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
                     <a class="button" href="/talks/posts/{{ post.id }}#tab_name_edit" data-tooltip="Edit">✏</a>

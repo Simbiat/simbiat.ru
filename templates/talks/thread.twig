@@ -4,10 +4,13 @@
         <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
     </article>
 {% else %}
-    {% if created > 'now'|date('U') or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
+    {% if created != published or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
         <div class="thread_icons margin_bottom_05rem">
-            {% if created > 'now'|date('U') %}
-                <span data-tooltip="Scheduled thread">⏲</span>
+            {% if created > published %}
+                <span data-tooltip="Backlog thread created on {{ created|date('d/m/Y H:i') }}">🕰️</span>
+            {% endif %}
+            {% if created < published %}
+                <span data-tooltip="Scheduled thread created on {{ created|date('d/m/Y H:i') }}">⏲️</span>
             {% endif %}
             {% if pinned %}
                 <span data-tooltip="Pinned thread">📌</span>
