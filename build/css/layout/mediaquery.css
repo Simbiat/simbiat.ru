@@ -2,16 +2,12 @@
 and https://medium.com/@barrypeng6/why-should-not-use-rem-unit-in-media-query-5645d0163ce5
 since they show em as most consistent */
 /* Adjust snackbars */
-/* Need to use calc, which is not compatible with range */
-/* noinspection Stylelint */
 @media (width <= calc(100ch + 15rem + 1rem)) {
     .snackbar {
         inline-size: 90vi;
     }
 }
 
-/* Need to use calc, which is not compatible with range */
-/* noinspection Stylelint */
 @media (width >= calc(100ch + 15rem + 1rem)) {
     .snackbar {
         inline-size: 75vi;
@@ -22,8 +18,6 @@ since they show em as most consistent */
     }
 }
 
-/* Need to use calc, which is not compatible with range */
-/* noinspection Stylelint */
 @media (width <= calc(100ch + 15rem + 1rem)) {
     #navigation {
         background-color: var(--color_body);
@@ -33,8 +27,6 @@ since they show em as most consistent */
 }
 
 /* Adjust some buttons */
-/* Need to use calc, which is not compatible with range */
-/* noinspection Stylelint */
 @media (width <= calc(100ch + 15rem + 1rem)) {
     nav-hide {
         inset-block-start: 0;
@@ -43,16 +35,12 @@ since they show em as most consistent */
     }
 }
 
-/* Need to use calc, which is not compatible with range */
-/* noinspection Stylelint */
 @media (width <= calc(100ch + 15rem + 1rem)) {
     nav-show {
         display: block;
     }
 }
 
-/* Need to use calc, which is not compatible with range */
-/* noinspection Stylelint */
 @media (width >= calc(100ch + 15rem + 1rem)) {
     nav-show, nav-hide {
         display: none;

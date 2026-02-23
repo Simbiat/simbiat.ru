@@ -31,7 +31,6 @@ snack-bar {
     overflow-block: auto;
     overflow-wrap: anywhere;
     vertical-align: top;
-    word-wrap: break-word;
 }
 
 .snack_close {

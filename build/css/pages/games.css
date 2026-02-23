@@ -8,7 +8,7 @@
 
 #gm4html5_div_id canvas {
     border: 0;
-    image-rendering: optimizespeed;
+    image-rendering: pixelated;
     margin: 0;
     padding: 0;
 }

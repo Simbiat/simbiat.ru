@@ -29,7 +29,6 @@ blockquote {
     overflow-wrap: anywhere;
     padding: 1.25rem;
     position: relative;
-    word-wrap: break-word;
 
     /* If not doing this override the elements will create horizontal scrolling because of the margins */
 

@@ -18,22 +18,22 @@ img.supops_fact {
     margin: 1rem;
 }
 
-@counter-style suppos_list_resolutions {
+@counter-style supops_list_resolutions {
     suffix: ' ';
     symbols: 🛠️ ♊ 🐛 📈 📄 🖼️ 🤝 👷 ⌛ ✖️;
     system: fixed;
 }
 
-.suppos_list_resolutions {
-    list-style-type: suppos_list_resolutions;
+.supops_list_resolutions {
+    list-style-type: supops_list_resolutions;
 }
 
-@counter-style suppos_list_needs {
+@counter-style supops_list_needs {
     suffix: ' ';
     symbols: ↗️ 💬 🛠️ 📈 👷 ‍🧑‍🏫 🧑‍💻;
     system: fixed;
 }
 
-.suppos_list_needs {
-    list-style-type: suppos_list_needs;
+.supops_list_needs {
+    list-style-type: supops_list_needs;
 }

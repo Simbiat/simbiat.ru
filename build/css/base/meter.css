@@ -1,8 +1,6 @@
 meter {
     block-size: 2rem;
     position: relative;
-    -moz-user-modify: read-only;
-    -webkit-user-modify: read-only;
 
     &::-webkit-meter-optimum-value,
     &::-webkit-meter-suboptimum-value,
