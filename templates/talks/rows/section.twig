@@ -5,10 +5,10 @@
     <td>
         <div class="section_name">
             <div class="section_icons">
-                {% if section.created > section.published %}
+                {% if section.created|date('d/m/Y H:i') > section.published|date('d/m/Y H:i') %}
                     <span data-tooltip="Backlog section created on {{ section.created|date('d/m/Y H:i') }}">🕰️</span>
                 {% endif %}
-                {% if section.created < section.published %}
+                {% if section.created|date('d/m/Y H:i') < section.published|date('d/m/Y H:i') %}
                     <span data-tooltip="Scheduled section created on {{ section.created|date('d/m/Y H:i') }}">⏲️</span>
                 {% endif %}
                 {% if 'edit_sections' not in permissions %}

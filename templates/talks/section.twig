@@ -1,6 +1,12 @@
-{% if created > 'now'|date('U') or closed or private %}
+{% if created|date('d/m/Y H:i') != published|date('d/m/Y H:i') or closed or private %}
     <div class="section_icons margin_bottom_05rem">
-        {% if created > 'now'|date('U') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
+        {% if created|date('d/m/Y H:i') != published|date('d/m/Y H:i') %}<span data-tooltip="Scheduled section">⏲</span>{% endif %}
+        {% if created|date('d/m/Y H:i') > published|date('d/m/Y H:i') %}
+            <span data-tooltip="Backlog section created on {{ created|date('d/m/Y H:i') }}">🕰️</span>
+        {% endif %}
+        {% if created|date('d/m/Y H:i') < published|date('d/m/Y H:i') %}
+            <span data-tooltip="Scheduled section created on {{ created|date('d/m/Y H:i') }}">⏲️</span>
+        {% endif %}
         {% if closed %}<span data-tooltip="Closed section">🔒</span>{% endif %}
         {% if private %}<span data-tooltip="Private section">🚷</span>{% endif %}
     </div>
