@@ -171,7 +171,7 @@ export class Threads {
       const button = this.edit_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.edit_thread_form);
-      //Check if custom icon is being attached
+      //Check if a custom icon is being attached
       const og_image: HTMLInputElement | null = this.edit_thread_form.querySelector('input[type=file]');
       if (og_image?.files?.[0]) {
         form_data.append('thread_data[og_image]', 'true');
@@ -179,7 +179,7 @@ export class Threads {
         form_data.append('thread_data[og_image]', 'false');
       }
       buttonToggle(button as HTMLInputElement);
-      ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+      ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
         .then((response) => {
           const data = response as ajaxJSONResponse;
           if (data.data === true) {

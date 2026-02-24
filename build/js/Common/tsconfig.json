@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        
         //Type checking
         "strict": true,
         "allowUnreachableCode": false,
@@ -16,29 +17,28 @@
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": false,
         //Compiler options
-        "module": "None",
+        "module": "ESNext",
         "target": "ESNext",
         "moduleResolution": "nodenext",
         "baseUrl": ".",
         "paths": {
             "/tinymce/*": [
-                "../../vendor/tinymce/tinymce/*"
+                "../../../vendor/tinymce/tinymce/*"
             ],
             "/assets/controllers/*": [
-                "../public/assets/controllers/*"
+                "../../../public/assets/controllers/*"
+            ],
+            "@/controllers/*": [
+                "../../../public/assets/controllers/*"
             ],
             "*": [
-                "/js/Pages/*",
-                "../../*"
+                "../../../build/js/Common/*",
+                "../../../build/js/Pages/*"
             ]
         },
         "sourceMap": true,
         "inlineSources": true,
-        "rootDir": "../../",
-        "sourceRoot": "/",
         "removeComments": true,
-        "outDir": "../../../public/assets/",
-        "outFile": "../../../public/assets/app.js",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
@@ -51,7 +51,11 @@
             "dom",
             "WebWorker",
             "dom.iterable"
-        ]
+        ],
+        "rootDir": "../../",
+        "sourceRoot": "/",
+        "outDir": "../../../public/assets/",
+        "outFile": "../../../public/assets/app.js",
     },
     "files": [
         "../../../vendor/tinymce/tinymce/tinymce.min.js",

@@ -161,7 +161,7 @@ export class Threads {
                 form_data.append('thread_data[og_image]', 'false');
             }
             buttonToggle(button);
-            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+            ajax(`${location.protocol}//${location.host}/api/talks/threads/${String(form_data.get('thread_data[thread_id]') ?? '0')}`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
                 .then((response) => {
                 const data = response;
                 if (data.data === true) {

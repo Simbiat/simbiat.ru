@@ -19,15 +19,29 @@
         "module": "ESNext",
         "target": "ESNext",
         "moduleResolution": "nodenext",
+        "baseUrl": ".",
+        "paths": {
+            "/tinymce/*": [
+                "../../../vendor/tinymce/tinymce/*"
+            ],
+            "/assets/controllers/*": [
+                "../../../public/assets/controllers/*"
+            ],
+            "@/controllers/*": [
+                "../../../public/assets/controllers/*"
+            ],
+            "*": [
+                "../../../build/js/Common/*",
+                "../../../build/js/Pages/*"
+            ]
+        },
         "sourceMap": true,
         "inlineSources": true,
-        "sourceRoot": "/js/Pages/",
         "removeComments": true,
-        "outDir": "../../../public/assets/controllers/",
         "explainFiles": true,
         "listFiles": true,
         //Other settings
-        "allowJs": false,
+        "allowJs": true,
         "checkJs": true,
         "composite": true,
         "noErrorTruncation": true,
@@ -36,18 +50,20 @@
             "dom",
             "WebWorker",
             "dom.iterable"
-        ]
+        ],
+        "sourceRoot": "/js/Pages/",
+        "outDir": "../../../public/assets/controllers/",
     },
     //Include only .ts files in the same dir
     "include": [
         "./*/*.ts"
     ],
-    "exclude": [
-        "*node_modules*"
-    ],
     "references": [
         {
             "path": "../Common/tsconfig.json"
         }
+    ],
+    "exclude": [
+        "*node_modules*"
     ]
 }

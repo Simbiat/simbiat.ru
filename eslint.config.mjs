@@ -57,6 +57,18 @@ export default defineConfig([
       ecmaVersion: 'latest',
       sourceType: 'script',
     },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          bun: true,
+          project: [
+            'build/js/Common/tsconfig.json',
+            'build/js/Pages/tsconfig.json',
+          ],
+        },
+      },
+    },
     rules: {
       'compat/compat': 'error',
       'array-callback-return': ['error', {
@@ -202,6 +214,8 @@ export default defineConfig([
       'promise/prefer-await-to-then': 'warn',
       'promise/prefer-catch': 'error',
       'promise/spec-only': 'error',
+      // Too many false positives highlighting `if` statements inside `then`, when there is no return expected as result of the `if`
+      'promise/always-return': 'off',
       'regexp/no-octal': 'error',
       'regexp/no-standalone-backslash': 'error',
       'regexp/prefer-escape-replacement-dollar-char': 'error',

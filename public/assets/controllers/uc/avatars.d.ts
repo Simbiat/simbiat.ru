@@ -2,8 +2,8 @@ export declare class EditAvatars {
     private readonly form;
     private readonly current_avatar;
     private readonly sidebar_avatar;
-    private readonly avatarFile;
-    private readonly avatarsList;
+    private readonly avatar_file;
+    private readonly avatars_list;
     private readonly template;
     constructor();
     private listen;

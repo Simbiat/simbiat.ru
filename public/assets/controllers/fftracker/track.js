@@ -28,8 +28,7 @@ export class ffTrack {
             if (this.idInput) {
                 const button = document.querySelector('#ff_track_submit');
                 buttonToggle(button);
-                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}`, null, 'json', 'POST', AJAX_TIMEOUT, true).
-                    then((response) => {
+                void ajax(`${location.protocol}//${location.host}/api/fftracker/${this.select.value}/${this.idInput.value}`, null, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
                     const data = response;
                     if (data.data === true) {
                         addSnackbar(`${selectText} with ID ${this.idInput?.value ?? ''} was registered. Check <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'success', 0);
