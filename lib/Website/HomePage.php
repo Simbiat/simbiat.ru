@@ -175,7 +175,9 @@ class HomePage
                 \header('Content-Type: text/plain; charset=utf-8');
                 \header('Content-Disposition: inline; filename="security.txt"');
             }
-            $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last monday of next month midnight'))]);
+            if (self::$method !== 'HEAD' && self::$method !== 'OPTIONS') {
+                $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last monday of next month midnight'))]);
+            }
             exit(0);
         }
         return;
@@ -190,6 +192,9 @@ class HomePage
      */
     final public function twigProc(array $twig_vars = [], bool $cache = false): bool
     {
+        if (self::$method === 'OPTIONS') {
+            exit(0);
+        }
         if ($cache && ($twig_vars === [] || self::$method !== 'GET' || \array_key_exists('cachereset', $_GET) || \array_key_exists('cachereset', $_POST))) {
             return false;
         }
