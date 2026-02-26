@@ -116,7 +116,7 @@ function router(): void {
           void import('@/controllers/fftracker/crests.js').then((module) => {
             void new module.ffCrests();
           });
-        } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(String(path[1]))) {
+        } else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams', 'achievements'].includes(String(path[1]))) {
           void import('@/controllers/fftracker/entity.js').then((module) => {
             void new module.ffEntity();
           });

@@ -5602,7 +5602,7 @@ function router() {
                         void new module.ffCrests();
                     });
                 }
-                else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams',].includes(String(path[1]))) {
+                else if (['characters', 'freecompanies', 'linkshells', 'crossworldlinkshells', 'crossworld_linkshells', 'pvpteams', 'achievements'].includes(String(path[1]))) {
                     void import('@/controllers/fftracker/entity.js').then((module) => {
                         void new module.ffEntity();
                     });
@@ -6619,9 +6619,6 @@ class TabMenu extends HTMLElement {
                 this.hideContent(content);
             }
         }
-        this.addEventListener('keydown', (event) => {
-            this.keyboardNavigation(event);
-        });
         for (const tab of this.tabs) {
             tab.addEventListener('click', (event) => {
                 event.preventDefault();

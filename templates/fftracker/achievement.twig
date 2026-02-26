@@ -30,4 +30,13 @@
             </ul>
         {% endif %}
     {% endif %}
+    {% if achievement.can_refresh %}
+        <p class="margin_top_1rem">
+            <input class="refresh" id="ff_refresh" alt="Update achievement" data-tooltip="Update achievement" type="image" data-link="/api/fftracker/achievements/{{ achievement.id }}/update" src="/assets/images/refresh.svg">
+        </p>
+    {% elseif achievement.scheduled %}
+        <p class="margin_top_1rem">
+            Next update scheduled for {{ timeTag(achievement.scheduled, "d/m/Y H:i:s") }}.
+        </p>
+    {% endif %}
 </section>

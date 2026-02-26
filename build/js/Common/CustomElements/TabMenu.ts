@@ -31,10 +31,6 @@ class TabMenu extends HTMLElement {
         this.hideContent(content);
       }
     }
-    // Attach listeners to tabs
-    this.addEventListener('keydown', (event: KeyboardEvent) => {
-      this.keyboardNavigation(event);
-    });
     for (const tab of this.tabs) {
       tab.addEventListener('click', (event: MouseEvent) => {
         event.preventDefault();

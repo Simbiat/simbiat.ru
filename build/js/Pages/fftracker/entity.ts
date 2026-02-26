@@ -22,7 +22,7 @@ export class ffEntity {
           if (!this.forceRefresh) {
             return;
           }
-          void ajax(`${location.protocol}//${location.host}${this.forceRefresh.getAttribute('data-link') ?? ''}`, null, 'json', 'PUT', 300000).then((response) => {
+          void ajax(`${location.protocol}//${location.host}${this.forceRefresh.getAttribute('data-link') ?? ''}`, null, 'json', 'PATCH', 300000, true).then((response) => {
               const data = response as ajaxJSONResponse;
               if (this.forceRefresh) {
                 this.forceRefresh.classList.remove('spin');
@@ -31,7 +31,7 @@ export class ffEntity {
                 addSnackbar('Data updated. Reloading page...', 'success');
                 pageRefresh();
               } else {
-                addSnackbar('Failed to update data', 'failure', SNACKBAR_FAIL_LIFE);
+                addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
               }
             });
         }, 500);

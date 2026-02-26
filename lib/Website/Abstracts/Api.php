@@ -75,6 +75,10 @@ abstract class Api
         if ($this->top_level) {
             self::headers();
         }
+        #Ignore bots
+        if (!empty(HomePage::$user_agent['bot'])) {
+            return ['http_error' => 403, 'reason' => 'No access to API for bots'];
+        }
         #Check if proper endpoint
         if (\count($this->sub_routes) !== 0 && (empty($path[0]) || (!$this->final_node && !in_array($path[0], $this->sub_routes, true)))) {
             $data = ['http_error' => 400, 'reason' => 'Unsupported endpoint', 'endpoints' => \array_combine($this->sub_routes, $this->routes_description)];

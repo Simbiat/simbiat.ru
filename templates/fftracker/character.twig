@@ -13,13 +13,6 @@
                 {% if not character.dates.hidden %}
                     <samp class="warning regular_text">If you own this character account, and do not want to share the data, read <a href="/talks/threads/1657" target="_blank">this article</a> to learn how to hide it.</samp>
                 {% endif %}
-                <h2>General</h2>
-                {% if character.owned.id and session_data.user_id == character.owned.id %}
-                    <p>
-                        You own this character. Press this button to force update the data.
-                    </p>
-                    <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update" src="/assets/images/refresh.svg">
-                {% endif %}
                 {% if character.dates.hidden %}
                     <p class="warning">
                         Requested <a href="/talks/threads/1657" target="_blank">anonymity</a> on {{ timeTag(character.dates.hidden, "d/m/Y") }}
@@ -50,6 +43,15 @@
                     {% endif %}
                     {% if character.biography %}
                         <blockquote class="w100pc">{{ sanitize(character.biography) }}</blockquote>
+                    {% endif %}
+                    {% if character.can_refresh %}
+                        <p class="margin_top_1rem">
+                            <input class="refresh" id="ff_refresh" alt="Update character" data-tooltip="Update character" type="image" data-link="/api/fftracker/characters/{{ character.id }}/update" src="/assets/images/refresh.svg">
+                        </p>
+                    {% elseif character.dates.scheduled %}
+                        <p class="margin_top_1rem">
+                            Next interview scheduled for {{ timeTag(character.dates.scheduled, "d/m/Y H:i:s") }}.
+                        </p>
                     {% endif %}
                 {% endif %}
             </section>
