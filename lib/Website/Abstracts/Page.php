@@ -53,8 +53,6 @@ abstract class Page
     protected bool $authentication_needed = false;
     #List of permissions, from which at least 1 is required to have access to the page
     protected array $required_permission = [];
-    #Link to JS module for preload
-    protected string $js_module = '';
     #Static list of images to H2 push, which are common for the page type
     protected array $h2_push = [
         '/assets/images/logo.svg',
@@ -182,10 +180,7 @@ abstract class Page
             }
             Links::links($this->h2_push);
         }
-        if (!empty($this->alt_links) || !empty($this->js_module)) {
-            if (!empty($this->js_module)) {
-                $this->alt_links = \array_merge($this->alt_links, [['rel' => 'modulepreload', 'href' => '/assets/controllers/'.$this->js_module.'.'.\filemtime(Config::$js_dir.'/controllers/'.$this->js_module.'.js').'.js', 'as' => 'script']]);
-            }
+        if (!empty($this->alt_links)) {
             #Send HTTP header
             if (!HomePage::$stale_return) {
                 Links::links($this->alt_links);
