@@ -88,7 +88,7 @@ abstract class Notification extends Entity
     }
     
     /**
-     * Mark notification as read
+     * Mark the notification as read
      *
      * @param string $uuid UUID of the
      * @param bool   $echo Whether to output an image directly
@@ -197,7 +197,9 @@ abstract class Notification extends Entity
                     $this->user = (int)$user_id;
                 }
             } catch (\Throwable $throwable) {
-                Errors::error_log($throwable);
+                if (!$this::ALWAYS_SEND) {
+                    Errors::error_log($throwable);
+                }
             }
         }
         #If DB is not required, then we are ok with not saving to the database
@@ -430,11 +432,18 @@ abstract class Notification extends Entity
             $email->subject((Config::$prod ? '' : '[Test] ').$this::SUBJECT)
                 ->htmlTemplate('notifications/email.twig')
                 ->context(['subject' => (Config::$prod ? '' : '[Test] ').$this::SUBJECT, 'username' => $username, 'unsubscribe_all' => $subscribed, 'text' => $this->text, 'tracker' => $this->id, 'created' => $this->created, 'sent' => \time()]);
-            Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
+            try {
+                Query::query('UPDATE `sys__notifications` SET `attempts`=`attempts`+1, `last_attempt`=CURRENT_TIMESTAMP(6) WHERE `uuid` = :uuid;', [':uuid' => $this->id]);
+            } catch (\Throwable $exception) {
+                if (!$this::ALWAYS_SEND) {
+                    Errors::error_log($exception, debug: $debug);
+                    return false;
+                }
+            }
             if ($debug) {
                 #For some reason using `getHtmlBody` right after send does not work, and returns `null`, so have to render it again. Not critical, since this is for testing only.
                 $renderer->render($email);
-                #Need to include CSS file, since embedded does not seem to apply properly in browser. It's not exactly the same as when email is sent, but close enough.
+                #Need to include the CSS file, since embedded does not seem to apply properly in browser. It's not exactly the same as when email is sent, but close enough.
                 Common::zEcho('<link href="/assets/styles/1234567890.css" rel="stylesheet preload" type="text/css" as="style">'.$email->getHtmlBody(), 'live', false);
                 exit(0);
             }
@@ -447,8 +456,10 @@ abstract class Notification extends Entity
             try {
                 Query::query('UPDATE `sys__notifications` SET `sent`=CURRENT_TIMESTAMP(6) WHERE `uuid`=:uuid;', [':uuid' => $this->id]);
             } catch (\Throwable $exception) {
-                #Not critical, in worse case it will just be sent out again. But still log to file, just in case.
-                Errors::error_log($exception);
+                if (!$this::ALWAYS_SEND) {
+                    #Not critical, in worse case it will just be sent out again. But still log to the file, just in case.
+                    Errors::error_log($exception);
+                }
             }
         }
         return true;

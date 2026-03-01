@@ -72,7 +72,7 @@ class HealthCheck
     }
     
     /**
-     * Function to send alert database going down
+     * Function to send alert if the database going down
      * @return void
      */
     public function dbDown(): void
@@ -97,7 +97,11 @@ class HealthCheck
         if (\is_file($crash_flag)) {
             $error_text = \file_get_contents($crash_flag);
             try {
-                $result = Query::query('UPDATE `sys__settings` SET `value` = 0 WHERE `setting` = \'maintenance\';');
+                $result = Query::query([
+                    'UPDATE `sys__settings` SET `value`=0 WHERE `setting` = \'maintenance\';',
+                    #Reset any potentially hanged cron jobs (if any)
+                    'UPDATE cron__schedule SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;'
+                ]);
             } catch (\Throwable) {
                 $result = false;
             }
@@ -112,13 +116,15 @@ class HealthCheck
         if (\is_file($no_db_flag)) {
             /** @noinspection PhpUsageOfSilenceOperatorInspection Not critical, probably concurrency issue */
             @\unlink($no_db_flag);
+            #If we crashed, there is a high chance that some cron jobs failed, as well. Reset any potential jobs like that.
+            Query::query('UPDATE cron__schedule SET `run_by`=NULL, `status`=0 WHERE `run_by` IS NOT NULL;');
             #Send mail
             new DatabaseUp()->save(SystemUsers::Owner->value, ['maintenance' => false], true, false, Config::ADMIN_MAIL)->send();
         }
     }
     
     /**
-     * Check if error log exists and notify about it
+     * Check if the error log exists and notify about it
      * @return void
      */
     public function errorLog(): void
