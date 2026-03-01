@@ -1,5 +1,19 @@
-//Custom initializers for built-in elements, as an alternative way to built-in custom elements, that are not supported in Safari
-function inputInit(input: HTMLInputElement): void {
+import {
+  pasteSplit,
+  ariaNation,
+  inputFileValidate,
+  countInTextarea,
+  autoNext,
+  formEnter,
+  inputBackSpace
+} from './Inputs.ts';
+import { addSnackbar, empty, basename, copyQuote, submitDefaultIntercept } from './Helpers.ts';
+import { urlClean } from './Url.ts';
+import { toggleDetailsButton, closeAllDetailsTags, resetDetailsTags } from './Details.ts';
+import { loadTinyMCE } from './TinyMCE.ts';
+
+//Custom initializers for built-in elements, as an alternative way to built-in custom elements that are not supported in Safari
+export function inputInit(input: HTMLInputElement): void {
   ['focus', 'change', 'input',].forEach((eventType: string) => {
     input.addEventListener(eventType, () => {
       ariaNation(input);
@@ -26,7 +40,7 @@ function inputInit(input: HTMLInputElement): void {
   }
 }
 
-function textareaInit(textarea: HTMLTextAreaElement): void {
+export function textareaInit(textarea: HTMLTextAreaElement): void {
   //Give elements a default placeholder if there is none
   if (!textarea.hasAttribute('placeholder')) {
     textarea.setAttribute('placeholder', textarea.value || textarea.type || 'placeholder');
@@ -38,7 +52,7 @@ function textareaInit(textarea: HTMLTextAreaElement): void {
         countInTextarea(event.target as HTMLTextAreaElement);
       });
     });
-    //Call to set initial value
+    //Call to set the initial value
     countInTextarea(textarea);
   }
   if (textarea.classList.contains('tinymce') && textarea.id) {
@@ -46,8 +60,8 @@ function textareaInit(textarea: HTMLTextAreaElement): void {
   }
 }
 
-function headingInit(heading: HTMLHeadingElement): void {
-  //Add ID attribute to header tags, if it's missing (needed for unique anchor links)
+export function headingInit(heading: HTMLHeadingElement): void {
+  //Add ID attribute to header tags if it's missing (needed for unique anchor links)
   if (!heading.hasAttribute('id')) {
     //Get initial ID
     let id = String(heading.textContent)
@@ -62,25 +76,25 @@ function headingInit(heading: HTMLHeadingElement): void {
     }
     //Get ID index, in case it's already used
     let index = 1;
-    let altId = id;
-    //Check if altID exists
-    while (document.querySelector(`#${altId}`)) {
+    let alt_id = id;
+    //Check if alt_id exists
+    while (document.querySelector(`#${alt_id}`)) {
       //Increase index
       index += 1;
-      altId = `${id}_${index}`;
+      alt_id = `${id}_${index}`;
     }
-    heading.setAttribute('id', altId);
+    heading.setAttribute('id', alt_id);
   }
   heading.addEventListener('click', (event: MouseEvent) => {
     //Get the element under the mouse pointer
-    const elementUnderMouse = document.elementFromPoint(event.clientX, event.clientY);
+    const element_under_mouse = document.elementFromPoint(event.clientX, event.clientY);
     //Check if it's an <a> element
-    if (elementUnderMouse && elementUnderMouse.tagName === 'A') {
-      //Cancel this event if we clicked on an anchor, because it can confuse if we get notification about copy, and follow the link right away
+    if (element_under_mouse && element_under_mouse.tagName === 'A') {
+      //Cancel this event if we clicked on an anchor, because it can confuse if we get notification about copy and follow the link right away
       return;
     }
-    //Checking for selection. If it's present most likely the text in anchor is being selected with intention of copying it.
-    //In this case, if we copy the anchor link, we may provide undesired effect (although ctrl+c will most likely fire after this).
+    //Checking for selection. If it's present, most likely the text in anchor is being selected with the intention of copying it.
+    //In this case, if we copy the anchor link, we may provide an undesired effect (although ctrl+c will most likely fire after this).
     const selection = window.getSelection();
     if (selection && selection.type !== 'Range') {
       //Generate anchor link
@@ -96,14 +110,14 @@ function headingInit(heading: HTMLHeadingElement): void {
   });
 }
 
-// Below is a list of input types, that do not make much sense to be tracked through keypress or paste events, in case it will be required at some time
+// Below is a list of input types that make little sense to be tracked through keypress or paste events, in case it will be required at some time.
 // Including date/time types, even though some of them may fall back to textual fields. Doing this, since you can't predict this by checking browser version.
 // Not including hidden (since it's hidden), image (since its purpose is unclear by default),
 // range (unclear how to track to actually determine, that user stopped interaction),
 // reset and submit (due to their purpose)
 // const nonTextInputTypes = ['checkbox', 'color', 'date', 'datetime-local', 'file', 'month', 'number', 'radio', 'time', 'week',];
-function formInit(form: HTMLFormElement): void {
-  //Prevent form submit on Enter, if action is empty (otherwise this causes page reload with additional question mark in address
+export function formInit(form: HTMLFormElement): void {
+  //Prevent form submit on Enter if the action is empty (otherwise this causes page reload with additional question mark in the address
   if (empty(form.action)) {
     form.addEventListener('keypress', (event: KeyboardEvent) => {
       formEnter(event);
@@ -113,14 +127,14 @@ function formInit(form: HTMLFormElement): void {
       form.addEventListener('keypress', submitDefaultIntercept);
     }
   }
-  //For all elements that can be used inside a form add name, if it's missing. Make it equal to ID.
+  //For all elements that can be used inside a form add name if it's missing. Make it equal to ID.
   form.querySelectorAll('button, datalist, fieldset, input, meter, progress, select, textarea')
       .forEach((item) => {
         if (!item.hasAttribute('data-noname') && (!item.hasAttribute('name') || empty(item.getAttribute('name'))) && !empty(item.id)) {
           item.setAttribute('name', item.id);
         }
       });
-  //List of input types, that are "textual" by default, thus can be tracked through keypress and paste events. In essence, these are types, that support maxlength attribute
+  //List of input types that are "textual" by default, thus can be tracked through keypress and paste events. In essence, these are types that support the maxlength attribute
   form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')
       .forEach((item) => {
         //Somehow backspace can be tracked only on keydown, not keypress
@@ -130,37 +144,37 @@ function formInit(form: HTMLFormElement): void {
             item.addEventListener(eventType, autoNext);
           });
           item.addEventListener('paste', (event) => {
-            void pasteSplit(event);
+            void pasteSplit(event as ClipboardEvent);
           });
         }
       });
 }
 
-function sampInit(samp: HTMLElement): void {
+export function sampInit(samp: HTMLElement): void {
   // Add a visual button
-  // Modifying innerHTML instead of insertBefore, since block may not have any actual children in the first place, and as per https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
+  // Modifying innerHTML instead of insertBefore, since the block may not have any actual children in the first place, and as per https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
   // "When the element does not have a first child, then firstChild is null. The element is still appended to the parent, after the last child."
-  // This results in same effect as with appendChild, that the image is inserted at the end, which is not what we want
-  // Same is true for codeInit and blockquoteInit
+  // This results in the same effect as with appendChild, that the image is inserted at the end, which is not what we want.
+  // The same is true for codeInit and blockquoteInit
   samp.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${samp.innerHTML}`;
   //Add description
   const description = samp.getAttribute('data-description') ?? '';
   if (!empty(description)) {
     samp.innerHTML = `<span class="code_desc">${description}</span>${samp.innerHTML}`;
   }
-  //Add source
+  //Add the source
   const source = samp.getAttribute('data-source') ?? '';
   if (!empty(source)) {
     samp.innerHTML = `${samp.innerHTML}<span class="quote_source">${source}</span>`;
   }
-  //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
+  //Add a listener to the button. Needs to be the last one due to manipulations with innerHTML
   samp.querySelector('.copy_quote')
-      ?.addEventListener('click', (event: MouseEvent) => {
+      ?.addEventListener('click', (event) => {
         copyQuote(event.target as HTMLElement);
       });
 }
 
-function codeInit(code: HTMLElement): void {
+export function codeInit(code: HTMLElement): void {
   //Add a visual button
   code.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${code.innerHTML}`;
   //Add description
@@ -168,19 +182,19 @@ function codeInit(code: HTMLElement): void {
   if (!empty(description)) {
     code.innerHTML = `<span class="code_desc">${description}</span>${code.innerHTML}`;
   }
-  //Add source
+  //Add the source
   const source = code.getAttribute('data-source') ?? '';
   if (!empty(source)) {
     code.innerHTML = `${code.innerHTML}<span class="quote_source">${source}</span>`;
   }
-  //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
+  //Add a listener to the button. Needs to be the last one due to manipulations with innerHTML
   code.querySelector('.copy_quote')
-      ?.addEventListener('click', (event: MouseEvent) => {
+      ?.addEventListener('click', (event) => {
         copyQuote(event.target as HTMLElement);
       });
 }
 
-function blockquoteInit(quote: HTMLElement): void {
+export function blockquoteInit(quote: HTMLElement): void {
   //Add a visual button
   quote.innerHTML = `<img loading="lazy" decoding="async"  src="/assets/images/copy.svg" alt="Click to copy block" class="copy_quote">${quote.innerHTML}`;
   //Add author
@@ -188,20 +202,20 @@ function blockquoteInit(quote: HTMLElement): void {
   if (!empty(author)) {
     quote.innerHTML = `<span class="quote_author">${author}</span>${quote.innerHTML}`;
   }
-  //Add source
+  //Add the source
   const source = quote.getAttribute('data-source') ?? '';
   if (!empty(source)) {
     quote.innerHTML = `${quote.innerHTML}<span class="quote_source">${source}</span>`;
   }
-  //Add listener to the button. Needs to be the last one due to manipulations with innerHTML
+  //Add a listener to the button. Needs to be the last one due to manipulations with innerHTML
   quote.querySelector('.copy_quote')
-       ?.addEventListener('click', (event: MouseEvent) => {
+       ?.addEventListener('click', (event) => {
          copyQuote(event.target as HTMLElement);
        });
 }
 
-function qInit(quote: HTMLQuoteElement): void {
-  // q tag is inline and a visual button does not suit it, so we add tooltip to it
+export function qInit(quote: HTMLQuoteElement): void {
+  // q tag is inline and a visual button does not suit it, so we add a tooltip to it
   if (!quote.hasAttribute('data-tooltip')) {
     quote.setAttribute('data-tooltip', 'Click to copy quote');
   }
@@ -211,8 +225,8 @@ function qInit(quote: HTMLQuoteElement): void {
   });
 }
 
-function varInit(variable: HTMLElement): void {
-  // var tag is inline and a visual button does not suit it, so we add tooltip to it
+export function varInit(variable: HTMLElement): void {
+  // var tag is inline and a visual button does not suit it, so we add a tooltip to it
   if (!variable.hasAttribute('data-tooltip')) {
     variable.setAttribute('data-tooltip', 'Click to copy variable');
   }
@@ -222,9 +236,9 @@ function varInit(variable: HTMLElement): void {
   });
 }
 
-function detailsInit(details: HTMLDetailsElement): void {
+export function detailsInit(details: HTMLDetailsElement): void {
   if (!details.classList.contains('persistent') && !details.classList.contains('spoiler') && !details.classList.contains('adult')) {
-    // Attach listener for clicks. Technically we can (and probably should) use 'toggle', but I was not able to achieve consistent behavior with it.
+    // Attach listener for clicks. Technically, we can (and probably should) use 'toggle', but I was not able to achieve consistent behavior with it.
     const summary = details.querySelector('summary');
     if (summary) {
       summary.addEventListener('click', (event) => {
@@ -235,7 +249,7 @@ function detailsInit(details: HTMLDetailsElement): void {
   }
 }
 
-function imgInit(img: HTMLImageElement): void {
+export function imgInit(img: HTMLImageElement): void {
   //Add alt, if empty
   if (empty(img.alt)) {
     img.alt = basename(String(img.src));
@@ -248,10 +262,10 @@ function imgInit(img: HTMLImageElement): void {
   }
   //Wrap gallery_zoom images in anchor
   if (img.classList.contains('gallery_zoom')) {
-    //Check if parent is already a link
+    //Check if the parent is already a link
     const parent = img.parentElement;
     if (parent && parent.nodeName.toLowerCase() !== 'a') {
-      //Prepare link
+      //Prepare the link
       const link = document.createElement('a');
       link.href = img.src;
       link.target = '_blank';
@@ -262,9 +276,9 @@ function imgInit(img: HTMLImageElement): void {
       //Create a clone of the image, and remove gallery_zoom class for cleanliness
       const clone = img.cloneNode(true) as HTMLImageElement;
       clone.classList.remove('gallery_zoom');
-      //Append the clone to link
+      //Append the clone to the link
       link.appendChild(clone);
-      //Replace original image with link
+      //Replace the original image with the link
       img.replaceWith(link);
     } else if (parent && parent.nodeName.toLowerCase() === 'a') {
       //Handle existing anchor
@@ -279,7 +293,7 @@ function imgInit(img: HTMLImageElement): void {
   }
 }
 
-function dialogInit(dialog: HTMLDialogElement): void {
+export function dialogInit(dialog: HTMLDialogElement): void {
   if (dialog.classList.contains('modal')) {
     dialog.addEventListener('click', (event) => {
       const target = event.target;
@@ -292,17 +306,17 @@ function dialogInit(dialog: HTMLDialogElement): void {
   }
 }
 
-function anchorInit(anchor: HTMLAnchorElement): void {
+export function anchorInit(anchor: HTMLAnchorElement): void {
   // If `href` is empty - do not do anything
   if (empty(anchor.href)) {
     return;
   }
-  const current_URL = new URL(anchor.href);
-  // Add `target="_blank"` if link is not from the current domain
-  if (current_URL.host !== window.location.host) {
+  const current_url = new URL(anchor.href);
+  // Add `target="_blank"` if the link is not from the current domain
+  if (current_url.host !== window.location.host) {
     anchor.target = '_blank';
     // Add noopener and noreferrer for some level of security/privacy.
-    // Technically all modern browsers are supposed to add them during onclick, but can't trust that.
+    // Technically, all modern browsers are supposed to add them during onclick, but can't trust that.
     // Also, noreferrer already implies noopener, but allegedly some browsers at least used to require both, not following the spec.
     if (empty(anchor.rel)) {
       anchor.rel = 'noopener noreferrer';
@@ -315,28 +329,29 @@ function anchorInit(anchor: HTMLAnchorElement): void {
       }
     }
   }
-  // Add an icon indicating that link will open in new tab
+  // Add an icon indicating that the link will open in a new tab
   if (anchor.target === '_blank' && !anchor.innerHTML.includes('assets/images/newtab.svg') && !anchor.classList.contains('no_new_tab_icon')) {
     anchor.innerHTML += '<img class="new_tab_icon" src="/assets/images/newtab.svg" alt="Opens in new tab" loading="lazy" decoding="async">';
-    // I am aware of some extensions adding blank anchors, that can break the code, so we need to check if href is empty
+    // I am aware of some extensions adding blank anchors that can break the code, so we need to check if the href is empty
   } else if (
     !empty(anchor.href) &&
-    !anchor.getAttribute('href')?.startsWith('#tab_name_') &&
-    !empty(current_URL.hash)
-    && current_URL.origin + current_URL.host + current_URL.pathname === window.location.origin + window.location.host + window.location.pathname
+    !anchor.getAttribute('href')
+           ?.startsWith('#tab_name_') &&
+    !empty(current_url.hash)
+    && current_url.origin + current_url.host + current_url.pathname === window.location.origin + window.location.host + window.location.pathname
   ) {
-    // Logic to update URL if this is a hash link for current page
+    // Logic to update URL if this is a hash link for the current page
     anchor.addEventListener('click', () => {
       if (!window.location.hash.toLowerCase()
                  .startsWith('#gallery=')) {
-        history.replaceState(document.title, document.title, `${current_URL.hash}`);
+        history.replaceState(document.title, document.title, `${current_url.hash}`);
       }
     });
   }
 }
 
-// Function to apply custom initializers from observer
-function customizeNewElements(new_node: Node): void {
+// Function to apply custom initializers from the observer
+export function customizeNewElements(new_node: Node): void {
   if (new_node.nodeType === 1) {
     const node_name = new_node.nodeName.toLowerCase();
     switch (node_name) {

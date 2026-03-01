@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="JS" pattern="file[simbiat.dev]:build/js//*.js||file[simbiat.dev]:build/js//*.ts" />
+  <scope name="JS" pattern="file[simbiat.dev]:build/js//*" />
 </component>

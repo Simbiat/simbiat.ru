@@ -57,10 +57,10 @@ services:
       /bin/sh -c "rm -f -r /sessions/* &
                   /docker-entrypoint.sh apache2-foreground"
 
-  #Currently unused due to https://youtrack.jetbrains.com/issue/WEB-73725
-  node:
-    container_name: nodejs
-    image: node:latest
+  #Currently unused due to https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722
+  bun:
+    container_name: bun
+    image: oven/bun:latest
     profiles:
       - dev_only
     restart: no
@@ -68,14 +68,6 @@ services:
       - webserver
     security_opt:
       - no-new-privileges=true
-    volumes:
-      - ./package.json:/usr/app/package.json:ro
-      - ./package-lock.json:/usr/app/package-lock.json:rw
-      - ./build/js:/usr/app/js:rw
-      - node_modules:/usr/app/node_modules:rw
-      - ./build/css:/usr/app/css:ro
-      - ./public/assets/:/usr/app/output:rw
-    working_dir: /usr/app
     #Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run")
     #command: tail -f /dev/null
 

@@ -1,3 +1,8 @@
+import { addSnackbar, submitIntercept, basename } from 'Common/Helpers.ts';
+import { ajax, type AjaxJSONResponse } from 'Common/Ajax.ts';
+import { AJAX_TIMEOUT, SNACKBAR_FAIL_LIFE } from 'Common/Constants.ts';
+import { buttonToggle } from 'Common/Inputs.ts';
+
 export class EditAvatars {
   private readonly form: HTMLFormElement | null = null;
   private readonly current_avatar: HTMLImageElement | null = null;
@@ -50,8 +55,9 @@ export class EditAvatars {
       const form_data = new FormData(this.form);
       const button = this.form.querySelector('#avatar_submit');
       buttonToggle(button as HTMLInputElement);
-      void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, form_data, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
-          const data = response as ajaxJSONResponse;
+      void ajax(`${location.protocol}//${location.host}/api/uc/avatars/add`, form_data, 'json', 'POST', AJAX_TIMEOUT, true)
+        .then((response) => {
+          const data = response as AjaxJSONResponse;
           if (data.data === true) {
             //Add avatar to the list
             this.addToList(data.location);
@@ -75,8 +81,9 @@ export class EditAvatars {
     if (li) {
       const form_data = new FormData();
       form_data.append('avatar', (li as HTMLElement).id);
-      void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true).then((response) => {
-          const data = response as ajaxJSONResponse;
+      void ajax(`${location.protocol}//${location.host}/api/uc/avatars/setactive`, form_data, 'json', 'PATCH', AJAX_TIMEOUT, true)
+        .then((response) => {
+          const data = response as AjaxJSONResponse;
           if (data.data === true) {
             //Update avatar on page
             this.refresh(data.location);
@@ -92,7 +99,8 @@ export class EditAvatars {
   private refresh(avatar: string): void {
     const hash = basename(avatar);
     if (this.avatars_list) {
-      this.avatars_list.querySelectorAll('li').forEach((item) => {
+      this.avatars_list.querySelectorAll('li')
+          .forEach((item) => {
             const radio = item.querySelector('input[id^=avatar_]');
             const close = item.querySelector('input[id^=del_]');
             //Deselect all nodes, that are not current one
@@ -145,7 +153,8 @@ export class EditAvatars {
       //Update label
       const label: HTMLLabelElement | null = clone.querySelector('label');
       if (label) {
-        label.setAttribute('for', String(label.getAttribute('for')).replace('hash', hash));
+        label.setAttribute('for', String(label.getAttribute('for'))
+          .replace('hash', hash));
       }
       //Update image source
       const img: HTMLImageElement | null = clone.querySelector('img');
@@ -168,8 +177,9 @@ export class EditAvatars {
     if (li) {
       const form_data = new FormData();
       form_data.append('avatar', (li as HTMLElement).id);
-      void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, form_data, 'json', 'DELETE', AJAX_TIMEOUT, true).then((response) => {
-          const data = response as ajaxJSONResponse;
+      void ajax(`${location.protocol}//${location.host}/api/uc/avatars/delete`, form_data, 'json', 'DELETE', AJAX_TIMEOUT, true)
+        .then((response) => {
+          const data = response as AjaxJSONResponse;
           if (data.data === true) {
             //Delete from list
             (li as HTMLElement).remove();

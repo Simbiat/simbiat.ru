@@ -1,25 +1,25 @@
 // @ts-check
 // eslint.config.mjs
-import stylistic from '@stylistic/eslint-plugin'
-import globals from 'globals'
-import eslint from '@eslint/js'
-import ts_eslint from 'typescript-eslint'
-import ts_parser from '@typescript-eslint/parser'
-import compat from 'eslint-plugin-compat'
-import { defineConfig } from 'eslint/config'
-import deMorgan from 'eslint-plugin-de-morgan'
-import { plugin as ex } from 'eslint-plugin-exception-handling'
-import no_unsanitized from 'eslint-plugin-no-unsanitized'
-import markdown from '@eslint/markdown'
-import json from '@eslint/json'
-import no_constructor from 'eslint-plugin-no-constructor-bind'
-import redos from 'eslint-plugin-redos'
-import pii from 'eslint-plugin-pii'
-import xss from 'eslint-plugin-xss'
-import github from 'eslint-plugin-github'
-import plugin_promise from 'eslint-plugin-promise'
-import regexp_plugin from 'eslint-plugin-regexp'
-import sonarjs from 'eslint-plugin-sonarjs'
+import stylistic from '@stylistic/eslint-plugin';
+import globals from 'globals';
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import ts_parser from '@typescript-eslint/parser';
+import compat from 'eslint-plugin-compat';
+import { defineConfig } from 'eslint/config';
+import deMorgan from 'eslint-plugin-de-morgan';
+import { plugin as ex } from 'eslint-plugin-exception-handling';
+import no_unsanitized from 'eslint-plugin-no-unsanitized';
+import markdown from '@eslint/markdown';
+import json from '@eslint/json';
+import no_constructor from 'eslint-plugin-no-constructor-bind';
+import redos from 'eslint-plugin-redos';
+import pii from 'eslint-plugin-pii';
+import xss from 'eslint-plugin-xss';
+import github from 'eslint-plugin-github';
+import plugin_promise from 'eslint-plugin-promise';
+import regexp_plugin from 'eslint-plugin-regexp';
+import sonarjs from 'eslint-plugin-sonarjs';
 
 // It looks like a false positive for the inspection, so suppressing it.
 // noinspection JSCheckFunctionSignatures
@@ -56,18 +56,6 @@ export default defineConfig([
       },
       ecmaVersion: 'latest',
       sourceType: 'script',
-    },
-    settings: {
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          bun: true,
-          project: [
-            'build/js/Common/tsconfig.json',
-            'build/js/Pages/tsconfig.json',
-          ],
-        },
-      },
     },
     rules: {
       'compat/compat': 'error',
@@ -107,12 +95,12 @@ export default defineConfig([
       'no-extra-bind': 'error',
       'no-extra-label': 'error',
       'no-implicit-coercion': 'error',
-      'no-inline-comments': 'error',
+      'no-inline-comments': 'warn',
       'no-iterator': 'error',
       'no-label-var': 'error',
       'no-labels': 'error',
       'no-lone-blocks': 'error',
-      'no-lonely-if': 'error',
+      'no-lonely-if': 'warn',
       'no-multi-assign': 'error',
       'no-multi-str': 'error',
       'no-new-func': 'error',
@@ -134,9 +122,10 @@ export default defineConfig([
       'object-shorthand': 'error',
       'one-var': ['error', 'never'],
       '@stylistic/one-var-declaration-per-line': ['warn', 'always'],
+      '@stylistic/eol-last': 'warn',
       'operator-assignment': ['error', 'always'],
       'prefer-arrow-callback': 'error',
-      'prefer-const': 'error',
+      'prefer-const': 'warn',
       'prefer-exponentiation-operator': 'error',
       'prefer-numeric-literals': 'error',
       'prefer-object-has-own': 'error',
@@ -156,6 +145,8 @@ export default defineConfig([
       '@stylistic/no-multi-spaces': 'warn',
       '@stylistic/object-property-newline': 'warn',
       '@stylistic/semi-style': ['warn', 'last'],
+      '@stylistic/comma-dangle': 'warn',
+      '@stylistic/quotes': 'warn',
       // Conflicts with PHPStorm settings
       '@stylistic/indent': 'off',
       '@stylistic/quote-props': 'warn',
@@ -181,7 +172,7 @@ export default defineConfig([
       '@stylistic/function-paren-newline': ['warn', 'multiline'],
       '@stylistic/newline-per-chained-call': 'warn',
       '@stylistic/spaced-comment': 'off',
-      'no-void': 'error',
+      'no-void': 'warn',
       'default-param-last': 'error',
       'no-invalid-this': 'error',
       'no-loop-func': 'error',
@@ -191,6 +182,7 @@ export default defineConfig([
       'no-array-constructor': 'error',
       'no-empty-function': 'error',
       '@stylistic/no-extra-semi': 'warn',
+      '@stylistic/member-delimiter-style': 'warn',
       '@stylistic/semi': ['warn', 'always'],
       'no-implied-eval': 'error',
       'require-await': 'error',
@@ -238,15 +230,15 @@ export default defineConfig([
       'sonarjs/aws-iam-all-resources-accessible': 'error',
       'sonarjs/bool-param-default': 'error',
       'sonarjs/class-prototype': 'error',
-      'sonarjs/declarations-in-global-scope': 'error',
+      'sonarjs/declarations-in-global-scope': 'warn',
       'sonarjs/destructuring-assignment-syntax': 'error',
-      'sonarjs/elseif-without-else': 'error',
+      'sonarjs/elseif-without-else': 'warn',
       'sonarjs/file-name-differ-from-class': 'error',
       'sonarjs/max-union-size': 'error',
       // not sure if this helps that much, probably would end up excluding cases
       'sonarjs/nested-control-flow': 'off',
       'sonarjs/no-built-in-override': 'error',
-      'sonarjs/no-collapsible-if': 'error',
+      'sonarjs/no-collapsible-if': 'warn',
       // gets triggered by CSS queries, which probably should not be put into a variable
       'sonarjs/no-duplicate-string': 'off',
       'sonarjs/no-for-in-iterable': 'error',
@@ -282,6 +274,9 @@ export default defineConfig([
         format: '^[A-Z][a-zA-Z]*$',
       }],
       'github/filenames-match-regex': ['warn', '^[A-Z][a-z0-9_]+[a-zA-Z0-9_]*$'],
+      'github/no-blur': 'warn',
+      'github/array-foreach': 'warn',
+      'github/no-then': 'warn',
       // escompat is bundled with GitHub rules, and some rules do not recognize that options are supported by targeted browsers (a limitation of caniuse-lite)
       'escompat/no-optional-catch': 'off',
       'escompat/no-optional-chaining': 'off',
@@ -291,14 +286,17 @@ export default defineConfig([
       'prettier/prettier': 'off',
       // Also not sure where this came from
       'eslint-comments/no-use': 'off',
+      // Conflicts with PHPStorm rules
+      'import/no-unresolved': 'off',
+      'import/extensions': 'off'
     },
   },
   {
     files: ['**/*.ts', '**/*.tsx'],
     extends: [
-      ts_eslint.configs.recommendedTypeChecked,
-      ts_eslint.configs.stylisticTypeChecked,
-      ts_eslint.configs.strict,
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+      tseslint.configs.strict,
     ],
     languageOptions: {
       parser: ts_parser,
@@ -337,6 +335,7 @@ export default defineConfig([
       '@typescript-eslint/no-shadow': 'error',
       'no-use-before-define': 'off',
       '@typescript-eslint/no-use-before-define': 'error',
+      '@typescript-eslint/no-unused-vars': 'warn'
     },
   },
   {

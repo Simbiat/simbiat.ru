@@ -166,7 +166,7 @@ final class Config
         }
         #Load shared config
         try {
-            self::$shared_with_js = \json_decode(\file_get_contents(self::$work_dir.'/public/assets/config.json'), true, 512, \JSON_THROW_ON_ERROR);
+            self::$shared_with_js = \json_decode(\file_get_contents(self::$work_dir.'/build/js/shared_with_php.json'), true, 512, \JSON_THROW_ON_ERROR);
         } catch (\Throwable $exception) {
             #For now just logging, at the moment of writing there should not be anything critical here
             Errors::error_log($exception);
@@ -219,7 +219,7 @@ final class Config
     private function nonApiLinks(): void
     {
         if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
-            \array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], ['rel' => 'preload', 'href' => '/assets/config.'.\filemtime(self::$js_dir.'/config.json').'.json', 'as' => 'fetch', 'crossorigin' => 'same-origin', 'type' => 'application/json']);
+            \array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], );
         }
     }
     

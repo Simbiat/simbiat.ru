@@ -1,3 +1,6 @@
+import { empty } from './Helpers.ts';
+import { inputInit } from './CustomInits.ts';
+
 const CUSTOM_COLOR_MAP: Record<string, string> = {
   '#17141F': 'body',
   '#19424D': 'dark_border',
@@ -409,7 +412,7 @@ function tinyMCEHideInputs(): void {
         const inputs = dialog.querySelectorAll('input[type="file"]');
         if (!empty(inputs)) {
           inputs.forEach((input) => {
-              inputInit(input);
+            inputInit(input as HTMLInputElement);
           });
         }
       } else if (titleText === 'cell properties' || titleText === 'row properties') {
@@ -426,7 +429,7 @@ function tinyMCEHideInputs(): void {
   }
 }
 
-function loadTinyMCE(id: string, no_media = true, no_restore_on_empty = false): void {
+export function loadTinyMCE(id: string, no_media = true, no_restore_on_empty = false): void {
   if ((/^\s*$/ui).exec(id)) {
     return;
   }
@@ -445,12 +448,12 @@ function loadTinyMCE(id: string, no_media = true, no_restore_on_empty = false): 
       settings.autosave_restore_when_empty = false;
     }
     void import('/tinymce/tinymce.min.js').then(() => {
-      // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
+      // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit the current structure
       // As such I am suppressing a bunch of linters' errors here
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       void tinymce.init(settings)
                   .then(() => {
-                    // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
+                    // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit the current structure
                     // As such I am suppressing a bunch of linters' errors here
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-assignment
                     const tiny_instance = tinymce.get(id);
@@ -495,7 +498,7 @@ function loadTinyMCE(id: string, no_media = true, no_restore_on_empty = false): 
   }
 }
 
-function saveTinyMCE(id: string, textareaOnly = false): void {
+export function saveTinyMCE(id: string, textareaOnly = false): void {
   if ((/^\s*$/ui).exec(id)) {
     return;
   }

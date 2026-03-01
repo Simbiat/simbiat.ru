@@ -1,5 +1,5 @@
 //Common function to add snackbars. Originally it was a separate class, but it does not make much sense to have it that way.
-function addSnackbar(text: string, color = '', milliseconds = 3000): void {
+export function addSnackbar(text: string, color = '', milliseconds = 3000): void {
   const snacks = document.querySelector('snack-bar');
   const template = document.querySelector('#snackbar_template');
   if (snacks && template) {
@@ -13,7 +13,8 @@ function addSnackbar(text: string, color = '', milliseconds = 3000): void {
         textBlock.innerHTML = text;
       }
       //Update milliseconds for auto-closure
-      snack.querySelector('snack-close')?.setAttribute('data-close-in', String(milliseconds));
+      snack.querySelector('snack-close')
+           ?.setAttribute('data-close-in', String(milliseconds));
       //Add class for color
       if (color) {
         snack.classList.add(color);
@@ -26,7 +27,7 @@ function addSnackbar(text: string, color = '', milliseconds = 3000): void {
 }
 
 //Get meta content
-function getMeta(meta_name: string): string | null {
+export function getMeta(meta_name: string): string | null {
   const metas = Array.from(document.querySelectorAll('meta'));
   const tag = metas.find((obj) => {
     return obj.name === meta_name;
@@ -38,7 +39,7 @@ function getMeta(meta_name: string): string | null {
 }
 
 //Update document title and push to history. Required, since browsers mostly ignore title argument in pushState
-function updateHistory(new_url: string, title: string): void {
+export function updateHistory(new_url: string, title: string): void {
   //Update title and/or URL only if there were changes
   if (document.title !== title) {
     document.title = title;
@@ -49,7 +50,7 @@ function updateHistory(new_url: string, title: string): void {
 }
 
 //Function to intercept both form submission and Enter key pressed in the form (which normally also submits it)
-function submitIntercept(form: HTMLFormElement, callable: () => void): void {
+export function submitIntercept(form: HTMLFormElement, callable: () => void): void {
   const is_bot = !empty(getMeta('is_bot'));
   form.removeEventListener('submit', submitDefaultIntercept);
   form.removeEventListener('keypress', submitDefaultIntercept);
@@ -79,7 +80,7 @@ function submitIntercept(form: HTMLFormElement, callable: () => void): void {
   });
 }
 
-function submitDefaultIntercept(event: SubmitEvent | KeyboardEvent): boolean {
+export function submitDefaultIntercept(event: SubmitEvent | KeyboardEvent): boolean {
   if (event.type === 'submit' || (event.type === 'keydown' && (event as KeyboardEvent).code === 'Enter')) {
     event.preventDefault();
     event.stopPropagation();
@@ -90,7 +91,7 @@ function submitDefaultIntercept(event: SubmitEvent | KeyboardEvent): boolean {
 }
 
 //Remove table row based containing element
-function deleteRow(element: HTMLElement): boolean {
+export function deleteRow(element: HTMLElement): boolean {
   const table = element.closest('table');
   //Get row number
   const tr = element.closest('tr');
@@ -102,18 +103,23 @@ function deleteRow(element: HTMLElement): boolean {
 }
 
 //Simulation of basename() function to return only the name of the file (without path or extension)
-function basename(text: string): string {
+export function basename(text: string): string {
   return text.replace(/^.*\/|\.[^.]*$/gu, '');
 }
 
 //Function replicating PHP's rawurlencode for consistency.
-function rawurlencode(str: string): string {
+export function rawurlencode(str: string): string {
   const definitelyString = String(str);
-  return encodeURIComponent(definitelyString).replace(/!/ug, '%21').replace(/'/ug, '%27').replace(/\(/ug, '%28').replace(/\)/ug, '%29').replace(/\*/ug, '%2A');
+  return encodeURIComponent(definitelyString)
+    .replace(/!/ug, '%21')
+    .replace(/'/ug, '%27')
+    .replace(/\(/ug, '%28')
+    .replace(/\)/ug, '%29')
+    .replace(/\*/ug, '%2A');
 }
 
 //Function to replicate PHP's empty()
-function empty(variable: unknown): boolean {
+export function empty(variable: unknown): boolean {
   if (typeof variable === 'undefined' || variable === null || variable === false || variable === 0 || variable === 'NaN') {
     return true;
   }
@@ -136,7 +142,7 @@ function empty(variable: unknown): boolean {
 }
 
 //Function to force page refresh. Regular reload() often hits cache, thus not properly updating
-function pageRefresh(new_url?: string): void {
+export function pageRefresh(new_url?: string): void {
   let url;
   if (empty(new_url)) {
     url = new URL(document.location.href);
@@ -149,7 +155,7 @@ function pageRefresh(new_url?: string): void {
 }
 
 //Copy the text of tags like q, samp, code, blockquote, var
-function copyQuote(target: HTMLElement): string {
+export function copyQuote(target: HTMLElement): string {
   let node;
   //Get parent node, if click was on the copy picture/button
   if (target.tagName.toLowerCase() === 'q' || target.tagName.toLowerCase() === 'var') {
@@ -185,36 +191,39 @@ function copyQuote(target: HTMLElement): string {
   //Remove author from blockquotes
   if (tagName === 'blockquote' && node.hasAttribute('data-author')) {
     const authorMatch = new RegExp(`^(${String(node.getAttribute('data-author'))})`, 'ui');
-    quoteText = quoteText.replace(authorMatch,'');
+    quoteText = quoteText.replace(authorMatch, '');
   }
   //Remove description from code and samp
   if ((tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-description')) {
     const descMatch = new RegExp(`^(${String(node.getAttribute('data-description'))})`, 'ui');
-    quoteText = quoteText.replace(descMatch,'');
+    quoteText = quoteText.replace(descMatch, '');
   }
   //Remove source from blockquotes, code and samp
   if ((tagName === 'blockquote' || tagName === 'samp' || tagName === 'code') && node.hasAttribute('data-source')) {
     const sourceMatch = new RegExp(`(${String(node.getAttribute('data-source'))})$`, 'ui');
-    quoteText = quoteText.replace(sourceMatch,'');
+    quoteText = quoteText.replace(sourceMatch, '');
   }
-  navigator.clipboard.writeText(quoteText).then(() => {
+  navigator.clipboard.writeText(quoteText)
+           .then(() => {
              addSnackbar(`${tag} copied to clipboard`, 'success');
            }, () => {
-             addSnackbar(`Failed to copy ${tag.toLowerCase()}`,'failure');
+             addSnackbar(`Failed to copy ${tag.toLowerCase()}`, 'failure');
            });
   return String(node.textContent);
 }
 
-//Check if remote file exists
-async function is_file(url: string): Promise<boolean> {
+//Check if a remote file exists
+export async function is_file(url: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    fetch(url, { 'method': 'HEAD' }).then((response) => {
+    fetch(url, {'method': 'HEAD'})
+      .then((response) => {
         if (response.ok) {
           resolve(true);
         } else {
           resolve(false);
         }
-      }).catch((error) => {
+      })
+      .catch((error) => {
         reject(error);
       });
   });

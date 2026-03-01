@@ -1,0 +1,73 @@
+{
+    "compilerOptions": {
+        //Type checking
+        "strict": true,
+        "skipLibCheck": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": false,
+        //Compiler options
+        "module": "Preserve",
+        "target": "ESNext",
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "moduleDetection": "force",
+        "jsx": "react-jsx",
+        "verbatimModuleSyntax": true,
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "/tinymce/*": [
+                "../../vendor/tinymce/tinymce/*"
+            ],
+            "*": [
+                "../../build/js/*",
+                "../../build/js/Pages/*"
+            ]
+        },
+        "sourceMap": true,
+        "inlineSources": true,
+        "removeComments": true,
+        "explainFiles": true,
+        "listFiles": true,
+        //Other settings
+        "allowJs": true,
+        "checkJs": true,
+        "composite": true,
+        "noErrorTruncation": true,
+        "lib": [
+            "esnext",
+            "dom",
+            "WebWorker",
+            "dom.iterable"
+        ],
+        "rootDir": "../",
+        "sourceRoot": "/",
+        "outDir": "../../public/assets/",
+        "outFile": "../../public/assets/app.js",
+    },
+    "files": [
+        "shared_with_php.json",
+        "../../vendor/tinymce/tinymce/tinymce.min.js",
+        "../../vendor/tinymce/tinymce/tinymce.d.ts"
+    ],
+    //Include only .ts files in the same dir
+    "include": [
+        "./*.ts",
+        "./*/*.ts",
+        "./*/*/*.ts"
+    ],
+    "exclude": [
+        "*node_modules*"
+    ]
+}

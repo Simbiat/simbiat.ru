@@ -1,7 +1,11 @@
+import { SNACKBAR_FAIL_LIFE } from 'Common/Constants.ts';
+import { urlCleanString } from './Url.ts';
+import { addSnackbar, empty } from './Helpers.ts';
+
 //Functions related to various input, form and related elements
 
 //Adding some aria attributes to input elements and doing other standardization stuff.
-function ariaNation(inputElement: HTMLInputElement): void {
+export function ariaNation(inputElement: HTMLInputElement): void {
   //Adjust aria-invalid based on whether input is valid or not
   inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
   //Add placeholder, if not present. Required more as a precaution for text-like inputs with no placeholder
@@ -43,7 +47,7 @@ function ariaNation(inputElement: HTMLInputElement): void {
 }
 
 //Function to start/stop spinner and disable/enable respective button
-function buttonToggle(button: HTMLInputElement, enable = true): void {
+export function buttonToggle(button: HTMLInputElement, enable = true): void {
   let spinner;
   //If the button is inside form, then search for spinner inside it first
   if (button.form) {
@@ -77,7 +81,7 @@ function buttonToggle(button: HTMLInputElement, enable = true): void {
 }
 
 //Function to count characters inside textarea elements and update their respective labels
-function countInTextarea(textarea: HTMLTextAreaElement): void {
+export function countInTextarea(textarea: HTMLTextAreaElement): void {
   if (textarea.labels[0] && textarea.maxLength) {
     const label = textarea.labels[0];
     label.setAttribute('data-curlength', `(${textarea.value.length}/${textarea.maxLength}ch)`);
@@ -91,7 +95,7 @@ function countInTextarea(textarea: HTMLTextAreaElement): void {
 }
 
 //Find next/previous input
-function nextInput(initial: HTMLInputElement, reverse = false): HTMLInputElement | null {
+export function nextInput(initial: HTMLInputElement, reverse = false): HTMLInputElement | null {
   //Get form
   const form = initial.form;
   //Iterate textual inputs inside the form. Not using previousElementSibling, because next/previous input may not be a sibling on the same level
@@ -118,7 +122,7 @@ function nextInput(initial: HTMLInputElement, reverse = false): HTMLInputElement
   return null;
 }
 
-async function pasteSplit(event: ClipboardEvent): Promise<void> {
+export async function pasteSplit(event: ClipboardEvent): Promise<void> {
   const originalString = event.clipboardData?.getData('text/plain');
   event.preventDefault();
   event.stopImmediatePropagation();
@@ -185,7 +189,7 @@ async function pasteSplit(event: ClipboardEvent): Promise<void> {
 }
 
 //Paste and move cursor to the end of the field value. Essentially this is meant to simulate default paste event
-function pasteAndMove(input: HTMLInputElement, text: string): void {
+export function pasteAndMove(input: HTMLInputElement, text: string): void {
   const start = input.selectionStart as number;
   const end = input.selectionEnd as number;
   const selectedLength = end - start;
@@ -206,7 +210,7 @@ function pasteAndMove(input: HTMLInputElement, text: string): void {
   input.scrollLeft = (input.scrollWidth / input.value.length) * newCursorPos;
 }
 
-function formEnter(event: KeyboardEvent): boolean {
+export function formEnter(event: KeyboardEvent): boolean {
   if (event.target) {
     const form = (event.target as HTMLInputElement).form;
     if (form && (event.code === 'Enter' || event.code === 'NumpadEnter') && !form.action) {
@@ -219,7 +223,7 @@ function formEnter(event: KeyboardEvent): boolean {
 }
 
 //Track backspace and focus previous input field, if input is empty, when it's pressed
-function inputBackSpace(event: Event): void {
+export function inputBackSpace(event: Event): void {
   const current = event.target as HTMLInputElement;
   if ((event as KeyboardEvent).code === 'Backspace' && !current.value) {
     const moveTo = nextInput(current, true);
@@ -233,7 +237,7 @@ function inputBackSpace(event: Event): void {
 }
 
 // Focus next field, if current is filled to the brim and valid
-function autoNext(event: Event): void {
+export function autoNext(event: Event): void {
   const current = event.target as HTMLInputElement;
   // Get length attribute
   const max_length = parseInt(current.getAttribute('maxlength') ?? '0', 10);
@@ -247,7 +251,7 @@ function autoNext(event: Event): void {
 }
 
 // Validate file names for inputs of type "file", to throw an error before sending them to server, where they will be blocked by SecRule 920120
-function inputFileValidate(file_input: HTMLInputElement): void {
+export function inputFileValidate(file_input: HTMLInputElement): void {
   const files = file_input.files;
   const invalidChars = /['";=]/gu;
   if (files !== null) {

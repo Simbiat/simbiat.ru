@@ -25,7 +25,7 @@ export default {
     'unit-no-unknown': true,
     'no-unknown-custom-media': true,
     'function-no-unknown': true,
-    // Too many false-positives for no-unknown-custom-properties, since codebase is split
+    // Too many false-positives for no-unknown-custom-properties, since the codebase is split
     'no-unknown-custom-properties': false,
     // Similar for animations
     'no-unknown-animations': false,
@@ -74,7 +74,7 @@ export default {
     }],
     'order/properties-alphabetical-order': [true, { severity: 'warning' }],
     'plugin/no-unsupported-browser-features': [true, {
-      /* These features are safe to ignore, because browsers will fall back to appropriate values, when necessary. */
+      /* These features are safe to ignore because browsers will fall back to appropriate values, when necessary. */
       /* This also may include features that are partially supported, but the partial support is acceptable. */
       ignore: [
         'css3-cursors',
@@ -101,8 +101,9 @@ export default {
         'css-file-selector-button'
       ]
     }],
-    'plugin/use-logical-units': [true, { severity: 'warning' }],
-    'plugin/use-logical-properties-and-values': [true, { severity: 'warning' }],
+    'logical-css/require-logical-units': [true, { severity: 'warning' }],
+    'logical-css/require-logical-properties': [true, { severity: 'warning' }],
+    'logical-css/require-logical-keywords': [true, { severity: 'warning' }],
     'csstools/use-nesting': 'always',
     // These two require Autoprefixer
     'property-no-vendor-prefix': true,

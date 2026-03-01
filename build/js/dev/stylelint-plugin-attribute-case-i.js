@@ -20,25 +20,25 @@ const ruleFunction = (primary, _secondaryOptions) => {
       actual: primary,
       possible: [true]
     });
-    
+
     if (!validOptions) return;
-    
+
     root.walkRules((ruleNode) => {
       const rawSelector = ruleNode.raws.selector?.raw || ruleNode.selector;
-      
+
       selectorParser((selectors) => {
         selectors.walkAttributes((attr) => {
           const attrName = attr.attribute;
           const attrValue = attr.value?.replace(/^["']|["']$/g, "");
           const hasIFlag = attr.insensitive;
-          
+
           if (hasIFlag || attrValue === undefined || attrValue === "") return;
-          
+
           const fullAttr = attr.toString();
           const rawAttr = `${attrName}='${attrValue}'`;
           const index = rawSelector.indexOf(fullAttr);
           const endIndex = index + fullAttr.length;
-          
+
           stylelint.utils.report({
             result,
             ruleName,
@@ -53,7 +53,7 @@ const ruleFunction = (primary, _secondaryOptions) => {
               );
               ruleNode.selector = fixed;
               return true;
-            }
+            },
           });
         });
       }).processSync(rawSelector);
