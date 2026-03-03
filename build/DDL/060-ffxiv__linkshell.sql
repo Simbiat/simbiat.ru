@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `ffxiv__linkshell` (
   KEY `communityid` (`community_id`),
   KEY `name_order` (`name`),
   KEY `updated` (`updated` DESC),
+  KEY `duplicates` (`deleted`,`name`,`server_id`,`crossworld`),
   FULLTEXT KEY `name` (`name`),
   CONSTRAINT `serverid_ls` FOREIGN KEY (`server_id`) REFERENCES `ffxiv__server` (`server_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs ROW_FORMAT=DYNAMIC COMMENT='Linkshells (both crossworld and not) found on Lodestone' `PAGE_COMPRESSED`='ON';

@@ -1,6 +1,6 @@
 <section>
     <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ achievement.name }}" src="/assets/images/fftracker/icons/{{ achievement.icon }}">
-    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, "d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {{ timeTag(achievement.updated, "d/m/Y") }}{% endif %}.</p>
+    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, "d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {% if achievement.is_fresh %}<span class="success">{% endif %}{{ timeTag(achievement.updated, "d/m/Y") }}{% if achievement.is_fresh %}</span>{% endif %}{% endif %}.</p>
     <p>By achieving it, one can receive:</p>
     <ul>
         {% if achievement.rewards.points %}
@@ -18,6 +18,9 @@
         <blockquote class="w100pc">{{ achievement.how_to }}</blockquote>
     {% else %}
         <p>But it won't be easy to reap these rewards. What makes that even harder, is that it is still unknown, what the requirements are.</p>
+    {% endif %}
+    {% if achievement.lodestone_url %}
+        <p>See the record on <a href="{{ achievement.lodestone_url }}" target="_blank" rel="noopener noreferrer">Lodestone</a>.</p>
     {% endif %}
     {% if achievement.characters.total > 0 %}
         <p>Achievement has been earned by <i class="success">{{ achievement.characters.total }}</i> {% if achievement.characters.total > 1 %}people{% else %}person{% endif %}.</p>

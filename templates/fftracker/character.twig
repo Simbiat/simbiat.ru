@@ -33,9 +33,11 @@
                     {% if character.grand_company.name %}
                         <p>Reached rank of <img loading="lazy" decoding="async" alt="{{ character.grand_company.rank }}" class="link_icon" src="/assets/images/fftracker/grandcompany/{{ character.grand_company.gc_rank_id }}.webp"><i>{{ character.grand_company.rank }}</i> in <i>{{ character.grand_company.name }}</i> Grand company.</p>
                     {% endif %}
-                    {% if not character.dates.deleted %}
+                    {% if character.dates.deleted %}
+                        <p>Last ressurection check was conducted on {% if character.is_fresh %}<span class="success">{% endif %}{{ timeTag(character.dates.updated, "d/m/Y H:i") }}{% if character.is_fresh %}</span>{% endif %}.</p>
+                    {% else %}
                         <p>
-                            Last interview was conducted on {{ timeTag(character.dates.updated, "d/m/Y H:i") }}.
+                            Last interview was conducted on {% if character.is_fresh %}<span class="success">{% endif %}{{ timeTag(character.dates.updated, "d/m/Y H:i") }}{% if character.is_fresh %}</span>{% endif %}.
                             {% if character.biography %}
                                 This is what adventurer had to say during it:
                             {% endif %}
@@ -43,6 +45,9 @@
                     {% endif %}
                     {% if character.biography %}
                         <blockquote class="w100pc">{{ sanitize(character.biography) }}</blockquote>
+                    {% endif %}
+                    {% if character.lodestone_url %}
+                        <p>See the record on <a href="{{ character.lodestone_url }}" target="_blank" rel="noopener noreferrer">Lodestone</a>.</p>
                     {% endif %}
                     {% if character.can_refresh %}
                         <p class="margin_top_1rem">

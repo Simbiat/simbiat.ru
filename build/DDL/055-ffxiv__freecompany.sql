@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `ffxiv__freecompany` (
   KEY `communityid` (`community_id`),
   KEY `name_order` (`name`),
   KEY `updated` (`updated` DESC),
+  KEY `duplicates` (`deleted`,`name`,`server_id`),
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `tag` (`tag`),
   FULLTEXT KEY `slogan` (`slogan`),

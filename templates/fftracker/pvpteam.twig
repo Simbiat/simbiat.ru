@@ -2,7 +2,7 @@
     <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
     <tab-content id="tab_content_general" class="active">
         <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
-        <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, "d/m/Y") }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {{ timeTag(pvpteam.dates.updated, "d/m/Y H:i") }}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
+        <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, "d/m/Y") }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {% if pvpteam.is_fresh %}<span class="success">{% endif %}{{ timeTag(pvpteam.dates.updated, "d/m/Y H:i") }}{% if pvpteam.is_fresh %}</span>{% endif %}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
         <p>Operate{% if pvpteam.dates.deleted %}d{% else %}s{% endif %} on <i>{{ pvpteam.data_center }}</i>.{% if not pvpteam.dates.deleted %}{% if pvpteam.community %} Has an open <a rel="noopener noreferrer" href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ pvpteam.community }}" target="_blank">community</a>.{% endif %}{% endif %}</p>
         {% if pvpteam.old_names|length > 0 %}
             <p>Had also been known under <i>{{ pvpteam.old_names|length }}</i> other name{% if pvpteam.old_names|length > 1 %}s{% endif %}:</p>
@@ -19,6 +19,9 @@
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
                 {% endfor %}
             </ul>
+        {% endif %}
+        {% if pvpteam.lodestone_url %}
+            <p>See the record on <a href="{{ pvpteam.lodestone_url }}" target="_blank" rel="noopener noreferrer">Lodestone</a>.</p>
         {% endif %}
         {% if pvpteam.can_refresh %}
             <p class="margin_top_1rem">

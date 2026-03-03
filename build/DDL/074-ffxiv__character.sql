@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `ffxiv__character` (
   KEY `achievement_points` (`achievement_points` DESC),
   KEY `privated` (`hidden`) USING BTREE,
   KEY `hidden_achievements` (`hidden_achievements`),
+  KEY `duplicates` (`deleted`,`hidden`,`name`,`server_id`),
   FULLTEXT KEY `name` (`name`),
   FULLTEXT KEY `biography` (`biography`),
   CONSTRAINT `cityid` FOREIGN KEY (`city_id`) REFERENCES `ffxiv__city` (`city_id`) ON UPDATE CASCADE,

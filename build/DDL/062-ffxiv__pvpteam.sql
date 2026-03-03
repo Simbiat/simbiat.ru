@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS `ffxiv__pvpteam` (
   KEY `communityid` (`community_id`),
   KEY `name_order` (`name`),
   KEY `updated` (`updated` DESC),
+  KEY `duplicates` (`deleted`,`name`,`data_center_id`),
   FULLTEXT KEY `name` (`name`),
   CONSTRAINT `pvp_dcid` FOREIGN KEY (`data_center_id`) REFERENCES `ffxiv__server` (`server_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_as_cs ROW_FORMAT=DYNAMIC COMMENT='PvP Teams found on Lodestone' `PAGE_COMPRESSED`='ON';
