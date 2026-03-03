@@ -27,11 +27,10 @@
             <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.lock" />
-            <excludedPath local="true" path="$PROJECT_DIR$/build" />
             <excludedPath local="true" path="$PROJECT_DIR$/eslint.config.mjs" />
             <excludedPath local="true" path="$PROJECT_DIR$/stylelint.config.mjs" />
             <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/package-lock.json" />
+            <excludedPath local="true" path="$PROJECT_DIR$/bun.lock" />
           </excludedPaths>
         </serverdata>
       </paths>

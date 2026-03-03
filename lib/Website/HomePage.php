@@ -129,13 +129,16 @@ class HomePage
                 #Try to start a session if it's not started yet and DB is up. Do not do it, if cache is being returned, if an error has been detected already or if a bot was detected
                 if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
                     session_set_save_handler(new Session(), true);
-                    \session_start();
-                    #Check if banned IP
-                    if (!empty($_SESSION['banned_ip'])) {
-                        self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
-                    }
-                    if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
-                        self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
+                    if (\session_start()) {
+                        #Check if banned IP
+                        if (!empty($_SESSION['banned_ip'])) {
+                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
+                        }
+                        if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
+                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
+                        }
+                    } else {
+                        throw new \RunTimeException('Failed to start session');
                     }
                 } else {
                     $_SESSION = [];
@@ -143,7 +146,7 @@ class HomePage
                     $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
                 }
                 #Check if we have cached the results already
-                self::$stale_return = $this->twigProc(self::$data_cache->read(), true);
+                self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');
                 #We go to router in any case, since error checks will happen in Page class
                 $vars = new MainRouter()->route($uri);
             } catch (\Throwable $exception) {
@@ -154,7 +157,7 @@ class HomePage
                 $vars['template_override'] = 'common/pages/api.twig';
             }
             #Generate page
-            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot'] ?? null]));
+            $this->twigProc(\array_merge($vars, ['request_from_bot' => self::$user_agent['bot'] ?? null]), false, $uri[0] === 'api');
         } catch (\Throwable $exception) {
             Errors::error_log($exception);
         }
@@ -185,12 +188,14 @@ class HomePage
     
     /**
      * Twig processing of the generated page
+     *
      * @param array $twig_vars List of Twig variables
      * @param bool  $cache     Indicates if this is a cache pass
+     * @param bool  $api       Whether generation is for API
      *
      * @return bool
      */
-    final public function twigProc(array $twig_vars = [], bool $cache = false): bool
+    final public function twigProc(array $twig_vars = [], bool $cache = false, bool $api = false): bool
     {
         if (self::$method === 'OPTIONS') {
             exit(0);
@@ -199,7 +204,7 @@ class HomePage
             return false;
         }
         #Update CSRF token
-        if (\session_status() === \PHP_SESSION_ACTIVE) {
+        if (!$api && \session_status() === \PHP_SESSION_ACTIVE) {
             $_SESSION['csrf'] = Security::genToken();
             if (!\headers_sent()) {
                 \header('X-CSRF-Token: '.$_SESSION['csrf']);

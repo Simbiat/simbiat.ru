@@ -109,10 +109,6 @@ abstract class Page
      */
     final public function get(array $path): array
     {
-        #Close session early, if we know, that its data will not be changed (default)
-        if (!$this->session_change && \session_status() === \PHP_SESSION_ACTIVE) {
-            \session_write_close();
-        }
         #Send page language
         if ($this->language !== '' && !\headers_sent()) {
             \header('Content-Language: '.$this->language);
@@ -139,10 +135,6 @@ abstract class Page
                 #Generate the page
                 try {
                     $page = $this->generate($path);
-                    #Close session if it's still open. Normally at this point all manipulations have been done.
-                    if (\session_status() === \PHP_SESSION_ACTIVE) {
-                        \session_write_close();
-                    }
                 } catch (\Throwable $exception) {
                     if (\preg_match('/(ID `.*` for entity `.*` has incorrect format\.)|(ID can\'t be empty\.)/ui', $exception->getMessage()) === 1) {
                         $page = ['http_error' => 400, 'reason' => $exception->getMessage()];

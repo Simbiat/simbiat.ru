@@ -7,6 +7,7 @@ export interface AjaxJSONResponse extends JSON {
   data: boolean | number | string
   location: string
   reason: string
+  csrf: string
 }
 
 // noinspection OverlyComplexFunctionJS
@@ -60,6 +61,10 @@ export async function ajax(
     switch (type) {
       case 'json':
         result = await response.json() as AjaxJSONResponse;
+        if (result.csrf) {
+          document.querySelector('meta[name="X-CSRF-Token"]')
+                  ?.setAttribute('content', result.csrf);
+        }
         break;
       case 'blob':
         result = await response.blob();

@@ -45,8 +45,6 @@ abstract class Api
     protected array $required_permission = [];
     #Flag to indicate need to validate CSRF
     protected bool $csrf = false;
-    #Flag to indicate that session data change is possible on this page
-    protected bool $session_change = false;
     #List of allowed origins, if we want to limit them
     protected array $allowed_origins = [];
     
@@ -174,6 +172,13 @@ abstract class Api
             if (!empty($data['about'])) {
                 $result['json_ready']['about'] = $data['about'];
             }
+            if (\session_status() === \PHP_SESSION_ACTIVE) {
+                $_SESSION['csrf'] = Security::genToken();
+                if (!\headers_sent()) {
+                    \header('X-CSRF-Token: '.$_SESSION['csrf']);
+                }
+            }
+            $result['json_ready']['csrf'] = $_SESSION['csrf'];
             try {
                 $result['json_ready'] = \json_encode($result['json_ready'], \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
             } catch (\JsonException) {
@@ -310,10 +315,6 @@ abstract class Api
         $result = [];
         #If this is a final node, "convert" methods to GET "actions" if such mapping is set. Required for consistency
         if ($this->final_node) {
-            #Close session early, if we know, that its data will not be changed (default)
-            if (!$this->session_change && \session_status() === \PHP_SESSION_ACTIVE) {
-                \session_write_close();
-            }
             #Add description
             if (\count($this->description) !== 0) {
                 $result['about'] = $this->description;
@@ -352,10 +353,6 @@ abstract class Api
             #Add cache age if set
             if (empty($result['cache_age']) && !$this->static) {
                 $result['cache_age'] = $this->cache_age;
-            }
-            #Close session if it's still open. Normally at this point all manipulations have been done.
-            if (\session_status() === \PHP_SESSION_ACTIVE) {
-                \session_write_close();
             }
         }
         return $result;
