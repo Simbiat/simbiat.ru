@@ -11,7 +11,7 @@
 <h2>Characters with no avatar</h2>
 {% if ffstats.data.bugs.no_avatar|length > 0 %}
     <p>These are characters that for some reason do not have an avatar on Lodestone (and no jobs at all) and look corrupted.</p>
-    {% for character in ffstats.data.bugs.no_clan %}
+    {% for character in ffstats.data.bugs.no_avatar %}
         {{ include('common/elements/entitycard.twig', character) }}
     {% endfor %}
 {% else %}
