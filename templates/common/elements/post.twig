@@ -57,10 +57,10 @@
             {% if allow_reply_to and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
                 <input type="button" class="reply_to_button" data-post_id="{{ post.id }}" data-tooltip="Reply to this post" value="📩">
             {% endif %}
-            {% if post.created|date('d/m/Y H:i') > post.published|date('d/m/Y H:i') %}
+            {% if post.created|date('U') > post.published|date('U') %}
                 <span data-tooltip="Backlog post created on {{ post.created|date('d/m/Y H:i') }} UTC">🕰️</span>
             {% endif %}
-            {% if post.created|date('d/m/Y H:i') < post.published|date('d/m/Y H:i') %}
+            {% if post.created|date('U') < post.published|date('U') %}
                 <span data-tooltip="Scheduled post created on {{ post.created|date('d/m/Y H:i') }} UTC">⏲️</span>
             {% endif %}
             {% if post.locked %}
