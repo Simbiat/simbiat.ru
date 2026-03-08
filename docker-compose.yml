@@ -21,7 +21,7 @@ services:
     image: phpmyadmin:5.2.3-apache
     profiles:
       - dev_only
-    restart: unless-stopped
+    restart: no
     environment:
       APACHE_PORT: ${PHPMYADMIN_PORT}
       PMA_ARBITRARY: 0
@@ -57,7 +57,9 @@ services:
       /bin/sh -c "rm -f -r /sessions/* &
                   /docker-entrypoint.sh apache2-foreground"
 
-  #Currently unused due to https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722
+  #Attempt to use Bun from a container. Was meant to allow not keeping `node_modules` in the host, but it doesn't work
+  #due to https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722 bugs.
+  #Bugs were originally raised for Node.js, but they are applicable to Bun, as well.
   bun:
     container_name: bun
     image: oven/bun:latest
@@ -85,6 +87,8 @@ services:
       GEOIPUPDATE_EDITION_IDS: GeoLite2-ASN GeoLite2-City
     volumes:
       - ./data/geoip/:/usr/share/GeoIP/:rw
+    security_opt:
+      - no-new-privileges=true
 
   frankenphp:
     container_name: frankenphp
@@ -155,7 +159,7 @@ services:
       - "127.0.0.1:8080:8080"
       - "127.0.0.1:6060:6060"
       - "127.0.0.1:7422:7422"
-      #These are valid despite IDE highlighting them. https://youtrack.jetbrains.com/issue/IJPL-228615
+      #These are valid despite the IDE highlighting them. https://youtrack.jetbrains.com/issue/IJPL-228615
       - "[::1]:8080:8080"
       - "[::1]:6060:6060"
       - "[::1]:7422:7422"
