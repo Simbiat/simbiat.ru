@@ -177,8 +177,10 @@ abstract class Api
                 if (!\headers_sent()) {
                     \header('X-CSRF-Token: '.$_SESSION['csrf']);
                 }
+                $result['json_ready']['csrf'] = $_SESSION['csrf'];
+            } else {
+                $result['json_ready']['csrf'] = 'no active session';
             }
-            $result['json_ready']['csrf'] = $_SESSION['csrf'];
             try {
                 $result['json_ready'] = \json_encode($result['json_ready'], \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT | \JSON_INVALID_UTF8_SUBSTITUTE | \JSON_UNESCAPED_UNICODE | \JSON_PRESERVE_ZERO_FRACTION);
             } catch (\JsonException) {
