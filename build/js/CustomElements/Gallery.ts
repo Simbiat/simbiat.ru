@@ -5,7 +5,7 @@ export class Gallery extends HTMLElement {
   private _current = 0;
   //Array of the images
   public images: HTMLElement[] = [];
-  //Flag indicating that gallery is open
+  //Flag indicating that the gallery is open
   public isOpened = false;
   //Basic sub-elements
   private readonly gallery_name: HTMLDivElement | null = null;
@@ -35,7 +35,7 @@ export class Gallery extends HTMLElement {
 
   public constructor() {
     super();
-    //Get list of images
+    //Get the list of images
     this.images = Array.from(document.querySelectorAll('.gallery_zoom'));
     this.gallery_name = document.querySelector('#gallery_name');
     this.gallery_name_link = document.querySelector('#gallery_name_link');
@@ -60,7 +60,7 @@ export class Gallery extends HTMLElement {
 
   private open(): void {
     this.tabIndex = 99;
-    //Get element from array
+    //Get element from the array
     const link = this.images[this.current];
     if (link instanceof HTMLAnchorElement) {
       //Get image
@@ -108,7 +108,7 @@ export class Gallery extends HTMLElement {
     (this.parentElement as HTMLDialogElement).close();
     //Update URL
     this.history();
-    //Focus on 1st focusable element to help with keyboard navigation. If not done, focus may stay on close button.
+    //Focus on the 1st focusable element to help with keyboard navigation. If not done, focus may stay on the close button.
     (document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')[0] as HTMLElement).focus();
     this.isOpened = false;
   }
@@ -271,7 +271,7 @@ export class CarouselList extends HTMLElement {
           this.toScroll(event);
         });
       });
-      // Disabled scrolling buttons for carousels, that require this
+      // Disabled scrolling buttons for carousels that require this
       this.disableScroll();
     }
   }
@@ -279,7 +279,7 @@ export class CarouselList extends HTMLElement {
   private toScroll(event: Event): void {
     if (this.list) {
       const scrollButton = event.target as HTMLElement;
-      //Get width to scroll based on width of one of the images
+      //Get width to scroll based on the width of one of the images
       const img = this.list.querySelector('img');
       if (img) {
         if (scrollButton.nodeName === 'IMAGE-CAROUSEL-PREV') {

@@ -29,7 +29,7 @@ export class Posts {
 
   private move(): void {
     if (this.move_post_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.move_post_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.move_post_form);
@@ -50,7 +50,7 @@ export class Posts {
 
   private edit(): void {
     if (this.post_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.post_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.post_form);
@@ -59,7 +59,7 @@ export class Posts {
         .then((response) => {
           const data = response as AjaxJSONResponse;
           if (data.data === true) {
-            //Notify TinyMCE, that data was saved
+            //Notify TinyMCE that data was saved
             if (this.post_form) {
               const textarea = this.post_form.querySelector('textarea');
               if (textarea && !empty(textarea.id)) {
@@ -82,7 +82,7 @@ export class Posts {
 
   private delete(): void {
     if (this.delete_post_form && confirm('This is the last chance to back out.\nIf you press \'OK\' this post will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.delete_post_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.delete_post_form);

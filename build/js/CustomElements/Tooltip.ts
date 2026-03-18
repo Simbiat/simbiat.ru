@@ -8,10 +8,10 @@ export class Tooltip extends HTMLElement {
 
   public constructor() {
     super();
-    //Add data-tooltip attribute for elements, that have title or alt and do not have tooltip either on them or their parent
+    //Add data-tooltip attribute for the elements that have title or alt and do not have a tooltip either on them or their parent
     document.querySelectorAll('[alt]:not([alt=""]):not([data-tooltip]):not(.no_tooltip), [title]:not([title=""]):not([data-tooltip]):not(link):not(.no_tooltip)')
             .forEach((item) => {
-              //Add tooltip only if it's not set on parent element already
+              //Add tooltip only if it's not set on the parent element already
               if (item.parentElement?.hasAttribute('data-tooltip') === false) {
                 item.setAttribute('data-tooltip', item.getAttribute('alt') ?? item.getAttribute('title') ?? '');
               }
@@ -28,7 +28,7 @@ export class Tooltip extends HTMLElement {
             .forEach((item) => {
               item.addEventListener('focus', this.onFocus.bind(this));
             });
-    //Remove tooltip if an element without data-tooltip is selected. Needed to prevent focused tooltips from persisting
+    //Remove the tooltip if an element without a `data-tooltip` is selected. Needed to prevent focused tooltips from persisting
     document.querySelectorAll(':not([data-tooltip])')
             .forEach((item) => {
               item.addEventListener('focus', () => {

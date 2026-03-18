@@ -11,7 +11,7 @@ export class PasswordShow extends HTMLElement {
     }
   }
 
-  //Show or hide password by changing password field's type
+  //Show or hide password by changing the password field's type
   private toggle(event: Event): void {
     //Prevent focus stealing
     event.preventDefault();
@@ -108,15 +108,15 @@ export class PasswordStrength extends HTMLElement {
       if ((/.{8,}/u).test(password)) {
         points += 1;
       }
-      //Add one more point, if it's twice as long as minimum requirement
+      //Add one more point if it's twice as long as the minimum requirement
       if ((/.{16,}/u).test(password)) {
         points += 1;
       }
-      //Add one more point, if it's 3 times as long as minimum requirement
+      //Add one more point if it's 3 times as long as the minimum requirement
       if ((/.{32,}/u).test(password)) {
         points += 1;
       }
-      //Add one more point, if it's 64 characters or more
+      //Add one more point if it's 64 characters or more
       if ((/.{64,}/u).test(password)) {
         points += 1;
       }
@@ -128,7 +128,7 @@ export class PasswordStrength extends HTMLElement {
       if ((/\p{Lu}/u).test(password)) {
         points += 1;
       }
-      //Check for letters without case (glyphs)
+      //Check for letters without a case (glyphs)
       if ((/\p{Lo}/u).test(password)) {
         points += 1;
       }
@@ -146,7 +146,7 @@ export class PasswordStrength extends HTMLElement {
       }
       //Set strength
       let strength;
-      //Return value based on points. Note, that order is important.
+      //Return value based on points. Note that order is important.
       if (points <= 2) {
         strength = 'weak';
       } else if (points > 2 && points < 5) {

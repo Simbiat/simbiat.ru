@@ -125,11 +125,11 @@ export class EditAvatars {
     }
   }
 
-  //Function to add avatar to list
+  //Function to add avatar to the list
   private addToList(avatar: string): void {
     const hash = basename(avatar);
     if (this.template) {
-      //Create list item
+      //Create a list item
       const clone = this.template.content.cloneNode(true) as HTMLElement;
       //Set ID for the item
       const li = clone.querySelector('li');
@@ -181,7 +181,7 @@ export class EditAvatars {
         .then((response) => {
           const data = response as AjaxJSONResponse;
           if (data.data === true) {
-            //Delete from list
+            //Delete the avatar from the list
             (li as HTMLElement).remove();
             //Update avatar on page
             this.refresh(data.location);

@@ -62,7 +62,7 @@ export class FFCrests {
         this.emblemImage.setAttribute('src', `/assets/images/fftracker/crests-components/emblems/${emblem.slice(0, 3).toLowerCase()}/${emblem}`);
       }
       if (this.preview) {
-        //Hide preview element if it's empty
+        //Hide the preview element if it's empty
         if (empty(this.backgroundImage.getAttribute('src')) && empty(this.frameImage.getAttribute('src')) && empty(this.emblemImage.getAttribute('src'))) {
           this.preview.classList.add('hidden');
         } else {

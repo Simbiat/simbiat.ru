@@ -1,4 +1,4 @@
-import { getSearchParam, cleanGET, hashCheck, router } from './Common/Url.ts';
+import { cleanGET, hashCheck, router } from './Common/Url.ts';
 import {
   customizeNewElements,
   inputInit,
@@ -17,7 +17,14 @@ import {
 } from './Common/CustomInits.ts';
 import { NavShow, NavHide, SideShow, SideHide } from './CustomElements/Nav.ts';
 import { BackToTop } from './CustomElements/BackToTop.ts';
-import { Gallery, GalleryClose, GalleryPrev, GalleryNext, GalleryImage, CarouselList } from './CustomElements/Gallery.ts';
+import {
+  Gallery,
+  GalleryClose,
+  GalleryPrev,
+  GalleryNext,
+  GalleryImage,
+  CarouselList,
+} from './CustomElements/Gallery.ts';
 import { ImageUpload } from './CustomElements/ImageUpload.ts';
 import { Likedis } from './CustomElements/Likedis.ts';
 import { LoginForm } from './CustomElements/LoginForm.ts';

@@ -12,7 +12,7 @@ export interface AjaxJSONResponse extends JSON {
 
 // noinspection OverlyComplexFunctionJS
 export async function ajax(
-  url: string,
+  url_string: string,
   form_data: FormData | null = null,
   type = 'json',
   method = 'GET',
@@ -30,10 +30,13 @@ export async function ajax(
     controller.abort();
   }, timeout);
   // Add an access token to the URL, if present
-  if (!empty(ACCESS_TOKEN) && url.startsWith(`${location.protocol}//${location.host}`)) {
-    const url_obj = new URL(url, window.location.origin);
+  let url;
+  if (!empty(ACCESS_TOKEN) && url_string.startsWith(`${location.protocol}//${location.host}`)) {
+    const url_obj = new URL(url_string, window.location.origin);
     url_obj.searchParams.set('access_token', `${ACCESS_TOKEN}`);
     url = url_obj.toString();
+  } else {
+    url = url_string;
   }
   try {
     const response = await fetch(url, {

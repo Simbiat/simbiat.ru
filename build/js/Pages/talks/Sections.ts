@@ -46,7 +46,7 @@ export class Sections {
 
   private makePrivate(): void {
     if (this.private_section_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.private_section_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.private_section_form);
@@ -73,7 +73,7 @@ export class Sections {
 
   private move(): void {
     if (this.move_section_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.move_section_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.move_section_form);
@@ -94,7 +94,7 @@ export class Sections {
 
   private close(): void {
     if (this.closed_section_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.closed_section_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.closed_section_form);
@@ -121,11 +121,11 @@ export class Sections {
 
   private addSection(): void {
     if (this.add_section_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.add_section_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.add_section_form);
-      //Check if custom icon is being attached
+      //Check if the custom icon is being attached
       const icon: HTMLInputElement | null = this.add_section_form.querySelector('input[type=file]');
       if (icon?.files?.[0]) {
         form_data.append('section_data[icon]', 'true');
@@ -155,11 +155,11 @@ export class Sections {
 
   private edit(): void {
     if (this.edit_section_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.edit_section_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.edit_section_form);
-      //Check if custom icon is being attached
+      //Check if the custom icon is being attached
       const icon: HTMLInputElement | null = this.edit_section_form.querySelector('input[type=file]');
       if (icon?.files?.[0]) {
         form_data.append('section_data[icon]', 'true');
@@ -188,7 +188,7 @@ export class Sections {
   private delete(): void {
     if (this.delete_section_form) {
       if (confirm('This is the last chance to back out.\nIf you press \'OK\' this section will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-        //Get submit button
+        //Get the `submit` button
         const button = this.delete_section_form.querySelector('input[type=submit]');
         //Get form data
         const form_data = new FormData(this.delete_section_form);
@@ -210,11 +210,11 @@ export class Sections {
 
   private addThread(): void {
     if (this.add_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.add_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.add_thread_form);
-      //Check if custom icon is being attached
+      //Check if the custom icon is being attached
       const og_image: HTMLInputElement | null = this.add_thread_form.querySelector('input[type=file]');
       if (og_image?.files?.[0]) {
         form_data.append('thread_data[og_image]', 'true');
@@ -229,7 +229,7 @@ export class Sections {
           const data = response as AjaxJSONResponse;
           if (data.data === true) {
             if (this.add_thread_form) {
-              //Notify TinyMCE, that data was saved
+              //Notify TinyMCE that data was saved
               const textarea = this.add_thread_form.querySelector('textarea');
               if (textarea && !empty(textarea.id)) {
                 saveTinyMCE(textarea.id);

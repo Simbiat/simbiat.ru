@@ -404,7 +404,7 @@ function tinyMCEHideInputs(): void {
     if (title) {
       // Get the labels
       const labels = dialog.querySelectorAll('label');
-      // Get name of the dialog
+      // Get the name of the dialog
       const titleText = String(title.textContent)
         .toLowerCase();
       if (titleText === 'insert/edit image') {
@@ -448,7 +448,7 @@ export function loadTinyMCE(id: string, no_media = true, no_restore_on_empty = f
       settings.autosave_restore_when_empty = false;
     }
     void import('/tinymce/tinymce.min.js').then(() => {
-      // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit the current structure
+      // @ts-expect-error: I can't make TS see the tinymce object without turning the file into a module, which does not suit the current structure
       // As such I am suppressing a bunch of linters' errors here
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       void tinymce.init(settings)
@@ -505,7 +505,7 @@ export function saveTinyMCE(id: string, textareaOnly = false): void {
   const textarea = document.querySelector(`#${id}`);
   if (textarea !== null) {
     void import('/tinymce/tinymce.min.js').then(() => {
-      // @ts-expect-error: I can't make TS see tinymce object without turning the file into a module, which does not suit current structure
+      // @ts-expect-error: I can't make TS see the tinymce object without turning the file into a module, which does not suit current structure
       // As such I am suppressing a bunch of linters' errors here
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
       const tinyInstance = tinymce.get(id);

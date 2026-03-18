@@ -54,7 +54,7 @@ export class Emails {
       void ajax(`${location.protocol}//${location.host}/api/uc/emails/add`, form_data, 'json', 'POST', AJAX_TIMEOUT, true).then((response) => {
           const data = response as AjaxJSONResponse;
           if (data.data === true) {
-            //Add row to table
+            //Add the row to the table
             this.addRow(email);
             //Refresh delete buttons' status
             Emails.blockDelete();
@@ -76,7 +76,7 @@ export class Emails {
     if (this.tbody && this.template) {
       const clone = this.template.content.cloneNode(true) as HTMLElement;
       const cells = clone.querySelectorAll('td');
-      //Set email as value of the first cell
+      //Set email as the value of the first cell
       if (cells[0]) {
         cells[0].innerHTML = email;
       }
@@ -116,7 +116,7 @@ export class Emails {
           spinner3.setAttribute('alt', String(spinner3.getAttribute('alt')).replace('email', email));
         }
       }
-      //Attach the row to table body
+      //Attach the row to the table's body
       this.tbody.appendChild(clone);
     }
   }
@@ -140,7 +140,7 @@ export class Emails {
       });
   }
 
-  //Function to block button for mail removal if we have less than 2 confirmed mails
+  //Function to block the button for mail removal if we have less than 2 confirmed mails
   private static blockDelete(): void {
     const confirmedMail = document.querySelectorAll('.mail_confirmed').length;
     document.querySelectorAll('.mail_deletion').forEach((item) => {
@@ -149,7 +149,7 @@ export class Emails {
               if (cell) {
                 const row = cell.parentElement;
                 if (row) {
-                  //Check if row is for confirmed mail
+                  //Check if the row is for confirmed mail
                   if (row.querySelectorAll('.mail_confirmed').length > 0) {
                     input.disabled = confirmedMail < 2;
                   } else {

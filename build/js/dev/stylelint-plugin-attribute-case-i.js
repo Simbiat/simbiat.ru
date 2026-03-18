@@ -1,4 +1,4 @@
-// Plugin to force `i` flag for comparison of attribute values
+// Plugin to force the `i` flag for comparison of attribute values
 const stylelint = require("stylelint");
 const selectorParser = require("postcss-selector-parser");
 
@@ -46,17 +46,17 @@ const ruleFunction = (primary, _secondaryOptions) => {
             message: messages.expected(rawAttr),
             index,
             endIndex,
-            fix: (fixer) => {
-              const fixed = rawSelector.replace(
+            fix: () => {
+              ruleNode.selector = rawSelector.replace(
                 fullAttr,
-                fullAttr.replace(/\]$/, " i]")
+                fullAttr.replace(/]$/, " i]")
               );
-              ruleNode.selector = fixed;
               return true;
             },
           });
         });
-      }).processSync(rawSelector);
+      })
+        .processSync(rawSelector);
     });
   };
 };

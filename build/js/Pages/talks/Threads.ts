@@ -70,7 +70,7 @@ export class Threads {
       if (textarea && !empty(textarea.id)) {
         saveTinyMCE(textarea.id, true);
       }
-      //Get submit button
+      //Get the `submit` button
       const button = this.add_post_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.add_post_form);
@@ -82,7 +82,7 @@ export class Threads {
           const data = response as AjaxJSONResponse;
           if (data.data === true) {
             if (this.add_post_form) {
-              //Notify TinyMCE, that data was saved
+              //Notify TinyMCE that data was saved
               if (textarea && !empty(textarea.id)) {
                 saveTinyMCE(textarea.id);
               }
@@ -103,7 +103,7 @@ export class Threads {
 
   private move(): void {
     if (this.move_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.move_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.move_thread_form);
@@ -125,7 +125,7 @@ export class Threads {
   private delete(): void {
     if (this.delete_thread_form) {
       if (confirm('This is the last chance to back out.\nIf you press \'OK\' this thread will be permanently deleted.\nPress \'Cancel\' to cancel the action.')) {
-        //Get submit button
+        //Get the `submit` button
         const button = this.delete_thread_form.querySelector('input[type=submit]');
         //Get form data
         const form_data = new FormData(this.delete_thread_form);
@@ -147,7 +147,7 @@ export class Threads {
 
   private close(): void {
     if (this.closed_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.closed_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.closed_thread_form);
@@ -174,7 +174,7 @@ export class Threads {
 
   private edit(): void {
     if (this.edit_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.edit_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.edit_thread_form);
@@ -206,7 +206,7 @@ export class Threads {
 
   private makePrivate(): void {
     if (this.private_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.private_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.private_thread_form);
@@ -233,7 +233,7 @@ export class Threads {
 
   private pin(): void {
     if (this.pin_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.pin_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.pin_thread_form);

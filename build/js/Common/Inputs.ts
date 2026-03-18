@@ -8,7 +8,7 @@ import { addSnackbar, empty } from './Helpers.ts';
 export function ariaNation(inputElement: HTMLInputElement): void {
   //Adjust aria-invalid based on whether input is valid or not
   inputElement.setAttribute('aria-invalid', String(!inputElement.validity.valid));
-  //Add placeholder, if not present. Required more as a precaution for text-like inputs with no placeholder
+  //Add a placeholder if not present. Required more as a precaution for text-like inputs with no placeholder
   if (!inputElement.hasAttribute('placeholder')) {
     inputElement.setAttribute('placeholder', inputElement.value || inputElement.type || 'placeholder');
   }
@@ -22,7 +22,7 @@ export function ariaNation(inputElement: HTMLInputElement): void {
   } else {
     type = inputElement.type;
   }
-  //Add aria-required with value based on whether "required" attribute is present
+  //Add aria-required with value based on whether the "required" attribute is present
   if (['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'checkbox', 'radio', 'file',].includes(String(type))) {
     if (inputElement.required) {
       inputElement.setAttribute('aria-required', String(true));
@@ -30,39 +30,39 @@ export function ariaNation(inputElement: HTMLInputElement): void {
       inputElement.setAttribute('aria-required', String(false));
     }
   }
-  //Add checkbox role
+  //Add the checkbox role
   if (type === 'checkbox') {
     inputElement.setAttribute('role', 'checkbox');
-    //Add aria-checked value based on whether checkbox is checked
+    //Add aria-checked value based on whether the checkbox is checked
     inputElement.setAttribute('aria-checked', String(inputElement.checked));
     //Handle indeterminate state of checkboxes
     if (inputElement.indeterminate) {
       inputElement.setAttribute('aria-checked', 'mixed');
     }
   }
-  //Get and show color in attribute. For some reason, CSS's attr(value) does not show the value, if I do not do this
+  //Get and show color in the attribute. For some reason, CSS's attr(value) does not show the value if I do not do this
   if (type === 'checkbox') {
     inputElement.setAttribute('value', inputElement.value);
   }
 }
 
-//Function to start/stop spinner and disable/enable respective button
+//Function to start/stop spinner and disable/enable the respective button
 export function buttonToggle(button: HTMLInputElement, enable = true): void {
   let spinner;
-  //If the button is inside form, then search for spinner inside it first
+  //If the button is inside form, then search for the spinner inside it first
   if (button.form) {
     spinner = button.form.querySelector('.spinner');
   }
-  //If spinner is empty at this point, try to get it from parent element
+  //If the spinner is empty at this point, try to get it from the parent element
   if (!spinner) {
     const buttonParent = button.parentElement;
     if (buttonParent) {
       spinner = buttonParent.querySelector('.spinner');
     }
   }
-  //Check if button is disabled
+  //Check if the button is disabled
   if (button.disabled) {
-    //Enabled button, if we do not want it to stay disabled
+    //Enable the button if we do not want it to stay disabled
     if (enable) {
       button.disabled = false;
     }
@@ -103,7 +103,7 @@ export function nextInput(initial: HTMLInputElement, reverse = false): HTMLInput
     let previous;
     for (const moveTo of form.querySelectorAll('input[type="email"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"]')) {
       if (reverse) {
-        //Check if current element in loop is the initial one, meaning
+        //Check if the current element in the loop is the initial one, meaning
         if (moveTo === initial) {
           //If previous is not empty - share it. Otherwise - false, since initial input is first in the form
           if (previous) {
@@ -111,7 +111,7 @@ export function nextInput(initial: HTMLInputElement, reverse = false): HTMLInput
           }
           return null;
         }
-        //If we are moving forward and initial node is the previous one
+        //If we are moving forward and the initial node is the previous one
       } else if (previous && previous === initial) {
         return moveTo as HTMLInputElement;
       }
@@ -133,22 +133,22 @@ export async function pasteSplit(event: ClipboardEvent): Promise<void> {
     //If somehow we got here - exit early
     return;
   }
-  //If we are pasting into URL field, clean it
+  //If we are pasting into the URL field, clean it
   if ((current as HTMLInputElement).getAttribute('type') === 'url') {
     buffer = urlCleanString(buffer);
   }
-  //Exit if current field has a value already
+  //Exit if the current field has a value already
   if ((current as HTMLInputElement).value && !((current as HTMLInputElement).selectionStart === 0 && (current as HTMLInputElement).selectionEnd === (current as HTMLInputElement).value.length)) {
     pasteAndMove((current as HTMLInputElement), buffer);
     return;
   }
-  //Get initial length attribute
+  //Get the initial length attribute
   let maxLength = parseInt((current as HTMLInputElement).getAttribute('maxlength') ?? '0', 10);
   //Loop while the buffer is too large
   while (current !== null && maxLength && buffer.length > maxLength) {
-    //Ensure input value is updated
+    //Ensure the input value is updated
     pasteAndMove((current as HTMLInputElement), buffer.substring(0, maxLength));
-    //Trigger input event to bubble any bound events
+    //Trigger the input event to bubble any bound events
     current.dispatchEvent(new Event('input', {
       'bubbles': true,
       'cancelable': true,
@@ -163,10 +163,10 @@ export async function pasteSplit(event: ClipboardEvent): Promise<void> {
     if ((current as HTMLInputElement).getAttribute('data-no-spill')) {
       return;
     }
-    //Get next node
+    //Get the next node
     current = nextInput((current as HTMLInputElement), false);
     if (current) {
-      //Exit if next field has something in it already
+      //Exit if the next field has something in it already
       if ((current as HTMLInputElement).value) {
         return;
       }
@@ -180,7 +180,7 @@ export async function pasteSplit(event: ClipboardEvent): Promise<void> {
   if (current) {
     //Dump everything we can from leftovers
     pasteAndMove((current as HTMLInputElement), buffer);
-    //Trigger input event to bubble any bound events
+    //Trigger the input event to bubble any bound events
     current.dispatchEvent(new Event('input', {
       'bubbles': true,
       'cancelable': true,
@@ -188,7 +188,7 @@ export async function pasteSplit(event: ClipboardEvent): Promise<void> {
   }
 }
 
-//Paste and move cursor to the end of the field value. Essentially this is meant to simulate default paste event
+//Paste and move the cursor to the end of the field value. Essentially, this is meant to simulate the default paste event
 export function pasteAndMove(input: HTMLInputElement, text: string): void {
   const start = input.selectionStart as number;
   const end = input.selectionEnd as number;
@@ -204,7 +204,7 @@ export function pasteAndMove(input: HTMLInputElement, text: string): void {
   const newCursorPos = start + newText.length;
   //Insert text at the cursor position
   input.value = input.value.substring(0, start) + newText + input.value.substring(end);
-  //Move cursor to the end of the inserted text
+  //Move the cursor to the end of the inserted text
   input.setSelectionRange(newCursorPos, newCursorPos);
   //Scroll to cursor position
   input.scrollLeft = (input.scrollWidth / input.value.length) * newCursorPos;
@@ -222,7 +222,7 @@ export function formEnter(event: KeyboardEvent): boolean {
   return true;
 }
 
-//Track backspace and focus previous input field, if input is empty, when it's pressed
+//Track backspace and focus the previous input field if input is empty, when it's pressed
 export function inputBackSpace(event: Event): void {
   const current = event.target as HTMLInputElement;
   if ((event as KeyboardEvent).code === 'Backspace' && !current.value) {
@@ -236,7 +236,7 @@ export function inputBackSpace(event: Event): void {
   }
 }
 
-// Focus next field, if current is filled to the brim and valid
+// Focus the next field if the current is filled to the brim and valid
 export function autoNext(event: Event): void {
   const current = event.target as HTMLInputElement;
   // Get length attribute

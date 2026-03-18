@@ -6,7 +6,7 @@ export class FFEntity {
   private readonly forceRefresh: HTMLInputElement | null = null;
 
   public constructor() {
-    //Get the refresh button, if it exists
+    //Get the refresh button if it exists
     this.forceRefresh = document.querySelector('#ff_refresh');
     if (this.forceRefresh) {
       //Attach on-click event

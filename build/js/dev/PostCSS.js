@@ -13,7 +13,7 @@ const postcssLogical = require('postcss-logical');
 const postcssLogicalViewportUnits = require('@csstools/postcss-logical-viewport-units');
 
 /**
- * Process a CSS file with PostCSS (import resolution + minification)
+ * Process a CSS file with PostCSS (import resolution and minification)
  * @param {string} input_path - Path to the input CSS file (entry point)
  * @param {string} output_path - Path to the output minified CSS file
  * @param {boolean} email - Whether to replace CSS variables

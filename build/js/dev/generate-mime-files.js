@@ -64,7 +64,7 @@ for (const [mimeType, entry] of Object.entries(customMime)) {
 // Write JSON: extension → MIME
 fs.writeFileSync(outputJson, JSON.stringify(extToMime, null, 2));
 
-// Write mime.types file
+// Write the mime.types file
 const mimeTypesFile = Object.entries(mimeToExts)
                             .map(([mimeType, exts]) => {
                               const extList = [...exts].join(' ');

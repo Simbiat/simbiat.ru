@@ -1,0 +1,42 @@
+#Ignore secrets
+.env
+*.key
+*.pem
+
+#Ignore temp files
+*.tmp
+
+#Ignore logs
+logs/
+
+#Ignore data folder
+data/
+
+#Ignore generated CSS/JS
+public/assets/app.*
+public/assets/styles/
+
+#Ignore project files
+.idea/
+*.iml
+
+#Ignore node_modules, since only used by dev tools
+node_modules/
+
+#Ignore image files from libraries. There are just too many, and they won't be useful.
+#At the same time, I've noticed that chat does not seem to "see" them unless respective folder is open in Porject Explorer,
+#so maybe this is not even necessary.
+#FFXIV libraries
+/lib/FFXIV/Icons/
+!/lib/FFXIV/Icons/README.md
+/lib/FFXIV/EstateMaps/
+!/lib/FFXIV/EstateMaps/README.md
+/lib/FFXIV/CrestComponents/
+!/lib/FFXIV/CrestComponents/README.md
+/lib/FFXIV/PSDs/
+!/lib/FFXIV/PSDs/README.md
+#DDC
+/lib/DDCIcons/src/icons/
+
+/build/PSDs/
+/build/phpmyadmin/

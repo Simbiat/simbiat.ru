@@ -16,7 +16,7 @@ export class Contacts {
 
   private addThread(): void {
     if (this.add_thread_form) {
-      //Get submit button
+      //Get the `submit` button
       const button = this.add_thread_form.querySelector('input[type=submit]');
       //Get form data
       const form_data = new FormData(this.add_thread_form);
@@ -28,7 +28,7 @@ export class Contacts {
           const data = response as AjaxJSONResponse;
           if (data.data === true) {
             if (this.add_thread_form) {
-              //Notify TinyMCE, that data was saved
+              //Notify TinyMCE that data was saved
               const textarea = this.add_thread_form.querySelector('textarea');
               if (textarea && !empty(textarea.id)) {
                 saveTinyMCE(textarea.id);
@@ -36,12 +36,10 @@ export class Contacts {
             }
             addSnackbar('Thread created. Reloading...', 'success');
             pageRefresh(data.location);
+          } else if (data.location) {
+            addSnackbar(`${data.reason} View the thread <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
           } else {
-            if (data.location) {
-              addSnackbar(data.reason + ` View the thread <a href="${data.location}" target="_blank" rel="noopener noreferrer">here</a>.`, 'failure', 0);
-            } else {
-              addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
-            }
+            addSnackbar(data.reason, 'failure', SNACKBAR_FAIL_LIFE);
           }
           buttonToggle(button as HTMLInputElement);
         });

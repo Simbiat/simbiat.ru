@@ -29,7 +29,7 @@ export class Likedis extends HTMLElement {
     }
   }
 
-  //Function to update like/dislike on backend
+  //Function to update like/dislike on the backend
   private like(event: Event): void {
     const button = event.target as HTMLInputElement;
     let action: string;
