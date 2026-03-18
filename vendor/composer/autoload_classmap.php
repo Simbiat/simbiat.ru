@@ -262,6 +262,7 @@ return array(
     'League\\Uri\\FtpTest' => $vendorDir . '/league/uri/FtpTest.php',
     'League\\Uri\\HostFormat' => $vendorDir . '/league/uri-interfaces/HostFormat.php',
     'League\\Uri\\HostRecord' => $vendorDir . '/league/uri-interfaces/HostRecord.php',
+    'League\\Uri\\HostRecordTest' => $vendorDir . '/league/uri-interfaces/HostRecordTest.php',
     'League\\Uri\\HostType' => $vendorDir . '/league/uri-interfaces/HostType.php',
     'League\\Uri\\Http' => $vendorDir . '/league/uri/Http.php',
     'League\\Uri\\HttpBench' => $vendorDir . '/league/uri/HttpBench.php',

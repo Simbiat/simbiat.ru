@@ -674,6 +674,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'League\\Uri\\FtpTest' => __DIR__ . '/..' . '/league/uri/FtpTest.php',
         'League\\Uri\\HostFormat' => __DIR__ . '/..' . '/league/uri-interfaces/HostFormat.php',
         'League\\Uri\\HostRecord' => __DIR__ . '/..' . '/league/uri-interfaces/HostRecord.php',
+        'League\\Uri\\HostRecordTest' => __DIR__ . '/..' . '/league/uri-interfaces/HostRecordTest.php',
         'League\\Uri\\HostType' => __DIR__ . '/..' . '/league/uri-interfaces/HostType.php',
         'League\\Uri\\Http' => __DIR__ . '/..' . '/league/uri/Http.php',
         'League\\Uri\\HttpBench' => __DIR__ . '/..' . '/league/uri/HttpBench.php',
