@@ -7,6 +7,8 @@ use DeviceDetector\ClientHints;
 use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
 use Simbiat\Talks\Enums\SystemUsers;
+use Simbiat\Translit\Decode;
+use Simbiat\Translit\Encode;
 use function function_exists;
 use function is_array;
 
@@ -45,12 +47,12 @@ class Security
         }
         #Generate IV
         $iv = \random_bytes(\openssl_cipher_iv_length('AES-256-GCM'));
-        #This is where the tag will be written by OpenSSL
+        #This is where OpenSSL will write the tag
         $tag = '';
-        #Ecnrypt and als get the tag
+        #Encrypt and als get the tag
         $encrypted = \openssl_encrypt($data, 'AES-256-GCM', \hex2bin($_ENV['ENCRYPTION_PASSPHRASE']), \OPENSSL_RAW_DATA, $iv, $tag);
-        #Ecnrypt and prepend IV and tag
-        return \base64_encode($iv.$tag.$encrypted);
+        #Encrypt and prepend IV and tag
+        return Encode::base64url($iv.$tag.$encrypted);
     }
     
     /**
@@ -67,7 +69,7 @@ class Security
             return '';
         }
         #Decode
-        $data = \base64_decode($data);
+        $data = Decode::base64url($data);
         #Get IV
         $iv = \substr($data, 0, 12);
         #Get tag

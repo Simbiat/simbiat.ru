@@ -2,6 +2,7 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="682abc00-c7c0-347c-85ea-fc382fbe77df" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
+    <inspection_tool class="6eb703bb-3a17-326e-9c68-7eeb27312da3" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="7387f796-c82a-3028-87f9-07527621e7c8" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="7d78d672-300c-3398-b4a6-a376cf564ba3" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="869a30f7-35aa-3f0c-b967-c25fee0428cc" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
@@ -768,6 +769,10 @@
       <replaceConfiguration name="[MB] Replace with multibyte alterantive" text="lcfirst($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_lcfirst($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" negateName="true" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="[PHP] Strict BASE64 decode" description="Use strict flag in base64_decode" suppressId="strict_base64_decode" text="base64_decode($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="base64_decode($p$, true)">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="p" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="[PHP] Use exit function with exit code" uuid="4e1209f3-613d-3ab3-981e-ef2bb07b5abf" description="Use exit function with exit code" suppressId="use_exit_function" text="exit($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="exit(0)">
         <constraint name="__context__" within="" contains="" />
