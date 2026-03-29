@@ -41,7 +41,7 @@
     }
 
     & div {
-        background-color: oklch(0% 0 0deg / 75%);
+        background-color: var(--color_black_75);
         border-end-end-radius: var(--border_radius);
         border-end-start-radius: var(--border_radius);
         inline-size: calc(100% - 2 * var(--border_width) - 0.1rem);

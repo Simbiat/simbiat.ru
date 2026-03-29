@@ -70,7 +70,7 @@ input[type='range' i] {
 
     &::-webkit-slider-runnable-track {
         border-radius: var(--border_radius);
-        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        box-shadow: 0 0.1rem 0.3rem var(--color_black_25) inset;
         cursor: pointer;
     }
 
@@ -89,7 +89,7 @@ input[type='range' i] {
     &::-moz-range-track {
         block-size: 0.5rem;
         border-radius: var(--border_radius);
-        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        box-shadow: 0 0.1rem 0.3rem var(--color_black_25) inset;
         cursor: pointer;
     }
 

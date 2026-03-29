@@ -21,18 +21,18 @@ meter {
 
     &::-webkit-meter-bar {
         background-color: var(--color_article);
-        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        box-shadow: 0 0.1rem 0.3rem var(--color_black_25) inset;
     }
 
     &::-webkit-meter-optimum-value {
-        background-image: linear-gradient(to right, oklch(100% 0 89.876deg), var(--color_success), oklch(86.8% 0.156 144.088deg));
+        background-image: linear-gradient(to right, var(--color_meter_gradient_0), var(--color_success), var(--color_meter_gradient_100_optimum));
     }
 
     &::-webkit-meter-suboptimum-value {
-        background-image: linear-gradient(to right, oklch(100% 0 89.876deg), var(--color_warning), oklch(79.3% 0.171 70.67deg));
+        background-image: linear-gradient(to right, var(--color_meter_gradient_0), var(--color_warning), var(--color_meter_gradient_100_suboptimum));
     }
 
     &::-webkit-meter-even-less-good-value {
-        background-image: linear-gradient(to right, oklch(100% 0 89.876deg), var(--color_failure), oklch(72.5% 0.138 21.029deg));
+        background-image: linear-gradient(to right, var(--color_meter_gradient_0), var(--color_failure), var(--color_meter_gradient_100_bad));
     }
 }

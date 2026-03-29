@@ -2,7 +2,7 @@
 kbd {
     background-color: var(--color_disabled);
     border-radius: var(--border_radius);
-    box-shadow: 0.1rem 0.1rem 0.1rem oklch(56.9% 0 89.876deg);
+    box-shadow: 0.1rem 0.1rem 0.1rem var(--color_kbd_shadow);
     color: var(--color_text);
     cursor: default;
     display: inline-block;
@@ -21,7 +21,7 @@ kbd {
 
     &:active,
     &:active * {
-        box-shadow: 0.1rem 0.1rem 0 oklch(38.7% 0 89.876deg) inset;
-        color: oklch(0% 0 0deg);
+        box-shadow: 0.1rem 0.1rem 0 var(--color_kbd_shadow_active) inset;
+        color: var(--color_black);
     }
 }

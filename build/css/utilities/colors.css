@@ -16,7 +16,7 @@
 }
 
 .gold {
-    color: oklch(88.7% 0.182 95.33deg);
+    color: var(--color_gold);
 }
 
 .regular_text {

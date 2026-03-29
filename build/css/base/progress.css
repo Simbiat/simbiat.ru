@@ -4,7 +4,7 @@ progress {
     border-color: var(--border_color_inset);
     border-style: solid;
     border-width: var(--border_width);
-    box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+    box-shadow: 0 0.1rem 0.3rem var(--color_black_25) inset;
     position: relative;
     vertical-align: baseline;
 
@@ -13,7 +13,7 @@ progress {
         background-color: var(--color_article);
         background-image: linear-gradient(to right, var(--color_failure), var(--color_success));
         border-radius: var(--border_radius);
-        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        box-shadow: 0 0.1rem 0.3rem var(--color_black_25) inset;
     }
 
     &:indeterminate::-moz-progress-bar {
@@ -59,7 +59,7 @@ progress {
 
     &::-webkit-progress-bar {
         background-color: var(--color_article);
-        box-shadow: 0 0.1rem 0.3rem oklch(0% 0 0deg / 25%) inset;
+        box-shadow: 0 0.1rem 0.3rem var(--color_black_25) inset;
         padding: 0.1rem;
     }
 

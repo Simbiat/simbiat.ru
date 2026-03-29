@@ -31,6 +31,30 @@ metatags.twig (MS Tile and theme-color)
     --color_warning: oklch(79.9% 0.143 86.206deg);
     /* Color for disabled elements */
     --color_disabled: oklch(60% 0 89.876deg);
+    /* Gold color */
+    --color_gold: oklch(88.7% 0.182 95.33deg);
+    /* Toxic green */
+    --color_toxic_green: oklch(86.6% 0.295 142.495deg);
+    /* Black colors */
+    --color_black: oklch(0% 0 0deg);
+    --color_black_25: oklch(0% 0 0deg / 25%);
+    --color_black_30: oklch(0% 0 0deg / 30%);
+    --color_black_75: oklch(0% 0 0deg / 75%);
+    /* Special colors for `kbd` elements */
+    --color_kbd_shadow: oklch(56.9% 0 89.876deg);
+    --color_kbd_shadow_active: oklch(38.7% 0 89.876deg);
+    /* Special colors for `meter` elements */
+    --color_meter_gradient_0: oklch(100% 0 89.876deg);
+    --color_meter_gradient_100_optimum: oklch(86.8% 0.156 144.088deg);
+    --color_meter_gradient_100_suboptimum: oklch(79.3% 0.171 70.67deg);
+    --color_meter_gradient_100_bad: oklch(72.5% 0.138 21.029deg);
+    /* GameMaker specific colors */
+    --color_game_maker_login_background: oklch(37.1% 0 89.876deg);
+    --color_game_maker_login_shadow: oklch(17.3% 0 89.876deg);
+
+    --color_dialog_backdrop: oklch(20% 0.022 296.868deg / 75%);
+
+    --gradient_password_very_strong: linear-gradient(to bottom, oklch(81.2% 0.046 85.847deg) 22%, oklch(44% 0.057 80.386deg) 24%, oklch(81.2% 0.046 85.847deg) 26%, oklch(81.2% 0.046 85.847deg) 27%, oklch(94.5% 0.076 91.816deg) 40%, oklch(71.3% 0.128 81.095deg) 78%);
 
     /* Borders styling */
     --border_dark: oklch(35% 0.067 218deg);

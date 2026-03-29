@@ -12,7 +12,7 @@ dialog {
     padding: 0; /* Adjusting for Safari */
 
     &::backdrop {
-        background-color: oklch(20% 0.022 296.868deg / 75%);
+        background-color: var(--color_dialog_backdrop);
     }
 
     &:not([open]) {

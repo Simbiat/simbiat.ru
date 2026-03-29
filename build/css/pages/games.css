@@ -26,11 +26,11 @@ div.gm4html5_div_class {
 
 /* START - Login Dialog Box */
 div.gm4html5_login {
-    background-color: oklch(37.1% 0 89.876deg);
-    border: solid 2px oklch(0% 0 0deg);
+    background-color: var(--color_game_maker_login_background);
+    border: solid 2px var(--color_black);
     border-radius: 15px;
-    box-shadow: oklch(17.3% 0 89.876deg) 20px 20px 40px;
-    color: oklch(86.6% 0.295 142.495deg);
+    box-shadow: var(--color_game_maker_login_shadow) 20px 20px 40px;
+    color: var(--color_toxic_green);
     padding: 20px;
     position: absolute;
 }
