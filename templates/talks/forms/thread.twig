@@ -59,7 +59,7 @@
         {% endif %}
         {% if not thread_edit and 'post_scheduled' in session_data.permissions %}
             <div class="float_label">
-                <input id="thread_data_time" name="thread_data[time]" type="datetime-local" inputmode="numeric" aria-required="false" value="0">
+                <input id="thread_data_time" name="thread_data[time]" type="datetime-local" inputmode="numeric" aria-required="false">
                 <label for="thread_data_time" data-tooltip="You can select a future time at which, the thread and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
             </div>
             <br>

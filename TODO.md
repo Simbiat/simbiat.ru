@@ -20,19 +20,6 @@
 
 ## Phase 0 — Core Infrastructure & Foundations
 
-*Do these first. Self-contained; unblock everything that follows.*
-
----
-
-### 0.1 · Critical Live Bug Fixes 🐛 ⚠️
-
-| Issue                                                                                           | URL                                                                                                      | Note                                        |
-|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------|
-| [0 does not conform to required format](https://github.com/Simbiat/simbiat.ru/issues/103)       | simbiat.ru                                                                                               | Timestamp input bug 🟢 XS                   |
-| [index page says it's static when DB is down](https://github.com/Simbiat/simbiat.ru/issues/168) | simbiat.ru                                                                                               | Wrong error message 🟢 XS 🔧                |
-
----
-
 ### 0.2 · Static Analysis Setup ⚠️ 🟡 S 🔧
 
 Set up PHP static analysis (PhpStan, Psalm), TypeScript/JS linting, and CSS linting **before
