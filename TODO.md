@@ -28,8 +28,6 @@
 
 | Issue                                                                                           | URL                                                                                                      | Note                                        |
 |-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------------------------------------|
-| [multiple groups in "current" status](https://github.com/Simbiat/FFXIV-Tracker/issues/12)       | FFXIV-Tracker                                                                                            | Duplicate FC "current" membership 🟡 S 🔴 L |
-| [Bic update through UI waits](https://github.com/Simbiat/simbiat.ru/issues/349)                 | simbiat.ru                                                                                               | Should update one-at-a-time 🟢 XS 🔧        |
 | [0 does not conform to required format](https://github.com/Simbiat/simbiat.ru/issues/103)       | simbiat.ru                                                                                               | Timestamp input bug 🟢 XS                   |
 | [index page says it's static when DB is down](https://github.com/Simbiat/simbiat.ru/issues/168) | simbiat.ru                                                                                               | Wrong error message 🟢 XS 🔧                |
 
