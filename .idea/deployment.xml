@@ -31,6 +31,8 @@
             <excludedPath local="true" path="$PROJECT_DIR$/stylelint.config.mjs" />
             <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/bun.lock" />
+            <excludedPath local="true" path="$PROJECT_DIR$/TODO.md" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.aiignore" />
           </excludedPaths>
         </serverdata>
       </paths>

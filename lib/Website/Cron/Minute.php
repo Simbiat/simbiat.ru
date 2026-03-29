@@ -28,7 +28,10 @@ class Minute
         try {
             return (bool)new Session()->gc();
         } catch (\Throwable $throwable) {
-            Errors::error_log($throwable);
+            #Ignore deadlocks, since they can happen quite easily during backups
+            if (mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
+                Errors::error_log($throwable);
+            }
             return false;
         }
     }
@@ -54,7 +57,7 @@ class Minute
                     ':id' => $item['cookie_id'],
                 ], return: 'affected'
             );
-            #If it was deleted - log it
+            #If it was deleted, log it
             if ($affected > 0) {
                 Security::log(LogTypes::Logout->value, 'Logged out due to cookie timeout', $item, $item['user_id']);
             }
