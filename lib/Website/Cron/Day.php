@@ -94,9 +94,9 @@ class Day
     
     /**
      * Update the BIC library
-     * @return bool|string
+     * @return bool|string|int
      */
-    public function libraryUpdate(): bool|string
+    public function libraryUpdate(): bool|string|int
     {
         $result = new Library()->update(true);
         #Ignore failures to download the file, CBR started using DDoS-Guard, which seems to be blocking the server most of the time now
