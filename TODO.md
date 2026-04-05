@@ -20,12 +20,6 @@
 
 ## Phase 0 — Core Infrastructure & Foundations
 
-### 0.1 - Bugs
-
-https://github.com/Simbiat/simbiat.ru/issues/382 notifications bug
-
----
-
 ### 0.3 · Security & Code Quality Quick Fixes ⚠️ 🔗 DEP: 0.2
 
 | Issue                                                                                      | URL        | Note                                                                                  |
