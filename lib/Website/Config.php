@@ -12,6 +12,7 @@ use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use DeviceDetector\Yaml\Pecl;
 use Dotenv\Dotenv;
+use Pdo\Mysql;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Query;
 use Simbiat\Database\Pool;
@@ -239,8 +240,8 @@ final class Config
                         ->setUser($_ENV['DATABASE_USER'])
                         ->setPassword($_ENV['DATABASE_PASSWORD'])
                         ->setDB($_ENV['DATABASE_NAME'])
-                        ->setOption(\PDO::MYSQL_ATTR_FOUND_ROWS, true)
-                        ->setOption(\PDO::MYSQL_ATTR_INIT_COMMAND, 'SET SESSION character_set_client = \'utf8mb4\',
+                        ->setOption(Mysql::ATTR_FOUND_ROWS, true)
+                        ->setOption(Mysql::ATTR_INIT_COMMAND, 'SET SESSION character_set_client = \'utf8mb4\',
                                                                                     SESSION collation_connection = \'utf8mb4_0900_as_cs\',
                                                                                     SESSION character_set_connection = \'utf8mb4\',
                                                                                     SESSION character_set_database = \'utf8mb4\',
