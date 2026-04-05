@@ -6,6 +6,7 @@ FROM mariadb:12.2.2
 
 #Copy config
 COPY my.cnf /etc/mysql/conf.d/my.cnf
+RUN chmod 0444 /etc/mysql/conf.d/my.cnf
 #Copy cron files
 COPY cron/mariadb.cron /etc/cron.d/mariadb.cron
 COPY cron/*.sh /usr/local/bin/
