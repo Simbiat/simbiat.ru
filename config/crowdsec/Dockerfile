@@ -1,7 +1,15 @@
-FROM crowdsecurity/crowdsec:v1.7.6-debian
+FROM crowdsecurity/crowdsec:v1.7.7-debian
 
 #When CRS is updated, check for potential changes in 02-crs-setup.conf as well
 ARG CRS_RELEASE="4.25.0"
+
+#Copy configs
+COPY yaml/acquis.yaml /etc/crowdsec/acquis.yaml
+COPY yaml/config.yaml.local /etc/crowdsec/config.yaml.local
+COPY yaml/online_api_credentials.yaml /etc/crowdsec/online_api_credentials.yaml
+COPY yaml/acquis/*.yaml /etc/crowdsec/acquis.d/
+COPY yaml/appsec/simbiat-appsec.yaml /etc/crowdsec/appsec-configs/simbiat-appsec.yaml
+COPY yaml/appsec/simbiat-seclang.yaml /etc/crowdsec/appsec-rules/simbiat-seclang.yaml
 
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install curl gpg dirmngr gpg-agent&&apt-get -y autoremove&&apt-get clean && \
     curl -sSL https://github.com/coreruleset/coreruleset/releases/download/v${CRS_RELEASE}/coreruleset-${CRS_RELEASE}-minimal.tar.gz -o v${CRS_RELEASE}-minimal.tar.gz && \

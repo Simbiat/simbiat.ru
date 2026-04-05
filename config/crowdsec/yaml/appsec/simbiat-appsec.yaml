@@ -5,3 +5,9 @@ inband_rules:
   - crowdsecurity/vpatch-*
   - crowdsecurity/generic-*
   - simbiat/simbiat-seclang
+outofband_rules:
+  - simbiat/simbiat-seclang
+on_match:
+  - filter: IsOutBand == true
+    apply:
+      - SendAlert()

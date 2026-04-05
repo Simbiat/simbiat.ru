@@ -101,8 +101,7 @@ services:
     environment:
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}
       CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
-      PHP_INI_DIR: /usr/local/php/config
-      PHP_INI_SCAN_DIR: /usr/local/php/config
+      PHP_CS_FIXER_FUTURE_MODE: 1
     networks:
       - webserver
     ports:
@@ -110,11 +109,20 @@ services:
       - "443:443/tcp" # HTTPS
       - "443:443/udp" # HTTP/3
     volumes:
+      #RO for MariaDB socket
       - mariadb_socket:/run/mysqld/:ro
-      - ./:/app:rw
-      - ./config/frankenphp:/usr/local/php/config:rw
+      #RO to be able to get Caddy config
+      - ./config/frankenphp:/usr/local/php/config:ro
+      #Caddy folders requiring RW
       - ${CADDY_DATA_DIR}:/data:rw
       - ./data/caddy_config:/config:rw
+      #Main project folder is RO
+      - ./:/app:ro
+      #Some files/folders are overridden for RW permissions
+      - ./composer.lock:/app/composer.lock:rw
+      - ./data:/app/data:rw
+      - ./logs:/app/logs:rw
+      - ./vendor:/app/vendor:rw
     security_opt:
       - no-new-privileges=true
     depends_on:
@@ -129,10 +137,7 @@ services:
       - mariadb:database
     command: >
       /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
-                  #We need to register cron task and start cron service before the endpoint
-                  cp /usr/local/php/config/cron/php.cron /etc/cron.d/php.cron &&
-                  chmod 0644 /etc/cron.d/php.cron &&
-                  crontab /etc/cron.d/php.cron &&
+                  #We need to start cron service before the endpoint
                   cron &&
                   docker-php-entrypoint --config /usr/local/php/config/caddy.json5 --adapter json5"
 
@@ -145,7 +150,26 @@ services:
     restart: unless-stopped
     environment:
       GID: 1000
-      COLLECTIONS: crowdsecurity/caddy crowdsecurity/whitelist-good-actors crowdsecurity/http-cve crowdsecurity/http-dos crowdsecurity/base-http-scenarios crowdsecurity/appsec-generic-rules crowdsecurity/appsec-virtual-patching crowdsecurity/appsec-wordpress crowdsecurity/wordpress crowdsecurity/discord-crawler-whitelist openappsec/openappsec
+      COLLECTIONS: crowdsecurity/caddy
+        crowdsecurity/whitelist-good-actors
+        crowdsecurity/http-cve
+        crowdsecurity/http-dos
+        crowdsecurity/base-http-scenarios
+        crowdsecurity/http-extended-context
+        crowdsecurity/appsec-generic-rules
+        crowdsecurity/appsec-virtual-patching
+        crowdsecurity/appsec-wordpress
+        crowdsecurity/wordpress
+        crowdsecurity/discord-crawler-whitelist
+        crowdsecurity/appsec-crs
+        crowdsecurity/appsec-crs-inband
+        crowdsecurity/linux
+        crowdsecurity/linux-lpe
+        crowdsecurity/iptables
+        crowdsecurity/mariadb
+        crowdsecurity/sshd
+        barnoux/caddy-coraza
+        openappsec/openappsec
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
       ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
@@ -164,16 +188,14 @@ services:
       - "[::1]:6060:6060"
       - "[::1]:7422:7422"
     volumes:
+      #RO for MariaDB socket
       - mariadb_socket:/run/mysqld/:ro
-      - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
+      #RO for GeoLite2 files
       - ./data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
       - ./data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
-      - ./config/crowdsec/yaml/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
-      - ./config/crowdsec/yaml/acquis/:/etc/crowdsec/acquis.d/:rw
-      - ./config/crowdsec/yaml/config.yaml.local:/etc/crowdsec/config.yaml.local:ro
-      - ./config/crowdsec/yaml/online_api_credentials.yaml:/etc/crowdsec/online_api_credentials.yaml:ro
-      - ./config/crowdsec/yaml/appsec/simbiat-appsec.yaml:/etc/crowdsec/appsec-configs/simbiat-appsec.yaml:ro
-      - ./config/crowdsec/yaml/appsec/simbiat-seclang.yaml:/etc/crowdsec/appsec-rules/simbiat-seclang.yaml:ro
+      #Data folder is required to be mounted, otherwise container does not start
+      - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
+      #CRS files
       - ./config/crowdsec/CoreRuleSet/:/var/lib/crowdsec/data/CoreRuleSet/:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
@@ -205,8 +227,8 @@ services:
   mariadb:
     container_name: mariadb
     build:
-      context: .
-      dockerfile: config/mysql/Dockerfile
+      context: ./config/mariadb
+      dockerfile: Dockerfile
     restart: unless-stopped
     environment:
       WEB_SERVER_TEST: ${WEB_SERVER_TEST}
@@ -224,11 +246,15 @@ services:
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
+      #RW for the socket
       - mariadb_socket:/run/mysqld/:rw
+      #RW for database files directory
       - ${MARIADB_DATA_DIR}:/var/lib/mysql:rw
-      - ./config/mysql:/etc/mysql/conf.d:ro
+      #RW for logs directory
       - ./logs:/usr/local/logs:rw
+      #RW for backups directory
       - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
+      #RO for DDL directory, used during maintenance stuff
       - ./build/DDL:/usr/local/DDL:ro
     security_opt:
       - no-new-privileges=true
@@ -243,10 +269,7 @@ services:
                   #We need to ensure that buffer pool file exists
                   touch /var/lib/mysql/ib_buffer_pool &&
                   chown mysql:mysql /var/lib/mysql/ib_buffer_pool &&
-                  #We need to register cron tasks and start cron service before the endpoint
-                  cp /etc/mysql/conf.d/cron/mariadb.cron /etc/cron.d/mariadb.cron &&
-                  chmod 0644 /etc/cron.d/mariadb.cron &&
-                  crontab /etc/cron.d/mariadb.cron &&
+                  #We need to start cron service before the endpoint
                   cron &&
                   #If maintenance flag is found, it implies crash during maintenance: rename it to indicate this
                   mv /usr/local/backups/maintenance.flag /usr/local/backups/crash.flag

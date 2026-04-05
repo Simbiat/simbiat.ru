@@ -4,6 +4,7 @@ seclang_files_rules:
   - /CoreRuleSet/01-coraza-recommended.conf
   - /CoreRuleSet/02-crs-setup.conf
   - /CoreRuleSet/03-exclusions-before-crs.conf
+  - crs-plugins/*/*-before.conf
   - REQUEST-901-INITIALIZATION.conf
   - /CoreRuleSet/04-custom-blocks.conf
   - REQUEST-905-COMMON-EXCEPTIONS.conf
@@ -30,4 +31,5 @@ seclang_files_rules:
   - RESPONSE-955-WEB-SHELLS.conf
   - RESPONSE-959-BLOCKING-EVALUATION.conf
   - RESPONSE-980-CORRELATION.conf
+  - crs-plugins/*/*-after.conf
   - /CoreRuleSet/05-exclusions-after-crs.conf

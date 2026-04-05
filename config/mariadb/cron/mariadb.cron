@@ -1,0 +1,2 @@
+0 3 * * * /usr/local/bin/backup.sh
+0 0 * * * /usr/local/bin/log-rotate.sh

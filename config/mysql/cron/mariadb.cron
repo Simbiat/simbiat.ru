@@ -1,2 +1,0 @@
-0 3 * * * /etc/mysql/conf.d/cron/backup.sh
-0 0 * * * /etc/mysql/conf.d/cron/log-rotate.sh

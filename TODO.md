@@ -20,12 +20,9 @@
 
 ## Phase 0 — Core Infrastructure & Foundations
 
-### 0.2 · Static Analysis Setup ⚠️ 🟡 S 🔧
+### 0.1 - Bugs
 
-Set up PHP static analysis (PhpStan, Psalm), TypeScript/JS linting, and CSS linting **before
-** the cleanup pass in 0.3 — so 0.3 is clearing a known, finite list rather than guessing at what needs fixing.
-
-**Issue:** [More SAT](https://github.com/Simbiat/simbiat.ru/issues/166)
+https://github.com/Simbiat/simbiat.ru/issues/382 notifications bug
 
 ---
 
@@ -33,6 +30,7 @@ Set up PHP static analysis (PhpStan, Psalm), TypeScript/JS linting, and CSS lint
 
 | Issue                                                                                      | URL        | Note                                                                                  |
 |--------------------------------------------------------------------------------------------|------------|---------------------------------------------------------------------------------------|
+| `@internal`                                                                                 |            | Consider using internal tag for internal classes/methods not meant for use by users   |
 | [SQL Concatenation](https://github.com/Simbiat/simbiat.ru/issues/110)                      | simbiat.ru | Audit all query construction 🟡 S 🔧                                                  |
 | [twig raw](https://github.com/Simbiat/simbiat.ru/issues/111)                               | simbiat.ru | Remove unsafe `\|raw` usages 🟡 S 🔧                                                  |
 | [strict_variables in twig](https://github.com/Simbiat/simbiat.ru/issues/7)                 | simbiat.ru | Enable strict mode 🟢 XS 🔧                                                           |

@@ -18,14 +18,17 @@
         "ext-yaml is used as suggestion for matomo/device-detector",
         "ext-maxminddb is used to speed-up geoip2/geoip2",
         "ext-uuid is used as suggestion from ramsey/uuid",
+        "ext-pcntl and ext-xdebug are used by PHPUnit",
         "below suggestions should be ignored:",
         "paragonie/random-lib - since ext-uuid is being used",
-        "ramsey/uuid-doctrine - since not using doctrine",
+        "ramsey/uuid-doctrine - since not using Doctrine",
         "maxmind-db/reader-ext - since ext-maxminddb is being used",
         "jeremykendall/php-domain-parser - since does not seem to be used by the library",
         "league/uri-polyfill - since using modern PHP",
         "league/uri-components - since used only for tests",
-        "rowbot/url - not used by the library"
+        "rowbot/url - not used by the library",
+        "ext-pcoc - since ext-xdebug is used",
+        "weirdan/doctrine-psalm-plugin - since not using Doctrine"
     ],
     "require": {
         "php": "^8.5",
@@ -63,7 +66,25 @@
         "ext-uuid": "*"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
+        "roave/security-advisories": "dev-latest",
+        "friendsofphp/php-cs-fixer": "@stable",
+        "phpstan/phpstan": "@stable",
+        "phpstan/phpstan-strict-rules": "@stable",
+        "phpstan/phpstan-deprecation-rules": "@stable",
+        "phpstan/phpstan-phpunit": "@stable",
+        "phpstan/phpstan-symfony": "@stable",
+        "vimeo/psalm": "@stable",
+        "psalm/plugin-phpunit": "@stable",
+        "psalm/plugin-symfony": "@stable",
+        "phpunit/phpunit": "@stable",
+        "ext-pcntl": "*",
+        "ext-xdebug": "*",
+        "ext-igbinary": "*"
+    },
+    "scripts": {
+        "php-cs-fixer": "./vendor/bin/php-cs-fixer check --config=./.php-cs-fixer.php --using-cache=yes --allow-risky=yes --path-mode=intersection",
+        "phpstan": "./vendor/bin/phpstan analyse -c ./phpstan.neon --memory-limit 1G",
+        "psalm": "./vendor/bin/psalm --config=./psalm.xml --memory-limit=1G"
     },
     "autoload": {
         "psr-4": {
@@ -114,6 +135,7 @@
         "optimize-autoloader": true,
         "classmap-authoritative": true,
         "htaccess-protect": true,
-        "platform-check": true
+        "platform-check": true,
+        "process-timeout": 900
     }
 }

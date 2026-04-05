@@ -33,22 +33,49 @@ COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 #Copy custom mime.types
 COPY mime.types /etc/mime.types
+#Copy php.ini files
+COPY php.ini.dev $PHP_INI_DIR/php.ini.dev
+COPY php.ini.prod $PHP_INI_DIR/php.ini.prod
+#Copy cron files
+COPY cron/php.cron /etc/cron.d/php.cron
+COPY cron/*.sh /usr/local/bin/
 
 # Add additional extensions
-RUN install-php-extensions \
-    mysqli \
-    pdo_mysql \
-    gd \
-    zip \
-    brotli \
-    zstd \
-    apcu \
-    intl \
-    bcmath \
-    gmp \
-    maxminddb \
-    yaml \
-    uuid
+ARG WEB_SERVER_TEST
+RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
+      install-php-extensions \
+              mysqli \
+              pdo_mysql \
+              gd \
+              zip \
+              brotli \
+              zstd \
+              apcu \
+              intl \
+              bcmath \
+              gmp \
+              maxminddb \
+              yaml \
+              uuid \
+              pcntl \
+              igbinary \
+              xdebug; \
+    else \
+      install-php-extensions \
+              mysqli \
+              pdo_mysql \
+              gd \
+              zip \
+              brotli \
+              zstd \
+              apcu \
+              intl \
+              bcmath \
+              gmp \
+              maxminddb \
+              yaml \
+              uuid; \
+    fi
 
 # Completely custom
 # Add composer
@@ -58,10 +85,19 @@ RUN composer self-update
 # cron required for crontab, libnss3-tools is recommended for Caddy (looks like)
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install cron libnss3-tools&&apt-get -y autoremove&&apt-get clean
 # Install Git and unzip on test environment (for composer)
-ARG WEB_SERVER_TEST
 RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
-    apt-get install -y unzip git-all; \
+      apt-get install -y unzip git-all; \
     fi
+#Copy appropriate php.ini file
+RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
+      cp "$PHP_INI_DIR/php.ini.dev" "$PHP_INI_DIR/php.ini"; \
+    else \
+      cp "$PHP_INI_DIR/php.ini.prod" "$PHP_INI_DIR/php.ini"; \
+    fi
+#Setup cron
+RUN chmod 0644 /etc/cron.d/php.cron && \
+    chmod +x /usr/local/bin/*.sh && \
+    crontab /etc/cron.d/php.cron
 
 # Use custom caddy config
 CMD ["--config", "/config/config.json5", "--adapter", "json5"]
