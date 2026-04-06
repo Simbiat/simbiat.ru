@@ -122,6 +122,8 @@ services:
       - ./composer.lock:/app/composer.lock:rw
       - ./build/DDL:/app/build/DDL:rw
       - ./data:/app/data:rw
+      - ./lib/FFXIV/Icons:/app/lib/FFXIV/Icons:rw
+      - ./lib/FFXIV/CrestComponents:/app/lib/FFXIV/CrestComponents:rw
       - ./logs:/app/logs:rw
       - ./vendor:/app/vendor:rw
     security_opt:
