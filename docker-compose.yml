@@ -120,6 +120,7 @@ services:
       - ./:/app:ro
       #Some files/folders are overridden for RW permissions
       - ./composer.lock:/app/composer.lock:rw
+      - ./build/DDL:/app/build/DDL:rw
       - ./data:/app/data:rw
       - ./logs:/app/logs:rw
       - ./vendor:/app/vendor:rw
