@@ -22,23 +22,19 @@
 
 ### 0.3 · Security & Code Quality Quick Fixes ⚠️ 🔗 DEP: 0.2
 
-| Issue                                                                                      | URL        | Note                                                                                  |
-|--------------------------------------------------------------------------------------------|------------|---------------------------------------------------------------------------------------|
-| `@internal`                                                                                 |            | Consider using internal tag for internal classes/methods not meant for use by users   |
-| [SQL Concatenation](https://github.com/Simbiat/simbiat.ru/issues/110)                      | simbiat.ru | Audit all query construction 🟡 S 🔧                                                  |
-| [twig raw](https://github.com/Simbiat/simbiat.ru/issues/111)                               | simbiat.ru | Remove unsafe `\|raw` usages 🟡 S 🔧                                                  |
-| [strict_variables in twig](https://github.com/Simbiat/simbiat.ru/issues/7)                 | simbiat.ru | Enable strict mode 🟢 XS 🔧                                                           |
-| [eval, setTimeOut, setInterval, Function](https://github.com/Simbiat/simbiat.ru/issues/50) | simbiat.ru | Remove/replace unsafe JS patterns 🟡 S                                                |
-| [TS clean-up](https://github.com/Simbiat/simbiat.ru/issues/368)                            | simbiat.ru | Resolve IDE/SAT warnings in TS/JS; also covers some unsafe JS patterns 🟡 S           |
-| [resolve EA inspections](https://github.com/Simbiat/simbiat.ru/issues/15)                  | simbiat.ru | Resolve Qodana/IDE highlights — do early so development only generates new items 🟠 M |
-| [allow media only from same host](https://github.com/Simbiat/simbiat.ru/issues/55)         | simbiat.ru | Verify sanitizer rule (may already be done) 🟢 XS 🔧                                  |
-| [don't tell if account exists](https://github.com/Simbiat/simbiat.ru/issues/102)           | simbiat.ru | Login/reset response normalization 🟢 XS                                              |
-| [DMARC scan](https://github.com/Simbiat/simbiat.ru/issues/237)                             | simbiat.ru | Add easydmarc scan link to the security/about page as a trust signal 🟢 XS 🔧         |
-| [Pure JSON shown on form submit](https://github.com/Simbiat/simbiat.ru/issues/365)         | simbiat.ru | Fix AJAX handler to never render raw JSON 🟡 S                                        |
-| [limit emails with `+`](https://github.com/Simbiat/simbiat.ru/issues/53)                   | simbiat.ru | Reject/normalize `+` addressing on registration 🟢 XS 🔧                              |
-| [anonymized IPs](https://github.com/Simbiat/simbiat.ru/issues/59)                          | simbiat.ru | Implement per IP storage policy decision 🟡 S                                         |
-| [DNT and GPC](https://github.com/Simbiat/simbiat.ru/issues/360)                            | simbiat.ru | Honor DNT/GPC headers in session/SEO storage 🟡 S                                     |
-| [Client Hints](https://github.com/Simbiat/simbiat.ru/issues/359)                           | simbiat.ru | Accept-CH for Matomo bot detection; update Privacy Policy 🟡 S                        |
+| Issue                                                                                      | Note                                                                                  |
+|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| `@internal`                                                                                 | Consider using internal tag for internal classes/methods not meant for use by users   |
+| [SQL Concatenation](https://github.com/Simbiat/simbiat.ru/issues/110)                      | Audit all query construction 🟡 S 🔧                                                  |
+| [twig raw](https://github.com/Simbiat/simbiat.ru/issues/111)                               | Remove unsafe `\|raw` usages 🟡 S 🔧                                                  |
+| [strict_variables in twig](https://github.com/Simbiat/simbiat.ru/issues/7)                 | Enable strict mode 🟢 XS 🔧                                                           |
+| [eval, setTimeOut, setInterval, Function](https://github.com/Simbiat/simbiat.ru/issues/50) | Remove/replace unsafe JS patterns 🟡 S                                                |
+| [TS clean-up](https://github.com/Simbiat/simbiat.ru/issues/368)                            | Resolve IDE/SAT warnings in TS/JS; also covers some unsafe JS patterns 🟡 S           |
+| [resolve EA inspections](https://github.com/Simbiat/simbiat.ru/issues/15)                  | Resolve Qodana/IDE highlights — do early so development only generates new items 🟠 M |
+| [Pure JSON shown on form submit](https://github.com/Simbiat/simbiat.ru/issues/365)         | Fix AJAX handler to never render raw JSON 🟡 S                                        |
+| [anonymized IPs](https://github.com/Simbiat/simbiat.ru/issues/59)                          | Implement per IP storage policy decision 🟡 S                                         |
+| [DNT and GPC](https://github.com/Simbiat/simbiat.ru/issues/360)                            | Honor DNT/GPC headers in session/SEO storage 🟡 S                                     |
+| [Client Hints](https://github.com/Simbiat/simbiat.ru/issues/359)                           | Accept-CH for Matomo bot detection; update Privacy Policy 🟡 S                        |
 
 ---
 
@@ -79,7 +75,7 @@ Stabilize all libraries used throughout the project. Includes ongoing maintenanc
 
 **Other libraries and ongoing maintenance:**
 
-| Issue                                                                              | Note       | Note                                                                                                                                                                                                      |
+| Issue                                                                              | Library    | Note                                                                                                                                                                                                      |
 |------------------------------------------------------------------------------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [languages to separate files](https://github.com/Simbiat/sand-clock/issues/1)      | sand-clock | Extensibility 🟢 XS 🔧                                                                                                                                                                                    |
 | [[php8.4] Use HTMLDocument](https://github.com/Simbiat/HTMLCut/issues/2)           | HTMLCut    | PHP 8.4 upgrade 🟢 XS 🔧                                                                                                                                                                                  |
@@ -96,29 +92,29 @@ Stabilize all libraries used throughout the project. Includes ongoing maintenanc
 **Issue:
 ** [Split into smaller libraries](https://github.com/Simbiat/HTTP20/issues/2) — do this first, then work remaining HTTP20 issues.
 
-| Issue                                                                                | URL    | Priority                                                                                            |
-|--------------------------------------------------------------------------------------|--------|-----------------------------------------------------------------------------------------------------|
-| [disable header rewrite](https://github.com/Simbiat/HTTP20/issues/3)                 | HTTP20 | High 🟢 XS 🔧                                                                                       |
-| [cachecontrol updates](https://github.com/Simbiat/HTTP20/issues/7)                   | HTTP20 | High 🟡 S                                                                                           |
-| [Early hints](https://github.com/Simbiat/HTTP20/issues/4)                            | HTTP20 | Medium 🟡 S                                                                                         |
-| [zstd](https://github.com/Simbiat/HTTP20/issues/6)                                   | HTTP20 | Medium 🟡 S                                                                                         |
-| [Document-Policy](https://github.com/Simbiat/HTTP20/issues/8)                        | HTTP20 | Medium 🟡 S                                                                                         |
-| [OpenGraph](https://github.com/Simbiat/HTTP20/issues/12)                             | HTTP20 | Medium 🟡 S                                                                                         |
-| [RDFa prefixes](https://github.com/Simbiat/HTTP20/issues/13)                         | HTTP20 | Medium 🟡 S                                                                                         |
-| [Image sitemaps](https://github.com/Simbiat/HTTP20/issues/1)                         | HTTP20 | Medium 🟡 S                                                                                         |
-| [media sitemaps](https://github.com/Simbiat/HTTP20/issues/14)                        | HTTP20 | Medium 🟡 S                                                                                         |
-| [Server-Timing](https://github.com/Simbiat/HTTP20/issues/16)                         | HTTP20 | Medium 🟡 S                                                                                         |
-| [hash in HTTP header](https://github.com/Simbiat/HTTP20/issues/17)                   | HTTP20 | Medium (enables Ajax integrity) 🟡 S 🟠 M                                                           |
-| [replace trigger_error with exceptions](https://github.com/Simbiat/HTTP20/issues/18) | HTTP20 | Medium — 🔗 DEP: Phase 1.4 (Custom Error class must exist first) 🟡 S                               |
-| [roadmap library](https://github.com/Simbiat/HTTP20/issues/19)                       | HTTP20 | Medium 💰 (needed for public roadmap page in Phase 1.11) 🟡 S 🟠 M                                  |
-| [force left/right for timeline](https://github.com/Simbiat/HTTP20/issues/22)         | HTTP20 | Low 🔴 L 🟢 XS                                                                                      |
-| [sitemap enhancements](https://github.com/Simbiat/HTTP20/issues/24)                  | HTTP20 | Low 🔴 L 🟡 S                                                                                       |
-| [[php8.4] Use HTMLDocument](https://github.com/Simbiat/HTTP20/issues/25)             | HTTP20 | Low 🔴 L 🟢 XS 🔧                                                                                   |
-| [callback in clientReturn](https://github.com/Simbiat/HTTP20/issues/11)              | HTTP20 | Low 🟡 S                                                                                            |
-| [HTTP authentication](https://github.com/Simbiat/HTTP20/issues/15)                   | HTTP20 | Low 🟡 S 🟠 M                                                                                       |
-| [Remove Feature-Policy](https://github.com/Simbiat/HTTP20/issues/5)                  | HTTP20 | 💬 DEFER — cannot remove until Document-Policy and Permission-Policy have broader adoption 🟢 XS 🔧 |
-| [HAL and Siren formats](https://github.com/Simbiat/HTTP20/issues/9)                  | HTTP20 | 💬 CONSIDER — niche 🟠 M                                                                            |
-| [Resumable PUT](https://github.com/Simbiat/HTTP20/issues/10)                         | HTTP20 | 💬 CONSIDER — only if large file uploads are needed 🟡 S 🟠 M                                       |
+| Issue                                                                                | Priority                                                                                            |
+|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+| [disable header rewrite](https://github.com/Simbiat/HTTP20/issues/3)                 | High 🟢 XS 🔧                                                                                       |
+| [cachecontrol updates](https://github.com/Simbiat/HTTP20/issues/7)                   | High 🟡 S                                                                                           |
+| [Early hints](https://github.com/Simbiat/HTTP20/issues/4)                            | Medium 🟡 S                                                                                         |
+| [zstd](https://github.com/Simbiat/HTTP20/issues/6)                                   | Medium 🟡 S                                                                                         |
+| [Document-Policy](https://github.com/Simbiat/HTTP20/issues/8)                        | Medium 🟡 S                                                                                         |
+| [OpenGraph](https://github.com/Simbiat/HTTP20/issues/12)                             | Medium 🟡 S                                                                                         |
+| [RDFa prefixes](https://github.com/Simbiat/HTTP20/issues/13)                         | Medium 🟡 S                                                                                         |
+| [Image sitemaps](https://github.com/Simbiat/HTTP20/issues/1)                         | Medium 🟡 S                                                                                         |
+| [media sitemaps](https://github.com/Simbiat/HTTP20/issues/14)                        | Medium 🟡 S                                                                                         |
+| [Server-Timing](https://github.com/Simbiat/HTTP20/issues/16)                         | Medium 🟡 S                                                                                         |
+| [hash in HTTP header](https://github.com/Simbiat/HTTP20/issues/17)                   | Medium (enables Ajax integrity) 🟡 S 🟠 M                                                           |
+| [replace trigger_error with exceptions](https://github.com/Simbiat/HTTP20/issues/18) | Medium — 🔗 DEP: Phase 1.4 (Custom Error class must exist first) 🟡 S                               |
+| [roadmap library](https://github.com/Simbiat/HTTP20/issues/19)                       | Medium 💰 (needed for public roadmap page in Phase 1.11) 🟡 S 🟠 M                                  |
+| [force left/right for timeline](https://github.com/Simbiat/HTTP20/issues/22)         | Low 🔴 L 🟢 XS                                                                                      |
+| [sitemap enhancements](https://github.com/Simbiat/HTTP20/issues/24)                  | Low 🔴 L 🟡 S                                                                                       |
+| [[php8.4] Use HTMLDocument](https://github.com/Simbiat/HTTP20/issues/25)             | Low 🔴 L 🟢 XS 🔧                                                                                   |
+| [callback in clientReturn](https://github.com/Simbiat/HTTP20/issues/11)              | Low 🟡 S                                                                                            |
+| [HTTP authentication](https://github.com/Simbiat/HTTP20/issues/15)                   | Low 🟡 S 🟠 M                                                                                       |
+| [Remove Feature-Policy](https://github.com/Simbiat/HTTP20/issues/5)                  | 💬 DEFER — cannot remove until Document-Policy and Permission-Policy have broader adoption 🟢 XS 🔧 |
+| [HAL and Siren formats](https://github.com/Simbiat/HTTP20/issues/9)                  | 💬 CONSIDER — niche 🟠 M                                                                            |
+| [Resumable PUT](https://github.com/Simbiat/HTTP20/issues/10)                         | 💬 CONSIDER — only if large file uploads are needed 🟡 S 🟠 M                                       |
 
 **After hash-in-header (#17) is done:**
 
