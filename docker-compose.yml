@@ -111,8 +111,6 @@ services:
     volumes:
       #RO for MariaDB socket
       - mariadb_socket:/run/mysqld/:ro
-      #RO to be able to get Caddy config
-      - ./config/frankenphp:/usr/local/php/config:ro
       #Caddy folders requiring RW
       - ${CADDY_DATA_DIR}:/data:rw
       - ./data/caddy_config:/config:rw
@@ -142,7 +140,7 @@ services:
       /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
                   #We need to start cron service before the endpoint
                   cron &&
-                  docker-php-entrypoint --config /usr/local/php/config/caddy.json5 --adapter json5"
+                  docker-php-entrypoint --config /usr/local/etc/php/caddy.json5 --adapter json5"
 
   crowdsec:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
