@@ -6,6 +6,7 @@ namespace Simbiat\Website\Abstracts;
 use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
+use Simbiat\StringHelpers\Sanitize;
 use Simbiat\Website\Config;
 use Simbiat\Website\Enums\NotificationTypes;
 use Simbiat\Website\Errors;
@@ -242,7 +243,7 @@ abstract class Notification extends Entity
         } else {
             $this->setText($twig_vars);
         }
-        if (\preg_match('/^\s*$/', $this->text ?? '') === 1) {
+        if (Sanitize::whiteString($this->text ?? '')) {
             throw new \UnexpectedValueException('No text is set for notification');
         }
         $constant_name = new \ReflectionClass($this)->getShortName();
@@ -327,7 +328,7 @@ abstract class Notification extends Entity
             #Don't do anything if we already tried to send the message too many times
             return false;
         }
-        if (\preg_match('/^\s*$/', $this->text ?? '') === 1) {
+        if (Sanitize::whiteString($this->text ?? '')) {
             throw new \UnexpectedValueException('No text is set for notification');
         }
         if (!$this::ALWAYS_SEND && $this->created === null) {
@@ -359,7 +360,7 @@ abstract class Notification extends Entity
             }
             return true;
         }
-        if (\preg_match('/^\s*$/', $this::SUBJECT) !== 0) {
+        if (Sanitize::whiteString($this::SUBJECT)) {
             throw new \RuntimeException('No subject set for the email');
         }
         $subscribed = null;

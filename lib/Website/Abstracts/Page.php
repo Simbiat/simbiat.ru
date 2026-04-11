@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website\Abstracts;
 
 use Simbiat\http20\IRI;
+use Simbiat\StringHelpers\Sanitize;
 use Simbiat\Website\Config;
 use Simbiat\Website\Errors;
 use Simbiat\Website\HomePage;
@@ -285,7 +286,7 @@ abstract class Page
         $cleaned_html = \preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html);
         $new_description = \strip_tags(Cut::cut(\preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html), 160, 1));
         #Update description only if it's not empty
-        if (\preg_match('/^\s*$/u', $new_description) === 0) {
+        if (!Sanitize::whiteString($new_description)) {
             $this->og_desc = $new_description;
         }
     }

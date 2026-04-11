@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use Simbiat\StringHelpers\Sanitize;
+
 /**
  * Class to handle page caching
  */
@@ -13,7 +15,7 @@ class Caching
      */
     public function __construct(private string $cache_dir = '')
     {
-        if (\preg_match('/^\s*$/u', $this->cache_dir) === 1) {
+        if (Sanitize::whiteString($this->cache_dir)) {
             $this->cache_dir = Config::$html_cache;
         }
         if (!\is_dir($this->cache_dir) && !\mkdir($this->cache_dir, recursive: true) && !\is_dir($this->cache_dir)) {
@@ -39,7 +41,7 @@ class Caching
             if ($data !== '' && $data !== []) {
                 #Ensure we do not save CSRF
                 unset($data['X-CSRF-Token']);
-                #Add headers data
+                #Add headers' data
                 $data['http_headers'] = \headers_list();
                 #Set expiration date
                 if ($age > 0) {
@@ -56,7 +58,7 @@ class Caching
             $key = $this->key($key);
             #Generate subdirectory name
             $sub_dir = mb_substr($key, 0, 2, 'UTF-8').'/'.mb_substr($key, 2, 2, 'UTF-8').'/'.mb_substr($key, 4, 2, 'UTF-8').'/';
-            #Create folder if missing. Silencing operator because of potential concurrency
+            #Create the folder if missing. Silencing operator because of potential concurrency
             /** @noinspection PhpUsageOfSilenceOperatorInspection */
             if (!\is_dir($this->cache_dir.$sub_dir) && !@\mkdir($this->cache_dir.$sub_dir, recursive: true) && !\is_dir($this->cache_dir.$sub_dir)) {
                 throw new \RuntimeException(\sprintf('Directory "%s" was not created', $this->cache_dir.$sub_dir));
