@@ -7,8 +7,8 @@ use DeviceDetector\ClientHints;
 use Simbiat\Database\Query;
 use Simbiat\http20\IRI;
 use Simbiat\Talks\Enums\SystemUsers;
-use Simbiat\Translit\Decode;
-use Simbiat\Translit\Encode;
+use Simbiat\StringHelpers\Decode;
+use Simbiat\StringHelpers\Encode;
 use function function_exists;
 use function is_array;
 

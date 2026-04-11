@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts;
 
-use Simbiat\Arrays\Sorters;
+use Simbiat\ArrayHelpers\Sorters;
 use Simbiat\http20\Headers;
 use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Config;

@@ -76,9 +76,9 @@
 [submodule "lib/Database/Installer"]
 	path = lib/Database/Installer
 	url = https://github.com/Simbiat/db-installer
-[submodule "lib/Translit"]
-	path = lib/Translit
-	url = https://github.com/Simbiat/translit
 [submodule "lib/Talks"]
 	path = lib/Talks
 	url = https://github.com/Simbiat/talks
+[submodule "lib/StringHelpers"]
+	path = lib/StringHelpers
+	url = https://github.com/Simbiat/StringHelpers

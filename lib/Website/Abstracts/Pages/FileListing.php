@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Abstracts\Pages;
 
-use Simbiat\Translit\Convert;
+use Simbiat\StringHelpers\Convert;
 use Simbiat\Website\Config;
 use Simbiat\http20\Headers;
 

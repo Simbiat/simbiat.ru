@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Cron;
 
-use Simbiat\Arrays\Converters;
+use Simbiat\ArrayHelpers\Converters;
 use Simbiat\Database\Query;
 use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Talks\Enums\TalkTypes;

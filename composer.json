@@ -94,9 +94,6 @@
                 "./lib/HTMLCache/src",
                 "./lib/SandClock/src"
             ],
-            "Simbiat\\Arrays\\": [
-                "./lib/ArrayHelpers/src"
-            ],
             "Simbiat\\BIC\\": [
                 "./lib/BIC/AccountKeying/src",
                 "./lib/BIC/Tracker/src"
@@ -119,8 +116,9 @@
                 "./lib/HTML/Cut/src",
                 "./lib/HTML/nl2tag/src"
             ],
+            "Simbiat\\ArrayHelpers\\": "./lib/ArrayHelpers/src",
+            "Simbiat\\StringHelpers\\": "./lib/StringHelpers/src",
             "Simbiat\\Talks\\": "./lib/Talks/src",
-            "Simbiat\\Translit\\": "./lib/Translit/src",
             "Simbiat\\Database\\Maintainer\\": "./lib/Database/Maintainer/src",
             "Simbiat\\HTML\\ArrayToTable\\": "./lib/array2table/src",
             "Simbiat\\Cron\\": "./lib/Cron/src",
