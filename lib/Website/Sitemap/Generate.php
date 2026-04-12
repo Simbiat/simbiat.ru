@@ -64,12 +64,6 @@ class Generate
                     if (!\is_file($file_path.'/'.$file_name) || $content !== \file_get_contents($file_path.'/'.$file_name) || \filemtime($file_path.'/'.$file_name) < \strtotime('-2 weeks')) {
                         #Save the file
                         \file_put_contents($file_path.'/'.$file_name.'.xml', $content);
-                        #Ping Google about file update
-                        try {
-                            $curl->getPage('https://www.google.com/ping?sitemap='.\urlencode($link));
-                        } catch (\Throwable) {
-                            #Do nothing, it's not critical
-                        }
                     }
                 }
             }
@@ -78,12 +72,6 @@ class Generate
                 #Check if the index file already exists and if its contents are the same
                 if (!\is_file(Config::$sitemap.$index_file.'.xml') || $index[$index_file] !== \file_get_contents(Config::$sitemap.$index_file.'.xml') || \filemtime(Config::$sitemap.$index_file.'.xml') < \strtotime('-2 weeks')) {
                     \file_put_contents(Config::$sitemap.$index_file.'.xml', $index[$index_file]);
-                    #Ping Google about index update
-                    try {
-                        $curl->getPage('https://www.google.com/ping?sitemap='.\urlencode(Config::$base_url.'/sitemap/'.$index_file.'.xml'));
-                    } catch (\Throwable) {
-                        #Do nothing, it's not critical
-                    }
                 }
             }
             return true;
