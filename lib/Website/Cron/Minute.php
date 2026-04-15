@@ -28,10 +28,7 @@ class Minute
         try {
             return (bool)new Session()->gc();
         } catch (\Throwable $throwable) {
-            #Ignore deadlocks, since they can happen quite easily during backups
-            if (mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
-                Errors::error_log($throwable);
-            }
+            Errors::error_log($throwable);
             return false;
         }
     }

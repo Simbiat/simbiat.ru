@@ -434,9 +434,15 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
     public function gc(int $max_lifetime = 300): false|int
     {
         try {
-            return Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUsers::System->value, 'int'], ':deleted_user_id' => [SystemUsers::Deleted->value, 'int']], return: 'affected');
-        } catch (\Throwable $e) {
-            Errors::error_log($e);
+            Query::$max_tries = 1;
+            $result = Query::query('DELETE FROM `uc__sessions` WHERE `time` <= DATE_SUB(CURRENT_TIMESTAMP(6), INTERVAL :life SECOND) OR `user_id` IN (:system_user_id, :deleted_user_id);', [':life' => [$max_lifetime, 'int'], ':system_user_id' => [SystemUsers::System->value, 'int'], ':deleted_user_id' => [SystemUsers::Deleted->value, 'int']], return: 'affected');
+            Query::$max_tries = 5;
+            return $result;
+        } catch (\Throwable $throwable) {
+            #Ignore deadlocks
+            if (mb_stripos($throwable->getMessage(), 'Deadlock', 0, 'UTF-8') === false) {
+                Errors::error_log($throwable);
+            }
             return false;
         }
     }
