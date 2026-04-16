@@ -1387,7 +1387,8 @@ session.serialize_handler = 'php_serialize'
 ; Development Value: 1
 ; Production Value: 1
 ; https://php.net/session.gc-probability
-session.gc_probability = 1
+; Sessions are cleared in a scheduled job
+session.gc_probability = 0
 
 ; Defines the probability that the 'garbage collection' process is started on every
 ; session initialization. The probability is calculated by using gc_probability/gc_divisor,
