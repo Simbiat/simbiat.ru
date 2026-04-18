@@ -7824,3 +7824,5 @@ INSERT IGNORE INTO `ffxiv__server` (`server_id`, `server`, `data_center`) VALUES
 INSERT INTO `ffxiv__jobs`(`name`) VALUES ('Alchemist'), ('Armorer'), ('Astrologian'), ('Bard'), ('Black Mage'), ('Blacksmith'), ('Blue Mage'), ('Botanist'), ('Carpenter'), ('Culinarian'), ('Dancer'), ('Dark Knight'), ('Dragoon'), ('Fisher'), ('Goldsmith'), ('Gunbreaker'), ('Leatherworker'), ('Machinist'), ('Miner'), ('Monk'), ('Ninja'), ('Paladin'), ('Pictomancer'), ('Reaper'), ('Red Mage'), ('Sage'), ('Samurai'), ('Scholar'), ('Summoner'), ('Viper'), ('Warrior'), ('Weaver'), ('White Mage');
 
 UPDATE `ffxiv__achievement` SET `earned_by`=(SELECT COUNT(*) FROM `ffxiv__character_achievement` WHERE `ffxiv__character_achievement`.`achievement_id`=`ffxiv__achievement`.`achievement_id`);
+
+INSERT INTO `ffxiv__jobs` (`job_id`, `name`) VALUES ('34', 'Beastmaster');
