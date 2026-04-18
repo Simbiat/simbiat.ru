@@ -11,6 +11,7 @@ use Simbiat\Website\Config;
 use Simbiat\Website\Enums\NotificationTypes;
 use Simbiat\Website\Errors;
 use Simbiat\Website\Images;
+use Simbiat\Website\Sanitization;
 use Simbiat\Website\Twig\EnvironmentGenerator;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -157,7 +158,11 @@ abstract class Notification extends Entity
         $this->is_read = $from_db['is_read'] !== null ? \strtotime($from_db['is_read']) : null;
         $this->last_attempt = $from_db['last_attempt'] !== null ? \strtotime($from_db['last_attempt']) : null;
         $this->attempts = (int)$from_db['attempts'];
-        $this->text = $from_db['text'] ?? null;
+        if (Sanitize::whiteString($from_db['text'] ?? '')) {
+            $this->text = null;
+        } else {
+            $this->text = Sanitization::sanitizeHTML($from_db['text']);
+        }
     }
     
     /**

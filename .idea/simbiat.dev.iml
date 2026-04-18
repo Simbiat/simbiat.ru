@@ -50,30 +50,13 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/Translit/src" isTestSource="false" packagePrefix="Simbiat\Translit\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/http20/src" isTestSource="false" packagePrefix="Simbiat\http20\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/StringHelpers/src" isTestSource="false" packagePrefix="Simbiat\StringHelpers\" />
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/vcs" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/twig" />
       <excludeFolder url="file://$MODULE_DIR$/symfony" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/graham-campbell/result-type" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/league/uri-interfaces" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/matomo/device-detector" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/mustangostang/spyc" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phpoption/phpoption" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-factory" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-message" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/deprecation-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/html-sanitizer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-ctype" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/vlucas/phpdotenv" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/twig/twig" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/geoip2/geoip2" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind-db/reader" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/maxmind/web-service-common" />
       <excludeFolder url="file://$MODULE_DIR$/templates/cache" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dictionaries" />

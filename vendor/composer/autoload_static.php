@@ -185,6 +185,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'E' =>
         array (
             'Evenement\\' => 10,
+            'Ergebnis\\AgentDetector\\' => 23,
             'Egulias\\EmailValidator\\' => 23,
         ),
         'D' =>
@@ -621,6 +622,10 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Evenement\\' =>
         array (
             0 => __DIR__ . '/..' . '/evenement/evenement/src',
+        ),
+        'Ergebnis\\AgentDetector\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/ergebnis/agent-detector/src',
         ),
         'Egulias\\EmailValidator\\' =>
         array (
@@ -1217,6 +1222,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'Egulias\\EmailValidator\\Warning\\QuotedString' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/QuotedString.php',
         'Egulias\\EmailValidator\\Warning\\TLD' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/TLD.php',
         'Egulias\\EmailValidator\\Warning\\Warning' => __DIR__ . '/..' . '/egulias/email-validator/src/Warning/Warning.php',
+        'Ergebnis\\AgentDetector\\Detector' => __DIR__ . '/..' . '/ergebnis/agent-detector/src/Detector.php',
         'Evenement\\EventEmitter' => __DIR__ . '/..' . '/evenement/evenement/src/EventEmitter.php',
         'Evenement\\EventEmitterInterface' => __DIR__ . '/..' . '/evenement/evenement/src/EventEmitterInterface.php',
         'Evenement\\EventEmitterTrait' => __DIR__ . '/..' . '/evenement/evenement/src/EventEmitterTrait.php',
@@ -2231,8 +2237,6 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PHPUnit\\Framework\\InvalidArgumentException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Exception/InvalidArgumentException.php',
         'PHPUnit\\Framework\\InvalidDataProviderException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Exception/InvalidDataProviderException.php',
         'PHPUnit\\Framework\\InvalidDependencyException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Exception/InvalidDependencyException.php',
-        'PHPUnit\\Framework\\IsolatedTestRunner' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/TestRunner/IsolatedTestRunner.php',
-        'PHPUnit\\Framework\\IsolatedTestRunnerRegistry' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/TestRunner/IsolatedTestRunnerRegistry.php',
         'PHPUnit\\Framework\\MockObject\\AbstractInvocationImplementation' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Runtime/AbstractInvocationImplementation.php',
         'PHPUnit\\Framework\\MockObject\\BadMethodCallException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/BadMethodCallException.php',
         'PHPUnit\\Framework\\MockObject\\CannotUseOnlyMethodsException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/MockObject/Exception/CannotUseOnlyMethodsException.php',
@@ -2366,6 +2370,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PHPUnit\\Logging\\JUnit\\TestRunnerExecutionFinishedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/JUnit/Subscriber/TestRunnerExecutionFinishedSubscriber.php',
         'PHPUnit\\Logging\\JUnit\\TestSkippedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/JUnit/Subscriber/TestSkippedSubscriber.php',
         'PHPUnit\\Logging\\JUnit\\TestSuiteFinishedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/JUnit/Subscriber/TestSuiteFinishedSubscriber.php',
+        'PHPUnit\\Logging\\JUnit\\TestSuiteSkippedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/JUnit/Subscriber/TestSuiteSkippedSubscriber.php',
         'PHPUnit\\Logging\\JUnit\\TestSuiteStartedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/JUnit/Subscriber/TestSuiteStartedSubscriber.php',
         'PHPUnit\\Logging\\OpenTestReporting\\AfterLastTestMethodErroredSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/OpenTestReporting/Subscriber/AfterLastTestMethodErroredSubscriber.php',
         'PHPUnit\\Logging\\OpenTestReporting\\AfterLastTestMethodFailedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Logging/OpenTestReporting/Subscriber/AfterLastTestMethodFailedSubscriber.php',
@@ -2855,7 +2860,6 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PHPUnit\\Util\\InvalidJsonException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Exception/InvalidJsonException.php',
         'PHPUnit\\Util\\InvalidVersionOperatorException' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Exception/InvalidVersionOperatorException.php',
         'PHPUnit\\Util\\Json' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Json.php',
-        'PHPUnit\\Util\\PHP\\DefaultJobRunner' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/PHP/DefaultJobRunner.php',
         'PHPUnit\\Util\\PHP\\Job' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/PHP/Job.php',
         'PHPUnit\\Util\\PHP\\JobRunner' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/PHP/JobRunner.php',
         'PHPUnit\\Util\\PHP\\JobRunnerRegistry' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/PHP/JobRunnerRegistry.php',
@@ -2985,6 +2989,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PhpCsFixer\\Console\\Command\\HelpCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/HelpCommand.php',
         'PhpCsFixer\\Console\\Command\\InitCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/InitCommand.php',
         'PhpCsFixer\\Console\\Command\\ListFilesCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/ListFilesCommand.php',
+        'PhpCsFixer\\Console\\Command\\ListRulesCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/ListRulesCommand.php',
         'PhpCsFixer\\Console\\Command\\ListSetsCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/ListSetsCommand.php',
         'PhpCsFixer\\Console\\Command\\SelfUpdateCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/SelfUpdateCommand.php',
         'PhpCsFixer\\Console\\Command\\WorkerCommand' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Command/WorkerCommand.php',
@@ -3006,6 +3011,11 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PhpCsFixer\\Console\\Report\\FixReport\\ReporterInterface' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/FixReport/ReporterInterface.php',
         'PhpCsFixer\\Console\\Report\\FixReport\\TextReporter' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/FixReport/TextReporter.php',
         'PhpCsFixer\\Console\\Report\\FixReport\\XmlReporter' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/FixReport/XmlReporter.php',
+        'PhpCsFixer\\Console\\Report\\ListRulesReport\\JsonReporter' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListRulesReport/JsonReporter.php',
+        'PhpCsFixer\\Console\\Report\\ListRulesReport\\ReportSummary' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListRulesReport/ReportSummary.php',
+        'PhpCsFixer\\Console\\Report\\ListRulesReport\\ReporterFactory' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListRulesReport/ReporterFactory.php',
+        'PhpCsFixer\\Console\\Report\\ListRulesReport\\ReporterInterface' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListRulesReport/ReporterInterface.php',
+        'PhpCsFixer\\Console\\Report\\ListRulesReport\\TextReporter' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListRulesReport/TextReporter.php',
         'PhpCsFixer\\Console\\Report\\ListSetsReport\\JsonReporter' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListSetsReport/JsonReporter.php',
         'PhpCsFixer\\Console\\Report\\ListSetsReport\\ReportSummary' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListSetsReport/ReportSummary.php',
         'PhpCsFixer\\Console\\Report\\ListSetsReport\\ReporterFactory' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Console/Report/ListSetsReport/ReporterFactory.php',
@@ -3089,6 +3099,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PhpCsFixer\\Fixer\\ArrayNotation\\NoMultilineWhitespaceAroundDoubleArrowFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/NoMultilineWhitespaceAroundDoubleArrowFixer.php',
         'PhpCsFixer\\Fixer\\ArrayNotation\\NoTrailingCommaInSinglelineArrayFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/NoTrailingCommaInSinglelineArrayFixer.php',
         'PhpCsFixer\\Fixer\\ArrayNotation\\NoWhitespaceBeforeCommaInArrayFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/NoWhitespaceBeforeCommaInArrayFixer.php',
+        'PhpCsFixer\\Fixer\\ArrayNotation\\NoWhitespaceInEmptyArrayFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/NoWhitespaceInEmptyArrayFixer.php',
         'PhpCsFixer\\Fixer\\ArrayNotation\\NormalizeIndexBraceFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/NormalizeIndexBraceFixer.php',
         'PhpCsFixer\\Fixer\\ArrayNotation\\ReturnToYieldFromFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/ReturnToYieldFromFixer.php',
         'PhpCsFixer\\Fixer\\ArrayNotation\\TrimArraySpacesFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/ArrayNotation/TrimArraySpacesFixer.php',
@@ -3317,6 +3328,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocListTypeFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocListTypeFixer.php',
         'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoAccessFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocNoAccessFixer.php',
         'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoAliasTagFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocNoAliasTagFixer.php',
+        'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoDuplicateTypesFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocNoDuplicateTypesFixer.php',
         'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoEmptyReturnFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocNoEmptyReturnFixer.php',
         'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoPackageFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocNoPackageFixer.php',
         'PhpCsFixer\\Fixer\\Phpdoc\\PhpdocNoUselessInheritdocFixer' => __DIR__ . '/..' . '/friendsofphp/php-cs-fixer/src/Fixer/Phpdoc/PhpdocNoUselessInheritdocFixer.php',
@@ -5435,6 +5447,7 @@ class ComposerStaticInit088939bb6221eb9ea309cf2f29c27227
         'SebastianBergmann\\CodeCoverage\\Report\\Html\\File' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/Html/Renderer/File.php',
         'SebastianBergmann\\CodeCoverage\\Report\\Html\\Renderer' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/Html/Renderer.php',
         'SebastianBergmann\\CodeCoverage\\Report\\OpenClover' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/OpenClover.php',
+        'SebastianBergmann\\CodeCoverage\\Report\\Summary' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/Summary.php',
         'SebastianBergmann\\CodeCoverage\\Report\\Text' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/Text.php',
         'SebastianBergmann\\CodeCoverage\\Report\\Thresholds' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/Thresholds.php',
         'SebastianBergmann\\CodeCoverage\\Report\\Xml\\BuildInformation' => __DIR__ . '/..' . '/phpunit/php-code-coverage/src/Report/Xml/BuildInformation.php',

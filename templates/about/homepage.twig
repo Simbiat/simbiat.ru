@@ -51,11 +51,7 @@
                 </section>
             {% endif %}
             <section class="post_text">
-                {% if post.type == 'Changelog' or post.detailed_type == 'Changelog' %}
-                    {{ sanitize(preg_replace(htmlCut(changelog(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
-                {% else %}
-                    {{ sanitize(preg_replace(htmlCut(nl2p(post.text), 400), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
-                {% endif %}
+                {{ sanitize(post.text) }}
             </section>
             <section class="post_footer">
                 <div class="post_time_id">

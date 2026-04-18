@@ -9,7 +9,7 @@
         {{ include('common/elements/search.twig') }}
     {% endif %}
     {% if subservice_name %}
-        {% if subservice_name == 'user' and subservice_name == 'search' %}
+        {% if subservice_name == 'user' or subservice_name == 'search' %}
             <article class="margin_05rem">
                 {% if subservice_name == 'search' %}
                     {{ include('common/pages/search.twig') }}

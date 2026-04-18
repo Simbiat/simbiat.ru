@@ -22,13 +22,9 @@
             <a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.og_image }}"></a>
         </section>
     {% endif %}
-    {% if post.htmlcut == true %}
+    {% if post.text_only == true %}
         <section class="post_text">
-            {% if post.type == 'Changelog' or post.detailed_type == 'Changelog' %}
-                {{ sanitize(preg_replace(htmlCut(changelog(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
-            {% else %}
-                {{ sanitize(preg_replace(htmlCut(nl2p(post.text)), '/…(<|$)/ui', '<a href="/talks/threads/' ~ post.thread_id ~ '">…</a>$1')) }}
-            {% endif %}
+            {{ sanitize(post.text) }}
         </section>
     {% else %}
         <section class="post_text">
@@ -38,11 +34,7 @@
                     <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.author_name }}" src="{{ post.avatar }}" class="avatar"></div>
                 </section>
             {% endif %}
-            {% if post.type == 'Changelog' or post.detailed_type == 'Changelog' %}
-                {{ sanitize(changelog(post.text)) }}
-            {% else %}
-                {{ sanitize(nl2p(post.text)) }}
-            {% endif %}
+            {{ sanitize(post.text) }}
         </section>
     {% endif %}
     <section class="post_footer">
@@ -57,10 +49,10 @@
             {% if allow_reply_to and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
                 <input type="button" class="reply_to_button" data-post_id="{{ post.id }}" data-tooltip="Reply to this post" value="📩">
             {% endif %}
-            {% if post.created|date('U') > post.published|date('U') %}
+            {% if post.created|date('Y/m/d H:i') > post.published|date('Y/m/d H:i') %}
                 <span data-tooltip="Backlog post created on {{ post.created|date('d/m/Y H:i') }} UTC">🕰️</span>
             {% endif %}
-            {% if post.created|date('U') < post.published|date('U') %}
+            {% if post.created|date('Y/m/d H:i') < post.published|date('Y/m/d H:i') %}
                 <span data-tooltip="Scheduled post created on {{ post.created|date('d/m/Y H:i') }} UTC">⏲️</span>
             {% endif %}
             {% if post.locked %}

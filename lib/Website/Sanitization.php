@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website;
 
+use JetBrains\PhpStorm\ExpectedValues;
 use JetBrains\PhpStorm\Pure;
 use Simbiat\SandClock;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
@@ -16,58 +17,38 @@ use function in_array;
 class Sanitization
 {
     
-    #Static sanitizer config for a little bit of performance
-    private(set) static ?HtmlSanitizerConfig $sanitizer_config = null;
+    #Static sanitizer configs for a little bit of performance
+    private(set) static array $sanitizer_config = ['body' => null, 'head' => null, 'timeline' => null];
+    
+    /**
+     * Elements names, that can be used for sanitization
+     */
+    public const array SANITIZATION_ELEMENT_NAMES = ['body', 'head', 'timeline'];
     
     /**
      * Sanitize HTML string
+     *
      * @param string $string String to sanitize
-     * @param bool   $head   Flag indicating whether we are sanitizing for `head`
+     * @param string $for    Flag indicating for which element we are doing sanitization
      *
      * @return string
      */
-    public static function sanitizeHTML(string $string, bool $head = false): string
+    public static function sanitizeHTML(string $string, #[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): string
     {
-        #Check if config has been created already
-        if (self::$sanitizer_config) {
-            $config = self::$sanitizer_config;
-        } else {
-            $config = new HtmlSanitizerConfig()->withMaxInputLength(-1)->allowSafeElements()
-                ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
-                ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
-            #Block some extra elements
-            foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
-                         'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
-                         'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
-                         'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
-                         'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp'] as $element) {
-                #Need to update the original, because a clone is returned, instead of the same instance.
-                $config = $config->blockElement($element);
-            }
-            #Allow class attribute
-            $config = $config->allowAttribute('class', '*');
-            #Allow data-* attributes in blockquotes, code and samp
-            $config = $config->allowAttribute('data-author', 'blockquote');
-            $config = $config->allowAttribute('data-description', ['code', 'samp']);
-            $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
-            #Allow tooltips
-            $config = $config->allowAttribute('data-tooltip', '*');
-            #Drop the title element, since it will create a tooltip using the browser's engine, which can create an inconsistent experience
-            $config = $config->dropAttribute('title', '*');
-            #TinyMCE adds the `border` attribute to tables, which we do not use, so dropping it for cleaner code
-            $config = $config->dropAttribute('border', '*');
-            #Save config to static for future reuse
-            self::$sanitizer_config = $config;
+        if (!in_array($for, self::SANITIZATION_ELEMENT_NAMES, true)) {
+            return '';
         }
-        #Allow some property attributes for meta-tags
-        if ($head) {
-            $config = $config->allowAttribute('property', 'meta');
+        #Check if config has been created already
+        if (self::$sanitizer_config[$for]) {
+            $config = self::$sanitizer_config[$for];
+        } else {
+            $config = self::initSanitizer($for);
         }
         #Remove excessive new lines
         $string = \preg_replace(['/(\s*<br \/>\s*){5,}/mi', '/(^(<br \/>\s*)+)|((<br \/>\s*)+$)/mi'], ['<br>', ''], $string);
         #Run the sanitizer
         $sanitizer = new HtmlSanitizer($config);
-        if ($head) {
+        if ($for === 'head') {
             $string = $sanitizer->sanitizeFor('head', $string);
         } else {
             $string = $sanitizer->sanitize($string);
@@ -75,6 +56,66 @@ class Sanitization
         #TODO add rel="noopener noreferrer" to all external links, that do not have it
         #TODO add loading="lazy" decoding="async" to all images
         return $string;
+    }
+    
+    /**
+     * Helper function to generate HtmlSanitizerConfig if it's not created yet
+     *
+     * @param string $for Flag indicating for which element we are doing sanitization
+     *
+     * @return \Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig
+     */
+    private static function initSanitizer(#[ExpectedValues(self::SANITIZATION_ELEMENT_NAMES)] string $for = 'body'): HtmlSanitizerConfig
+    {
+        $config = new HtmlSanitizerConfig()->withMaxInputLength(-1)->allowSafeElements()
+            ->allowRelativeLinks()->allowMediaHosts([Config::$http_host])->allowRelativeMedias()
+            ->forceHttpsUrls()->allowLinkSchemes(['https', 'mailto'])->allowMediaSchemes(['https']);
+        #Block some extra elements
+        foreach (['acronym', 'applet', 'area', 'aside', 'base', 'basefont', 'bgsound', 'big', 'blink', 'body', 'button', 'canvas', 'center', 'content', 'datalist',
+                     'dialog', 'dir', 'embed', 'fieldset', 'figure', 'figcaption', 'font', 'footer', 'form', 'frame', 'frameset', 'head', 'header', 'hgroup', 'html',
+                     'iframe', 'input', 'image', 'keygen', 'legend', 'link', 'main', 'map', 'marquee', 'menuitem', 'meter', 'nav', 'nobr', 'noembed', 'noframes',
+                     'noscript', 'object', 'optgroup', 'option', 'param', 'picture', 'plaintext', 'portal', 'pre', 'progress', 'rb', 'rp', 'rt', 'rtc', 'ruby', 'script',
+                     'select', 'selectmenu', 'shadow', 'slot', 'strike', 'style', 'spacer', 'template', 'textarea', 'title', 'tt', 'xmp']
+                 as $element) {
+            #Need to update the original, because a clone is returned, instead of the same instance.
+            $config = $config->blockElement($element);
+        }
+        #Allow timeline elements
+        if ($for === 'timeline') {
+            $config = $config->allowElement('time-line');
+            $config = $config->allowElement('time-line-shortcut');
+        }
+        #Allow some property attributes for meta-tags
+        if ($for === 'head') {
+            $config = $config->allowAttribute('property', 'meta');
+        }
+        #Allow class attribute
+        $config = $config->allowAttribute('class', '*');
+        #Allow ARIA attributes
+        foreach (['aria-activedescendant', 'aria-atomic', 'aria-atomic', 'aria-autocomplete', 'aria-busy', 'aria-busy', 'aria-checked', 'aria-colcount', 'aria-colindex',
+                     'aria-colspan', 'aria-controls', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-describedby', 'aria-description', 'aria-description',
+                     'aria-details', 'aria-details', 'aria-disabled', 'aria-disabled', 'aria-dropeffect', 'aria-dropeffect', 'aria-errormessage', 'aria-errormessage',
+                     'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-flowto', 'aria-grabbed', 'aria-grabbed', 'aria-haspopup', 'aria-haspopup', 'aria-hidden',
+                     'aria-hidden', 'aria-invalid', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-label', 'aria-labelledby', 'aria-labelledby', 'aria-level',
+                     'aria-live', 'aria-live', 'aria-modal', 'aria-multiline', 'aria-multiselectable', 'aria-orientation', 'aria-owns', 'aria-owns', 'aria-placeholder',
+                     'aria-posinset', 'aria-pressed', 'aria-readonly', 'aria-relevant', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowcount',
+                     'aria-rowindex', 'aria-rowspan', 'aria-selected', 'aria-setsize', 'aria-sort', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext']
+                 as $attribute) {
+            $config = $config->allowAttribute($attribute, '*');
+        }
+        #Allow data-* attributes in blockquotes, code and samp
+        $config = $config->allowAttribute('data-author', 'blockquote');
+        $config = $config->allowAttribute('data-description', ['code', 'samp']);
+        $config = $config->allowAttribute('data-source', ['blockquote', 'code', 'samp']);
+        #Allow tooltips
+        $config = $config->allowAttribute('data-tooltip', '*');
+        #Drop the title element, since it will create a tooltip using the browser's engine, which can create an inconsistent experience
+        $config = $config->dropAttribute('title', '*');
+        #TinyMCE adds the `border` attribute to tables, which we do not use, so dropping it for cleaner code
+        $config = $config->dropAttribute('border', '*');
+        #Save config to static for future reuse
+        self::$sanitizer_config[$for] = $config;
+        return $config;
     }
     
     /**

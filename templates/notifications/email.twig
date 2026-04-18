@@ -22,6 +22,7 @@
                 <div id="main" style="height: 100% !important; width: 100% !important;">
                     <div class="article margin_05rem">
                         <p>Hi, {{ username|default('dear user') }}!</p>
+                        {# This can be a valid HTML generated in respective notification class, and that is sanitized before we get here #}
                         {{ text|raw }}
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 {% if json_ready %}
+    {# Twig will escape quotes and other characters without `raw` filter here, even if Twig's `|json_encode` filter is used #}
     {{ json_ready|raw }}
 {% else %}
 {

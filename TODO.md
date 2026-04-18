@@ -24,9 +24,6 @@
 
 | Issue                                                                                      | Note                                                                                  |
 |--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| `@internal`                                                                                 | Consider using internal tag for internal classes/methods not meant for use by users   |
-| [SQL Concatenation](https://github.com/Simbiat/simbiat.ru/issues/110)                      | Audit all query construction 🟡 S 🔧                                                  |
-| [twig raw](https://github.com/Simbiat/simbiat.ru/issues/111)                               | Remove unsafe `\|raw` usages 🟡 S 🔧                                                  |
 | [strict_variables in twig](https://github.com/Simbiat/simbiat.ru/issues/7)                 | Enable strict mode 🟢 XS 🔧                                                           |
 | [eval, setTimeOut, setInterval, Function](https://github.com/Simbiat/simbiat.ru/issues/50) | Remove/replace unsafe JS patterns 🟡 S                                                |
 | [TS clean-up](https://github.com/Simbiat/simbiat.ru/issues/368)                            | Resolve IDE/SAT warnings in TS/JS; also covers some unsafe JS patterns 🟡 S           |

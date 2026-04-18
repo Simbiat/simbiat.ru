@@ -75,6 +75,22 @@
               </list>
             </option>
           </RegExpInspectionConfiguration>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Using raw is unsafe. Be sure that sanitization is applied when using it." />
+            <option name="name" value="[Twig] Use of `|raw` filter" />
+            <option name="suppressId" value="twig_raw_used" />
+            <option name="uuid" value="c80cc5f5-1826-35e5-8cd7-617f9f606617" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="\|raw" />
+                  <option name="_fileType" value="Twig" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="flags" value="64" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
         </list>
       </option>
     </inspection_tool>
@@ -780,6 +796,18 @@
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" regexp="^\s*$" minCount="0" maxCount="0" within="" contains="" />
       </replaceConfiguration>
+      <searchConfiguration name="[Twig] `is_safe` option used" description="If `is_safe` is used, you need to be sure appropriate sanitization is done to the output." suppressId="twig_is_safe_used" text="new TwigFunction($name$, $callable$, $options$)" recursive="true" caseInsensitive="false" type="PHP">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="name" within="" contains="" />
+        <constraint name="callable" regexp="^.*is_safe.*$" nameOfExprType="array" within="" contains="" />
+        <constraint name="options" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="[Twig] `is_safe` option used" text="new TwigFunction($name$, $callable$, $options$)" recursive="true" caseInsensitive="false" type="PHP">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="name" within="" contains="" />
+        <constraint name="callable" within="" contains="" />
+        <constraint name="options" regexp="^.*is_safe.*$" nameOfExprType="array" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SecurityAdvisoriesInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="optionConfiguration">
@@ -878,5 +906,9 @@
     <inspection_tool class="UsingInclusionReturnValueInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="VoidExpressionJS" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="XHTMLIncompatabilitiesJS" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="c80cc5f5-1826-35e5-8cd7-617f9f606617" enabled="true" level="WARNING" enabled_by_default="false">
+      <scope name="Twig" level="WARNING" enabled="true" />
+    </inspection_tool>
+    <inspection_tool class="f24ccb9a-bfe6-31c7-b172-e242a1bf9652" enabled="true" level="WARNING" enabled_by_default="true" />
   </profile>
 </component>

@@ -61,7 +61,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function timeline(array $items, int $br_limit = 0): string
     {
-        return HTML::timeline($items, br_limit: $br_limit);
+        return Sanitization::sanitizeHTML(HTML::timeline($items, br_limit: $br_limit), 'timeline');
     }
     
     /**
@@ -102,51 +102,6 @@ final class RuntimeExtension implements RuntimeExtensionInterface
     }
     
     /**
-     * New lines to `<p>` tag
-     * @param string $string
-     *
-     * @return string
-     */
-    public function nl2p(string $string): string
-    {
-        $nl2tag = (new NL2Tag());
-        $nl2tag->preserve_non_breaking_space = true;
-        return $nl2tag->nl2p($string);
-    }
-    
-    /**
-     * Generate changelog from string
-     * @param string $string
-     *
-     * @return string
-     */
-    public function changelog(string $string): string
-    {
-        $nl2tag = (new NL2Tag());
-        $nl2tag->preserve_non_breaking_space = true;
-        return $nl2tag->changelog($string);
-    }
-    
-    /**
-     * PHP's preg_replace
-     *
-     * @param string $string
-     * @param string $pattern
-     * @param string $replace
-     *
-     * @return string
-     * @noinspection PhpMethodNamingConventionInspection
-     */
-    public function preg_replace(string $string, string $pattern, string $replace): string
-    {
-        $new_string = \preg_replace($pattern, $replace, $string);
-        if (!\is_string($new_string)) {
-            return $string;
-        }
-        return $new_string;
-    }
-    
-    /**
      * Sanitize HTML string
      * @param string $string
      * @param bool   $head
@@ -155,19 +110,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function sanitize(string $string, bool $head = false): string
     {
-        return Sanitization::sanitizeHTML($string, $head);
-    }
-    
-    /**
-     * Cut HTML string
-     * @param string $string HTML to cut
-     * @param int    $length Maximum length of text
-     *
-     * @return string
-     */
-    public function htmlCut(string $string, int $length = 250): string
-    {
-        return Cut::cut($string, $length, 3);
+        return Sanitization::sanitizeHTML($string, $head ? 'head' : 'body');
     }
     
     /**

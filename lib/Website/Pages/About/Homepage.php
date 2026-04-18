@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Simbiat\Website\Pages\About;
 
+use Simbiat\HTML\Cut;
 use Simbiat\Talks\Entities\User;
 use Simbiat\Talks\Enums\SystemUsers;
 use Simbiat\Website\Abstracts\Page;
@@ -36,9 +37,10 @@ class Homepage extends Page
     {
         $output_array = ['h1' => 'Home', 'service_name' => 'homepage'];
         $output_array['posts'] = new User(SystemUsers::Owner->value)->getTalksStarters(true);
-        #Add ogimages to H2 push
-        foreach ($output_array['posts'] as $post) {
+        foreach ($output_array['posts'] as $post_id => $post) {
+            #Add ogimages to H2 push
             $this->h2_push_extra[] = $post['og_image']['og_image'];
+            $output_array['posts'][$post_id]['text'] = Cut::cut($post['text'], 400, 3, '<a href="/talks/threads/'.$post['thread_id'].'">…</a>');
         }
         return $output_array;
     }
