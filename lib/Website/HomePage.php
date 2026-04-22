@@ -145,6 +145,8 @@ class HomePage
                     $_SESSION = [];
                     $_SESSION['user_id'] = SystemUsers::Unknown->value;
                     $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
+                    $_SESSION['csrf'] = null;
+                    $_SESSION['prev_page'] = null;
                 }
                 #Check if we have cached the results already
                 self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');
@@ -213,7 +215,7 @@ class HomePage
         }
         $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
         if (\array_key_exists('http_error', $twig_vars)) {
-            Headers::clientReturn($twig_vars['http_error'], false);
+            Headers::clientReturn($twig_vars['http_error'] ?? 500, false);
         }
         if ($cache) {
             try {
@@ -240,11 +242,11 @@ class HomePage
             #Handling strict variables
             foreach ([
                          #common/layout/metatags.twig
-                         'og_image', 'ogtype', 'ogextra', 'favicon',
+                         'og_image', 'ogtype', 'ogextra', 'favicon', 'service_name', 'title', 'error_page', 'static_page', 'cached_page', 'construction', 'suggested_link',
                          #index.twig
                          'link_extra', 'http_error', 'reason', 'pagination',
                          #common/layout/navigation.twig
-                         'type', 'detailed_type', 'section_id', 'subservice_name',
+                         'type', 'detailed_type', 'section_id', 'subservice_name', 'breadcrumbs',
                          #common/layout/header.twig
                          'cache_reset',
                          #talks/forms/thread.twig
