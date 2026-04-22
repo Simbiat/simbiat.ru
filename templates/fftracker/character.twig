@@ -19,7 +19,7 @@
                     </p>
                 {% else %}
                     <p>
-                        <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.
+                        <b>{{ character.name }}</b>{% if character.title.title %}, a.k.a <i>"<a href="/fftracker/achievements/{{ character.title.id }}"><img class="link_icon" loading="lazy" decoding="async" alt="{{ character.name }}" src="/assets/images/fftracker/icons/{{ character.title.icon }}">{{ character.title.title }}</a>"</i>{% if not character.owned.id %},{% endif %}{% endif %}{% if character.owned.id %}, a.k.a <i>"<a href="/users/{{ character.owned.id }}">{{ character.owned.name }}</a>"</i>,{% endif %} {% if character.dates.deleted or character.dates.hidden %}was{% else %}is{% endif %} a {% if character.biology.gender == 1 %}male{% else %}female{% endif %} <i>{{ character.biology.race }}</i> of <i>{{ character.biology.clan }}</i> clan, registered in the database on {{ timeTag(character.dates.registered, "d/m/Y") }} with <i>{{ character.id }}</i> for ID.
                     </p>
                     <p>
                         Born on <i>{{ character.biology.nameday }}</i> under protection of <img loading="lazy" decoding="async" alt="{{ character.biology.guardian }}" class="link_icon" src="/assets/images/fftracker/guardians/{{ character.biology.guardian_id }}.webp"><i>{{ character.biology.guardian }}</i>.{% if character.dates.deleted %} <span class="failure">🪦 Died on {{ timeTag(character.dates.deleted, "d/m/Y") }}.</span>{% endif %}
@@ -97,7 +97,7 @@
                         {% for entity in character.groups %}
                             <div>
                                 {% if entity.current %}<span class="emoji_green" data-tooltip="Current group">✔</span>{% else %}<span class="emoji_red" data-tooltip="Past group">❌</span>{% endif %}
-                                {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rankname %} as <i>{{ entity.rankname }}</i>{% endif %}
+                                {{ include('common/elements/entitycard.twig', entity) }}{% if entity.rank %} as <i>{{ entity.rank }}</i>{% endif %}
                             </div>
                         {% endfor %}
                     </ul>

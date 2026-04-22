@@ -57,7 +57,7 @@
     {% else %}
         {{ include('common/elements/selectcustom.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': 'section_data[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
     {% endif %}
-    {{ include('common/elements/imageupload.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': 'section_data[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null}, with_context = false) }}
+    {{ include('common/elements/imageupload.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': 'section_data[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null, 'mime': 'image/*', 'tooltip': 'Optional icon for the new section'}, with_context = false) }}
     {% if section_edit %}
         <div class="float_label">
             <input id="cur_section_clear_icon" name="section_data[clear_icon]" type="checkbox">
@@ -75,7 +75,7 @@
             {% endif %}
         {% endif %}
     {% endif %}
-    {% if section_edit and section.author != session_data.user_id and author not in system_users %}
+    {% if section_edit and author != session_data.user_id and author not in system_users %}
         {{ include('common/elements/change_reason.twig', {'form_name': 'edit_section_form', 'array_name': 'section_data'}, with_context = false) }}
         <br>
     {% endif %}

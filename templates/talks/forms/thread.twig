@@ -67,7 +67,7 @@
         {{ include('talks/forms/alt_links.twig', {'alt_links_edit': thread_edit}) }}
     {% endif %}
     {% if not thread_edit %}
-        {{ include('talks/forms/post.twig', {'verb': 'add', 'new_thread': true}, with_context = false) }}
+        {{ include('talks/forms/post.twig', {'verb': 'add', 'new_thread': true, 'text': null}, with_context = false) }}
     {% endif %}
     {% if thread_edit and author != session_data.user_id and author not in system_users %}
         {{ include('common/elements/change_reason.twig', {'form_name': 'thread_form', 'array_name': 'thread_data'}, with_context = false) }}

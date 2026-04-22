@@ -1,4 +1,4 @@
-<article class="post{% if post.showbanner == true and post.og_image %} has_banner{% endif %}{% if post.no_user %} no_user{% endif %}">
+<article class="post{% if post.no_user %} no_user{% endif %}">
     <section class="post_header">
         {% if post.noname != true %}
             {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
@@ -17,11 +17,6 @@
             {% endif %}
         </div>
     </section>
-    {% if post.showbanner == true and post.og_image %}
-        <section class="post_banner">
-            <a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.og_image }}"></a>
-        </section>
-    {% endif %}
     {% if post.text_only == true %}
         <section class="post_text">
             {{ sanitize(post.text) }}

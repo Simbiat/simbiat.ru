@@ -69,6 +69,8 @@ class Search extends Page
             $this->title = sprintf($this->short_title, $this->search_for);
             $this->h1 = $this->title;
             $this->og_desc = sprintf($this->full_title, $this->search_for);
+        } else {
+            $output_array['search_value'] = null;
         }
         #Merge with extra fields and return the result
         return \array_merge($output_array, $this->extras());

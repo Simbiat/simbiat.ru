@@ -12,6 +12,7 @@ use Simbiat\Website\Abstracts\Api;
 use Simbiat\Website\Abstracts\Page;
 use Simbiat\Website\Routing\MainRouter;
 use Simbiat\Website\Twig\EnvironmentGenerator;
+use Twig\Error\RuntimeError;
 use function in_array;
 
 /**
@@ -235,6 +236,24 @@ class HomePage
                 return false;
             }
         } else {
+            #TODO: Needs to be cleaned up during refactor of pages
+            #Handling strict variables
+            foreach ([
+                         #common/layout/metatags.twig
+                         'og_image', 'ogtype', 'ogextra', 'favicon',
+                         #index.twig
+                         'link_extra', 'http_error', 'reason', 'pagination',
+                         #common/layout/navigation.twig
+                         'type', 'detailed_type', 'section_id', 'subservice_name',
+                         #common/layout/header.twig
+                         'cache_reset',
+                         #talks/forms/thread.twig
+                         'contact_form',
+                     ] as $variable) {
+                if (!\array_key_exists($variable, $twig_vars)) {
+                    $twig_vars[$variable] = null;
+                }
+            }
             \ob_start();
             try {
                 $output = EnvironmentGenerator::getTwig()->render($twig_vars['template_override'] ?? 'index.twig', $twig_vars);
@@ -242,8 +261,20 @@ class HomePage
                 Errors::error_log($exception);
                 Headers::clientReturn(500, false);
                 try {
-                    $output = EnvironmentGenerator::getTwig()->render('index.twig', ['http_error' => 500, 'reason' => 'Twig failure', 'session_data' => $_SESSION ?? NULL]);
-                } catch (\Throwable) {
+                    #TODO: Needs to be cleaned up during refactor of pages
+                    $output = EnvironmentGenerator::getTwig()->render('index.twig', [
+                        'http_error' => 500, 'reason' => (\preg_match('/(Variable "[^"]+" does not exist)|(Key "[^"]+" does not exist as the sequence)|(Key "[^"]+" for sequence\/mapping with keys "[^"]+" does not exist)/ui', $exception->getMessage()) === 1 ? $exception->getMessage() : 'Twig failure'), 'session_data' => $_SESSION ?? null, 'error_page' => 500,
+                        #common/layout/metatags.twig
+                        'og_image' => null, 'ogtype' => null, 'ogextra' => null, 'favicon' => null, 'service_name' => null, 'title' => null, 'request_from_bot' => null,
+                        #index.twig
+                        'link_extra' => null, 'pagination' => null, 'static_page' => false, 'cached_page' => false, 'construction' => false,
+                        #common/layout/navigation.twig
+                        'type' => null, 'detailed_type' => null, 'section_id' => null, 'subservice_name' => null, 'breadcrumbs' => [],
+                        #common/layout/header.twig
+                        'cache_reset' => null,
+                    ]);
+                } catch (\Throwable $twig_error) {
+                    Errors::error_log($twig_error);
                     $output = 'Complete twig failure';
                 }
             }

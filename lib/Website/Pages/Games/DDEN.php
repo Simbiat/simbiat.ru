@@ -20,7 +20,7 @@ class DDEN extends Game
     #Page's description. Practically needed only for main pages of a segment, since will be overridden otherwise
     protected string $og_desc = 'Homage to Dangerous Dave in the Haunted Mansion';
     #Page's banner. Defaults to website's banner
-    protected string $og_image = '/ogimages/dden.png';
+    protected string $og_image = '/ogimages/dden.webp';
     #Path to game's JS file
     protected string $game_js = '/assets/html5games/dden/Dangerous Dave Endless Nightmare.js';
     #Flag to indicate the game has sound

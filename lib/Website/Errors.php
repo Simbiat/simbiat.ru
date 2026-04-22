@@ -40,8 +40,35 @@ final class Errors
      */
     public static function error_log(\Throwable $error, mixed $context = '', bool $debug = false): false
     {
+        #Generate message
+        $message = self::genLogEntry(\get_class($error).' Exception', $error->getFile(), $error->getLine(), $error->getMessage(), $error->getTraceAsString(), $context);
+        #Write to log
+        if ($debug) {
+            echo '<pre>'.$message.'</pre>';
+            exit(0);
+        }
+        #Write to file
+        self::write($message);
+        return false;
+    }
+    
+    /**
+     * Helper to write errors in the log
+     *
+     * @param string     $type    Error type
+     * @param string     $file    The file where the error happened
+     * @param string|int $line    Line in file where the error happened
+     * @param string     $message Error message
+     * @param string     $trace
+     * @param mixed      $context
+     *
+     * @return string
+     */
+    private static function genLogEntry(string $type, string $file, string|int $line, string $message, string $trace = '', mixed $context = ''): string
+    {
         #Determine page link
         $page = self::getRequest();
+        #Prepare context
         if (!\is_string($context)) {
             try {
                 $context = \json_encode($context, \JSON_THROW_ON_ERROR);
@@ -49,21 +76,13 @@ final class Errors
                 $context = '';
             }
         }
-        #Generate message
-        $message = '['.\date('c').'] '.\get_class($error).' Exception:'."\r\n\t".
+        return '['.\date('c').'] '.$type.':'."\r\n\t".
             'Request: '.$page."\r\n\t".
-            'File: '.$error->getFile()."\r\n\t".
-            'Line: '.$error->getLine()."\r\n\t".
-            'Message: '.$error->getMessage()."\r\n\t".
-            'Trace: '.$error->getTraceAsString()."\r\n".
-            ($context === '' ? '' : "\r\n\t".'Context: '.$context."\r\n");
-        #Write to log
-        if ($debug) {
-            echo '<pre>'.$message.'</pre>';
-            exit(0);
-        }
-        \file_put_contents(Config::$work_dir.'/logs/php.log', $message, \FILE_APPEND);
-        return false;
+            'File: '.$file."\r\n\t".
+            'Line: '.$line."\r\n\t".
+            'Message: '.$message."\r\n".
+            ($trace === '' ? '' : "\t".'Trace: '.$trace."\r\n").
+            ($context === '' ? '' : "\t".'Context: '.$context."\r\n");
     }
     
     /**
@@ -90,7 +109,10 @@ final class Errors
         ) {
             return false;
         }
-        self::write(self::PHP_ERROR_TYPES[$level], $file, $line, $message);
+        #Generate message
+        $message = self::genLogEntry(self::PHP_ERROR_TYPES[$level], $file, $line, $message);
+        #Write to file
+        self::write($message);
         return true;
     }
     
@@ -104,8 +126,10 @@ final class Errors
         $error = \error_get_last();
         #Log only time and memory exhaustion to avoid duplicates
         if ($error !== null && $error !== [] && $error['type'] === \E_ERROR && \preg_match('/(Maximum execution time)|(Allowed memory size)/i', $error['message']) === 1) {
-            #Determine page link
-            self::write(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
+            #Generate message
+            $message = self::genLogEntry(self::PHP_ERROR_TYPES[$error['type']], $error['file'], $error['line'], $error['message']);
+            #Write to file
+            self::write($message);
         }
         #Rollback if there was an open transaction
         if (Query::$dbh !== null && Query::$dbh->inTransaction()) {
@@ -115,23 +139,13 @@ final class Errors
     
     /**
      * Helper to write errors in the log
-     * @param string     $type    Error type
-     * @param string     $file    The file where the error happened
-     * @param string|int $line    Line in file where the error happened
-     * @param string     $message Error message
+     * @param string $message Error message
      *
      * @return void
      */
-    private static function write(string $type, string $file, string|int $line, string $message): void
+    private static function write(string $message): void
     {
-        \file_put_contents(
-            Config::$work_dir.'/logs/php.log',
-            '['.\date('c').'] '.$type.':'."\r\n\t".
-            'Request: '.self::getRequest()."\r\n\t".
-            'File: '.$file."\r\n\t".
-            'Line: '.$line."\r\n\t".
-            $message."\r\n",
-            \FILE_APPEND);
+        \file_put_contents(Config::$work_dir.'/logs/php.log', $message, \FILE_APPEND);
     }
     
     /**

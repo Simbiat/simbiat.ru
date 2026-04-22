@@ -1,4 +1,6 @@
-<div class="middle"><img loading="lazy" decoding="async" class="avatar gallery_zoom" alt="User's avatar" id="current_avatar" src="{{ user_data.current_avatar|default('/assets/images/avatar.svg') }}"></div>
+<div class="middle">
+    <img loading="lazy" decoding="async" class="avatar gallery_zoom" alt="User's avatar" id="current_avatar" src="{{ user_data.current_avatar|default('/assets/images/avatar.svg') }}">
+</div>
 <div class="middle">{{ user_data.username }}</div>
 {% if user_data.about %}
     <div id="about_user">{{ sanitize(user_data.about) }}</div>
@@ -8,6 +10,7 @@
         <div class="middle">Linked FFXIV characters:</div>
         <ul class="search_results">
             {% for character in fftracker.characters %}
+                {% set character = character|merge({'user_id': null, 'rank': null, 'ls_rank_id': null, 'pvp_rank_id': null, 'achievement_points': null}) %}
                 <li>{{ include('common/elements/entitycard.twig', character) }}</li>
             {% endfor %}
         </ul>
@@ -18,6 +21,7 @@
         <div class="middle">Last created threads:</div>
         <ul class="search_results">
             {% for thread in threads %}
+                {% set thread = thread|merge({'user_id': null, 'rank': null, 'ls_rank_id': null, 'pvp_rank_id': null, 'achievement_points': null}) %}
                 <li>{{ include('common/elements/entitycard.twig', thread) }}</li>
             {% endfor %}
         </ul>
@@ -27,7 +31,7 @@
     <section>
         <div class="middle">Last posts:</div>
         {% for post in posts %}
-            {% set post = post|merge({'no_user': true, 'noeditedtime': true, 'text_only': true}) %}
+            {% set post = post|merge({'no_user': true, 'noeditedtime': true, 'text_only': true, 'noname': false, 'no_post_id': false, 'allow_reply_to': false, history_version: false, 'owned': false, 'attachments': null, 'private': false}) %}
             {{ include('common/elements/post.twig', post) }}
         {% endfor %}
     </section>

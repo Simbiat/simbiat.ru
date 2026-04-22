@@ -38,7 +38,7 @@
         {{ include('common/elements/ogimage.twig', {'og_image': og_image}, with_context = false) }}
     {% endif %}
     {% for post in posts.entities %}
-        {% set post = post|merge({'noname': true, 'allow_reply_to': true}) %}
+        {% set post = post|merge({'noname': true, 'allow_reply_to': true, 'no_user': false, 'no_post_id': false, 'text_only': false, 'history_version': false, 'private': false, 'noeditedtime': false}) %}
         {{ include('common/elements/post.twig', post) }}
         {% if loop.index == 1 and external_links|length > 0 %}
             {{ include('talks/altlinks.twig') }}
@@ -46,5 +46,5 @@
     {% endfor %}
 {% endif %}
 {% if 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
-    {{ include('talks/forms/post.twig', {'verb': 'add', 'new_thread': false, 'thread_id': id}, with_context = false) }}
+    {{ include('talks/forms/post.twig', {'verb': 'add', 'new_thread': false, 'thread_id': id, 'text': null}, with_context = false) }}
 {% endif %}

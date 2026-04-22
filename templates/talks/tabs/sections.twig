@@ -3,7 +3,7 @@
     <a class="tab_name" id="tab_name_start_blog" href="#tab_name_start_blog">Start blog</a>
     <tab-content id="tab_content_start_blog">
         <p>Fill in and submit the form below to create your personal blog.</p>
-        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': true}) }}
+        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': true, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
     </tab-content>
 {% endif %}
 {# Check if user does not have a changelog created and we are in a changelog root section #}
@@ -11,7 +11,7 @@
     <a class="tab_name" id="tab_name_start_changelog" href="#tab_name_start_changelog">Start changelog</a>
     <tab-content id="tab_content_start_changelog">
         <p>Fill in and submit the form below to create your changelog.</p>
-        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_changelog': true}) }}
+        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': true, 'starting_new_kb': false}) }}
     </tab-content>
 {% endif %}
 {# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
@@ -19,7 +19,7 @@
     <a class="tab_name" id="tab_name_start_knowledgebase" href="#tab_name_start_knowledgebase">Start knowledgebase</a>
     <tab-content id="tab_content_start_knowledgebase">
         <p>Fill in and submit the form below to create your knowledgebase.</p>
-        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_kb': true}) }}
+        {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': true}) }}
     </tab-content>
 {% endif %}
 {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
@@ -27,7 +27,7 @@
         <a class="tab_name" id="tab_name_new_thread" href="#tab_name_new_thread">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</a>
         <tab-content id="tab_content_new_thread">
             <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
-            {{ include('talks/forms/thread.twig', {'thread_edit': false}) }}
+            {{ include('talks/forms/thread.twig', {'thread_edit': false, 'contact_form': false, 'external_links': null}) }}
         </tab-content>
     {% endif %}
 {% endif %}
@@ -36,14 +36,14 @@
         <a class="tab_name" id="tab_name_new_section" href="#tab_name_new_section">Add subsection</a>
         <tab-content id="tab_content_new_section">
             <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
-            {{ include('talks/forms/section.twig', {'section_edit': false}) }}
+            {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
         </tab-content>
     {% endif %}
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
     <tab-content id="tab_content_edit">
-        {{ include('talks/forms/section.twig', {'section_edit': true}) }}
+        {{ include('talks/forms/section.twig', {'section_edit': true, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
     </tab-content>
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}

@@ -5,7 +5,7 @@
 {% if (owned and 'edit_own_threads' in session_data.permissions) or (not owned and 'edit_others_threads' in session_data.permissions) %}
     <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
     <tab-content id="tab_content_edit">
-        {{ include('talks/forms/thread.twig', {'thread_edit': true}) }}
+        {{ include('talks/forms/thread.twig', {'thread_edit': true, 'contact_form': false}) }}
     </tab-content>
 {% endif %}
 {% if 'edit_others_threads' in session_data.permissions and 'mark_private' in session_data.permissions %}

@@ -1,6 +1,7 @@
 <tab-menu>
     <a class="tab_name active" id="tab_name_view" href="#tab_name_view">View</a>
     <tab-content class="active" id="tab_content_view">
+        {% set post = post|merge({'no_user': false, 'noname': false, 'detailed_type': null, 'text_only': false, 'allow_reply_to': false, 'noeditedtime': false}) %}
         {{ include('common/elements/post.twig', post) }}
     </tab-content>
     {% if not history_version %}

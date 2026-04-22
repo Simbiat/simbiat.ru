@@ -74,45 +74,6 @@
                 </tbody>
             </table>
         {% endif %}
-        {% if bicdetails.accounts|length > 0 %}
-            <table>
-                <caption><h2 class="no_margin">Счета</h2></caption>
-                <tbody>
-                    <tr>
-                        <th>Счёт</th>
-                        <th>Тип счёта</th>
-                        <th>Контрольный ключ</th>
-                        <th>Обслуживание</th>
-                        <th>Начало действия</th>
-                        <th>Конец действия</th>
-                    </tr>
-                    {% for account in bicdetails.accounts %}
-                        {% if not account.DateOut %}
-                            <tr>
-                                <td class="success">{{ account.Account }}</td>
-                                <td>{{ account.AccountType }}</td>
-                                <td>{{ account.CK|default('-') }}</td>
-                                <td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td>
-                                <td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" loading="lazy" decoding="async">{% endif %}{% else %}-{% endif %}</td>
-                                <td>-</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                    {% for account in bicdetails.accounts %}
-                        {% if account.DateOut %}
-                            <tr>
-                                <td>{{ account.Account }}</td>
-                                <td>{{ account.AccountType }}</td>
-                                <td>{{ account.CK|default('-') }}</td>
-                                <td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td>
-                                <td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" loading="lazy" decoding="async">{% endif %}{% else %}-{% endif %}</td>
-                                <td>{{ timeTag(account.DateOut, "d/m/Y", "failure") }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
         <table>
             <caption><h2 class="no_margin">Контакты</h2></caption>
             <tbody>
@@ -168,6 +129,48 @@
             </tbody>
         </table>
     </tab-content>
+    {% if bicdetails.accounts|length > 0 %}
+        <a class="tab_name" id="tab_name_accounts" href="#tab_name_general">Счета</a>
+        <tab-content id="tab_content_accounts">
+            <table>
+                <caption><h2 class="no_margin">Счета</h2></caption>
+                <tbody>
+                    <tr>
+                        <th>Счёт</th>
+                        <th>Тип счёта</th>
+                        <th>Контрольный ключ</th>
+                        <th>Обслуживание</th>
+                        <th>Начало действия</th>
+                        <th>Конец действия</th>
+                    </tr>
+                    {% for account in bicdetails.accounts %}
+                        {% if not account.DateOut %}
+                            <tr>
+                                <td class="success">{{ account.Account }}</td>
+                                <td>{{ account.AccountType }}</td>
+                                <td>{{ account.CK|default('-') }}</td>
+                                <td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td>
+                                <td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" loading="lazy" decoding="async">{% endif %}{% else %}-{% endif %}</td>
+                                <td>-</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% for account in bicdetails.accounts %}
+                        {% if account.DateOut %}
+                            <tr>
+                                <td>{{ account.Account }}</td>
+                                <td>{{ account.AccountType }}</td>
+                                <td>{{ account.CK|default('-') }}</td>
+                                <td>{% if account.AccountCBRBIC %}<a href="/bictracker/bics/{{ account.AccountCBRBIC }}">{{ account.AccountCBRBIC }}</a>{% else %}-{% endif %}</td>
+                                <td>{% if account.DateIn %}{{ timeTag(account.DateIn, "d/m/Y") }}{% if date(bicdetails.DateIn) == date('1996-07-10') %}<img class="tooltip_footnote" alt="tooltip" src="/assets/images/tooltip.svg" data-tooltip="Точная дата добавления неизвестна, используется дата внедрения библиотеки БИК" loading="lazy" decoding="async">{% endif %}{% else %}-{% endif %}</td>
+                                <td>{{ timeTag(account.DateOut, "d/m/Y", "failure") }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </tab-content>
+    {% endif %}
     {% if bicdetails.restrictions %}
         <a class="tab_name" id="tab_name_restrictions" href="#tab_name_restrictions">Ограничения</a>
         <tab-content id="tab_content_restrictions">
@@ -269,7 +272,7 @@
                         <td>{{ bicdetails.DBF.contacts.AT2|default('-') }}</td>
                     </tr>
                     <tr>
-                        <td>Телефон{% if bicdetails.DBF.contacts.TELEF.phones|length > 1 %}ы{% endif %}:</td>
+                        <td>Телефон{% if bicdetails.DBF.contacts.TELEF and bicdetails.DBF.contacts.TELEF.phones|length > 1 %}ы{% endif %}:</td>
                         <td>{% if bicdetails.DBF.contacts.TELEF %}
                                 {% for tel in bicdetails.DBF.contacts.TELEF.phones %}
                                     📞<a target="_blank" rel="noopener noreferrer" href="tel://{{ tel.url }}">{{ tel.phone }}</a>{% if not loop.last %},<br>{% endif %}

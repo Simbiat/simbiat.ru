@@ -10,7 +10,7 @@
 {% elseif type == 'pvpteam' %}
     {% set url = 'fftracker/pvpteams' %}
 {% elseif type == 'linkshell' %}
-    {% if crossworld %}
+    {% if subservice_name != 'statistics' and crossworld %}
         {% set url = 'fftracker/crossworld_linkshells' %}
     {% else %}
         {% set url = 'fftracker/linkshells' %}
@@ -22,7 +22,7 @@
 {% endif %}
 {# Actual card #}
 <entity-card>
-    <a class="entity_card cursor_pointer{% if user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{% if rank %}{% if type == 'character' %}{{ rank }} {% else %}{{ rank }} in {% endif %}{% endif %}{{ name }}">
+    <a class="entity_card cursor_pointer{% if subservice_name != 'statistics' and type == 'character' and user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{{ name }}">
         <span class="entity_icon">
             {% if type == 'bic' %}
                 {% if DateOut %}
@@ -51,7 +51,7 @@
             {% elseif type == 'pvpteam' %}
                 <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
             {% elseif type == 'linkshell' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/{% if crossworld %}crossworld_{% endif %}linkshell.webp" class="cursor_pointer">
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/{% if subservice_name != 'statistics' and crossworld %}crossworld_{% endif %}linkshell.webp" class="cursor_pointer">
             {% elseif type == 'crossworldlinkshell' %}
                 <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/crossworld_linkshell.webp" class="cursor_pointer">
             {% else %}
@@ -62,25 +62,27 @@
             {% if type == 'thread' %}
                 {{ timeTag(thread.updated, "d/m/Y H:i") }}<br>
             {% endif %}
-            {% if (type == 'linkshell' or type == 'crossworldlinkshell' or type == 'character') and ls_rank_id and ls_rank_id != 3 and ls_rank_id != 4 %}
-                <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/lsranks/{{ ls_rank_id }}.webp">
-            {% endif %}
-            {% if (type == 'pvpteam' or type == 'character') and pvp_rank_id and pvp_rank_id != 3 %}
-                <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/pvpranks/{{ pvp_rank_id }}.webp">
-            {% endif %}
-            {% if (type == 'freecompany' or type == 'character') and rank_id|default('') matches '/^\\d+$/' %}
-                <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/fcranks/{{ rank_id }}.webp">
+            {% if subservice_name == 'character' %}
+                {% if (type == 'linkshell' or type == 'crossworldlinkshell' or type == 'character') and rank_id and rank_id != 3 and rank_id != 4 %}
+                    <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/lsranks/{{ rank_id }}.webp">
+                {% endif %}
+                {% if (type == 'pvpteam' or type == 'character') and rank_id and rank_id != 3 %}
+                    <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/pvpranks/{{ rank_id }}.webp">
+                {% endif %}
+                {% if (type == 'freecompany' or type == 'character') and rank_id|default('') matches '/^\\d+$/' %}
+                    <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/fcranks/{{ rank_id }}.webp">
+                {% endif %}
             {% endif %}
             {% if type == 'thread' %}
                 <b>{% if detailed_type == 'Changelog' and is_numeric(name) %}{{ timeTag(name, "Y.m.d") }}{% else %}{{ name }}{% endif %}</b>
             {% else %}
                 {{ name }}
-                {% if (type == 'character') and achievement_points %}
+                {% if subservice_name == 'points' and type == 'character' and achievement_points %}
                     <br>
                     <img class="ff_achievement_points cursor_pointer" loading="lazy" decoding="async" alt="{{ achievement_points }} points" data-tooltip="{{ achievement_points }} points" src="/assets/images/fftracker/Cup.webp">{{ achievement_points }}
                 {% endif %}
             {% endif %}
-            {% if user_id %}
+            {% if subservice_name != 'statistics' and type == 'character' and user_id %}
                 <sup>🔗</sup>
             {% endif %}
         </span>

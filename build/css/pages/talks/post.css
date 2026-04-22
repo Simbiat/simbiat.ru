@@ -26,6 +26,13 @@
           'post_footer post_footer';
         grid-template-columns: 50% calc(50% - var(--grid_gap));
     }
+
+    /* False positive https://youtrack.jetbrains.com/issue/WI-84694/ */
+    /* noinspection CssInvalidNestedSelector */
+
+    tab-content > & {
+        margin-block-start: 0;
+    }
 }
 
 .post_header {

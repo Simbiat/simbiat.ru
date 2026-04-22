@@ -24,7 +24,7 @@
         </article>
     {% else %}
     {% endif %}
-    {% if children.entities %}
+    {% if children and children.entities %}
         <table id="sections_list">
             <thead>
                 <tr>
@@ -36,12 +36,12 @@
             </thead>
             <tbody>
                 {% for section in children.entities %}
-                    {{ include('talks/rows/section.twig', {'section': section, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
+                    {{ include('talks/rows/section.twig', {'section': section, 'permissions': session_data.permissions}, with_context = false) }}
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
-    {% if threads.entities %}
+    {% if threads and threads.entities %}
         <table id="threads_list">
             <thead>
                 <tr>
@@ -53,7 +53,7 @@
             </thead>
             <tbody>
                 {% for thread in threads.entities %}
-                    {{ include('talks/rows/thread.twig', {'thread': thread, 'edit_mode': edit_mode, 'permissions': session_data.permissions}, with_context = false) }}
+                    {{ include('talks/rows/thread.twig', {'thread': thread, 'permissions': session_data.permissions}, with_context = false) }}
                 {% endfor %}
             </tbody>
         </table>

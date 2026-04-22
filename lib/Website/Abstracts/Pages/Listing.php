@@ -63,6 +63,7 @@ class Listing extends Search
             $this->h1 = $this->title;
             $this->og_desc = sprintf($this->full_title, $this->search_for).', '.$this->page_word.' '.$page;
         } else {
+            $output_array['search_value'] = null;
             #Update breadcrumbs
             $this->breadcrumb = [['href' => '/' .$this->service_name. '/' . $this->subservice_name, 'name' => $this->types[$this->subservice_name]['name']]];
             if ($page > 1) {

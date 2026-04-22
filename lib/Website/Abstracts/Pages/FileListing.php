@@ -55,10 +55,13 @@ class FileListing extends StaticPage
                 }
                 if (!empty($dir['depth']) && $dir['depth'] >= 1) {
                     $output_array['files'][$key] = $this->getDirs(Config::$work_dir.$dir['path'], true);
+                    $output_array['files'][$key]['files'] = [];
                 } else {
                     $output_array['files'][$key] = $this->getFiles(Config::$work_dir.$dir['path'], true);
+                    $output_array['files'][$key]['dirs'] = [];
                 }
                 $output_array['files'][$key]['name'] = $dir['name'];
+                $output_array['files'][$key]['parent'] = null;
             }
         } else {
             if (!\array_key_exists($path[0], $this->dirs)) {
@@ -66,6 +69,7 @@ class FileListing extends StaticPage
             }
             if (empty($this->dirs[$path[0]]['depth'])) {
                 $output_array = $this->listFiles($path[0]);
+                $output_array['files'][$path[0]]['parent'] = null;
             } else {
                 if (!\is_dir(Config::$work_dir.$this->dirs[$path[0]]['path'])) {
                     return ['http_error' => 404, 'reason' => 'Directory `'.$this->dirs[$path[0]]['path'].'` does not exist.', 'suggested_link' => $this->getLastCrumb()];
@@ -89,6 +93,7 @@ class FileListing extends StaticPage
                 } else {
                     #Get the list of directories
                     $output_array['files'][$path[0]] = $this->getDirs(Config::$work_dir.$this->dirs[$path[0]]['path'].$sub_dir);
+                    $output_array['files'][$path[0]]['files'] = [];
                 }
                 $output_array['files'][$path[0]]['name'] = $this->dirs[$path[0]]['name'];
                 $output_array['files'][$path[0]]['parent'] = array_slice($this->breadcrumb, -2, 1)[0];
