@@ -90,7 +90,7 @@ class HomePage
                     #Show an error page if maintenance is running
                     self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
                 }
-                #Supress inspection, since we only need headers to be sent
+                #Suppress inspection, since we only need headers to be sent
                 /** @noinspection UnusedFunctionResultInspection */
                 Links::links(Config::$links);
                 #Send standard headers
@@ -147,6 +147,7 @@ class HomePage
                     $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
                     $_SESSION['csrf'] = null;
                     $_SESSION['prev_page'] = null;
+                    $_SESSION['banned'] = false;
                 }
                 #Check if we have cached the results already
                 self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');

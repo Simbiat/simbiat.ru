@@ -24,14 +24,9 @@
 
 | Issue                                                                                      | Note                                                                                  |
 |--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| [strict_variables in twig](https://github.com/Simbiat/simbiat.ru/issues/7)                 | Enable strict mode 🟢 XS 🔧                                                           |
-| [eval, setTimeOut, setInterval, Function](https://github.com/Simbiat/simbiat.ru/issues/50) | Remove/replace unsafe JS patterns 🟡 S                                                |
 | [TS clean-up](https://github.com/Simbiat/simbiat.ru/issues/368)                            | Resolve IDE/SAT warnings in TS/JS; also covers some unsafe JS patterns 🟡 S           |
 | [resolve EA inspections](https://github.com/Simbiat/simbiat.ru/issues/15)                  | Resolve Qodana/IDE highlights — do early so development only generates new items 🟠 M |
 | [Pure JSON shown on form submit](https://github.com/Simbiat/simbiat.ru/issues/365)         | Fix AJAX handler to never render raw JSON 🟡 S                                        |
-| [anonymized IPs](https://github.com/Simbiat/simbiat.ru/issues/59)                          | Implement per IP storage policy decision 🟡 S                                         |
-| [DNT and GPC](https://github.com/Simbiat/simbiat.ru/issues/360)                            | Honor DNT/GPC headers in session/SEO storage 🟡 S                                     |
-| [Client Hints](https://github.com/Simbiat/simbiat.ru/issues/359)                           | Accept-CH for Matomo bot detection; update Privacy Policy 🟡 S                        |
 
 ---
 

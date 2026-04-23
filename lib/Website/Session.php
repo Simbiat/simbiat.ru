@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Simbiat\Website;
 
 use Simbiat\Database\Query;
+use Simbiat\http20\Headers;
 use Simbiat\Talks\Entities\User;
 use Simbiat\Talks\Enums\SystemUsers;
 
@@ -137,6 +138,8 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         $queries = [];
         #Update SEO-related tables if this was determined to be a new page view
         if (empty($data['useragent']['bot'])) {
+            #TODO: Below is commented out to not collect IPs inline with current privacy policy. Needs to be updated when working on https://github.com/Simbiat/simbiat.ru/issues/142
+            /*
             if (!empty($data['ip']) && $data['new_view']) {
                 #Update unique visitors
                 $queries[] = [
@@ -182,6 +185,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                     ],
                 ];
             }
+            */
             #Write session data
             $queries[] = [
                 'INSERT INTO `uc__sessions` SET `session_id`=:id, `cookie_id`=:cookie_id, `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data ON DUPLICATE KEY UPDATE `time`=CURRENT_TIMESTAMP(6), `user_id`=:user_id, `ip`=:ip, `user_agent`=:user_agent, `page`=:page, `data`=:data;',
@@ -248,6 +252,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
      */
     private function dataRefresh(array &$data): void
     {
+        $data['wants_privacy'] = Headers::isDNT() || Headers::isGPC();
         #Add UserAgent data
         $data['useragent'] = HomePage::$user_agent;
         #Add IP data
@@ -304,6 +309,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 } else {
                     $data['user_id'] = SystemUsers::Unknown->value;
                     $data['username'] = (!empty($data['useragent']['bot']) ? $data['useragent']['bot'] : null);
+                    $data['banned'] = false;
                 }
             }
         } catch (\Throwable) {

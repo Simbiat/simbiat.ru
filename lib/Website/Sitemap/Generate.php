@@ -42,7 +42,6 @@ class Generate
                     @\unlink($file);
                 }
             }
-            $curl = (new Curl);
             #Generate sitemaps for each link in index
             foreach ($links as $link) {
                 if (!empty($link)) {
@@ -59,6 +58,10 @@ class Generate
                     }
                     #Generate and write file
                     $map_vars = $router->route(\array_merge($path));
+                    if (!\array_key_exists('index', $map_vars)) {
+                        var_dump($map_vars);
+                        exit;
+                    }
                     $content = EnvironmentGenerator::getTwig()->render($map_vars['template_override'] ?? 'index.twig', $map_vars);
                     #Check if file already exists and if its contents are the same
                     if (!\is_file($file_path.'/'.$file_name) || $content !== \file_get_contents($file_path.'/'.$file_name) || \filemtime($file_path.'/'.$file_name) < \strtotime('-2 weeks')) {

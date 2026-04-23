@@ -40,7 +40,7 @@
     {% for post in posts.entities %}
         {% set post = post|merge({'noname': true, 'allow_reply_to': true, 'no_user': false, 'no_post_id': false, 'text_only': false, 'history_version': false, 'private': false, 'noeditedtime': false}) %}
         {{ include('common/elements/post.twig', post) }}
-        {% if loop.index == 1 and external_links|length > 0 %}
+        {% if loop.index == 1 and external_links_list|length > 0 %}
             {{ include('talks/altlinks.twig') }}
         {% endif %}
     {% endfor %}

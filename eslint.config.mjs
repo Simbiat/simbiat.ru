@@ -34,7 +34,6 @@ export default defineConfig([
       github.getFlatConfigs().browser,
       github.getFlatConfigs().recommended,
       github.getFlatConfigs().react,
-      ...github.getFlatConfigs().typescript,
       plugin_promise.configs['flat/recommended'],
       regexp_plugin.configs['flat/recommended'],
       sonarjs.configs.recommended,
@@ -58,6 +57,7 @@ export default defineConfig([
       sourceType: 'script',
     },
     rules: {
+      camelcase: 'off',
       'compat/compat': 'error',
       'array-callback-return': ['error', {
         checkForEach: true,
@@ -207,7 +207,7 @@ export default defineConfig([
       'promise/prefer-await-to-then': 'warn',
       'promise/prefer-catch': 'error',
       'promise/spec-only': 'error',
-      // Too many false positives highlighting `if` statements inside `then`, when there is no return expected as result of the `if`
+      // Too many false positives highlighting `if` statements inside `then` when there is no return expected as result of the `if`
       'promise/always-return': 'off',
       'regexp/no-octal': 'error',
       'regexp/no-standalone-backslash': 'error',
@@ -297,7 +297,7 @@ export default defineConfig([
     extends: [
       tseslint.configs.recommendedTypeChecked,
       tseslint.configs.stylisticTypeChecked,
-      tseslint.configs.strict,
+      tseslint.configs.strict
     ],
     languageOptions: {
       parser: ts_parser,
@@ -336,7 +336,9 @@ export default defineConfig([
       '@typescript-eslint/no-shadow': 'error',
       'no-use-before-define': 'off',
       '@typescript-eslint/no-use-before-define': 'error',
-      '@typescript-eslint/no-unused-vars': 'warn'
+      '@typescript-eslint/no-unused-vars': 'warn',
+      //Rule from GitHub
+      '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
     },
   },
   {

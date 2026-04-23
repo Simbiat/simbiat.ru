@@ -95,10 +95,10 @@
                         <li{% if service_name == 'bictracker' and (subservice_name == 'search' or search_value is defined) %} class="current"{% endif %}>
                             <a class="nav_item" href="/bictracker/search" target="_self" itemprop="url"><span itemprop="name">Поиск</span></a>
                         </li>
-                        <li{% if (subservice_name == 'openbics' and search_value is not defined) or (subservice_name == 'bic' and not bicdetails.DateOut) %} class="current"{% endif %}>
+                        <li{% if (subservice_name == 'openbics' and search_value is not defined) or (subservice_name == 'bic' and not http_error and not bicdetails.DateOut) %} class="current"{% endif %}>
                             <a class="nav_item" href="/bictracker/openbics" target="_self" itemprop="url"><span itemprop="name">Открытые БИК</span></a>
                         </li>
-                        <li{% if (subservice_name == 'closedbics' and search_value is not defined) or (subservice_name == 'bic' and bicdetails.DateOut) %} class="current"{% endif %}>
+                        <li{% if (subservice_name == 'closedbics' and search_value is not defined) or (subservice_name == 'bic' and not http_error and bicdetails.DateOut) %} class="current"{% endif %}>
                             <a class="nav_item" href="/bictracker/closedbics" target="_self" itemprop="url"><span itemprop="name">Закрытые БИК</span></a>
                         </li>
                         <li{% if subservice_name == 'keying' %} class="current"{% endif %}>

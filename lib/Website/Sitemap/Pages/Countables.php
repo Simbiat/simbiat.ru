@@ -58,35 +58,35 @@ class Countables extends Page
         switch ($path[0]) {
             case 'bics':
                 $this->breadcrumb[0]['name'] = 'Russian Banks';
-                $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`) AS `loc`, `Updated` AS `lastmod`, `NameP` AS `name` FROM `bic__list` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'bictracker/bics/\', `BIC`) AS `loc`, `Updated` AS `lastmod`, NULL as `changefreq`, `NameP` AS `name` FROM `bic__list` LIMIT :limit_start, :limit_max;';
                 break;
             case 'ffxiv_characters':
                 $this->breadcrumb[0]['name'] = 'FFXIV Characters';
-                $query = 'SELECT CONCAT(\'fftracker/characters/\', `character_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__character` WHERE `hidden` IS NULL LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'fftracker/characters/\', `character_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__character` WHERE `hidden` IS NULL LIMIT :limit_start, :limit_max;';
                 break;
             case 'ffxiv_freecompanies':
                 $this->breadcrumb[0]['name'] = 'FFXIV Free Companies';
-                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `fc_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__freecompany` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'fftracker/freecompanies/\', `fc_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__freecompany` LIMIT :limit_start, :limit_max;';
                 break;
             case 'ffxiv_linkshells':
                 $this->breadcrumb[0]['name'] = 'FFXIV Linkshells';
-                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `ls_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__linkshell` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'fftracker/\', IF(`crossworld`=1, \'crossworld_\', \'\'), \'linkshells/\', `ls_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__linkshell` LIMIT :limit_start, :limit_max;';
                 break;
             case 'ffxiv_pvpteams':
                 $this->breadcrumb[0]['name'] = 'FFXIV PvP Teams';
-                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvp_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__pvpteam` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'fftracker/pvpteams/\', `pvp_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__pvpteam` LIMIT :limit_start, :limit_max;';
                 break;
             case 'ffxiv_achievements':
                 $this->breadcrumb[0]['name'] = 'FFXIV Achievements';
-                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievement_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `ffxiv__achievement` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'fftracker/achievements/\', `achievement_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `ffxiv__achievement` LIMIT :limit_start, :limit_max;';
                 break;
             case 'threads':
                 $this->breadcrumb[0]['name'] = 'Forums Threads';
-                $query = 'SELECT CONCAT(\'talks/threads/\', `thread_id`) AS `loc`, `updated` AS `lastmod`, `name` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6) ORDER BY `name` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'talks/threads/\', `thread_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `name` FROM `talks__threads` WHERE `private`=0 AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6) ORDER BY `name` LIMIT :limit_start, :limit_max;';
                 break;
             case 'users':
                 $this->breadcrumb[0]['name'] = 'Users';
-                $query = 'SELECT CONCAT(\'talks/users/\', `user_id`) AS `loc`, `updated` AS `lastmod`, `username` as `name` FROM `uc__users` WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) ORDER BY `name` LIMIT :limit_start, :limit_max;';
+                $query = 'SELECT CONCAT(\'talks/users/\', `user_id`) AS `loc`, `updated` AS `lastmod`, NULL as `changefreq`, `username` as `name` FROM `uc__users` WHERE `user_id` NOT IN (SELECT `user_id` FROM `uc__users` WHERE `system`=1) ORDER BY `name` LIMIT :limit_start, :limit_max;';
                 break;
         }
         #Update name of breadcrumb
@@ -106,6 +106,7 @@ class Countables extends Page
             $links = [];
         }
         return [
+            'index' => false,
             'sitemap_links' => $links,
         ];
     }
