@@ -47,10 +47,8 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/HTTP/SSE/src" isTestSource="false" packagePrefix="Simbiat\HTTP\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/SandClock/src" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/Talks/src" isTestSource="false" packagePrefix="Simbiat\Talks\" />
-      <sourceFolder url="file://$MODULE_DIR$/lib/Translit/src" isTestSource="false" packagePrefix="Simbiat\Translit\" />
       <sourceFolder url="file://$MODULE_DIR$/lib/http20/src" isTestSource="false" packagePrefix="Simbiat\http20\" />
       <sourceFolder url="file://$MODULE_DIR$/./lib/StringHelpers/src" isTestSource="false" packagePrefix="Simbiat\StringHelpers\" />
-      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
       <excludeFolder url="file://$MODULE_DIR$/data/cache/composer/repo" />
@@ -85,6 +83,11 @@
       <excludeFolder url="file://$MODULE_DIR$/build/DDL" />
       <excludeFolder url="file://$MODULE_DIR$/build/PSDs" />
       <excludeFolder url="file://$MODULE_DIR$/build/phpmyadmin" />
+      <excludeFolder url="file://$MODULE_DIR$/lib/DDCIcons/src/icons" />
+      <excludeFolder url="file://$MODULE_DIR$/lib/FFXIV/CrestComponents" />
+      <excludeFolder url="file://$MODULE_DIR$/lib/FFXIV/EstateMaps" />
+      <excludeFolder url="file://$MODULE_DIR$/lib/FFXIV/Icons" />
+      <excludeFolder url="file://$MODULE_DIR$/lib/FFXIV/PSDs" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />

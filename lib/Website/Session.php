@@ -294,6 +294,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
                 $data['permissions'] = ['view_posts', 'view_bic', 'view_ff'];
                 $data['activated'] = false;
                 $data['avatar'] = null;
+                $data['banned'] = false;
             } else {
                 $user = new User($data['user_id'])->get();
                 #Assign some data to the session
@@ -315,6 +316,7 @@ final class Session implements \SessionHandlerInterface, \SessionIdInterface, \S
         } catch (\Throwable) {
             $data['user_id'] = SystemUsers::Unknown->value;
             $data['username'] = (!empty($data['useragent']['bot']) ? $data['useragent']['bot'] : null);
+            $data['banned'] = false;
         }
     }
     
