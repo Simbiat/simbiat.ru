@@ -57,10 +57,11 @@ if [ "$WEB_SERVER_TEST" != "true" ]; then
     7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$logical_backup/$current_date-users.7z" "$logical_backup/$current_date-users.sql";
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Zipping data for $current_date (logical)..."
     7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$logical_backup/$current_date-${logical_name}.7z" "$logical_backup/$current_date-${logical_name}.sql"
+    #For some reason the logical backup file is not deleted after compression, despite the flag, so using a separate command to do that
+    rm -rf $logical_backup/*.sql;
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Zipping backup for $current_date (physical)..."
     7z a -aoa -y -r -stl -sdel -sse -ssp -ssw -ssc -bt -m0=LZMA2 -mhe -mtc -mta -mtm -mmt=on -p"${MARIADB_BACKUP_PASSWORD}" "$logical_backup/$current_date-physical.7z" $physical_backup
-    #For some reason physical backup is no longer being deleted after compression, even though it should be, so using a separate command to do that, and also to remove any loose SQL files (should not happen normally)
-    rm -rf $logical_backup/*.sql;
+    #For some reason the physical backup file is not deleted after compression, despite the flag, so using a separate command to do that
     rm -rf $physical_backup;
     echo "[$(date +%Y-%m-%dT%H:%M:%S%z)] Backup completed"
   } >> "$log_file" 2>&1
