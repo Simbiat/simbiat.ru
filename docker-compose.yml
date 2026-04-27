@@ -11,7 +11,6 @@ networks:
         - subnet: 2001:db8:1::/64
 
 volumes:
-  node_modules: { }
   mariadb_socket:
     driver: local
 

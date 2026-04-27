@@ -22,7 +22,6 @@
             <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
             <excludedPath local="true" path="$PROJECT_DIR$/.gitmodules" />
             <excludedPath local="true" path="$PROJECT_DIR$/LICENSE" />
-            <excludedPath local="true" path="$PROJECT_DIR$/qodana.yaml" />
             <excludedPath local="true" path="$PROJECT_DIR$/README.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
@@ -32,11 +31,7 @@
             <excludedPath local="true" path="$PROJECT_DIR$/bun.lock" />
             <excludedPath local="true" path="$PROJECT_DIR$/TODO.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/.aiignore" />
-            <excludedPath local="true" path="$PROJECT_DIR$/phpunit.xml" />
             <excludedPath local="true" path="$PROJECT_DIR$/tests" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.php-cs-fixer.php" />
-            <excludedPath local="true" path="$PROJECT_DIR$/phpstan.neon" />
-            <excludedPath local="true" path="$PROJECT_DIR$/psalm.xml" />
           </excludedPaths>
         </serverdata>
       </paths>
