@@ -115,7 +115,7 @@ services:
       - ${CADDY_DATA_DIR}:/data:rw
       - ./data/caddy_config:/config:rw
       #Main project folder is RO
-      - ./:/app:rw
+      - ./:/app:ro
       #Some files/folders are overridden for RW permissions
       - ./composer.lock:/app/composer.lock:rw
       - ./build/DDL:/app/build/DDL:rw
