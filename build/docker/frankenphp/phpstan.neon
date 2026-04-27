@@ -1,0 +1,61 @@
+includes:
+    - /root/.composer/vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - /root/.composer/vendor/phpstan/phpstan-strict-rules/rules.neon
+    - /root/.composer/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - /root/.composer/vendor/phpstan/phpstan-phpunit/extension.neon
+    - /root/.composer/vendor/phpstan/phpstan-phpunit/rules.neon
+    - /root/.composer/vendor/phpstan/phpstan-symfony/extension.neon
+    - /root/.composer/vendor/phpstan/phpstan-symfony/rules.neon
+parameters:
+    level: max
+    paths:
+        - /app/bin
+        - /app/tests
+        - /app/src
+        - /app/packages
+    fileExtensions:
+        - php
+    cache:
+        nodesByStringCountMax: 1024
+        resolvedPhpDocBlockCacheCountMax: 4056
+        nameScopeMapMemoryCacheCountMax: 4056
+    #TODO: uncomment and update when migrating to Symfony
+    #symfony:
+    #    containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+        # If you're using PHP config files for Symfony 5.3+, you also need this for auto-loading of `Symfony\Config`:
+    #    scanDirectories:
+    #       - var/cache/dev/Symfony/Config
+        # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
+        # you need this to load the helper functions (i.e. service(), env()):
+    #    scanFiles:
+    #        - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+    reportIgnoresWithoutComments: false
+    tmpDir: /tmp/phpstan
+    editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+    editorUrlTitle: '%%relFile%%:%%line%%'
+    resultCachePath: /tmp/phpstan/phpstan.php
+    #Changed default rules
+    checkTooWideParameterOutInProtectedAndPublicMethods: true
+    checkTooWideThrowTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    checkBenevolentUnionTypes: true
+    reportPossiblyNonexistentGeneralArrayOffset: true
+    reportPossiblyNonexistentConstantArrayOffset: true
+    reportAlwaysTrueInLastCondition: true
+    reportNonIntStringArrayKey: true
+    #TODO: uncomment once PHPStan updates to 2.2.0
+    #reportUnsafeArrayStringKeyCasting: prevent
+    reportAnyTypeWideningInVarTag: true
+    checkMissingOverrideMethodAttribute: true
+    checkMissingOverridePropertyAttribute: true
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true
+            throwTypeCovariance: true
+            tooWideImplicitThrowType: true
+    checkMissingCallableSignature: true
+    usePathConstantsAsConstantString: true
+    #Rules initially disabled by PHPStan Strict Rules (observe the behavior)
+    polluteScopeWithLoopInitialAssignments: true
+    polluteScopeWithAlwaysIterableForeach: true
+    polluteScopeWithBlock: true

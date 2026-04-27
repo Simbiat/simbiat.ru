@@ -27,16 +27,12 @@ node_modules/
 #At the same time, I've noticed that chat does not seem to "see" them unless respective folder is open in Porject Explorer,
 #so maybe this is not even necessary.
 #FFXIV libraries
-/lib/FFXIV/Icons/
-!/lib/FFXIV/Icons/README.md
-/lib/FFXIV/EstateMaps/
-!/lib/FFXIV/EstateMaps/README.md
-/lib/FFXIV/CrestComponents/
-!/lib/FFXIV/CrestComponents/README.md
-/lib/FFXIV/PSDs/
-!/lib/FFXIV/PSDs/README.md
+/public/assets/images/fftracker/icons/
+/public/assets/images/fftracker/maps/
+/public/assets/images/fftracker/crests-components/
+/build/PSDs/FFXIV/
 #DDC
-/lib/DDCIcons/src/icons/
+/packages/DDCIcons/icons/
 
 /build/PSDs/
 /build/phpmyadmin/

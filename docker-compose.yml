@@ -40,7 +40,7 @@ services:
       - "[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
     volumes:
       - mariadb_socket:/run/mysqld/:ro
-      - ./config/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+      - ./build/docker/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
       - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
       - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
     security_opt:
@@ -76,7 +76,7 @@ services:
   geoip:
     container_name: geoip
     build:
-      context: ./config/geoip
+      context: ./build/docker/geoip
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
@@ -93,7 +93,7 @@ services:
   frankenphp:
     container_name: frankenphp
     build:
-      context: ./config/frankenphp
+      context: ./build/docker/frankenphp
       dockerfile: Dockerfile
       args:
         WEB_SERVER_TEST: ${WEB_SERVER_TEST}
@@ -115,13 +115,13 @@ services:
       - ${CADDY_DATA_DIR}:/data:rw
       - ./data/caddy_config:/config:rw
       #Main project folder is RO
-      - ./:/app:ro
+      - ./:/app:rw
       #Some files/folders are overridden for RW permissions
       - ./composer.lock:/app/composer.lock:rw
       - ./build/DDL:/app/build/DDL:rw
       - ./data:/app/data:rw
-      - ./lib/FFXIV/Icons:/app/lib/FFXIV/Icons:rw
-      - ./lib/FFXIV/CrestComponents:/app/lib/FFXIV/CrestComponents:rw
+      - ./public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
+      - ./public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
       - ./logs:/app/logs:rw
       - ./vendor:/app/vendor:rw
     security_opt:
@@ -146,7 +146,7 @@ services:
     #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
     container_name: crowdsec
     build:
-      context: ./config/crowdsec
+      context: ./build/docker/crowdsec
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
@@ -197,7 +197,7 @@ services:
       #Data folder is required to be mounted, otherwise container does not start
       - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
       #CRS files
-      - ./config/crowdsec/CoreRuleSet/:/var/lib/crowdsec/data/CoreRuleSet/:ro
+      - ./build/docker/crowdsec/CoreRuleSet/:/var/lib/crowdsec/data/CoreRuleSet/:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -228,7 +228,7 @@ services:
   mariadb:
     container_name: mariadb
     build:
-      context: ./config/mariadb
+      context: ./build/docker/mariadb
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
@@ -273,5 +273,5 @@ services:
                   #We need to start cron service before the endpoint
                   cron &&
                   #If maintenance flag is found, it implies crash during maintenance: rename it to indicate this
-                  mv /usr/local/backups/maintenance.flag /usr/local/backups/crash.flag
+                  mv /usr/local/logs/db_maintenance.flag /usr/local/logs/backup_crash.flag
                   docker-entrypoint.sh mariadbd-safe"

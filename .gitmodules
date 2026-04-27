@@ -1,84 +1,81 @@
 [submodule "lib/ArrayHelpers"]
-	path = lib/ArrayHelpers
+	path = packages/ArrayHelpers
 	url = https://github.com/Simbiat/ArrayHelpers
 [submodule "lib/SandClock"]
-	path = lib/SandClock
+	path = packages/SandClock
 	url = https://github.com/Simbiat/sand-clock
 [submodule "lib/Cron"]
-	path = lib/Cron
+	path = packages/Cron
 	url = https://github.com/Simbiat/cron
 [submodule "lib/http20"]
-	path = lib/http20
+	path = packages/http20
 	url = https://github.com/Simbiat/http20
 [submodule "lib/CuteBytes"]
-	path = lib/CuteBytes
+	path = packages/CuteBytes
 	url = https://github.com/Simbiat/cute-bytes
 [submodule "lib/array2table"]
-	path = lib/array2table
+	path = packages/HTML/ArrayToTable
 	url = https://github.com/Simbiat/array2table
 [submodule "lib/HTMLCache"]
-	path = lib/HTMLCache
+	path = packages/HTMLCache
 	url = https://github.com/Simbiat/HTMLCache
 [submodule "lib/DDCIcons"]
-	path = lib/DDCIcons
+	path = packages/DDCIcons
 	url = https://github.com/Simbiat/DeviceDetectorIcons
 [submodule "lib/BIC/Tracker"]
-	path = lib/BIC/Tracker
+	path = packages/BIC/Tracker
 	url = https://github.com/Simbiat/BIC-Tracker
 [submodule "lib/BIC/AccountKeying"]
-	path = lib/BIC/AccountKeying
+	path = packages/BIC/AccountKeying
 	url = https://github.com/Simbiat/AccountKeying
 [submodule "lib/FFXIV/Tracker"]
-	path = lib/FFXIV/Tracker
+	path = packages/FFXIV/Tracker
 	url = https://github.com/Simbiat/FFXIV-Tracker
 [submodule "lib/FFXIV/Lodestone"]
-	path = lib/FFXIV/Lodestone
+	path = packages/FFXIV/Lodestone
 	url = https://github.com/Simbiat/lodestone-parser
 [submodule "lib/HTML/Cut"]
-	path = lib/HTML/Cut
+	path = packages/HTML/Cut
 	url = https://github.com/Simbiat/htmlcut
 [submodule "lib/HTML/nl2tag"]
-	path = lib/HTML/nl2tag
+	path = packages/HTML/nl2tag
 	url = https://github.com/Simbiat/nl2tag
 [submodule "lib/HTTP/SSE"]
-	path = lib/HTTP/SSE
+	path = packages/HTTP/SSE
 	url = https://github.com/Simbiat/sse
-[submodule "lib/Database/Database"]
-	path = lib/Database/Database
-	url = https://github.com/Simbiat/database
 [submodule "lib/Database/Pool"]
-	path = lib/Database/Pool
+	path = packages/Database/Pool
 	url = https://github.com/Simbiat/db-pool
 [submodule "lib/FFXIV/PSDs"]
-	path = lib/FFXIV/PSDs
+	path = build/PSDs/FFXIV
 	url = https://github.com/Simbiat/FFXIV-PSDs
 [submodule "lib/FFXIV/Icons"]
-	path = lib/FFXIV/Icons
+	path = public/assets/images/fftracker/icons
 	url = https://github.com/Simbiat/FFXIV-Icons
 [submodule "lib/FFXIV/EstateMaps"]
-	path = lib/FFXIV/EstateMaps
+	path = public/assets/images/fftracker/maps
 	url = https://github.com/Simbiat/ffxiv-estate-maps
 [submodule "lib/FFXIV/CrestComponents"]
-	path = lib/FFXIV/CrestComponents
+	path = public/assets/images/fftracker/crests-components
 	url = https://github.com/Simbiat/FFXIV-Crests-Components
 [submodule "lib/Database/Binder"]
-	path = lib/Database/Binder
+	path = packages/Database/Bind
 	url = https://github.com/Simbiat/db-binder
 [submodule "lib/Database/Manager"]
-	path = lib/Database/Manager
+	path = packages/Database/Manage
 	url = https://github.com/Simbiat/db-manager
 [submodule "lib/Database/Query"]
-	path = lib/Database/Query
+	path = packages/Database/Query
 	url = https://github.com/Simbiat/db-query
 [submodule "lib/Database/Maintainer"]
-	path = lib/Database/Maintainer
+	path = packages/Database/Maintainer
 	url = https://github.com/Simbiat/db-maintainer
 [submodule "lib/Database/Installer"]
-	path = lib/Database/Installer
+	path = packages/Database/Installer
 	url = https://github.com/Simbiat/db-installer
 [submodule "lib/Talks"]
-	path = lib/Talks
+	path = packages/Talks
 	url = https://github.com/Simbiat/talks
 [submodule "lib/StringHelpers"]
-	path = lib/StringHelpers
+	path = packages/StringHelpers
 	url = https://github.com/Simbiat/StringHelpers

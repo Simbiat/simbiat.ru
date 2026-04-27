@@ -145,16 +145,11 @@ dist
 /vendor/
 !/vendor/composer/
 !/vendor/autoload.php
-#Some dev-only config folders
-/config/keys/
-/config/Installers
+#This is a local script to grab some files from remote server for backup purposes
+/build/backup.cmd
+#Some useful local commands for maintanence purposes
+/build/useful.cmd
 #Environment variables should not be included
 /.env
-#Some security settings for MySQL
-/config/mysql/security.cnf
-#Temporary folder for reference
-/symfony
-#For some reason composer creates this .htaccess
-/config/caddy/composer/.htaccess
 #CrowdSec credentials
-/config/crowdsec/yaml/online_api_credentials.yaml
+/build/docker/crowdsec/yaml/online_api_credentials.yaml

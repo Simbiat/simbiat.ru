@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--TODO: May require extra setup for Symfony https://github.com/psalm/psalm-plugin-symfony-->
+<psalm
+    errorLevel="1"
+    reportMixedIssues="true"
+    addParamDefaultToDocblockType="true"
+    checkForThrowsDocblock="true"
+    checkForThrowsInGlobalScope="true"
+    findUnusedVariablesAndParams="true"
+    findUnusedCode="true"
+    forceJit="true"
+    findUnusedPsalmSuppress="true"
+    ensureArrayStringOffsetsExist="true"
+    ensureArrayIntOffsetsExist="true"
+    cacheDirectory="/tmp/psalm"
+    serializer="igbinary"
+>
+    <projectFiles>
+        <directory name="/app/bin"/>
+        <directory name="/app/tests"/>
+        <directory name="/app/src"/>
+        <directory name="/app/packages"/>
+    </projectFiles>
+    <fileExtensions>
+        <extension name=".php"/>
+        <extension name=".twig"
+                   checker="../../../../root/.composer/vendor/psalm/plugin-symfony/src/Twig/TemplateFileAnalyzer.php"/>
+    </fileExtensions>
+    <plugins>
+        <pluginClass xmlns="https://getpsalm.org/schema/config" class="Psalm\PhpUnitPlugin\Plugin"/>
+        <pluginClass xmlns="https://getpsalm.org/schema/config" class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+    </plugins>
+</psalm>

@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 
 #Bootstrap things
-require_once dirname(__DIR__).'/bin/Bootstrap.php';
+require_once '/app/bin/Bootstrap.php';
 #Enable implicit flush for CLI mode
 ini_set('implicit_flush', 1);
 
@@ -11,10 +11,10 @@ ini_set('implicit_flush', 1);
 #It is also encouraged to use `echo` or similar function(s) to output stuff to the command line for the sake of monitoring.
 #To run in use `/usr/local/bin/php -f /app/bin/OneTime.php` on the respective container
 
+use App\Service\Config;
+use App\Service\Errors;
 use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
-use Simbiat\Website\Config;
-use Simbiat\Website\Errors;
 
 Config::dbConnect();
 try {

@@ -1,0 +1,27 @@
+<?php
+declare(strict_types = 1);
+
+namespace App\Controller\SupOps;
+
+use App\Controller\Abstracts\StaticPage;
+
+class Pitch extends StaticPage
+{
+    #Current breadcrumb for navigation
+    protected array $breadcrumb = [
+        ['href' => '/supops', 'name' => 'SupOps']
+    ];
+    #Sub service name
+    protected string $subservice_name = 'pitch';
+    #Page title. Practically needed only for main pages of segment, since will be overridden otherwise
+    protected string $title = 'SupOps: The Pitch';
+    #Page's H1 tag. Practically needed only for main pages of segment, since will be overridden otherwise
+    protected string $h1 = 'SupOps: The Pitch';
+    #Page's description. Practically needed only for main pages of segment, since will be overridden otherwise
+    protected string $og_desc = 'SupOps: The Pitch';
+    #List of images to H2 push
+    protected array $h2_push_extra = [
+        '/assets/images/supops/logo/rectangle_color.svg',
+        '/assets/images/supops/navigation/problem.svg',
+    ];
+}

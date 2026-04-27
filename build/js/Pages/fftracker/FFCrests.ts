@@ -53,13 +53,13 @@ export class FFCrests {
       this.emblemImage.setAttribute('src', '');
       //Generate links and update src of image tags
       if (!empty(background) && this.background.checkValidity()) {
-        this.backgroundImage.setAttribute('src', `/assets/images/fftracker/crests-components/backgrounds/${background.slice(0, 3).toLowerCase()}/${background}`);
+        this.backgroundImage.setAttribute('src', `/public/assets/images/fftracker/crests-components/backgrounds/${background.slice(0, 3).toLowerCase()}/${background}`);
       }
       if (!empty(frame) && this.frame.checkValidity()) {
-        this.frameImage.setAttribute('src', `/assets/images/fftracker/crests-components/frames/${frame}`);
+        this.frameImage.setAttribute('src', `/public/assets/images/fftracker/crests-components/frames/${frame}`);
       }
       if (!empty(emblem) && this.emblem.checkValidity()) {
-        this.emblemImage.setAttribute('src', `/assets/images/fftracker/crests-components/emblems/${emblem.slice(0, 3).toLowerCase()}/${emblem}`);
+        this.emblemImage.setAttribute('src', `/public/assets/images/fftracker/crests-components/emblems/${emblem.slice(0, 3).toLowerCase()}/${emblem}`);
       }
       if (this.preview) {
         //Hide the preview element if it's empty

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    bootstrap="/app/vendor/autoload.php"
+    backupGlobals="true"
+    backupStaticAttributes="true"
+    cacheDirectory="/tmp/phpunit"
+    cacheResult="true"
+    colors="true"
+    requireCoverageMetadata="true"
+    requireSealedMockObjects="true"
+    processIsolation="true"
+    stopOnDefect="true"
+    stopOnError="true"
+    stopOnFailure="true"
+    stopOnWarning="false"
+    stopOnRisky="true"
+    stopOnDeprecation="false"
+    stopOnNotice="false"
+    stopOnSkipped="false"
+    stopOnIncomplete="true"
+    failOnAllIssues="true"
+    failOnEmptyTestSuite="false"
+    failOnDeprecation="true"
+    failOnPhpunitDeprecation="true"
+    failOnIncomplete="true"
+    failOnRisky="true"
+    beStrictAboutChangesToGlobalState="true"
+    beStrictAboutOutputDuringTests="true"
+    beStrictAboutTestsThatDoNotTestAnything="true"
+    beStrictAboutCoverageMetadata="true"
+    executionOrder="depends,defects,duration"
+    testdox="true"
+    testdoxSummary="true"
+    displayDetailsOnAllIssues="true"
+    displayDetailsOnSkippedTests="false"
+>
+    <testsuites>
+        <testsuite name="Project Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">lib</directory>
+        </include>
+    </source>
+    <coverage
+        includeUncoveredFiles="true"
+        pathCoverage="true"
+        ignoreDeprecatedCodeUnits="true"
+        disableCodeCoverageIgnore="true"
+    >
+        <report>
+            <clover outputFile="/app/tests/coverage/clover.xml"/>
+            <cobertura outputFile="/app/tests/coverage/cobertura.xml"/>
+            <crap4j outputFile="/app/tests/coverage/crap4j.xml" threshold="50"/>
+            <html outputDirectory="/app/tests/coverage/html" lowUpperBound="50" highLowerBound="90"/>
+            <php outputFile="/app/tests/coverage/coverage.php"/>
+            <text outputFile="/app/tests/coverage/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="/app/tests/coverage/xml"/>
+        </report>
+    </coverage>
+    <logging>
+        <junit outputFile="/app/tests/logs/junit.xml"/>
+        <teamcity outputFile="/app/tests/logs/teamcity.txt"/>
+        <testdoxHtml outputFile="/app/tests/logs/testdox.html"/>
+        <testdoxText outputFile="/app/tests/logs/testdox.txt"/>
+    </logging>
+</phpunit>

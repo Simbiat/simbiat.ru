@@ -7,32 +7,29 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/ArrayHelpers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/BIC/AccountKeying" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/BIC/Tracker" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Cron" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/CuteBytes" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/DDCIcons" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Binder" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Installer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Maintainer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Manager" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Pool" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Database/Query" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/FFXIV/CrestComponents" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/FFXIV/EstateMaps" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/FFXIV/Icons" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/FFXIV/Lodestone" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/FFXIV/PSDs" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/FFXIV/Tracker" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/HTML/Cut" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/HTML/nl2tag" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/HTMLCache" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/HTTP/SSE" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/SandClock" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/StringHelpers" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/Talks" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/array2table" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/lib/http20" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/PSDs/FFXIV" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/ArrayHelpers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/BIC/AccountKeying" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Cron" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/CuteBytes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/DDCIcons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Database/Bind" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Database/Installer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Database/Maintainer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Database/Manage" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Database/Pool" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/Database/Query" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/FFXIV/Lodestone" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/HTML/ArrayToTable" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/HTML/Cut" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/HTML/nl2tag" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/HTMLCache" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/HTTP/SSE" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/SandClock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/StringHelpers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/packages/http20" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/crests-components" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/icons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/public/assets/images/fftracker/maps" vcs="Git" />
   </component>
 </project>

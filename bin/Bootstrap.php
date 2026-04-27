@@ -2,7 +2,8 @@
 #Suppressing unhandled exceptions, since they are meant to be handled inside the respective functions
 declare(strict_types = 1);
 
-use Simbiat\Website\Config;
+#TODO: consider this to be absorbed into the Symfony kernel bootstrap
+use App\Service\Config;
 
 #Load composer libraries
 require_once dirname(__DIR__).'/vendor/autoload.php';
@@ -11,6 +12,6 @@ require_once dirname(__DIR__).'/vendor/autoload.php';
 new Config();
 
 #Set error handling
-set_error_handler('\Simbiat\Website\Errors::error_handler');
-set_exception_handler('\Simbiat\Website\Errors::error_log');
-register_shutdown_function('\Simbiat\Website\Errors::shutdown');
+set_error_handler('\App\Service\Errors::error_handler');
+set_exception_handler('\App\Service\Errors::error_log');
+register_shutdown_function('\App\Service\Errors::shutdown');

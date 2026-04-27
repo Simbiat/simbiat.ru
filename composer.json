@@ -67,64 +67,22 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "friendsofphp/php-cs-fixer": "@stable",
-        "phpstan/phpstan": "@stable",
-        "phpstan/phpstan-strict-rules": "@stable",
-        "phpstan/phpstan-deprecation-rules": "@stable",
-        "phpstan/phpstan-phpunit": "@stable",
-        "phpstan/phpstan-symfony": "@stable",
-        "vimeo/psalm": "@stable",
-        "psalm/plugin-phpunit": "@stable",
-        "psalm/plugin-symfony": "@stable",
-        "phpunit/phpunit": "@stable",
         "ext-pcntl": "*",
         "ext-xdebug": "*",
         "ext-igbinary": "*"
     },
     "scripts": {
-        "php-cs-fixer": "./vendor/bin/php-cs-fixer check --config=./.php-cs-fixer.php --using-cache=yes --allow-risky=yes --path-mode=intersection",
-        "phpstan": "./vendor/bin/phpstan analyse -c ./phpstan.neon --memory-limit 1G",
-        "psalm": "./vendor/bin/psalm --config=./psalm.xml --memory-limit=1G"
+        "php-cs-fixer": "/root/.composer/vendor/bin/php-cs-fixer check --config=/usr/local/etc/php/.php-cs-fixer.php --using-cache=yes --allow-risky=yes --path-mode=intersection",
+        "phpstan": "/root/.composer/vendor/bin/phpstan analyse -c /usr/local/etc/php/phpstan.neon --memory-limit 1G",
+        "psalm": "/root/.composer/vendor/bin/psalm --config=/usr/local/etc/php/psalm.xml --memory-limit=1G"
     },
     "autoload": {
         "psr-4": {
-            "Simbiat\\": [
-                "./lib/CuteBytes/src",
-                "./lib/DDCIcons/src",
-                "./lib/HTMLCache/src",
-                "./lib/SandClock/src"
-            ],
-            "Simbiat\\BIC\\": [
-                "./lib/BIC/AccountKeying/src",
-                "./lib/BIC/Tracker/src"
-            ],
-            "Simbiat\\Database\\": [
-                "./lib/Database/Binder/src",
-                "./lib/Database/Manager/src",
-                "./lib/Database/Pool/src",
-                "./lib/Database/Query/src",
-                "./lib/Database/Installer/src"
-            ],
-            "Simbiat\\FFXIV\\": [
-                "./lib/FFXIV/Lodestone/src",
-                "./lib/FFXIV/Tracker/src"
-            ],
-            "Simbiat\\HTTP\\": [
-                "./lib/HTTP/SSE/src"
-            ],
-            "Simbiat\\HTML\\": [
-                "./lib/HTML/Cut/src",
-                "./lib/HTML/nl2tag/src"
-            ],
-            "Simbiat\\ArrayHelpers\\": "./lib/ArrayHelpers/src",
-            "Simbiat\\StringHelpers\\": "./lib/StringHelpers/src",
-            "Simbiat\\Talks\\": "./lib/Talks/src",
-            "Simbiat\\Database\\Maintainer\\": "./lib/Database/Maintainer/src",
-            "Simbiat\\HTML\\ArrayToTable\\": "./lib/array2table/src",
-            "Simbiat\\Cron\\": "./lib/Cron/src",
-            "Simbiat\\http20\\": "./lib/http20/src",
-            "Simbiat\\Website\\": "./lib/Website"
-        }
+            "App\\": "./src"
+        },
+        "classmap": [
+            "./packages"
+        ]
     },
     "config": {
         "sort-packages": true,
