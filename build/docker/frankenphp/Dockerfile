@@ -85,13 +85,6 @@ RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
     fi
 
 # Completely custom
-# Create some temp directories
-RUN mkdir -p /tmp/upload
-RUN mkdir -p /tmp/sessions
-RUN mkdir -p /tmp/soap
-RUN mkdir -p /tmp/opcache
-RUN mkdir -p /tmp/upload
-
 # Add composer
 ENV COMPOSER_HOME=/root/.composer
 COPY --from=composer/composer /usr/bin/composer /usr/bin/composer
@@ -125,6 +118,13 @@ RUN if [ "$WEB_SERVER_TEST" = "true" ]; then \
 RUN chmod 0644 /etc/cron.d/php.cron && \
     chmod +x /usr/local/bin/*.sh && \
     crontab /etc/cron.d/php.cron
+
+# Create some temp directories
+RUN mkdir -p /tmp/upload/
+RUN mkdir -p /tmp/sessions/
+RUN mkdir -p /tmp/soap/
+RUN mkdir -p /tmp/opcache/
+RUN mkdir -p /tmp/upload/
 
 # Use custom caddy config
 CMD ["--config", "/config/config.json5", "--adapter", "json5"]

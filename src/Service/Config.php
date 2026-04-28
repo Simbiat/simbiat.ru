@@ -62,7 +62,7 @@ final class Config
     #Folder to dump DDLs to
     private(set) static string $ddl_dir = '';
     #GeoIP folder
-    private(set) static string $geoip = '';
+    private(set) static string $geoip = '/geoip/';
     #Set of general LINKs to be sent both in HTML and in HEADER
     private(set) static array $links = [];
     #FFTracker directories
@@ -143,7 +143,6 @@ final class Config
         self::$merged_crests_cache = self::$work_dir.'/data/mergedcrests/';
         self::$icons = self::$work_dir.'/public/assets/images/fftracker/icons/';
         self::$statistics = self::$work_dir.'/data/ffstatistics/';
-        self::$geoip = self::$work_dir.'/data/geoip/';
         #Generate Argon settings
         if (\count(self::$argon_settings) === 0) {
             self::$argon_settings = Security::argonCalc();

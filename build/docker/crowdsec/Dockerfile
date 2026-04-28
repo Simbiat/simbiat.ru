@@ -10,6 +10,7 @@ COPY yaml/online_api_credentials.yaml /etc/crowdsec/online_api_credentials.yaml
 COPY yaml/acquis/*.yaml /etc/crowdsec/acquis.d/
 COPY yaml/appsec/simbiat-appsec.yaml /etc/crowdsec/appsec-configs/simbiat-appsec.yaml
 COPY yaml/appsec/simbiat-seclang.yaml /etc/crowdsec/appsec-rules/simbiat-seclang.yaml
+COPY CoreRuleSet/* /etc/crowdsec/CoreRuleSet/
 
 RUN apt-get -y update&&apt-get -y --no-install-recommends upgrade&&apt-get -y --no-install-recommends install curl gpg dirmngr gpg-agent&&apt-get -y autoremove&&apt-get clean && \
     curl -sSL https://github.com/coreruleset/coreruleset/releases/download/v${CRS_RELEASE}/coreruleset-${CRS_RELEASE}-minimal.tar.gz -o v${CRS_RELEASE}-minimal.tar.gz && \

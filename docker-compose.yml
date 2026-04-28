@@ -13,11 +13,21 @@ networks:
 volumes:
   mariadb_socket:
     driver: local
+  geoip_data:
+    driver: local
+  crowdsec_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
 
 services:
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin:5.2.3-apache
+    build:
+      context: ./build/docker/phpmyadmin
+      dockerfile: Dockerfile
     profiles:
       - dev_only
     restart: no
@@ -39,7 +49,6 @@ services:
       - "[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
     volumes:
       - mariadb_socket:/run/mysqld/:ro
-      - ./build/docker/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
       - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
       - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
     security_opt:
@@ -85,7 +94,7 @@ services:
       GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
       GEOIPUPDATE_EDITION_IDS: GeoLite2-ASN GeoLite2-City
     volumes:
-      - ./data/geoip/:/usr/share/GeoIP/:rw
+      - geoip_data:/usr/share/GeoIP/:rw
     security_opt:
       - no-new-privileges=true
 
@@ -110,9 +119,11 @@ services:
     volumes:
       #RO for MariaDB socket
       - mariadb_socket:/run/mysqld/:ro
+      #geoip mapping
+      - geoip_data:/geoip:ro
       #Caddy folders requiring RW
-      - ${CADDY_DATA_DIR}:/data:rw
-      - ./data/caddy_config:/config:rw
+      - caddy_data:/data:rw
+      - caddy_config:/config:rw
       #Main project folder is RO
       - ./:/app:ro
       #Some files/folders are overridden for RW permissions
@@ -190,13 +201,10 @@ services:
     volumes:
       #RO for MariaDB socket
       - mariadb_socket:/run/mysqld/:ro
-      #RO for GeoLite2 files
-      - ./data/geoip/GeoLite2-ASN.mmdb:/var/lib/crowdsec/data/GeoLite2-ASN.mmdb:ro
-      - ./data/geoip/GeoLite2-City.mmdb:/var/lib/crowdsec/data/GeoLite2-City.mmdb:ro
       #Data folder is required to be mounted, otherwise container does not start
-      - ./data/crowdsec/:/var/lib/crowdsec/data/:rw
-      #CRS files
-      - ./build/docker/crowdsec/CoreRuleSet/:/var/lib/crowdsec/data/CoreRuleSet/:ro
+      - crowdsec_data:/var/lib/crowdsec/data/:rw
+      #RO for GeoLite2 files
+      - geoip_data:/geoip:ro
       #Required to read syslog. This will be valid only on UNIX
       - /var/log/:/var/log/:ro
       #Caddy logs folder is RW, because we're also writing Crowdsec logs here
@@ -217,9 +225,13 @@ services:
     #Override image's entrypoint to execute custom command
     entrypoint: ''
     command: >
-      /bin/sh -c "#Need to ensure that CRS files are up-to-date every time, so we remove them first
+      /bin/sh -c "#Need to link GeoIP files
+                  ln -sf /geoip/GeoLite2-ASN.mmdb /var/lib/crowdsec/data/GeoLite2-ASN.mmdb &&
+                  ln -sf /geoip/GeoLite2-City.mmdb /var/lib/crowdsec/data/GeoLite2-City.mmdb &&
+                  #Need to ensure that CRS files are up-to-date every time, so we remove them first
                   rm -f /var/lib/crowdsec/data/REQUEST-9*.conf /var/lib/crowdsec/data/RESPONSE-9*.conf /var/lib/crowdsec/data/iis-errors.data /var/lib/crowdsec/data/java-classes.data /var/lib/crowdsec/data/java-errors.data /var/lib/crowdsec/data/lfi-os-files.data /var/lib/crowdsec/data/php-config-directives.data /var/lib/crowdsec/data/php-errors.data /var/lib/crowdsec/data/php-errors-pl2.data /var/lib/crowdsec/data/php-function-names-933150.data /var/lib/crowdsec/data/php-function-names-933151.data /var/lib/crowdsec/data/php-variables.data /var/lib/crowdsec/data/restricted-files.data /var/lib/crowdsec/data/restricted-upload.data /var/lib/crowdsec/data/scanners-user-agents.data /var/lib/crowdsec/data/sql-errors.data /var/lib/crowdsec/data/ssrf.data /var/lib/crowdsec/data/unix-shell.data /var/lib/crowdsec/data/web-shells-asp.data /var/lib/crowdsec/data/web-shells-php.data /var/lib/crowdsec/data/windows-powershell-commands.data &
                   cp -r /var/lib/OWASP/rules/* /var/lib/crowdsec/data/ &&
+                  cp -r /etc/crowdsec/CoreRuleSet/* /var/lib/crowdsec/data/CoreRuleSet/ &&
                   #Don't remember why this is required, I think the folder is not created automatically in some cases
                   mkdir -p /etc/periodic/daily/ &
                   /bin/bash /docker_start.sh"
