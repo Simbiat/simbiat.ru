@@ -124,7 +124,6 @@ RUN mkdir -p /tmp/upload/
 RUN mkdir -p /tmp/sessions/
 RUN mkdir -p /tmp/soap/
 RUN mkdir -p /tmp/opcache/
-RUN mkdir -p /tmp/upload/
 
 # Use custom caddy config
 CMD ["--config", "/config/config.json5", "--adapter", "json5"]
