@@ -6,7 +6,7 @@ const mimeDb = require('mime-db');
 // Paths
 const projectRoot = path.resolve(__dirname, '../../..');
 const customFile = path.resolve(__dirname, 'custom_mime.json');
-const outputJson = path.join(projectRoot, '/lib/http20/src/mime.json');
+const outputJson = path.join(projectRoot, '/packages/http20/mime.json');
 const outputMimeTypes = path.join(projectRoot, 'build/docker/frankenphp/mime.types');
 
 // Load custom MIME data

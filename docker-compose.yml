@@ -11,6 +11,8 @@ networks:
         - subnet: 2001:db8:1::/64
 
 volumes:
+  mariadb_data:
+    driver: local
   mariadb_socket:
     driver: local
   geoip_data:
@@ -68,6 +70,7 @@ services:
   #Attempt to use Bun from a container. Was meant to allow not keeping `node_modules` in the host, but it doesn't work
   #due to https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722 bugs.
   #Bugs were originally raised for Node.js, but they are applicable to Bun, as well.
+  #Also, possible that this is not even doable at all, and `node_modules` will need to be local either way.
   bun:
     container_name: bun
     image: oven/bun:latest
@@ -76,6 +79,12 @@ services:
     restart: no
     networks:
       - webserver
+    volumes:
+      #- ./:/home/bun/app:rw
+      #- node_modules:/home/bun/app/node_modules/:rw
+      #- ./bun.lock:/home/bun/app/bun.lock:rw
+      #- ./package.json:/home/bun/app/package.json:rw
+      - ./:/home/bun/app/:ro
     security_opt:
       - no-new-privileges=true
     #Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run")
@@ -262,7 +271,7 @@ services:
       #RW for the socket
       - mariadb_socket:/run/mysqld/:rw
       #RW for database files directory
-      - ${MARIADB_DATA_DIR}:/var/lib/mysql:rw
+      - mariadb_data:/var/lib/mysql:rw
       #RW for logs directory
       - ./logs:/usr/local/logs:rw
       #RW for backups directory
