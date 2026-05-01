@@ -150,6 +150,8 @@ class Thread extends Page
         #Add access token
         if ($output_array['author'] === SystemUser::Unknown->value && $_SESSION['user_id'] === SystemUser::Unknown->value) {
             $output_array['get_access_token'] = $_GET['access_token'] ?? null;
+        } else {
+            $output_array['get_access_token'] = null;
         }
         return $output_array;
     }
