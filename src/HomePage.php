@@ -260,6 +260,8 @@ class HomePage
                          'cache_reset',
                          #talks/forms/thread.twig
                          'contact_form',
+                         #talks/thread.twig
+                         'get_access_token'
                      ] as $variable) {
                 if (!\array_key_exists($variable, $twig_vars)) {
                     $twig_vars[$variable] = null;
