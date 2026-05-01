@@ -83,7 +83,7 @@ class Minute
                 #Bad type, remove the notification
                 new Test($uuid)->delete();
             } else {
-                $class_name = "\Simbiat\Notification\\$class_name->name";
+                $class_name = "\App\Notification\\$class_name->name";
                 try {
                     new $class_name($uuid)->get()->send();
                 } catch (\Throwable $throwable) {
