@@ -48,6 +48,9 @@ class MainRouter extends Router
             #We want to handle sitemap links equally regardless of trailing .xml extension
             $path[\array_key_last($path)] = \str_replace('.xml', '', $path[\array_key_last($path)]);
         }
+        if ($path[0] === 'supops' && !\array_key_exists(1, $path)) {
+            $path[1] = 'pitch';
+        }
         return match ($path[0]) {
             'api' => \array_merge(['template_override' => 'common/pages/api.twig'], new Api()->route(array_slice($path, 1))),
             #Forum/Articles
