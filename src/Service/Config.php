@@ -128,9 +128,9 @@ final class Config
             throw new \RuntimeException('Missing important setting');
         }
         if (\array_key_exists('WEB_SERVER_TEST', $_ENV)) {
-            self::$prod = false;
-        } else {
             self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
+        } else {
+            self::$prod = false;
         }
         self::$http_host = (self::$prod ? 'www.simbiat.eu' : 'localhost');
         self::$base_url = 'https://'.self::$http_host;
