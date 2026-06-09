@@ -19,7 +19,7 @@ og-image {
         inline-size: fit-content;
     }
 
-    & hide-banner {
+    & div.hide_banner {
         block-size: 1rem;
         border-end-end-radius: var(--border_radius);
         border-end-start-radius: var(--border_radius);

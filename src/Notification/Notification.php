@@ -10,6 +10,7 @@ use App\Service\Errors;
 use App\Service\Images;
 use App\Service\Sanitization;
 use App\Twig\EnvironmentGenerator;
+use GeoIp2\Database\Reader;
 use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\http20\Common;
@@ -42,11 +43,15 @@ abstract class Notification extends Entity
      */
     protected const bool TWIG_REQUIRED = false;
     /**
-     * Whether to send to all emails registered for the user
+     * Whether this is a security alert, and we need to collect session details and pass them to Twig
+     */
+    protected const bool SECURITY_ALERT = false;
+    /**
+     * Whether to send the notification to all emails registered for the user
      */
     protected const bool ALL_EMAILS = false;
     /**
-     * Whether to send to email even if some details fail to be retrieved
+     * Whether to send the notification to email even if some details fail to be retrieved
      */
     protected const bool ALWAYS_SEND = false;
     /**
@@ -81,10 +86,10 @@ abstract class Notification extends Entity
     final public function setId(string|int $id): self
     {
         if (\is_int($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
-        if (!Uuid::isValid($id)) {
-            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.\get_class($this).'` has incorrect format.');
+        if (!\uuid_is_valid($id)) {
+            throw new \UnexpectedValueException('ID `'.$id.'` for entity `'.static::class.'` has incorrect format.');
         }
         $this->id = $id;
         return $this;
@@ -101,7 +106,7 @@ abstract class Notification extends Entity
     final public static function markRead(string $uuid, bool $echo = false): bool
     {
         $result = false;
-        if (Uuid::isValid($uuid)) {
+        if (\uuid_is_valid($uuid)) {
             try {
                 $result = Query::query('UPDATE `sys__notifications` SET `is_read`=CURRENT_TIMESTAMP(6) WHERE `uuid`=:id AND `is_read` IS NULL;', [':id' => $uuid]);
             } catch (\Throwable $throwable) {
@@ -243,7 +248,29 @@ abstract class Notification extends Entity
         } else {
             $emails = [];
         }
-        #If Twig variables are required, but not provided - do not do anything
+        #Add some sessional data
+        if ($this::SECURITY_ALERT) {
+            $session_details = [
+                'ip' => $_SESSION['ip'] ?? null,
+                'os' => $_SESSION['useragent']['os'] ?? null,
+                'client' => $_SESSION['useragent']['client'] ?? null,
+            ];
+            if ($session_details['ip'] !== null) {
+                try {
+                    $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($session_details['ip']);
+                    $session_details['country'] = $geoip->country->name ?? null;
+                    $session_details['city'] = $geoip->city->name ?? null;
+                } catch (\Throwable $throwable) {
+                    $session_details['country'] = null;
+                    $session_details['city'] = null;
+                }
+            } else {
+                $session_details['country'] = null;
+                $session_details['city'] = null;
+            }
+            $twig_vars['session_details'] = $session_details;
+        }
+        #If Twig variables are required but not provided, we do not do anything
         if ($this::TWIG_REQUIRED && \count($twig_vars) === 0) {
             $this->text = null;
         } else {
@@ -269,7 +296,7 @@ abstract class Notification extends Entity
                         if (\filter_var($address, \FILTER_VALIDATE_EMAIL, \FILTER_FLAG_EMAIL_UNICODE) === false) {
                             continue;
                         }
-                        $this->id = Uuid::uuid4()->toString();
+                        $this->id = uuid_create(4);
                         $this->email = $address;
                         $result = Query::query(
                             'INSERT INTO `sys__notifications`(`uuid`, `user_id`, `type`, `text`, `email`, `push`) VALUES (:uuid, :user_id, :type, :text, :email, :push);',
@@ -284,7 +311,7 @@ abstract class Notification extends Entity
                         );
                     }
                 } else {
-                    $this->id = Uuid::uuid4()->toString();
+                    $this->id = uuid_create(4);
                     $result = Query::query(
                         'INSERT INTO `sys__notifications`(`uuid`, `user_id`, `type`, `text`, `email`, `push`) VALUES (:uuid, :user_id, :type, :text, :email, :push);',
                         [
@@ -298,7 +325,7 @@ abstract class Notification extends Entity
                     );
                 }
             } elseif ($this::ALWAYS_SEND) {
-                $this->id = Uuid::uuid4()->toString();
+                $this->id = uuid_create(4);
                 if ($email && \array_key_exists(0, $emails)) {
                     $this->email = $emails[0];
                 }

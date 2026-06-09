@@ -1,8 +1,8 @@
-<tab-menu>
+<tab-menu role="tablist">
     <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
-    <tab-content id="tab_content_general" class="active">
-        <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
-        <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, "d/m/Y") }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, "d/m/Y") }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {% if pvpteam.is_fresh %}<span class="success">{% endif %}{{ timeTag(pvpteam.dates.updated, "d/m/Y H:i") }}{% if pvpteam.is_fresh %}</span>{% endif %}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
+    <div id="tab_content_general" class="tab_content active">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ pvpteam.name }}" src="{{ pvpteam.crest }}">
+        <p>PvP Team <b>"{{ pvpteam.name }}"</b> was {% if pvpteam.dates.formed %}formed on {{ timeTag(pvpteam.dates.formed, 'd/m/Y') }} and {% endif %}registered on {{ timeTag(pvpteam.dates.registered, 'd/m/Y') }} with ID <i>{{ pvpteam.id }}</i>. Last set of interviews conducted on {% if pvpteam.is_fresh %}<span class="success">{% endif %}{{ timeTag(pvpteam.dates.updated, 'd/m/Y H:i') }}{% if pvpteam.is_fresh %}</span>{% endif %}.{% if pvpteam.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(pvpteam.dates.deleted, 'd/m/Y') }}.</span>{% endif %}</p>
         <p>Operate{% if pvpteam.dates.deleted %}d{% else %}s{% endif %} on <i>{{ pvpteam.data_center }}</i>.{% if not pvpteam.dates.deleted %}{% if pvpteam.community %} Has an open <a rel="noopener noreferrer" href="https://eu.finalfantasyxiv.com/lodestone/community_finder/{{ pvpteam.community }}" target="_blank">community</a>.{% endif %}{% endif %}</p>
         {% if pvpteam.old_names|length > 0 %}
             <p>Had also been known under <i>{{ pvpteam.old_names|length }}</i> other name{% if pvpteam.old_names|length > 1 %}s{% endif %}:</p>
@@ -23,24 +23,27 @@
         {% if pvpteam.lodestone_url %}
             <p>See the record on <a href="{{ pvpteam.lodestone_url }}" target="_blank" rel="noopener noreferrer">Lodestone</a>.</p>
         {% endif %}
-        {% if pvpteam.can_refresh %}
+        {% if not pvpteam.dates.deleted and pvpteam.dates.scheduled %}
             <p class="margin_top_1rem">
-                <input class="refresh" id="ff_refresh" alt="Update PvP team" data-tooltip="Update PvP team" type="image" data-link="/api/fftracker/pvpteams/{{ pvpteam.id }}/update" src="/assets/images/refresh.svg">
-            </p>
-        {% elseif pvpteam.dates.scheduled %}
-            <p class="margin_top_1rem">
-                Next interview scheduled for {{ timeTag(pvpteam.dates.scheduled, "d/m/Y H:i:s") }}.
+                Next interview scheduled for {{ timeTag(pvpteam.dates.scheduled, 'd/m/Y H:i:s') }}.
             </p>
         {% endif %}
-    </tab-content>
+        {% if pvpteam.can_refresh %}
+            <p class="margin_top_1rem">
+                <button class="refresh" id="ff_refresh" data-tooltip="Update PvP team" type="button" data-link="/api/fftracker/pvpteams/{{ pvpteam.id }}/update">
+                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Update PvP team" src="/assets/images/refresh.svg">
+                </button>
+            </p>
+        {% endif %}
+    </div>
     {% if pvpteam.past_members|length > 0 %}
         <a class="tab_name" id="tab_name_past_members" href="#tab_name_past_members">Past members</a>
-        <tab-content id="tab_content_past_members">
+        <div class="tab_content" id="tab_content_past_members">
             <ul class="search_results">
                 {% for entity in pvpteam.past_members %}
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
                 {% endfor %}
             </ul>
-        </tab-content>
+        </div>
     {% endif %}
 </tab-menu>

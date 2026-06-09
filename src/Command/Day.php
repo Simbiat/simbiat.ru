@@ -24,31 +24,31 @@ $ff = new FFXIV();
 #Run cron
 try {
     if (Config::$dbup) {
-        Minute::cliOutput('Cleaning avatars...', true);
+        Minute::cliOutput('Cleaning avatars...');
         $talks->cleanAvatars();
-        Minute::cliOutput('Cleaning unused uploaded files...', true);
+        Minute::cliOutput('Cleaning unused uploaded files...');
         $talks->cleanFiles();
-        Minute::cliOutput('Cleaning notifications...', true);
+        Minute::cliOutput('Cleaning notifications...');
         $maintenance->cleanNotifications();
-        Minute::cliOutput('Locking posts...', true);
+        Minute::cliOutput('Locking posts...');
         $talks->lockPosts();
-        Minute::cliOutput('Closing tickets...', true);
+        Minute::cliOutput('Closing tickets...');
         $talks->closeInactiveTickets();
-        Minute::cliOutput('Removing empty threads...', true);
+        Minute::cliOutput('Removing empty threads...');
         $talks->removeEmptyThreads();
-        Minute::cliOutput('Registering new FF characters...', true);
+        Minute::cliOutput('Registering new FF characters...');
         $ff->registerNewCharacters();
-        Minute::cliOutput('Updating FF statistics...', true);
+        Minute::cliOutput('Updating FF statistics...');
         $ff->updateStatistics();
-        Minute::cliOutput('Generating ordered tables list...', true);
+        Minute::cliOutput('Generating ordered tables list...');
         $maintenance->forBackup();
-        Minute::cliOutput('Generating script for DB optimization...', true);
+        Minute::cliOutput('Generating script for DB optimization...');
         $maintenance->dbOptimize();
-        Minute::cliOutput('Generating sitemap...', true);
+        Minute::cliOutput('Generating sitemap...');
         new Sitemap()->generate();
-        Minute::cliOutput('Updating BIC...', true);
+        Minute::cliOutput('Updating BIC...');
         (void)$maintenance->libraryUpdate();
-        Minute::cliOutput('Removing dead links...', true);
+        Minute::cliOutput('Removing dead links...');
         $talks->removeDeadLinks();
     }
 } catch (Throwable $throwable) {

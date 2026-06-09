@@ -1,4 +1,4 @@
-<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<p>All data below is for {{ timeTag(ffstats.data.time, 'd/m/Y') }}.</p>
 <h2>Characters with no clan</h2>
 {% if ffstats.data.bugs.no_clan|length > 0 %}
     <p>These are either characters that are freshly added to the tracker (which is normal) or those that have <var>----</var> instead of race/clan on Lodestone itself (which is a bug).</p>

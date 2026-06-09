@@ -8,6 +8,18 @@ table {
     text-indent: 0; /* Remove text indentation from table contents in Chrome, Edge, and Safari. */
     word-break: normal;
 
+    & tr {
+        background-color: var(--color_article);
+
+        &:nth-child(even) {
+            background: var(--table_row_alt);
+        }
+
+        &:hover {
+            background: var(--table_row_hover);
+        }
+    }
+
     & thead,
     & tfoot,
     & th {
@@ -105,5 +117,9 @@ table {
         & thead:first-child {
             z-index: 2;
         }
+    }
+
+    & tr:hover {
+        border-color: white;
     }
 }

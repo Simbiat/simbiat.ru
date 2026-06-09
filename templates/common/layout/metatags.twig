@@ -1,91 +1,91 @@
-<meta charset="UTF-8" />
-<meta name="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8"/>
+<meta name="Content-Type" content="text/html; charset=UTF-8"/>
 
 {% if has_get or service_name == 'uc' or service_name == 'admin' %}
-    <meta name="robots" content="none" />
+    <meta name="robots" content="none"/>
 {% endif %}
 
 <!-- General Meta -->
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="{{ og_desc|default('Official Simbiat Software website') }}" />
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="{{ og_desc|default('Official Simbiat Software website') }}"/>
 <meta name="theme-color" content="#2e293d">
 
 <!-- Author Meta -->
-<meta name="author" content="Dmitrii Kustov" />
+<meta name="author" content="Dmitrii Kustov"/>
 <link rel="author" href="https://www.facebook.com/simbiat19"/>
 
 <!-- Google Meta -->
 <meta itemprop="name" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}">
-<meta itemprop="description" content="{{ og_desc|default('Official Simbiat Software website') }}" />
+<meta itemprop="description" content="{{ og_desc|default('Official Simbiat Software website') }}"/>
 <meta itemprop="image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}">
 
-<meta name="X-CSRF-Token" content="{{ session_data.csrf }}" />
+<meta name="X-CSRF-Token" content="{{ session_data.csrf }}"/>
 <meta name="is_bot" content="{{ request_from_bot }}">
 <!-- Custom meta tag to indicate whether Save-Data header was received -->
-<meta name="save_data" content="{{ save_data }}" />
+<meta name="save_data" content="{{ save_data }}"/>
 
 <!-- Facebook IDs -->
 <meta property="fb:app_id" content="288606374482851"/>
 <meta property="fb:admins" content="100002283569233"/>
 
 <!-- Open Graph Protocol -->
-<meta property="og:site_name" content="{{ site_name }}" />
-<meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
-<meta property="og:description" content="{{ og_desc|default('Official Simbiat Software website') }}" />
-<meta property="og:url" content="{{ canonical }}" />
-<meta property="og:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
-<meta property="og:image:secure_url" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
-<meta property="og:image:width" content="{{ og_image_width|default('1200') }}" />
-<meta property="og:image:height" content="{{ og_image_height|default('630') }}" />
-<meta property="og:image:type" content="image/png" />
+<meta property="og:site_name" content="{{ site_name }}"/>
+<meta property="og:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}"/>
+<meta property="og:description" content="{{ og_desc|default('Official Simbiat Software website') }}"/>
+<meta property="og:url" content="{{ canonical }}"/>
+<meta property="og:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}"/>
+<meta property="og:image:secure_url" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}"/>
+<meta property="og:image:width" content="{{ og_image_width|default('1200') }}"/>
+<meta property="og:image:height" content="{{ og_image_height|default('630') }}"/>
+<meta property="og:image:type" content="image/png"/>
 {% if not ogtype %}
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="website"/>
 {% else %}
-    <meta property="og:type" content="{{ ogtype }}" />
+    <meta property="og:type" content="{{ ogtype }}"/>
 {% endif %}
 {% if ogextra %}
     {{ sanitize(ogextra, true) }}
 {% endif %}
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}" />
-<meta name="twitter:site" content="@simbiat199" />
-<meta name="twitter:site:id" content="3049604752" />
-<meta name="twitter:creator" content="@simbiat199" />
-<meta name="twitter:creator:id" content="3049604752" />
-<meta name="twitter:description" content="{{ og_desc|default('Official Simbiat Software website') }}" />
-<meta name="twitter:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}" />
-<meta name="twitter:image:alt" content="{% if og_image %}{{ title }}{% else %}Default banner image{% endif %}" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="{% if title %}{{ title }}{% if http_error is not defined %} on {{ site_name }}{% endif %}{% else %}{{ site_name }}{% endif %}"/>
+<meta name="twitter:site" content="@simbiat199"/>
+<meta name="twitter:site:id" content="3049604752"/>
+<meta name="twitter:creator" content="@simbiat199"/>
+<meta name="twitter:creator:id" content="3049604752"/>
+<meta name="twitter:description" content="{{ og_desc|default('Official Simbiat Software website') }}"/>
+<meta name="twitter:image" content="{% if og_image %}{{ domain ~ og_image }}{% else %}{{ domain ~ '/assets/images/ogimages/default.png' }}{% endif %}"/>
+<meta name="twitter:image:alt" content="{% if og_image %}{{ title }}{% else %}Default banner image{% endif %}"/>
 
 <!-- MS Tiles -->
-<meta name="application-name" content="{{ site_name }}" />
-<meta name="msapplication-navbutton-color" content="#000000" />
-<meta name="msapplication-TileColor" content="#2e293d" />
-<meta name="msapplication-square70x70logo" content="{{ domain }}/assets/images/favicons/mstile/70x70.png" />
-<meta name="msapplication-square150x150logo" content="{{ domain }}/assets/images/favicons/mstile/150x150.png" />
-<meta name="msapplication-square310x310logo" content="{{ domain }}/assets/images/favicons/mstile/310x310.png" />
-<meta name="msapplication-wide310x150logo" content="{{ domain }}/assets/images/favicons/mstile/310x150.png" />
-<meta name="msapplication-TileImage" content="{{ domain }}/assets/images/favicons/mstile/144x144.png" />
-<meta name="msapplication-tooltip" content="Simbiat Software" />
-<meta name="msapplication-starturl" content="{{ domain }}" />
-<meta name="msapplication-window" content="width=800;height=600" />
-<meta name="msapplication-allowDomainApiCalls" content="true" />
-<meta name="msapplication-allowDomainMetaTags" content="true" />
-<meta name="msapplication-config" content="/browserconfig.xml" />
-<meta name="msapplication-tap-highlight" content="no" />
+<meta name="application-name" content="{{ site_name }}"/>
+<meta name="msapplication-navbutton-color" content="#000000"/>
+<meta name="msapplication-TileColor" content="#2e293d"/>
+<meta name="msapplication-square70x70logo" content="{{ domain }}/assets/images/favicons/mstile/70x70.png"/>
+<meta name="msapplication-square150x150logo" content="{{ domain }}/assets/images/favicons/mstile/150x150.png"/>
+<meta name="msapplication-square310x310logo" content="{{ domain }}/assets/images/favicons/mstile/310x310.png"/>
+<meta name="msapplication-wide310x150logo" content="{{ domain }}/assets/images/favicons/mstile/310x150.png"/>
+<meta name="msapplication-TileImage" content="{{ domain }}/assets/images/favicons/mstile/144x144.png"/>
+<meta name="msapplication-tooltip" content="Simbiat Software"/>
+<meta name="msapplication-starturl" content="{{ domain }}"/>
+<meta name="msapplication-window" content="width=800;height=600"/>
+<meta name="msapplication-allowDomainApiCalls" content="true"/>
+<meta name="msapplication-allowDomainMetaTags" content="true"/>
+<meta name="msapplication-config" content="/browserconfig.xml"/>
+<meta name="msapplication-tap-highlight" content="no"/>
 
 <!-- Web Apps -->
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="{{ site_name }}" />
+<meta name="apple-mobile-web-app-title" content="{{ site_name }}"/>
 
 <!-- Favicons -->
 {% if favicon %}
     <link href="{{ favicon }}" rel="icon" type="image/png">
 {% else %}
-    <link href="/assets/images/logo.svg" title="SVG" rel="icon" type="image/svg+xml">
+    <link href="/assets/images/logo.svg" title="SVG" rel="icon" type="image/svg+xml" crossorigin="anonymous">
     <link href="/assets/images/favicons/favicon.ico" title="ICON" rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48">
     <link href="/assets/images/favicons/favicon-16x16.png" title="16x16" rel="icon" type="image/png" sizes="16x16">
     <link href="/assets/images/favicons/favicon-32x32.png" title="32x32" rel="icon" type="image/png" sizes="32x32">
@@ -109,6 +109,3 @@
     <link href="/assets/images/favicons/safari-pinned-tab.svg" title="Safari" rel="mask-icon" type="image/svg+xml" color="#000000">
     <link href="/assets/images/favicons/favicon.svg" title="ICON" rel="icon" type="image/svg+xml" sizes="any">
 {% endif %}
-
-<!-- Manifest -->
-<link href="/manifest.webmanifest" rel="manifest" type="application/manifest+json">

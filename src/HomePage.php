@@ -47,7 +47,7 @@ class HomePage
         self::$method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] ?? $_SERVER['REQUEST_METHOD'] ?? null;
         #Parse multipart/form-data for PUT/DELETE/PATCH methods (if any)
         Headers::multiPartFormParse();
-        if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'])) {
+        if (in_array(self::$method, ['PUT', 'DELETE', 'PATCH'], true)) {
             $_POST = \array_change_key_case(Headers::$_PUT ?: Headers::$_DELETE ?: Headers::$_PATCH ?: []);
             $_FILES = Headers::$_FILES;
         }
@@ -85,82 +85,88 @@ class HomePage
             #Exploding further processing
             /* @noinspection NotOptimalRegularExpressionsInspection False positive, since does not know what can be in the string */
             $uri = \explode('/', \preg_replace('/^(\/)([^?]*)(\?'.(\preg_quote($_SERVER['QUERY_STRING'] ?? '', '/')).')?/ui', '$2', $_SERVER['REQUEST_URI']));
-            try {
-                #Connect to DB
-                Config::dbConnect();
-                #Show an error page if DB is down
-                if (!Config::$dbup) {
-                    self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
-                } elseif (Config::$db_update) {
-                    #Show an error page if maintenance is running
-                    self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
-                }
-                #Suppress inspection, since we only need headers to be sent
-                /** @noinspection UnusedFunctionResultInspection */
-                Links::links(Config::$links);
-                #Send standard headers
-                if ($uri[0] === 'api') {
-                    Api::headers();
+            #Check if there was an internal redirect to a custom error page
+            if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
+                if (\preg_match('/\d{3}/u', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
+                    self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
                 } else {
-                    Page::headers();
+                    self::$http_error = ['http_error' => 500, 'reason' => 'Failed on Caddy level and could not retrieve the error message'];
                 }
-                #Get user agent details
-                self::$user_agent = Security::getUA();
-                #Show that the client is unsupported
-                if (self::$user_agent['unsupported'] === true) {
-                    self::$http_error = ['client' => self::$user_agent['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
-                }
-                #Clear POST data if bot was detected to prevent potential abuse
-                if (!empty(self::$user_agent['bot'])) {
-                    $_POST = [];
-                }
-                #Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
-                #Also block any bot that's known as AI one
-                if (
-                    !empty(self::$user_agent['bot']) &&
-                    (\array_key_exists('ai', self::$user_agent) && self::$user_agent['ai'] === true)
-                ) {
-                    self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
-                }
-                #Check if there was an internal redirect to a custom error page
-                if (!empty($_SERVER['CADDY_HTTP_ERROR'])) {
-                    if (\preg_match('/\d{3}/', $_SERVER['CADDY_HTTP_ERROR']) === 1) {
-                        self::$http_error = ['http_error' => $_SERVER['CADDY_HTTP_ERROR'], 'reason' => $_SERVER['CADDY_HTTP_ERROR_MSG'] ?? ''];
-                    } else {
-                        self::$http_error = ['http_error' => 500, 'reason' => 'Failed on Caddy level and could not retrieve the error message'];
+            }
+            #Suppress inspection, since we only need headers to be sent
+            /** @noinspection UnusedFunctionResultInspection */
+            Links::links(Config::$links, force_cross_origin: true);
+            #Send standard headers
+            if ($uri[0] === 'api') {
+                Api::headers();
+            } else {
+                Page::headers();
+            }
+            if (\array_key_exists('http_error', self::$http_error)) {
+                $vars = self::$http_error;
+            } else {
+                try {
+                    #Connect to DB
+                    Config::dbConnect();
+                    #Show an error page if DB is down
+                    if (!Config::$dbup) {
+                        self::$http_error = ['http_error' => 503, 'reason' => 'Failed to connect to database'];
+                    } elseif (Config::$db_update) {
+                        #Show an error page if maintenance is running
+                        self::$http_error = ['http_error' => 503, 'reason' => 'Site is under maintenance and temporary unavailable'];
                     }
-                }
-                #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
-                Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
-                #Try to start a session if it's not started yet and DB is up. Do not do it, if cache is being returned, if an error has been detected already or if a bot was detected
-                if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
-                    session_set_save_handler(new Session(), true);
-                    if (\session_start()) {
-                        #Check if banned IP
-                        if (!empty($_SESSION['banned_ip'])) {
-                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
-                        }
-                        if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
-                            self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
-                        }
-                    } else {
-                        throw new \RunTimeException('Failed to start session');
+                    #Get user agent details
+                    self::$user_agent = Security::getUA();
+                    #Show that the client is unsupported
+                    if (self::$user_agent['unsupported'] === true) {
+                        self::$http_error = ['client' => self::$user_agent['client'] ?? 'Teapot', 'http_error' => 418, 'reason' => 'Teapot'];
                     }
-                } else {
-                    $_SESSION = [];
-                    $_SESSION['user_id'] = SystemUser::Unknown->value;
-                    $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
-                    $_SESSION['csrf'] = null;
-                    $_SESSION['prev_page'] = null;
-                    $_SESSION['banned'] = false;
+                    #Clear POST data if bot was detected to prevent potential abuse
+                    if (!empty(self::$user_agent['bot'])) {
+                        $_POST = [];
+                    }
+                    #Block some bots, in case they somehow got through CrowdSec, but were detected by Matomo (unlikely to happen, this is precaution)
+                    #Also block any bot known as AI one
+                    if (
+                        !empty(self::$user_agent['bot']) &&
+                        (\array_key_exists('ai', self::$user_agent) && self::$user_agent['ai'] === true)
+                    ) {
+                        self::$http_error = ['http_error' => 403, 'reason' => 'Bad bot'];
+                    }
+                    #Handle Sec-Fetch. Use strict mode if the request is not from a known bot and is from a known browser (bots and non-browser applications like libraries may not have Sec-Fetch headers)
+                    Headers::secFetch(strict: (empty(self::$user_agent['bot']) && self::$user_agent['browser']));
+                    #Try to start a session if it's not started yet and DB is up. Do not do it if the cache is being returned, if an error has been detected already or if a bot was detected
+                    if (empty(self::$user_agent['bot']) && (self::$http_error === null || self::$http_error === []) && Config::$dbup && !Config::$db_update && !self::$stale_return && \session_status() === \PHP_SESSION_NONE) {
+                        session_set_save_handler(new Session(), true);
+                        if (\session_start()) {
+                            #Check if banned IP
+                            if (!empty($_SESSION['banned_ip'])) {
+                                self::$http_error = ['http_error' => 403, 'reason' => 'Banned IP'];
+                            }
+                            if (\array_key_exists('banned', $_SESSION) && $_SESSION['banned'] === true && \preg_match('/^\/about\/contacts$/ui', $_SERVER['REQUEST_URI']) !== 1) {
+                                self::$http_error = ['http_error' => 403, 'reason' => 'Banned user'];
+                            }
+                        } else {
+                            throw new \RunTimeException('Failed to start session');
+                        }
+                    }
+                    #Check if we have cached the results already
+                    self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');
+                    #We go to router in any case, since error checks will happen in Page class
+                    $vars = new MainRouter()->route($uri);
+                } catch (\Throwable $exception) {
+                    Errors::error_log($exception);
+                    $vars = ['http_error' => 500];
                 }
-                #Check if we have cached the results already
-                self::$stale_return = $this->twigProc(self::$data_cache->read(), true, $uri[0] === 'api');
-                #We go to router in any case, since error checks will happen in Page class
-                $vars = new MainRouter()->route($uri);
-            } catch (\Throwable $exception) {
-                Errors::error_log($exception);
-                $vars = ['http_error' => 500];
+            }
+            if (\session_status() !== \PHP_SESSION_ACTIVE || \count($_SESSION) === 0) {
+                $_SESSION = [];
+                $_SESSION['user_id'] = SystemUser::Unknown->value;
+                $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
+                $_SESSION['csrf'] = null;
+                $_SESSION['prev_page'] = null;
+                $_SESSION['banned'] = false;
+                $_SESSION['timezone'] = 'UTC';
             }
             if ($uri[0] === 'api' && empty($vars['template_override'])) {
                 $vars['template_override'] = 'common/pages/api.twig';
@@ -183,19 +189,18 @@ class HomePage
     public function filesRequests(): void
     {
         #Remove query string, if present (that is everything after ?)
-        $request = \preg_replace('/^(.*)(\?.*)?$/', '$1', $_SERVER['REQUEST_URI']);
-        if (\preg_match('/^\/\.well-known\/security\.txt$/i', $request) === 1) {
+        $request = \preg_replace('/^(.*)(\?.*)?$/u', '$1', $_SERVER['REQUEST_URI']);
+        if (\preg_match('/^\/\.well-known\/security\.txt$/iu', $request) === 1) {
             #Send headers that will identify this as an actual file
             if (!\headers_sent()) {
                 \header('Content-Type: text/plain; charset=utf-8');
                 \header('Content-Disposition: inline; filename="security.txt"');
             }
             if (self::$method !== 'HEAD' && self::$method !== 'OPTIONS') {
-                $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last monday of next month midnight'))]);
+                $this->twigProc(['template_override' => 'about/security.txt.twig', 'expires' => \date(DateTimeInterface::RFC3339_EXTENDED, \strtotime('last Monday of next month midnight'))]);
             }
             exit(0);
         }
-        return;
     }
     
     /**

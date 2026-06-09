@@ -62,7 +62,10 @@ class Bic extends Page
         $this->og_desc = $output_array['bicdetails']['NameP'].' ('.$output_array['bicdetails']['BIC'].') в БИК трекере';
         #Link header/tag for API
         $this->alt_links = [['rel' => 'alternate', 'type' => 'application/json', 'title' => 'Представление в формате JSON', 'href' => '/api/bictracker/bics/'.$bic]];
-        if (\in_array($output_array['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ'])) {
+        if (
+            \in_array($output_array['bicdetails']['Rgn'], ['ДОНЕЦКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ЗАПОРОЖСКАЯ ОБЛАСТЬ', 'ЛУГАНСКАЯ НАРОДНАЯ РЕСПУБЛИКА', 'ХЕРСОНСКАЯ ОБЛАСТЬ', 'РЕСПУБЛИКА КРЫМ', 'Г СЕВАСТОПОЛЬ'], true) ||
+            \in_array($output_array['bicdetails']['Nnp'], ['Донецк', 'Луганск', 'Херсон', 'Мелитополь', 'ФЕОДОСИЯ', 'ГЕОРГИЕВКА 2'], true)
+        ) {
             $output_array['bicdetails']['Ukraine'] = true;
             $this->title = 'Це Україна! Іди додому, окупанте!';
             $this->h1 = 'Це Україна! Іди додому, окупанте!';

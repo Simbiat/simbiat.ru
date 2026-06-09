@@ -22,17 +22,15 @@
 
 ### 0.3 · Security & Code Quality Quick Fixes ⚠️ 🔗 DEP: 0.2
 
-| Issue                                                                                      | Note                                                                                  |
-|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| [TS clean-up](https://github.com/Simbiat/simbiat.ru/issues/368)                            | Resolve IDE/SAT warnings in TS/JS; also covers some unsafe JS patterns 🟡 S           |
-| [resolve EA inspections](https://github.com/Simbiat/simbiat.ru/issues/15)                  | Resolve Qodana/IDE highlights — do early so development only generates new items 🟠 M |
-| [Pure JSON shown on form submit](https://github.com/Simbiat/simbiat.ru/issues/365)         | Fix AJAX handler to never render raw JSON 🟡 S                                        |
+| Issue                                                                              | Note                                                                           |
+|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| [resolve EA inspections](https://github.com/Simbiat/simbiat.ru/issues/15)          | Resolve IDE highlights — do early so development only generates new items 🟠 M |
 
 ---
 
 ### 0.4 · Remove Foreign Key Constraints ⚠️ 🔗 DEP: 0.1 🔴 L
 
-**Issue:** [No foreign key constraints?](https://github.com/Simbiat/simbiat.ru/issues/339)
+**Issue:** [No foreign key constraints?](https://github.com/Simbiat/simbiat.ru/issues/339) along with  [types to PHP](https://github.com/Simbiat/simbiat.ru/issues/361), [constant attributes to constants](https://github.com/Simbiat/simbiat.ru/issues/362)
 
 ---
 
@@ -48,7 +46,6 @@ Stabilize all libraries used throughout the project. Includes ongoing maintenanc
 | [Ordinal numbers support](https://github.com/Simbiat/array2table/issues/3)  | array2table 🟡 S     |
 | [better currency support](https://github.com/Simbiat/array2table/issues/4)  | array2table 🟡 S     |
 | [more html types support](https://github.com/Simbiat/array2table/issues/5)  | array2table 🟡 S     |
-| [aria to inputs](https://github.com/Simbiat/array2table/issues/6)           | array2table 🟢 XS 🔧 |
 | [Support IRI](https://github.com/Simbiat/array2table/issues/7)              | array2table 🟡 S     |
 | [timezone in array2table](https://github.com/Simbiat/array2table/issues/8)  | array2table 🟡 S     |
 | [extensibility](https://github.com/Simbiat/array2table/issues/9)            | array2table 🟠 M     |
@@ -57,13 +54,13 @@ Stabilize all libraries used throughout the project. Includes ongoing maintenanc
 
 | Issue                                                                     | Note              |
 |---------------------------------------------------------------------------|-------------------|
-| [complete transliterations](https://github.com/Simbiat/translit/issues/2) | translit 🟡 S 🔧  |
-| [ASCII only](https://github.com/Simbiat/translit/issues/3)                | translit 🟡 S     |
-| [update documentation](https://github.com/Simbiat/translit/issues/4)      | translit 🟢 XS 🔧 |
-| [path from hash](https://github.com/Simbiat/translit/issues/5)            | translit 🟡 S     |
-| [potential extra functions](https://github.com/Simbiat/translit/issues/6) | translit 🟡 S     |
-| [password generator](https://github.com/Simbiat/translit/issues/7)        | translit 🟡 S     |
-| [letters to numbers](https://github.com/Simbiat/translit/issues/8)        | translit 🟡 S     |
+| [complete transliterations](https://github.com/Simbiat/StringHelpers/issues/2) | translit 🟡 S 🔧  |
+| [ASCII only](https://github.com/Simbiat/StringHelpers/issues/3)                | translit 🟡 S     |
+| [update documentation](https://github.com/Simbiat/StringHelpers/issues/4)      | translit 🟢 XS 🔧 |
+| [path from hash](https://github.com/Simbiat/StringHelpers/issues/5)            | translit 🟡 S     |
+| [potential extra functions](https://github.com/Simbiat/StringHelpers/issues/6) | translit 🟡 S     |
+| [password generator](https://github.com/Simbiat/StringHelpers/issues/7)        | translit 🟡 S     |
+| [letters to numbers](https://github.com/Simbiat/StringHelpers/issues/8)        | translit 🟡 S     |
 
 **Other libraries and ongoing maintenance:**
 
@@ -250,7 +247,7 @@ Add PHPUnit during migration, starting with: Talks entity classes (once Phase 2 
 Patreon stub + public roadmap
 
 **Also:
-** [GitHub to Changelog](https://github.com/Simbiat/simbiat.ru/issues/253), [Changelog](https://github.com/Simbiat/talks/issues/12) — link git commits to the changelog section.
+** [GitHub to Changelog](https://github.com/Simbiat/simbiat.ru/issues/253), [Changelog](https://github.com/Simbiat/simbiat.ru/issues/424) — link git commits to the changelog section.
 
 ---
 
@@ -263,7 +260,7 @@ work.*
 
 ### 2.1 · Architecture Decision: Thread Subclass Pattern ⚠️ 🟢 XS
 
-**Issue:** [threads into subclasses](https://github.com/Simbiat/talks/issues/21)
+**Issue:** [threads into subclasses](https://github.com/Simbiat/simbiat.ru/issues/394)
 
 Write an Architecture Decision Record before coding. Pattern: shared base tables (`talks__sections`, `talks__threads`,
 `talks__posts`) plus 1:1 type-specific extension tables (`talks__forum__threads`, `talks__ticket__threads`,
@@ -275,20 +272,20 @@ Write an Architecture Decision Record before coding. Pattern: shared base tables
 ### 2.2 · DDL: Soft Delete + States + Count Columns ✂️ ⚠️ 🔗 DEP: 0.4, 2.1 🟡 S 🔧
 
 **Issues:
-** [soft delete for talks](https://github.com/Simbiat/talks/issues/10), [states improvements](https://github.com/Simbiat/talks/issues/19), [threads/posts counts](https://github.com/Simbiat/simbiat.ru/issues/306)
+** [soft delete for talks](https://github.com/Simbiat/simbiat.ru/issues/422), [states improvements](https://github.com/Simbiat/simbiat.ru/issues/433), [threads/posts counts](https://github.com/Simbiat/simbiat.ru/issues/306)
 
 ---
 
 ### 2.3 · DDL: Type-Specific Extension Tables ⚠️ 🔗 DEP: 2.1, 2.2 🟡 S 🔧
 
-**Issue:** [threads into subclasses](https://github.com/Simbiat/talks/issues/21)
+**Issue:** [threads into subclasses](https://github.com/Simbiat/simbiat.ru/issues/394)
 
 ---
 
 ### 2.4 · PHP Class Hierarchy for Talks ✂️ ⚠️ 🔗 DEP: 2.3 ⬛ XL
 
 **Issues:
-** [threads into subclasses](https://github.com/Simbiat/talks/issues/21), [Changes to Talks types](https://github.com/Simbiat/talks/issues/11)
+** [threads into subclasses](https://github.com/Simbiat/simbiat.ru/issues/394), [Changes to Talks types](https://github.com/Simbiat/simbiat.ru/issues/423)
 
 ---
 
@@ -297,15 +294,6 @@ Write an Architecture Decision Record before coding. Pattern: shared base tables
 **Issue:** [entities decoupling](https://github.com/Simbiat/simbiat.ru/issues/363)
 
 PHP Entity interface (`setId`, `setAttribute`, `select`, `check`, `add`, `delete`, `update`). Start with Talks classes.
-
----
-
-### 2.8 · PHP-Level Type Enums 🔗 DEP: 2.4 🟡 S 🔧
-
-**Issues:
-** [types to PHP](https://github.com/Simbiat/simbiat.ru/issues/361), [constant attributes to constants](https://github.com/Simbiat/simbiat.ru/issues/362)
-
-Move static types from DB to PHP Enums with metadata. Start with `talks__types`.
 
 ---
 
@@ -321,22 +309,22 @@ Move PI/PII from
 
 ### 2.9 · Additional Talks Library Features ✂️ 🔗 DEP: 2.4
 
-| Issue                                                                             | URL   | Note                                                                       |
-|-----------------------------------------------------------------------------------|-------|----------------------------------------------------------------------------|
-| [colored names](https://github.com/Simbiat/talks/issues/1)                        | talks | Group-based colored usernames 🟡 S                                         |
-| [change post time](https://github.com/Simbiat/talks/issues/3)                     | talks | Admin: adjust post timestamp 🟢 XS 🔧                                      |
-| [thread time change](https://github.com/Simbiat/talks/issues/4)                   | talks | Admin: adjust thread timestamp 🟢 XS 🔧                                    |
-| [copying banner from thread to thread](https://github.com/Simbiat/talks/issues/5) | talks | During create/edit 🟢 XS                                                   |
-| [tag cloud](https://github.com/Simbiat/talks/issues/8)                            | talks | Tag visualization 🟡 S                                                     |
-| [reply to](https://github.com/Simbiat/talks/issues/7)                             | talks | Threaded replies 🟠 M                                                      |
-| [comment resolution](https://github.com/Simbiat/talks/issues/17)                  | talks | Ticket + KB types 🟡 S                                                     |
-| ["wall" feed for blog](https://github.com/Simbiat/talks/issues/14)                | talks | Blog section feed 🟡 S                                                     |
-| [visible thread history](https://github.com/Simbiat/talks/issues/22)              | talks | Opt-in public post history 🟡 S                                            |
-| [sorting arrows](https://github.com/Simbiat/talks/issues/15)                      | talks | Thread list sort UI 🟡 S                                                   |
-| [backposting](https://github.com/Simbiat/talks/issues/18)                         | talks | Post with historical timestamp — needed for Phase 4.12 content import 🟡 S |
-| [entity ID change](https://github.com/Simbiat/talks/issues/26)                    | talks | ID migration logic 🟠 M                                                    |
-| [og images for sections](https://github.com/Simbiat/talks/issues/16)              | talks | OG image — base Section class 🟡 S 🟢 XS                                   |
-| [Changelog](https://github.com/Simbiat/talks/issues/12)                           | talks | Changelog section type 🟡 S                                                |
+| Issue                                                                                    | URL   | Note                                                                       |
+|------------------------------------------------------------------------------------------|-------|----------------------------------------------------------------------------|
+| [colored names](https://github.com/Simbiat/simbiat.ru/issues/431)                        | talks | Group-based colored usernames 🟡 S                                         |
+| [change post time](https://github.com/Simbiat/simbiat.ru/issues/419)                     | talks | Admin: adjust post timestamp 🟢 XS 🔧                                      |
+| [thread time change](https://github.com/Simbiat/simbiat.ru/issues/418)                   | talks | Admin: adjust thread timestamp 🟢 XS 🔧                                    |
+| [copying banner from thread to thread](https://github.com/Simbiat/simbiat.ru/issues/429) | talks | During create/edit 🟢 XS                                                   |
+| [tag cloud](https://github.com/Simbiat/simbiat.ru/issues/420)                            | talks | Tag visualization 🟡 S                                                     |
+| [reply to](https://github.com/Simbiat/simbiat.ru/issues/416)                             | talks | Threaded replies 🟠 M                                                      |
+| [comment resolution](https://github.com/Simbiat/simbiat.ru/issues/426)                   | talks | Ticket + KB types 🟡 S                                                     |
+| ["wall" feed for blog](https://github.com/Simbiat/simbiat.ru/issues/428)                 | talks | Blog section feed 🟡 S                                                     |
+| [visible thread history](https://github.com/Simbiat/simbiat.ru/issues/435)               | talks | Opt-in public post history 🟡 S                                            |
+| [sorting arrows](https://github.com/Simbiat/simbiat.ru/issues/430)                       | talks | Thread list sort UI 🟡 S                                                   |
+| [backposting](https://github.com/Simbiat/simbiat.ru/issues/432)                          | talks | Post with historical timestamp — needed for Phase 4.12 content import 🟡 S |
+| [entity ID change](https://github.com/Simbiat/simbiat.ru/issues/438)                     | talks | ID migration logic 🟠 M                                                    |
+| [og images for sections](https://github.com/Simbiat/simbiat.ru/issues/427)               | talks | OG image — base Section class 🟡 S 🟢 XS                                   |
+| [Changelog](https://github.com/Simbiat/simbiat.ru/issues/424)                            | talks | Changelog section type 🟡 S                                                |
 
 ---
 
@@ -374,19 +362,19 @@ Cascade ban to `uc__bad_names`/`uc__bad_mails`. Rename to
 
 ### 3.4 · Soft Delete Admin UI + Cron ✂️ ⚠️ 🔗 DEP: 2.2 🟡 S 🔧
 
-**Issue:** [soft delete for talks](https://github.com/Simbiat/talks/issues/10) — admin side
+**Issue:** [soft delete for talks](https://github.com/Simbiat/simbiat.ru/issues/422) — admin side
 
 View/restore/hard-delete deleted entities. Cron hard-deletes after 30 days.
 
 **Also:
-** [potential post history improvements](https://github.com/Simbiat/simbiat.ru/issues/328), [flag for public post history](https://github.com/Simbiat/talks/issues/6) — store only changed text; purge after configurable period; selective admin removal; opt-in public history.
+** [potential post history improvements](https://github.com/Simbiat/simbiat.ru/issues/328), [flag for public post history](https://github.com/Simbiat/simbiat.ru/issues/415) — store only changed text; purge after configurable period; selective admin removal; opt-in public history.
 
 ---
 
 ### 3.5 · Ticketing System (Full) 🔗 DEP: 2.3, 2.4 🔴 L
 
 **Issues:
-** [ticketing system](https://github.com/Simbiat/simbiat.ru/issues/21), [link support tickets](https://github.com/Simbiat/simbiat.ru/issues/357), [multi-page support threads](https://github.com/Simbiat/talks/issues/20)
+** [ticketing system](https://github.com/Simbiat/simbiat.ru/issues/21), [link support tickets](https://github.com/Simbiat/simbiat.ru/issues/357), [multi-page support threads](https://github.com/Simbiat/simbiat.ru/issues/434)
 
 Full ticketing UI on `Talks\Ticket\Thread`: statuses, priority, linking, optional public disclosure, pagination.
 
@@ -409,8 +397,8 @@ Report button per entity → creates support ticket. Categories: spam, violence,
 | [Buttons for spoiler and NSFW](https://github.com/Simbiat/simbiat.ru/issues/125)          | simbiat.ru | TinyMCE buttons 🟢 XS 🔧                       |
 | [reactions redesign](https://github.com/Simbiat/simbiat.ru/issues/140)                    | simbiat.ru | Likes → reactions; notifications per post 🟠 M |
 | [Entity tagging](https://github.com/Simbiat/simbiat.ru/issues/191)                        | simbiat.ru | @mention users; # tag entities 🟠 M            |
-| [embed youtube](https://github.com/Simbiat/talks/issues/13)                               | talks      | YouTube embed in TinyMCE 🟡 S                  |
-| [TinyMCE URL insert](https://github.com/Simbiat/talks/issues/25)                          | talks      | URL insert helper 🟢 XS                        |
+| [embed youtube](https://github.com/Simbiat/simbiat.ru/issues/425)                               | talks      | YouTube embed in TinyMCE 🟡 S                  |
+| [TinyMCE URL insert](https://github.com/Simbiat/simbiat.ru/issues/438)                          | talks      | URL insert helper 🟢 XS                        |
 | [style articles and section in TinyMCE](https://github.com/Simbiat/simbiat.ru/issues/170) | simbiat.ru | Article/section styling 🟡 S                   |
 | [TinyMCE context menu on mobile](https://github.com/Simbiat/simbiat.ru/issues/121)        | simbiat.ru | Mobile UX fix 🟡 S                             |
 | [Way to update images in posts](https://github.com/Simbiat/simbiat.ru/issues/57)          | simbiat.ru | Image update flow 🟡 S                         |
@@ -424,15 +412,12 @@ Report button per entity → creates support ticket. Categories: spam, violence,
 
 Subscribe/unsubscribe UI. Notification generation. Force-subscribe to own tickets. Atom feeds for sections, threads, main page. Notification management UI (view, mark-read, email preferences). Failure-to-write handled via Symfony Messenger (available from Phase 1).
 
-**Snackbar (separate from sys__notifications):
-** [notifications countdown](https://github.com/Simbiat/simbiat.ru/issues/47) — JS dismiss timer counts only while page is active (Page Visibility API); this is the snackbar UI component only.
-
 ---
 
 ### 3.9 · Knowledge Base Section ✂️ 🔗 DEP: 2.3, 2.4 🟠 M
 
 **Issues:
-** [permission to create KBs in owned sections](https://github.com/Simbiat/talks/issues/9), [Changes to Talks types](https://github.com/Simbiat/talks/issues/11)
+** [permission to create KBs in owned sections](https://github.com/Simbiat/simbiat.ru/issues/421), [Changes to Talks types](https://github.com/Simbiat/simbiat.ru/issues/423)
 
 Multi-level hierarchy, variable sort, section-owner KB creation permission. [Basic help articles in knowledgebase](https://github.com/Simbiat/private-issues/issues/4) 🔒 — write after KB is live.
 
@@ -455,9 +440,9 @@ Per-issue sizes: [Cron job management](https://github.com/Simbiat/simbiat.ru/iss
 ### 4.1 · File Attachment & Upload Hardening ✂️ ⚠️ 🔗 DEP: 1.5 🟠 M
 
 **Issues:
-** [attach files to posts](https://github.com/Simbiat/talks/issues/2), [filenames sanitization](https://github.com/Simbiat/simbiat.ru/issues/32), [handle single quotes in filenames](https://github.com/Simbiat/simbiat.ru/issues/266), [TinyMCE images alt text](https://github.com/Simbiat/simbiat.ru/issues/33), [Merge upload folder](https://github.com/Simbiat/simbiat.ru/issues/130), [use TinyPNG for image processing](https://github.com/Simbiat/simbiat.ru/issues/332), [avif](https://github.com/Simbiat/simbiat.ru/issues/238), [temporary image upload](https://github.com/Simbiat/private-issues/issues/50) 🔒
+** [attach files to posts](https://github.com/Simbiat/simbiat.ru/issues/417), [filenames sanitization](https://github.com/Simbiat/simbiat.ru/issues/32), [handle single quotes in filenames](https://github.com/Simbiat/simbiat.ru/issues/266), [TinyMCE images alt text](https://github.com/Simbiat/simbiat.ru/issues/33), [Merge upload folder](https://github.com/Simbiat/simbiat.ru/issues/130), [use TinyPNG for image processing](https://github.com/Simbiat/simbiat.ru/issues/332), [avif](https://github.com/Simbiat/simbiat.ru/issues/238), [temporary image upload](https://github.com/Simbiat/private-issues/issues/50) 🔒
 
-Per-issue sizes: [attach files to posts](https://github.com/Simbiat/talks/issues/2) 🟠 M · [filenames sanitization](https://github.com/Simbiat/simbiat.ru/issues/32) 🟡 S 🔧 · [handle single quotes](https://github.com/Simbiat/simbiat.ru/issues/266) 🟢 XS 🔧 · [TinyMCE images alt text](https://github.com/Simbiat/simbiat.ru/issues/33) 🟢 XS · [Merge upload folder](https://github.com/Simbiat/simbiat.ru/issues/130) 🟡 S 🔧 · [TinyPNG processing](https://github.com/Simbiat/simbiat.ru/issues/332) 🟡 S · [avif](https://github.com/Simbiat/simbiat.ru/issues/238) 🟢 XS 🔧 · [temporary image upload](https://github.com/Simbiat/private-issues/issues/50) 🟡 S · [files meta to DB](https://github.com/Simbiat/simbiat.ru/issues/246) 🟡 S
+Per-issue sizes: [attach files to posts](https://github.com/Simbiat/simbiat.ru/issues/417) 🟠 M · [filenames sanitization](https://github.com/Simbiat/simbiat.ru/issues/32) 🟡 S 🔧 · [handle single quotes](https://github.com/Simbiat/simbiat.ru/issues/266) 🟢 XS 🔧 · [TinyMCE images alt text](https://github.com/Simbiat/simbiat.ru/issues/33) 🟢 XS · [Merge upload folder](https://github.com/Simbiat/simbiat.ru/issues/130) 🟡 S 🔧 · [TinyPNG processing](https://github.com/Simbiat/simbiat.ru/issues/332) 🟡 S · [avif](https://github.com/Simbiat/simbiat.ru/issues/238) 🟢 XS 🔧 · [temporary image upload](https://github.com/Simbiat/private-issues/issues/50) 🟡 S · [files meta to DB](https://github.com/Simbiat/simbiat.ru/issues/246) 🟡 S
 
 Filename sanitization. TinyPNG integration (avif → webp fallback, silent failure). Temporary image upload for drafts.
 
@@ -483,7 +468,7 @@ Sanitize outbound links in post HTML. Block forbidden GET parameters; forbid use
 ### 4.3 · Track Links Per Post ⚠️ 🟡 S 🔧
 
 **Issues:
-** [track links per post](https://github.com/Simbiat/talks/issues/24), [cron to check alt links](https://github.com/Simbiat/simbiat.ru/issues/96)
+** [track links per post](https://github.com/Simbiat/simbiat.ru/issues/437), [cron to check alt links](https://github.com/Simbiat/simbiat.ru/issues/96)
 
 Store outbound links per post. Enables moderation, spam detection, and dead-link cleanup via cron.
 
@@ -546,30 +531,17 @@ Rate limiting by IP and API key. Higher limits for authenticated users.
 | [sidebar and footer](https://github.com/Simbiat/simbiat.ru/issues/85)                        | simbiat.ru | Visual consistency 🟡 S                                                    |
 | [trackers section](https://github.com/Simbiat/simbiat.ru/issues/88)                          | simbiat.ru | Move trackers to /trackers 🟢 XS 🔧                                        |
 | [tox-statusbar height](https://github.com/Simbiat/simbiat.ru/issues/62)                      | simbiat.ru | UI size fix 🟢 XS 🔧                                                       |
-| [Notifications are behind dialog](https://github.com/Simbiat/simbiat.ru/issues/52)           | simbiat.ru | z-index bug 🟢 XS                                                          |
-| [tooltips and dialogs](https://github.com/Simbiat/simbiat.ru/issues/369)                     | simbiat.ru | Tooltips visible inside dialogs 🟢 XS                                      |
 | [sticky tab-names](https://github.com/Simbiat/simbiat.ru/issues/100)                         | simbiat.ru | Sticky on scroll 🟢 XS 🔧                                                  |
 | [tables are too small](https://github.com/Simbiat/simbiat.ru/issues/144)                     | simbiat.ru | Layout 🟢 XS 🔧                                                            |
-| [Small menu button](https://github.com/Simbiat/simbiat.ru/issues/145)                        | simbiat.ru | Touch target 🟢 XS 🔧                                                      |
-| [Gallery arrows too wide](https://github.com/Simbiat/simbiat.ru/issues/147)                  | simbiat.ru | UI fix 🟢 XS 🔧                                                            |
-| [Image gallery improvements](https://github.com/Simbiat/simbiat.ru/issues/187)               | simbiat.ru | Gallery UX 🟡 S                                                            |
 | [Check for capslock](https://github.com/Simbiat/simbiat.ru/issues/189)                       | simbiat.ru | Password field 🟢 XS                                                       |
 | [Dynamic hamburger placement](https://github.com/Simbiat/simbiat.ru/issues/190)              | simbiat.ru | Mobile nav 🟡 S                                                            |
-| [dialog elements with tabindex](https://github.com/Simbiat/simbiat.ru/issues/193)            | simbiat.ru | Accessibility 🟢 XS 🔧                                                     |
 | [Open sidepanel with swipe](https://github.com/Simbiat/simbiat.ru/issues/194)                | simbiat.ru | Mobile UX 🟡 S                                                             |
-| [cursor: wait](https://github.com/Simbiat/simbiat.ru/issues/200)                             | simbiat.ru | Loading indicator 🟢 XS 🔧                                                 |
-| [more aria roles](https://github.com/Simbiat/simbiat.ru/issues/251)                          | simbiat.ru | Accessibility 🟡 S                                                         |
-| [input to button](https://github.com/Simbiat/simbiat.ru/issues/377)                          | simbiat.ru | Semantic HTML 🟡 S 🔧                                                      |
 | [page number for breadcrumbs](https://github.com/Simbiat/simbiat.ru/issues/301)              | simbiat.ru | Navigation 🟡 S                                                            |
 | [animation for hiding elements](https://github.com/Simbiat/simbiat.ru/issues/198)            | simbiat.ru | UX polish 🟢 XS                                                            |
 | [Zoom for tables](https://github.com/Simbiat/simbiat.ru/issues/199)                          | simbiat.ru | Mobile 🟡 S                                                                |
 | [table sorting JS](https://github.com/Simbiat/simbiat.ru/issues/374)                         | simbiat.ru | Client-side sort 🟡 S                                                      |
-| [highlight table rows](https://github.com/Simbiat/simbiat.ru/issues/376)                     | simbiat.ru | UX hover 🟢 XS 🔧                                                          |
-| [og:description loses spaces around links](https://github.com/Simbiat/simbiat.ru/issues/333) | simbiat.ru | SEO bug 🟢 XS                                                              |
 | [force refresh page](https://github.com/Simbiat/simbiat.ru/issues/185)                       | simbiat.ru | Pull-to-refresh 🟡 S                                                       |
 | [removed characters get doubled](https://github.com/Simbiat/simbiat.ru/issues/91)            | simbiat.ru | UX: typed chars duplicating in inputs 🟡 S                                 |
-| [browser cache is used for updated pages](https://github.com/Simbiat/simbiat.ru/issues/29)   | simbiat.ru | New post loads stale cached page — 🔗 DEP: 0.3 (HTMLCache) 🟡 S            |
-| [popover](https://github.com/Simbiat/simbiat.ru/issues/334)                                  | simbiat.ru | Evaluate HTML `popover` attribute for tabs/dialogs 🟡 S                    |
 | [ToC generation](https://github.com/Simbiat/simbiat.ru/issues/196)                           | simbiat.ru | JS-inject table of contents on long pages; threshold to be determined 🟡 S |
 
 ---
@@ -675,7 +647,7 @@ Submission queue, moderator action log.
 ### 6.4 · MediaTracker: Comments & Reactions via Talks 🔗 DEP: 6.2, 2.4 🟡 S
 
 **Issues:
-** [Comment section utilizing forum](https://github.com/Simbiat/FFXIV-Tracker/issues/23), [reaction/stickers for media characters](https://github.com/Simbiat/private-issues/issues/60) 🔒
+** [Comment section utilizing forum](https://github.com/Simbiat/simbiat.ru/issues/395), [reaction/stickers for media characters](https://github.com/Simbiat/private-issues/issues/60) 🔒
 
 ---
 
@@ -695,7 +667,7 @@ integration (Phase 7).*
 ### 6a.1 · FFXIV Tracker: DB Refactoring ✂️ 🔗 DEP: 0.4 🔴 L
 
 **Issues:
-** [Splitting character table](https://github.com/Simbiat/FFXIV-Tracker/issues/1), [freecompanyid to BIGINT](https://github.com/Simbiat/FFXIV-Tracker/issues/8), [Separate crossworld linkshells](https://github.com/Simbiat/FFXIV-Tracker/issues/9), [move images to library](https://github.com/Simbiat/FFXIV-Tracker/issues/14), [multiple groups in "current" status](https://github.com/Simbiat/FFXIV-Tracker/issues/12)
+** [Splitting character table](https://github.com/Simbiat/simbiat.ru/issues/385), [freecompanyid to BIGINT](https://github.com/Simbiat/simbiat.ru/issues/386), [Separate crossworld linkshells](https://github.com/Simbiat/simbiat.ru/issues/392), [move images to library](https://github.com/Simbiat/simbiat.ru/issues/410), [multiple groups in "current" status](https://github.com/Simbiat/simbiat.ru/issues/408)
 
 **Also:
 ** [DOM instead of Regex](https://github.com/Simbiat/lodestone-parser/issues/2) — replace Lodestone parser regex with DOM/CSS-to-XPath (e.g. Symfony DomCrawler); do here alongside other FFXIV refactoring.
@@ -706,33 +678,31 @@ integration (Phase 7).*
 
 | Issue                                                                                  | URL           | Note                                                        |
 |----------------------------------------------------------------------------------------|---------------|-------------------------------------------------------------|
-| [`updated` field to `checked`](https://github.com/Simbiat/FFXIV-Tracker/issues/6)      | FFXIV-Tracker | Rename field 🟢 XS 🔧                                       |
-| [Track results from ranking pages](https://github.com/Simbiat/FFXIV-Tracker/issues/7)  | FFXIV-Tracker | Store ranking data 🟠 M                                     |
-| [lodestone alt link based on IP](https://github.com/Simbiat/FFXIV-Tracker/issues/13)   | FFXIV-Tracker | Regional Lodestone link 🔴 L 🟡 S                           |
-| [Shared name tabs](https://github.com/Simbiat/FFXIV-Tracker/issues/15)                 | FFXIV-Tracker | Tab for same-name entities 🔴 L 🟡 S                        |
-| [FF friend list](https://github.com/Simbiat/FFXIV-Tracker/issues/16)                   | FFXIV-Tracker | Friend list, mutual detection 🔴 L 🟠 M                     |
-| [ff-track dynamic tip](https://github.com/Simbiat/FFXIV-Tracker/issues/17)             | FFXIV-Tracker | Tooltip for character ID location 🔴 L 🟢 XS                |
-| [ff entities atom feed](https://github.com/Simbiat/FFXIV-Tracker/issues/18)            | FFXIV-Tracker | Atom feeds for entity updates 🔴 L 🟡 S                     |
+| [`updated` field to `checked`](https://github.com/Simbiat/simbiat.ru/issues/403)       | FFXIV-Tracker | Rename field 🟢 XS 🔧                                       |
+| [Track results from ranking pages](https://github.com/Simbiat/simbiat.ru/issues/404)   | FFXIV-Tracker | Store ranking data 🟠 M                                     |
+| [lodestone alt link based on IP](https://github.com/Simbiat/simbiat.ru/issues/409)     | FFXIV-Tracker | Regional Lodestone link 🔴 L 🟡 S                           |
+| [Shared name tabs](https://github.com/Simbiat/simbiat.ru/issues/411)                   | FFXIV-Tracker | Tab for same-name entities 🔴 L 🟡 S                        |
+| [FF friend list](https://github.com/Simbiat/simbiat.ru/issues/396)                     | FFXIV-Tracker | Friend list, mutual detection 🔴 L 🟠 M                     |
+| [ff entities atom feed](https://github.com/Simbiat/simbiat.ru/issues/405)              | FFXIV-Tracker | Atom feeds for entity updates 🔴 L 🟡 S                     |
 | [dynamically add linked character](https://github.com/Simbiat/FFXIV-Tracker/issues/24) | FFXIV-Tracker | Dynamic linking UI 🟡 S                                     |
-| [dynamic avatar](https://github.com/Simbiat/FFXIV-Tracker/issues/25)                   | FFXIV-Tracker | Avatar from linked FF character 🟡 S                        |
-| [search in old names](https://github.com/Simbiat/FFXIV-Tracker/issues/26)              | FFXIV-Tracker | Search historical names 🟡 S                                |
-| [FF key regeneration](https://github.com/Simbiat/FFXIV-Tracker/issues/27)              | FFXIV-Tracker | Regenerate FF linking token 🟢 XS 🔧                        |
+| [dynamic avatar](https://github.com/Simbiat/simbiat.ru/issues/388)                     | FFXIV-Tracker | Avatar from linked FF character 🟡 S                        |
+| [search in old names](https://github.com/Simbiat/simbiat.ru/issues/387)                | FFXIV-Tracker | Search historical names 🟡 S                                |
+| [FF key regeneration](https://github.com/Simbiat/simbiat.ru/issues/390)                | FFXIV-Tracker | Regenerate FF linking token 🟢 XS 🔧                        |
 | [API Key regeneration](https://github.com/Simbiat/simbiat.ru/issues/80)                | simbiat.ru    | Regenerate API key 🟢 XS 🔧                                 |
-| [link to json](https://github.com/Simbiat/FFXIV-Tracker/issues/28)                     | FFXIV-Tracker | JSON representation link 🟢 XS 🔧                           |
-| [affiliation blocks too small](https://github.com/Simbiat/FFXIV-Tracker/issues/29)     | FFXIV-Tracker | UI size fix 🟢 XS 🔧                                        |
-| [avoid duplicate FF avatars](https://github.com/Simbiat/FFXIV-Tracker/issues/30)       | FFXIV-Tracker | Deduplication 🟡 S                                          |
+| [link to json](https://github.com/Simbiat/simbiat.ru/issues/391)                       | FFXIV-Tracker | JSON representation link 🟢 XS 🔧                           |
+| [affiliation blocks too small](https://github.com/Simbiat/simbiat.ru/issues/393)       | FFXIV-Tracker | UI size fix 🟢 XS 🔧                                        |
+| [avoid duplicate FF avatars](https://github.com/Simbiat/simbiat.ru/issues/407)         | FFXIV-Tracker | Deduplication 🟡 S                                          |
 | [Entities with same name](https://github.com/Simbiat/simbiat.ru/issues/82)             | simbiat.ru    | FFXIV-specific: show same-name entities on entity page 🟡 S |
-| [Finalize repo as a library](https://github.com/Simbiat/FFXIV-Tracker/issues/33)       | FFXIV-Tracker | Library cleanup 🟡 S                                        |
 
 **Lower priority — complex or niche; do after monetization stabilizes:**
 
 | Issue                                                                                                 | URL                     |
 |-------------------------------------------------------------------------------------------------------|-------------------------|
-| [Character cards](https://github.com/Simbiat/FFXIV-Tracker/issues/19)                                 | FFXIV-Tracker 🔴 L 🟠 M |
-| [Recruitment logic](https://github.com/Simbiat/FFXIV-Tracker/issues/20)                               | FFXIV-Tracker 🟠 M      |
-| [categories for minions and mounts](https://github.com/Simbiat/FFXIV-Tracker/issues/4)                | FFXIV-Tracker 🟡 S      |
-| [List of orchestrion rolls and triple triad cards](https://github.com/Simbiat/FFXIV-Tracker/issues/5) | FFXIV-Tracker 🟡 S      |
-| [ffxivcollect](https://github.com/Simbiat/FFXIV-Tracker/issues/22)                                    | FFXIV-Tracker 🟠 M      |
+| [Character cards](https://github.com/Simbiat/simbiat.ru/issues/406)                                 | FFXIV-Tracker 🔴 L 🟠 M |
+| [Recruitment logic](https://github.com/Simbiat/simbiat.ru/issues/402)                               | FFXIV-Tracker 🟠 M      |
+| [categories for minions and mounts](https://github.com/Simbiat/simbiat.ru/issues/398)                | FFXIV-Tracker 🟡 S      |
+| [List of orchestrion rolls and triple triad cards](https://github.com/Simbiat/simbiat.ru/issues/399) | FFXIV-Tracker 🟡 S      |
+| [ffxivcollect](https://github.com/Simbiat/simbiat.ru/issues/397)                                    | FFXIV-Tracker 🟠 M      |
 
 ---
 
@@ -742,11 +712,9 @@ integration (Phase 7).*
 
 | Issue                                                                           | URL         | Note                                 |
 |---------------------------------------------------------------------------------|-------------|--------------------------------------|
-| [bic errors log](https://github.com/Simbiat/BIC-Tracker/issues/3)               | BIC-Tracker | Verify errors are logged 🟢 XS 🔧    |
-| [Split BIC to library](https://github.com/Simbiat/BIC-Tracker/issues/4)         | BIC-Tracker | Extract library 🟠 M                 |
-| [BIC changes tracking](https://github.com/Simbiat/BIC-Tracker/issues/5)         | BIC-Tracker | Track changes in separate table 🟠 M |
-| [[php8.4] Use HTMLDocument](https://github.com/Simbiat/BIC-Tracker/issues/6)    | BIC-Tracker | PHP 8.4 upgrade 🟢 XS 🔧             |
-| [BIC Statistics](https://github.com/Simbiat/BIC-Tracker/issues/1)               | BIC-Tracker | Stats page 🟠 M                      |
+| [BIC changes tracking](https://github.com/Simbiat/simbiat.ru/issues/413)        | BIC-Tracker | Track changes in separate table 🟠 M |
+| [php8.4 Use HTMLDocument](https://github.com/Simbiat/simbiat.ru/issues/414)     | BIC-Tracker | PHP 8.4 upgrade 🟢 XS 🔧             |
+| [BIC Statistics](https://github.com/Simbiat/simbiat.ru/issues/412)              | BIC-Tracker | Stats page 🟠 M                      |
 | [BIC Atom](https://github.com/Simbiat/simbiat.ru/issues/247)                    | simbiat.ru  | Restore BIC RSS/Atom feeds 🟡 S 🔧   |
 | [BIC number to title of BICs](https://github.com/Simbiat/simbiat.ru/issues/162) | simbiat.ru  | BIC number in titles/cards 🟢 XS 🔧  |
 
@@ -765,7 +733,7 @@ integration (Phase 7).*
 
 ### 7.2 · FF Achievements → Social 🔗 DEP: 7.1 🟡 S
 
-**Issue:** [FF Achievements to social](https://github.com/Simbiat/FFXIV-Tracker/issues/21)
+**Issue:** [FF Achievements to social](https://github.com/Simbiat/simbiat.ru/issues/401)
 
 ---
 

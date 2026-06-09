@@ -38,8 +38,12 @@
             "api_url": "http://crowdsec:8080/",
             "appsec_url": "http://crowdsec:7422/",
             "ticker_interval": "10s",
+            "metrics_interval": "10s",
             "enable_streaming": true,
             "enable_hard_fails": false,
+            "appsec_fail_open": true,
+            "enable_caddy_error": true,
+            "enable_caddy_metrics": true
         },
         //Certificates settings
         "tls": {

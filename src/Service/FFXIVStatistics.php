@@ -262,7 +262,7 @@ class FFXIVStatistics
                             UNION
                             SELECT DATE(`deleted`) AS `date`, COUNT(*) AS `count`, \'linkshells_deleted\' as `type` FROM `ffxiv__linkshell` WHERE `deleted` IS NOT NULL GROUP BY `date`;', return: 'all'
         );
-        $data['timelines'] = Splitters::splitByKey($data['timelines'], 'datetime');
+        $data['timelines'] = Splitters::splitByKey($data['timelines'], 'date');
         foreach ($data['timelines'] as $date => $datapoint) {
             $data['timelines'][$date] = Converters::multiToSingle(Editors::digitToKey($datapoint, 'type', true), 'count');
         }

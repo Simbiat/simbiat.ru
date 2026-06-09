@@ -1,0 +1,45 @@
+<gallery-overlay>
+    <button type="button" id="gallery_help">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Gallery help" data-tooltip="
+        Keyboard controls:
+        <br>
+        <kbd>➡</kbd>, <kbd>⬇</kbd>, <kbd>PgDown</kbd> - next image
+        <br>
+        <kbd>⬅</kbd>, <kbd>⬆</kbd>, <kbd>PgUp</kbd> - previous image
+        <br>
+        <kbd>End</kbd> - last image
+        <br>
+        <kbd>Home</kbd> - first image
+        <br>
+        <kbd>Space</kbd> - toggle zoom
+        <br>
+        <kbd>Esc</kbd>, <kbd>BckSpace</kbd> - exit overlay
+" src="/assets/images/tooltip.svg">
+    </button>
+    <button type="button" id="gallery_close">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Close gallery" data-tooltip="Close gallery" src="/assets/images/close.svg">
+    </button>
+    <div id="gallery_grid">
+        <div id="gallery_name_block">
+            <a id="gallery_name_down" href="" data-tooltip="Download image" rel="noopener noreferrer" download>
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Download image" src="/assets/images/download.svg">
+            </a>
+            <span id="gallery_name">Name</span>
+            <a id="gallery_name_link" href="" target="_blank" data-tooltip="Open image in new tab" rel="noopener noreferrer">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Open in new tab" src="/assets/images/newtab.svg">
+            </a>
+        </div>
+        <div id="gallery_image">
+            <div id="gallery_prev" role="button" tabindex="0" data-tooltip="Previous image">❰</div>
+            <img crossorigin="anonymous" loading="lazy" decoding="async" id="gallery_loaded_image" alt="" src="">
+            <div id="gallery_next" role="button" tabindex="0" data-tooltip="Next image">❱</div>
+        </div>
+        <div id="gallery_counter">
+            <span id="gallery_dimensions"></span>
+            <span id="gallery_current">0</span>
+            <span id="gallery_slash">/</span>
+            <span id="gallery_total">0</span>
+            <span id="gallery_size"></span>
+        </div>
+    </div>
+</gallery-overlay>

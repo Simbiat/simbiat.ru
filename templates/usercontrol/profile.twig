@@ -1,14 +1,15 @@
 <form class="middle" id="profile_username">
     <div class="float_label">
-        <input spellcheck="false" data-original="{{ user_data.username }}" value="{{ user_data.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
+        <input spellcheck="false" data-original="{{ user_data.username }}" value="{{ user_data.username }}" type="text" aria-required="true" required name="username" id="username_value" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\- ]{1,64}$">
         <label for="username_value">Username</label>
     </div>
-    <input role="button" type="submit" name="submit" id="username_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Change">
-    <img loading="lazy" decoding="async" id="username_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Changing username...">
+    <button type="submit" name="submit" id="username_submit" value="Change" data-alt-attribute="Changing username...">
+        Change
+    </button>
 </form>
 <hr/>
 <form class="middle" id="profile_details">
-    <p>Form below auto-saves 10 seconds after any changes.</p>
+    <p>The form below auto-saves 10 seconds after any changes.</p>
     <div class="float_label">
         <input value="{{ user_data.name.first_name }}" type="text" aria-required="false" name="details[name][first_name]" id="first_name_value" placeholder="First name" autocomplete="given-name" spellcheck="true" inputmode="text" minlength="0" maxlength="100" pattern="[\p{L}\d\x27 \.,]{0,100}">
         <label for="first_name_value">First name</label>
@@ -77,7 +78,8 @@
         <label for="about_value" class="label_for_tinymce">About</label>
     </div>
     <br/>
-    <input role="button" type="submit" name="submit" id="details_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Save">
+    <button type="submit" name="submit" id="details_submit" value="Save" data-alt-attribute="Updating details...">
+        Save
+    </button>
     <p id="last_auto_save" class="hidden">Last auto save: {{ timeTag("now", "H:i") }}</p>
-    <img loading="lazy" decoding="async" id="details_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Updating details...">
 </form>

@@ -19,6 +19,14 @@ final class LoginSuccess extends Notification
      * Is this notification type high priority or not. 1 - normal, less than 1 - low, more than 1 - high
      */
     protected const int PRIORITY = 0;
+    /**
+     * Whether to send to all emails registered for the user
+     */
+    protected const bool ALL_EMAILS = true;
+    /**
+     * Whether this is a security alert, and we need to collect session details and pass them to Twig
+     */
+    protected const bool SECURITY_ALERT = true;
     
     /**
      * Generate text for message

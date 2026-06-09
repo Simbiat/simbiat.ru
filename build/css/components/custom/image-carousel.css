@@ -13,7 +13,7 @@ image-carousel {
 
     & figure {
         block-size: 10rem;
-        margin-inline: 0.25rem 0.25rem;
+        margin-inline: 0.25rem;
 
         & > a {
             block-size: 5rem;
@@ -86,20 +86,20 @@ image-carousel {
         text-overflow: ellipsis;
     }
 
-    & image-carousel-next {
+    & .image_carousel_next {
         border-end-end-radius: var(--border_radius);
         border-start-end-radius: var(--border_radius);
         grid-area: next;
     }
 
-    & image-carousel-prev {
+    & .image_carousel_prev {
         border-end-start-radius: var(--border_radius);
         border-start-start-radius: var(--border_radius);
         grid-area: prev;
     }
 
-    & image-carousel-next,
-    & image-carousel-prev {
+    & .image_carousel_next,
+    & .image_carousel_prev {
         background-color: var(--color_body);
         block-size: 10rem;
         color: var(--color_interactive);

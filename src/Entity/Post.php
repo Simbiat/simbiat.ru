@@ -13,7 +13,6 @@ use App\Service\Errors;
 use App\Service\Sanitization;
 use App\Service\Search\Posts;
 use JetBrains\PhpStorm\ExpectedValues;
-use Ramsey\Uuid\Uuid;
 use Simbiat\Database\Query;
 use Simbiat\StringHelpers\Sanitize;
 use function in_array;
@@ -212,6 +211,13 @@ final class Post extends Entity
         if (!in_array('can_like', $_SESSION['permissions'], true)) {
             return ['http_error' => 403, 'reason' => 'No `can_like` permission'];
         }
+        $author = Query::query('SELECT `author` FROM `talks__posts` WHERE `post_id`=:post_id;', [':post_id' => [$this->id, 'int']], return: 'value');
+        if ($author === $_SESSION['user_id']) {
+            if ($dislike) {
+                return ['http_error' => 400, 'reason' => 'No reason to bring yourself down'];
+            }
+            return ['http_error' => 400, 'reason' => 'This is not the site for self-pleasuring'];
+        }
         #Get the current value (if any)
         $is_liked = (int)(Query::query('SELECT `like_value` FROM `talks__likes` WHERE `post_id`=:post_id AND `user_id`=:user_id;',
             [':post_id' => [$this->id, 'int'], ':user_id' => [$_SESSION['user_id'], 'int']], return: 'value'
@@ -405,7 +411,7 @@ final class Post extends Entity
         if ($_SESSION['user_id'] !== SystemUser::Unknown->value && Sanitize::whiteString($email ?? '')) {
             return;
         }
-        $new_token = Uuid::uuid7()->toString();
+        $new_token = uuid_create(7);
         try {
             if ($this->access_token === null) {
                 $affected = Query::query('INSERT INTO `talks__contact_form` (`thread_id`, `email`, `access_token`) VALUES (:thread_id, :email, :token);', [':token' => $new_token, ':email' => [$email, (($email === null || $email === '') ? 'null' : 'string')], ':thread_id' => $this->thread_id], return: 'affected');

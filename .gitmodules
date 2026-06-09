@@ -79,3 +79,9 @@
 [submodule "lib/StringHelpers"]
 	path = packages/StringHelpers
 	url = https://github.com/Simbiat/StringHelpers
+[submodule "build/js/dev/ESLintPlugin"]
+	path = build/js/dev/ESLintPlugin
+	url = https://github.com/Simbiat/eslint-plugin-simbiat
+[submodule "build/js/dev/StylelintPlugin"]
+	path = build/js/dev/StylelintPlugin
+	url = https://github.com/Simbiat/stylelint-plugin-simbiat

@@ -57,7 +57,7 @@ div.gm4html5_login_header {
 #banner_play {
     position: relative;
 
-    & hide-banner {
+    & div.hide_banner {
         display: none;
     }
 

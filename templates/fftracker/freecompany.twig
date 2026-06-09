@@ -1,7 +1,7 @@
-<tab-menu>
+<tab-menu role="tablist">
     <a class="tab_name active" id="tab_name_general" href="#tab_name_general">General</a>
-    <tab-content id="tab_content_general" class="active">
-        <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ freecompany.name }}"
+    <div id="tab_content_general" class="tab_content active">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ freecompany.name }}"
             {% if freecompany.crest %}
                 src="{{ freecompany.crest }}"
             {% else %}
@@ -14,13 +14,13 @@
                 {% endif %}
             {% endif %}
         >
-        <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{ timeTag(freecompany.dates.formed, "d/m/Y") }} and registered on {{ timeTag(freecompany.dates.registered, "d/m/Y") }} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {% if freecompany.is_fresh %}<span class="success">{% endif %}{{ timeTag(freecompany.dates.updated, "d/m/Y H:i") }}{% if freecompany.is_fresh %}</span>{% endif %}.{% if freecompany.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(freecompany.dates.deleted, "d/m/Y") }}.</span>{% endif %}</p>
+        <p>Rank <i>{{ freecompany.rank }}</i> Free Company <b>"{{ freecompany.name }}"</b> was formed on {{ timeTag(freecompany.dates.formed, 'd/m/Y') }} and registered on {{ timeTag(freecompany.dates.registered, 'd/m/Y') }} with ID <i>{{ freecompany.id }}</i>. Last set of interviews conducted on {% if freecompany.is_fresh %}<span class="success">{% endif %}{{ timeTag(freecompany.dates.updated, 'd/m/Y H:i') }}{% if freecompany.is_fresh %}</span>{% endif %}.{% if freecompany.dates.deleted %} <span class="failure">Was disbanded on {{ timeTag(freecompany.dates.deleted, 'd/m/Y') }}.</span>{% endif %}</p>
         {% if freecompany.slogan %}
             <p>{% if freecompany.dates.deleted %}Had{% else %}has{% endif %} the following slogan:</p>
             <blockquote class="w100pc">{{ sanitize(freecompany.slogan) }}</blockquote>
         {% endif %}
         <p>
-            Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.data_center }}</i>{% if freecompany.grand_company %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img loading="lazy" decoding="async" class="link_icon gallery_zoom" alt="{{ freecompany.grand_company }}"
+            Operate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} on <i>{{ freecompany.location.server }}</i>, <i>{{ freecompany.location.data_center }}</i>{% if freecompany.grand_company %},{% if freecompany.tag %} leaving tags <b>"{{ freecompany.tag }}"</b> all over the place and{% endif %} increasing glory of {% if freecompany.crest %}<img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon gallery_zoom" alt="{{ freecompany.grand_company }}"
             {% if freecompany.grand_company == 'Order of the Twin Adder' %}
                 src="/assets/images/fftracker/cities/2.webp"
             {% elseif freecompany.grand_company == 'Immortal Flames' %}
@@ -43,7 +43,7 @@
                 {% else %}
                     land
                 {% endif %}
-                on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a>.
+                on plot <i>{{ freecompany.location.estate.plot }}</i> in ward <i>{{ freecompany.location.estate.ward }}</i> of <i>{{ freecompany.location.estate.area }}</i>, {{ freecompany.location.estate.city }}, {{ freecompany.location.estate.region }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ freecompany.location.estate.area }}/{{ freecompany.location.estate.plot }}.webp" target="_blank" data-tooltip="{{ freecompany.location.estate.area }}, plot {{ freecompany.location.estate.plot }}"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a>.
             {% endif %}
         </p>
         {% if freecompany.location.estate.message %}
@@ -54,7 +54,7 @@
             <p>Participate{% if freecompany.dates.deleted %}d{% else %}s{% endif %} in:</p>
             <ul class="flex_list">
                 {% for focus, value in freecompany.focus %}
-                    {% if value %}<li><img loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="link_icon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus|capitalize }}</li>{% endif %}
+                    {% if value %}<li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ focus|capitalize }}" class="link_icon" src="/assets/images/fftracker/focus/{{ focus }}.webp">{{ focus|capitalize }}</li>{% endif %}
                 {% endfor %}
             </ul>
         {% endif %}
@@ -65,7 +65,7 @@
                 {% if freecompany.seeking.tank or freecompany.seeking.healer or freecompany.seeking.DPS or freecompany.seeking.crafter or freecompany.seeking.gatherer %}
                     <ul class="flex_list">
                         {% for seeking, value in freecompany.seeking %}
-                            {% if value %}<li><img loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="link_icon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking|capitalize }}</li>{% endif %}
+                            {% if value %}<li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ seeking|capitalize }}" class="link_icon" src="/assets/images/fftracker/roles/{{ seeking }}.webp">{{ seeking|capitalize }}</li>{% endif %}
                         {% endfor %}
                     </ul>
                 {% endif %}
@@ -82,39 +82,42 @@
         {% if freecompany.lodestone_url %}
             <p>See the record on <a href="{{ freecompany.lodestone_url }}" target="_blank" rel="noopener noreferrer">Lodestone</a>.</p>
         {% endif %}
-        {% if freecompany.can_refresh %}
+        {% if not freecompany.dates.deleted and freecompany.dates.scheduled %}
             <p class="margin_top_1rem">
-                <input class="refresh" id="ff_refresh" alt="Update free company" data-tooltip="Update free company" type="image" data-link="/api/fftracker/freecompanies/{{ freecompany.id }}/update" src="/assets/images/refresh.svg">
-            </p>
-        {% elseif freecompany.dates.scheduled %}
-            <p class="margin_top_1rem">
-                Next interview scheduled for {{ timeTag(freecompany.dates.scheduled, "d/m/Y H:i:s") }}.
+                Next interview scheduled for {{ timeTag(freecompany.dates.scheduled, 'd/m/Y H:i:s') }}.
             </p>
         {% endif %}
-    </tab-content>
+        {% if freecompany.can_refresh %}
+            <p class="margin_top_1rem">
+                <button class="refresh" id="ff_refresh" data-tooltip="Update free company" type="button" data-link="/api/fftracker/freecompanies/{{ freecompany.id }}/update">
+                    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Update free company" src="/assets/images/refresh.svg">
+                </button>
+            </p>
+        {% endif %}
+    </div>
     {% if freecompany.members|length > 0 %}
         <a class="tab_name" id="tab_name_members" href="#tab_name_members">Current members</a>
-        <tab-content id="tab_content_members">
+        <div class="tab_content" id="tab_content_members">
             <ul class="search_results">
                 {% for entity in freecompany.members %}
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
                 {% endfor %}
             </ul>
-        </tab-content>
+        </div>
     {% endif %}
     {% if freecompany.past_members|length > 0 %}
         <a class="tab_name" id="tab_name_past_members" href="#tab_name_past_members">Past members</a>
-        <tab-content id="tab_content_past_members">
+        <div class="tab_content" id="tab_content_past_members">
             <ul class="search_results">
                 {% for entity in freecompany.past_members %}
                     <li>{{ include('common/elements/entitycard.twig', entity) }}</li>
                 {% endfor %}
             </ul>
-        </tab-content>
+        </div>
     {% endif %}
     {% if freecompany.ranking|length > 0 %}
-        <a class="tab_name active" id="tab_name_ranking" href="#tab_name_ranking">Ranking history</a>
-        <tab-content id="tab_content_ranking">
+        <a class="tab_name" id="tab_name_ranking" href="#tab_name_ranking">Ranking history</a>
+        <div class="tab_content" id="tab_content_ranking">
             <table>
                 <tr>
                     <th>Date</th>
@@ -124,13 +127,13 @@
                 </tr>
                 {% for rank in freecompany.ranking %}
                     <tr>
-                        <td>{{ timeTag(rank.date, "d/m/Y") }}</td>
+                        <td>{{ timeTag(rank.date, 'd/m/Y') }}</td>
                         <td>{{ rank.weekly }}</td>
                         <td>{{ rank.monthly }}</td>
                         <td>{{ rank.members }}</td>
                     </tr>
                 {% endfor %}
             </table>
-        </tab-content>
+        </div>
     {% endif %}
 </tab-menu>

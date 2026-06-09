@@ -7,6 +7,7 @@ namespace App\Entity\FFXIV;
 use App\Service\Config;
 use App\Service\Errors;
 use App\Service\Images;
+use App\Service\Sanitization;
 use Simbiat\Database\Query;
 use Simbiat\FFXIV\Lodestone;
 
@@ -97,7 +98,7 @@ class Achievement extends AbstractEntity
                     return 'Request throttled by Lodestone';
                 }
                 if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
-                    Errors::error_log($exception, $lodestone->getErrors());
+                    Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
                 }
             }
             #Most likely temporary unavailability of the Lodestone page
@@ -127,7 +128,7 @@ class Achievement extends AbstractEntity
                     return 'Request throttled by Lodestone';
                 }
                 if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
-                    Errors::error_log($exception, $lodestone->getErrors());
+                    Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
                 }
                 return $exception->getMessage();
             }
@@ -194,7 +195,7 @@ class Achievement extends AbstractEntity
         $this->category = $from_db['category'];
         $this->subcategory = $from_db['subcategory'];
         $this->icon = $from_db['icon'];
-        $this->how_to = $from_db['how_to'];
+        $this->how_to = Sanitization::sanitizeHTML($from_db['how_to']);
         $this->db_id = $from_db['db_id'];
         $this->rewards = [
             'points' => (int)$from_db['points'],
@@ -234,7 +235,7 @@ class Achievement extends AbstractEntity
         if (empty($this->lodestone['how_to'])) {
             $bindings[':how_to'] = [NULL, 'null'];
         } else {
-            $bindings[':how_to'] = $this->lodestone['how_to'];
+            $bindings[':how_to'] = Sanitization::sanitizeHTML($this->lodestone['how_to']);
         }
         if (empty($this->lodestone['title'])) {
             $bindings[':title'] = [NULL, 'null'];

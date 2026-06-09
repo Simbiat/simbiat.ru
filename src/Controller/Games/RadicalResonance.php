@@ -22,7 +22,7 @@ class RadicalResonance extends Game
     #Page's banner. Defaults to website's banner
     protected string $og_image = '/ogimages/RadicalResonance.png';
     #Path to game's JS file
-    protected string $game_js = '/assets/html5games/RadicalResonance/Radical Resonance.js';
+    protected string $gamemaker_js = '/assets/html5games/RadicalResonance/Radical Resonance.js';
     #Flag to indicate the game has sound
     protected bool $has_sound = true;
     #Flag to indicate the game has music

@@ -1,16 +1,24 @@
 /* Styling of elements specific page where you add entities to tracker */
+#ff_track_register {
+    text-align: center;
+}
+
 #ff_track_id,
-#ff_track_type {
-    inline-size: 22rem;
+#ff_track_id_wrap {
+    max-inline-size: 22rem;
+}
+
+#ff_track_type,
+#ff_track_type_wrap {
+    inline-size: 11rem;
 }
 
 #ff_track_id_wrap,
 #ff_track_type_wrap {
-    display: block;
-    inline-size: 22rem;
+    display: inline-block;
 }
 
 #ff_track_submit {
-    display: block;
+    display: inline-block;
     margin: auto;
 }

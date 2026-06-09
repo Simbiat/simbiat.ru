@@ -1,5 +1,5 @@
 <!-- Main JavaScript file -->
-<script src="{{ domain }}/assets/app.{{ js_version }}.js" crossorigin="anonymous"></script>
+<script src="/assets/app.{{ js_version }}.js" crossorigin="anonymous"></script>
 
 <!-- Google rich cards -->
 <script type="application/ld+json">
@@ -17,3 +17,6 @@
         ]
     }
 </script>
+{% if gamemaker_js|default(null) %}
+    <script type="text/javascript" src="{{ gamemaker_js }}"></script>
+{% endif %}

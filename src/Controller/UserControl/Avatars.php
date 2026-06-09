@@ -33,6 +33,7 @@ class Avatars extends Page
         $output_array = [];
         #Get the avatar list
         $output_array['avatars'] = new User($_SESSION['user_id'])->getAvatars();
+        #var_dump($output_array);exit;
         return $output_array;
     }
 }

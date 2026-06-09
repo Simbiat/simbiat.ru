@@ -67,7 +67,7 @@ class PvPTeam extends AbstractEntity
                 return 'Request throttled by Lodestone';
             }
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
-                Errors::error_log($exception, $lodestone->getErrors());
+                Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
             return 'Failed to get all necessary data for PvPTeam '.$this->id;
         }
@@ -76,7 +76,7 @@ class PvPTeam extends AbstractEntity
                 $this->delete();
                 return ['404' => true];
             }
-            Errors::error_log(new \RuntimeException('Failed to get all necessary data for PvP Team '.$this->id), $lodestone->getErrors());
+            Errors::error_log(new \RuntimeException('Failed to get all necessary data for PvP Team '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             return 'Failed to get all necessary data for PvP Team '.$this->id;
         }
         if (empty($data['pvpteams'][$this->id]['crest'][2]) && !empty($data['pvpteams'][$this->id]['crest'][1])) {

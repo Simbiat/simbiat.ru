@@ -11,7 +11,7 @@ time-line {
         border-radius: var(--border_radius);
         content: '';
         inline-size: 0.5rem;
-        inset-block: 0 0;
+        inset-block: 0;
         inset-inline-start: 50%;
         margin-inline-start: -0.25rem;
         position: absolute;
@@ -23,7 +23,7 @@ time-line {
         background-color: var(--color_block);
         border-radius: var(--border_radius);
         inline-size: calc(50% - 2rem);
-        margin: 1rem 0 1rem 0;
+        margin: 1rem 0;
         position: relative;
 
         /* The circles on the timeline */

@@ -1,6 +1,6 @@
 <section>
-    <img loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ achievement.name }}" src="/assets/images/fftracker/icons/{{ achievement.icon }}">
-    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, "d/m/Y") }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date("Y-m-d") != achievement.updated|date("Y-m-d") %} and revised on {% if achievement.is_fresh %}<span class="success">{% endif %}{{ timeTag(achievement.updated, "d/m/Y") }}{% if achievement.is_fresh %}</span>{% endif %}{% endif %}.</p>
+    <img crossorigin="anonymous" loading="lazy" decoding="async" class="float_left ff_crest gallery_zoom" alt="{{ achievement.name }}" src="/assets/images/fftracker/icons/{{ achievement.icon }}">
+    <p><b>"{{ achievement.name }}"</b> is a <i>{{ achievement.subcategory }}</i> achievement in <i>{{ achievement.category }}</i> category. It was added to the roaster on {{ timeTag(achievement.registered, 'd/m/Y') }} with ID <i>{{ achievement.id }}</i>{% if achievement.registered|date('Y-m-d') != achievement.updated|date('Y-m-d') %} and revised on {% if achievement.is_fresh %}<span class="success">{% endif %}{{ timeTag(achievement.updated, 'd/m/Y') }}{% if achievement.is_fresh %}</span>{% endif %}{% endif %}.</p>
     <p>By achieving it, one can receive:</p>
     <ul>
         {% if achievement.rewards.points %}
@@ -10,14 +10,16 @@
             <li><i class="gold">"{{ achievement.rewards.title }}"</i> title</li>
         {% endif %}
         {% if achievement.rewards.item.name %}
-            <li><a rel="noopener noreferrer" class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img loading="lazy" decoding="async" class="link_icon" src="/assets/images/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
+            <li><a rel="noopener noreferrer" class="gold" href="https://eu.finalfantasyxiv.com/lodestone/playguide/db/item/{{ achievement.rewards.item.id }}" target="_blank"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" src="/assets/images/fftracker/icons/{{ achievement.rewards.item.icon }}" alt="{{ achievement.rewards.item.name }}"><i>"{{ achievement.rewards.item.name }}"</i></a> as a trophy</li>
         {% endif %}
     </ul>
     {% if achievement.how_to %}
         <p>But it won't be easy to reap these rewards. As per established rules, one is required to fulfill these conditions:</p>
-        <blockquote class="w100pc">{{ achievement.how_to }}</blockquote>
+        <!-- This is sanitized when saving to database and when grabbed from it -->
+        <!--suppress TwigRawUsed -->
+        <blockquote class="w100pc">{{ achievement.how_to|raw }}</blockquote>
     {% else %}
-        <p>But it won't be easy to reap these rewards. What makes that even harder, is that it is still unknown, what the requirements are.</p>
+        <p>But it won't be easy to reap these rewards. What makes that even harder is that it's still unknown what the requirements are.</p>
     {% endif %}
     {% if achievement.lodestone_url %}
         <p>See the record on <a href="{{ achievement.lodestone_url }}" target="_blank" rel="noopener noreferrer">Lodestone</a>.</p>
@@ -33,13 +35,16 @@
             </ul>
         {% endif %}
     {% endif %}
+    {% if achievement.scheduled %}
+        <p class="margin_top_1rem">
+            Next update scheduled for {{ timeTag(achievement.scheduled, 'd/m/Y H:i:s') }}.
+        </p>
+    {% endif %}
     {% if achievement.can_refresh %}
         <p class="margin_top_1rem">
-            <input class="refresh" id="ff_refresh" alt="Update achievement" data-tooltip="Update achievement" type="image" data-link="/api/fftracker/achievements/{{ achievement.id }}/update" src="/assets/images/refresh.svg">
-        </p>
-    {% elseif achievement.scheduled %}
-        <p class="margin_top_1rem">
-            Next update scheduled for {{ timeTag(achievement.scheduled, "d/m/Y H:i:s") }}.
+            <button class="refresh" id="ff_refresh" data-tooltip="Update achievement" type="button" data-link="/api/fftracker/achievements/{{ achievement.id }}/update">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Update achievement" src="/assets/images/refresh.svg">
+            </button>
         </p>
     {% endif %}
 </section>

@@ -56,7 +56,7 @@ class Sessions extends Page
         #Expand user_agent
         foreach (['sessions', 'cookies', 'logs'] as $type) {
             foreach ($output_array[$type] as $key => $item) {
-                if (!isset($ips[$item['ip']])) {
+                if (!\array_key_exists($item['ip'], $ips)) {
                     try {
                         $ips[$item['ip']] = [];
                         $geoip = new Reader(Config::$geoip.'GeoLite2-City.mmdb')->city($item['ip']);
@@ -78,13 +78,19 @@ class Sessions extends Page
                 #Set OS and client icon if they exist
                 if (!empty($output_array[$type][$key]['os'])) {
                     $output_array[$type][$key]['os']['icon'] = DDCIcons::getOS($output_array[$type][$key]['os']['name'], $output_array[$type][$key]['os']['family']);
+                } else {
+                    $output_array[$type][$key]['os']['icon'] = null;
                 }
                 if (!empty($output_array[$type][$key]['client'])) {
                     $output_array[$type][$key]['client']['icon'] = DDCIcons::getClient($output_array[$type][$key]['client']['name'], $output_array[$type][$key]['client']['type']);
+                } else {
+                    $output_array[$type][$key]['client']['icon'] = null;
                 }
-                #Set country icon, if a flag exists
+                #Set country icon if a flag exists
                 if (!empty($output_array[$type][$key]['country']) && \is_file(Config::$img_dir.'/flags/'.$output_array[$type][$key]['country'].'.svg')) {
                     $output_array[$type][$key]['country_icon'] = '/assets/images/flags/'.$output_array[$type][$key]['country'].'.svg';
+                } else {
+                    $output_array[$type][$key]['country_icon'] = null;
                 }
             }
         }

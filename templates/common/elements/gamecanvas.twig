@@ -5,8 +5,8 @@
             <div id="play_overlay">▶️</div>
         </div>
     {% endif %}
-    <button id="game_start_button" class="middle">▶️ Start the game</button>
-    <div class="gm4html5_div_class" id="gm4html5_div_id" data-js="{{ game_js }}"></div>
+    <button type="button" id="game_start_button" class="middle">▶️ Start the game</button>
+    <div class="gm4html5_div_class" id="gm4html5_div_id" data-js="{{ gamemaker_js }}"></div>
     {% if has_sound or has_music %}
         <div class="sound_warning warning">🎵 This game has {% if has_sound %}sound effects{% endif %}{% if has_sound and has_music %} and {% endif %}{% if has_music %}music{% endif %} 🎵</div>
     {% endif %}

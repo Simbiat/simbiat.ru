@@ -1,10 +1,29 @@
 <tr class="middle">
     <td>{{ email.email|default('email') }}</td>
     <td>
-        {% if not email or email.activation %}<input type="button" value="Confirm" class="mail_activation" data-email="{{ email.email }}"><img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Activating {{ email.email }}...">{% else %}<span class="mail_confirmed">✅</span>{% endif %}
+        {% if not email|default(null) or email.activation %}
+            <button type="button" value="Confirm" class="mail_activation" data-email="{{ email.email|default(null) }}" data-alt-attribute="Activating {{ email.email|default(null) }}...">
+                Confirm
+            </button>
+        {% else %}
+            <span class="mail_confirmed">✅</span>
+        {% endif %}
     </td>
-    <td{% if not email or email.activation %} class="warning"{% endif %}>{% if not email or email.activation %}Confirm address to change setting{% else %}<span class="float_label"><input id="subscription_checkbox_{{ number }}" class="mail_subscription" data-email="{{ email.email }}" type="checkbox"{% if email.subscribed %} checked{% endif %}{% if email.subscribed %} disabled{% endif %}><label for="subscription_checkbox_{{ number }}"{% if email.subscribed %} data-tooltip="Select another email to unsubscribe this one"{% endif %}></label></span><img loading="lazy" decoding="async" class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Changing subscription for {{ email.email }}...">{% endif %}</td>
+    <td{% if not email|default(null) or email.activation|default(null) %} class="warning"{% endif %}>{% if not email|default(null) or email.activation|default(null) %}Confirm address to change setting{% else %}
+            <span class="float_label">
+                <input id="subscription_checkbox_{{ number|default(null) }}" class="mail_subscription" data-email="{{ email.email|default(null) }}" type="checkbox"{% if email.subscribed|default(null) %} checked{% endif %}{% if email.subscribed|default(null) %} disabled{% endif %} data-alt-attribute="Changing subscription for {{ email.email|default(null) }}...">
+                <label for="subscription_checkbox_{{ number|default(null) }}"{% if email.subscribed|default(null) %} data-tooltip="Select another email to unsubscribe this one"{% endif %}></label>
+            </span>
+        {% endif %}
+    </td>
     <td>
-        <input class="mail_deletion" data-email="{{ email.email }}" type="image" src="/assets/images/close.svg" {% if email and ((email.activation and count_activated == 0) or (not email.activation and count_activated == 1) or (not email.activation and email.subscribed and count_subscribed == 1)) %}disabled alt="Can't delete the only confirmed or the only subscribed email" {% else %}alt="Delete {{ email.email|default('email') }}"{% endif %}><img class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Removing {{ email.email|default('email') }}..." loading="lazy" decoding="async">
+        {% if email|default(null) and ((email.activation|default(null) and count_activated|default(null) == 0) or (not email.activation|default(null) and count_activated|default(null) == 1) or (not email.activation|default(null) and email.subscribed|default(null) and count_subscribed|default(null) == 1)) %}
+            {% set can_delete_email = false %}
+        {% else %}
+            {% set can_delete_email = true %}
+        {% endif %}
+        <button type="button" class="mail_deletion" data-email="{{ email.email|default(null) }}"{% if can_delete_email == false %} disabled{% endif %} data-tooltip="{% if can_delete_email == false %}Can't delete the only confirmed or the only subscribed email{% else %}Delete {{ email.email|default('email') }}{% endif %}" data-alt-attribute="Removing {{ email.email|default('email') }}...">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if can_delete_email == false %}Can't delete the only confirmed or the only subscribed email{% else %}Delete {{ email.email|default('email') }}{% endif %}" src="/assets/images/close.svg">
+        </button>
     </td>
 </tr>

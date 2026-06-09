@@ -25,13 +25,15 @@
             <excludedPath local="true" path="$PROJECT_DIR$/README.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/eslint.config.mjs" />
-            <excludedPath local="true" path="$PROJECT_DIR$/stylelint.config.mjs" />
+            <excludedPath local="true" path="$PROJECT_DIR$/eslint.config.mts" />
+            <excludedPath local="true" path="$PROJECT_DIR$/build/css/stylelint.config.ts" />
             <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/bun.lock" />
             <excludedPath local="true" path="$PROJECT_DIR$/TODO.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/.aiignore" />
             <excludedPath local="true" path="$PROJECT_DIR$/tests" />
+            <excludedPath local="true" path="$PROJECT_DIR$/tsconfig.json" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.example.env" />
           </excludedPaths>
         </serverdata>
       </paths>

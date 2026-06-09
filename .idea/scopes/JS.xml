@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="JS" pattern="file[simbiat.dev]:build/js//*" />
+  <scope name="JS" pattern="file[simbiat.dev]:build/js//*||file:eslint.config.ts||file:build/css/stylelint.config.ts||file:package.json||file:tsconfig.json" />
 </component>

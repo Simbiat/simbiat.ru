@@ -1,7 +1,7 @@
-FROM crowdsecurity/crowdsec:v1.7.7-debian
+FROM crowdsecurity/crowdsec:v1.7.8-debian
 
 #When CRS is updated, check for potential changes in 02-crs-setup.conf as well
-ARG CRS_RELEASE="4.25.0"
+ARG CRS_RELEASE="4.27.0"
 
 #Copy configs
 COPY yaml/acquis.yaml /etc/crowdsec/acquis.yaml

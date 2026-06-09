@@ -3,5 +3,5 @@
         <input type="file"{% if mime %} accept="{{ mime }}"{% endif%} aria-required="{% if required == true %}true{% else %}false{% endif %}"{% if required == true %} required{% endif %} id="{{ form_name }}_file" name="{{ input_name }}">
         <label for="{{ form_name }}_file" data-tooltip="{{ tooltip }}">{{ placeholder }}</label>
     </div>
-    <img loading="lazy" decoding="async" alt="Preview of " src="/assets/images/noimage.svg" data-current="{{ image_url }}" class="{{ preview_classes }} hidden" id="{{ form_name }}_preview">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Preview of " src="/assets/images/noimage.svg" data-current="{{ image_url }}" class="{{ preview_classes }} hidden" id="{{ form_name }}_preview">
 </image-upload>

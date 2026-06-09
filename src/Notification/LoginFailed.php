@@ -23,6 +23,10 @@ final class LoginFailed extends Notification
      * Whether to send to all emails registered for the user
      */
     protected const bool ALL_EMAILS = true;
+    /**
+     * Whether this is a security alert, and we need to collect session details and pass them to Twig
+     */
+    protected const bool SECURITY_ALERT = true;
     
     /**
      * Generate text for message

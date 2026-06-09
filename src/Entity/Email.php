@@ -320,12 +320,12 @@ final class Email extends Entity
             #Remove user from unverified users
             ['DELETE FROM `uc__user_to_group` WHERE `user_id`=:user_id AND `group_id`=:group_id', [':user_id' => [$user_id, 'int'], ':group_id' => [Config::GROUP_IDS['Unverified'], 'int']]],
             #Claim Contact Form threads created while using the emai
-            ['UPDATE `talks__threads` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown, 'int']]],
-            ['UPDATE `talks__threads` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown, 'int']]],
+            ['UPDATE `talks__threads` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
+            ['UPDATE `talks__threads` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             #Claim respective posts and their history as well
-            ['UPDATE `talks__posts` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown, 'int']]],
-            ['UPDATE `talks__posts` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown, 'int']]],
-            ['UPDATE `talks__posts_history` SET `user_id`=:user_id WHERE `post_id` IN (SELECT `post_id` FROM `talks__posts` WHERE `author`=:user_id) AND `user_id`=:anonymous', [':user_id' => [$user_id, 'int'], ':anonymous' => [SystemUser::Unknown, 'int']]],
+            ['UPDATE `talks__posts` SET `author`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `author`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
+            ['UPDATE `talks__posts` SET `editor`=:user_id, `updated`=`updated` WHERE `thread_id` IN (SELECT `thread_id` FROM `talks__contact_form` WHERE `email`=:email) AND `editor`=:anonymous', [':user_id' => [$user_id, 'int'], ':email' => $this->id, ':anonymous' => [SystemUser::Unknown->value, 'int']]],
+            ['UPDATE `talks__posts_history` SET `user_id`=:user_id WHERE `post_id` IN (SELECT `post_id` FROM `talks__posts` WHERE `author`=:user_id) AND `user_id`=:anonymous', [':user_id' => [$user_id, 'int'], ':anonymous' => [SystemUser::Unknown->value, 'int']]],
             #Remove the access token for respective Contact Form threads
             ['DELETE FROM `talks__contact_form` WHERE `email`=:email;', [':email' => $this->id,]],
         ];

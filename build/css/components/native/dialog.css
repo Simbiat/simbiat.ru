@@ -7,7 +7,7 @@ dialog {
     border-width: var(--border_width);
     color: inherit;
     inline-size: fit-content; /* Adjusting for Safari */
-    inset-inline: 0 0; /* Adjusting for Safari */
+    inset-inline: 0; /* Adjusting for Safari */
     margin: auto; /* Adjusting for Safari */
     padding: 0; /* Adjusting for Safari */
 
@@ -17,5 +17,17 @@ dialog {
 
     &:not([open]) {
         display: none; /* Adjusting for Safari */
+    }
+
+    &#gallery_dialog {
+        block-size: 99vb;
+        inline-size: 99vi;
+        /* Fill whole screen. Needs to be less than 100 due to how Dialog is rendered */
+        max-block-size: 99vb;
+        max-inline-size: 99vi;
+    }
+
+    &#login_form {
+        padding: 1rem;
     }
 }

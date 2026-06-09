@@ -14,18 +14,26 @@
         <p>Enter character, achievement or group ID or part of the name, biography, estate message or other description.</p>
     {% endif %}
     {% if request_from_bot %}
-        <p class="error">You were identified as a bot, search form hidden.</p>
+        <p class="error">You were identified as a bot, the search form was hidden.</p>
     {% else %}
+        {# TODO: Need to intercept this so that search button is replaced by spinner when page is loading #}
         <form role="search" class="search_form" action="{{ action_url }}" method="get">
-            <span class="float_label" id="search_label"><input id="search_field" role="searchbox" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
-            <input role="button" type="submit" id="search_button" data-noname value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}">
+            <span class="float_label" id="search_label"><input id="search_field" type="search" inputmode="search" name="search" autocomplete="on" maxlength="100"{% if search_value is defined %} value="{{ search_value }}"{% else %} autofocus{% endif %}><label for="search_field">{% if service_name == 'bictracker' %}Термин для поиска{% else %}Search term{% endif %}</label></span>
+            <button type="submit" value="{% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}" id="search_button" data-noname>
+                {% if service_name == 'bictracker' %}Поиск{% else %}Search{% endif %}
+            </button>
         </form>
     {% endif %}
 </search>
 <section>
     {% if service_name == 'bictracker' %}
         <p class="relative warning">Начиная с апреля 2025ого года ЦБ использует DDoS-Guard, который блокирует запросы с сервера в большинстве случаев, судя по всему, по IP, так как на тесте проблем нет вовсе. Обновления библиотеки больше не гарантируются.</p>
-        <p class="relative">Библиотека обновлена {{ timeTag(bic_date, 'd.m.Y', 'bic_date') }}.<input class="refresh" id="bic_refresh" alt="Обновить библиотеку" data-tooltip="Обновить библиотеку" type="image" src="/assets/images/refresh.svg"></p>
+        <p class="relative">
+            Библиотека обновлена {{ timeTag(bic_date, 'd.m.Y', 'bic_date') }}.
+            <button type="button" class="refresh" id="bic_refresh" data-tooltip="Обновить библиотеку">
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Обновить библиотеку" src="/assets/images/refresh.svg">
+            </button>
+        </p>
     {% endif %}
     {% for type, sub_result in search_result %}
         <p>

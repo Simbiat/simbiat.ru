@@ -78,7 +78,7 @@
         border-start-start-radius: var(--border_radius);
         font-weight: 700;
         grid-area: block_header;
-        padding-inline: .25rem .25rem;
+        padding-inline: .25rem;
         text-align: center;
     }
 

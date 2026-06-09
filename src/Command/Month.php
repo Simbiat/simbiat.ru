@@ -21,17 +21,17 @@ $maintenance = new Month();
 #Run cron
 try {
     if (Config::$dbup) {
-        Minute::cliOutput('Updating argon settings...', true);
+        Minute::cliOutput('Updating argon settings...');
         $maintenance->argon();
-        Minute::cliOutput('Cleaning files...', true);
+        Minute::cliOutput('Cleaning files...');
         new HealthCheck()->filesClean();
-        Minute::cliOutput('Cleaning logs...', true);
+        Minute::cliOutput('Cleaning logs...');
         $maintenance->logsClean();
-        Minute::cliOutput('Cleaning statistics...', true);
+        Minute::cliOutput('Cleaning statistics...');
         $maintenance->statisticsClean();
-        Minute::cliOutput('Updating FF servers...', true);
+        Minute::cliOutput('Updating FF servers...');
         new FFXIV()->updateServers();
-        Minute::cliOutput('Cleaning foreign keys...', true);
+        Minute::cliOutput('Cleaning foreign keys...');
         $maintenance->cleanForeignKeys();
     }
 } catch (Throwable $throwable) {

@@ -1,38 +1,38 @@
 <div class="about_h_wrapper">
-    <img loading="lazy" decoding="async" class="nav_icon" alt="Check projects" data-tooltip="Track" src="/assets/images/navigation/projects.svg">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Check projects" data-tooltip="Track" src="/assets/images/navigation/projects.svg">
     <h2 id="Track" class="home_page block_title">Check projects</h2>
 </div>
 <section>
     <div class="about_showcase">
         <a href="/fftracker" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Final Fantasy XIV Tracker" src="/assets/images/ogimages/fftracker.webp">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="cursor_pointer" alt="Final Fantasy XIV Tracker" src="/assets/images/ogimages/fftracker.webp">
             <div>Final Fantasy XIV Tracker</div>
         </a>
         <a href="/bictracker" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="BIC Tracker" src="/assets/images/ogimages/bictracker.webp">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="cursor_pointer" alt="BIC Tracker" src="/assets/images/ogimages/bictracker.webp">
             <div>BIC Tracker</div>
         </a>
         <a href="/supops" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="SupOps" src="/assets/images/supops/logo/ogimage.webp">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="cursor_pointer" alt="SupOps" src="/assets/images/supops/logo/ogimage.webp">
             <div>SupOps</div>
         </a>
         <a href="/games/jiangshi" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Jiangshi" src="/assets/images/ogimages/jiangshi.webp">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="cursor_pointer" alt="Jiangshi" src="/assets/images/ogimages/jiangshi.webp">
             <div>Jiangshi</div>
         </a>
         <a href="/games/radicalresonance" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Radical Resonance" src="/assets/images/ogimages/RadicalResonance.png">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="cursor_pointer" alt="Radical Resonance" src="/assets/images/ogimages/RadicalResonance.png">
             <div>Radical Resonance</div>
         </a>
         <a href="/games/dden" class="about_banner no_new_tab_icon">
-            <img loading="lazy" decoding="async" class="cursor_pointer" alt="Dangerous Dave: Endless Nightmare" src="/assets/images/ogimages/dden.webp">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" class="cursor_pointer" alt="Dangerous Dave: Endless Nightmare" src="/assets/images/ogimages/dden.webp">
             <div>Dangerous Dave: Endless Nightmare</div>
         </a>
     </div>
 </section>
 
 <div class="about_h_wrapper">
-    <img loading="lazy" decoding="async" class="nav_icon" alt="Read stuff" data-tooltip="Read" src="/assets/images/navigation/talks.svg">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Read stuff" data-tooltip="Read" src="/assets/images/navigation/talks.svg" crossorigin="anonymous">
     <h2 id="Read" class="home_page block_title">Read stuff</h2>
 </div>
 <div>
@@ -40,14 +40,14 @@
         <article class="post has_banner no_user">
             <section class="post_header">
                 {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
-                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></h3>
+                    <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, 'Y.m.d') }}</a></h3>
                 {% else %}
                     <h3 class="post_name" id="{{ prettyURL(post.name) }}"><a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></h3>
                 {% endif %}
             </section>
             {% if post.og_image %}
                 <section class="post_banner">
-                    <a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}"><img loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.og_image.og_image }}"></a>
+                    <a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}"><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ post.name }}" src="{{ post.og_image.og_image }}"></a>
                 </section>
             {% endif %}
             <section class="post_text">
@@ -55,7 +55,7 @@
             </section>
             <section class="post_footer">
                 <div class="post_time_id">
-                    {{ timeTag(post.published, "d/m/Y H:i", "post_time") }}
+                    {{ timeTag(post.published, 'd/m/Y H:i', "post_time") }}
                 </div>
             </section>
         </article>

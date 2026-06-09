@@ -1,10 +1,12 @@
-<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<p>All data below is for {{ timeTag(ffstats.data.time, 'd/m/Y') }}.</p>
 <table>
     <caption><h2>Nameday popularity</h2></caption>
-    <thead><tr>
-        <th>Nameday</th>
-        <th>Characters</th>
-    </tr></thead>
+    <thead>
+        <tr>
+            <th>Nameday</th>
+            <th>Characters</th>
+        </tr>
+    </thead>
     {% for datapoint in ffstats.data.namedays %}
         <tr>
             <td>{{ datapoint.value }}</td>
@@ -13,30 +15,34 @@
     {% endfor %}
 </table>
 <table>
-    <caption><h2 data-tooltip="All dates besides `Formed` are tracker-specific. `Formed` is based on Lodestone data.">Activity calendar</h2></caption>
-    <thead><tr>
-        <th rowspan="2">Date</th>
-        <th colspan="3">Formed</th>
-        <th colspan="4">Added</th>
-        <th colspan="4">Deleted</th>
-        <th rowspan="2">Characters Privated</th>
-    </tr>
-    <tr>
-        <th>Free Companies</th>
-        <th>PvP Teams</th>
-        <th>Linkshells</th>
-        <th>Free Companies</th>
-        <th>PvP Teams</th>
-        <th>Linkshells</th>
-        <th>Characters</th>
-        <th>Free Companies</th>
-        <th>PvP Teams</th>
-        <th>Linkshells</th>
-        <th>Characters</th>
-    </tr></thead>
+    <caption>
+        <h2 data-tooltip="All dates besides `Formed` are tracker-specific. `Formed` is based on Lodestone data.">Activity calendar</h2>
+    </caption>
+    <thead>
+        <tr>
+            <th rowspan="2">Date</th>
+            <th colspan="3">Formed</th>
+            <th colspan="4">Added</th>
+            <th colspan="4">Deleted</th>
+            <th rowspan="2">Characters Privated</th>
+        </tr>
+        <tr>
+            <th>Free Companies</th>
+            <th>PvP Teams</th>
+            <th>Linkshells</th>
+            <th>Free Companies</th>
+            <th>PvP Teams</th>
+            <th>Linkshells</th>
+            <th>Characters</th>
+            <th>Free Companies</th>
+            <th>PvP Teams</th>
+            <th>Linkshells</th>
+            <th>Characters</th>
+        </tr>
+    </thead>
     {% for datekey, datapoint in ffstats.data.timelines %}
         <tr>
-            <td>{{ timeTag(datekey, "Y.m.d") }}</td>
+            <td>{{ timeTag(datekey, 'Y.m.d') }}</td>
             <td>{{ datapoint.free_companies_formed|default(0) }}</td>
             <td>{{ datapoint.pvp_teams_formed|default(0) }}</td>
             <td>{{ datapoint.linkshells_formed|default(0) }}</td>

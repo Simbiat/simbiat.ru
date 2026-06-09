@@ -19,6 +19,7 @@ $maintenance = new Minute();
 try {
     if (Config::$dbup) {
         #Send messages
+        Minute::cliOutput('Sending emails...');
         (void)$maintenance->sendNotifications();
     }
 } catch (Throwable $throwable) {

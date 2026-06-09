@@ -27,7 +27,7 @@ class Password extends Page
     #This is the actual page generation based on further details of the $path
     protected function generate(array $path): array
     {
-        $output_array = [];
+        $output_array = ['user_id' => null, 'token' => null];
         if ($_SESSION['user_id'] === 1) {
             #Check if password reset is being attempted
             if (!empty($path[0]) && \preg_match('/\d+/u', $path[0]) === 1) {

@@ -64,7 +64,7 @@ services:
     #Before starting the container, it's better to clear the session files. It looks like otherwise the service can pick up older settings (unless manually clearing session data).
     #This is also important in case something happens to the phpMyAdmin database/tables, and they got removed, because otherwise it will keep showing error without allowing to fix it directly through the UI.
     command: >
-      /bin/sh -c "rm -f -r /sessions/* &
+      /bin/sh -c "rm -f -r /sessions/* ;
                   /docker-entrypoint.sh apache2-foreground"
 
   #Attempt to use Bun from a container. Was meant to allow not keeping `node_modules` in the host, but it doesn't work
@@ -157,6 +157,11 @@ services:
       - mariadb:database
     command: >
       /bin/sh -c "printenv | grep -v "no_proxy" > /etc/environment &&
+                  #These folders are supposed to be created through dockerfile, but for some reason sometimes they are not created
+                  mkdir -p /tmp/upload/;
+                  mkdir -p /tmp/sessions/;
+                  mkdir -p /tmp/soap/;
+                  mkdir -p /tmp/opcache/;
                   #We need to start cron service before the endpoint
                   cron &&
                   docker-php-entrypoint --config /usr/local/etc/php/caddy.json5 --adapter json5"
@@ -170,6 +175,7 @@ services:
     restart: unless-stopped
     environment:
       GID: 1000
+      TZ: UTC
       COLLECTIONS: crowdsecurity/caddy
         crowdsecurity/whitelist-good-actors
         crowdsecurity/http-cve
@@ -181,8 +187,6 @@ services:
         crowdsecurity/appsec-wordpress
         crowdsecurity/wordpress
         crowdsecurity/discord-crawler-whitelist
-        crowdsecurity/appsec-crs
-        crowdsecurity/appsec-crs-inband
         crowdsecurity/linux
         crowdsecurity/linux-lpe
         crowdsecurity/iptables
@@ -190,6 +194,9 @@ services:
         crowdsecurity/sshd
         barnoux/caddy-coraza
         openappsec/openappsec
+      PARSERS: crowdsecurity/appsec-logs
+      SCENARIOS: crowdsecurity/appsec-native
+        crowdsecurity/crowdsec-appsec-outofband
       BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
       BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
       ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
@@ -238,12 +245,12 @@ services:
                   ln -sf /geoip/GeoLite2-ASN.mmdb /var/lib/crowdsec/data/GeoLite2-ASN.mmdb &&
                   ln -sf /geoip/GeoLite2-City.mmdb /var/lib/crowdsec/data/GeoLite2-City.mmdb &&
                   #Need to ensure that CRS files are up-to-date every time, so we remove them first
-                  rm -f /var/lib/crowdsec/data/REQUEST-9*.conf /var/lib/crowdsec/data/RESPONSE-9*.conf /var/lib/crowdsec/data/iis-errors.data /var/lib/crowdsec/data/java-classes.data /var/lib/crowdsec/data/java-errors.data /var/lib/crowdsec/data/lfi-os-files.data /var/lib/crowdsec/data/php-config-directives.data /var/lib/crowdsec/data/php-errors.data /var/lib/crowdsec/data/php-errors-pl2.data /var/lib/crowdsec/data/php-function-names-933150.data /var/lib/crowdsec/data/php-function-names-933151.data /var/lib/crowdsec/data/php-variables.data /var/lib/crowdsec/data/restricted-files.data /var/lib/crowdsec/data/restricted-upload.data /var/lib/crowdsec/data/scanners-user-agents.data /var/lib/crowdsec/data/sql-errors.data /var/lib/crowdsec/data/ssrf.data /var/lib/crowdsec/data/unix-shell.data /var/lib/crowdsec/data/web-shells-asp.data /var/lib/crowdsec/data/web-shells-php.data /var/lib/crowdsec/data/windows-powershell-commands.data &
+                  rm -f /var/lib/crowdsec/data/REQUEST-9*.conf /var/lib/crowdsec/data/RESPONSE-9*.conf /var/lib/crowdsec/data/iis-errors.data /var/lib/crowdsec/data/java-classes.data /var/lib/crowdsec/data/java-errors.data /var/lib/crowdsec/data/lfi-os-files.data /var/lib/crowdsec/data/php-config-directives.data /var/lib/crowdsec/data/php-errors.data /var/lib/crowdsec/data/php-errors-pl2.data /var/lib/crowdsec/data/php-function-names-933150.data /var/lib/crowdsec/data/php-function-names-933151.data /var/lib/crowdsec/data/php-variables.data /var/lib/crowdsec/data/restricted-files.data /var/lib/crowdsec/data/restricted-upload.data /var/lib/crowdsec/data/scanners-user-agents.data /var/lib/crowdsec/data/sql-errors.data /var/lib/crowdsec/data/ssrf.data /var/lib/crowdsec/data/unix-shell.data /var/lib/crowdsec/data/web-shells-asp.data /var/lib/crowdsec/data/web-shells-php.data /var/lib/crowdsec/data/windows-powershell-commands.data ;
                   cp -r /var/lib/OWASP/rules/* /var/lib/crowdsec/data/ &&
                   mkdir -p /var/lib/crowdsec/data/CoreRuleSet/ &&
                   cp -r /etc/crowdsec/CoreRuleSet/* /var/lib/crowdsec/data/CoreRuleSet/ &&
                   #Don't remember why this is required, I think the folder is not created automatically in some cases
-                  mkdir -p /etc/periodic/daily/ &
+                  mkdir -p /etc/periodic/daily/ ;
                   /bin/bash /docker_start.sh"
 
   mariadb:

@@ -52,6 +52,12 @@ metatags.twig (MS Tile and theme-color)
     --color_game_maker_login_background: oklch(37.1% 0 89.876deg);
     --color_game_maker_login_shadow: oklch(17.3% 0 89.876deg);
 
+    /* Table colors */
+    --table_header: var(--color_block);
+    --table_row: var(--color_article);
+    --table_row_alt: oklch(33% 0.036 297deg);
+    --table_row_hover: oklch(40% 0.040 297deg);
+
     --color_dialog_backdrop: oklch(20% 0.022 296.868deg / 75%);
 
     --gradient_password_very_strong: linear-gradient(to bottom, oklch(81.2% 0.046 85.847deg) 22%, oklch(44% 0.057 80.386deg) 24%, oklch(81.2% 0.046 85.847deg) 26%, oklch(81.2% 0.046 85.847deg) 27%, oklch(94.5% 0.076 91.816deg) 40%, oklch(71.3% 0.128 81.095deg) 78%);

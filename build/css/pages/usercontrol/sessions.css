@@ -3,6 +3,10 @@
 #uc_logs_table {
     margin-block-end: 1rem;
 
+    & tr {
+        block-size: 3rem;
+    }
+
     & tfoot {
         font-size: smaller;
         font-style: italic;

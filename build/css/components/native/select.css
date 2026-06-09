@@ -1,6 +1,5 @@
 /* Styling select, optgroup and option elements */
 select {
-    appearance: none;
     background-color: var(--color_article);
     block-size: auto;
     border-color: var(--border_color_outset);

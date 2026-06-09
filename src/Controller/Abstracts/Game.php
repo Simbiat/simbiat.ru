@@ -15,7 +15,7 @@ class Game extends Page
     #Cache strategy: aggressive, private, live, month, week, day, hour
     protected string $cache_strategy = 'week';
     #Path to game's JS file
-    protected string $game_js = '';
+    protected string $gamemaker_js = '';
     #Flag to indicate the game has sound
     protected bool $has_sound = false;
     #Flag to indicate the game has music
@@ -31,15 +31,15 @@ class Game extends Page
     {
         #Allow `data:`
         @\header('content-security-policy: upgrade-insecure-requests; default-src \'self\'; child-src \'self\'; connect-src \'self\'; font-src \'self\'; frame-src \'self\'; img-src \'self\' https://img2.finalfantasyxiv.com; manifest-src \'self\'; media-src \'self\' data:; object-src \'none\'; script-src \'report-sample\' \'self\'; script-src-elem \'report-sample\' \'self\'; script-src-attr \'none\'; style-src \'report-sample\' \'self\'; style-src-elem \'report-sample\' \'self\'; style-src-attr \'none\'; worker-src \'self\'; base-uri \'self\'; form-action \'self\'; frame-ancestors \'self\';');
-        if (empty($this->game_js)) {
+        if (empty($this->gamemaker_js)) {
             return ['http_error' => 500, 'reason' => 'No game script file setup'];
         }
-        $file = '/app/public'.$this->game_js;
+        $file = '/app/public'.$this->gamemaker_js;
         if (!\file_exists($file)) {
             return ['http_error' => 500, 'reason' => 'Game script file is missing'];
         }
         $output_array = [];
-        $output_array['game_js'] = $this->game_js.'?'.\filemtime($file);
+        $output_array['gamemaker_js'] = $this->gamemaker_js.'?'.\filemtime($file);
         $output_array['has_sound'] = $this->has_sound;
         $output_array['has_music'] = $this->has_music;
         if (!empty($this->og_image)) {

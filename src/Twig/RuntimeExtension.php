@@ -142,7 +142,7 @@ final class RuntimeExtension implements RuntimeExtensionInterface
      */
     public function linkTags(array $links, string $type = 'header'): string
     {
-        return Links::links($links, $type);
+        return Links::links($links, $type, true);
     }
     
     /**

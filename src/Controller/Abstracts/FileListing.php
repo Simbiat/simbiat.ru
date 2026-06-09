@@ -91,6 +91,7 @@ class FileListing extends StaticPage
                 if (count($path) - 1 === $this->dirs[$path[0]]['depth']) {
                     #Get files, since we are on the last allowed level
                     $output_array = $this->listFiles($path[0], $sub_dir);
+                    $output_array['files'][$path[0]]['dirs'] = [];
                 } else {
                     #Get the list of directories
                     $output_array['files'][$path[0]] = $this->getDirs(Config::$work_dir.$this->dirs[$path[0]]['path'].$sub_dir);
@@ -255,7 +256,7 @@ class FileListing extends StaticPage
             $id = 1;
             foreach ($iterator as $key => $file) {
                 if (!in_array($key, $this->exclude, true) && (empty($this->search_for) || mb_stripos($key, $this->search_for, 0, 'UTF-8') !== false)) {
-                    if ($id >= (($this->page - 1) * $this->list_items + 1) && $id <= ($this->page * $this->list_items)) {
+                    if ($id >= ((($this->page - 1) * $this->list_items) + 1) && $id <= ($this->page * $this->list_items)) {
                         $file_details = [
                             'filename' => $file->getFilename(),
                             'basename' => $file->getBasename('.'.$file->getExtension()),

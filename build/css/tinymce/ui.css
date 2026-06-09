@@ -1,9 +1,11 @@
+/* stylelint-disable declaration-no-important, selector-class-pattern, selector-id-pattern -- These are overrides of TinyMCE styles */
 /* Override for UI */
 .tox:not(.tox-tinymce-inline) .tox-editor-header,
 .tox .tox-menubar,
 .tox .tox-toolbar,
 .tox .tox-toolbar__overflow,
 .tox .tox-toolbar__primary {
+    /* noinspection Stylelint */
     background-color: var(--color_block) !important;
 }
 
@@ -256,3 +258,5 @@ body > div.tox.tox-silver-sink.tox-tinymce-aux {
 .tox-form__group:has(input[type='url' i]) {
     display: none;
 }
+
+/* stylelint-enable declaration-no-important, selector-class-pattern, selector-id-pattern -- These are overrides of TinyMCE styles */

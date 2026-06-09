@@ -2,13 +2,17 @@
     <section class="post_header">
         {% if post.noname != true %}
             {% if post.detailed_type == 'Changelog' and is_numeric(post.name) %}
-                <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, "Y.m.d") }}</a></div>
+                <div class="post_name">
+                    <a href="/talks/threads/{{ post.thread_id }}">{{ timeTag(post.name, 'Y.m.d') }}</a>
+                </div>
             {% else %}
-                <div class="post_name"><a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}">{{ post.name }}</a></div>
+                <div class="post_name">
+                    <a href="/talks/threads/{{ post.thread_id }}" data-tooltip="{{ post.name }}">{{ post.name }}</a>
+                </div>
             {% endif %}
         {% endif %}
         <div class="post_time_id">
-            {{ timeTag(post.published, "d/m/Y H:i", "post_time") }}
+            {{ timeTag(post.published, 'd/m/Y H:i', 'post_time') }}
             {% if post.no_post_id != true %}
                 <div class="post_id_wrapper">
                     <h2 class="post_id" id="post_{{ post.id }}">#{{ post.id }}</h2>
@@ -26,29 +30,36 @@
             {% if post.no_user != true %}
                 <section class="post_user">
                     <div class="post_username"><a href="/talks/users/{{ post.author }}">{{ post.author_name }}</a></div>
-                    <div class="post_avatar"><img loading="lazy" decoding="async" alt="{{ post.author_name }}" src="{{ post.avatar }}" class="avatar"></div>
+                    <div class="post_avatar">
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ post.author_name }}" src="{{ post.avatar }}" class="avatar">
+                    </div>
                 </section>
             {% endif %}
             {{ sanitize(post.text) }}
         </section>
     {% endif %}
     <section class="post_footer">
-        <like-dis data-post_id="{{ post.id }}" data-liked="{% if post.is_liked is null %}0{% else %}{{ post.is_liked }}{% endif %}">
-            <input type="button" value="👍" class="like_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.is_liked > 0 %}Remove like{% else %}Like{% endif %}">
+        <like-dis data-post-id="{{ post.id }}" data-liked="{% if post.is_liked is null %}0{% else %}{{ post.is_liked }}{% endif %}">
+            <button type="button" value="👍" class="like_button"{% if 'can_like' not in session_data.permissions or post.author === session_data.user_id %} disabled{% endif %} data-tooltip="{% if post.is_liked > 0 %}Remove like{% else %}Like{% endif %}" data-alt-attribute="Registering preference...">
+                👍
+            </button>
             <span class="likes_count{% if post.is_liked > 0 %} success{% endif %}">{{ post.likes }}</span>
-            <input type="button" value="👎" class="dislike_button"{% if 'can_like' not in session_data.permissions %} disabled{% endif %} data-tooltip="{% if post.is_liked < 0 %}Remove dislike{% else %}Dislike{% endif %}">
+            <button type="button" value="👎" class="dislike_button"{% if 'can_like' not in session_data.permissions or post.author === session_data.user_id %} disabled{% endif %} data-tooltip="{% if post.is_liked < 0 %}Remove dislike{% else %}Dislike{% endif %}" data-alt-attribute="Registering preference...">
+                👎
+            </button>
             <span class="dislikes_count{% if post.is_liked < 0 %} failure{% endif %}">{{ post.dislikes }}</span>
-            <img loading="lazy" decoding="async" class="hidden inline spinner" src="/assets/images/spinner.svg" alt="Registering preference...">
         </like-dis>
         <div class="post_icons">
             {% if allow_reply_to and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
-                <input type="button" class="reply_to_button" data-post_id="{{ post.id }}" data-tooltip="Reply to this post" value="📩">
+                <button type="button" value="📩" class="reply_to_button" data-post-id="{{ post.id }}" data-tooltip="Reply to this post">
+                    📩
+                </button>
             {% endif %}
             {% if post.created|date('Y/m/d H:i') > post.published|date('Y/m/d H:i') %}
-                <span data-tooltip="Backlog post created on {{ post.created|date('d/m/Y H:i') }} UTC">🕰️</span>
+                <span data-tooltip="Backlog post created on {{ post.created|date('d/m/Y H:i') }}">🕰️</span>
             {% endif %}
             {% if post.created|date('Y/m/d H:i') < post.published|date('Y/m/d H:i') %}
-                <span data-tooltip="Scheduled post created on {{ post.created|date('d/m/Y H:i') }} UTC">⏲️</span>
+                <span data-tooltip="Scheduled post created on {{ post.created|date('d/m/Y H:i') }}">⏲️</span>
             {% endif %}
             {% if post.locked %}
                 {% if not history_version and 'edit_locked' in session_data.permissions and ((owned and 'edit_own_posts' in session_data.permissions) or (not owned and 'edit_others_posts' in session_data.permissions)) %}
@@ -61,13 +72,15 @@
                 {% endif %}
             {% endif %}
             {% if post.attachments|length > 0 %}
-                <input type="button" class="toggle_details" data-details-id="post_attachments_{{ post.id }}" data-tooltip="List of {{ post.attachments|length }} attachment{% if post.attachments|length > 1 %}s{% endif %}" value="📎">
+                <button type="button" value="📎" class="toggle_details" data-details-id="post_attachments_{{ post.id }}" data-tooltip="List of {{ post.attachments|length }} attachment{% if post.attachments|length > 1 %}s{% endif %}">
+                    📎
+                </button>
             {% endif %}
             {% if post.private %}<span data-tooltip="Private post">🚷</span>{% endif %}
             {% if post.system %}<span data-tooltip="System post">⚠</span>{% endif %}
         </div>
         {% if post.attachments|length > 0 %}
-            <details class="no_marker post_attachments" id="post_attachments_{{ post.id }}">
+            <details class="no_marker post_attachments" id="post_attachments_{{ post.id }}" tabindex="-1">
                 <summary></summary>
                 <table>
                     <tr>
@@ -77,7 +90,9 @@
                     </tr>
                     {% for attachment in post.attachments %}
                         <tr>
-                            <td><a href="{{ uploadedLink(attachment.file_id ~ '.' ~ attachment.extension) }}" target="_blank" rel="noopener noreferrer">{{ attachment.name }}</a></td>
+                            <td>
+                                <a href="{{ uploadedLink(attachment.file_id ~ '.' ~ attachment.extension) }}" target="_blank" rel="noopener noreferrer">{{ attachment.name }}</a>
+                            </td>
                             <td>{{ attachment.mime }}</td>
                             <td>{{ cuteBytes(attachment.size) }}</td>
                         </tr>
@@ -86,7 +101,17 @@
             </details>
         {% endif %}
         {% if post.noeditedtime != true %}
-            <div class="post_edited">{% if post.updated > post.created %}{% if 'view_posts_history' in session_data.permissions %}<a href="/talks/posts/{{ post.id }}#tab_name_history">Edited</a>{% else %}Edited{% endif%} {{ timeTag(post.updated, "d/m/Y H:i", "post_time") }} by <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>{% endif %}</div>
+            <div class="post_edited">
+                {% if post.updated > post.created %}
+                    {% if 'view_posts_history' in session_data.permissions %}
+                        <a href="/talks/posts/{{ post.id }}#tab_name_history">Edited</a>
+                    {% else %}
+                        Edited
+                    {% endif %}
+                    {{ timeTag(post.updated, 'd/m/Y H:i', 'post_time') }} by
+                    <a href="/talks/users/{{ post.editor }}">{{ post.editor_name }}</a>
+                {% endif %}
+            </div>
         {% endif %}
     </section>
 </article>

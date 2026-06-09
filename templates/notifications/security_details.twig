@@ -1,0 +1,13 @@
+<p>These are the details that we have about the action:</p>
+<ul>
+    <li><b>Time: </b>{{ timeTag('now', 'd/m/Y H:i:s') }}</li>
+    {% if session_details.os %}
+        <li><b>Operating System: </b>{{ session_details.os }}</li>
+    {% endif %}
+    {% if session_details.client %}
+        <li><b>Client: </b>{{ session_details.client }}</li>
+    {% endif %}
+    {% if session_details.ip %}
+        <li><b>IP: </b>{{ session_details.ip }}{% if session_details.country or session_details.city %} ({% if session_details.country %}{{ session_details.country }}{% if session_details.city %}, {% endif %}{% endif %}{% if session_details.city %}{{ session_details.city }}{% endif %}){% endif %}</li>
+    {% endif %}
+</ul>

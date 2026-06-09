@@ -96,23 +96,20 @@ class Minute
     }
     
     /**
-     * Output for
+     * Output for CLI
      *
-     * @param string                   $message     Message to output
-     * @param bool                     $log_in_cron Whether to log to Cron log
-     * @param \Simbiat\Cron\EventTypes $event       Cron event type
+     * @param string                   $message Message to output
+     * @param \Simbiat\Cron\EventTypes $event   Cron event type
      *
      * @return void
      */
-    public static function cliOutput(string $message, bool $log_in_cron = false, EventTypes $event = EventTypes::CustomInformation): void
+    public static function cliOutput(string $message, EventTypes $event = EventTypes::CustomInformation): void
     {
         echo '['.\date('c').'] '.$message.\PHP_EOL;
-        if ($log_in_cron) {
-            try {
-                new Agent()->log($message, $event);
-            } catch (\Throwable $throwable) {
-                Errors::error_log($throwable);
-            }
+        try {
+            new Agent()->log($message, $event);
+        } catch (\Throwable $throwable) {
+            Errors::error_log($throwable);
         }
     }
 }

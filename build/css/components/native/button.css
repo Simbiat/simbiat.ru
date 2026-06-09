@@ -26,6 +26,7 @@ a.button {
     padding: 0.1875em 0.375em 0.3125em;
     text-decoration: none;
     text-transform: none;
+    vertical-align: middle;
 
     > * {
         /* noinspection Stylelint */
@@ -47,8 +48,70 @@ a.button {
     }
 
     &:focus,
+    &:focus-visible,
+    &:focus-within,
     &:hover {
         border-color: var(--border_color_outset);
         filter: var(--border_shadow);
+    }
+}
+
+button {
+    &:disabled {
+        border-color: var(--color_disabled);
+        color: var(--color_disabled);
+        cursor: not-allowed;
+        filter: blur(0.025rem) grayscale(1);
+        user-select: none;
+
+        &:focus,
+        &:focus-visible,
+        &:focus-within,
+        &:hover {
+            border-color: var(--color_disabled);
+            filter: blur(0.025rem) grayscale(1);
+        }
+    }
+
+    &:has(img:only-child:not(.nav_icon)) {
+        padding: .15rem;
+    }
+
+    &:has(img:only-child.spinner) {
+        padding: .1875em .375em .3125em;
+    }
+
+    &:has(img:only-child.nav_icon) {
+        block-size: 3rem;
+        inline-size: 3rem;
+        margin: auto;
+        padding: 0;
+    }
+
+    & > img:only-child:not(.nav_icon) {
+        block-size: clamp(1rem, 1.5rem, 2rem);
+    }
+
+    & > img:only-child.spinner {
+        block-size: 100%;
+        display: inline-block;
+        inline-size: unset;
+    }
+
+    & > img:only-child.nav_icon {
+        block-size: 95%;
+        border-radius: var(--border_radius);
+        inline-size: 85%;
+        margin: 0;
+
+        &#nav_show,
+        &#nav_hide {
+            block-size: unset;
+            border-radius: 0;
+            inset-block-start: 0;
+            inset-inline-start: 0;
+            margin: 0;
+            position: relative;
+        }
     }
 }

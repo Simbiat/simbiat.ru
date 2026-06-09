@@ -1,5 +1,5 @@
 <div class="middle">
-    <img loading="lazy" decoding="async" class="avatar gallery_zoom" alt="User's avatar" id="current_avatar" src="{{ user_data.current_avatar|default('/assets/images/avatar.svg') }}">
+    <img crossorigin="anonymous" loading="lazy" decoding="async" class="avatar gallery_zoom" alt="User's avatar" id="current_avatar" src="{{ user_data.current_avatar|default('/assets/images/avatar.svg') }}">
 </div>
 <div class="middle">{{ user_data.username }}</div>
 {% if user_data.about %}

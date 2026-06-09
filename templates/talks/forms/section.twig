@@ -3,7 +3,7 @@
 {% else %}
     {% set section_form_name = 'add_section_form' %}
 {% endif %}
-<form role="form" id="{{ section_form_name }}" name="{{ section_form_name }}" autocomplete="off" class="middle">
+<form id="{{ section_form_name }}" name="{{ section_form_name }}" autocomplete="off" class="middle">
     <input type="hidden" name="verb" value="{% if section_edit %}edit{% else %}add{% endif %}" required>
     {% if section_edit %}
         <input type="hidden" name="section_data[parent_id]" value="{{ parent_id }}" required>
@@ -35,11 +35,11 @@
     {% if not section_edit %}
         <span class="float_label">
             <input id="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" class="section_private" name="section_data[private]" type="checkbox"{% if section_edit and private %} checked{% endif %}>
-            <label for="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" data-tooltip="Public sections can be viewed by anyone.<br>Private ones can be viewed only by creator and people with special permission.<br>Click to change."></label>
+            <label for="{% if section_edit %}cur_section_private{% else %}new_section_private{% endif %}" data-tooltip="Public sections can be viewed by anyone. Private ones can be viewed only by creator and people with special permission. Click to change."></label>
         </span>
         <span class="float_label">
             <input id="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" class="section_closed" name="section_data[closed]" type="checkbox"{% if section_edit and closed %} checked{% endif %}>
-            <label for="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" data-tooltip="Open sections allow posting in them.<br>Closed ones do not.<br>Click to change."></label>
+            <label for="{% if section_edit %}cur_section_closed{% else %}new_section_closed{% endif %}" data-tooltip="Open sections allow posting in them. Closed ones do not. Click to change."></label>
         </span>
     {% endif %}
     <br>
@@ -55,13 +55,13 @@
     {% elseif starting_new_kb %}
         <input type="hidden" name="section_data[type]" value="6">
     {% else %}
-        {{ include('common/elements/selectcustom.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': 'section_data[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
+        {{ include('common/elements/select_custom.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Type', 'input_name': 'section_data[type]', 'items': section_types, 'required': true, 'selected': type}, with_context = false) }}
     {% endif %}
     {{ include('common/elements/imageupload.twig', {'form_name': section_edit ? 'edit_section_form' : 'add_section_form', 'placeholder': 'Custom icon', 'input_name': 'section_data[icon]', 'preview_classes': 'middle section_icon', 'required': false, 'image_url': section_edit ? icon : null, 'mime': 'image/*', 'tooltip': 'Optional icon for the new section'}, with_context = false) }}
     {% if section_edit %}
         <div class="float_label">
             <input id="cur_section_clear_icon" name="section_data[clear_icon]" type="checkbox">
-            <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section (if used), replacing it with the default icon for selected section type.<br>Physical file will not be removed on update, it will only be unlinked from the section.<br>Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
+            <label for="cur_section_clear_icon" data-tooltip="If checked will remove custom icon for the section (if used), replacing it with the default icon for selected section type. Physical file will not be removed on update, it will only be unlinked from the section. Physical file will be removed during routine cleaning of orphaned files, if it is not linked to anything else.">Remove custom icon</label>
         </div>
         <br>
     {% else %}
@@ -69,7 +69,7 @@
             {% if 'post_scheduled' in session_data.permissions %}
                 <div class="float_label">
                     <input id="new_section_time" name="section_data[time]" type="datetime-local" inputmode="numeric" aria-required="false">
-                    <label for="new_section_time" data-tooltip="You can select a future time at which, the section and all its contents will become visible for public.<br>Leave blank, if you want it shown right now.">Schedule for</label>
+                    <label for="new_section_time" data-tooltip="You can select a future time at which, the section and all its contents will become visible for public. Leave blank, if you want it shown right now.">Schedule for</label>
                 </div>
                 <br>
             {% endif %}
@@ -79,6 +79,7 @@
         {{ include('common/elements/change_reason.twig', {'form_name': 'edit_section_form', 'array_name': 'section_data'}, with_context = false) }}
         <br>
     {% endif %}
-    <input role="button" type="submit" name="section_data[submit]" id="{% if section_edit %}edit_section_submit{% else %}add_section_submit{% endif %}" formaction="/api/talks/sections" formmethod="post" formtarget="_self" value="{% if section_edit %}Update{% else %}Add{% endif %}">
-    <img id="{% if section_edit %}edit_section_spinner{% else %}add_section_spinner{% endif %}" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if section_edit %}Adding{% else %}Creating{% endif %} section..." loading="lazy" decoding="async">
+    <button type="submit" value="{% if section_edit %}Update{% else %}Add{% endif %}" name="section_data[submit]" id="{% if section_edit %}edit_section_submit{% else %}add_section_submit{% endif %}" formaction="/api/talks/sections" formmethod="post" formtarget="_self" data-alt-attribute="{% if section_edit %}Adding{% else %}Creating{% endif %} section...">
+        {% if section_edit %}Update{% else %}Add{% endif %}
+    </button>
 </form>

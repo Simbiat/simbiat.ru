@@ -116,7 +116,7 @@ class Character extends AbstractEntity
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) === 1) {
                 return 'Lodestone not available';
             }
-            Errors::error_log($exception, $lodestone->getErrors());
+            Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             return 'Failed to get all necessary data for Character '.$this->id;
         }
         #Check if the character is private
@@ -131,7 +131,7 @@ class Character extends AbstractEntity
                 $this->delete();
                 return ['404' => true];
             }
-            Errors::error_log(new \RuntimeException('Failed to get all necessary data for Character '.$this->id), $lodestone->getErrors());
+            Errors::error_log(new \RuntimeException('Failed to get all necessary data for Character '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             return 'Failed to get all necessary data for Character '.$this->id;
         }
         #Try to get jobs and achievements now, that we got basic information, and there were no issues with it.
@@ -150,7 +150,7 @@ class Character extends AbstractEntity
                 return 'Request throttled by Lodestone';
             }
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
-                Errors::error_log($exception, $lodestone->getErrors());
+                Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
         }
         unset($data['characters'][$this->id]['page_current'], $data['characters'][$this->id]['page_total'], $data['characters'][$this->id]['members_count']);
@@ -196,6 +196,9 @@ class Character extends AbstractEntity
             'previous_servers' => $from_db['servers'] ?? [],
         ];
         $this->biography = $from_db['biography'] ?? null;
+        if ($this->biography) {
+            $this->biography = Sanitization::sanitizeHTML($this->biography);
+        }
         $this->title = [
             'title' => $from_db['title'] ?? null,
             'icon' => $from_db['title_icon'] ?? null,
@@ -640,7 +643,7 @@ class Character extends AbstractEntity
         try {
             #Check if a character exists and is linked already
             $character = Query::query('SELECT `character_id`, `user_id` FROM `uc__user_to_ff_character` WHERE `character_id`=:id;', [':id' => $this->id], return: 'row');
-            if ($character['user_id']) {
+            if ($character !== [] && $character['user_id']) {
                 return ['http_error' => 409, 'reason' => 'Character already linked'];
             }
             #Register or update the character

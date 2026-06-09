@@ -3,7 +3,7 @@
         <li>
             <figure>
                 <a class="gallery_zoom no_new_tab_icon" href="{{ icon.icon }}" target="_blank" rel="noopener noreferrer">
-                    <img loading="lazy" decoding="async" src="{{ icon.icon }}" alt="{{ icon.name|default(basename(icon.icon)) }}">
+                    <img crossorigin="anonymous" loading="lazy" decoding="async" src="{{ icon.icon }}" alt="{{ icon.name|default(basename(icon.icon)) }}">
                 </a>
                 <figcaption class="middle">{{ icon.name|default(basename(icon.icon)) }}</figcaption>
             </figure>

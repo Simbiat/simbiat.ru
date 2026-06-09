@@ -12,7 +12,7 @@
     </div>
 {% endif %}
 {% if session_data.user_id != 1 and session_data.username %}
-    <tab-menu>
+    <tab-menu role="tablist">
         {{ include('talks/tabs/sections.twig') }}
     </tab-menu>
 {% endif %}
@@ -20,7 +20,7 @@
     {% if not children.entities and not threads.entities %}
         <article class="margin_05rem">
             <p class="middle">Looks like we've got nothing in here</p>
-            <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
         </article>
     {% else %}
     {% endif %}

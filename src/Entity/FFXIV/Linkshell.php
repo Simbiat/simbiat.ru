@@ -69,7 +69,7 @@ class Linkshell extends AbstractEntity
                 return 'Request throttled by Lodestone';
             }
             if (\preg_match('/Lodestone not available/ui', $exception->getMessage()) !== 1) {
-                Errors::error_log($exception, $lodestone->getErrors());
+                Errors::error_log($exception, ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
             }
             return 'Failed to get all necessary data for Linkshell '.$this->id;
         }
@@ -79,7 +79,7 @@ class Linkshell extends AbstractEntity
                 return ['404' => true];
             }
             if (empty($data['linkshells']) || empty($data['linkshells'][$this->id]) || !\array_key_exists('page_total', $data['linkshells'][$this->id]) || $data['linkshells'][$this->id]['page_total'] !== 0) {
-                Errors::error_log(new \RuntimeException('Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id), $lodestone->getErrors());
+                Errors::error_log(new \RuntimeException('Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id), ['last_error' => $lodestone->getLastError(), 'all_errors' => $lodestone->getErrors()]);
                 return 'Failed to get all necessary data for '.($this::CROSSWORLD ? 'Crossworld ' : '').'Linkshell '.$this->id;
             }
             #At some point, empty linkshells became possible on lodestone, those that have a page, but no members at all, and are not searchable by name. Possibly private linkshells or something like that

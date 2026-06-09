@@ -1,10 +1,10 @@
 {% if json_ready %}
-    {# Twig will escape quotes and other characters without `raw` filter here, even if Twig's `|json_encode` filter is used #}
+    {# Twig will escape quotes and other characters without `raw` filter here, even if Twig's `|json_encode` filter is used. Otherwise sanitization is handled by respesctive API controllers #}
     {{ json_ready|raw }}
 {% else %}
-{
+    {
     "status": {{ http_error }},
     "CSRF": "{{ session_data.csrf }}",
     "reason": "{% if reason %}{% if reason == 'Teapot' %}Unsupported client{% else %}{{ reason }}{% endif %}{% else %}Unknown{% endif %}"
-}
+    }
 {% endif %}

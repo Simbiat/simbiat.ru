@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!--TODO: May require extra setup for Symfony https://github.com/psalm/psalm-plugin-symfony-->
 <psalm
+    autoloader="/app/vendor/autoload.php"
     errorLevel="1"
     reportMixedIssues="true"
     addParamDefaultToDocblockType="true"

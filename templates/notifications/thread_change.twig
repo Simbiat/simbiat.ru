@@ -25,7 +25,7 @@
         {% for key, change in changes %}
             {% if key == 'og_image' %}
                 {% if change.to %}
-                    <li>Banner: to <img loading="lazy" decoding="async" alt="New banner" src="{{ domain }}{{ change.to }}" class="banner_preview">
+                    <li>Banner: to <img crossorigin="anonymous" loading="lazy" decoding="async" alt="New banner" src="{{ domain }}{{ change.to }}" class="banner_preview">
                 {% else %}
                     <li>Banner: removed</li>
                 {% endif %}
@@ -34,12 +34,12 @@
             {% else %}
                 {% if change.to %}
                     {% if change.from %}
-                        <li><img loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: changed to <var>{{ change.to.url }}</var></li>
+                        <li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: changed to <var>{{ change.to.url }}</var></li>
                     {% else %}
-                        <li><img loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: linked to <var>{{ change.to.url }}</var></li>
+                        <li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.to.icon }}" class="link_icon">: linked to <var>{{ change.to.url }}</var></li>
                     {% endif %}
                 {% else %}
-                    <li><img loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.from.icon }}" class="link_icon">: removed</li>
+                    <li><img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ key }}" src="{{ domain }}{{ change.from.icon }}" class="link_icon">: removed</li>
                 {% endif %}
             {% endif %}
         {% endfor %}

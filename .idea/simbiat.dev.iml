@@ -18,7 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/HTMLCache/" isTestSource="false" packagePrefix="Simbiat\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/HTTP/SSE/" isTestSource="false" packagePrefix="Simbiat\HTTP\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/SandClock/" isTestSource="false" packagePrefix="Simbiat\" />
-      <sourceFolder url="file://$MODULE_DIR$/packages/StringHelpers/" isTestSource="false" packagePrefix="Simbiat\StringHelper\" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/StringHelpers/" isTestSource="false" packagePrefix="Simbiat\StringHelpers\" />
       <sourceFolder url="file://$MODULE_DIR$/packages/http20/" isTestSource="false" packagePrefix="Simbiat\http20\" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/!spares" />
@@ -63,6 +63,7 @@
       <excludeFolder url="file://$MODULE_DIR$/public/assets/images/fftracker/icons" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/images/fftracker/maps" />
       <excludeFolder url="file://$MODULE_DIR$/build/BIC" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/DDCIcons/icons" />
       <excludePattern pattern="public\assets\app.*" />
     </content>
     <orderEntry type="inheritedJdk" />

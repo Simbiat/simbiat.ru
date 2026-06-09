@@ -1,25 +1,26 @@
 <section>
     <p>Linking a character will allow you to force-update it and its respective groups on their pages. There are some other features planned for the future, as well (for example, commenting on other characters).</p>
-    <p>To link a character follow below instructions.</p>
+    <p>To link a character, follow the below instructions.</p>
     <details{% if characters is empty %} open{% endif %}>
         <summary>Instructions</summary>
         <ol>
-            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank" rel="noopener noreferrer"><img loading="lazy" decoding="async" alt="Lodestone" class="link_icon" src="/assets/images/icons/lodestone.svg">Lodestone</a></li>
+            <li>Login to your profile on <a href="https://eu.finalfantasyxiv.com/lodestone/my/" target="_blank" rel="noopener noreferrer"><img crossorigin="anonymous" loading="lazy" decoding="async" alt="Lodestone" class="link_icon" src="/assets/images/icons/lodestone.svg">Lodestone</a></li>
             <li>Go to the profile of the character you want to link.</li>
-            <li>Scroll the page to "Character profile" section and click the edit button.</li>
+            <li>Scroll the page to the "Character profile" section and click the edit button.</li>
             <li>Paste this token <code>fftracker:{{ token }}</code> anywhere in the text field and save the changes.</li>
-            <li>Get the character id from URL of the character profile. URL normally looks like <samp>https://eu.finalfantasyxiv.com/lodestone/character/%character_id%/</samp>, where <samp>%character_id%</samp> is the value you need to copy.</li>
+            <li>Get the character id from the URL of the character profile. URL normally looks like <samp>https://eu.finalfantasyxiv.com/lodestone/character/%character_id%/</samp>, where <samp>%character_id%</samp> is the value you need to copy.</li>
             <li>Input the copied value into the form below and link the character.</li>
-            <li>If link was successful, you can revert the profile changes you've just made.</li>
+            <li>If linking was successful, you can revert the profile changes you've just made.</li>
         </ol>
     </details>
     <form id="ff_link_user">
         <div class="float_label" data-tooltip="Character ID as seen on Lodestone (in URL)">
-            <input autofocus type="text" required aria-required="true" name="character_id" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="text" minlength="1" maxlength="10" pattern="^\d{1,10}$">
+            <input autofocus type="number" required aria-required="true" name="character_id" id="ff_link_id" placeholder="Character ID" autocomplete="off" inputmode="numeric" min="1" max="9999999">
             <label for="ff_link_id">Character ID</label>
         </div>
-        <input type="submit" value="Link" id="ff_link_submit">
-        <img loading="lazy" decoding="async" id="ff_link_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Linking character...">
+        <button type="submit" value="Link" id="ff_link_submit" data-alt-attribute="Linking character...">
+            Link
+        </button>
     </form>
 </section>
 {% if characters %}

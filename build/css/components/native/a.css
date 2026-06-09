@@ -30,4 +30,8 @@ a {
     &:active {
         filter: brightness(0.7);
     }
+
+    &:has(img:only-child) {
+        text-decoration: none;
+    }
 }

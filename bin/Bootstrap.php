@@ -1,5 +1,4 @@
 <?php
-#Suppressing unhandled exceptions, since they are meant to be handled inside the respective functions
 declare(strict_types = 1);
 
 #TODO: consider this to be absorbed into the Symfony kernel bootstrap

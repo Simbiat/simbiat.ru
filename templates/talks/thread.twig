@@ -1,7 +1,7 @@
 {% if not posts.entities %}
     <article class="margin_05rem">
         <p class="middle">Looks like we've got nothing in here</p>
-        <img loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Not found" src="/assets/images/errors/notfound.webp" class="middle block">
     </article>
 {% else %}
     {% if created|date('Y/m/d H:i') != published|date('Y/m/d H:i') or pinned or closed or private or system or (access_token and get_access_token and access_token == get_access_token) %}
@@ -30,7 +30,7 @@
         </div>
     {% endif %}
     {% if session_data.user_id != 1 and session_data.username %}
-        <tab-menu>
+        <tab-menu role="tablist">
             {{ include('talks/tabs/threads.twig') }}
         </tab-menu>
     {% endif %}

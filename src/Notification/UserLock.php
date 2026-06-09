@@ -7,7 +7,7 @@ use App\Service\Errors;
 use App\Twig\EnvironmentGenerator;
 
 /**
- * Notification about user being locked due to wrong password
+ * Notification about a user being locked due to a wrong password
  */
 final class UserLock extends Notification
 {
@@ -25,7 +25,7 @@ final class UserLock extends Notification
     protected const bool ALL_EMAILS = true;
     
     /**
-     * Generate text for message
+     * Generate text for the message
      *
      * @param array $twig_vars Array of variables for Twig
      *

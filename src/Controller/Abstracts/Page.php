@@ -56,6 +56,8 @@ abstract class Page
     #Static list of images to H2 push, which are common for the page type
     protected array $h2_push = [
         '/assets/images/logo.svg',
+        '/assets/images/menu.svg',
+        '/assets/images/close.svg',
         '/assets/images/share.svg',
         '/assets/images/navigation/home.svg',
         '/assets/images/navigation/talks.svg',
@@ -64,6 +66,7 @@ abstract class Page
         '/assets/images/navigation/about.svg',
         '/assets/images/navigation/simplepages.svg',
         '/assets/images/navigation/gamepad.svg',
+        '/assets/images/supops/logo/square_navigation.svg'
     ];
     #List of images to H2 push, which are dependent on data grabbed by the page during generation
     protected array $h2_push_extra = [];
@@ -170,12 +173,12 @@ abstract class Page
             foreach ($this->h2_push as $key => $image) {
                 $this->h2_push[$key] = ['href' => $image, 'rel' => 'preload', 'as' => 'image'];
             }
-            Links::links($this->h2_push);
+            Links::links($this->h2_push, force_cross_origin: true);
         }
         if (!empty($this->alt_links)) {
             #Send HTTP header
             if (!HomePage::$stale_return) {
-                Links::links($this->alt_links);
+                Links::links($this->alt_links, force_cross_origin: true);
             }
             #Add a link to HTML
             $page['link_extra'] = $this->alt_links;
@@ -272,8 +275,8 @@ abstract class Page
         #`mb_encode_numericentity` is done as per workaround for UTF-8 loss/corruption on loading from https://stackoverflow.com/questions/8218230/php-domdocument-loadhtml-not-encoding-utf-8-correctly
         #LIBXML_HTML_NOIMPLIED and LIBXML_HTML_NOTED to avoid adding wrappers (html, body, DTD). This will also allow fewer issues in case string has both regular HTML and some regular text (outside any tags). LIBXML_NOBLANKS to remove empty tags if any. LIBXML_PARSEHUGE to allow processing of larger strings. LIBXML_COMPACT for some potential optimization. LIBXML_NOWARNING and LIBXML_NOERROR to suppress warning in case of malformed HTML. LIBXML_NONET to protect from unsolicited connections to external sources.
         $html->loadHTML(mb_encode_numericentity($string, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8'), \LIBXML_HTML_NOIMPLIED | \LIBXML_HTML_NODEFDTD | \LIBXML_NOBLANKS | \LIBXML_PARSEHUGE | \LIBXML_COMPACT | \LIBXML_NOWARNING | \LIBXML_NOERROR | \LIBXML_NONET);
-        $html->preserveWhiteSpace = false;
-        $html->formatOutput = false;
+        $html->preserveWhiteSpace = true;
+        $html->formatOutput = true;
         $html->normalizeDocument();
         #Remove the elements
         foreach (new \DOMXPath($html)->query('//details') as $element) {
@@ -283,7 +286,7 @@ abstract class Page
         $cleaned_html = $html->saveHTML();
         #Strip the excessive HTML tags if we added them
         $cleaned_html = \preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html);
-        $new_description = \strip_tags(Cut::cut(\preg_replace('/(^\s*<html( [^<>]*)?>)(.*)(<\/html>\s*$)/uis', '$3', $cleaned_html), 160, 1));
+        $new_description = \strip_tags(Cut::cut($cleaned_html, 160, 1));
         #Update description only if it's not empty
         if (!Sanitize::whiteString($new_description)) {
             $this->og_desc = $new_description;

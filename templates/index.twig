@@ -27,7 +27,7 @@
                 <header>
                     {{ include('common/layout/header.twig') }}
                 </header>
-                <main role="main" id="main">
+                <main id="main">
                     {% if http_error and (static_page == false or (static_page and http_error != 503)) and cached_page == false %}
                         <article id="http_error">
                             {% if construction == false %}
@@ -60,11 +60,13 @@
                 </footer>
             </div>
             {{ include('common/layout/sidebar.twig') }}
-            <over-lays>
-                {{ include('common/layout/gallery.twig') }}
-                <tool-tip id="tooltip" role="tooltip" aria-label="Tooltip"></tool-tip>
-                <snack-bar role="dialog"></snack-bar>
-            </over-lays>
+            <div id="overlays">
+                <dialog class="modal" aria-label="Gallery overlay" id="gallery_dialog">
+                    {{ include('CustomElements/GalleryOverlay.twig') }}
+                </dialog>
+                <tool-tip id="tooltip" role="tooltip" aria-label="Tooltip" popover="manual"></tool-tip>
+                <div id="snackbar_container"></div>
+            </div>
             {{ include('common/layout/templates.twig') }}
         </body>
     {% endif %}

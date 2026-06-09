@@ -30,7 +30,7 @@
     /* False positive https://youtrack.jetbrains.com/issue/WI-84694/ */
     /* noinspection CssInvalidNestedSelector */
 
-    tab-content > & {
+    div.tab_content > & {
         margin-block-start: 0;
     }
 }
@@ -41,7 +41,7 @@
     border-start-end-radius: var(--border_radius);
     border-start-start-radius: var(--border_radius);
     grid-area: post_header;
-    padding-inline: 0.25rem 0.25rem;
+    padding-inline: 0.25rem;
 }
 
 .post_name {
@@ -88,7 +88,7 @@
             'post_likes post_icons'
             'post_likes post_attachments'
             'post_likes post_edit';
-    padding-inline: 0.25rem 0.25rem;
+    padding-inline: 0.25rem;
 }
 
 .post_attachments {

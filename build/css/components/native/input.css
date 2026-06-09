@@ -41,17 +41,19 @@ input {
         }
     }
 
-    &[required] + label::after {
+    &[required]:not([type="button" i], [type="reset" i], [type="submit" i], [type="image" i]) + label::after {
         color: var(--color_failure);
         content: '*';
     }
 
-    &:invalid {
+    &:not([type="button" i], [type="reset" i], [type="submit" i], [type="image" i]):invalid {
         border-color: var(--color_failure);
         box-shadow: 0.1rem 0.1rem 0.75rem var(--color_failure), -0.1rem -0.1rem 0.75rem var(--color_failure);
     }
 
-    &:focus:valid {
+    &:not([type="button" i], [type="reset" i], [type="submit" i], [type="image" i]):focus:valid,
+    &:not([type="button" i], [type="reset" i], [type="submit" i], [type="image" i]):focus-visible:valid,
+    &:not([type="button" i], [type="reset" i], [type="submit" i], [type="image" i]):focus-within:valid {
         border-color: var(--color_success);
         box-shadow: 0.1rem 0.1rem 0.75rem var(--color_success), -0.1rem -0.1rem 0.75rem var(--color_success);
     }

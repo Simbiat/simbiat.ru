@@ -8,6 +8,7 @@ tool-tip {
     color: var(--color_text);
     display: none;
     inline-size: fit-content;
+    inset: auto;
     inset-block-start: var(--cursor_y);
     inset-inline-start: var(--cursor_x);
     margin: 1rem auto;

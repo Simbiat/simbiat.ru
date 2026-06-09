@@ -1,5 +1,8 @@
-<html-templates>
+<div id="html_templates">
     {{ include('common/elements/snackbar.twig') }}
+    <template id="spinner">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="spinner" src="/assets/images/spinner.svg" alt="Processing...">
+    </template>
     {% if service_name == 'uc' %}
         {% if subservice_name == 'emails' %}
             <template id="email_row">
@@ -11,4 +14,4 @@
             </template>
         {% endif %}
     {% endif %}
-</html-templates>
+</div>

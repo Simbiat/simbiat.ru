@@ -1,9 +1,11 @@
 <li id="{{ avatar.file_id|default('hash') }}">
     <span class="float_label">
-        <input id="avatar_{{ avatar.file_id|default('hash') }}" type="radio"{% if avatar.current %} checked{% endif %}>
+        <input id="avatar_{{ avatar.file_id|default('hash') }}" type="radio"{% if avatar|default(null) and avatar.current|default(null) %} checked{% endif %}>
         <label for="avatar_{{ avatar.file_id|default('hash') }}">
-            <img loading="lazy" decoding="async" alt="Avatar {{ number }}" src="{{ avatar.url }}" class="avatar">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Avatar {{ number|default(null) }}" src="{{ avatar.url|default(null) }}" class="avatar">
         </label>
     </span>
-    <input id="del_{{ avatar.file_id|default('hash') }}" alt="Delete avatar" type="image" class="delete_avatar{% if avatar and avatar.current %} hidden{% endif %}"{% if avatar and avatar.current %} disabled{% endif %} src="/assets/images/close.svg">
+    <button id="del_{{ avatar.file_id|default('hash') }}" type="button" class="delete_avatar{% if avatar|default(null) and avatar.current|default(null) %} hidden{% endif %}"{% if avatar|default(null) and avatar.current|default(null) %} disabled{% endif %}>
+        <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Delete avatar" src="/assets/images/close.svg">
+    </button>
 </li>

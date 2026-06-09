@@ -89,6 +89,7 @@ nav li::before {
 .nav_element details {
     display: inline-block;
     inline-size: calc(100% - 0.2rem);
+    text-decoration: none;
 }
 
 .nav_line {

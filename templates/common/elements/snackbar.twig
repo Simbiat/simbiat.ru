@@ -1,5 +1,8 @@
 <template id="snackbar_template">
     <dialog role="alertdialog" class="snackbar fade_in">
-        <span class="snack_text">alert text goes here</span><snack-close data-close-in="0"><input class="nav_icon snack_close" alt="Close notification" type="image" src="/assets/images/close.svg" aria-invalid="false" placeholder="image"></snack-close>
+        <span class="snack_text">alert text goes here</span>
+        <button class="snack_close" type="button" data-close-in="0">
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="Close notification" src="/assets/images/close.svg">
+        </button>
     </dialog>
 </template>

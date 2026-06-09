@@ -11,7 +11,7 @@
                     <div id="header_mail">
                         <div class="header_text">Simbiat</div>
                         <div id="logo_nav">
-                            <img loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="{{ email.image('@images/favicons/favicon-32x32.png') }}">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="logo" id="logo_icon" class="cursor_pointer" data-tooltip="Simbiat Software" src="{{ email.image('@images/favicons/favicon-32x32.png') }}">
                         </div>
                         <div class="header_text">Software</div>
                     </div>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="xx_small">
                         Email generated at {{ timeTag(created, 'Y-m-d H:i:s') }} UTC and sent at {{ timeTag(sent, 'Y-m-d H:i:s') }} UTC{% if tracker %}
-                        <img class="read_status" src="{{ domain }}/api/uc/notifications?uuid={{ tracker }}" loading="lazy" decoding="async" alt="Read status" title="Read status">{% endif %}
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="read_status" src="{{ domain }}/api/uc/notifications?uuid={{ tracker }}" alt="Read status" title="Read status">{% endif %}
                     </div>
                 </div>
             </div>

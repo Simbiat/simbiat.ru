@@ -33,10 +33,10 @@ samp {
 
     & > .code_desc {
         color: var(--color_disabled);
-        font-size: 1rem;
+        font-size: inherit;
         font-style: italic;
         inline-size: fit-content;
-        inset-block-start: -0.25rem;
+        inset-block-start: 0;
         inset-inline-start: 0.5rem;
         overflow: hidden;
         position: absolute;

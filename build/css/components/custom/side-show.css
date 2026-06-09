@@ -6,9 +6,7 @@ side-show {
     margin-block-end: 1rem;
     margin-inline-end: 1rem;
 
-    & .nav_icon {
-        block-size: 3rem;
-        inline-size: 3rem;
+    & button {
         opacity: 75%;
 
         &:hover,
@@ -17,5 +15,10 @@ side-show {
             background-color: var(--color_block);
             opacity: 100%;
         }
+    }
+
+    & .nav_icon {
+        block-size: 3rem;
+        inline-size: 3rem;
     }
 }

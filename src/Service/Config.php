@@ -1,6 +1,4 @@
 <?php
-#Suppressing "too many properties" warning: this is a config class, it's supposed to be like this
-/** @noinspection PhpClassHasTooManyDeclaredMembersInspection */
 declare(strict_types = 1);
 
 #TODO: move to `/app/config` and consider using YAML, where possible
@@ -14,7 +12,7 @@ use DeviceDetector\DeviceDetector;
 use DeviceDetector\Parser\AbstractParser;
 use DeviceDetector\Parser\Device\AbstractDeviceParser;
 use DeviceDetector\Yaml\Pecl;
-use Dotenv\Dotenv;
+use Symfony\Component\Dotenv\Dotenv;
 use Pdo\Mysql;
 use Simbiat\Database\Connection;
 use Simbiat\Database\Pool;
@@ -85,7 +83,7 @@ final class Config
         'Bots' => 7,
     ];
     /**
-     * Section ID to be used for contact form
+     * Section ID to be used for the contact form
      */
     public const int SUPPORT_SECTION = 26;
     private(set) static array $argon_settings = [];
@@ -113,20 +111,27 @@ final class Config
     public function __construct()
     {
         #Check if we are in CLI
-        if (\preg_match('/^cli(-server)?$/i', \PHP_SAPI) === 1) {
+        if (\preg_match('/^cli(-server)?$/iu', \PHP_SAPI) === 1) {
             self::$cli = true;
         } else {
             self::$cli = false;
         }
         self::$work_dir = '/app';
-        $dotenv = Dotenv::createImmutable(self::$work_dir, '.env');
-        /** @noinspection UnusedFunctionResultInspection */
-        $dotenv->load();
+        $dotenv = new Dotenv();
+        $dotenv->load(self::$work_dir.'/.env');
         #Database settings
-        $dotenv->required(['DATABASE_USER', 'DATABASE_PASSWORD', 'DATABASE_NAME', 'DATABASE_SOCKET'])->notEmpty();
-        #Other settings
-        $dotenv->required(['WEB_SERVER_TEST', 'PROTON_DSN', 'ENCRYPTION_PASSPHRASE'])->notEmpty();
-        self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
+        if (empty($_ENV['DATABASE_USER']) || empty($_ENV['DATABASE_PASSWORD']) || empty($_ENV['DATABASE_NAME']) || empty($_ENV['DATABASE_SOCKET'])) {
+            throw new \RuntimeException('Missing database configuration');
+        }
+        #Other important settings
+        if (empty($_ENV['PROTON_DSN']) || empty($_ENV['ENCRYPTION_PASSPHRASE'])) {
+            throw new \RuntimeException('Missing important setting');
+        }
+        if (\array_key_exists('WEB_SERVER_TEST', $_ENV)) {
+            self::$prod = false;
+        } else {
+            self::$prod = ($_ENV['WEB_SERVER_TEST'] === 'false');
+        }
         self::$http_host = (self::$prod ? 'www.simbiat.eu' : 'localhost');
         self::$base_url = 'https://'.self::$http_host;
         self::$html_cache = \sys_get_temp_dir().'/html/';
@@ -179,11 +184,11 @@ final class Config
         AbstractDeviceParser::setVersionTruncation(AbstractParser::VERSION_TRUNCATION_NONE);
         self::$device_detector = new DeviceDetector();
         self::$device_detector->setYamlParser(new Pecl());
-        self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('matomo')));
+        self::$device_detector->setCache(new PSR6Bridge(new ApcuAdapter('Matomo')));
     }
     
     /**
-     * Generate canonical link
+     * Generate a canonical link
      * @return void
      */
     private function canonical(): void
@@ -199,7 +204,7 @@ final class Config
         if (\preg_match('/\/\?/u', self::$canonical) !== 1) {
             self::$canonical = \preg_replace('/([^\/])$/u', '$1/', self::$canonical);
         }
-        #Also return some of the GET parameters, that we do support
+        #Also return some of the GET parameters that we do support
         self::$canonical .= '?'.\http_build_query([
                 #Do not add the 1st page as a query (since it is excessive)
                 'page' => empty($_GET['page']) || $_GET['page'] === '1' ? null : $_GET['page'],
@@ -222,7 +227,15 @@ final class Config
     private function nonApiLinks(): void
     {
         if (\preg_match('/^\/api(\/|$)/ui', $_SERVER['REQUEST_URI']) === 0) {
-            \array_push(self::$links, ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'], ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'], );
+            \array_push(self::$links,
+                ['rel' => 'stylesheet preload', 'href' => '/assets/styles/'.\filemtime(self::$css_dir.'/app.css').'.css', 'as' => 'style'],
+                ['rel' => 'preload', 'href' => '/assets/app.'.\filemtime(self::$js_dir.'/app.js').'.js', 'as' => 'script'],
+                ['rel' => 'manifest', 'href' => '/manifest.webmanifest', 'type' => 'application/manifest+json'],
+                ['rel' => 'privacy-policy', 'href' => '/about/privacy'],
+                ['rel' => 'terms-of-service', 'href' => '/about/tos'],
+                ['rel' => 'help', 'href' => '/talks/sections/8', 'title' => 'Knowledgebase'],
+                ['rel' => 'help', 'href' => '/about/contacts', 'title' => 'Contacts'],
+            );
         }
     }
     
@@ -256,7 +269,7 @@ final class Config
                 try {
                     self::$db_update = (bool)Query::query('SELECT `value` FROM `sys__settings` WHERE `setting`=\'maintenance\'', return: 'value');
                 } catch (\Throwable $exception) {
-                    #The most likely cause of the maintenance check to fail is if the table does not exist. If it does not - consider that we are under maintenance.
+                    #The most likely cause of the maintenance check to fail is if the table does not exist. If it does not, consider that we are under maintenance.
                     self::$db_update = true;
                     Errors::error_log($exception);
                 }

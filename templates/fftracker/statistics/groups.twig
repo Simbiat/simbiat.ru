@@ -1,4 +1,4 @@
-<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<p>All data below is for {{ timeTag(ffstats.data.time, 'd/m/Y') }}.</p>
 <table>
     <caption><h2>20 most popular estates among companies</h2></caption>
     <thead><tr>
@@ -7,7 +7,7 @@
     </tr></thead>
     {% for estate in ffstats.data.freecompany.estate.top %}
         <tr>
-            <td>{{ estate.value }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
+            <td>{{ estate.value }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
             <td>{{ estate.count }}</td>
         </tr>
     {% endfor %}
@@ -20,7 +20,7 @@
     </tr></thead>
     {% for estate in ffstats.data.freecompany.estate.bottom %}
         <tr>
-            <td>{{ estate.value }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
+            <td>{{ estate.value }} <a class="gallery_zoom no_new_tab_icon interactive_border" href="/assets/images/fftracker/maps/{{ estate.area }}/{{ estate.plot }}.webp" target="_blank" data-tooltip="{{ estate.area }}, plot {{ estate.plot }}"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Show on map" data-tooltip="Show on map" src="/assets/images/fftracker/zoom.webp"></a></td>
             <td>{{ estate.count }}</td>
         </tr>
     {% endfor %}
@@ -134,7 +134,7 @@
     </tr></thead>
     {% for datapoint in ffstats.data.freecompany.crests %}
         <tr>
-            <td><img loading="lazy" decoding="async" class="ff_crest gallery_zoom" alt="Crest used by {{ datapoint.count }} Free Companies" src="{{ datapoint.icon }}"></td>
+            <td><img crossorigin="anonymous" loading="lazy" decoding="async" class="ff_crest gallery_zoom" alt="Crest used by {{ datapoint.count }} Free Companies" src="{{ datapoint.icon }}"></td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}
@@ -147,7 +147,7 @@
     </tr></thead>
     {% for datapoint in ffstats.data.pvpteam.crests %}
         <tr>
-            <td><img loading="lazy" decoding="async" class="ff_crest gallery_zoom" alt="Crest used by {{ datapoint.count }} PvP Teams" src="{{ datapoint.icon }}"></td>
+            <td><img crossorigin="anonymous" loading="lazy" decoding="async" class="ff_crest gallery_zoom" alt="Crest used by {{ datapoint.count }} PvP Teams" src="{{ datapoint.icon }}"></td>
             <td>{{ datapoint.count }}</td>
         </tr>
     {% endfor %}

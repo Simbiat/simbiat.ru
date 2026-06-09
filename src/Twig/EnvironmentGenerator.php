@@ -7,6 +7,7 @@ namespace App\Twig;
 #Twig environment
 use App\Service\Config;
 use Twig\Environment;
+use Twig\Extension\CoreExtension;
 use Twig\Extra\CssInliner\CssInlinerExtension;
 use Twig\Loader\FilesystemLoader;
 
@@ -32,6 +33,7 @@ final class EnvironmentGenerator
             $loader->addPath(Config::$work_dir.'/public/assets/images/', 'images'); // this creates the @images namespace
             $loader->addPath(Config::$work_dir.'/public/assets/styles/', 'styles'); // this creates the @styles namespace
             self::$environment = new Environment($loader, ['cache' => \sys_get_temp_dir().'/twig/', 'auto_reload' => true, 'autoescape' => 'html', 'use_yield' => true, 'strict_variables' => true]);
+            self::$environment->getExtension(CoreExtension::class)->setTimezone($_SESSION['timezone'] ?? $_SERVER['HTTP_X_CLIENT_TIMEZONE'] ?? 'UTC');
             self::$environment->addExtension(new Extension());
             self::$environment->addExtension(new CssInlinerExtension());
         }

@@ -1,4 +1,4 @@
-<p>All data below is for {{ timeTag(ffstats.data.time, "d/m/Y") }}.</p>
+<p>All data below is for {{ timeTag(ffstats.data.time, 'd/m/Y') }}.</p>
 <table>
     <caption><h2>Use of communities statistics</h2></caption>
     <thead><tr>
@@ -40,7 +40,7 @@
     </thead>
     {% for datekey, datapoint in ffstats.data.updates_stats %}
         <tr>
-            <td>{{ timeTag(datekey, "Y.m.d") }}</td>
+            <td>{{ timeTag(datekey, 'Y.m.d') }}</td>
             <td>{{ datapoint.characters|default(0) }}</td>
             <td>{{ datapoint.free_companies|default(0) }}</td>
             <td>{{ datapoint.pvp_teams|default(0) }}</td>

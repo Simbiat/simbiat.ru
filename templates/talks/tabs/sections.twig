@@ -1,76 +1,80 @@
 {# Check if user does not have a blog created and we are in a blog root section #}
 {% if id == 1 and not session_data.sections.blog %}
     <a class="tab_name" id="tab_name_start_blog" href="#tab_name_start_blog">Start blog</a>
-    <tab-content id="tab_content_start_blog">
+    <div class="tab_content" id="tab_content_start_blog">
         <p>Fill in and submit the form below to create your personal blog.</p>
         {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': true, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
-    </tab-content>
+    </div>
 {% endif %}
 {# Check if user does not have a changelog created and we are in a changelog root section #}
 {% if id == 3 and not session_data.sections.changelog %}
     <a class="tab_name" id="tab_name_start_changelog" href="#tab_name_start_changelog">Start changelog</a>
-    <tab-content id="tab_content_start_changelog">
+    <div class="tab_content" id="tab_content_start_changelog">
         <p>Fill in and submit the form below to create your changelog.</p>
         {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': true, 'starting_new_kb': false}) }}
-    </tab-content>
+    </div>
 {% endif %}
 {# Check if user does not have a knowledgebase created and we are in a knowledgebase root section #}
 {% if id == 4 and not session_data.sections.knowledgebase %}
     <a class="tab_name" id="tab_name_start_knowledgebase" href="#tab_name_start_knowledgebase">Start knowledgebase</a>
-    <tab-content id="tab_content_start_knowledgebase">
+    <div class="tab_content" id="tab_content_start_knowledgebase">
         <p>Fill in and submit the form below to create your knowledgebase.</p>
         {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': true}) }}
-    </tab-content>
+    </div>
 {% endif %}
 {% if type != 'Category' and 'can_post' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions) %}
     {% if (type != 'Blog' and type != 'Knowledgebase' and type != 'Changelog') or ((type == 'Blog' or type == 'Knowledgebase' or type == 'Changelog') and owned) %}
         <a class="tab_name" id="tab_name_new_thread" href="#tab_name_new_thread">New {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}</a>
-        <tab-content id="tab_content_new_thread">
+        <div class="tab_content" id="tab_content_new_thread">
             <p>Fill in and submit the form below to create a new {% if type == 'Knowledgebase' %}article{% elseif type == 'Support' %}ticket{% elseif type == 'Changelog' %}change{% else %}thread{% endif %}.</p>
             {{ include('talks/forms/thread.twig', {'thread_edit': false, 'contact_form': false, 'external_links': null}) }}
-        </tab-content>
+        </div>
     {% endif %}
 {% endif %}
 {% if (id == 1 and session_data.sections.blog) or (id == 3 and session_data.sections.changelog) or (id == 4 and session_data.sections.knowledgebase) or (id != 1 and id != 3 and id != 4) %}
     {% if inherited_type != 'Blog' and (owned or ('add_sections' in session_data.permissions and (not closed or 'post_in_closed' in session_data.permissions))) %}
         <a class="tab_name" id="tab_name_new_section" href="#tab_name_new_section">Add subsection</a>
-        <tab-content id="tab_content_new_section">
+        <div class="tab_content" id="tab_content_new_section">
             <p>Fill in and submit the form below to create a new subsection in the currently selected one.</p>
             {{ include('talks/forms/section.twig', {'section_edit': false, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
-        </tab-content>
+        </div>
     {% endif %}
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <a class="tab_name" id="tab_name_edit" href="#tab_name_edit">Edit</a>
-    <tab-content id="tab_content_edit">
+    <div class="tab_content" id="tab_content_edit">
         {{ include('talks/forms/section.twig', {'section_edit': true, 'starting_new_blog': false, 'starting_new_changelog': false, 'starting_new_kb': false}) }}
-    </tab-content>
+    </div>
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <a class="tab_name warning" id="tab_name_private" href="#tab_name_private">Mark {% if private %}public{% else %}private{% endif %}</a>
-    <tab-content id="tab_content_private">
-        <form role="form" id="section_private_form" name="section_private_form" autocomplete="off" class="middle">
+    <div class="tab_content" id="tab_content_private">
+        <form id="section_private_form" name="section_private_form" autocomplete="off" class="middle">
             {% if private %}
                 <p>Marking the section public will make all content inside this section available for public view.</p>
             {% else %}
-                <p>Marking the section private will hide all the content from almost everyone. Only the owner and users with <var>view_private</var> will be able to see it. Note, that while the content will be removed from sitemaps and thus no longer advertised to search engines, this action has no control on <i>when</i> it will be removed from those engines.</p>
+                <p>Marking the section private will hide all the content from almost everyone. Only the owner and users with
+                    <var>view_private</var> will be able to see it. Note, that while the content will be removed from sitemaps and thus no longer advertised to search engines, this action has no control on
+                    <i>when</i> it will be removed from those engines.</p>
             {% endif %}
             {% if author != session_data.user_id and author not in system_users %}
                 {{ include('common/elements/change_reason.twig', {'form_name': 'section_private_form', 'array_name': 'section_data'}, with_context = false) }}
             {% endif %}
             <input type="hidden" name="verb" value="mark_{% if private %}public{% else %}private{% endif %}" required>
             <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
-            <input role="button" type="submit" id="section_private_submit" value="Mark {% if private %}public{% else %}private{% endif %}">
-            <img loading="lazy" decoding="async" id="section_private_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Marking section {% if private %}public{% else %}private{% endif %}...">
+            <button type="submit" value="Mark {% if private %}public{% else %}private{% endif %}" id="section_private_submit" data-alt-attribute="Marking section {% if private %}public{% else %}private{% endif %}...">
+                Mark {% if private %}public{% else %}private{% endif %}
+            </button>
         </form>
-    </tab-content>
+    </div>
 {% endif %}
 {% if 'move_sections' in session_data.permissions and parent_id %}
     <a class="tab_name warning" id="tab_name_move" href="#tab_name_move">Move</a>
-    <tab-content id="tab_content_move">
-        <form role="form" id="section_move_form" name="section_move_form" autocomplete="off" class="middle">
+    <div class="tab_content" id="tab_content_move">
+        <form id="section_move_form" name="section_move_form" autocomplete="off" class="middle">
             <p>Input ID of parent section to which you want to move this section.</p>
-            <p class="warning">Note, that moving this section <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
+            <p class="warning">Note, that moving this section
+                <b>can</b> affect content availability, if new parent public and/or close status differ.</p>
             <div class="float_label">
                 <input type="number" inputmode="decimal" min="1" value="{{ parent_id }}" step="1" aria-required="true" required name="section_data[parent_id]" id="cur_section_parent" placeholder="Parent ID">
                 <label for="cur_section_parent">Parent ID</label>
@@ -78,38 +82,43 @@
             <br>
             <input type="hidden" name="verb" value="move" required>
             <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
-            <input role="button" type="submit" id="section_move_submit" value="Move">
-            <img loading="lazy" decoding="async" id="section_move_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Moving section...">
+            <button type="submit" value="Move" id="section_move_submit" data-alt-attribute="Moving section...">
+                Move
+            </button>
         </form>
-    </tab-content>
+    </div>
 {% endif %}
 {% if owned or 'edit_sections' in session_data.permissions %}
     <a class="tab_name danger" id="tab_name_close" href="#tab_name_close">{% if closed %}Open{% else %}Close{% endif %}</a>
-    <tab-content id="tab_content_close">
-        <form role="form" id="section_closed_form" name="section_closed_form" autocomplete="off" class="middle">
+    <div class="tab_content" id="tab_content_close">
+        <form id="section_closed_form" name="section_closed_form" autocomplete="off" class="middle">
             {% if closed %}
                 <p>Opening this section will allow others to create threads and posts in it, if they have appropriate permissions.</p>
             {% else %}
-                <p>Closing this section will prevent others from creating threads and posts in it, unless they have <var>post_in_closed</var> permission.</p>
+                <p>Closing this section will prevent others from creating threads and posts in it, unless they have
+                    <var>post_in_closed</var> permission.</p>
             {% endif %}
             {% if author != session_data.user_id and author not in system_users %}
                 {{ include('common/elements/change_reason.twig', {'form_name': 'section_closed_form', 'array_name': 'section_data'}, with_context = false) }}
             {% endif %}
             <input type="hidden" name="verb" value="{% if closed %}open{% else %}close{% endif %}" required>
             <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
-            <input role="button" type="submit" id="section_closed_submit" value="{% if closed %}Open{% else %}Close{% endif %}">
-            <img loading="lazy" decoding="async" id="section_closed_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="{% if closed %}Opening{% else %}Closing{% endif %} section...">
+            <button type="submit" value="{% if closed %}Open{% else %}Close{% endif %}" id="section_closed_submit" data-alt-attribute="{% if closed %}Opening{% else %}Closing{% endif %} section...">
+                {% if closed %}Open{% else %}Close{% endif %}
+            </button>
         </form>
-    </tab-content>
+    </div>
 {% endif %}
 {% if (owned or 'remove_sections' in session_data.permissions) and not system %}
     <a class="tab_name danger" id="tab_name_delete" href="#tab_name_delete">Delete</a>
-    <tab-content id="tab_content_delete">
+    <div class="tab_content" id="tab_content_delete">
         {% if children.entities|length > 0 or threads.entities|length > 0 %}
             <p>This section has subsections or/and threads. Removal is not possible.</p>
         {% else %}
-            <form role="form" id="section_delete_form" name="section_delete_form" autocomplete="off" class="middle">
-                <p>Pressing below button will delete the current section completely. <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.</p>
+            <form id="section_delete_form" name="section_delete_form" autocomplete="off" class="middle">
+                <p>Pressing below button will delete the current section completely.
+                    <b class="warning">It will not be possible to restore it</b>, so do it after a good and long thinking.
+                </p>
                 <p>If section has a custom icon it will not be removed along with the section. Instead, it will be removed during routine check for orphaned files, if the icon file is not linked to anything else.</p>
                 <p>If deletion is successful you will be redirected to respective parent section.</p>
                 {% if author != session_data.user_id and author not in system_users %}
@@ -117,9 +126,10 @@
                 {% endif %}
                 <input type="hidden" name="verb" value="delete" required>
                 <input type="hidden" name="section_data[section_id]" value="{{ section_id }}" required>
-                <input role="button" type="submit" class="danger" id="section_delete_submit" value="Delete">
-                <img loading="lazy" decoding="async" id="section_delete_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Deleting section...">
+                <button type="submit" value="Delete" class="danger" id="section_delete_submit" data-alt-attribute="Deleting section...">
+                    Delete
+                </button>
             </form>
         {% endif %}
-    </tab-content>
+    </div>
 {% endif %}

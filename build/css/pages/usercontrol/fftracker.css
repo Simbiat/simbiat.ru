@@ -20,3 +20,7 @@
 #ff_link_user {
     text-align: center;
 }
+
+#ff_link_id {
+    inline-size: 8rem;
+}

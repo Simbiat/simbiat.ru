@@ -84,7 +84,7 @@ q {
     border-block-start: none;
     cursor: pointer;
     font-style: italic;
-    padding-inline: 0.3rem 0.3rem;
+    padding-inline: 0.3rem;
 
     &::before {
         color: var(--color_disabled);

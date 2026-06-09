@@ -1,5 +1,5 @@
 <p class="middle">Current avatar:</p>
-<div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your current avatar" id="current_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}"></div>
+<div class="middle"><img crossorigin="anonymous" loading="lazy" decoding="async" class="avatar" alt="Your current avatar" id="current_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}"></div>
 <p class="middle">Select avatar from previous uploads:</p>
 <ul id="avatars_list">
     {% if avatars %}
@@ -10,7 +10,8 @@
 </ul>
 <form class="middle" id="profile_avatar">
     <p>Upload new avatar:</p>
-    {{ include('common/elements/imageupload.twig', {'form_name': 'profile_avatar', 'placeholder': 'New avatar', 'input_name': 'avatar[file]', 'preview_classes': 'avatar middle', 'required': false, 'mime': 'image/*', 'tooltip': 'Upload your new avatar'}, with_context = false) }}
-    <input role="button" type="submit" name="submit" id="avatar_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Upload">
-    <img id="avatar_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Uploading avatar..." loading="lazy" decoding="async">
+    {{ include('common/elements/imageupload.twig', {'form_name': 'profile_avatar', 'placeholder': 'New avatar', 'input_name': 'avatar[file]', 'preview_classes': 'avatar middle', 'required': false, 'mime': 'image/*', 'tooltip': 'Upload your new avatar', 'image_url': null}, with_context = false) }}
+    <button type="submit" name="submit" id="avatar_submit" value="Upload" data-alt-attribute="Uploading avatar...">
+        Upload
+    </button>
 </form>

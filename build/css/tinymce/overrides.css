@@ -1,3 +1,4 @@
+/* stylelint-disable declaration-no-important -- These are overrides of TinyMCE styles */
 /* Override for content_css for TinyMCE */
 body {
     background-color: var(--color_article);
@@ -97,3 +98,5 @@ table caption {
     font-style: italic !important;
     font-weight: 700 !important;
 }
+
+/* stylelint-enable declaration-no-important -- These are overrides of TinyMCE styles */

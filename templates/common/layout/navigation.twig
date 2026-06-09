@@ -1,11 +1,9 @@
-<nav id="navigation" aria-label="Primary" role="navigation" itemscope itemtype="https://schema.org/SiteNavigationElement">
-    <nav-hide>
-        <input id="hide_nav_icon" class="nav_icon" alt="Close navigation" type="image" src="/assets/images/menu.svg">
-    </nav-hide>
+<nav id="navigation" aria-label="Primary" itemscope itemtype="https://schema.org/SiteNavigationElement">
+    {{ include('CustomElements/NavHide.twig', with_context = false) }}
     <ul id="nav_list">
         <li class="nav_element">
             <div class="nav_line">
-                <a class="nav_item" href="/" target="_self" itemprop="url"><img loading="lazy" decoding="async" class="nav_icon" alt="Home Page" data-tooltip="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></a>
+                <a class="nav_item" href="/" target="_self" itemprop="url"><img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Home Page" data-tooltip="Home Page" src="/assets/images/navigation/home.svg"><span itemprop="name">Home</span></a>
             </div>
         </li>
         {% if service_name != 'homepage' and breadcrumbs and breadcrumbs|length > 1 %}
@@ -19,7 +17,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'talks' %} persistent{% endif %}" {% if service_name == 'talks' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="Talks" src="/assets/images/navigation/talks.svg"><span itemprop="name">Talks</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Talks" src="/assets/images/navigation/talks.svg">
+                        <span itemprop="name">Talks</span>
                     </summary>
                     <ul>
                         <li{% if type == 'Blog' or detailed_type == 'Blog' or section_id == 1 %} class="current"{% endif %}>
@@ -45,7 +44,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'fftracker' %} persistent{% endif %}" {% if service_name == 'fftracker' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="FFXIV Tracker" data-tooltip="FFXIV Tracker" src="/assets/images/navigation/fftracker.svg"><span itemprop="name">FFXIV Tracker</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="FFXIV Tracker" data-tooltip="FFXIV Tracker" src="/assets/images/navigation/fftracker.svg">
+                        <span itemprop="name">FFXIV Tracker</span>
                     </summary>
                     <ul>
                         <li{% if subservice_name == 'statistics' %} class="current"{% endif %}>
@@ -89,7 +89,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'bictracker' %} persistent{% endif %}" {% if service_name == 'bictracker' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="БИК Трекер" data-tooltip="БИК Трекер" src="/assets/images/navigation/bictracker.svg"><span itemprop="name">БИК Трекер</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="БИК Трекер" data-tooltip="БИК Трекер" src="/assets/images/navigation/bictracker.svg">
+                        <span itemprop="name">БИК Трекер</span>
                     </summary>
                     <ul>
                         <li{% if service_name == 'bictracker' and (subservice_name == 'search' or search_value is defined) %} class="current"{% endif %}>
@@ -112,7 +113,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'supops' %} persistent{% endif %}" {% if service_name == 'supops' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="Talks" src="/assets/images/supops/logo/square_navigation.svg"><span itemprop="name">SupOps</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Talks" src="/assets/images/supops/logo/square_navigation.svg">
+                        <span itemprop="name">SupOps</span>
                     </summary>
                     <ul>
                         <li{% if service_name == 'supops' and (not subservice_name or subservice_name == 'pitch') %} class="current"{% endif %}>
@@ -189,7 +191,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'games' %} persistent{% endif %}" {% if service_name == 'games' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="Games" data-tooltip="Games" src="/assets/images/navigation/gamepad.svg"><span itemprop="name">Games</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="Games" data-tooltip="Games" src="/assets/images/navigation/gamepad.svg">
+                        <span itemprop="name">Games</span>
                     </summary>
                     <ul>
                         <li{% if subservice_name == 'jiangshi' %} class="current"{% endif %}>
@@ -209,7 +212,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'simplepages' %} persistent{% endif %}" {% if service_name == 'simplepages' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="About" data-tooltip="Simple Pages" src="/assets/images/navigation/simplepages.svg"><span itemprop="name">Simple Pages</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="About" data-tooltip="Simple Pages" src="/assets/images/navigation/simplepages.svg">
+                        <span itemprop="name">Simple Pages</span>
                     </summary>
                     <ul>
                         <li{% if subservice_name == 'devicedetector' %} class="current"{% endif %}>
@@ -223,7 +227,8 @@
             <div class="nav_line">
                 <details class="nav_cat{% if service_name == 'about' %} persistent{% endif %}" {% if service_name == 'about' %}open{% endif %}>
                     <summary class="right_summary">
-                        <img loading="lazy" decoding="async" class="nav_icon" alt="About" data-tooltip="About" src="/assets/images/navigation/about.svg"><span itemprop="name">About</span>
+                        <img crossorigin="anonymous" loading="lazy" decoding="async" class="nav_icon" alt="About" data-tooltip="About" src="/assets/images/navigation/about.svg">
+                        <span itemprop="name">About</span>
                     </summary>
                     <ul>
                         <li{% if subservice_name == 'me' %} class="current"{% endif %}>

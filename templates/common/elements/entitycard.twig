@@ -21,71 +21,69 @@
     {% set url = 'talks/threads' %}
 {% endif %}
 {# Actual card #}
-<entity-card>
-    <a class="entity_card cursor_pointer{% if subservice_name != 'statistics' and type == 'character' and user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{{ name }}">
-        <span class="entity_icon">
-            {% if type == 'bic' %}
-                {% if DateOut %}
-                    <span class="emoji_red">❌</span>
-                {% else %}
-                    <span class="emoji_green">✔</span>
-                {% endif %}
-            {% elseif type == 'achievement' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ icon }}" class="cursor_pointer">
-            {% elseif type == 'character' %}
-                {% if icon == 'defaultf' %}
-                    <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/no_avatar.webp" class="cursor_pointer">
-                {% else %}
-                    <img loading="lazy" decoding="async" alt="{{ name }}" src="https://img2.finalfantasyxiv.com/f/{{ icon }}c0.jpg" class="cursor_pointer">
-                {% endif %}
-            {% elseif type == 'freecompany' %}
-                {% if icon == '1' %}
-                    <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/Maelstrom.webp" class="cursor_pointer">
-                {% elseif icon == '2' %}
-                    <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/OrderOfTheTwinAdder.webp" class="cursor_pointer">
-                {% elseif icon == '3' %}
-                    <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/ImmortalFlames.webp" class="cursor_pointer">
-                {% else %}
-                    <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
-                {% endif %}
-            {% elseif type == 'pvpteam' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
-            {% elseif type == 'linkshell' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/{% if subservice_name != 'statistics' and crossworld %}crossworld_{% endif %}linkshell.webp" class="cursor_pointer">
-            {% elseif type == 'crossworldlinkshell' %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/crossworld_linkshell.webp" class="cursor_pointer">
+<a class="entity_card cursor_pointer{% if subservice_name != 'statistics' and type == 'character' and user_id and session_data.user_id == user_id %} ff_owned{% endif %}" href="/{{ url }}/{{ id }}" data-tooltip="{{ name }}">
+    <span class="entity_icon">
+        {% if type == 'bic' %}
+            {% if DateOut %}
+                <span class="emoji_red">❌</span>
             {% else %}
-                <img loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
+                <span class="emoji_green">✔</span>
             {% endif %}
-        </span>
-        <span class="entity_name">
-            {% if type == 'thread' %}
-                {{ timeTag(thread.updated, "d/m/Y H:i") }}<br>
-            {% endif %}
-            {% if subservice_name == 'character' %}
-                {% if (type == 'linkshell' or type == 'crossworldlinkshell' or type == 'character') and rank_id and rank_id != 3 and rank_id != 4 %}
-                    <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/lsranks/{{ rank_id }}.webp">
-                {% endif %}
-                {% if (type == 'pvpteam' or type == 'character') and rank_id and rank_id != 3 %}
-                    <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/pvpranks/{{ rank_id }}.webp">
-                {% endif %}
-                {% if (type == 'freecompany' or type == 'character') and rank_id|default('') matches '/^\\d+$/' %}
-                    <img class="entity_rank cursor_pointer" loading="lazy" decoding="async" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/fcranks/{{ rank_id }}.webp">
-                {% endif %}
-            {% endif %}
-            {% if type == 'thread' %}
-                <b>{% if detailed_type == 'Changelog' and is_numeric(name) %}{{ timeTag(name, "Y.m.d") }}{% else %}{{ name }}{% endif %}</b>
+        {% elseif type == 'achievement' %}
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/icons/{{ icon }}" class="cursor_pointer">
+        {% elseif type == 'character' %}
+            {% if icon == 'defaultf' %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/no_avatar.webp" class="cursor_pointer">
             {% else %}
-                {{ name }}
-                {% if subservice_name == 'points' and type == 'character' and achievement_points %}
-                    <br>
-                    <img class="ff_achievement_points cursor_pointer" loading="lazy" decoding="async" alt="{{ achievement_points }} points" data-tooltip="{{ achievement_points }} points" src="/assets/images/fftracker/Cup.webp">{{ achievement_points }}
-                {% endif %}
+                <img loading="lazy" decoding="async" alt="{{ name }}" src="https://img2.finalfantasyxiv.com/f/{{ icon }}c0.jpg" class="cursor_pointer">
             {% endif %}
-            {% if subservice_name != 'statistics' and type == 'character' and user_id %}
-                <sup>🔗</sup>
+        {% elseif type == 'freecompany' %}
+            {% if icon == '1' %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/Maelstrom.webp" class="cursor_pointer">
+            {% elseif icon == '2' %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/OrderOfTheTwinAdder.webp" class="cursor_pointer">
+            {% elseif icon == '3' %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/default-crests/ImmortalFlames.webp" class="cursor_pointer">
+            {% else %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
             {% endif %}
-        </span>
-        <span class="entity_arrow">➧</span>
-    </a>
-</entity-card>
+        {% elseif type == 'pvpteam' %}
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
+        {% elseif type == 'linkshell' %}
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/{% if subservice_name != 'statistics' and crossworld %}crossworld_{% endif %}linkshell.webp" class="cursor_pointer">
+        {% elseif type == 'crossworldlinkshell' %}
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="/assets/images/fftracker/crossworld_linkshell.webp" class="cursor_pointer">
+        {% else %}
+            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ name }}" src="{{ icon }}" class="cursor_pointer">
+        {% endif %}
+    </span>
+    <span class="entity_name">
+        {% if type == 'thread' %}
+            {{ timeTag(thread.updated, 'd/m/Y H:i') }}<br>
+        {% endif %}
+        {% if subservice_name == 'character' %}
+            {% if (type == 'linkshell' or type == 'crossworldlinkshell' or type == 'character') and rank_id and rank_id != 3 and rank_id != 4 %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="entity_rank cursor_pointer" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/lsranks/{{ rank_id }}.webp">
+            {% endif %}
+            {% if (type == 'pvpteam' or type == 'character') and rank_id and rank_id != 3 %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="entity_rank cursor_pointer" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/pvpranks/{{ rank_id }}.webp">
+            {% endif %}
+            {% if (type == 'freecompany' or type == 'character') and rank_id|default('') matches '/^\\d+$/' %}
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="entity_rank cursor_pointer" alt="{{ rank }}" data-tooltip="{{ rank }}" src="/assets/images/fftracker/fcranks/{{ rank_id }}.webp">
+            {% endif %}
+        {% endif %}
+        {% if type == 'thread' %}
+            <b>{% if detailed_type == 'Changelog' and is_numeric(name) %}{{ timeTag(name, 'Y.m.d') }}{% else %}{{ name }}{% endif %}</b>
+        {% else %}
+            {{ name }}
+            {% if subservice_name == 'points' and type == 'character' and achievement_points %}
+                <br>
+                <img crossorigin="anonymous" loading="lazy" decoding="async" class="ff_achievement_points cursor_pointer" alt="{{ achievement_points }} points" data-tooltip="{{ achievement_points }} points" src="/assets/images/fftracker/Cup.webp">{{ achievement_points }}
+            {% endif %}
+        {% endif %}
+        {% if subservice_name != 'statistics' and type == 'character' and user_id %}
+            <sup>🔗</sup>
+        {% endif %}
+    </span>
+    <span class="entity_arrow">➧</span>
+</a>

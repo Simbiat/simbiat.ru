@@ -3,50 +3,97 @@
         <caption>Registered cookies</caption>
         <thead>
             <tr>
-                <th>Last activity</th><th>IP</th><th>City</th><th>OS</th><th>Browser</th><th>Delete</th>
+                <th>Last activity</th>
+                <th>IP</th>
+                <th>City</th>
+                <th>OS</th>
+                <th>Browser</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
             {% for cookie in cookies %}
                 <tr>
-                    <td>{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %}✅ Current{% else %}{{ timeTag(cookie.time, "d/m/Y H:i") }}{% endif %}</td>
+                    <td>{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %}✅ Current{% else %}{{ timeTag(cookie.time, 'd/m/Y H:i') }}{% endif %}</td>
                     <td>{{ cookie.ip }}</td>
-                    <td>{% if cookie.country_icon %}<img loading="lazy" decoding="async" class="link_icon" alt="{{ cookie.country }}" src="{{ cookie.country_icon }}">{% endif %}{{ cookie.city }}</td>
-                    <td>{% if cookie.os.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="link_icon">{% endif %}{{ cookie.os.name }} {{ cookie.os.version }}</td>
-                    <td>{% if cookie.client.icon %}<img loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="link_icon">{% endif %}{{ cookie.client.name }} {{ cookie.client.version }}</td>
-                    <td class="middle"><input class="cookie_deletion" data-cookie="{{ cookie.cookie_id }}" type="image" src="/assets/images/close.svg"{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %} disabled alt="Logout to remove"{% else %} alt="Delete cookie"{% endif %}><img class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Removing cookie..." loading="lazy" decoding="async"></td>
+                    <td>{% if cookie.country_icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ cookie.country }}" src="{{ cookie.country_icon }}">{% endif %}{{ cookie.city }}
+                    </td>
+                    <td>{% if cookie.os.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ cookie.os.name }}" src="{{ cookie.os.icon }}" class="link_icon">{% endif %}{{ cookie.os.name }} {{ cookie.os.version }}
+                    </td>
+                    <td>{% if cookie.client.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ cookie.client.name }}" src="{{ cookie.client.icon }}" class="link_icon">{% endif %}{{ cookie.client.name }} {{ cookie.client.version }}
+                    </td>
+                    <td class="middle">
+                        <button type="button" class="cookie_deletion" data-cookie="{{ cookie.cookie_id }}" {% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %} disabled{% endif %} data-alt-attribute="Removing cookie...">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if cookie.cookie_id and session_data.cookie_id and cookie.cookie_id == session_data.cookie_id %}Logout to remove{% else %}Delete cookie{% endif %}" src="/assets/images/close.svg">
+                        </button>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
         <tfoot>
-            <tr><td colspan="6">Normally removed after 1 month of inactivity.{% if cookies|length  > 1 %}<input id="delete_cookies" type="button" value="Delete all">{% endif %}</td></tr>
+            <tr>
+                <td colspan="6">Normally removed after 1 month of inactivity.
+                    {% if cookies|length  > 1 %}
+                        <button type="button" value="Delete all" id="delete_cookies">
+                            Delete all
+                        </button>
+                    {% endif %}
+                </td>
+            </tr>
         </tfoot>
     </table>
 {% else %}
-    <p>No cookies registered.</p>
+    <p>No registered cookies.</p>
 {% endif %}
 {% if sessions %}
     <table id="uc_sessions_table">
         <caption>Active sessions</caption>
         <thead>
-        <tr>
-            <th>Last activity</th><th>IP</th><th>City</th><th>OS</th><th>Browser</th><th>Delete</th>
-        </tr>
+            <tr>
+                <th>Last activity</th>
+                <th>IP</th>
+                <th>City</th>
+                <th>OS</th>
+                <th>Browser</th>
+                <th>Delete</th>
+            </tr>
         </thead>
         <tbody>
-        {% for session in sessions %}
-            <tr>
-                <td>{% if session.session_id and current_session and session.session_id == current_session %}✅ Current{% else %}{{ timeTag(session.time, "d/m/Y H:i") }}{% endif %}</td>
-                <td>{{ session.ip }}</td>
-                <td>{% if session.country_icon %}<img loading="lazy" decoding="async" class="link_icon" alt="{{ session.country }}" src="{{ session.country_icon }}">{% endif %}{{ session.city }}</td>
-                <td>{% if session.os.icon %}<img loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="link_icon">{% endif %}{{ session.os.name }} {{ session.os.version }}</td>
-                <td>{% if session.client.icon %}<img loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="link_icon">{% endif %}{{ session.client.name }} {{ session.client.version }}</td>
-                <td class="middle"><input class="session_deletion" data-session="{{ session.session_id }}" type="image" src="/assets/images/close.svg"{% if session.session_id and current_session and session.session_id == current_session %} disabled alt="Logout to remove"{% else %} alt="Delete session"{% endif %}><img class="hidden spinner inline" src="/assets/images/spinner.svg" alt="Removing session..." loading="lazy" decoding="async"></td>
-            </tr>
-        {% endfor %}
+            {% for session in sessions %}
+                <tr>
+                    <td>{% if session.session_id and current_session and session.session_id == current_session %}✅ Current{% else %}{{ timeTag(session.time, 'd/m/Y H:i') }}{% endif %}</td>
+                    <td>{{ session.ip }}</td>
+                    <td>{% if session.country_icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ session.country }}" src="{{ session.country_icon }}">{% endif %}{{ session.city }}
+                    </td>
+                    <td>{% if session.os.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ session.os.name }}" src="{{ session.os.icon }}" class="link_icon">{% endif %}{{ session.os.name }} {{ session.os.version }}
+                    </td>
+                    <td>{% if session.client.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ session.client.name }}" src="{{ session.client.icon }}" class="link_icon">{% endif %}{{ session.client.name }} {{ session.client.version }}
+                    </td>
+                    <td class="middle">
+                        <button type="button" class="session_deletion" data-session="{{ session.session_id }}" {% if session.session_id and current_session and session.session_id == current_session %}disabled{% endif %} data-alt-attribute="Removing session...">
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{% if session.session_id and current_session and session.session_id == current_session %}Logout to remove{% else %}Delete session{% endif %}" src="/assets/images/close.svg">
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
         <tfoot>
-        <tr><td colspan="6">Normally removed after 5 minutes of inactivity.{% if sessions|length  > 1 %}<input id="delete_sessions" type="button" value="Delete all">{% endif %}</td></tr>
+            <tr>
+                <td colspan="6">
+                    Normally removed after 5 minutes of inactivity.
+                    {% if sessions|length  > 1 %}
+                        <button type="button" value="Delete all" id="delete_sessions">
+                            Delete all
+                        </button>
+                    {% endif %}
+                </td>
+            </tr>
         </tfoot>
     </table>
 {% else %}
@@ -56,21 +103,32 @@
     <table id="uc_logs_table">
         <caption>Recent logs</caption>
         <thead>
-        <tr>
-            <th>Action</th><th>Last activity</th><th>IP</th><th>City</th><th>OS</th><th>Browser</th>
-        </tr>
+            <tr>
+                <th>Action</th>
+                <th>Last activity</th>
+                <th>IP</th>
+                <th>City</th>
+                <th>OS</th>
+                <th>Browser</th>
+            </tr>
         </thead>
         <tbody>
-        {% for log in logs %}
-            <tr>
-                <td>{{ log.action }}</td>
-                <td>{{ timeTag(log.time, "d/m/Y H:i") }}</td>
-                <td>{{ log.ip }}</td>
-                <td>{% if log.country_icon %}<img loading="lazy" decoding="async" class="link_icon" alt="{{ log.country }}" src="{{ log.country_icon }}">{% endif %}{{ log.city }}</td>
-                <td>{% if log.os.icon %}<img loading="lazy" decoding="async" alt="{{ log.os.name }}" src="{{ log.os.icon }}" class="link_icon">{% endif %}{{ log.os.name }} {{ log.os.version }}</td>
-                <td>{% if log.client.icon %}<img loading="lazy" decoding="async" alt="{{ log.client.name }}" src="{{ log.client.icon }}" class="link_icon">{% endif %}{{ log.client.name }} {{ log.client.version }}</td>
-            </tr>
-        {% endfor %}
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.action }}</td>
+                    <td>{{ timeTag(log.time, 'd/m/Y H:i') }}</td>
+                    <td>{{ log.ip }}</td>
+                    <td>{% if log.country_icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="{{ log.country }}" src="{{ log.country_icon }}">{% endif %}{{ log.city }}
+                    </td>
+                    <td>{% if log.os.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ log.os.name }}" src="{{ log.os.icon }}" class="link_icon">{% endif %}{{ log.os.name }} {{ log.os.version }}
+                    </td>
+                    <td>{% if log.client.icon %}
+                            <img crossorigin="anonymous" loading="lazy" decoding="async" alt="{{ log.client.name }}" src="{{ log.client.icon }}" class="link_icon">{% endif %}{{ log.client.name }} {{ log.client.version }}
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% else %}

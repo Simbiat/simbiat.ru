@@ -1,32 +1,35 @@
 {% if session_data.user_id != 1 and session_data.username %}
-    <a id="uc_settings" class="button" href="/uc/profile"><img loading="lazy" decoding="async" class="link_icon" alt="Settings" src="/assets/images/cog.svg"></a>
-    <div class="middle">Hi, <a href="/talks/users/{{ session_data.user_id }}" id="own_profile_link">{{ session_data.username }}</a>!</div>
-    <div class="middle"><img loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebar_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}"></div>
+    <a id="uc_settings" class="button" href="/uc/profile"><img crossorigin="anonymous" loading="lazy" decoding="async" class="link_icon" alt="Settings" src="/assets/images/cog.svg"></a>
+    <div class="middle">Hi,
+        <a href="/talks/users/{{ session_data.user_id }}" id="own_profile_link">{{ session_data.username }}</a>!
+    </div>
+    <div class="middle">
+        <img crossorigin="anonymous" loading="lazy" decoding="async" class="avatar" alt="Your avatar" id="sidebar_avatar" src="{{ session_data.avatar|default('/assets/images/avatar.svg') }}">
+    </div>
     {% if session_data.activated == false %}
         <div class="warning">Pending <a href="/uc/emails">activation</a>.</div>
     {% endif %}
     <login-form>
-        <form role="form" id="signinup" name="signinup" autocomplete="on">
-            <input role="button" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout">
-            <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Logging out...">
+        <form id="signinup" name="signinup" autocomplete="on">
+            <button type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Logout" data-alt-attribute="Logging out...">Logout</button>
         </form>
     </login-form>
 {% else %}
     <login-form>
-        <form role="form" id="signinup" name="signinup" autocomplete="on">
+        <form id="signinup" name="signinup" autocomplete="on">
             {% if registration == 0 %}
                 <div class="warning">Registration is currently closed</div>
             {% endif %}
             <div id="radio_signinup" role="radiogroup">
                 <span>I am</span><br>
                 <span class="float_label">
-                    <input type="radio" id="radio_existuser" name="signinup[type]" value="login" checked>
-                    <label for="radio_existuser">member</label>
+                    <input type="radio" id="radio_exist_user" name="signinup[type]" value="login" checked>
+                    <label for="radio_exist_user">member</label>
                 </span>
                 {% if registration == 1 %}
                     <span class="float_label">
-                        <input type="radio" id="radio_newuser" name="signinup[type]" value="register">
-                        <label for="radio_newuser">new</label>
+                        <input type="radio" id="radio_new_user" name="signinup[type]" value="register">
+                        <label for="radio_new_user">new</label>
                     </span>
                 {% endif %}
                 <span class="float_label">
@@ -35,28 +38,19 @@
                 </span>
             </div>
             <div class="float_label">
-                <input type="text" aria-required="false" spellcheck="false" name="signinup[username]" id="signinup_username" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`{|}~\- ]{1,64}$">
+                <input type="text" aria-required="false" spellcheck="false" name="signinup[username]" id="signinup_username" placeholder="Username" autocomplete="username" inputmode="text" minlength="1" maxlength="64" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\- ]{1,64}$">
                 <label for="signinup_username">Username</label>
             </div>
             <div class="float_label">
-                <input type="email" required spellcheck="false" aria-required="true" name="signinup[email]" id="signinup_email" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="254" pattern="^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
+                <input type="email" required spellcheck="false" aria-required="true" name="signinup[email]" id="signinup_email" placeholder="Email" autocomplete="email" inputmode="email" minlength="1" maxlength="254" pattern="^[\p{L}\d.!#$%&'*+\/=?^_`\{\|\}~\-]+@[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d\-]{0,61}[a-zA-Z\d])?)*$">
                 <label for="signinup_email">Email</label>
             </div>
-            <password-field>
-                <div class="float_label">
-                    <input type="password" spellcheck="false" required aria-required="true" name="signinup[password]" id="signinup_password" placeholder="Password" autocomplete="current-password" inputmode="text" minlength="8" pattern=".{8,}">
-                    <label for="signinup_password">Password</label>
-                    <password-show></password-show>
-                    <password-requirements></password-requirements>
-                    <password-strength></password-strength>
-                </div>
-            </password-field>
+            {{ include('common/elements/password_field.twig', {'new_password': true, 'password_field_id': 'signinup_password', 'password_field_name': 'signinup[password]', 'password_field_placeholder': 'Password'}) }}
             <div class="float_label" id="rememberme_div">
-                <input role="checkbox" aria-checked="false" type="checkbox" name="signinup[rememberme]" id="rememberme">
+                <input type="checkbox" name="signinup[rememberme]" id="rememberme">
                 <label for="rememberme">Remember me</label>
             </div>
-            <input role="button" type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Sign in/Join">
-            <img loading="lazy" decoding="async" id="signinup_spinner" class="hidden spinner" src="/assets/images/spinner.svg" alt="Submitting form...">
+            <button type="submit" name="signinup[submit]" id="signinup_submit" formaction="{{ url }}" formmethod="post" formtarget="_self" value="Sign in/Join" data-alt-attribute="Sign in in...">Sign in/Join</button>
         </form>
     </login-form>
 {% endif %}
