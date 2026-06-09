@@ -195,7 +195,7 @@ class Achievement extends AbstractEntity
         $this->category = $from_db['category'];
         $this->subcategory = $from_db['subcategory'];
         $this->icon = $from_db['icon'];
-        $this->how_to = Sanitization::sanitizeHTML($from_db['how_to']);
+        $this->how_to = Sanitization::sanitizeHTML($from_db['how_to'] ?? '');
         $this->db_id = $from_db['db_id'];
         $this->rewards = [
             'points' => (int)$from_db['points'],
