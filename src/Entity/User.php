@@ -386,11 +386,7 @@ final class User extends Entity
         if ($this->system) {
             return ['http_error' => 403, 'reason' => 'Can\'t modify system user'];
         }
-        $sanitized_name = Sanitization::removeNonPrintable($new_name, true);
-        if (!is_string($sanitized_name)) {
-            return ['http_error' => 403, 'reason' => 'Prohibited username provided'];
-        }
-        $new_name = $sanitized_name;
+        $new_name = Sanitization::removeNonPrintable($new_name, true);
         #Check if the new name is valid
         if (empty($new_name) || $this->bannedName($new_name) || $this->usedName($new_name)) {
             return ['http_error' => 403, 'reason' => 'Prohibited username provided'];

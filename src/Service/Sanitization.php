@@ -119,17 +119,17 @@ class Sanitization
     
     /**
      * Remove controls characters from strings and arrays.
-     * @param string|array $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
-     * @param bool         $full_list Flag whether newlines and tabs should also be removed
+     * @param string $string    String to sanitize. Arrays are also accepted, but it's expected that they will have string values only.
+     * @param bool   $full_list Flag whether newlines and tabs should also be removed
      *
-     * @return string|array
+     * @return string
      */
-    public static function removeNonPrintable(string|array $string, bool $full_list = false): string|array
+    public static function removeNonPrintable(string $string, bool $full_list = false): string
     {
         if ($full_list) {
-            return \preg_replace('/[[:cntrl:]]/iu', '', $string);
+            return \preg_replace('/[[:cntrl:]]/iu', '', $string) ?? '';
         }
-        return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string);
+        return \preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/iu', '', $string) ?? '';
     }
     
     /**
