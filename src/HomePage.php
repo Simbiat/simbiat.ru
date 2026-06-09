@@ -37,6 +37,17 @@ class HomePage
     private(set) static ?array $http_error = [];
     #User agent details from
     private(set) static array $user_agent = [];
+    /**
+     * Default session shape, so that code relying on it would run properly without warnings.
+     */
+    private const array SESSION_SHAPE = [
+        'user_id' => SystemUser::Unknown->value,
+        'permissions' => Config::DEFAULT_PERMISSIONS,
+        'csrf' => null,
+        'prev_page' => null,
+        'banned' => false,
+        'timezone' => 'UTC',
+    ];
     
     public function __construct()
     {
@@ -70,6 +81,9 @@ class HomePage
         #\Simbiat\Website\Errors::dump(\Simbiat\Translit\Convert::caseVariations('OSDATA'));
         #echo 'here';
         #exit(0);
+        
+        #Set default Session shape
+        $_SESSION = self::SESSION_SHAPE;
         try {
             #Maybe a client is using HTTP1.0, and there is little to worry about, but maybe there is.
             if (empty($_SERVER['HTTP_HOST'])) {
@@ -158,15 +172,6 @@ class HomePage
                     Errors::error_log($exception);
                     $vars = ['http_error' => 500];
                 }
-            }
-            if (\session_status() !== \PHP_SESSION_ACTIVE || \count($_SESSION) === 0) {
-                $_SESSION = [];
-                $_SESSION['user_id'] = SystemUser::Unknown->value;
-                $_SESSION['permissions'] = Config::DEFAULT_PERMISSIONS;
-                $_SESSION['csrf'] = null;
-                $_SESSION['prev_page'] = null;
-                $_SESSION['banned'] = false;
-                $_SESSION['timezone'] = 'UTC';
             }
             if ($uri[0] === 'api' && empty($vars['template_override'])) {
                 $vars['template_override'] = 'common/pages/api.twig';

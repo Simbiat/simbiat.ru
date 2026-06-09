@@ -962,10 +962,10 @@ final class User extends Entity
     {
         $where = '`talks__threads`.`author`=:user_id';
         $bindings = [':user_id' => [$this->id, 'int'],];
-        if (!in_array('view_scheduled', $_SESSION['permissions'] ?? [], true)) {
+        if (!in_array('view_scheduled', $_SESSION['permissions'], true)) {
             $where .= ' AND `talks__threads`.`published`<=CURRENT_TIMESTAMP(6)';
         }
-        if (!in_array('view_private', $_SESSION['permissions'] ?? [], true)) {
+        if (!in_array('view_private', $_SESSION['permissions'], true)) {
             $where .= ' AND (`talks__threads`.`private`=0 OR `talks__threads`.`author`=:author)';
             $bindings[':author'] = [$_SESSION['user_id'], 'int'];
         }
