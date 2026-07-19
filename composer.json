@@ -69,9 +69,9 @@
         "ext-igbinary": "*"
     },
     "scripts": {
-        "php-cs-fixer": "/root/.composer/vendor/bin/php-cs-fixer check --config=/usr/local/etc/php/.php-cs-fixer.php --using-cache=yes --allow-risky=yes --path-mode=intersection",
-        "phpstan": "/root/.composer/vendor/bin/phpstan analyse -c /usr/local/etc/php/phpstan.neon --memory-limit 1G",
-        "psalm": "/root/.composer/vendor/bin/psalm --config=/usr/local/etc/php/psalm.xml --memory-limit=1G"
+        "phpstan": "phpstan analyse -c /app/config/phpstan.neon --memory-limit 1G",
+        "psalm": "psalm --config=/app/config/psalm.xml --memory-limit=1G",
+        "phpcs": "phpcs --standard=/app/config/phpcs.xml"
     },
     "autoload": {
         "psr-4": {

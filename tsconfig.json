@@ -25,24 +25,13 @@
         "jsx": "react-jsx",
         "verbatimModuleSyntax": true,
         "noEmit": true,
+        "types": [
+            "trusted-types"
+        ],
         "paths": {
-            "eslint-plugin-github": [
-                "./build/js/dev/types/eslint-plugin-github/index.d.ts"
-            ],
-            "eslint-plugin-no-constructor-bind": [
-                "./build/js/dev/types/eslint-plugin-no-constructor-bind/index.d.ts"
-            ],
-            "eslint-plugin-no-unsanitized": [
-                "./build/js/dev/types/eslint-plugin-no-unsanitized/index.d.ts"
-            ],
-            "eslint-plugin-pii": [
-                "./build/js/dev/types/eslint-plugin-pii/index.d.ts"
-            ],
+            // TODO: need to remove this path, ones the plugin gets its own types in a future update (it's already in master branch, but not yet on NPM).
             "eslint-plugin-redos": [
                 "./build/js/dev/types/eslint-plugin-redos/index.d.ts"
-            ],
-            "eslint-plugin-xss": [
-                "./build/js/dev/types/eslint-plugin-xss/index.d.ts"
             ],
             "tinymce/tinymce.min.js": [
                 "./vendor/tinymce/tinymce/tinymce.d.ts"
@@ -66,6 +55,7 @@
         "allowJs": false,
         "checkJs": true,
         "composite": true,
+        "incremental": false,
         "noErrorTruncation": true,
         "lib": [
             "esnext",
@@ -75,14 +65,12 @@
         ],
         "rootDir": "./build/js/",
         "sourceRoot": "./build/js/",
-        "outDir": "./public/assets/",
-        "outFile": "./public/assets/app.js",
     },
     "files": [
         "./build/js/shared_with_php.json",
         "./vendor/tinymce/tinymce/tinymce.d.ts",
-        "./eslint.config.mts",
-        "./build/css/stylelint.config.ts"
+        "./config/eslint.config.mts",
+        "./config/stylelint.config.ts"
     ],
     //Include only .ts and .mts files in the same dir
     "include": [
@@ -91,7 +79,9 @@
         "./build/js/*/*/*.ts",
         "./build/js/*.mts",
         "./build/js/*/*.mts",
-        "./build/js/*/*/*.mts"
+        "./build/js/*/*/*.mts",
+        "./config/*.ts",
+        "./config/*.mts"
     ],
     "exclude": [
         "*node_modules*"
