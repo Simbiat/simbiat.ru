@@ -94,6 +94,11 @@ services:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
+      - DAC_READ_SEARCH
+      - CHOWN
+      - SETUID
+      - SETGID
+      - FOWNER
     security_opt:
       - no-new-privileges=true
     environment:
