@@ -230,8 +230,8 @@ class HomePage
             }
         }
         $twig_vars = \array_merge($twig_vars, self::$http_error, ['session_data' => $_SESSION ?? null]);
-        if (\array_key_exists('http_error', $twig_vars)) {
-            Headers::clientReturn($twig_vars['http_error'] ?? 500, false);
+        if (\array_key_exists('http_error', $twig_vars) && \is_numeric($twig_vars['http_error'])) {
+            Headers::clientReturn($twig_vars['http_error'], false);
         }
         if ($cache) {
             try {
