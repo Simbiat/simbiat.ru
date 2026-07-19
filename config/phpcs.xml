@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!-- TODO: Monitor discussion about PER ruleset https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/29 -->
+<ruleset name="Application">
+    
+    <description>
+        PHPCS configuration for Symfony application.
+    </description>
+    
+    <!-- Directories to scan -->
+    <file>src</file>
+    <file>tests</file>
+    <file>packages</file>
+    <file>bin</file>
+    
+    <!-- Exclusions -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>var/*</exclude-pattern>
+    <exclude-pattern>cache/*</exclude-pattern>
+    
+    <!-- Performance -->
+    <arg name="cache" value="/tmp/phpcs.cache"/>
+    <arg value="p"/>
+    
+    <!-- Reporting -->
+    <arg name="colors"/>
+    <arg name="parallel" value="8"/>
+    
+    <!-- Assume modern PHP -->
+    <config name="testVersion" value="8.3-"/>
+    
+    <!-- Base standards -->
+    <rule ref="PSR12"/>
+    
+    <!-- Symfony coding standard -->
+    <rule ref="Symfony"/>
+    
+    <!-- PHP compatibility -->
+    <rule ref="PHPCompatibility"/>
+    
+    <!-- Slevomat quality rules -->
+    <rule ref="SlevomatCodingStandard"/>
+    
+    <!-- Useful modern strictness -->
+    
+    <rule ref="Generic.PHP.DisallowShortOpenTag"/>
+    <rule ref="Generic.CodeAnalysis.EmptyStatement"/>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+    
+    <rule ref="Squiz.PHP.CommentedOutCode"/>
+    
+    <!-- Symfony projects typically use attributes -->
+    <rule ref="SlevomatCodingStandard.Attributes"/>
+    
+    <!-- Type declarations -->
+    <rule ref="SlevomatCodingStandard.TypeHints">
+        <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
+    </rule>
+    
+    <!-- Namespaces -->
+    <rule ref="SlevomatCodingStandard.Namespaces"/>
+    
+    <!-- Classes -->
+    <rule ref="SlevomatCodingStandard.Classes"/>
+    
+    <!-- Functions -->
+    <rule ref="SlevomatCodingStandard.Functions"/>
+    
+    <!-- Control structures -->
+    <rule ref="SlevomatCodingStandard.ControlStructures"/>
+    
+    <!-- Variables -->
+    <rule ref="SlevomatCodingStandard.Variables"/>
+    
+    <!-- Arrays -->
+    <rule ref="SlevomatCodingStandard.Arrays"/>
+    
+    <!-- Operators -->
+    <rule ref="SlevomatCodingStandard.Operators"/>
+    
+    <!-- Complexity -->
+    <rule ref="SlevomatCodingStandard.Complexity"/>
+    
+    <!-- Exceptions -->
+    <rule ref="SlevomatCodingStandard.Exceptions"/>
+    
+    <!-- Include PHPCSExtra rulesets -->
+    <rule ref="NormalizedArrays"/>
+    <rule ref="Modernize"/>
+    <rule ref="Universal"/>
+
+</ruleset>

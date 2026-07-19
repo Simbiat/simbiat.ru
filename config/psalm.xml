@@ -17,10 +17,9 @@
     serializer="igbinary"
 >
     <projectFiles>
-        <directory name="/app/bin"/>
-        <directory name="/app/tests"/>
-        <directory name="/app/src"/>
-        <directory name="/app/packages"/>
+        <ignoreFiles allowMissingFiles="true">
+            <directory name="/app/vendor"/>
+        </ignoreFiles>
     </projectFiles>
     <fileExtensions>
         <extension name=".php"/>

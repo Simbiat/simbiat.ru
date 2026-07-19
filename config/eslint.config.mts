@@ -26,6 +26,9 @@ import unicorn from 'eslint-plugin-unicorn';
 import jsdoc from 'eslint-plugin-jsdoc';
 import simbiat from '@simbiat/eslint-plugin-simbiat';
 import { configs as security } from 'eslint-plugin-security';
+import html from '@html-eslint/eslint-plugin';
+import html_parser from '@html-eslint/parser';
+import { configs as package_json } from 'eslint-plugin-package-json';
 
 // It looks like a false positive for the inspection, so suppressing it.
 // noinspection JSCheckFunctionSignatures
@@ -55,16 +58,16 @@ export default defineConfig([
     ],
     plugins: {
       '@stylistic': stylistic,
-      'ex': ex,
+      ex,
       'no-unsanitized': no_unsanitized,
       'no-constructor-bind': no_constructor,
-      'redos': redos,
-      'pii': pii,
-      'xss': xss,
+      redos,
+      pii,
+      xss,
       'promise': plugin_promise,
-      'unicorn': unicorn,
-      'simbiat': simbiat,
-      'jsdoc': jsdoc,
+      unicorn,
+      simbiat,
+      jsdoc,
     },
     languageOptions: {
       globals: {
@@ -73,6 +76,10 @@ export default defineConfig([
       },
       ecmaVersion: 'latest',
       sourceType: 'module',
+    },
+    // This is for compat/compat rule
+    settings: {
+      lintAllEsApis: true,
     },
     rules: {
       'camelcase': 'off',
@@ -221,10 +228,27 @@ export default defineConfig([
       'no-useless-constructor': 'error',
       'no-constructor-bind/no-constructor-bind': 'error',
       'no-constructor-bind/no-constructor-state': 'error',
-      'no-unused-vars': 'warn',
+      'no-unused-vars': ['warn', {
+        varsIgnorePattern: '^_',
+        argsIgnorePattern: '^_',
+      }],
       'redos/no-vulnerable': 'error',
-      'no-unsanitized/method': 'error',
-      'no-unsanitized/property': 'error',
+      // This innerHTML is better handled by `no-unsanitized` rules.
+      'github/no-inner-html': 'off',
+      'no-unsanitized/method': ['error', {
+        escape: {
+          methods: [
+            'DOMPurify.sanitize',
+          ],
+        },
+      }],
+      'no-unsanitized/property': ['error', {
+        escape: {
+          methods: [
+            'DOMPurify.sanitize',
+          ],
+        },
+      }],
       'pii/no-email': 'error',
       'pii/no-ip': 'error',
       'pii/no-phone-number': 'error',
@@ -383,7 +407,15 @@ export default defineConfig([
       parser: ts_parser,
       parserOptions: {
         sourceType: 'module',
-        projectService: true,
+        ecmaVersion: 'latest',
+        jsDocParsingMode: 'all',
+        projectService: {
+          allowDefaultProject: [
+            'eslint.config.mts',
+            'stylelint.config.ts',
+          ],
+          defaultProject: '../tsconfig.json',
+        },
       },
     },
     rules: {
@@ -421,7 +453,10 @@ export default defineConfig([
       '@typescript-eslint/no-shadow': 'error',
       'no-use-before-define': 'off',
       '@typescript-eslint/no-use-before-define': 'error',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        varsIgnorePattern: '^_',
+        argsIgnorePattern: '^_',
+      }],
       '@typescript-eslint/prefer-optional-chain': 'warn',
       // Rule from GitHub that needs an override.
       '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
@@ -444,25 +479,114 @@ export default defineConfig([
   },
   {
     files: ['**/*.md', '**/*.markdown'],
-    plugins: { markdown },
-    extends: ['markdown/recommended'],
+    extends: [
+      markdown.configs.recommended,
+    ],
     rules: {
       'markdown/no-bare-urls': 'warn',
       'markdown/no-duplicate-headings': 'error',
     },
   },
   {
-    files: ['** /*.json', '** /*.jsonc', '.vscode/*.json', '** /*.json5'],
-    ignores: ['package-lock.json'],
+    files: ['**/*.json', '**/*.jsonc', '.vscode/*.json', '**/*.json5'],
+    ignores: ['**/package-lock.json', '**/tsconfig.json', '**/bun.lock', '**/package.json'],
     language: 'json/json',
     ...json.configs.recommended,
   },
   {
-    files: ['** /*.jsonc', '.vscode/*.json'],
+    files: ['**/*.jsonc', '.vscode/*.json'],
     language: 'json/jsonc',
   },
   {
-    files: ['** /*.json5'],
+    files: ['**/*.json5'],
     language: 'json/json5',
+  },
+  {
+    files: ['**/*.html', '**/*.htm', '**/*.twig', '**/*.svg'],
+    extends: [
+      html.configs.recommended,
+    ],
+    plugins: {
+      html,
+    },
+    languageOptions: {
+      parser: html_parser,
+      parserOptions: {
+        templateEngineSyntax: html_parser.TEMPLATE_ENGINE_SYNTAX.TWIG,
+      },
+    },
+    rules: {
+      'html/css-no-empty-blocks': 'warn',
+      'html/head-order': 'warn',
+      'html/no-duplicate-class': 'warn',
+      'html/no-ineffective-attrs': 'warn',
+      'html/no-inline-styles': 'error',
+      'html/no-invalid-attr-value': 'error',
+      'html/no-invalid-entity': 'warn',
+      'html/no-nested-interactive': 'error',
+      'html/no-script-style-type': 'warn',
+      'html/no-whitespace-only-children': 'warn',
+      'html/prefer-https': 'error',
+      'html/require-details-summary': 'error',
+      'html/require-meta-charset': 'error',
+      'html/svg-require-viewbox': 'warn',
+      'html/require-meta-description': 'error',
+      'html/require-open-graph-protocol': 'error',
+      'html/no-accesskey-attrs': 'warn',
+      'html/no-aria-hidden-body': 'error',
+      'html/no-aria-hidden-on-focusable': 'error',
+      'html/no-empty-headings': 'error',
+      'html/no-heading-inside-button': 'warn',
+      'html/no-invalid-role': 'error',
+      'html/no-non-scalable-viewport': 'error',
+      'html/no-positive-tabindex': 'warn',
+      'html/no-redundant-role': 'warn',
+      'html/require-content': 'error',
+      'html/require-frame-title': 'error',
+      'html/require-input-label': 'error',
+      'html/require-meta-viewport': 'error',
+      'html/class-spacing': 'warn',
+      'html/id-naming-convention': ['warn', 'snake_case'],
+      'html/lowercase': 'warn',
+      'html/no-multiple-empty-lines': 'warn',
+      'html/no-trailing-spaces': 'warn',
+      'html/no-abstract-roles': 'warn',
+      'html/no-skip-heading-levels': 'warn',
+      'html/require-form-method': 'warn',
+      'html/no-extra-spacing-text': 'warn',
+      // Recommended rules overrides
+      'html/no-extra-spacing-tags': 'warn',
+      'html/attrs-newline': 'off',
+      'html/element-newline': ['warn', {
+        skip: ['pre', 'code'],
+        inline: ['$inline'],
+      }],
+      'html/use-baseline': ['error', {
+        available: 'newly',
+      }],
+      'html/quotes': 'warn',
+      'html/no-duplicate-attrs': 'warn',
+      // Handled by IDE
+      'html/indent': 'off',
+      // Handled by custom inspections, which are used in all HTML contexts.
+      'html/no-target-blank': 'off',
+      'html/require-button-type': 'off',
+      'html/require-explicit-size': 'off',
+    },
+  },
+  {
+    files: ['./templates/email.twig'],
+    // These rules do not make sense in emails.
+    rules: {
+      'html/require-open-graph-protocol': 'off',
+      'html/no-inline-styles': 'off',
+    },
+  },
+  {
+    extends: [
+      package_json.recommended,
+      package_json.stylistic,
+    ],
+    files: ['**/package.json'],
   },
 ]);

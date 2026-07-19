@@ -1,8 +1,6 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="2b08bb32-ea14-3936-a47d-ded0f3b7c487" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="682abc00-c7c0-347c-85ea-fc382fbe77df" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="7387f796-c82a-3028-87f9-07527621e7c8" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="7d78d672-300c-3398-b4a6-a376cf564ba3" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
     <inspection_tool class="869a30f7-35aa-3f0c-b967-c25fee0428cc" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="INFO_ATTRIBUTES" />
@@ -36,26 +34,21 @@
     <inspection_tool class="CssMissingSemicolon" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CssNoGenericFontName" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CssRedundantUnit" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="CssUnknownProperty" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myCustomPropertiesEnabled" value="true" />
+      <option name="myIgnoreVendorSpecificProperties" value="false" />
+      <option name="myCustomPropertiesList">
+        <value>
+          <list size="1">
+            <item index="0" class="java.lang.String" itemvalue="inset-inlinestart" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
     <inspection_tool class="CssUnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CustomRegExpInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myConfigurations">
         <list>
-          <RegExpInspectionConfiguration>
-            <option name="description" value="Prefer `button` element instead of `input` with type `button`, `image`, `reset` or `submit`" />
-            <option name="name" value="[INPUT] Prefer button" />
-            <option name="suppressId" value="PreferButtonInsteadInput" />
-            <option name="uuid" value="2b08bb32-ea14-3936-a47d-ded0f3b7c487" />
-            <option name="patterns">
-              <list>
-                <InspectionPattern>
-                  <option name="regExp" value="&lt;input\b[^&gt;]*\btype=&quot;(button|submit|reset|image)&quot;[^&gt;]*&gt;" />
-                  <option name="_fileType" value="HTML" />
-                  <option name="searchContext" value="ANY" />
-                  <option name="flags" value="64" />
-                </InspectionPattern>
-              </list>
-            </option>
-          </RegExpInspectionConfiguration>
           <RegExpInspectionConfiguration>
             <option name="description" value="There is no need for `role=&quot;button&quot;` in `button` elements" />
             <option name="name" value="Redundant button role" />
@@ -137,6 +130,47 @@
               <list>
                 <InspectionPattern>
                   <option name="regExp" value="\|raw" />
+                  <option name="_fileType" value="HTML" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="flags" value="64" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Wrap text nodes in `span` for consistent styling" />
+            <option name="name" value="Text node in anchor" />
+            <option name="problemDescriptor" value="Wrap text nodes in `span`" />
+            <option name="suppressId" value="NoTextNodesInAcnhors" />
+            <option name="uuid" value="a0a511c2-83ae-3a39-b286-dfe4917b3dcd" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="(&lt;a\b[^&gt;]*&gt;\s*(?:&lt;(?:img|br|hr|input|wbr|area|base|col|embed|link|meta|source|track)\b[^&gt;]*&gt;\s*)+)([^\s&lt;&gt;][^&lt;&gt;]*?)(\s*&lt;/a&gt;)" />
+                  <option name="_fileType" value="HTML" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="$1&lt;span&gt;$2&lt;/span&gt;$3" />
+                  <option name="flags" value="64" />
+                </InspectionPattern>
+                <InspectionPattern>
+                  <option name="regExp" value="(&lt;a\b[^&gt;]*&gt;\s*)([^\s&lt;&gt;][^&lt;&gt;]*?)(\s*(?:&lt;(?:img|br|hr|input|wbr|area|base|col|embed|link|meta|source|track)\b[^&gt;]*&gt;\s*)+&lt;/a&gt;)" />
+                  <option name="_fileType" value="HTML" />
+                  <option name="searchContext" value="ANY" />
+                  <option name="replacement" value="$1&lt;span&gt;$2&lt;/span&gt;$3" />
+                  <option name="flags" value="64" />
+                </InspectionPattern>
+              </list>
+            </option>
+          </RegExpInspectionConfiguration>
+          <RegExpInspectionConfiguration>
+            <option name="description" value="Prefer `button` element instead of `input` with type `button`, `image`, `reset` or `submit`" />
+            <option name="name" value="Prefer button instead of input" />
+            <option name="suppressId" value="PreferButtonInsteadInput" />
+            <option name="uuid" value="2b08bb32-ea14-3936-a47d-ded0f3b7c487" />
+            <option name="patterns">
+              <list>
+                <InspectionPattern>
+                  <option name="regExp" value="&lt;input\b[^&gt;]*\btype=&quot;(button|submit|reset|image)&quot;[^&gt;]*&gt;" />
                   <option name="_fileType" value="HTML" />
                   <option name="searchContext" value="ANY" />
                   <option name="flags" value="64" />
@@ -355,7 +389,7 @@
     <inspection_tool class="PhpArrayFindKeyCanBeConvertedToLoopInspection" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="PhpArrayMapCanBeConvertedToLoopInspection" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="PhpArrayShapeAttributeCanBeAddedInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="PhpCSFixerValidationInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PhpCSValidationInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpClassHasTooManyDeclaredMembersInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="PhpClassNamingConventionInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="m_minLength" value="3" />
@@ -454,6 +488,25 @@
         <constraint name="name" within="" contains="" />
         <constraint name="callable" within="" contains="" />
         <constraint name="options" regexp="^.*is_safe.*$" nameOfExprType="array" within="" contains="" />
+      </searchConfiguration>
+      <replaceConfiguration name="Checkbox label" description="Use `span` in label to allow CSS-based label switching" suppressId="CheckboxDoubleSpan" problemDescriptor="Use `span` for CSS-based label switching" text="&lt;input id=&quot;$id$&quot; type=&quot;checkbox&quot; $attributes$&gt;&#10;&lt;label for=&quot;$id$&quot; $label_attrs$&gt;$content$&lt;/label&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="true" replacement="&lt;input id=&quot;$id$&quot; type=&quot;checkbox&quot; $attributes$&gt;&#10;&lt;label for=&quot;$id$&quot; $label_attrs$&gt;&#10;    &lt;span class=&quot;checkbox_checked_icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_checked&quot;&gt;$content$&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_not_checked_icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&#10;    &lt;span class=&quot;checkbox_not_checked&quot;&gt;$content$&lt;/span&gt;&#10;&lt;/label&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="id" within="" contains="" />
+        <constraint name="content" within="" contains="" />
+        <constraint name="label_attrs" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+      <searchConfiguration name="Empty height attribute" description="Image has empty `height` attribute" suppressId="NoEmptyHeightAttribute" problemDescriptor="Use non-empty `height` attribute to minimize content shifting" text="&lt;$tag$ $attribute$=&quot;$value$&quot; /&gt;" recursive="true" caseInsensitive="true" type="HTML">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="tag" regexp="img" within="" contains="" />
+        <constraint name="attribute" regexp="height" target="true" within="" contains="" />
+        <constraint name="value" regexp="^$" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Empty width attribute" description="Image has empty `width` attribute" suppressId="NoEmptyWidthAttribute" problemDescriptor="Use non-empty `width` attribute to minimize content shifting" text="&lt;$tag$ $attribute$=&quot;$value$&quot; /&gt;" recursive="true" caseInsensitive="true" type="HTML">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="tag" regexp="img" within="" contains="" />
+        <constraint name="attribute" regexp="width" target="true" within="" contains="" />
+        <constraint name="value" regexp="^$" within="" contains="" />
       </searchConfiguration>
       <replaceConfiguration name="Explicit multibyte encoding" uuid="7387f796-c82a-3028-87f9-07527621e7c8" description="Recommend explicit encoding in multibyte functions" suppressId="NoMBExplicitEncoding" problemDescriptor="Use explicit encoding in multibyte functions" text="mb_check_encoding($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="true" shortenFQN="false" replacement="mb_check_encoding($p$, 'UTF-8')">
         <constraint name="__context__" within="" contains="" />
@@ -664,12 +717,12 @@
         <constraint name="func" regexp="^preg_(filter|grep|match|match_all|replace|replace_callback|replace_callback_array|split)$" within="" contains="" />
         <constraint name="arg" maxCount="2147483647" within="" contains="" />
       </searchConfiguration>
-      <replaceConfiguration name="Missing crossorigin attribute" uuid="14c1cc58-94c6-378d-a191-5f9c0701f99e" description="Image is missing `crossorigin` attribute" suppressId="NoImgCrossoriginAttribute" problemDescriptor="Use `crossorigin=&quot;anonymous&quot;` attribute for images on same host" text="&lt;$tag$ $attr$ /&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attr$ /&gt;">
+      <replaceConfiguration name="Missing crossorigin attribute" uuid="14c1cc58-94c6-378d-a191-5f9c0701f99e" description="Image is missing `crossorigin` attribute" suppressId="NoImgCrossoriginAttribute" problemDescriptor="Use `crossorigin=&quot;anonymous&quot;` attribute for images on same host" text="&lt;$tag$ $attr$ /&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attr$ crossorigin=&quot;anonymous&quot; /&gt;">
         <constraint name="__context__" within="" contains="" />
         <constraint name="tag" script="&quot;def src = tag.getAttribute(&quot;src&quot;)?.value&#10;if (src == null) return true&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def external = src.startsWith(&quot;http&quot;)&#10;if (external) return false&#10;&#10;def crossorigin = tag.getAttribute(&quot;crossorigin&quot;)?.value&#10;return crossorigin == null&quot;" regexp="img" within="" contains="" />
         <constraint name="attr" minCount="0" maxCount="2147483647" within="" contains="" />
       </replaceConfiguration>
-      <replaceConfiguration name="Missing crossorigin attribute" uuid="14c1cc58-94c6-378d-a191-5f9c0701f99e" text="&lt;$tag$ $attr$ /&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;input $attr$ /&gt;">
+      <replaceConfiguration name="Missing crossorigin attribute" uuid="14c1cc58-94c6-378d-a191-5f9c0701f99e" text="&lt;$tag$ $attr$ /&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;input $attr$ crossorigin=&quot;anonymous&quot; /&gt;">
         <constraint name="__context__" within="" contains="" />
         <constraint name="tag" script="&quot;def input_type = tag.getAttribute(&quot;type&quot;)?.value&#10;if (input_type != &quot;image&quot;) return false&#10;&#10;def src = tag.getAttribute(&quot;src&quot;)?.value&#10;if (src == null) return true&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def external = src.startsWith(&quot;http&quot;)&#10;if (external) return false&#10;&#10;def crossorigin = tag.getAttribute(&quot;crossorigin&quot;)?.value&#10;return crossorigin == null&quot;" regexp="input" within="" contains="" />
         <constraint name="attr" minCount="0" maxCount="2147483647" within="" contains="" />
@@ -679,16 +732,20 @@
         <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="tag" script="&quot;tag.getAttribute(&quot;decoding&quot;) == null&quot;" regexp="img" within="" contains="" />
       </replaceConfiguration>
+      <replaceConfiguration name="Missing dimensions attributes" uuid="8faa9e07-8538-3bd4-83fd-cabf5e4db9a5" description="Image is missing `width` and/or `height` attributes" suppressId="NoImgDimensionAttributes" problemDescriptor="Use non-empty `width` and `height` attributes to minimize content shifting" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ width=&quot;&quot; height=&quot;&quot;&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="tag" script="&quot;tag.getAttribute(&quot;width&quot;) == null &amp;&amp; tag.getAttribute(&quot;height&quot;) == null&quot;" regexp="img" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="Missing height attribute" description="Image is missing `height` attribute" suppressId="NoMissingHeightAttribute" problemDescriptor="Use non-empty `height` attribute to minimize content shifting" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ height=&quot;&quot;&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="tag" script="&quot;tag.getAttribute(&quot;height&quot;) == null &amp;&amp; tag.getAttribute(&quot;width&quot;) !== null&quot;" regexp="img" within="" contains="" />
+      </replaceConfiguration>
       <replaceConfiguration name="Missing loading attribute" uuid="869a30f7-35aa-3f0c-b967-c25fee0428cc" description="Image is missing `loading` attribute" suppressId="NoImgLoadingAttribute" problemDescriptor="Use `loading=&quot;lazy&quot;` attribute" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ loading=&quot;lazy&quot;&gt;">
         <constraint name="__context__" within="" contains="" />
         <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="tag" script="&quot;tag.getAttribute(&quot;loading&quot;) == null&quot;" regexp="img" within="" contains="" />
-      </replaceConfiguration>
-      <replaceConfiguration name="Missing noreferrer or noopener attribute" uuid="682abc00-c7c0-347c-85ea-fc382fbe77df" description="Missing `noreferrer` and `noopener` in `rel` attribute" suppressId="NoANoreferrer" problemDescriptor="Use `rel=&quot;noopener noreferrer&quot;` attribute" text="&lt;$tag$ $attribute$&gt;$content$&lt;/$tag$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;a $attribute$ rel=&quot;noopener noreferrer&quot;&gt;$content$&lt;/a&gt;">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="attribute" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="content" minCount="0" maxCount="2147483647" within="" contains="" />
-        <constraint name="tag" script="&quot;def href = tag.getAttribute(&quot;href&quot;)?.value&#10;if (href == null) return false&#10;&#10;// internal links begin with &quot;/&quot;, &quot;#&quot;, &quot;?&quot;&#10;def internal = href.startsWith(&quot;/&quot;) || href.startsWith(&quot;#&quot;) || href.startsWith(&quot;?&quot;)&#10;if (internal) return false&#10;&#10;def rel = tag.getAttribute(&quot;rel&quot;)?.value&#10;return rel == null || !rel.contains(&quot;noopener&quot;) || !rel.contains(&quot;noreferrer&quot;)&quot;" regexp="a" within="" contains="" />
       </replaceConfiguration>
       <searchConfiguration name="Missing Unicode flag" uuid="1862d894-bdc2-301a-83f2-68d306d11363" description="Use Unicode flag (`u`) in regexp" suppressId="NoPHPRegexpUFlag" problemDescriptor="Use Unicode flag (`u`) in regexp" text="$func$($pattern$, $arg$)" recursive="true" caseInsensitive="true" type="PHP">
         <constraint name="__context__" within="" contains="" />
@@ -696,6 +753,11 @@
         <constraint name="func" regexp="^preg_(filter|grep|match|match_all|replace|replace_callback|replace_callback_array|split)$" within="" contains="" />
         <constraint name="arg" maxCount="2147483647" within="" contains="" />
       </searchConfiguration>
+      <replaceConfiguration name="Missing width attribute" uuid="2bd1bce4-e6e7-32d0-9e93-961b0b50697d" description="Image is missing `width` attribute" suppressId="NoMissingWidthAttribute" problemDescriptor="Use non-empty `width` attribute to minimize content shifting" text="&lt;$tag$ $attributes$&gt;" recursive="false" caseInsensitive="true" type="HTML" reformatAccordingToStyle="false" shortenFQN="false" replacement="&lt;img $attributes$ width=&quot;&quot;&gt;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="tag" script="&quot;tag.getAttribute(&quot;width&quot;) == null &amp;&amp; tag.getAttribute(&quot;height&quot;) !== null&quot;" regexp="img" within="" contains="" />
+      </replaceConfiguration>
       <replaceConfiguration name="Prefer `whiteString()`" uuid="c3808b79-f378-3ace-8e38-38ae7b94a133" description="Use custom sanitizer to check for whitespace-only strings" suppressId="NoIsWhitespaceRegex" problemDescriptor="Use a more extensive whitespace-only check" text="preg_match($pattern$, $keep$, $rest$) === 1" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="\Simbiat\StringHelpers\Sanitize::whiteString($keep$)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="pattern" regexp="^'/\^\\s\*\$/[imsxeADSUXJu]*'$" within="" contains="" />
@@ -872,6 +934,20 @@
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" negateName="true" within="" contains="" />
       </replaceConfiguration>
+      <replaceConfiguration name="Redundant alt" text="&lt;img $attribute$=&quot;$alt$&quot; $attributes$&gt;&lt;$tag$&gt;$alt$&lt;/$tag$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="alt=&quot;&quot;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attribute" regexp="alt" target="true" within="" contains="" />
+        <constraint name="alt" regexp=".+" within="" contains="" />
+        <constraint name="tag" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
+      <replaceConfiguration name="Redundant alt" text="&lt;$tag$&gt;$alt$&lt;/$tag$&gt;&lt;img $attribute$=&quot;$alt$&quot; $attributes$&gt;" recursive="false" caseInsensitive="false" type="HTML" reformatAccordingToStyle="true" shortenFQN="false" replacement="alt=&quot;&quot;">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="attribute" regexp="alt" target="true" within="" contains="" />
+        <constraint name="alt" regexp=".+" within="" contains="" />
+        <constraint name="tag" within="" contains="" />
+        <constraint name="attributes" minCount="0" maxCount="2147483647" within="" contains="" />
+      </replaceConfiguration>
       <replaceConfiguration name="Use exit function with exit code" uuid="4e1209f3-613d-3ab3-981e-ef2bb07b5abf" description="Use exit function with exit code" suppressId="use_exit_function" problemDescriptor="Use `exit` function with exit code" text="exit($p$)" recursive="false" caseInsensitive="true" type="PHP" reformatAccordingToStyle="false" shortenFQN="false" replacement="exit(0)">
         <constraint name="__context__" within="" contains="" />
         <constraint name="p" regexp="^\s*$" minCount="0" maxCount="0" within="" contains="" />
@@ -978,6 +1054,7 @@
     <inspection_tool class="UnusedDefine" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UsingInclusionReturnValueInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="XHTMLIncompatabilitiesJS" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="abef8912-ef3f-367e-9726-c6a56288dce5" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="c80cc5f5-1826-35e5-8cd7-617f9f606617" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Twig" level="WARNING" enabled="true" />
     </inspection_tool>

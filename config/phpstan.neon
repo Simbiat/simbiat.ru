@@ -8,13 +8,14 @@ includes:
     - /root/.composer/vendor/phpstan/phpstan-symfony/rules.neon
 parameters:
     level: max
-    paths:
-        - /app/bin
-        - /app/tests
-        - /app/src
-        - /app/packages
+    excludePaths:
+        - /app/vendor
     fileExtensions:
         - php
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 8
+        minimumNumberOfJobsPerProcess: 1
     cache:
         nodesByStringCountMax: 1024
         resolvedPhpDocBlockCacheCountMax: 4056
@@ -43,8 +44,7 @@ parameters:
     reportPossiblyNonexistentConstantArrayOffset: true
     reportAlwaysTrueInLastCondition: true
     reportNonIntStringArrayKey: true
-    #TODO: uncomment once PHPStan updates to 2.2.0
-    #reportUnsafeArrayStringKeyCasting: prevent
+    reportUnsafeArrayStringKeyCasting: prevent
     reportAnyTypeWideningInVarTag: true
     checkMissingOverrideMethodAttribute: true
     checkMissingOverridePropertyAttribute: true

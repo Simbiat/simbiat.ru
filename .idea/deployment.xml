@@ -25,8 +25,8 @@
             <excludedPath local="true" path="$PROJECT_DIR$/README.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/SECURITY.md" />
             <excludedPath local="true" path="$PROJECT_DIR$/composer.json" />
-            <excludedPath local="true" path="$PROJECT_DIR$/eslint.config.mts" />
-            <excludedPath local="true" path="$PROJECT_DIR$/build/css/stylelint.config.ts" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/eslint.config.mts" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/stylelint.config.ts" />
             <excludedPath local="true" path="$PROJECT_DIR$/package.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/bun.lock" />
             <excludedPath local="true" path="$PROJECT_DIR$/TODO.md" />
@@ -34,6 +34,13 @@
             <excludedPath local="true" path="$PROJECT_DIR$/tests" />
             <excludedPath local="true" path="$PROJECT_DIR$/tsconfig.json" />
             <excludedPath local="true" path="$PROJECT_DIR$/.example.env" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/psalm.xml" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/phpcs.xml" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/phpstan.neon" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/phpunit.xml" />
+            <excludedPath local="true" path="$PROJECT_DIR$/build/docker/frankenphp/config" />
+            <excludedPath local="true" path="$PROJECT_DIR$/config/.eslintcache" />
+            <excludedPath local="true" path="$PROJECT_DIR$/compose.override.yaml" />
           </excludedPaths>
         </serverdata>
       </paths>

@@ -13,7 +13,7 @@ export default {
     'stylelint-high-performance-animation',
     'stylelint-declaration-block-no-ignored-properties',
     'stylelint-no-browser-hacks',
-    'stylelint-plugin-simbiat',
+    '@simbiat/stylelint-plugin-simbiat',
   ],
   rules: {
     'simbiat/require-attribute-i-flag': [true, { severity: 'warning' }],

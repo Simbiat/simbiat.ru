@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="CaddyConfig" pattern="file[simbiat.dev]:build/docker/frankenphp/config//*||file:build/js/dev/GenerateCaddyConfig.mts" />
+</component>

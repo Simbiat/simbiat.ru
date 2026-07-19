@@ -133,7 +133,7 @@ dist
 #/.idea/webResources.xml
 #/.idea/
 
-#Some DDL files should be ignores due to sensetive data
+#Some DDL files should be ignored due to sensetive data
 /build/DDL/000-create_users.sql
 /build/DDL/999-Z-Admin.sql
 /build/DDL/000-optimization_commands.txt
@@ -153,3 +153,7 @@ dist
 /.env
 #CrowdSec credentials
 /build/docker/crowdsec/yaml/online_api_credentials.yaml
+#ESLint cache
+/config/.eslintcache
+#StyleLint cache
+/config/.stylelintcache
