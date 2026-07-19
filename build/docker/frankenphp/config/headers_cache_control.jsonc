@@ -1,0 +1,218 @@
+[
+    // Set Cache-Control, if empty
+    {
+        "handler": "headers",
+        "response": {
+            "set": {
+                "Cache-Control": [
+                    "max-age=31536000,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                ]
+            },
+            "require": {
+                "headers": {
+                    "Cache-Control": null
+                }
+            }
+        }
+    },
+    // Set Cache-Control for HTML5 games
+    {
+        "handler": "subroute",
+        "routes": [
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "max-age=1800,public,stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            }
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "path": [
+                            "/assets/html5games*",
+                            "/html5games*",
+                            "/games/html5games*"
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    // Set Cache-Control based on MIME, if empty
+    {
+        "handler": "subroute",
+        "routes": [
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "max-age=31556952,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            },
+                            "deferred": true
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                                "text/css*",
+                                "application/javascript*",
+                                "application/x-javascript*",
+                                "text/javascript*"
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "max-age=3600,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            },
+                            "deferred": true
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                                "application/atom+xml*",
+                                "application/rdf+xml*",
+                                "application/rss+xml*"
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "public,no-cache, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            },
+                            "deferred": true
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                                "application/json*",
+                                "application/ld+json*",
+                                "application/schema+json*",
+                                "application/geo+json*",
+                                "application/xml*",
+                                "text/calendar*",
+                                "text/xml*",
+                                "application/x-web-app-manifest+json*",
+                                "text/cache-manifest*",
+                                "text/markdown*"
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "max-age=60,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            },
+                            "deferred": true
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                                "text/html*"
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "max-age=604800,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            },
+                            "deferred": true
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                                "application/manifest+json*",
+                                "text/x-cross-domain-policy*"
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "handle": [
+                    {
+                        "handler": "headers",
+                        "response": {
+                            "set": {
+                                "Cache-Control": [
+                                    "max-age=31556952,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                            },
+                            "deferred": true
+                        }
+                    }
+                ],
+                "match": [
+                    {
+                        "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                                "application/wasm*"
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

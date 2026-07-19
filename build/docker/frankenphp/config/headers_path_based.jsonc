@@ -1,0 +1,57 @@
+// Set some headers based on a path
+{
+    "handler": "subroute",
+    "routes": [
+        //Allow access to images from outside (for example, just opening them in a separate tab)
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "set": {
+                            "Access-Control-Allow-Origin": [
+                                "*"
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/img*",
+                        "/data/uploadedimages*",
+                        "/data/mergedcrests*"
+                    ]
+                }
+            ]
+        },
+        //FFTracker loads some images directly from FFXIV Lodestone, and they lack cross-origin headers on them (I did ask SE to amend that, but still no change)
+        //Thankfully, COEP is not as critical, and respective functions are not expected to be used on these pages, so we can disable it on them,
+        {
+            "handle": [
+                {
+                    "handler": "headers",
+                    "response": {
+                        "set": {
+                            "Cross-Origin-Embedder-Policy": [
+                                "unsafe-none"
+                            ]
+                        },
+                        "deferred": true
+                    }
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/uc/fftracker*",
+                        "/fftracker*",
+                        "/talks/users*"
+                    ]
+                }
+            ]
+        }
+    ]
+}

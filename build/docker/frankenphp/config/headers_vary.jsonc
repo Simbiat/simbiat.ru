@@ -1,0 +1,31 @@
+[
+    // Add Accept-Encoding to Vary if Content-Encoding is set
+    {
+        "handler": "headers",
+        "response": {
+            "require": {
+                "headers": {
+                    "Content-Encoding": []
+                }
+            },
+            "set": {
+                "Vary": [
+                    "Origin, Save-Data, Accept-Encoding"
+                ]
+            }
+        }
+    },
+    // Add Vary to all responses
+    {
+        "handler": "headers",
+        "response": {
+            "set": {
+                "Vary": [
+                    "Origin, Save-Data"
+                ]
+            },
+            //Required to avoid duplicate headers
+            "deferred": true
+        }
+    }
+]

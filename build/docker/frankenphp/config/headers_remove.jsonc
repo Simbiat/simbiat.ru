@@ -1,0 +1,27 @@
+// Remove certain headers from responses if they are present
+{
+    "handler": "headers",
+    "response": {
+        "delete": [
+            "Expires",
+            "Host",
+            "P3P",
+            "Pragma",
+            "Public-Key-Pins",
+            "Public-Key-Pins-Report-Only",
+            "Server",
+            "Via",
+            "X-AspNet-Version",
+            "X-AspNetMvc-version",
+            "X-Powered-By",
+            "X-Runtime",
+            "X-Version",
+            "X-UA-Compatible",
+            "X-Robots-Tag",
+            "X-Frame-Options",
+            "X-Requested-With",
+            "X-Content-Duration",
+            "X-Pingback"
+        ]
+    }
+}

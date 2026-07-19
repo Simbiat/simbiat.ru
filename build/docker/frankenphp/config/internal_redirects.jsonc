@@ -1,0 +1,151 @@
+// Some redirects
+{
+    "handler": "subroute",
+    "routes": [
+        //No trailing slash with no query
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "^(.+?)/$",
+                        "name": "noTrailSlash"
+                    },
+                    "query": {}
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "{http.regexp.noTrailSlash.1}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //No trailing slash with a query
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "^(.+?)/$",
+                        "name": "noTrailSlashQuery"
+                    },
+                    "not": [
+                        {
+                            "query": {}
+                        }
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "{http.regexp.noTrailSlashQuery.1}?{http.request.uri.query}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //Sitemap with format (legacy)
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/sitemap/(xml|txt|html)(.*)",
+                        "name": "sitemapFormat"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/sitemap{http.regexp.sitemapFormat.2}"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //Sitemap without a file specified
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "/sitemap/?$",
+                        "name": "sitemapNoFile"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/sitemap/index.xml"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        },
+        //Sitemap without .xml
+        {
+            "match": [
+                {
+                    //A negative look behind does not seem to work here
+                    //Thrown "invalid named capture" error, so using "not", too
+                    "path_regexp": {
+                        "pattern": "/sitemap/(.+)$",
+                        "name": "sitemapNoExtension"
+                    },
+                    "not": [
+                        {
+                            "path": [
+                                "*.xml"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "static_response",
+                    "headers": {
+                        "Location": [
+                            "/sitemap/{http.regexp.sitemapNoExtension.1}.xml"
+                        ],
+                        "X-Redirect-Source": [
+                            "Caddy"
+                        ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                }
+            ]
+        }
+    ]
+}

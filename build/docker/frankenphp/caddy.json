@@ -1,0 +1,3282 @@
+{
+  "logging": {
+    "logs": {
+      "default": {
+        "writer": {
+          "filename": "/app/logs/caddy.log",
+          "output": "file",
+          "roll": true,
+          "roll_size_mb": 10,
+          "roll_keep": 5,
+          "roll_keep_days": 14
+        },
+        "level": "WARN",
+        "exclude": [
+          "http.log.access",
+          "crowdsec",
+          "http.handlers.crowdsec",
+          "http.handlers.appsec"
+        ]
+      },
+      "bouncer": {
+        "writer": {
+          "filename": "/app/logs/bouncer.log",
+          "output": "file",
+          "roll": true,
+          "roll_size_mb": 10,
+          "roll_keep": 5,
+          "roll_keep_days": 7
+        },
+        "level": "DEBUG",
+        "include": [
+          "http.handlers.crowdsec",
+          "http.handlers.appsec"
+        ]
+      },
+      "access_log": {
+        "writer": {
+          "filename": "/app/logs/access.log",
+          "output": "file",
+          "roll": true,
+          "roll_size_mb": 50,
+          "roll_keep": 5,
+          "roll_keep_days": 7
+        },
+        "level": "DEBUG",
+        "include": [
+          "http.log.access"
+        ]
+      }
+    }
+  },
+  "apps": {
+    "crowdsec": {
+      "api_key": "{env.CROWDSEC_API_KEY}",
+      "api_url": "http://crowdsec:8080/",
+      "appsec_url": "http://crowdsec:7422/",
+      "ticker_interval": "10s",
+      "metrics_interval": "15m",
+      "enable_streaming": true,
+      "enable_hard_fails": false,
+      "appsec_fail_open": false,
+      "enable_caddy_error": true,
+      "enable_caddy_metrics": true
+    },
+    "tls": {
+      "certificates": {
+        "automate": [
+          "simbiat.dev",
+          "simbiat.eu",
+          "simbiat.net",
+          "simbiat.org",
+          "www.simbiat.dev",
+          "www.simbiat.net",
+          "www.simbiat.org",
+          "facts.support",
+          "supops.support",
+          "supops.tech",
+          "supops.eu",
+          "supops.net",
+          "supops.org",
+          "www.facts.support",
+          "www.supops.support",
+          "www.supops.tech",
+          "www.supops.eu",
+          "www.supops.net",
+          "www.supops.org",
+          "www.simbiat.eu",
+          "localhost"
+        ]
+      },
+      "automation": {
+        "policies": [
+          {
+            "subjects": [
+              "simbiat.dev",
+              "simbiat.eu",
+              "simbiat.net",
+              "simbiat.org",
+              "www.simbiat.dev",
+              "www.simbiat.net",
+              "www.simbiat.org",
+              "facts.support",
+              "supops.support",
+              "supops.tech",
+              "supops.eu",
+              "supops.net",
+              "supops.org",
+              "www.facts.support",
+              "www.supops.support",
+              "www.supops.tech",
+              "www.supops.eu",
+              "www.supops.net",
+              "www.supops.org",
+              "www.simbiat.eu",
+              "localhost"
+            ],
+            "issuers": [
+              {
+                "module": "acme",
+                "ca": "https://acme-v02.api.letsencrypt.org/directory",
+                "email": "letsencrypt@simbiat.eu",
+                "acme_timeout": "60s"
+              },
+              {
+                "module": "internal",
+                "lifetime": "30d"
+              }
+            ],
+            "key_type": "rsa4096",
+            "must_staple": false
+          }
+        ]
+      }
+    },
+    "frankenphp": {},
+    "http": {
+      "grace_period": "30s",
+      "shutdown_delay": "10s",
+      "servers": {
+        "server_0": {
+          "listen": [
+            ":80",
+            ":443"
+          ],
+          "logs": {
+            "default_logger_name": "access_log"
+          },
+          "read_timeout": "10s",
+          "read_header_timeout": "10s",
+          "write_timeout": "30m",
+          "strict_sni_host": true,
+          "routes": [
+            {
+              "handle": [
+                {
+                  "handler": "rate_limit",
+                  "rate_limits": {
+                    "reads": {
+                      "match": [
+                        {
+                          "method": [
+                            "GET",
+                            "HEAD",
+                            "OPTIONS",
+                            "CONNECT"
+                          ]
+                        }
+                      ],
+                      "key": "{http.request.remote.host}",
+                      "window": "1m",
+                      "max_events": 300,
+                      "ipv4_prefix": 32,
+                      "ipv6_prefix": 64
+                    },
+                    "writes": {
+                      "match": [
+                        {
+                          "method": [
+                            "POST",
+                            "PUT",
+                            "PATCH",
+                            "DELETE"
+                          ]
+                        }
+                      ],
+                      "key": "{http.request.remote.host}",
+                      "window": "1m",
+                      "max_events": 60,
+                      "ipv4_prefix": 32,
+                      "ipv6_prefix": 64
+                    }
+                  },
+                  "jitter": 0.15,
+                  "sweep_interval": "1m",
+                  "log_key": true,
+                  "disable_metrics": false
+                }
+              ]
+            },
+            {
+              "handle": [
+                {
+                  "handler": "crowdsec"
+                }
+              ]
+            },
+            {
+              "handle": [
+                {
+                  "handler": "appsec"
+                }
+              ]
+            },
+            {
+              "handle": [
+                {
+                  "handler": "headers",
+                  "response": {
+                    "delete": [
+                      "Expires",
+                      "Host",
+                      "P3P",
+                      "Pragma",
+                      "Public-Key-Pins",
+                      "Public-Key-Pins-Report-Only",
+                      "Server",
+                      "Via",
+                      "X-AspNet-Version",
+                      "X-AspNetMvc-version",
+                      "X-Powered-By",
+                      "X-Runtime",
+                      "X-Version",
+                      "X-UA-Compatible",
+                      "X-Robots-Tag",
+                      "X-Frame-Options",
+                      "X-Requested-With",
+                      "X-Content-Duration",
+                      "X-Pingback"
+                    ]
+                  }
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Timing-Allow-Origin": [
+                        "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+                      ],
+                      "Access-Control-Max-Age": [
+                        "86400"
+                      ],
+                      "Access-Control-Allow-Credentials": [
+                        "true"
+                      ],
+                      "X-Content-Type-Options": [
+                        "nosniff"
+                      ],
+                      "Referrer-Policy": [
+                        "no-referrer"
+                      ],
+                      "Cross-Origin-Opener-Policy": [
+                        "same-origin"
+                      ],
+                      "Access-Control-Allow-Origin": [
+                        "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+                      ],
+                      "Cross-Origin-Embedder-Policy": [
+                        "require-corp"
+                      ],
+                      "Cross-Origin-Resource-Policy": [
+                        "same-origin"
+                      ],
+                      "Accept-CH": [
+                        "Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Form-Factors"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "handle": [
+                        {
+                          "handler": "error",
+                          "status_code": 405
+                        }
+                      ],
+                      "match": [
+                        {
+                          "protocol": "http/0.9",
+                          "method": [
+                            "POST"
+                          ]
+                        },
+                        {
+                          "protocol": "http/1.0",
+                          "method": [
+                            "POST"
+                          ]
+                        },
+                        {
+                          "method": [
+                            "TRACE"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "error",
+                          "status_code": 403
+                        }
+                      ],
+                      "match": [
+                        {
+                          "path": [
+                            "/bin*",
+                            "/build*",
+                            "/config*",
+                            "/lib*",
+                            "/logs*",
+                            "/node_modules*",
+                            "/templates*",
+                            "/twig*",
+                            "/vendor*",
+                            "/.*",
+                            "/data*"
+                          ],
+                          "not": [
+                            {
+                              "path": [
+                                "/vendor/tinymce/*",
+                                "/.well-known/*",
+                                "/data/sitemap*",
+                                "/data/mergedcrests*",
+                                "/data/ffstatistics*",
+                                "/data/uploaded*",
+                                "/data/uploadedimages*"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Access-Control-Expose-Headers": [
+                        "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link, Accept-CH"
+                      ]
+                    },
+                    "require": {
+                      "headers": {
+                        "Access-Control-Expose-Headers": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Access-Control-Allow-Methods": [
+                        "HEAD, OPTIONS, GET"
+                      ]
+                    },
+                    "require": {
+                      "headers": {
+                        "Access-Control-Allow-Methods": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Cache-Control": [
+                        "max-age=31536000,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                      ]
+                    },
+                    "require": {
+                      "headers": {
+                        "Cache-Control": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "max-age=1800,public,stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            }
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "path": [
+                            "/assets/html5games*",
+                            "/html5games*",
+                            "/games/html5games*"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "max-age=31556952,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                              "text/css*",
+                              "application/javascript*",
+                              "application/x-javascript*",
+                              "text/javascript*"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "max-age=3600,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                              "application/atom+xml*",
+                              "application/rdf+xml*",
+                              "application/rss+xml*"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "public,no-cache, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                              "application/json*",
+                              "application/ld+json*",
+                              "application/schema+json*",
+                              "application/geo+json*",
+                              "application/xml*",
+                              "text/calendar*",
+                              "text/xml*",
+                              "application/x-web-app-manifest+json*",
+                              "text/cache-manifest*",
+                              "text/markdown*"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "max-age=60,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                              "text/html*"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "max-age=604800,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                              "application/manifest+json*",
+                              "text/x-cross-domain-policy*"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cache-Control": [
+                                "max-age=31556952,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "header": {
+                            "Cache-Control": null,
+                            "Content-Type": [
+                              "application/wasm*"
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Allow": [
+                        "HEAD, OPTIONS, GET"
+                      ]
+                    },
+                    "require": {
+                      "headers": {
+                        "Allow": null
+                      }
+                    }
+                  }
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Access-Control-Allow-Origin": [
+                                "*"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "path": [
+                            "/img*",
+                            "/data/uploadedimages*",
+                            "/data/mergedcrests*"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "headers",
+                          "response": {
+                            "set": {
+                              "Cross-Origin-Embedder-Policy": [
+                                "unsafe-none"
+                              ]
+                            },
+                            "deferred": true
+                          }
+                        }
+                      ],
+                      "match": [
+                        {
+                          "path": [
+                            "/uc/fftracker*",
+                            "/fftracker*",
+                            "/talks/users*"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Cross-Origin-Resource-Policy": [
+                        "cross-origin"
+                      ]
+                    },
+                    "require": {
+                      "headers": {
+                        "Content-Type": [
+                          "image/*",
+                          "audio/*",
+                          "video/*",
+                          "font/*",
+                          "application/json*",
+                          "application/xml*"
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "require": {
+                      "headers": {
+                        "Content-Encoding": []
+                      }
+                    },
+                    "set": {
+                      "Vary": [
+                        "Origin, Save-Data, Accept-Encoding"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Vary": [
+                        "Origin, Save-Data"
+                      ]
+                    },
+                    "deferred": true
+                  }
+                },
+                {
+                  "handler": "headers",
+                  "response": {
+                    "require": {
+                      "headers": {
+                        "Content-Type": [
+                          "text/*",
+                          "application/xml",
+                          "application/atom+xml",
+                          "application/x-bb-appworld",
+                          "application/xml-dtd",
+                          "application/json",
+                          "application/rdf+xml",
+                          "application/rss+xml",
+                          "image/svg+xml",
+                          "application/manifest+json"
+                        ]
+                      }
+                    },
+                    "replace": {
+                      "Content-Type": [
+                        {
+                          "search_regexp": "^([^;]+)(;?\\s*)$",
+                          "replace": "$1; charset=UTF-8"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "handle": [
+                        {
+                          "handler": "vars",
+                          "root": "/app/public/"
+                        },
+                        {
+                          "handler": "encode",
+                          "encodings": {
+                            "br": {
+                              "quality": 6,
+                              "lgwin": 0
+                            },
+                            "gzip": {
+                              "level": 6
+                            },
+                            "zstd": {}
+                          },
+                          "prefer": [
+                            "zstd",
+                            "br",
+                            "gzip"
+                          ],
+                          "minimum_length": 256,
+                          "match": {
+                            "headers": {
+                              "Content-Type": [
+                                "application/atom+xml*",
+                                "application/eot*",
+                                "application/font*",
+                                "application/geo+json*",
+                                "application/graphql+json*",
+                                "application/javascript*",
+                                "application/json*",
+                                "application/ld+json*",
+                                "application/manifest+json*",
+                                "application/opentype*",
+                                "application/otf*",
+                                "application/rdf+xml",
+                                "application/rss+xml*",
+                                "application/schema+json",
+                                "application/sql",
+                                "application/truetype*",
+                                "application/ttf*",
+                                "application/vnd.api+json*",
+                                "application/vnd.ms-fontobject*",
+                                "application/wasm*",
+                                "application/x-font-ttf",
+                                "application/xhtml+xml*",
+                                "application/x-httpd-cgi*",
+                                "application/x-javascript*",
+                                "application/xml*",
+                                "application/x-opentype*",
+                                "application/x-otf*",
+                                "application/x-perl*",
+                                "application/x-protobuf*",
+                                "application/x-ttf*",
+                                "application/x-web-app-manifest+json",
+                                "font/*",
+                                "image/bmp",
+                                "image/svg+xml*",
+                                "image/vnd.microsoft.icon*",
+                                "image/x-icon*",
+                                "multipart/bag*",
+                                "multipart/mixed*",
+                                "text/*"
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "protocol": "http"
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "headers": {
+                    "Location": [
+                      "https://{http.request.host}{http.request.uri}"
+                    ],
+                    "X-Redirect-Source": [
+                      "Caddy"
+                    ]
+                  },
+                  "status_code": 308,
+                  "close": true
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "protocol": "https"
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Strict-Transport-Security": [
+                        "max-age=31536000; includeSubDomains; preload"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "host": [
+                    "simbiat.dev",
+                    "simbiat.eu",
+                    "simbiat.net",
+                    "simbiat.org",
+                    "www.simbiat.dev",
+                    "www.simbiat.net",
+                    "www.simbiat.org"
+                  ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "headers": {
+                    "Location": [
+                      "https://www.simbiat.eu{http.request.uri}"
+                    ],
+                    "X-Redirect-Source": [
+                      "Caddy"
+                    ]
+                  },
+                  "status_code": 308,
+                  "close": true
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "host": [
+                    "facts.support",
+                    "supops.support",
+                    "supops.tech",
+                    "supops.eu",
+                    "supops.net",
+                    "supops.org",
+                    "www.facts.support",
+                    "www.supops.support",
+                    "www.supops.tech",
+                    "www.supops.eu",
+                    "www.supops.net",
+                    "www.supops.org"
+                  ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "headers": {
+                    "Location": [
+                      "https://www.simbiat.eu/supops"
+                    ],
+                    "X-Redirect-Source": [
+                      "Caddy"
+                    ]
+                  },
+                  "status_code": 308,
+                  "close": true
+                }
+              ]
+            },
+            {
+              "match": [
+                {
+                  "host": [
+                    "www.simbiat.eu",
+                    "localhost"
+                  ]
+                }
+              ],
+              "handle": [
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "^(.+?)/$",
+                            "name": "noTrailSlash"
+                          },
+                          "query": {}
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "static_response",
+                          "headers": {
+                            "Location": [
+                              "{http.regexp.noTrailSlash.1}"
+                            ],
+                            "X-Redirect-Source": [
+                              "Caddy"
+                            ]
+                          },
+                          "status_code": 308,
+                          "close": true
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "^(.+?)/$",
+                            "name": "noTrailSlashQuery"
+                          },
+                          "not": [
+                            {
+                              "query": {}
+                            }
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "static_response",
+                          "headers": {
+                            "Location": [
+                              "{http.regexp.noTrailSlashQuery.1}?{http.request.uri.query}"
+                            ],
+                            "X-Redirect-Source": [
+                              "Caddy"
+                            ]
+                          },
+                          "status_code": 308,
+                          "close": true
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "/sitemap/(xml|txt|html)(.*)",
+                            "name": "sitemapFormat"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "static_response",
+                          "headers": {
+                            "Location": [
+                              "/sitemap{http.regexp.sitemapFormat.2}"
+                            ],
+                            "X-Redirect-Source": [
+                              "Caddy"
+                            ]
+                          },
+                          "status_code": 308,
+                          "close": true
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "/sitemap/?$",
+                            "name": "sitemapNoFile"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "static_response",
+                          "headers": {
+                            "Location": [
+                              "/sitemap/index.xml"
+                            ],
+                            "X-Redirect-Source": [
+                              "Caddy"
+                            ]
+                          },
+                          "status_code": 308,
+                          "close": true
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "/sitemap/(.+)$",
+                            "name": "sitemapNoExtension"
+                          },
+                          "not": [
+                            {
+                              "path": [
+                                "*.xml"
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "static_response",
+                          "headers": {
+                            "Location": [
+                              "/sitemap/{http.regexp.sitemapNoExtension.1}.xml"
+                            ],
+                            "X-Redirect-Source": [
+                              "Caddy"
+                            ]
+                          },
+                          "status_code": 308,
+                          "close": true
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "match": [
+                        {
+                          "path": [
+                            "/favicon.ico"
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/assets/images/favicons/favicon.ico"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path": [
+                            "/favicon.svg"
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/assets/images/favicons/favicon.svg"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "((^|/)assets/styles/\\d+\\.css)"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/assets/styles/app.css"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "((^|/)assets/styles/\\d+\\.css.map)"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/assets/styles/app.css.map"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "(^|/)assets/(.+)\\.\\d+(\\.json|\\.js|\\.js\\.map)",
+                            "name": "jsFiles"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/assets/{http.regexp.jsFiles.2}{http.regexp.jsFiles.3}"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "pattern": "(^|/)games/(.*/)?html5games/(.*)$",
+                            "name": "gameMaker"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/assets/html5games/{http.regexp.gameMaker.3}"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "tinymce",
+                            "pattern": "/tinymce/(.*)"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "file_server",
+                          "status_code": 200,
+                          "root": "/app/vendor/tinymce"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "oldStatic",
+                            "pattern": "/static/(.*)"
+                          },
+                          "file": {
+                            "root": "/app",
+                            "split_path": [],
+                            "try_policy": "first_exist",
+                            "try_files": [
+                              "/public/static/{http.regexp.oldStatic.1}",
+                              "/public/{http.regexp.oldStatic.1}"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "file_server",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "mergedCrest",
+                            "pattern": "/assets/images/fftracker/merged-crests/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                              "/public/assets/images/fftracker/default-crests/pvp.webp",
+                              "/public/assets/images/noimage.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/public/assets/images/noimage.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "status_code": 200,
+                          "root": "/app"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "ffxivJobs",
+                            "pattern": "/assets/images/fftracker/jobs/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app/public",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "/assets/images/fftracker/jobs/{http.request.uri.path.4}",
+                              "/assets/images/fftracker/jobs/None.webp",
+                              "/assets/images/noimage.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/assets/images/fftracker/jobs/None.webp",
+                                    "/assets/images/noimage.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app/public",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "root": "/app/public",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "avatars",
+                            "pattern": "/assets/images/avatars/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                              "/public/assets/images/avatar.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/public/assets/images/avatar.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "root": "/app",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "uploadedImages",
+                            "pattern": "/assets/images/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                              "/public/assets/images/noimage.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/public/assets/images/noimage.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "root": "/app",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "oldImages",
+                            "pattern": "/img/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app/public",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "/assets/images/noimage.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/assets/images/noimage.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app/public",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "root": "/app/public",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "DDCIcons",
+                            "pattern": "/assets/images/devicedetector/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                              "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                              "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}",
+                              "/packages/DDCIcons/icons/{http.request.uri.path.3}",
+                              "/public/assets/images/noimage.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/public/assets/images/noimage.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "root": "/app",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "missingImages",
+                            "pattern": "/assets/images/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                          },
+                          "file": {
+                            "root": "/app/public",
+                            "split_path": [],
+                            "try_policy": "first_exist_fallback",
+                            "try_files": [
+                              "{http.request.uri.path}",
+                              "/assets/images/noimage.svg"
+                            ]
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        },
+                        {
+                          "handler": "subroute",
+                          "routes": [
+                            {
+                              "match": [
+                                {
+                                  "path": [
+                                    "/assets/images/noimage.svg"
+                                  ]
+                                }
+                              ],
+                              "handle": [
+                                {
+                                  "handler": "file_server",
+                                  "root": "/app/public",
+                                  "status_code": 404
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "handler": "file_server",
+                          "root": "/app/public",
+                          "status_code": 200
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path": [
+                            "/sitemap.xml"
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "/sitemap/index.xml"
+                        }
+                      ]
+                    },
+                    {
+                      "match": [
+                        {
+                          "path_regexp": {
+                            "name": "sitemapRewrite",
+                            "pattern": "/sitemap/(.+)"
+                          }
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "file_server",
+                          "root": "/app/data",
+                          "status_code": 200
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "handler": "subroute",
+                  "routes": [
+                    {
+                      "match": [
+                        {
+                          "file": {
+                            "try_files": [
+                              "{http.request.uri.path}/index.php"
+                            ]
+                          },
+                          "not": [
+                            {
+                              "path": [
+                                "*/"
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "handle": [
+                        {
+                          "handler": "static_response",
+                          "headers": {
+                            "Location": [
+                              "{http.request.orig_uri.path}/"
+                            ],
+                            "X-Redirect-Source": [
+                              "Caddy"
+                            ]
+                          },
+                          "status_code": 308,
+                          "close": true
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "rewrite",
+                          "uri": "{http.matchers.file.relative}"
+                        }
+                      ],
+                      "match": [
+                        {
+                          "file": {
+                            "split_path": [
+                              ".php"
+                            ],
+                            "try_files": [
+                              "{http.request.uri.path}",
+                              "{http.request.uri.path}/index.php",
+                              "index.php"
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "vars",
+                          "caddy_http_error": "{http.error.status_code}",
+                          "caddy_http_error_msg": "{http.error.message}"
+                        }
+                      ],
+                      "match": [
+                        {
+                          "expression": "{http.error.status_code} != ''"
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "php",
+                          "env": {
+                            "CADDY_HTTP_ERROR": "{http.vars.caddy_http_error}",
+                            "CADDY_HTTP_ERROR_MSG": "{http.vars.caddy_http_error_msg}"
+                          },
+                          "split_path": [
+                            ".php"
+                          ]
+                        }
+                      ],
+                      "match": [
+                        {
+                          "path": [
+                            "*.php"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "handle": [
+                        {
+                          "handler": "file_server",
+                          "status_code": 200
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "terminal": true
+            }
+          ],
+          "errors": {
+            "routes": [
+              {
+                "handle": [
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "delete": [
+                        "Expires",
+                        "Host",
+                        "P3P",
+                        "Pragma",
+                        "Public-Key-Pins",
+                        "Public-Key-Pins-Report-Only",
+                        "Server",
+                        "Via",
+                        "X-AspNet-Version",
+                        "X-AspNetMvc-version",
+                        "X-Powered-By",
+                        "X-Runtime",
+                        "X-Version",
+                        "X-UA-Compatible",
+                        "X-Robots-Tag",
+                        "X-Frame-Options",
+                        "X-Requested-With",
+                        "X-Content-Duration",
+                        "X-Pingback"
+                      ]
+                    }
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Timing-Allow-Origin": [
+                          "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+                        ],
+                        "Access-Control-Max-Age": [
+                          "86400"
+                        ],
+                        "Access-Control-Allow-Credentials": [
+                          "true"
+                        ],
+                        "X-Content-Type-Options": [
+                          "nosniff"
+                        ],
+                        "Referrer-Policy": [
+                          "no-referrer"
+                        ],
+                        "Cross-Origin-Opener-Policy": [
+                          "same-origin"
+                        ],
+                        "Access-Control-Allow-Origin": [
+                          "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+                        ],
+                        "Cross-Origin-Embedder-Policy": [
+                          "require-corp"
+                        ],
+                        "Cross-Origin-Resource-Policy": [
+                          "same-origin"
+                        ],
+                        "Accept-CH": [
+                          "Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Form-Factors"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "error",
+                            "status_code": 405
+                          }
+                        ],
+                        "match": [
+                          {
+                            "protocol": "http/0.9",
+                            "method": [
+                              "POST"
+                            ]
+                          },
+                          {
+                            "protocol": "http/1.0",
+                            "method": [
+                              "POST"
+                            ]
+                          },
+                          {
+                            "method": [
+                              "TRACE"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "error",
+                            "status_code": 403
+                          }
+                        ],
+                        "match": [
+                          {
+                            "path": [
+                              "/bin*",
+                              "/build*",
+                              "/config*",
+                              "/lib*",
+                              "/logs*",
+                              "/node_modules*",
+                              "/templates*",
+                              "/twig*",
+                              "/vendor*",
+                              "/.*",
+                              "/data*"
+                            ],
+                            "not": [
+                              {
+                                "path": [
+                                  "/vendor/tinymce/*",
+                                  "/.well-known/*",
+                                  "/data/sitemap*",
+                                  "/data/mergedcrests*",
+                                  "/data/ffstatistics*",
+                                  "/data/uploaded*",
+                                  "/data/uploadedimages*"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Access-Control-Expose-Headers": [
+                          "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link, Accept-CH"
+                        ]
+                      },
+                      "require": {
+                        "headers": {
+                          "Access-Control-Expose-Headers": null
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Access-Control-Allow-Methods": [
+                          "HEAD, OPTIONS, GET"
+                        ]
+                      },
+                      "require": {
+                        "headers": {
+                          "Access-Control-Allow-Methods": null
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Cache-Control": [
+                          "max-age=31536000,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                        ]
+                      },
+                      "require": {
+                        "headers": {
+                          "Cache-Control": null
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "max-age=1800,public,stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              }
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "path": [
+                              "/assets/html5games*",
+                              "/html5games*",
+                              "/games/html5games*"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "max-age=31556952,public,immutable, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "header": {
+                              "Cache-Control": null,
+                              "Content-Type": [
+                                "text/css*",
+                                "application/javascript*",
+                                "application/x-javascript*",
+                                "text/javascript*"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "max-age=3600,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "header": {
+                              "Cache-Control": null,
+                              "Content-Type": [
+                                "application/atom+xml*",
+                                "application/rdf+xml*",
+                                "application/rss+xml*"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "public,no-cache, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "header": {
+                              "Cache-Control": null,
+                              "Content-Type": [
+                                "application/json*",
+                                "application/ld+json*",
+                                "application/schema+json*",
+                                "application/geo+json*",
+                                "application/xml*",
+                                "text/calendar*",
+                                "text/xml*",
+                                "application/x-web-app-manifest+json*",
+                                "text/cache-manifest*",
+                                "text/markdown*"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "max-age=60,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "header": {
+                              "Cache-Control": null,
+                              "Content-Type": [
+                                "text/html*"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "max-age=604800,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "header": {
+                              "Cache-Control": null,
+                              "Content-Type": [
+                                "application/manifest+json*",
+                                "text/x-cross-domain-policy*"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cache-Control": [
+                                  "max-age=31556952,public, stale-while-revalidate=1800,stale-if-error=1800,no-transform"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "header": {
+                              "Cache-Control": null,
+                              "Content-Type": [
+                                "application/wasm*"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Allow": [
+                          "HEAD, OPTIONS, GET"
+                        ]
+                      },
+                      "require": {
+                        "headers": {
+                          "Allow": null
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Access-Control-Allow-Origin": [
+                                  "*"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "path": [
+                              "/img*",
+                              "/data/uploadedimages*",
+                              "/data/mergedcrests*"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "headers",
+                            "response": {
+                              "set": {
+                                "Cross-Origin-Embedder-Policy": [
+                                  "unsafe-none"
+                                ]
+                              },
+                              "deferred": true
+                            }
+                          }
+                        ],
+                        "match": [
+                          {
+                            "path": [
+                              "/uc/fftracker*",
+                              "/fftracker*",
+                              "/talks/users*"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Cross-Origin-Resource-Policy": [
+                          "cross-origin"
+                        ]
+                      },
+                      "require": {
+                        "headers": {
+                          "Content-Type": [
+                            "image/*",
+                            "audio/*",
+                            "video/*",
+                            "font/*",
+                            "application/json*",
+                            "application/xml*"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "require": {
+                        "headers": {
+                          "Content-Encoding": []
+                        }
+                      },
+                      "set": {
+                        "Vary": [
+                          "Origin, Save-Data, Accept-Encoding"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Vary": [
+                          "Origin, Save-Data"
+                        ]
+                      },
+                      "deferred": true
+                    }
+                  },
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "require": {
+                        "headers": {
+                          "Content-Type": [
+                            "text/*",
+                            "application/xml",
+                            "application/atom+xml",
+                            "application/x-bb-appworld",
+                            "application/xml-dtd",
+                            "application/json",
+                            "application/rdf+xml",
+                            "application/rss+xml",
+                            "image/svg+xml",
+                            "application/manifest+json"
+                          ]
+                        }
+                      },
+                      "replace": {
+                        "Content-Type": [
+                          {
+                            "search_regexp": "^([^;]+)(;?\\s*)$",
+                            "replace": "$1; charset=UTF-8"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "vars",
+                            "root": "/app/public/"
+                          },
+                          {
+                            "handler": "encode",
+                            "encodings": {
+                              "br": {
+                                "quality": 6,
+                                "lgwin": 0
+                              },
+                              "gzip": {
+                                "level": 6
+                              },
+                              "zstd": {}
+                            },
+                            "prefer": [
+                              "zstd",
+                              "br",
+                              "gzip"
+                            ],
+                            "minimum_length": 256,
+                            "match": {
+                              "headers": {
+                                "Content-Type": [
+                                  "application/atom+xml*",
+                                  "application/eot*",
+                                  "application/font*",
+                                  "application/geo+json*",
+                                  "application/graphql+json*",
+                                  "application/javascript*",
+                                  "application/json*",
+                                  "application/ld+json*",
+                                  "application/manifest+json*",
+                                  "application/opentype*",
+                                  "application/otf*",
+                                  "application/rdf+xml",
+                                  "application/rss+xml*",
+                                  "application/schema+json",
+                                  "application/sql",
+                                  "application/truetype*",
+                                  "application/ttf*",
+                                  "application/vnd.api+json*",
+                                  "application/vnd.ms-fontobject*",
+                                  "application/wasm*",
+                                  "application/x-font-ttf",
+                                  "application/xhtml+xml*",
+                                  "application/x-httpd-cgi*",
+                                  "application/x-javascript*",
+                                  "application/xml*",
+                                  "application/x-opentype*",
+                                  "application/x-otf*",
+                                  "application/x-perl*",
+                                  "application/x-protobuf*",
+                                  "application/x-ttf*",
+                                  "application/x-web-app-manifest+json",
+                                  "font/*",
+                                  "image/bmp",
+                                  "image/svg+xml*",
+                                  "image/vnd.microsoft.icon*",
+                                  "image/x-icon*",
+                                  "multipart/bag*",
+                                  "multipart/mixed*",
+                                  "text/*"
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "match": [
+                  {
+                    "protocol": "http"
+                  }
+                ],
+                "handle": [
+                  {
+                    "handler": "static_response",
+                    "headers": {
+                      "Location": [
+                        "https://{http.request.host}{http.request.uri}"
+                      ],
+                      "X-Redirect-Source": [
+                        "Caddy"
+                      ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                  }
+                ]
+              },
+              {
+                "match": [
+                  {
+                    "protocol": "https"
+                  }
+                ],
+                "handle": [
+                  {
+                    "handler": "headers",
+                    "response": {
+                      "set": {
+                        "Strict-Transport-Security": [
+                          "max-age=31536000; includeSubDomains; preload"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "match": [
+                  {
+                    "host": [
+                      "simbiat.dev",
+                      "simbiat.eu",
+                      "simbiat.net",
+                      "simbiat.org",
+                      "www.simbiat.dev",
+                      "www.simbiat.net",
+                      "www.simbiat.org"
+                    ]
+                  }
+                ],
+                "handle": [
+                  {
+                    "handler": "static_response",
+                    "headers": {
+                      "Location": [
+                        "https://www.simbiat.eu{http.request.uri}"
+                      ],
+                      "X-Redirect-Source": [
+                        "Caddy"
+                      ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                  }
+                ]
+              },
+              {
+                "match": [
+                  {
+                    "host": [
+                      "facts.support",
+                      "supops.support",
+                      "supops.tech",
+                      "supops.eu",
+                      "supops.net",
+                      "supops.org",
+                      "www.facts.support",
+                      "www.supops.support",
+                      "www.supops.tech",
+                      "www.supops.eu",
+                      "www.supops.net",
+                      "www.supops.org"
+                    ]
+                  }
+                ],
+                "handle": [
+                  {
+                    "handler": "static_response",
+                    "headers": {
+                      "Location": [
+                        "https://www.simbiat.eu/supops"
+                      ],
+                      "X-Redirect-Source": [
+                        "Caddy"
+                      ]
+                    },
+                    "status_code": 308,
+                    "close": true
+                  }
+                ]
+              },
+              {
+                "handle": [
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "^(.+?)/$",
+                              "name": "noTrailSlash"
+                            },
+                            "query": {}
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "static_response",
+                            "headers": {
+                              "Location": [
+                                "{http.regexp.noTrailSlash.1}"
+                              ],
+                              "X-Redirect-Source": [
+                                "Caddy"
+                              ]
+                            },
+                            "status_code": 308,
+                            "close": true
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "^(.+?)/$",
+                              "name": "noTrailSlashQuery"
+                            },
+                            "not": [
+                              {
+                                "query": {}
+                              }
+                            ]
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "static_response",
+                            "headers": {
+                              "Location": [
+                                "{http.regexp.noTrailSlashQuery.1}?{http.request.uri.query}"
+                              ],
+                              "X-Redirect-Source": [
+                                "Caddy"
+                              ]
+                            },
+                            "status_code": 308,
+                            "close": true
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "/sitemap/(xml|txt|html)(.*)",
+                              "name": "sitemapFormat"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "static_response",
+                            "headers": {
+                              "Location": [
+                                "/sitemap{http.regexp.sitemapFormat.2}"
+                              ],
+                              "X-Redirect-Source": [
+                                "Caddy"
+                              ]
+                            },
+                            "status_code": 308,
+                            "close": true
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "/sitemap/?$",
+                              "name": "sitemapNoFile"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "static_response",
+                            "headers": {
+                              "Location": [
+                                "/sitemap/index.xml"
+                              ],
+                              "X-Redirect-Source": [
+                                "Caddy"
+                              ]
+                            },
+                            "status_code": 308,
+                            "close": true
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "/sitemap/(.+)$",
+                              "name": "sitemapNoExtension"
+                            },
+                            "not": [
+                              {
+                                "path": [
+                                  "*.xml"
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "static_response",
+                            "headers": {
+                              "Location": [
+                                "/sitemap/{http.regexp.sitemapNoExtension.1}.xml"
+                              ],
+                              "X-Redirect-Source": [
+                                "Caddy"
+                              ]
+                            },
+                            "status_code": 308,
+                            "close": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/httperror/{http.error.status_code}/"
+                          }
+                        ],
+                        "match": [
+                          {
+                            "path": [
+                              "*.php"
+                            ]
+                          },
+                          {
+                            "header": {
+                              "Sec-Fetch-Dest": [
+                                "document"
+                              ]
+                            }
+                          },
+                          {
+                            "header": {
+                              "Sec-Fetch-Site": [
+                                "none"
+                              ]
+                            }
+                          },
+                          {
+                            "header": {
+                              "Sec-Fetch-Dest": null,
+                              "Sec-Fetch-Site": null,
+                              "Referer": []
+                            },
+                            "expression": "!'{http.request.header.Referer}'.startsWith('{http.request.scheme}://{http.request.host}')"
+                          },
+                          {
+                            "header": {
+                              "Sec-Fetch-Dest": null,
+                              "Sec-Fetch-Site": null,
+                              "Referer": null,
+                              "Origin": []
+                            },
+                            "expression": "!'{http.request.header.Origin}'.startsWith('{http.request.scheme}://{http.request.host}')"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "match": [
+                          {
+                            "path": [
+                              "/favicon.ico"
+                            ]
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/assets/images/favicons/favicon.ico"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path": [
+                              "/favicon.svg"
+                            ]
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/assets/images/favicons/favicon.svg"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "((^|/)assets/styles/\\d+\\.css)"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/assets/styles/app.css"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "((^|/)assets/styles/\\d+\\.css.map)"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/assets/styles/app.css.map"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "(^|/)assets/(.+)\\.\\d+(\\.json|\\.js|\\.js\\.map)",
+                              "name": "jsFiles"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/assets/{http.regexp.jsFiles.2}{http.regexp.jsFiles.3}"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "pattern": "(^|/)games/(.*/)?html5games/(.*)$",
+                              "name": "gameMaker"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/assets/html5games/{http.regexp.gameMaker.3}"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "tinymce",
+                              "pattern": "/tinymce/(.*)"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "file_server",
+                            "status_code": 200,
+                            "root": "/app/vendor/tinymce"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "oldStatic",
+                              "pattern": "/static/(.*)"
+                            },
+                            "file": {
+                              "root": "/app",
+                              "split_path": [],
+                              "try_policy": "first_exist",
+                              "try_files": [
+                                "/public/static/{http.regexp.oldStatic.1}",
+                                "/public/{http.regexp.oldStatic.1}"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "file_server",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "mergedCrest",
+                              "pattern": "/assets/images/fftracker/merged-crests/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                "/public/assets/images/fftracker/default-crests/pvp.webp",
+                                "/public/assets/images/noimage.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/public/assets/images/noimage.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "status_code": 200,
+                            "root": "/app"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "ffxivJobs",
+                              "pattern": "/assets/images/fftracker/jobs/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app/public",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "/assets/images/fftracker/jobs/{http.request.uri.path.4}",
+                                "/assets/images/fftracker/jobs/None.webp",
+                                "/assets/images/noimage.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/assets/images/fftracker/jobs/None.webp",
+                                      "/assets/images/noimage.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app/public",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "root": "/app/public",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "avatars",
+                              "pattern": "/assets/images/avatars/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                "/public/assets/images/avatar.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/public/assets/images/avatar.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "root": "/app",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "uploadedImages",
+                              "pattern": "/assets/images/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                "/public/assets/images/noimage.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/public/assets/images/noimage.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "root": "/app",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "oldImages",
+                              "pattern": "/img/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app/public",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "/assets/images/noimage.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/assets/images/noimage.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app/public",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "root": "/app/public",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "DDCIcons",
+                              "pattern": "/assets/images/devicedetector/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                                "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                                "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}",
+                                "/packages/DDCIcons/icons/{http.request.uri.path.3}",
+                                "/public/assets/images/noimage.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/public/assets/images/noimage.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "root": "/app",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "missingImages",
+                              "pattern": "/assets/images/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                            },
+                            "file": {
+                              "root": "/app/public",
+                              "split_path": [],
+                              "try_policy": "first_exist_fallback",
+                              "try_files": [
+                                "{http.request.uri.path}",
+                                "/assets/images/noimage.svg"
+                              ]
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          },
+                          {
+                            "handler": "subroute",
+                            "routes": [
+                              {
+                                "match": [
+                                  {
+                                    "path": [
+                                      "/assets/images/noimage.svg"
+                                    ]
+                                  }
+                                ],
+                                "handle": [
+                                  {
+                                    "handler": "file_server",
+                                    "root": "/app/public",
+                                    "status_code": 404
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "handler": "file_server",
+                            "root": "/app/public",
+                            "status_code": 200
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path": [
+                              "/sitemap.xml"
+                            ]
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "/sitemap/index.xml"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "path_regexp": {
+                              "name": "sitemapRewrite",
+                              "pattern": "/sitemap/(.+)"
+                            }
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "file_server",
+                            "root": "/app/data",
+                            "status_code": 200
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "handler": "subroute",
+                    "routes": [
+                      {
+                        "handle": [
+                          {
+                            "handler": "vars",
+                            "root": "/app/public"
+                          }
+                        ]
+                      },
+                      {
+                        "match": [
+                          {
+                            "file": {
+                              "try_files": [
+                                "{http.request.uri.path}/index.php"
+                              ]
+                            },
+                            "not": [
+                              {
+                                "path": [
+                                  "*/"
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        "handle": [
+                          {
+                            "handler": "static_response",
+                            "headers": {
+                              "Location": [
+                                "{http.request.orig_uri.path}/"
+                              ],
+                              "X-Redirect-Source": [
+                                "Caddy"
+                              ]
+                            },
+                            "status_code": 308,
+                            "close": true
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "rewrite",
+                            "uri": "{http.matchers.file.relative}"
+                          }
+                        ],
+                        "match": [
+                          {
+                            "file": {
+                              "split_path": [
+                                ".php"
+                              ],
+                              "try_files": [
+                                "{http.request.uri.path}",
+                                "{http.request.uri.path}/index.php",
+                                "index.php"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "vars",
+                            "caddy_http_error": "{http.error.status_code}",
+                            "caddy_http_error_msg": "{http.error.message}"
+                          }
+                        ],
+                        "match": [
+                          {
+                            "expression": "{http.error.status_code} != ''"
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "php",
+                            "env": {
+                              "CADDY_HTTP_ERROR": "{http.vars.caddy_http_error}",
+                              "CADDY_HTTP_ERROR_MSG": "{http.vars.caddy_http_error_msg}"
+                            },
+                            "split_path": [
+                              ".php"
+                            ]
+                          }
+                        ],
+                        "match": [
+                          {
+                            "path": [
+                              "*.php"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "handle": [
+                          {
+                            "handler": "file_server",
+                            "status_code": 200
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "terminal": true
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+// Deny access to some things
+{
+    "handler": "subroute",
+    "routes": [
+        //Deny TRACE method for all requests and POST method for requests using HTTP below 1.1
+        {
+            "handle": [
+                {
+                    "handler": "error",
+                    "status_code": 405
+                }
+            ],
+            "match": [
+                {
+                    "protocol": "http/0.9",
+                    "method": [
+                        "POST"
+                    ]
+                },
+                {
+                    "protocol": "http/1.0",
+                    "method": [
+                        "POST"
+                    ]
+                },
+                {
+                    "method": [
+                        "TRACE"
+                    ]
+                }
+            ]
+        },
+        //Deny access to certain folders. They should not be in /public, but just as a precaution
+        //Some of these folders are legacy, but keeping them also as a precaution
+        {
+            "handle": [
+                {
+                    "handler": "error",
+                    "status_code": 403
+                }
+            ],
+            "match": [
+                {
+                    "path": [
+                        "/bin*",
+                        "/build*",
+                        "/config*",
+                        "/lib*",
+                        "/logs*",
+                        "/node_modules*",
+                        "/templates*",
+                        "/twig*",
+                        "/vendor*",
+                        "/.*",
+                        "/data*"
+                    ],
+                    "not": [
+                        {
+                            "path": [
+                                //Access to the TinyMCE folder is required for loading of the editor components
+                                "/vendor/tinymce/*",
+                                //well-known folder is allowed to be accessed
+                                "/.well-known/*",
+                                //It is ok to access certain data folders
+                                "/data/sitemap*",
+                                "/data/mergedcrests*",
+                                "/data/ffstatistics*",
+                                "/data/uploaded*",
+                                "/data/uploadedimages*"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

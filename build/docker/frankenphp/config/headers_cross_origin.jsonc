@@ -1,0 +1,23 @@
+// Allow cross-origin for certain MIME types
+{
+    "handler": "headers",
+    "response": {
+        "set": {
+            "Cross-Origin-Resource-Policy": [
+                "cross-origin"
+            ]
+        },
+        "require": {
+            "headers": {
+                "Content-Type": [
+                    "image/*",
+                    "audio/*",
+                    "video/*",
+                    "font/*",
+                    "application/json*",
+                    "application/xml*"
+                ]
+            }
+        }
+    }
+}

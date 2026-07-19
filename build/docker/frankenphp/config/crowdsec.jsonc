@@ -1,0 +1,34 @@
+{
+    // APIKey for the CrowdSec Local API.
+    "api_key": "{env.CROWDSEC_API_KEY}",
+    // APIUrl for the CrowdSec Local API.
+    "api_url": "http://crowdsec:8080/",
+    // AppSecUrl is the URL of the AppSec component served by your CrowdSec installation.
+    "appsec_url": "http://crowdsec:7422/",
+    // TickerInterval is the interval the StreamBouncer uses for querying the CrowdSec Local API.
+    // 10s is recommended by CrowdSec.
+    "ticker_interval": "10s",
+    // This is the *minimum* value recommended by CrowdSec
+    "metrics_interval": "15m",
+    // EnableStreaming indicates whether the StreamBouncer should be used.
+    // If it's false, the LiveBouncer is used. The StreamBouncer keeps
+    // CrowdSec decisions in memory, resulting in quicker lookups. The
+    // LiveBouncer will perform an API call to your CrowdSec instance.
+    "enable_streaming": true,
+    // EnableHardFails indicates whether calls to the CrowdSec API should
+    // result in hard failures, resulting in Caddy quitting vs.
+    // Caddy continuing operation (with a chance of not performing).
+    "enable_hard_fails": false,
+    // AppSecFailOpen indicates whether requests should be allowed
+    // through when the AppSec component is unavailable or returns errors.
+    // When false (the default), AppSec errors will result in requests
+    // being blocked.
+    "appsec_fail_open": false,
+    // EnableCaddyError indicates whether access denied responses should be
+    // propagated as Caddy errors (allowing for custom error pages via handle_errors)
+    // instead of writing a raw HTTP response directly.
+    "enable_caddy_error": true,
+    // EnableCaddyMetrics enables metrics maintained by the CrowdSec
+    // module to be emitted at Caddy's /metrics endpoint.
+    "enable_caddy_metrics": true
+}

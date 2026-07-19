@@ -1,0 +1,34 @@
+[
+    // Set Access-Control-Expose-Headers, if empty
+    {
+        "handler": "headers",
+        "response": {
+            "set": {
+                "Access-Control-Expose-Headers": [
+                    "SourceMap, Cache-Control, Content-Language, Content-Type, Last-Modified, Strict-Transport-Security, Access-Control-Max-Age, Access-Control-Allow-Credentials, Vary, Access-Control-Allow-Origin, Access-Control-Expose-Headers, Access-Control-Allow-Headers, Access-Control-Allow-Methods, Cross-Origin-Embedder-Policy, Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, Referrer-Policy, Content-Security-Policy, Content-Security-Policy-Report-Only, X-Content-Type-Options, X-DNS-Prefetch-Control, Connection, Keep-Alive, Feature-Policy, ETag, Link, Accept-CH"
+                ]
+            },
+            "require": {
+                "headers": {
+                    "Access-Control-Expose-Headers": null
+                }
+            }
+        }
+    },
+    // Set Access-Control-Allow-Methods, if empty
+    {
+        "handler": "headers",
+        "response": {
+            "set": {
+                "Access-Control-Allow-Methods": [
+                    "HEAD, OPTIONS, GET"
+                ]
+            },
+            "require": {
+                "headers": {
+                    "Access-Control-Allow-Methods": null
+                }
+            }
+        }
+    }
+]

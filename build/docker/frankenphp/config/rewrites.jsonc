@@ -1,0 +1,561 @@
+// Rewrite rules
+{
+    "handler": "subroute",
+    "routes": [
+        //Favicon
+        {
+            "match": [
+                {
+                    "path": [
+                        "/favicon.ico"
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/assets/images/favicons/favicon.ico"
+                }
+            ]
+        },
+        {
+            "match": [
+                {
+                    "path": [
+                        "/favicon.svg"
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/assets/images/favicons/favicon.svg"
+                }
+            ]
+        },
+        //Main CSS file
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "((^|/)assets/styles/\\d+\\.css)"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/assets/styles/app.css"
+                }
+            ]
+        },
+        //Main CSS map file
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "((^|/)assets/styles/\\d+\\.css.map)"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/assets/styles/app.css.map"
+                }
+            ]
+        },
+        //JS files and their maps
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "(^|/)assets/(.+)\\.\\d+(\\.json|\\.js|\\.js\\.map)",
+                        "name": "jsFiles"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/assets/{http.regexp.jsFiles.2}{http.regexp.jsFiles.3}"
+                }
+            ]
+        },
+        //GameMaker files
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "pattern": "(^|/)games/(.*/)?html5games/(.*)$",
+                        "name": "gameMaker"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/assets/html5games/{http.regexp.gameMaker.3}"
+                }
+            ]
+        },
+        //TinyMCE
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "tinymce",
+                        "pattern": "/tinymce/(.*)"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "file_server",
+                    "status_code": 200,
+                    "root": "/app/vendor/tinymce"
+                }
+            ]
+        },
+        //Old "static" assets
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "oldStatic",
+                        "pattern": "/static/(.*)"
+                    },
+                    "file": {
+                        "root": "/app",
+                        "split_path": [],
+                        "try_policy": "first_exist",
+                        "try_files": [
+                            "/public/static/{http.regexp.oldStatic.1}",
+                            "/public/{http.regexp.oldStatic.1}"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                {
+                    "handler": "file_server",
+                    "status_code": 200
+                }
+            ]
+        },
+        //Merged crests
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "mergedCrest",
+                        "pattern": "/assets/images/fftracker/merged-crests/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "/data/mergedcrests/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                            "/public/assets/images/fftracker/default-crests/pvp.webp",
+                            "/public/assets/images/noimage.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/public/assets/images/noimage.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "status_code": 200,
+                    "root": "/app"
+                }
+            ]
+        },
+        //FFXIV Job icons
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "ffxivJobs",
+                        "pattern": "/assets/images/fftracker/jobs/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app/public",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "/assets/images/fftracker/jobs/{http.request.uri.path.4}",
+                            "/assets/images/fftracker/jobs/None.webp",
+                            "/assets/images/noimage.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/assets/images/fftracker/jobs/None.webp",
+                                        "/assets/images/noimage.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app/public",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "root": "/app/public",
+                    "status_code": 200
+                }
+            ]
+        },
+        //Avatars
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "avatars",
+                        "pattern": "/assets/images/avatars/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                            "/public/assets/images/avatar.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/public/assets/images/avatar.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "root": "/app",
+                    "status_code": 200
+                }
+            ]
+        },
+        //Uploaded images
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "uploadedImages",
+                        "pattern": "/assets/images/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "/data/uploadedimages/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                            "/public/assets/images/noimage.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/public/assets/images/noimage.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "root": "/app",
+                    "status_code": 200
+                }
+            ]
+        },
+        //Old image folder
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "oldImages",
+                        "pattern": "/img/uploaded/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app/public",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "/assets/images/noimage.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/assets/images/noimage.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app/public",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "root": "/app/public",
+                    "status_code": 200
+                }
+            ]
+        },
+        //Device detector icons
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "DDCIcons",
+                        "pattern": "/assets/images/devicedetector/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}/{http.request.uri.path.6}",
+                            "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}/{http.request.uri.path.5}",
+                            "/packages/DDCIcons/icons/{http.request.uri.path.3}/{http.request.uri.path.4}",
+                            "/packages/DDCIcons/icons/{http.request.uri.path.3}",
+                            "/public/assets/images/noimage.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/public/assets/images/noimage.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "root": "/app",
+                    "status_code": 200
+                }
+            ]
+        },
+        //All other images
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "missingImages",
+                        "pattern": "/assets/images/(.*\\.(svg|png|jpeg|jpg|avif|heic|gif|webp))"
+                    },
+                    "file": {
+                        "root": "/app/public",
+                        "split_path": [],
+                        "try_policy": "first_exist_fallback",
+                        "try_files": [
+                            "{http.request.uri.path}",
+                            "/assets/images/noimage.svg"
+                        ]
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "{http.matchers.file.relative}"
+                },
+                //Return 404 if we failback to noimage.svg
+                {
+                    "handler": "subroute",
+                    "routes": [
+                        {
+                            "match": [
+                                {
+                                    "path": [
+                                        "/assets/images/noimage.svg"
+                                    ]
+                                }
+                            ],
+                            "handle": [
+                                {
+                                    "handler": "file_server",
+                                    "root": "/app/public",
+                                    "status_code": 404
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "handler": "file_server",
+                    "root": "/app/public",
+                    "status_code": 200
+                }
+            ]
+        },
+        //Sitemap (This is an attempt to force Google Search to recognize the sitemaps)
+        {
+            "match": [
+                {
+                    "path": [
+                        "/sitemap.xml"
+                    ]
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "rewrite",
+                    "uri": "/sitemap/index.xml"
+                }
+            ]
+        },
+        //Feed sitemaps from actual data directory
+        {
+            "match": [
+                {
+                    "path_regexp": {
+                        "name": "sitemapRewrite",
+                        "pattern": "/sitemap/(.+)"
+                    }
+                }
+            ],
+            "handle": [
+                {
+                    "handler": "file_server",
+                    "root": "/app/data",
+                    "status_code": 200
+                }
+            ]
+        }
+    ]
+}

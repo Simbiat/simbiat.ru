@@ -1,0 +1,48 @@
+[
+    // Force www.simbiat.eu
+    {
+        "match": [
+            {
+                "host": []
+            }
+        ],
+        "handle": [
+            {
+                "handler": "static_response",
+                "headers": {
+                    "Location": [
+                        "https://www.simbiat.eu{http.request.uri}"
+                    ],
+                    "X-Redirect-Source": [
+                        "Caddy"
+                    ]
+                },
+                "status_code": 308,
+                "close": true
+            }
+        ]
+    },
+    // Force SupOps page
+    {
+        "match": [
+            {
+                "host": []
+            }
+        ],
+        "handle": [
+            {
+                "handler": "static_response",
+                "headers": {
+                    "Location": [
+                        "https://www.simbiat.eu/supops"
+                    ],
+                    "X-Redirect-Source": [
+                        "Caddy"
+                    ]
+                },
+                "status_code": 308,
+                "close": true
+            }
+        ]
+    }
+]

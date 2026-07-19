@@ -1,0 +1,43 @@
+{
+    "handler": "rate_limit",
+    "rate_limits": {
+        "reads": {
+            "match": [
+                {
+                    "method": [
+                        "GET",
+                        "HEAD",
+                        "OPTIONS",
+                        "CONNECT"
+                    ]
+                }
+            ],
+            "key": "{http.request.remote.host}",
+            "window": "1m",
+            "max_events": 300,
+            "ipv4_prefix": 32,
+            "ipv6_prefix": 64
+        },
+        "writes": {
+            "match": [
+                {
+                    "method": [
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                    ]
+                }
+            ],
+            "key": "{http.request.remote.host}",
+            "window": "1m",
+            "max_events": 60,
+            "ipv4_prefix": 32,
+            "ipv6_prefix": 64
+        }
+    },
+    "jitter": 0.15,
+    "sweep_interval": "1m",
+    "log_key": true,
+    "disable_metrics": false
+}

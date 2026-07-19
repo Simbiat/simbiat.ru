@@ -1,0 +1,101 @@
+// PHP handler
+[
+    {
+        "match": [
+            {
+                "file": {
+                    "try_files": [
+                        "{http.request.uri.path}/index.php"
+                    ]
+                },
+                "not": [
+                    {
+                        "path": [
+                            "*/"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "handle": [
+            {
+                "handler": "static_response",
+                "headers": {
+                    "Location": [
+                        "{http.request.orig_uri.path}/"
+                    ],
+                    "X-Redirect-Source": [
+                        "Caddy"
+                    ]
+                },
+                "status_code": 308,
+                "close": true
+            }
+        ]
+    },
+    {
+        "handle": [
+            {
+                "handler": "rewrite",
+                "uri": "{http.matchers.file.relative}"
+            }
+        ],
+        "match": [
+            {
+                "file": {
+                    "split_path": [
+                        ".php"
+                    ],
+                    "try_files": [
+                        "{http.request.uri.path}",
+                        "{http.request.uri.path}/index.php",
+                        "index.php"
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "handle": [
+            {
+                "handler": "vars",
+                "caddy_http_error": "{http.error.status_code}",
+                "caddy_http_error_msg": "{http.error.message}"
+            }
+        ],
+        "match": [
+            {
+                "expression": "{http.error.status_code} != ''"
+            }
+        ]
+    },
+    {
+        "handle": [
+            {
+                "handler": "php",
+                "env": {
+                    "CADDY_HTTP_ERROR": "{http.vars.caddy_http_error}",
+                    "CADDY_HTTP_ERROR_MSG": "{http.vars.caddy_http_error_msg}"
+                },
+                "split_path": [
+                    ".php"
+                ]
+            }
+        ],
+        "match": [
+            {
+                "path": [
+                    "*.php"
+                ]
+            }
+        ]
+    },
+    {
+        "handle": [
+            {
+                "handler": "file_server",
+                "status_code": 200
+            }
+        ]
+    }
+]

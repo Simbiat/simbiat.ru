@@ -1,0 +1,51 @@
+{
+    // Default log file. Log only warnings and completely exclude access logs.
+    "default": {
+        "writer": {
+            "filename": "/app/logs/caddy.log",
+            "output": "file",
+            "roll": true,
+            "roll_size_mb": 10,
+            "roll_keep": 5,
+            "roll_keep_days": 14
+        },
+        "level": "WARN",
+        "exclude": [
+            "http.log.access",
+            "crowdsec",
+            "http.handlers.crowdsec",
+            "http.handlers.appsec"
+        ]
+    },
+    // Crowdsec logs. If logs for API communication ever are required, add `crowdsec` to `include`.
+    "bouncer": {
+        "writer": {
+            "filename": "/app/logs/bouncer.log",
+            "output": "file",
+            "roll": true,
+            "roll_size_mb": 10,
+            "roll_keep": 5,
+            "roll_keep_days": 7
+        },
+        "level": "DEBUG",
+        "include": [
+            "http.handlers.crowdsec",
+            "http.handlers.appsec"
+        ]
+    },
+    // Access logs. Using DEBUG level to ensure as many details as possible, since it's read by CrowdSec.
+    "access_log": {
+        "writer": {
+            "filename": "/app/logs/access.log",
+            "output": "file",
+            "roll": true,
+            "roll_size_mb": 50,
+            "roll_keep": 5,
+            "roll_keep_days": 7
+        },
+        "level": "DEBUG",
+        "include": [
+            "http.log.access"
+        ]
+    }
+}

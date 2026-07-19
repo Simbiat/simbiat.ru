@@ -1,0 +1,51 @@
+// Minimizing potential hotlinking
+{
+    "handle": [
+        {
+            "handler": "rewrite",
+            "uri": "/httperror/{http.error.status_code}/"
+        }
+    ],
+    "match": [
+        {
+            "path": [
+                "*.php"
+            ]
+        },
+        // Covers direct navigation and opening resources in a new tab from the current document.
+        {
+            "header": {
+                "Sec-Fetch-Dest": [
+                    "document"
+                ]
+            }
+        },
+        // Fallback and covers only direct navigation.
+        {
+            "header": {
+                "Sec-Fetch-Site": [
+                    "none"
+                ]
+            }
+        },
+        // Fallback in case no Sec-Fetch-* headers, covers only direct navigation.
+        {
+            "header": {
+                "Sec-Fetch-Dest": null,
+                "Sec-Fetch-Site": null,
+                "Referer": []
+            },
+            "expression": "!'{http.request.header.Referer}'.startsWith('{http.request.scheme}://{http.request.host}')"
+        },
+        // Fallback in case no Sec-Fetch-* and Referer headers, covers only direct navigation.
+        {
+            "header": {
+                "Sec-Fetch-Dest": null,
+                "Sec-Fetch-Site": null,
+                "Referer": null,
+                "Origin": []
+            },
+            "expression": "!'{http.request.header.Origin}'.startsWith('{http.request.scheme}://{http.request.host}')"
+        }
+    ]
+}

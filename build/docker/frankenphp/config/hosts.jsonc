@@ -1,0 +1,32 @@
+{
+    // Main hosts to which all redirects should come.
+    "main": [
+        "www.simbiat.eu",
+        "localhost"
+    ],
+    // Hosts related to SupOps specifically.
+    "supops": [
+        "facts.support",
+        "supops.support",
+        "supops.tech",
+        "supops.eu",
+        "supops.net",
+        "supops.org",
+        "www.facts.support",
+        "www.supops.support",
+        "www.supops.tech",
+        "www.supops.eu",
+        "www.supops.net",
+        "www.supops.org"
+    ],
+    // Alternative (or legacy) hostnames.
+    "alt": [
+        "simbiat.dev",
+        "simbiat.eu",
+        "simbiat.net",
+        "simbiat.org",
+        "www.simbiat.dev",
+        "www.simbiat.net",
+        "www.simbiat.org"
+    ]
+}

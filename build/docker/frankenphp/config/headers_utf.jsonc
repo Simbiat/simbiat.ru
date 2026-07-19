@@ -1,0 +1,30 @@
+// Force UTF-8 charset to certain MIME types
+{
+    "handler": "headers",
+    "response": {
+        "require": {
+            "headers": {
+                "Content-Type": [
+                    "text/*",
+                    "application/xml",
+                    "application/atom+xml",
+                    "application/x-bb-appworld",
+                    "application/xml-dtd",
+                    "application/json",
+                    "application/rdf+xml",
+                    "application/rss+xml",
+                    "image/svg+xml",
+                    "application/manifest+json"
+                ]
+            }
+        },
+        "replace": {
+            "Content-Type": [
+                {
+                    "search_regexp": "^([^;]+)(;?\\s*)$",
+                    "replace": "$1; charset=UTF-8"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,38 @@
+// Force some standard headers
+{
+    "handler": "headers",
+    "response": {
+        "set": {
+            "Timing-Allow-Origin": [
+                "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+            ],
+            "Access-Control-Max-Age": [
+                "86400"
+            ],
+            "Access-Control-Allow-Credentials": [
+                "true"
+            ],
+            "X-Content-Type-Options": [
+                "nosniff"
+            ],
+            "Referrer-Policy": [
+                "no-referrer"
+            ],
+            "Cross-Origin-Opener-Policy": [
+                "same-origin"
+            ],
+            "Access-Control-Allow-Origin": [
+                "{http.request.scheme}://{http.request.host}:{http.request.local.port}"
+            ],
+            "Cross-Origin-Embedder-Policy": [
+                "require-corp"
+            ],
+            "Cross-Origin-Resource-Policy": [
+                "same-origin"
+            ],
+            "Accept-CH": [
+                "Sec-CH-UA-Arch, Sec-CH-UA-Bitness, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Form-Factors"
+            ]
+        }
+    }
+}
