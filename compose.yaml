@@ -1,0 +1,241 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+name: simbiat-dev
+
+#It looks like subnet may change in some cases for no clear (to me) reason, so trying to force it
+networks:
+  webserver:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+        - subnet: 2001:db8:1::/64
+
+volumes:
+  mariadb_data:
+    driver: local
+  mariadb_socket:
+    driver: local
+  #Volume shared between FrankenPHP and MariaDB
+  temp_volume:
+    driver: local
+  geoip_data:
+    driver: local
+  crowdsec_data:
+    driver: local
+  crowdsec_config:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+services:
+  phpmyadmin:
+    container_name: phpmyadmin
+    build:
+      context: ./build/docker/phpmyadmin
+      dockerfile: Dockerfile
+    profiles:
+      - dev_only
+    restart: no
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      APACHE_PORT: ${PHPMYADMIN_PORT}
+      PMA_SOCKET: ${DATABASE_SOCKET}
+      PMA_USER: ${DATABASE_USER}
+      PMA_PASSWORD: ${DATABASE_PASSWORD}
+      PMA_CONTROLPASS: ${PHPMYADMIN_PASSWORD}
+    networks:
+      - webserver
+    ports:
+      - "127.0.0.1:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
+      - "[::1]:${PHPMYADMIN_PORT}:${PHPMYADMIN_PORT}"
+    volumes:
+      - mariadb_socket:/run/mysqld/:ro
+      - ./build/phpmyadmin/upload:/etc/phpmyadmin/upload:ro
+      - ./build/phpmyadmin/save:/etc/phpmyadmin/save:rw
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    links:
+      - mariadb:mysql
+      - mariadb:database
+
+  geoip:
+    container_name: geoip
+    build:
+      context: ./build/docker/geoip
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      GEOIPUPDATE_ACCOUNT_ID: ${GEOIP_ACCOUNT}
+      GEOIPUPDATE_LICENSE_KEY: ${GEOIP_LICENSE}
+    tmpfs:
+      - /tmp
+    volumes:
+      - geoip_data:/usr/share/GeoIP/:rw
+
+  frankenphp:
+    container_name: frankenphp
+    build:
+      context: ./build/docker/frankenphp
+      dockerfile: Dockerfile
+      target: PROD
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+      CROWDSEC_API_KEY: ${CROWDSEC_CADDY_KEY}
+    networks:
+      - webserver
+    ports:
+      - "80:80" # HTTP
+      - "443:443/tcp" # HTTPS
+      - "443:443/udp" # HTTP/3
+    tmpfs:
+      - /run
+      # These are required for adding certificates to local trust store
+      - /usr/local/share/ca-certificates/
+      - /etc/ssl/certs/
+    volumes:
+      #Using tmpfs for /tmp is not a good idea, since there can be relatively large files being processed simultaneously
+      - temp_volume:/tmp:rw
+      #RO for MariaDB socket
+      - mariadb_socket:/run/mysqld/:ro
+      #geoip mapping
+      - geoip_data:/geoip:ro
+      #Caddy folders requiring RW
+      - caddy_data:/data:rw
+      - caddy_config:/config:rw
+      #Main project folder is RO
+      - ./:/app:ro
+      #Some files/folders are overridden for RW permissions
+      - ./build/DDL:/app/build/DDL:rw
+      - ./data:/app/data:rw
+      - ./public/assets/images/fftracker/icons:/app/public/assets/images/fftracker/icons:rw
+      - ./public/assets/images/fftracker/crests-components:/app/public/assets/images/fftracker/crests-components:rw
+      - ./logs:/app/logs:rw
+    depends_on:
+      #Used for determining country in PHP code
+      geoip:
+        condition: service_started
+      #We need Caddy bouncer to get at least the initial decision list from CrowdSec to keep the server protected
+      crowdsec:
+        condition: service_healthy
+      #If database is not available, an error page will be shown, so technically not critical
+      mariadb:
+        condition: service_started
+    links:
+      - mariadb:mysql
+      - mariadb:database
+
+  crowdsec:
+    #Based on https://github.com/crowdsecurity/example-docker-compose/tree/main/caddy
+    container_name: crowdsec
+    build:
+      context: ./build/docker/crowdsec
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      BOUNCER_KEY_CADDY: ${CROWDSEC_CADDY_KEY}
+      BOUNCER_KEY_IPTABLES: ${CROWDSEC_IPTABLES_KEY}
+      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
+      DATABASE_SOCKET: ${DATABASE_SOCKET}
+      DATABASE_PASSWORD: ${CROWDSEC_PASSWORD}
+    #Looks like this is required to allow reading the MariaDB log file (at least after hardening)
+    group_add:
+      - 999
+    networks:
+      - webserver
+    ports:
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:6060:6060"
+      - "127.0.0.1:7422:7422"
+      #These are valid despite the IDE highlighting them. https://youtrack.jetbrains.com/issue/IJPL-228615
+      - "[::1]:8080:8080"
+      - "[::1]:6060:6060"
+      - "[::1]:7422:7422"
+    tmpfs:
+      - /tmp
+      - /run
+    volumes:
+      #RO for MariaDB socket
+      - mariadb_socket:/run/mysqld/:ro
+      #Data folder is required to be mounted, otherwise container does not start
+      - crowdsec_data:/var/lib/crowdsec/data/:rw
+      - crowdsec_config:/etc/crowdsec/:rw
+      #RO for GeoLite2 files
+      - geoip_data:/geoip:ro
+      #Required to read syslog. This will be valid only on UNIX
+      - /var/log/:/var/log/:ro
+      #Caddy logs folder is RW, because we're also writing Crowdsec logs here
+      - ./logs:/usr/local/logs/:rw
+    depends_on:
+      geoip:
+        condition: service_started
+      mariadb:
+        condition: service_healthy
+
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ./build/docker/mariadb
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - SETUID
+      - SETGID
+      - FOWNER
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      WEB_SERVER_TEST: ${WEB_SERVER_TEST}
+      #Password for backups created by CRON job
+      MARIADB_BACKUP_PASSWORD: ${MARIADB_BACKUP_PASSWORD}
+      #Pass database name for backup
+      DATABASE_NAME: ${DATABASE_NAME}
+    networks:
+      - webserver
+    ports:
+      - "127.0.0.1:3306:3306"
+    tmpfs:
+      - /run
+    volumes:
+      #RW for the socket
+      - mariadb_socket:/run/mysqld/:rw
+      #RW for database files directory
+      - mariadb_data:/var/lib/mysql:rw
+      #Using tmpfs for /tmp is not a good idea, since it's used during various operations on large tables
+      - temp_volume:/tmp:rw
+      #RW for logs directory
+      - ./logs:/usr/local/logs:rw
+      #RW for backups directory
+      - ${MARIADB_BACKUP_DIR}:/usr/local/backups:rw
+      #RO for DDL directory, used during maintenance stuff
+      - ./build/DDL:/usr/local/DDL:ro

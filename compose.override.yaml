@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-go/master/schema/compose-spec.json
+services:
+  frankenphp:
+    build:
+      target: DEV
+    volumes:
+      #PHPStorm's integrations require `/opt` to be persistent, so using named volume
+      - temp_volume:/opt:rw
+      #Main project folder is RO but have to do RW on DEV due to https://github.com/docker/desktop-feedback/issues/491
+      - ./:/app:rw
+      #These 2 items need write permissions for composer to run properly
+      - ./composer.lock:/app/composer.lock:rw
+      - ./vendor:/app/vendor:rw
+      #Name is used to ensure the .ini is loaded last
+      - ./build/docker/frankenphp/php_dev.ini:/usr/local/etc/php/conf.d/zz-dev-overrides.ini
+
+  #Attempt to use Bun from a container. Was meant to allow not keeping `node_modules` in the host, but it doesn't work
+  #due to https://youtrack.jetbrains.com/issue/WEB-73725 and https://youtrack.jetbrains.com/issue/WEB-73722 bugs.
+  #Bugs were originally raised for Node.js, but they are applicable to Bun, as well.
+  #Also, possible that this is not even doable at all, and `node_modules` will need to be local either way.
+  bun:
+    container_name: bun
+    image: oven/bun:latest
+    profiles:
+      - dev_only
+    restart: no
+    security_opt:
+      - no-new-privileges=true
+    networks:
+      - webserver
+    volumes:
+      #- ./:/home/bun/app:rw
+      #- node_modules:/home/bun/app/node_modules/:rw
+      #- ./bun.lock:/home/bun/app/bun.lock:rw
+      #- ./package.json:/home/bun/app/package.json:rw
+      - ./:/home/bun/app/:ro
+    #Command is required in case some manual runs are needed, since PHPStorm stops the container right away (uses "run")
+    #command: tail -f /dev/null

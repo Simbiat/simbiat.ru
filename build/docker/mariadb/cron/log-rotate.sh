@@ -1,4 +1,6 @@
 #!/bin/sh
+# Import environment variables
+set -a; . /run/cron-env; set +a
 
 if [ -f /usr/local/logs/mariadb.log ]; then
     # Copy the log file to the new file with the previous day's date
